@@ -9,8 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IntWarsSharp</RootNamespace>
     <AssemblyName>IntWarsSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +24,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>default</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -38,9 +44,17 @@
       <HintPath>..\packages\ENet.1.3.6.3\lib\ENet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLua">
+      <HintPath>..\lib\NLua.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.1.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,10 +65,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logic\Blowfish.cs" />
+    <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Enet\ENetHosts.cs" />
     <Compile Include="Logic\Game.cs" />
+    <Compile Include="Logic\GameObjects\Champion.cs" />
+    <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\GameTarget.cs" />
+    <Compile Include="Logic\GameObjects\Spell.cs" />
+    <Compile Include="Logic\GameObjects\Unit.cs" />
     <Compile Include="Logic\Items\ItemManager.cs" />
     <Compile Include="Logic\Logger.cs" />
+    <Compile Include="Logic\GameObjects\Map.cs" />
+    <Compile Include="Logic\Lua\LuaScript.cs" />
     <Compile Include="Logic\PacketHandlers\PacketEnum.cs" />
     <Compile Include="Logic\PacketHandlers\PacketHandler.cs" />
     <Compile Include="Logic\PacketHandlers\PacketHandlerManager.cs" />
@@ -79,11 +101,13 @@
     <Compile Include="Logic\PacketHandlers\Packets\HandleSwapItems.cs" />
     <Compile Include="Logic\PacketHandlers\Packets\HandleSynch.cs" />
     <Compile Include="Logic\PacketHandlers\Packets\HandleView.cs" />
+    <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="ENetX64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -99,6 +123,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\InibinSharp\InibinSharp.csproj">
+      <Project>{f47ac3d4-6c0f-4f02-9a7f-fbed54cf6e0a}</Project>
+      <Name>InibinSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\riot-archive\riot-archive.csproj">
       <Project>{120c11de-81ae-4153-bb85-e0fdb4b242d7}</Project>
       <Name>riot-archive</Name>

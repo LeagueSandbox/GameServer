@@ -1,0 +1,8 @@
+To start create a folder for your champion and in that folder create a file Q/W/E/R.lua, where the first letter is the ability slot(first ability q, ultimate r)
+Then add functions finishCasting() and applyEffects(). On finishCasting() create projectiles if needed. To create a projectile use addProjectile(toX, toY) , projectile id and speed will be automagically loaded
+
+You need to use some basic vector math for most skills so they aren't unlimited range, hope you didn't sleep during math classes. see ezreal skills for examples
+
+If you added a projectile, add debuffs damage etc to applyEffects()
+
+See champion spell lua api text file in this folder for list of all methods avaiable in Lua

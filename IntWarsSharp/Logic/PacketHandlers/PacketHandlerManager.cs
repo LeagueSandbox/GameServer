@@ -16,6 +16,7 @@ namespace IntWarsSharp.Core.Logic
         internal void InitHandlers()
         {
             _handlerTable = new Dictionary<PacketCmd, Dictionary<Channel, PacketHandler>>();
+
             registerHandler(new HandleKeyCheck(), PacketCmd.PKT_KeyCheck, Channel.CHL_HANDSHAKE);
             registerHandler(new HandleLoadPing(), PacketCmd.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
             registerHandler(new HandleSpawn(), PacketCmd.PKT_C2S_CharLoaded, Channel.CHL_C2S);

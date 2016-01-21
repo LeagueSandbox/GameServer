@@ -3,6 +3,7 @@ using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.Enet;
 using IntWarsSharp.Core.Logic.Items;
 using IntWarsSharp.Core.Logic.RAF;
+using IntWarsSharp.Logic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +32,9 @@ namespace IntWarsSharp
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
 
+            Logger.LogCoreInfo("Loading Config.");
+            Config.LoadConfig();
+
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
             var basePath = RAFManager.getInstance().findGameBasePath();
@@ -57,9 +61,9 @@ namespace IntWarsSharp
                 return;
             }
 
-            /*g.netLoop();
+            g.netLoop();
 
-            PathNode.DestroyTable(); // Cleanup*/
+            PathNode.DestroyTable(); // Cleanup
         }
     }
 }

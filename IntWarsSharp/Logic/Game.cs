@@ -31,7 +31,7 @@ namespace IntWarsSharp.Core.Logic
             _blowfish = new BlowFish(key);
             PacketHandlerManager.getInstace().InitHandlers();
 
-           /* map = new SummonersRift(this);
+            map = new SummonersRift(this);
 
             //TODO: better lua implementation
 

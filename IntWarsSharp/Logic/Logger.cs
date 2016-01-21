@@ -28,12 +28,12 @@ namespace IntWarsSharp.Core.Logic
 
         public static void LogCoreInfo(string line)
         {
-            WriteToLog.Log(line, "CORE_INFO");
+            Log(line, "CORE_INFO");
         }
 
         public static void LogCoreError(string line)
         {
-            WriteToLog.Log(line, "CORE_ERROR");
+            Log(line, "CORE_ERROR");
         }
     }
 

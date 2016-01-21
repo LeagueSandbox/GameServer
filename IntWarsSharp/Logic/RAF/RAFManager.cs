@@ -1,4 +1,6 @@
 ﻿using freedompeace.RiotArchive;
+using InibinSharp;
+using InibinSharp.RAF;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -12,7 +14,7 @@ namespace IntWarsSharp.Core.Logic.RAF
     class RAFManager
     {
         private static RAFManager _instance;
-        private List<RiotArchive> Files = new List<RiotArchive>();
+        private RAFMasterFileList Root;
 
         public string findGameBasePath()
         {
@@ -85,28 +87,46 @@ namespace IntWarsSharp.Core.Logic.RAF
 
         public bool init(string rootDirectory)
         {
-            if (!Directory.Exists(rootDirectory))
-                return false;
+            /* if (!Directory.Exists(rootDirectory))
+                 return false;
 
-            var dirs = Directory.EnumerateDirectories(rootDirectory);
+             var dirs = Directory.EnumerateDirectories(rootDirectory);
 
-            foreach (var dir in dirs)
-            {
-                var files = Directory.GetFiles(dir, "*.raf");
+             foreach (var dir in dirs)
+             {
+                 var files = Directory.GetFiles(dir, "*.raf");
 
-                foreach (var file in files)
-                {
-                    if (!File.Exists(file))
-                        continue;
+                 foreach (var file in files)
+                 {
+                     if (!File.Exists(file))
+                         continue;
 
-                    var raf = RiotArchive.FromFile(file);
-                    Files.Add(raf);
-                }
-            }
-            Logger.LogCoreInfo("Loaded " + Files.Count + " RAF files");
+                     var raf = RiotArchive.FromFile(file);
+                     Files.Add(raf);
+                 }
+             }*/
+            Root = new RAFMasterFileList(rootDirectory);
+            Logger.LogCoreInfo("Loaded RAF files");
             return true;
         }
 
+        internal bool readFile(string path, out Inibin iniFile)
+        {
+            var entries = Root.SearchFileEntries(path);
+
+            if (entries.Count < 1)
+            {
+                iniFile = null;
+                return false;
+            }
+            if (entries.Count > 1)
+                Logger.LogCoreInfo("Found more than one inibin for query " + path);
+
+            var entry = entries.First();
+            iniFile = new Inibin(entry);
+
+            return true;
+        }
 
         public static RAFManager getInstance()
         {
