@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CB004023-B938-4EC6-B036-29EE2F55CFA4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IntWarsSharp</RootNamespace>
+    <AssemblyName>IntWarsSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ENet, Version=1.3.6.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ENet.1.3.6.3\lib\ENet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Logic\Blowfish.cs" />
+    <Compile Include="Logic\Enet\ENetHosts.cs" />
+    <Compile Include="Logic\Game.cs" />
+    <Compile Include="Logic\Items\ItemManager.cs" />
+    <Compile Include="Logic\Logger.cs" />
+    <Compile Include="Logic\PacketHandlers\PacketEnum.cs" />
+    <Compile Include="Logic\PacketHandlers\PacketHandler.cs" />
+    <Compile Include="Logic\PacketHandlers\PacketHandlerManager.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleAttentionPing.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleBuyItem.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleCastSpell.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleChatBoxMessage.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleClick.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleEmotion.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleGameNumber.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleHeartBeat.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleKeyCheck.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleLoadPing.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleMap.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleMove.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleNull.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleQueryStatus.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleSellItem.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleSkillUp.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleSpawn.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleStartGame.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleSwapItems.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleSynch.cs" />
+    <Compile Include="Logic\PacketHandlers\Packets\HandleView.cs" />
+    <Compile Include="Logic\RAF\RAFManager.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ENetX64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ENetX86.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="IntWarsSharp.Core.GPL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libenet.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\riot-archive\riot-archive.csproj">
+      <Project>{120c11de-81ae-4153-bb85-e0fdb4b242d7}</Project>
+      <Name>riot-archive</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
