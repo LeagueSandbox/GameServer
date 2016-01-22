@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic
 {
-    class GameObject : GameTarget
+    public class GameObject : GameTarget
     {
         protected int id;
         protected float xvector, yvector;

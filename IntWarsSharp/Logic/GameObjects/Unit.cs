@@ -35,7 +35,7 @@ namespace IntWarsSharp.Logic.GameObjects
         MOVE_ORDER_MOVE,
         MOVE_ORDER_ATTACKMOVE
     };
-    class Unit : GameObject
+    public class Unit : GameObject
     {
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;

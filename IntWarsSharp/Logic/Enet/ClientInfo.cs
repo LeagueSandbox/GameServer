@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.Enet
 {
-    class ClientInfo
+    public class ClientInfo
     {
         public bool keyChecked = false;
         public bool versionMatch = true;

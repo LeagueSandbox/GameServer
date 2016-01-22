@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\ChampionFactory.cs" />
     <Compile Include="Logic\Config.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
     <Compile Include="Logic\GameObjects\GameTarget.cs" />
+    <Compile Include="Logic\GameObjects\MovementVector.cs" />
     <Compile Include="Logic\GameObjects\Pathfinder.cs" />
     <Compile Include="Logic\GameObjects\Spell.cs" />
     <Compile Include="Logic\GameObjects\Unit.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="Logic\PacketHandlers\Packets\HandleSwapItems.cs" />
     <Compile Include="Logic\PacketHandlers\Packets\HandleSynch.cs" />
     <Compile Include="Logic\PacketHandlers\Packets\HandleView.cs" />
+    <Compile Include="Logic\Packets\Packet.cs" />
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />

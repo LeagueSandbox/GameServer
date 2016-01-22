@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    class Champion : Unit
+    public class Champion : Unit
     {
         protected string type;
         protected List<Spell> spells = new List<Spell>();

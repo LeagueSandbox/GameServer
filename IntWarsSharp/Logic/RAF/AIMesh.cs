@@ -159,13 +159,3 @@ namespace IntWarsSharp.Logic.RAF
         }
     }
 }
-namespace IntWarsSharp.Logic.Extensions
-{
-    static class Extensions
-    {
-        public static float SqrLength(this Vector2 v)
-        {
-            return (v.X * v.X + v.Y * v.Y);
-        }
-    }
-}

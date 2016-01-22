@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic
 {
-    class GameTarget
+    public class GameTarget
     {
         internal float x;
         internal float y;
@@ -60,7 +60,7 @@ namespace IntWarsSharp.Logic
             this.y = y;
         }
 
-        public  Vector2 getPosition()
+        public Vector2 getPosition()
         {
             return new Vector2(x, y);
         }
