@@ -53,7 +53,7 @@ namespace InibinSharp
         {
             _reader = new BinaryReader(stream);
 
-            var size = (int) _reader.BaseStream.Length;
+            var size = (int)_reader.BaseStream.Length;
             var version = ReadValue<byte>();
             var oldLength = ReadValue<UInt16>();
             var bitmask = ReadValue<UInt16>();
@@ -137,6 +137,26 @@ namespace InibinSharp
             }
         }
 
+        public int getIntValue(string v1, string v2)
+        {
+            return GetValue<int>(v1, v2);
+        }
+
+        public bool getBoolValue(string v1, string v2)
+        {
+            return GetValue<bool>(v1, v2);
+        }
+
+        public string getStringValue(string v1, string v2)
+        {
+            return GetValue<string>(v1, v2);
+        }
+
+        public float getFloatValue(string v1, string v2)
+        {
+            return GetValue<float>(v1, v2);
+        }
+
         public void Dispose()
         {
             if (_reader != null)
@@ -150,7 +170,7 @@ namespace InibinSharp
             if (!Values.ContainsKey(key))
             {
                 Values.Add(key, value);
-                Debug.WriteLine("{0} [{1}] = {2}", typeof (T).Name, key, value);
+                Debug.WriteLine("{0} [{1}] = {2}", typeof(T).Name, key, value);
             }
         }
 
@@ -158,19 +178,19 @@ namespace InibinSharp
         {
             var start = _reader.BaseStream.Position;
             var keys = ReadSegmentKeys();
-            _reader.BaseStream.Position += keys.Length*size;
+            _reader.BaseStream.Position += keys.Length * size;
             Debug.WriteLine("{0} properties skip from {1} to {2}", size, start, _reader.BaseStream.Position);
         }
 
         private void ParseValues<T>(bool isBase10 = false)
         {
-            Debug.WriteLine("{0} properties start position {1}", typeof (T).Name, _reader.BaseStream.Position);
+            Debug.WriteLine("{0} properties start position {1}", typeof(T).Name, _reader.BaseStream.Position);
             var keys = ReadSegmentKeys();
 
-            if (typeof (T) == typeof (bool))
+            if (typeof(T) == typeof(bool))
             {
                 var index = 0;
-                for (var i = 0; i < 1 + ((keys.Length - 1)/8); ++i)
+                for (var i = 0; i < 1 + ((keys.Length - 1) / 8); ++i)
                 {
                     int bits = ReadValue<byte>();
                     for (var b = 0; b < 8; ++b)
@@ -186,7 +206,7 @@ namespace InibinSharp
                     }
                 }
             }
-            else if (typeof (T) == typeof (string))
+            else if (typeof(T) == typeof(string))
             {
                 foreach (var key in keys)
                 {
@@ -200,7 +220,7 @@ namespace InibinSharp
                 {
                     if (isBase10)
                     {
-                        AddValue(key, ((byte) (object) ReadValue<T>())*0.1f);
+                        AddValue(key, ((byte)(object)ReadValue<T>()) * 0.1f);
                     }
                     else
                     {
@@ -216,23 +236,23 @@ namespace InibinSharp
         {
             try
             {
-                if (typeof (T) == typeof (byte))
+                if (typeof(T) == typeof(byte))
                 {
-                    return (T) (object) _reader.ReadByte();
+                    return (T)(object)_reader.ReadByte();
                 }
-                if (typeof (T) == typeof (UInt16))
+                if (typeof(T) == typeof(UInt16))
                 {
-                    return (T) (object) _reader.ReadUInt16();
+                    return (T)(object)_reader.ReadUInt16();
                 }
-                if (typeof (T) == typeof (UInt32))
+                if (typeof(T) == typeof(UInt32))
                 {
-                    return (T) (object) _reader.ReadUInt32();
+                    return (T)(object)_reader.ReadUInt32();
                 }
-                if (typeof (T) == typeof (float))
+                if (typeof(T) == typeof(float))
                 {
-                    return (T) (object) _reader.ReadSingle();
+                    return (T)(object)_reader.ReadSingle();
                 }
-                if (typeof (T) == typeof (string))
+                if (typeof(T) == typeof(string))
                 {
                     int c;
                     var sb = new StringBuilder();
@@ -240,11 +260,11 @@ namespace InibinSharp
                     _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
                     while ((c = _reader.ReadByte()) > 0)
                     {
-                        sb.Append((char) c);
+                        sb.Append((char)c);
                     }
                     _reader.BaseStream.Seek(oldPos, SeekOrigin.Begin);
 
-                    return (T) (object) sb.ToString();
+                    return (T)(object)sb.ToString();
                 }
             }
             catch (Exception e)
@@ -281,45 +301,45 @@ namespace InibinSharp
                     throw new KeyNotFoundException(key.ToString());
                 }
 
-                if (typeof (T) == typeof (string))
+                if (typeof(T) == typeof(string))
                 {
-                    return (T) (object) Values[key].ToString();
+                    return (T)(object)Values[key].ToString();
                 }
 
                 // integers -> bool
-                if (typeof (T) == typeof (bool) && Values[key].GetType().IsInteger())
+                if (typeof(T) == typeof(bool) && Values[key].GetType().IsInteger())
                 {
-                    return (T) (object) ((int) Values[key] > 0);
+                    return (T)(object)((int)Values[key] > 0);
                 }
 
                 var value = Values[key] as string;
                 if (value != null)
                 {
                     // string -> bool
-                    if (typeof (T) == typeof (bool))
+                    if (typeof(T) == typeof(bool))
                     {
-                        return (T) (object) (value == "1");
+                        return (T)(object)(value == "1");
                     }
 
-                    if (typeof (T).IsNumeric())
+                    if (typeof(T).IsNumeric())
                     {
                         // string -> byte/short/int
                         int intValue;
                         if (Int32.TryParse(value, out intValue))
                         {
-                            return (T) (object) intValue;
+                            return (T)(object)intValue;
                         }
 
                         // string -> double/float
                         double doubleValue;
                         if (Double.TryParse(value, out doubleValue))
                         {
-                            return (T) (object) doubleValue;
+                            return (T)(object)doubleValue;
                         }
                     }
                 }
 
-                return (T) Values[key];
+                return (T)Values[key];
             }
             catch (KeyNotFoundException)
             {
@@ -328,7 +348,7 @@ namespace InibinSharp
             }
             catch (InvalidCastException)
             {
-                Debug.WriteLine(Values[key].GetType().Name + " to " + typeof (T).Name + " @ " + key);
+                Debug.WriteLine(Values[key].GetType().Name + " to " + typeof(T).Name + " @ " + key);
                 return default(T);
             }
         }
@@ -1107,14 +1127,14 @@ namespace InibinSharp
 
                 foreach (var c in section.ToLower())
                 {
-                    hash = c + 65599*hash;
+                    hash = c + 65599 * hash;
                 }
 
-                hash = (65599*hash + 42);
+                hash = (65599 * hash + 42);
 
                 foreach (var c in name.ToLower())
                 {
-                    hash = c + 65599*hash;
+                    hash = c + 65599 * hash;
                 }
 
                 return hash;
@@ -1129,20 +1149,20 @@ namespace InibinSharp
             if (dataType == null)
                 throw new ArgumentNullException("dataType");
 
-            return (dataType == typeof (int)
-                    || dataType == typeof (double)
-                    || dataType == typeof (long)
-                    || dataType == typeof (short)
-                    || dataType == typeof (float)
-                    || dataType == typeof (Int16)
-                    || dataType == typeof (Int32)
-                    || dataType == typeof (Int64)
-                    || dataType == typeof (uint)
-                    || dataType == typeof (UInt16)
-                    || dataType == typeof (UInt32)
-                    || dataType == typeof (UInt64)
-                    || dataType == typeof (sbyte)
-                    || dataType == typeof (Single)
+            return (dataType == typeof(int)
+                    || dataType == typeof(double)
+                    || dataType == typeof(long)
+                    || dataType == typeof(short)
+                    || dataType == typeof(float)
+                    || dataType == typeof(Int16)
+                    || dataType == typeof(Int32)
+                    || dataType == typeof(Int64)
+                    || dataType == typeof(uint)
+                    || dataType == typeof(UInt16)
+                    || dataType == typeof(UInt32)
+                    || dataType == typeof(UInt64)
+                    || dataType == typeof(sbyte)
+                    || dataType == typeof(Single)
                 );
         }
 
@@ -1151,18 +1171,18 @@ namespace InibinSharp
             if (dataType == null)
                 throw new ArgumentNullException("dataType");
 
-            return (dataType == typeof (int)
-                    || dataType == typeof (long)
-                    || dataType == typeof (short)
-                    || dataType == typeof (Int16)
-                    || dataType == typeof (Int32)
-                    || dataType == typeof (Int64)
-                    || dataType == typeof (uint)
-                    || dataType == typeof (UInt16)
-                    || dataType == typeof (UInt32)
-                    || dataType == typeof (UInt64)
-                    || dataType == typeof (sbyte)
-                    || dataType == typeof (Single)
+            return (dataType == typeof(int)
+                    || dataType == typeof(long)
+                    || dataType == typeof(short)
+                    || dataType == typeof(Int16)
+                    || dataType == typeof(Int32)
+                    || dataType == typeof(Int64)
+                    || dataType == typeof(uint)
+                    || dataType == typeof(UInt16)
+                    || dataType == typeof(UInt32)
+                    || dataType == typeof(UInt64)
+                    || dataType == typeof(sbyte)
+                    || dataType == typeof(Single)
                 );
         }
 
@@ -1171,7 +1191,7 @@ namespace InibinSharp
             if (dataType == null)
                 throw new ArgumentNullException("dataType");
 
-            return (dataType == typeof (double) || dataType == typeof (float));
+            return (dataType == typeof(double) || dataType == typeof(float));
         }
     }
 }

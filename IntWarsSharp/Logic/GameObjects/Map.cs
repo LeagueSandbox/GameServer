@@ -1,8 +1,10 @@
-﻿using IntWarsSharp.Core.Logic;
+﻿using InibinSharp;
+using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +28,8 @@ namespace IntWarsSharp.Logic
         protected bool firstBlood;
         protected bool killReduction;
         protected bool hasFountainHeal;
-        protected AIMesh mesh;
+        protected IntWarsSharp.Logic.RAF.AIMesh mesh;
+        protected int id;
 
         protected CollisionHandler collisionHandler;
         protected Fountain fountain;
@@ -35,7 +38,7 @@ namespace IntWarsSharp.Logic
         {
             return collisionHandler;
         }
-        public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal)
+        public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
             this.objects = new Dictionary<int, GameObject>();
             this.champions = new Dictionary<int, Champion>();
@@ -53,9 +56,9 @@ namespace IntWarsSharp.Logic
             this.firstBlood = true;
             this.killReduction = true;
             this.hasFountainHeal = hasFountainHeal;
-            this.mesh = new AIMesh();
             this.collisionHandler = new CollisionHandler(this);
             this.fountain = new Fountain();
+            this.id = id;
         }
 
         public virtual void update(long diff)
@@ -207,44 +210,223 @@ namespace IntWarsSharp.Logic
             if (hasFountainHeal)
                 fountain->healChampions(this, diff);
         }
-        public virtual float getGoldPerSecond() = 0;
-  public virtual bool spawn() = 0;
 
-	publicvirtual std::pair<int, Vector2> getMinionSpawnPosition(uint32 spawnPosition) const = 0;
-        public virtual void setMinionStats(Minion* minion) const = 0;
+        public virtual float getGoldPerSecond()
+        {
+            return 0;
+        }
 
-        public Object* getObjectById(uint32 id);
-        public void addObject(Object* o);
-        public void removeObject(Object* o);
-        public const std::vector<uint32>& getExperienceToLevelUp() { return expToLevelUp; }
-        public uint64 getGameTime() { return gameTime; }
-        public uint64 getFirstGoldTime() { return firstGoldTime; }
-        public virtual const Target getRespawnLocation(int team) const = 0;
-        public virtual float getGoldFor(Unit* u) const = 0;
-        public virtual float getExperienceFor(Unit* u) const = 0;
+        public virtual bool spawn()
+        {
+            return false;
+        }
 
-        public Game getGame() const { return game; }
+        public virtual Tuple<int, Vector2> getMinionSpawnPosition(int spawnPosition)
+        {
+            return null;
+        }
 
-    public const std::map<uint32, Object*>& getObjects() { return objects; }
-    public void stopTargeting(Unit* target);
+        public virtual void setMinionStats(Minion minion)
+        {
 
-    public std::vector<Champion*> getChampionsInRange(Target* t, float range, bool isAlive = false);
-    public std::vector<Unit*> getUnitsInRange(Target* t, float range, bool isAlive = false);
+        }
 
-    public bool getFirstBlood() { return firstBlood; }
-    public void setFirstBlood(bool state) { firstBlood = state; }
+        public GameObject getObjectById(int id)
+        {
+            if (!objects.ContainsKey(id))
+                return null;
 
-    public AIMesh* getAIMesh() { return &mesh; }
-    public float getHeightAtLocation(float x, float y) { return mesh.getY(x, y); }
-    public bool isWalkable(float x, float y) { return mesh.isWalkable(x, y); }
+            return objects[id];
+        }
+        public void addObject(GameObject o)
+        {
+            if (o == null)
+                return;
 
-    public bool getKillReduction() { return killReduction; }
-    public void setKillReduction(bool state) { killReduction = state; }
+            objects.Add(o.getNetId(), o);
 
-    public MovementVector toMovementVector(float x, float y);
+            var u = o as Unit;
+            if (u == null)
+                return;
 
-    public bool teamHasVisionOn(int team, Object* o);
+            collisionHandler.addObject(o);
 
-    public virtual const int getMapId() const = 0;
-}
+            visionUnits[o.getTeam()][o.getNetId()] = u;
+
+            var m = u as Minion;
+
+            if (m != null)
+                game.notifyMinionSpawned(m, m.getTeam());
+
+            var c = o as Champion;
+
+            if (c != null)
+            {
+                champions[c.getNetId()] = c;
+                game.notifyChampionSpawned(c, c.getTeam());
+            }
+        }
+        public void removeObject(GameObject o)
+        {
+            var c = o as Champion;
+
+            if (c != null)
+                champions.Remove(c.getNetId());
+
+            objects.Remove(o.getNetId());
+            visionUnits[o.getTeam()].Remove(o.getNetId());
+        }
+
+        public List<int> getExperienceToLevelUp()
+        {
+            return expToLevelUp;
+        }
+
+        public long getGameTime()
+        {
+            return gameTime;
+        }
+        public int getId()
+        {
+            return id;
+        }
+
+        public long getFirstGoldTime()
+        {
+            return firstGoldTime;
+        }
+
+        public virtual Target getRespawnLocation(int team)
+        {
+            return null;
+        }
+
+        public virtual float getGoldFor(Unit u)
+        {
+            return 0;
+        }
+
+        public virtual float getExperienceFor(Unit u)
+        {
+            return 0;
+        }
+
+        public Game getGame()
+        {
+            return game;
+        }
+
+        public Dictionary<int, GameObject> getObjects()
+        {
+            return objects;
+        }
+
+        public void stopTargeting(Unit target)
+        {
+            foreach (var kv in objects)
+            {
+                var u = kv.Value as Unit;
+
+                if (u == null)
+                    continue;
+
+                if (u.getTargetUnit() == target)
+                {
+                    u.setTargetUnit(null);
+                    u.setAutoAttackTarget(null);
+                    game.notifySetTarget(u, null);
+                }
+            }
+        }
+
+        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive = false)
+        {
+            var champs = new List<Champion>();
+            foreach (var kv in champions)
+            {
+                var c = kv.Value;
+                if (t.distanceWith(c) <= range)
+                    if (isAlive && !c.isDead() || !isAlive) //TODO: check
+                        champs.Add(c);
+            }
+            return champs;
+        }
+        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive = false)
+        {
+            var units = new List<Unit>();
+            foreach (var kv in objects)
+            {
+                var u = kv.Value as Unit;
+                if (u && t.distanceWith(u) <= range)
+                    if (isAlive && !u.isDead() || !isAlive)
+                        units.Add(u);
+            }
+            return units;
+        }
+
+        public bool getFirstBlood()
+        {
+            return firstBlood;
+        }
+
+        public void setFirstBlood(bool state)
+        {
+            firstBlood = state;
+        }
+
+        public IntWarsSharp.Logic.RAF.AIMesh getAIMesh()
+        {
+            return mesh;
+        }
+
+        public float getHeightAtLocation(float x, float y)
+        {
+            return mesh.getY(x, y);
+        }
+        public bool isWalkable(float x, float y)
+        {
+            return mesh.isWalkable(x, y);
+        }
+
+        public bool getKillReduction()
+        {
+            return killReduction;
+        }
+        public void setKillReduction(bool state)
+        {
+            killReduction = state;
+        }
+
+        public MovementVector toMovementVector(float x, float y)
+        {
+            return MovementVector((int)((x - mesh.getWidth() / 2) / 2), (int)((y - mesh.getHeight() / 2) / 2));
+        }
+
+        public bool teamHasVisionOn(int team, GameObject o)
+        {
+            if (o == null)
+                return false;
+
+            if (o.getTeam() == team)
+                return true;
+
+            foreach (var kv in objects)
+            {
+                if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                {
+                    var unit = kv.Value as Unit;
+                    if (unit != null && unit.isDead())
+                        continue;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public virtual int getMapId()
+        {
+            return 0;
+        }
+    }
 }

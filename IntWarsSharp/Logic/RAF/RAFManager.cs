@@ -110,7 +110,7 @@ namespace IntWarsSharp.Core.Logic.RAF
             return true;
         }
 
-        internal bool readFile(string path, out Inibin iniFile)
+        internal bool readInibin(string path, out Inibin iniFile)
         {
             var entries = Root.SearchFileEntries(path);
 
@@ -126,6 +126,36 @@ namespace IntWarsSharp.Core.Logic.RAF
             iniFile = new Inibin(entry);
 
             return true;
+        }
+
+        internal bool readAIMesh(string path, out IntWarsSharp.Logic.RAF.AIMesh aimesh)
+        {
+            var entries = Root.SearchFileEntries(path);
+            if (entries.Count < 1)
+            {
+                aimesh = null;
+                return false;
+            }
+            if (entries.Count > 1)
+                Logger.LogCoreInfo("Found more than one AIMesh for query " + path);
+
+            var entry = entries.First();
+            aimesh = new IntWarsSharp.Logic.RAF.AIMesh(entry);
+
+            return true;
+        }
+
+        public uint getHash(string path)
+        {
+            uint hash = 0;
+            uint mask = 0xF0000000;
+            for (var i = 0; i < path.Length; i++)
+            {
+                hash = Char.ToLower(path[i]) + (0x10 * hash);
+                if ((hash & mask) > 0)
+                    hash ^= hash & mask ^ ((hash & mask) >> 24);
+            }
+            return hash;
         }
 
         public static RAFManager getInstance()

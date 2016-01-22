@@ -30,6 +30,10 @@ namespace IntWarsSharp.Core.Logic
         {
             Log(line, "CORE_INFO");
         }
+        public static void LogCoreWarning(string line)
+        {
+            Log(line, "CORE_WARNING");
+        }
 
         public static void LogCoreError(string line)
         {

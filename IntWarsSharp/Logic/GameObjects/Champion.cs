@@ -1,4 +1,5 @@
-﻿using IntWarsSharp.Core.Logic;
+﻿using InibinSharp;
+using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.RAF;
 using System;
 using System.Collections.Generic;
@@ -35,14 +36,14 @@ namespace IntWarsSharp.Logic.GameObjects
             stats.setGoldPerSecond(map.getGoldPerSecond());
             stats.setGeneratingGold(false);
 
-            List<char> iniFile = new List<char>();
-            if (!RAFManager.getInstance().readFile("DATA/Characters/" + type + "/" + type + ".inibin", iniFile))
+            Inibin inibin;
+            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
             {
                 Logger.LogCoreError("couldn't find champion stats for " + type);
                 return;
             }
 
-            var inibin = getInibin(iniFile);
+
 
             stats->setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
             stats->setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
@@ -73,19 +74,17 @@ namespace IntWarsSharp.Logic.GameObjects
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            iniFile.Clear();
-            if (!RAFManager.getInstance().readFile("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", iniFile))
+            Inibin autoAttack;
+            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", out autoAttack))
             {
-                if (!RAFManager.getInstance().readFile("DATA/Spells/" + type + "BasicAttack.inibin", iniFile))
+                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + type + "BasicAttack.inibin", out autoAttack))
                 {
                     Logger.LogCoreError("Couldn't find champion auto-attack data for " + type);
                     return;
                 }
             }
 
-            var autoAttack = getAutoAttack(iniFile);
-
-            autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.f;
+            autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
             //Fuck LUA
@@ -199,43 +198,263 @@ namespace IntWarsSharp.Logic.GameObjects
             s.setSlot(slot);//temporary hack until we redo spells to be almost fully lua-based
 
             if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.getCurrentMana() || s.getState() != SpellState.STATE_READY)
-            {
-                return 0;
-            }
+                return null;
 
             s.cast(x, y, target, futureProjNetId, spellNetId);
             stats.setCurrentMana(stats.getCurrentMana() - (s.getCost() * (1 - stats.getSpellCostReduction())));
             return s;
         }
-        public Spell levelUpSpell(uint8 slot);
+        public Spell levelUpSpell(short slot)
+        {
+            if (slot >= spells.Count)
+                return null;
 
-        public virtual void update(int64 diff);
+            if (skillPoints == 0)
+                return null;
+
+            spells[slot].levelUp();
+            --skillPoints;
+
+            return spells[slot];
+        }
+
+        public override void update(long diff)
+        {
+            base.update(diff);
+
+            if (!isDead() && moveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && targetUnit != null)
+            {
+                Dictionary<int, GameObject> objects = map.getObjects();
+                float distanceToTarget = 9000000.0f;
+                Unit nextTarget = null;
+                float range = Math.Max(stats.getRange(), DETECT_RANGE);
+
+                foreach (var it in objects)
+                {
+                    var u = it.Value as Unit;
+
+                    if (u == null || u.isDead() || u.getTeam() == getTeam() || distanceWith(u) > range)
+                        continue;
+
+                    if (distanceWith(u) < distanceToTarget)
+                    {
+                        distanceToTarget = distanceWith(u);
+                        nextTarget = u;
+                    }
+                }
+
+                if (nextTarget != null)
+                {
+                    setTargetUnit(nextTarget);
+                    map.getGame().notifySetTarget(this, nextTarget);
+                }
+            }
+
+            if (!stats.isGeneratingGold() && map.getGameTime() >= map.getFirstGoldTime())
+            {
+                stats.setGeneratingGold(true);
+                Logger.LogCoreInfo("Generating Gold!");
+            }
+
+            if (respawnTimer > 0)
+            {
+                respawnTimer -= diff;
+                if (respawnTimer <= 0)
+                {
+                    var spawnPos = getRespawnPosition();
+                    float respawnX = spawnPos.Item1;
+                    float respawnY = spawnPos.Item2;
+                    setPosition(respawnX, respawnY);
+                    map.getGame().notifyChampionRespawn(this);
+                    getStats().setCurrentHealth(getStats().getMaxHealth());
+                    getStats().setCurrentMana(getStats().getMaxMana());
+                    deathFlag = false;
+                }
+            }
+
+            bool levelup = false;
+
+            while (getStats().getLevel() < map.getExperienceToLevelUp().Count && getStats().getExperience() >= map.getExperienceToLevelUp()[getStats().getLevel()])
+            {
+                levelUp();
+                levelup = true;
+            }
+
+            if (levelup)
+                map.getGame().notifyLevelUp(this);
+
+            foreach (var s in spells)
+                s.update(diff);
+
+            if (championHitFlagTimer > 0)
+            {
+                championHitFlagTimer -= diff;
+                if (championHitFlagTimer <= 0)
+                    championHitFlagTimer = 0;
+            }
+        }
 
         public void setSkillPoints(int _skillPoints)
         {
-            skillPoints = (uint8)_skillPoints;
+            skillPoints = (short)_skillPoints;
         }
 
-        public void setSkin(uint8 skin) { this->skin = skin; }
-        public uint32 getChampionHash();
+        public void setSkin(short skin)
+        {
+            this.skin = skin;
+        }
+        public int getChampionHash()
+        {
+            var szSkin = "";
 
-        public virtual bool isInDistress() const override { return distressCause!=0; }
+            if (skin < 10)
+                szSkin = "0" + skin;
+            else
+                szSkin = skin.ToString();
 
-    public uint8 getSkillPoints() const { return skillPoints; }
-public void levelUp();
+            int hash = 0;
+            var gobj = "[Character]";
+            for (var i = 0; i < gobj.Length; i++)
+            {
+                hash = Char.ToLower(gobj[i]) + (0x1003F * hash);
+            }
+            for (var i = 0; i < type.Length; i++)
+            {
+                hash = Char.ToLower(type[i]) + (0x1003F * hash);
+            }
+            for (var i = 0; i < szSkin.Length; i++)
+            {
+                hash = Char.ToLower(szSkin[i]) + (0x1003F * hash);
+            }
+            return hash;
+        }
 
-public Inventory& getInventory() { return inventory; }
+        public override bool isInDistress()
+        {
+            return distressCause != null;
+        }
 
-public virtual void die(Unit* killer) override;
-  public int64 getRespawnTimer() const { return respawnTimer; }
+        public short getSkillPoints()
+        {
+            return skillPoints;
+        }
+        public void levelUp()
+        {
+            Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + getStats().getLevel() + 1);
+            getStats().levelUp();
+            ++skillPoints;
+        }
 
- public void onCollision(Object* collider);
+        public Inventory getInventory()
+        {
+            return inventory;
+        }
 
-public float getChampionGoldFromMinions() { return championGoldFromMinions; }
-public void setChampionGoldFromMinions(float gold) { this->championGoldFromMinions = gold; }
+        public override void die(Unit killer)
+        {
+            respawnTimer = 5000000 + getStats().getLevel() * 2500000;
+            map.stopTargeting(this);
 
-public void setChampionHitFlagTimer(int64 time) { this->championHitFlagTimer = time; }
+            var cKiller = killer as Champion;
 
-public virtual void dealDamageTo(Unit* target, float damage, DamageType type, DamageSource source) override;
+            if (cKiller == null && championHitFlagTimer > 0)
+            {
+                cKiller = map.getObjectById(playerHitId) as Champion;
+                Logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
+            }
+
+            if (cKiller == null)
+            {
+                map.getGame().notifyChampionDie(this, killer, 0);
+                return;
+            }
+
+            cKiller.setChampionGoldFromMinions(0);
+
+            float gold = map.getGoldFor(this);
+            Logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
+
+            if (cKiller.killDeathCounter < 0)
+                cKiller.killDeathCounter = 0;
+
+            if (cKiller.killDeathCounter >= 0)
+                cKiller.killDeathCounter += 1;
+
+            if (killDeathCounter > 0)
+                killDeathCounter = 0;
+
+            if (killDeathCounter <= 0)
+                killDeathCounter -= 1;
+
+            if (gold > 0)
+            {
+                map.getGame().notifyChampionDie(this, cKiller, 0);
+                return;
+            }
+
+            if (map.getKillReduction() && !map.getFirstBlood())
+            {
+                gold -= gold * 0.25f;
+                //CORE_INFO("Still some minutes for full gold reward on champion kills");
+            }
+
+            if (map.getFirstBlood())
+            {
+                gold += 100;
+                map.setFirstBlood(false);
+            }
+
+            map.getGame().notifyChampionDie(this, cKiller, gold);
+
+            cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
+            map.getGame().notifyAddGold(cKiller, this, gold);
+
+            //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller->killDeathCounter,this->killDeathCounter);
+
+            map.stopTargeting(this);
+        }
+        public long getRespawnTimer()
+        {
+            return respawnTimer;
+        }
+
+        public override void onCollision(GameObject collider)
+        {
+            if (collider == null)
+            {
+                //CORE_INFO("I bumped into a wall!");
+            }
+            else
+            {
+                //CORE_INFO("I bumped into someone else!");
+            }
+        }
+
+        public float getChampionGoldFromMinions()
+        {
+            return championGoldFromMinions;
+        }
+        public void setChampionGoldFromMinions(float gold)
+        {
+            championGoldFromMinions = gold;
+        }
+
+        public void setChampionHitFlagTimer(long time)
+        {
+            championHitFlagTimer = time;
+        }
+
+        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
+        {
+            base.dealDamageTo(target, damage, type, source);
+
+            var cTarget = target as Champion;
+            if (cTarget == null)
+                return;
+
+            cTarget.setChampionHitFlagTimer(15 * 1000000); //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
+            cTarget.playerHitId = id;
+            //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
+        }
     }
 }

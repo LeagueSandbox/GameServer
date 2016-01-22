@@ -48,7 +48,7 @@ namespace IntWarsSharp.Logic
                             config.team = p.Value.ToString();
                             break;
                         case "skin":
-                            config.skin = p.Value.ToString();
+                            config.skin = short.Parse(p.Value.ToString());
                             break;
                         case "summoner1":
                             config.summoner1 = p.Value.ToString();
@@ -57,10 +57,10 @@ namespace IntWarsSharp.Logic
                             config.summoner2 = p.Value.ToString();
                             break;
                         case "ribbon":
-                            config.ribbon = p.Value.ToString();
+                            config.ribbon = short.Parse(p.Value.ToString());
                             break;
                         case "icon":
-                            config.icon = p.Value.ToString();
+                            config.icon = int.Parse(p.Value.ToString());
                             break;
                         default:
                             Logger.LogCoreInfo("Unknown player config " + p.Key.ToString());
@@ -231,10 +231,10 @@ namespace IntWarsSharp.Logic
         public string name { get; set; }
         public string champion { get; set; }
         public string team { get; set; }
-        public string skin { get; set; }
+        public short skin { get; set; }
         public string summoner1 { get; set; }
         public string summoner2 { get; set; }
-        public string ribbon { get; set; }
-        public string icon { get; set; }
+        public short ribbon { get; set; }
+        public int icon { get; set; }
     }
 }
