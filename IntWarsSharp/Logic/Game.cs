@@ -14,18 +14,18 @@ using IntWarsSharp.Logic.Packets;
 
 namespace IntWarsSharp.Core.Logic
 {
-    unsafe class Game
+    public unsafe class Game
     {
         ENetHost* _server;
         BlowFish _blowfish;
         bool _isAlive = false;
-        private int dwStart = 0x40000001;
+        private static int dwStart = 0x40000001; //new netid
 
         bool _started = false;
         int playersReady = 0;
 
         ENetPeer* currentPeer;
-        List<ClientInfo> players = new List<ClientInfo>();
+        List<Pair<uint, ClientInfo>> players = new List<Pair<uint, ClientInfo>>();
         Map map;
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
@@ -48,10 +48,11 @@ namespace IntWarsSharp.Core.Logic
                 return false;
 
             _blowfish = new BlowFish(key);
-            PacketHandlerManager.getInstace().InitHandlers();
+            PacketHandlerManager.getInstace().InitHandlers(this);
 
             map = new SummonersRift(this);
 
+            PacketNotifier.setMap(map);
             //TODO: better lua implementation
 
             var id = 0;
@@ -75,8 +76,9 @@ namespace IntWarsSharp.Core.Logic
                 c.levelUp();
 
                 player.setChampion(c);
-
-                players.Add(player);
+                var pair = new Pair<uint, ClientInfo>();
+                pair.Item2 = player;
+                players.Add(pair);
             }
 
             // Uncomment the following to get 2-players
@@ -112,11 +114,13 @@ namespace IntWarsSharp.Core.Logic
                             /* Set some defaults */
                             //enetEvent.peer->mtu = PEER_MTU;
                             enetEvent.data = 0;
+                            players[0].Item1 = enetEvent.peer->address.host; //temp
+                            players[0].Item2.setPeer(enetEvent.peer);
                             break;
 
                         case EventType.Receive:
                             currentPeer = enetEvent.peer;
-                            if (!handlePacket(enetEvent.peer, enetEvent.packet, enetEvent.channelID))
+                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.peer, enetEvent.packet, enetEvent.channelID))
                             {
                                 //enet_peer_disconnect(event.peer, 0);
                             }
@@ -146,133 +150,84 @@ namespace IntWarsSharp.Core.Logic
             }
         }
 
-
-        bool handlePacket(ENetPeer* peer, ENetPacket* packet, byte channelID)
+        public BlowFish getBlowfish()
         {
-            if ((int)packet->dataLength >= 8)
-            {
-                //if (peerInfo(peer))
-                {
-                    byte[] data = new byte[(int)packet->dataLength - ((int)packet->dataLength % 8)];
-                    Marshal.Copy(packet->data, data, 0, data.Length); //not gonna work lmao
-                    _blowfish.Decrypt(data, BlowFishMode.ECB); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
-                }
-            }
-
-            PacketHeader header = Marshal.PtrToStructure<PacketHeader>(packet->data); //pls work
-            var handler = PacketHandlerManager.getInstace().GetHandler(header.cmd, channelID);
-
-            if (handler != null)
-            {
-                return handler.HandlePacket(peer, packet);
-            }
-            else
-            {
-                Logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
-                printPacket(packet->data, packet->dataLength);
-            }
-            return false;
+            return _blowfish;
         }
-        bool handleDisconnect(ENetPeer* peer);
+
+        public ENetHost* getServer()
+        {
+            return _server;
+        }
+
+        public List<Pair<uint, ClientInfo>> getPlayers()
+        {
+            return players;
+        }
 
 
-        // Notifiers
-        void notifyMinionSpawned(Minion* m, int team);
-        void notifySetHealth(Unit* u);
-        void notifyUpdatedStats(Unit* u, bool partial = true);
-        void notifyMovement(Object* o);
-        void notifyDamageDone(Unit* source, Unit* target, float amount, DamageType type = DAMAGE_TYPE_PHYSICAL);
-        void notifyBeginAutoAttack(Unit* attacker, Unit* victim, uint32 futureProjNetId, bool isCritical);
-        void notifyTeleport(Unit* u, float _x, float _y);
-        void notifyProjectileSpawn(Projectile* p);
-        void notifyProjectileDestroy(Projectile* p);
-        void notifyParticleSpawn(Champion* source, Target* target, const std::string& particleName);
-void notifyModelUpdate(Unit* object);
-        void notifyLevelUp(Champion* c);
-        void notifyItemBought(Champion* c, const ItemInstance* i);
-        void notifyItemsSwapped(Champion* c, uint8 fromSlot, uint8 toSlot);
-        void notifyRemoveItem(Champion* c, uint8 slot, uint8 remaining);
-        void notifySetTarget(Unit* attacker, Unit* target);
-        void notifyChampionDie(Champion* die, Unit* killer, uint32 goldFromKill);
-        void notifyChampionDeathTimer(Champion* die);
-        void notifyChampionRespawn(Champion* c);
-        void notifyShowProjectile(Projectile* p);
-        void notifyNpcDie(Unit* die, Unit* killer);
-        void notifyNextAutoAttack(Unit* attacker, Unit* target, uint32 futureProjNetId, bool isCritical, bool nextAttackFlag);
-        void notifyOnAttack(Unit* attacker, Unit* attacked, AttackType attackType);
-        void notifyAddBuff(Unit* u, Unit* source, std::string buffName);
-        void notifyRemoveBuff(Unit* u, std::string buffName);
-        void notifyAddGold(Champion* c, Unit* died, float gold);
-        void notifyStopAutoAttack(Unit* attacker);
-        void notifyDebugMessage(std::string htmlDebugMessage);
-        void notifySpawn(Unit* u);
-        void notifyLeaveVision(Object* o, uint32 team);
-        void notifyEnterVision(Object* o, uint32 team);
-        void notifyChampionSpawned(Champion* c, uint32 team);
-        void notifySetCooldown(Champion* c, uint8 slotId, float currentCd, float totalCd = 0.0f);
-        void notifyGameTimer();
-        void notifyAnnounceEvent(uint8 messageId, bool isMapSpecific);
-        void notifySpellAnimation(Unit* u, const std::string& animation);
-void notifySetAnimation(Unit* u, const std::vector<std::pair<std::string, std::string>>& animationPairs);
-void notifyDash(Unit* u, float _x, float _y, float dashSpeed);
+        bool handleDisconnect(ENetPeer* peer)
+        {
+            var peerinfo = peerInfo(peer);
+            if (peerinfo != null)
+            {
+                // TODO: Handle disconnect
+                Logger.LogCoreInfo("Player " + peerinfo.userId + " disconnected");
+            }
+            return true;
+        }
 
-        // Tools
-        static void printPacket(const uint8* buf, uint32 len);
-void printLine(uint8* buf, uint32 len);
-        protected:
-		bool sendPacket(ENetPeer* peer, const uint8* data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
-bool sendPacket(ENetPeer* peer, const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
-bool broadcastPacket(uint8* data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
-        bool broadcastPacket(const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
-bool broadcastPacketTeam(uint8 team, const uint8* data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
-bool broadcastPacketTeam(uint8 team, const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
-bool broadcastPacketVision(Object* o, const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
-bool broadcastPacketVision(Object* o, const uint8* data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
+        public ClientInfo peerInfo(ENetPeer* peer)
+        {
+            foreach (var player in players)
+                if (player.Item1 == peer->address.host)
+                    return player.Item2;
+            return null;
+        }
 
-
-
-        SpellIds strToId(string str)
+        SummonerSpellIds strToId(string str)
         {
             if (str == "FLASH")
             {
-                return SpellIds.SPL_Flash;
+                return SummonerSpellIds.SPL_Flash;
             }
             else if (str == "IGNITE")
             {
-                return SpellIds.SPL_Ignite;
+                return SummonerSpellIds.SPL_Ignite;
             }
             else if (str == "HEAL")
             {
-                return SpellIds.SPL_Heal;
+                return SummonerSpellIds.SPL_Heal;
             }
             else if (str == "BARRIER")
             {
-                return SpellIds.SPL_Barrier;
+                return SummonerSpellIds.SPL_Barrier;
             }
             else if (str == "SMITE")
             {
-                return SpellIds.SPL_Smite;
+                return SummonerSpellIds.SPL_Smite;
             }
             else if (str == "GHOST")
             {
-                return SpellIds.SPL_Ghost;
+                return SummonerSpellIds.SPL_Ghost;
             }
             else if (str == "REVIVE")
             {
-                return SpellIds.SPL_Revive;
+                return SummonerSpellIds.SPL_Revive;
             }
             else if (str == "CLEANSE")
             {
-                return SpellIds.SPL_Cleanse;
+                return SummonerSpellIds.SPL_Cleanse;
             }
             else if (str == "TELEPORT")
             {
-                return SpellIds.SPL_Teleport;
+                return SummonerSpellIds.SPL_Teleport;
             }
 
             return 0;
         }
-        private int GetNewNetID()
+
+        public static int GetNewNetID()
         {
             dwStart++;
             return dwStart;

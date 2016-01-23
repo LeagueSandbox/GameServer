@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntWarsSharp.Logic.Enet;
+using IntWarsSharp.Logic.Maps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -20,7 +22,7 @@ namespace IntWarsSharp.Logic
         protected List<Vector2> waypoints;
         protected int curWaypoint;
         protected Map map;
-        protected int team;
+        protected TeamId team;
         protected bool movementUpdated;
         protected bool toRemove;
         protected int attackerCount;
@@ -115,11 +117,11 @@ namespace IntWarsSharp.Logic
         * Sets the team of the object
         * @param team the new team
         */
-        public void setTeam(int team)
+        public void setTeam(TeamId team)
         {
             this.team = team;
         }
-        public int getTeam()
+        public TeamId getTeam()
         {
             return team;
         }

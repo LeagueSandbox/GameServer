@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.RAF
 {
-    class AIMesh : InibinSharp.AIMesh
+    public class AIMesh : InibinSharp.AIMesh
     {
         public AIMesh(byte[] data) : base(data)
         {

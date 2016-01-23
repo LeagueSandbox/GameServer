@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.Enet
 {
-    public class ClientInfo
+    public unsafe class ClientInfo
     {
         public bool keyChecked = false;
         public bool versionMatch = true;
-        public long userId;
+        public int userId;
         public int ticks = 0;
         public int skinNo = 0;
-        public SpellIds[] summonerSkills = new SpellIds[2];
+        public SummonerSpellIds[] summonerSkills = new SummonerSpellIds[2];
         public string name, rank;
         public short ribbon;
         public int icon;
         public TeamId team;
 
         Champion champion;
-        ENetPeer peer;
+        ENetPeer* peer;
 
         public ClientInfo(string rank, TeamId team, short ribbon, int icon)
         {
@@ -74,7 +74,7 @@ namespace IntWarsSharp.Logic.Enet
             return skinNo;
         }
 
-        public void setSummoners(SpellIds sum1, SpellIds sum2)
+        public void setSummoners(SummonerSpellIds sum1, SummonerSpellIds sum2)
         {
             summonerSkills[0] = sum1;
             summonerSkills[1] = sum2;
@@ -101,12 +101,12 @@ namespace IntWarsSharp.Logic.Enet
             return ticks;
         }
 
-        public void setPeer(ENetPeer peer)
+        public void setPeer(ENetPeer* peer)
         {
             this.peer = peer;
         }
 
-        public ENetPeer getPeer()
+        public ENetPeer* getPeer()
         {
             return peer;
         }

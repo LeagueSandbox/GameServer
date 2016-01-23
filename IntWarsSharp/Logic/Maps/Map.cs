@@ -1,6 +1,8 @@
 ﻿using InibinSharp;
 using IntWarsSharp.Core.Logic;
+using IntWarsSharp.Logic.Enet;
 using IntWarsSharp.Logic.GameObjects;
+using IntWarsSharp.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntWarsSharp.Logic
+namespace IntWarsSharp.Logic.Maps
 {
-    class Map
+    public class Map
     {
         protected Dictionary<int, GameObject> objects;
         protected Dictionary<int, Champion> champions;
@@ -23,7 +25,7 @@ namespace IntWarsSharp.Logic
         protected long nextSpawnTime;
         protected long firstGoldTime; // Time that gold should begin to generate
         protected long nextSyncTime;
-        protected List<Pair<bool, Tuple<long, short, bool>>> announcerEvents;
+        protected List<Pair<bool, Tuple<long, byte, bool>>> announcerEvents;
         protected Game game;
         protected bool firstBlood;
         protected bool killReduction;
@@ -34,10 +36,7 @@ namespace IntWarsSharp.Logic
         protected CollisionHandler collisionHandler;
         protected Fountain fountain;
 
-        public publicCollisionHandler getCollisionHandler()
-        {
-            return collisionHandler;
-        }
+
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
             this.objects = new Dictionary<int, GameObject>();
@@ -51,7 +50,7 @@ namespace IntWarsSharp.Logic
             this.gameTime = 0;
             this.nextSpawnTime = firstSpawnTime;
             this.nextSyncTime = 10 * 1000000;
-            this.announcerEvents = new List<Pair<bool, Tuple<long, short, bool>>>();
+            this.announcerEvents = new List<Pair<bool, Tuple<long, byte, bool>>>();
             this.game = game;
             this.firstBlood = true;
             this.killReduction = true;
@@ -80,7 +79,7 @@ namespace IntWarsSharp.Logic
 
                 if (kv.Value.isMovementUpdated())
                 {
-                    game.notifyMovement(kv.Value);
+                    PacketNotifier.notifyMovement(kv.Value);
                     kv.Value.clearMovementUpdated();
                 }
 
@@ -94,63 +93,69 @@ namespace IntWarsSharp.Logic
 
                 for (var i = 0; i < 2; ++i)
                 {
-                    if (u.getTeam() == i)
+                    if (u.getTeam() == (TeamId)i)
                         continue;
 
-                    if (visionUnits[u.getTeam()].find(u.getNetId()) != visionUnits[u.getTeam()].end() && teamHasVisionOn(i, u))
+                    var visionUnitsTeam = visionUnits[(int)u.getTeam()];
+                    if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        u.setVisibleByTeam(i, true);
-                        game.notifySpawn(u);
-                        visionUnits[u.getTeam()].Remove(u.getNetId());
-                        game.notifyUpdatedStats(u, false);
-                        continue;
+                        var s = visionUnitsTeam[u.getNetId()];
+                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn((TeamId)i, u))
+                        {
+                            u.setVisibleByTeam(i, true);
+                            PacketNotifier.notifySpawn(u);
+                            visionUnitsTeam.Remove(u.getNetId());
+                            PacketNotifier.notifyUpdatedStats(u, false);
+                            continue;
+                        }
                     }
 
-                    if (!u.isVisibleByTeam(i) && teamHasVisionOn(i, u))
+                    if (!u.isVisibleByTeam(i) && teamHasVisionOn((TeamId)i, u))
                     {
-                        game.notifyEnterVision(u, i);
+                        PacketNotifier.notifyEnterVision(u, (TeamId)i);
                         u.setVisibleByTeam(i, true);
-                        game.notifyUpdatedStats(u, false);
+                        PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(i) && !teamHasVisionOn(i, u))
+                    else if (u.isVisibleByTeam(i) && !teamHasVisionOn((TeamId)i, u))
                     {
-                        game.notifyLeaveVision(u, i);
+                        PacketNotifier.notifyLeaveVision(u, (TeamId)i);
                         u.setVisibleByTeam(i, false);
                     }
                 }
 
-                if (u.buffs.size() != 0)
+                if (u.buffs.Count != 0)
                 {
-
-                    for (int i = u.buffs.size(); i > 0; i--)
+                    var toRemove = new List<Buff>();
+                    for (int i = u.buffs.Count; i > 0; i--)
                     {
-
                         if (u.buffs[i - 1].needsToRemove())
                         {
-                            u.buffs.erase(u->getBuffs().begin() + (i - 1));
+                            toRemove.Add(u.buffs[i - 1]);
                             //todo move this to Buff.cpp and add every stat
-                            u.getStats().addMovementSpeedPercentageModifier(-u->getBuffs()[i - 1]->getMovementSpeedPercentModifier());
+                            u.getStats().addMovementSpeedPercentageModifier(-u.getBuffs()[i - 1].getMovementSpeedPercentModifier());
                             continue;
                         }
-                        u->buffs[i - 1]->update(diff);
+                        u.buffs[i - 1].update(diff);
                     }
+                    foreach (var i in toRemove)
+                        u.buffs.Remove(i);
                 }
 
                 if (!u.getStats().getUpdatedStats().empty())
                 {
-                    game.notifyUpdatedStats(u);
-                    u->getStats().clearUpdatedStats();
+                    PacketNotifier.notifyUpdatedStats(u);
+                    u.getStats().clearUpdatedStats();
                 }
 
                 if (u.getStats().isUpdatedHealth())
                 {
-                    game.notifySetHealth(u);
+                    PacketNotifier.notifySetHealth(u);
                     u.getStats().clearUpdatedHealth();
                 }
 
                 if (u.isModelUpdated())
                 {
-                    game.notifyModelUpdate(u);
+                    PacketNotifier.notifyModelUpdate(u);
                     u.clearModelUpdated();
                 }
 
@@ -165,13 +170,13 @@ namespace IntWarsSharp.Logic
 
                 if (!isCompleted)
                 {
-                    long eventTime = i.Item2.Item1;
-                    short messageId = i.Item2.Item2;
-                    bool isMapSpecific = i.Item2.Item3;
+                    var eventTime = i.Item2.Item1;
+                    var messageId = i.Item2.Item2;
+                    var isMapSpecific = i.Item2.Item3;
 
                     if (gameTime >= eventTime)
                     {
-                        game.notifyAnnounceEvent(messageId, isMapSpecific);
+                        PacketNotifier.notifyAnnounceEvent(messageId, isMapSpecific);
                         i.Item1 = true;
                     }
                 }
@@ -183,11 +188,11 @@ namespace IntWarsSharp.Logic
             // By default, synchronize the game time every 10 seconds
             if (nextSyncTime >= 10 * 1000000)
             {
-                game->notifyGameTimer();
+                PacketNotifier.notifyGameTimer();
                 nextSyncTime = 0;
             }
 
-            if (waveNumber)
+            if (waveNumber > 0)
             {
                 if (gameTime >= nextSpawnTime + waveNumber * 8 * 100000)
                 { // Spawn new wave every 0.8s
@@ -209,6 +214,11 @@ namespace IntWarsSharp.Logic
 
             if (hasFountainHeal)
                 fountain->healChampions(this, diff);
+        }
+
+        public CollisionHandler getCollisionHandler()
+        {
+            return collisionHandler;
         }
 
         public virtual float getGoldPerSecond()
@@ -251,19 +261,23 @@ namespace IntWarsSharp.Logic
 
             collisionHandler.addObject(o);
 
-            visionUnits[o.getTeam()][o.getNetId()] = u;
+            var teamVision = visionUnits[(int)o.getTeam()];
+            if (teamVision.ContainsKey(o.getNetId()))
+                teamVision[o.getNetId()] = u;
+            else
+                teamVision.Add(o.getNetId(), u);
 
             var m = u as Minion;
 
             if (m != null)
-                game.notifyMinionSpawned(m, m.getTeam());
+                PacketNotifier.notifyMinionSpawned(m, m.getTeam());
 
             var c = o as Champion;
 
             if (c != null)
             {
                 champions[c.getNetId()] = c;
-                game.notifyChampionSpawned(c, c.getTeam());
+                PacketNotifier.notifyChampionSpawned(c, c.getTeam());
             }
         }
         public void removeObject(GameObject o)
@@ -274,7 +288,7 @@ namespace IntWarsSharp.Logic
                 champions.Remove(c.getNetId());
 
             objects.Remove(o.getNetId());
-            visionUnits[o.getTeam()].Remove(o.getNetId());
+            visionUnits[(int)o.getTeam()].Remove(o.getNetId());
         }
 
         public List<int> getExperienceToLevelUp()
@@ -334,7 +348,7 @@ namespace IntWarsSharp.Logic
                 {
                     u.setTargetUnit(null);
                     u.setAutoAttackTarget(null);
-                    game.notifySetTarget(u, null);
+                    PacketNotifier.notifySetTarget(u, null);
                 }
             }
         }
@@ -399,10 +413,10 @@ namespace IntWarsSharp.Logic
 
         public MovementVector toMovementVector(float x, float y)
         {
-            return MovementVector((int)((x - mesh.getWidth() / 2) / 2), (int)((y - mesh.getHeight() / 2) / 2));
+            return new MovementVector((int)((x - mesh.getWidth() / 2) / 2), (int)((y - mesh.getHeight() / 2) / 2));
         }
 
-        public bool teamHasVisionOn(int team, GameObject o)
+        public bool teamHasVisionOn(TeamId team, GameObject o)
         {
             if (o == null)
                 return false;

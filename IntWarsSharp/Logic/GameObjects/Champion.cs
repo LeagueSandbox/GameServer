@@ -1,6 +1,7 @@
 ﻿using InibinSharp;
 using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.RAF;
+using IntWarsSharp.Logic.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;

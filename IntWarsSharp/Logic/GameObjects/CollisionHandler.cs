@@ -1,15 +1,15 @@
 ﻿using IntWarsSharp.Core.Logic;
+using IntWarsSharp.Logic.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using IntWarsSharp.Logic.Extensions;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    class CollisionHandler
+    public class CollisionHandler
     {
         private float width, height;
         private CollisionDivision[] managedDivisions = new CollisionDivision[3 * 3];
@@ -346,7 +346,7 @@ namespace IntWarsSharp.Logic.GameObjects
         }
 
     }
-    class CollisionDivision
+    public class CollisionDivision
     {
         public Vector2 min, max;
         public List<GameObject> objects;

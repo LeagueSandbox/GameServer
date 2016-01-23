@@ -150,7 +150,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers
         CHL_LOADING_SCREEN = 7,
     };
 
-    public enum SpellIds : uint
+    public enum SummonerSpellIds : uint
     {
         SPL_Revive = 0x05C8B3A5,
         SPL_Smite = 0x065E8695,

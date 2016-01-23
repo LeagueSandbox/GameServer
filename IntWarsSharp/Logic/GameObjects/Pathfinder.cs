@@ -1,4 +1,5 @@
 ﻿using IntWarsSharp.Core.Logic;
+using IntWarsSharp.Logic.Maps;
 using IntWarsSharp.Logic.RAF;
 using System;
 using System.Collections.Generic;

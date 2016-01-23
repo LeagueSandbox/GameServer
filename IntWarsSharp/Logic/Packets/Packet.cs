@@ -29,6 +29,11 @@ namespace IntWarsSharp.Logic.Packets
 
             buffer.Write((byte)cmd);
         }
+
+        internal byte[] GetBytes()
+        {
+            return memStream.ToArray();
+        }
     }
 
     public class BasePacket : Packet
@@ -69,14 +74,13 @@ namespace IntWarsSharp.Logic.Packets
 
     public class GameHeader
     {
+        public GameCmd cmd;
+        public int netId;
+        public int ticks;
         public GameHeader()
         {
             netId = ticks = 0;
         }
-
-        public GameCmd cmd;
-        public int netId;
-        public int ticks;
     }
 
     public class ClientReady
@@ -427,7 +431,7 @@ namespace IntWarsSharp.Logic.Packets
             }
         }
 
-        EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_ObjectSpawn, c.getNetId())
+        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_ObjectSpawn, c.getNetId())
         {
             buffer.Write((short)0); // extraInfo
             buffer.Write((short)0); //c.getInventory().getItems().size(); // itemCount?
@@ -501,43 +505,48 @@ namespace IntWarsSharp.Logic.Packets
         short moveData;
     }
 
-    public class MovementAns
+    public class MovementAns : GamePacket
     {
-        public MovementAns()
+        //see PKT_S2C_CharStats mask
+        public MovementAns(GameObject actor) : base(PacketCmd.PKT_S2C_MoveAns, actor.getNetId())
         {
-            header.cmd = GameCmd.PKT_S2C_MoveAns;
+            var waypoints = actor.getWaypoints();
+            var numCoord = waypoints.Count * 2;
+
+
+            /*buffer.Write((short)1); //numUpdates
+            buffer.Write((byte)numCoord);//numCoords
+            buffer.Write((int)actor.getNetId());//netId*/
+
         }
+        /* MovementVector* getVector(uint32 index)
+         {
+             if (index >= (uint8)vectorNo / 2)
+             { return NULL;
+             }
+             MovementVector* vPoints = (MovementVector*)(&moveData + maskCount());
+             return &vPoints[index];
+         }
 
-        GameHeader header;
-        short nbUpdates;
-        short vectorNo;
-        int netId;
-        short moveData; //bitMasks + Move Vectors
+         int maskCount()
+         {
+             float fVal = (float)vectorNo / 2;
+             return (int)std::ceil((fVal - 1) / 4);
+         }
 
-        public MovementVector getVector(int index)
-        {
-            if (index >= (short)vectorNo / 2)
-                return null;
+         static uint32 size(uint8 vectorNo)
+         {
+             float fVectors = vectorNo;
+             int maskCount = (int)std::ceil((fVectors - 1) / 4);
+             return sizeof(MovementAns) + (vectorNo * sizeof(MovementVector)) + maskCount; //-1 since struct already has first moveData byte
+         }
 
-            MovementVector vPoints = new MovementVector();
-            return vPoints;
-        }
+         uint32 size()
+         {
+             return size(vectorNo / 2);
+         }*/
 
-        int maskCount()
-        {
-            float fVal = (float)vectorNo / 2;
-            return (int)Math.Ceiling((fVal - 1) / 4);
-        }
 
-        static MovementAns create(int vectorNo)
-        {
-            MovementAns packet = new MovementAns();
-
-            packet.header.cmd = GameCmd.PKT_S2C_MoveAns;
-            packet.header.ticks = Environment.TickCount;
-            packet.vectorNo = (short)vectorNo;
-            return packet;
-        }
     }
 
     /*typedef struct _ViewAns {
@@ -657,24 +666,19 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class UpdateModel
+    public class UpdateModel : GamePacket
     {
-        PacketHeader header;
-        int id;
-        short bOk;
-        int unk1;
-        short[] szName = new short[32];
-
-        public UpdateModel(int netID, char szModel)
+        public UpdateModel(int netID, string szModel) : base((PacketCmd)0x97, netID)
         {
-            header = new PacketHeader();
-            header.cmd = (PacketCmd)0x97;
-            header.netId = netID;
-            id = netID & ~0x40000000;
-            bOk = 1;
-            unk1 = -1;
-            for (var i = 0; i < szName.Length; i++)
-                szName[i] = (short)szModel;
+            buffer.Write((int)netID & ~0x40000000); //id
+            buffer.Write((byte)1); //bOk
+            buffer.Write((int)-1); //unk1
+            var ch = Encoding.BigEndianUnicode.GetBytes(szModel);
+            for (var i = 0; i < ch.Length; i++)
+                buffer.Write((byte)ch[i]);
+            if (ch.Length < 32)
+                for (var i = 0; i < 32 - ch.Length; i++)
+                    buffer.Write((byte)0);
         }
     }
 
@@ -757,7 +761,7 @@ namespace IntWarsSharp.Logic.Packets
 
     public class HeroSpawn2 : BasePacket
     {
-        HeroSpawn2(Champion p) : base(PacketCmd.PKT_S2C_ObjectSpawn, p.getNetId())
+        public HeroSpawn2(Champion p) : base(PacketCmd.PKT_S2C_ObjectSpawn, p.getNetId())
         {
             buffer.fill(0, 15);
             buffer.Write((short)0x80); // unk
@@ -788,29 +792,19 @@ namespace IntWarsSharp.Logic.Packets
         short type[42];*/
     }
 
-    public class GameTimer
+    public class GameTimer : GamePacket
     {
-        public PacketHeader header;
-        public float fTime;
-        public GameTimer(float fTime)
+        public GameTimer(float fTime) : base(PacketCmd.PKT_S2C_GameTimer, 0)
         {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_S2C_GameTimer;
-            header.netId = 0;
-            this.fTime = fTime;
+            buffer.Write((float)fTime);
         }
     }
 
-    public class GameTimerUpdate
+    public class GameTimerUpdate : GamePacket
     {
-        public PacketHeader header;
-        public float fTime;
-        public GameTimerUpdate(float fTime)
+        public GameTimerUpdate(float fTime) : base(PacketCmd.PKT_S2C_GameTimerUpdate, 0)
         {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_S2C_GameTimerUpdate;
-            header.netId = 0;
-            this.fTime = fTime;
+            buffer.Write((float)fTime);
         }
     }
 
@@ -848,21 +842,16 @@ namespace IntWarsSharp.Logic.Packets
         public int id;
     }
 
-    public class BuyItemAns
+    public class BuyItemAns : GamePacket
     {
-        public BuyItemAns()
+        public BuyItemAns(Champion actor, ItemInstance item) : base(PacketCmd.PKT_S2C_BuyItemAns, actor.getNetId())
         {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_S2C_BuyItemAns;
-            unk2 = 0;
-            unk3 = 0x40;
+            buffer.Write((int)i.getTemplate().getId());
+            buffer.Write((byte)i.getSlot());
+            buffer.Write((byte)i.getStacks());
+            buffer.Write((byte)0); //unk or stacks => short
+            buffer.Write((byte)0x40); //unk
         }
-        public PacketHeader header;
-        public int itemId;
-        public short slotId;
-        public short stack;
-        public short unk2;
-        public short unk3;
     }
 
     public class SellItem
@@ -897,10 +886,10 @@ namespace IntWarsSharp.Logic.Packets
     public class SwapItemsAns : BasePacket
     {
 
-        public SwapItemsAns(Champion c, short slotFrom, short slotTo) : base(PacketCmd.PKT_S2C_SwapItems, c.getNetId())
+        public SwapItemsAns(Champion c, byte slotFrom, byte slotTo) : base(PacketCmd.PKT_S2C_SwapItems, c.getNetId())
         {
-            buffer.Write(slotFrom);
-            buffer.Write(slotTo);
+            buffer.Write((byte)slotFrom);
+            buffer.Write((byte)slotTo);
         }
     }
 
@@ -919,9 +908,9 @@ namespace IntWarsSharp.Logic.Packets
 
     class Announce : BasePacket
     {
-        public Announce(short messageId, int mapId = 0) : base(PacketCmd.PKT_S2C_Announce)
+        public Announce(byte messageId, int mapId = 0) : base(PacketCmd.PKT_S2C_Announce)
         {
-            buffer.Write(messageId);
+            buffer.Write((byte)messageId);
             buffer.Write((long)0);
 
             if (mapId > 0)
@@ -933,7 +922,7 @@ namespace IntWarsSharp.Logic.Packets
 
     public class AddBuff : Packet
     {
-        AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmd.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmd.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
 
@@ -2020,7 +2009,7 @@ namespace IntWarsSharp.Logic.Packets
             {
 
             }
-        };
+        }
 
         public class UpdateStats : GamePacket
         {
@@ -2171,7 +2160,7 @@ namespace IntWarsSharp.Logic.Packets
 
         public class LevelUp : BasePacket
         {
-            LevelUp(Champion c) : base(PacketCmd.PKT_S2C_LevelUp, c.getNetId())
+            public LevelUp(Champion c) : base(PacketCmd.PKT_S2C_LevelUp, c.getNetId())
             {
                 buffer.Write(c.getStats().getLevel());
                 buffer.Write(c.getSkillPoints());
@@ -2205,7 +2194,7 @@ namespace IntWarsSharp.Logic.Packets
         public class SetCooldown : BasePacket
         {
 
-            public SetCooldown(int netId, short slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmd.PKT_S2C_SetCooldown, netId)
+            public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmd.PKT_S2C_SetCooldown, netId)
             {
                 buffer.Write(slotId);
                 buffer.Write((short)0xF8); // 4.18
@@ -2213,5 +2202,5 @@ namespace IntWarsSharp.Logic.Packets
                 buffer.Write(currentCd);
             }
         }
-
     }
+}
