@@ -2,6 +2,8 @@
 using IntWarsSharp.Core.Logic.PacketHandlers;
 using IntWarsSharp.Logic.Enet;
 using IntWarsSharp.Logic.GameObjects;
+using IntWarsSharp.Logic.Items;
+using IntWarsSharp.Logic.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,11 +128,11 @@ namespace IntWarsSharp.Logic.Packets
 
         public static void notifyProjectileDestroy(Projectile p)
         {
-            var dp = new DestroyProjectile(p);
+            var dp = new SpawnParticle.DestroyProjectile(p);
             PacketHandlerManager.getInstace().broadcastPacket(dp, Channel.CHL_S2C);
         }
 
-        public static void notifyParticleSpawn(Champion source, Target target, string particleName)
+        public static void notifyParticleSpawn(Champion source, GameObjects.Target target, string particleName)
         {
             var sp = new SpawnParticle(source, target, particleName, Game.GetNewNetID());
             PacketHandlerManager.getInstace().broadcastPacket(sp, Channel.CHL_S2C);

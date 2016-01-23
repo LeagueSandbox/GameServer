@@ -93,14 +93,15 @@ namespace IntWarsSharp.Logic.Maps
 
                 for (var i = 0; i < 2; ++i)
                 {
-                    if (u.getTeam() == (TeamId)i)
+                    var teamId = (TeamId)i;
+                    if (u.getTeam() == teamId)
                         continue;
 
                     var visionUnitsTeam = visionUnits[(int)u.getTeam()];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
                         var s = visionUnitsTeam[u.getNetId()];
-                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn((TeamId)i, u))
+                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn(teamId, u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -110,15 +111,15 @@ namespace IntWarsSharp.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(i) && teamHasVisionOn((TeamId)i, u))
+                    if (!u.isVisibleByTeam(teamId) && teamHasVisionOn(teamId, u))
                     {
-                        PacketNotifier.notifyEnterVision(u, (TeamId)i);
+                        PacketNotifier.notifyEnterVision(u, teamId);
                         u.setVisibleByTeam(i, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(i) && !teamHasVisionOn((TeamId)i, u))
+                    else if (u.isVisibleByTeam(teamId) && !teamHasVisionOn(teamId, u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, (TeamId)i);
+                        PacketNotifier.notifyLeaveVision(u, teamId);
                         u.setVisibleByTeam(i, false);
                     }
                 }
@@ -141,7 +142,7 @@ namespace IntWarsSharp.Logic.Maps
                         u.buffs.Remove(i);
                 }
 
-                if (!u.getStats().getUpdatedStats().empty())
+                if (u.getStats().getUpdatedStats().Count > 0)
                 {
                     PacketNotifier.notifyUpdatedStats(u);
                     u.getStats().clearUpdatedStats();
@@ -213,7 +214,7 @@ namespace IntWarsSharp.Logic.Maps
             }
 
             if (hasFountainHeal)
-                fountain->healChampions(this, diff);
+                fountain.healChampions(this, diff);
         }
 
         public CollisionHandler getCollisionHandler()
@@ -231,7 +232,7 @@ namespace IntWarsSharp.Logic.Maps
             return false;
         }
 
-        public virtual Tuple<int, Vector2> getMinionSpawnPosition(int spawnPosition)
+        public virtual Tuple<int, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             return null;
         }
@@ -353,7 +354,7 @@ namespace IntWarsSharp.Logic.Maps
             }
         }
 
-        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive = false)
+        public List<Champion> getChampionsInRange(GameObjects.Target t, float range, bool isAlive = false)
         {
             var champs = new List<Champion>();
             foreach (var kv in champions)
@@ -365,13 +366,13 @@ namespace IntWarsSharp.Logic.Maps
             }
             return champs;
         }
-        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive = false)
+        public List<Unit> getUnitsInRange(GameObjects.Target t, float range, bool isAlive = false)
         {
             var units = new List<Unit>();
             foreach (var kv in objects)
             {
                 var u = kv.Value as Unit;
-                if (u && t.distanceWith(u) <= range)
+                if (u != null && t.distanceWith(u) <= range)
                     if (isAlive && !u.isDead() || !isAlive)
                         units.Add(u);
             }

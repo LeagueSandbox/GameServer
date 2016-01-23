@@ -1,7 +1,9 @@
 ﻿using InibinSharp;
 using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.RAF;
+using IntWarsSharp.Logic.Items;
 using IntWarsSharp.Logic.Maps;
+using IntWarsSharp.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,26 +48,26 @@ namespace IntWarsSharp.Logic.GameObjects
 
 
 
-            stats->setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
-            stats->setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
-            stats->setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));
-            stats->setMaxMana(inibin.getFloatValue("Data", "BaseMP"));
-            stats->setBaseAd(inibin.getFloatValue("DATA", "BaseDamage"));
-            stats->setRange(inibin.getFloatValue("DATA", "AttackRange"));
-            stats->setBaseMovementSpeed(inibin.getFloatValue("DATA", "MoveSpeed"));
-            stats->setArmor(inibin.getFloatValue("DATA", "Armor"));
-            stats->setMagicArmor(inibin.getFloatValue("DATA", "SpellBlock"));
-            stats->setHp5(inibin.getFloatValue("DATA", "BaseStaticHPRegen"));
-            stats->setMp5(inibin.getFloatValue("DATA", "BaseStaticMPRegen"));
+            stats.setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
+            stats.setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
+            stats.setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));
+            stats.setMaxMana(inibin.getFloatValue("Data", "BaseMP"));
+            stats.setBaseAd(inibin.getFloatValue("DATA", "BaseDamage"));
+            stats.setRange(inibin.getFloatValue("DATA", "AttackRange"));
+            stats.setBaseMovementSpeed(inibin.getFloatValue("DATA", "MoveSpeed"));
+            stats.setArmor(inibin.getFloatValue("DATA", "Armor"));
+            stats.setMagicArmor(inibin.getFloatValue("DATA", "SpellBlock"));
+            stats.setHp5(inibin.getFloatValue("DATA", "BaseStaticHPRegen"));
+            stats.setMp5(inibin.getFloatValue("DATA", "BaseStaticMPRegen"));
 
-            stats->setHealthPerLevel(inibin.getFloatValue("DATA", "HPPerLevel"));
-            stats->setManaPerLevel(inibin.getFloatValue("DATA", "MPPerLevel"));
-            stats->setAdPerLevel(inibin.getFloatValue("DATA", "DamagePerLevel"));
-            stats->setArmorPerLevel(inibin.getFloatValue("DATA", "ArmorPerLevel"));
-            stats->setMagicArmorPerLevel(inibin.getFloatValue("DATA", "SpellBlockPerLevel"));
-            stats->setHp5RegenPerLevel(inibin.getFloatValue("DATA", "HPRegenPerLevel"));
-            stats->setMp5RegenPerLevel(inibin.getFloatValue("DATA", "MPRegenPerLevel"));
-            stats->setBaseAttackSpeed(0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent")));
+            stats.setHealthPerLevel(inibin.getFloatValue("DATA", "HPPerLevel"));
+            stats.setManaPerLevel(inibin.getFloatValue("DATA", "MPPerLevel"));
+            stats.setAdPerLevel(inibin.getFloatValue("DATA", "DamagePerLevel"));
+            stats.setArmorPerLevel(inibin.getFloatValue("DATA", "ArmorPerLevel"));
+            stats.setMagicArmorPerLevel(inibin.getFloatValue("DATA", "SpellBlockPerLevel"));
+            stats.setHp5RegenPerLevel(inibin.getFloatValue("DATA", "HPRegenPerLevel"));
+            stats.setMp5RegenPerLevel(inibin.getFloatValue("DATA", "MPRegenPerLevel"));
+            stats.setBaseAttackSpeed(0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent")));
 
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell1"), 0));
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
@@ -99,14 +101,14 @@ namespace IntWarsSharp.Logic.GameObjects
 
                  unitScript.loadScript(scriptloc);
 
-                 unitScript.lua.set_function("dealMagicDamage", [this](Unit * target, float amount) { this->dealDamageTo(target, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL); });
+                 unitScript.lua.set_function("dealMagicDamage", [this](Unit * target, float amount) { this.dealDamageTo(target, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL); });
                  unitScript.lua.set_function("addBuff", [this](Buff b, Unit * target){
-                     target->addBuff(new Buff(b));
+                     target.addBuff(new Buff(b));
                      return;
                  });
 
                  unitScript.lua.set_function("addParticleTarget", [this](const std::string&particle, Target* u) {
-                     this->getMap()->getGame()->notifyParticleSpawn(this, u, particle);
+                     this.getMap().getGame().notifyParticleSpawn(this, u, particle);
                      return;
                  });
 
@@ -189,7 +191,7 @@ namespace IntWarsSharp.Logic.GameObjects
             return new Tuple<float, float>(x, y);
         }
 
-        public Spell castSpell(short slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
+        public Spell castSpell(byte slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
         {
             if (slot >= spells.Count)
                 return null;
@@ -247,7 +249,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     setTargetUnit(nextTarget);
-                    map.getGame().notifySetTarget(this, nextTarget);
+                    PacketNotifier.notifySetTarget(this, nextTarget);
                 }
             }
 
@@ -266,7 +268,7 @@ namespace IntWarsSharp.Logic.GameObjects
                     float respawnX = spawnPos.Item1;
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
-                    map.getGame().notifyChampionRespawn(this);
+                    PacketNotifier.notifyChampionRespawn(this);
                     getStats().setCurrentHealth(getStats().getMaxHealth());
                     getStats().setCurrentMana(getStats().getMaxMana());
                     deathFlag = false;
@@ -282,7 +284,7 @@ namespace IntWarsSharp.Logic.GameObjects
             }
 
             if (levelup)
-                map.getGame().notifyLevelUp(this);
+                PacketNotifier.notifyLevelUp(this);
 
             foreach (var s in spells)
                 s.update(diff);
@@ -366,7 +368,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
             if (cKiller == null)
             {
-                map.getGame().notifyChampionDie(this, killer, 0);
+                PacketNotifier.notifyChampionDie(this, killer, 0);
                 return;
             }
 
@@ -389,7 +391,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
             if (gold > 0)
             {
-                map.getGame().notifyChampionDie(this, cKiller, 0);
+                PacketNotifier.notifyChampionDie(this, cKiller, 0);
                 return;
             }
 
@@ -405,12 +407,12 @@ namespace IntWarsSharp.Logic.GameObjects
                 map.setFirstBlood(false);
             }
 
-            map.getGame().notifyChampionDie(this, cKiller, gold);
+            PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
 
             cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
-            map.getGame().notifyAddGold(cKiller, this, gold);
+            PacketNotifier.notifyAddGold(cKiller, this, gold);
 
-            //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller->killDeathCounter,this->killDeathCounter);
+            //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             map.stopTargeting(this);
         }

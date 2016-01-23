@@ -1,4 +1,5 @@
 ﻿using IntWarsSharp.Logic.Enet;
+using IntWarsSharp.Logic.GameObjects;
 using IntWarsSharp.Logic.Maps;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic
 {
-    public class GameObject : GameTarget
+    public class GameObject : Target
     {
         protected int id;
         protected float xvector, yvector;
@@ -17,7 +18,7 @@ namespace IntWarsSharp.Logic
         /**
          * Current target the object running to (can be coordinates or an object)
          */
-        protected GameTarget target;
+        protected Target target;
 
         protected List<Vector2> waypoints;
         protected int curWaypoint;
@@ -91,7 +92,7 @@ namespace IntWarsSharp.Logic
                     setTarget(null);
                 }
                 else {
-                    setTarget(new GameTarget(waypoints[curWaypoint]));
+                    setTarget(new Target(waypoints[curWaypoint]));
                 }
             }
         }
@@ -140,11 +141,11 @@ namespace IntWarsSharp.Logic
             return false;
         }
 
-        public GameTarget getTarget()
+        public Target getTarget()
         {
             return target;
         }
-        public void setTarget(GameTarget target)
+        public void setTarget(Target target)
         {
             if (this.target == target)
                 return;
@@ -164,7 +165,7 @@ namespace IntWarsSharp.Logic
                 return;
             }
 
-            setTarget(new GameTarget(waypoints[1]));
+            setTarget(new Target(waypoints[1]));
             curWaypoint = 1;
         }
 
@@ -215,7 +216,7 @@ namespace IntWarsSharp.Logic
 
             setTarget(null);
         }
-        public float getZ()
+        public virtual float getZ()
         {
             return map.getHeightAtLocation(x, y);
         }
@@ -257,14 +258,9 @@ namespace IntWarsSharp.Logic
             --attackerCount;
         }
 
-        public bool isVisibleByTeam(int team)
+        public bool isVisibleByTeam(TeamId team)
         {
-            if (team > 1)
-            {
-                return false;
-            }
-
-            return (team == getTeam() || visibleByTeam[team]);
+            return (team == getTeam() || isVisibleByTeam(team));
         }
 
         public void setVisibleByTeam(int team, bool visible)
@@ -276,7 +272,7 @@ namespace IntWarsSharp.Logic
         {
             dashing = true;
             this.dashSpeed = dashSpeed;
-            setTarget(new GameTarget(x, y));
+            setTarget(new Target(x, y));
             waypoints.Clear();
         }
         public bool isDashing()

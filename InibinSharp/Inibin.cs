@@ -141,7 +141,10 @@ namespace InibinSharp
         {
             return GetValue<int>(v1, v2);
         }
-
+        public bool getBoolValue(int keyHash)
+        {
+            return GetValue<bool>((uint)keyHash);
+        }
         public bool getBoolValue(string v1, string v2)
         {
             return GetValue<bool>(v1, v2);

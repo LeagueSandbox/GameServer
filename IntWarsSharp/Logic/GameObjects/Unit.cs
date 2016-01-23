@@ -1,4 +1,6 @@
 ﻿using IntWarsSharp.Core.Logic;
+using IntWarsSharp.Logic.Maps;
+using IntWarsSharp.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,7 +109,7 @@ namespace IntWarsSharp.Logic.GameObjects
                     setTargetUnit(null);
                     autoAttackTarget = null;
                     isAttacking = false;
-                    map.getGame().notifySetTarget(this, 0);
+                    PacketNotifier.notifySetTarget(this, null);
                     initialAttackDone = false;
                 }
                 return;
@@ -119,20 +121,20 @@ namespace IntWarsSharp.Logic.GameObjects
                 {
                     setTargetUnit(null);
                     isAttacking = false;
-                    map.getGame().notifySetTarget(this, 0);
+                    PacketNotifier.notifySetTarget(this, null);
                     initialAttackDone = false;
 
                 }
                 else if (isAttacking && autoAttackTarget != null)
                 {
-                    autoAttackCurrentDelay += diff / 1000000.f;
-                    if (autoAttackCurrentDelay >= autoAttackDelay / stats->getAttackSpeedMultiplier())
+                    autoAttackCurrentDelay += diff / 1000000.0f;
+                    if (autoAttackCurrentDelay >= autoAttackDelay / stats.getAttackSpeedMultiplier())
                     {
                         if (!isMelee())
                         {
-                            Projectile p = new Projectile(map, autoAttackProjId, x, y, 5, this, autoAttackTarget, 0, autoAttackProjectileSpeed, 0);
+                            Projectile p = new Projectile(map, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
                             map.addObject(p);
-                            map.getGame().notifyShowProjectile(p);
+                            PacketNotifier.notifyShowProjectile(p);
                         }
                         else
                         {
@@ -151,21 +153,21 @@ namespace IntWarsSharp.Logic.GameObjects
                     {
                         isAttacking = true;
                         autoAttackCurrentDelay = 0;
-                        autoAttackProjId = GetNewNetID();
+                        autoAttackProjId = Game.GetNewNetID();
                         autoAttackTarget = targetUnit;
 
                         if (!initialAttackDone)
                         {
                             initialAttackDone = true;
-                            map.getGame().notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
+                            PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
                         }
                         else {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
-                            map.getGame().notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
+                            PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
                         }
 
                         var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        map.getGame().notifyOnAttack(this, targetUnit, attackType);
+                        PacketNotifier.notifyOnAttack(this, targetUnit, attackType);
                     }
 
                 }
@@ -261,22 +263,22 @@ namespace IntWarsSharp.Logic.GameObjects
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
                     defense = target.getStats().getArmor();
-                    defense = ((1 - stats->getArmorPenPct()) * defense) - stats->getArmorPenFlat();
+                    defense = ((1 - stats.getArmorPenPct()) * defense) - stats.getArmorPenFlat();
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = target.getStats().getMagicArmor();
-                    defense = ((1 - stats->getMagicPenPct()) * defense) - stats->getMagicPenFlat();
+                    defense = ((1 - stats.getMagicPenPct()) * defense) - stats.getMagicPenFlat();
                     break;
             }
 
             switch (source)
             {
                 case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = stats->getSpellVamp();
+                    regain = stats.getSpellVamp();
                     break;
                 case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = stats->getLifeSteal();
+                    regain = stats.getLifeSteal();
                     break;
             }
 
@@ -289,19 +291,19 @@ namespace IntWarsSharp.Logic.GameObjects
                 target.deathFlag = true;
                 target.die(this);
             }
-            map.getGame().notifyDamageDone(this, target, damage, type);
+            PacketNotifier.notifyDamageDone(this, target, damage, type);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
-                stats->setCurrentHealth(Math.Min(stats->getMaxHealth(), stats->getCurrentHealth() + (regain * damage)));
-                map.getGame().notifyUpdatedStats(this);
+                stats.setCurrentHealth(Math.Min(stats.getMaxHealth(), stats.getCurrentHealth() + (regain * damage)));
+                PacketNotifier.notifyUpdatedStats(this);
             }
         }
 
         public bool isDead()
         {
-            return deathFlag
+            return deathFlag;
         }
 
         public virtual void die(Unit killer)
@@ -309,7 +311,7 @@ namespace IntWarsSharp.Logic.GameObjects
             setToRemove();
             map.stopTargeting(this);
 
-            map.getGame().notifyNpcDie(this, killer);
+            PacketNotifier.notifyNpcDie(this, killer);
 
             float exp = map.getExperienceFor(this);
             var champs = map.getChampionsInRange(this, EXP_RANGE, true);
@@ -335,12 +337,12 @@ namespace IntWarsSharp.Logic.GameObjects
                     return;
 
                 cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
-                map.getGame().notifyAddGold(cKiller, this, gold);
+                PacketNotifier.notifyAddGold(cKiller, this, gold);
 
                 if (cKiller.killDeathCounter < 0)
                 {
                     cKiller.setChampionGoldFromMinions(cKiller.getChampionGoldFromMinions() + gold);
-                    Logger.LogCoreInfo("Adding gold form minions to reduce death spree: %f", cKiller.getChampionGoldFromMinions());
+                    Logger.LogCoreInfo("Adding gold form minions to reduce death spree: " + cKiller.getChampionGoldFromMinions());
                 }
 
                 if (cKiller.getChampionGoldFromMinions() >= 50 && cKiller.killDeathCounter < 0)
@@ -384,7 +386,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public void addBuff(Buff b)
         {
-            if (getBuff(b.getName()) == 0)
+            if (getBuff(b.getName()) == null)
             {
                 buffs.Add(b);
                 getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
@@ -454,7 +456,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public virtual void refreshWaypoints()
         {
-            if (targetUnit == null || (distanceWith(targetUnit) <= stats->getRange() && waypoints.Count == 1))
+            if (targetUnit == null || (distanceWith(targetUnit) <= stats.getRange() && waypoints.Count == 1))
                 return;
 
             if (distanceWith(targetUnit) <= stats.getRange() - 2.0f)
@@ -540,7 +542,7 @@ in the following order:
             Minion* m = dynamic_cast<Minion*>(target);
 
             if (m) {
-               switch (m->getType()) {
+               switch (m.getType()) {
                   case MINION_TYPE_MELEE:
                      return 4;
                   case MINION_TYPE_CASTER:

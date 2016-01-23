@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    class Fountain
+    public class Fountain
     {
         protected const int NUM_SIDES = 2;// Change implementation when more game-modes with more teams are available
         protected const float PERCENT_MAX_HEALTH_HEAL = 0.15f;

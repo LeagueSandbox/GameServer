@@ -10,6 +10,8 @@ using System.IO;
 using System.Numerics;
 using IntWarsSharp.Logic.GameObjects;
 using IntWarsSharp.Core.Logic.RAF;
+using IntWarsSharp.Logic.Items;
+using IntWarsSharp.Logic.Maps;
 
 namespace IntWarsSharp.Logic.Packets
 {
@@ -417,7 +419,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((short)0x02);
             buffer.Write((int)Environment.TickCount); // unk
 
-            const List<Vector2> waypoints = m.getWaypoints();
+            var waypoints = m.getWaypoints();
 
             buffer.Write((short)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write(m.getNetId());
@@ -677,8 +679,7 @@ namespace IntWarsSharp.Logic.Packets
             for (var i = 0; i < ch.Length; i++)
                 buffer.Write((byte)ch[i]);
             if (ch.Length < 32)
-                for (var i = 0; i < 32 - ch.Length; i++)
-                    buffer.Write((byte)0);
+                buffer.fill(0, 32 - ch.Length);
         }
     }
 
@@ -782,7 +783,7 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write(t.getNetId());
             buffer.Write(t.getName());
-            buffer.fill(0, 64 - t.getName().length());
+            buffer.fill(0, 64 - t.getName().Length);
             buffer.Write("\x00\x22\x00\x00\x80\x01");
         }
 
@@ -846,9 +847,9 @@ namespace IntWarsSharp.Logic.Packets
     {
         public BuyItemAns(Champion actor, ItemInstance item) : base(PacketCmd.PKT_S2C_BuyItemAns, actor.getNetId())
         {
-            buffer.Write((int)i.getTemplate().getId());
-            buffer.Write((byte)i.getSlot());
-            buffer.Write((byte)i.getStacks());
+            buffer.Write((int)item.getTemplate().getId());
+            buffer.Write((byte)item.getSlot());
+            buffer.Write((byte)item.getStacks());
             buffer.Write((byte)0); //unk or stacks => short
             buffer.Write((byte)0x40); //unk
         }
@@ -1095,7 +1096,7 @@ namespace IntWarsSharp.Logic.Packets
 
     public class BeginAutoAttack : BasePacket
     {
-        BeginAutoAttack(Unit attacker, Unit attacked, int futureProjNetId, bool isCritical) : base(PacketCmd.PKT_S2C_BeginAutoAttack, attacker.getNetId())
+        public BeginAutoAttack(Unit attacker, Unit attacked, int futureProjNetId, bool isCritical) : base(PacketCmd.PKT_S2C_BeginAutoAttack, attacker.getNetId())
         {
             buffer.Write(attacked.getNetId());
             buffer.Write((short)0x80); // unk
@@ -1965,7 +1966,7 @@ namespace IntWarsSharp.Logic.Packets
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
-        public SpawnParticle(Champion owner, Target t, string particle, int netId) : base(PacketCmd.PKT_S2C_SpawnParticle, owner.getNetId())
+        public SpawnParticle(Champion owner, GameObjects.Target t, string particle, int netId) : base(PacketCmd.PKT_S2C_SpawnParticle, owner.getNetId())
         {
             buffer.Write((short)1); // number of particles
             buffer.Write(owner.getChampionHash());
@@ -2004,7 +2005,6 @@ namespace IntWarsSharp.Logic.Packets
 
         public class DestroyProjectile : BasePacket
         {
-
             public DestroyProjectile(Projectile p) : base(PacketCmd.PKT_S2C_DestroyProjectile, p.getNetId())
             {
 
@@ -2015,7 +2015,7 @@ namespace IntWarsSharp.Logic.Packets
         {
             public UpdateStats(Unit u, bool partial = true) : base(PacketCmd.PKT_S2C_CharStats, 0)
             {
-                var stats = new Dictionary<short, List<int>>();
+                var stats = new Dictionary<byte, List<int>>();
 
                 if (partial)
                 {
@@ -2026,8 +2026,8 @@ namespace IntWarsSharp.Logic.Packets
                     stats = u.getStats().getAllStats();
                 }
 
-                var masks = new List<short>();
-                short masterMask = 0;
+                var masks = new List<byte>();
+                byte masterMask = 0;
 
                 foreach (var p in stats)
                 {
@@ -2035,14 +2035,14 @@ namespace IntWarsSharp.Logic.Packets
                     masks.Add(p.Key);
                 }
 
-                buffer.Write((short)1);
+                buffer.Write((byte)1);
                 buffer.Write(masterMask);
                 buffer.Write(u.getNetId());
 
-                foreach (short m in masks)
+                foreach (var m in masks)
                 {
                     int mask = 0;
-                    short size = 0;
+                    byte size = 0;
 
                     var updatedStats = stats[m];
 
@@ -2063,12 +2063,12 @@ namespace IntWarsSharp.Logic.Packets
                             if (u.getStats().getSize(m, tmpMask) == 4)
                             {
                                 float f = u.getStats().getStat(m, tmpMask);
-                                var c = (char)f;
-                                if (c >= 0xFE)
+                                var c = BitConverter.GetBytes(f);
+                                if (c[0] >= 0xFE)
                                 {
-                                    c = (char)0xFD;
+                                    c[0] = (byte)0xFD;
                                 }
-                                buffer.Write(f);
+                                buffer.Write(BitConverter.ToSingle(c, 0));
                             }
                             else if (u.getStats().getSize(m, tmpMask) == 2)
                             {
@@ -2088,7 +2088,6 @@ namespace IntWarsSharp.Logic.Packets
 
         public class LevelPropSpawn : BasePacket
         {
-
             public LevelPropSpawn(LevelProp lp) : base(PacketCmd.PKT_S2C_LevelPropSpawn)
             {
                 buffer.Write(lp.getNetId());
@@ -2112,9 +2111,9 @@ namespace IntWarsSharp.Logic.Packets
                 buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
                 buffer.Write(lp.getName());
-                buffer.fill(0, 64 - lp.getName().length());
+                buffer.fill(0, 64 - lp.getName().Length);
                 buffer.Write(lp.getType());
-                buffer.fill(0, 64 - lp.getType().length());
+                buffer.fill(0, 64 - lp.getType().Length);
             }
 
             // TODO : remove this once we find a better solution for jungle camp spawning command

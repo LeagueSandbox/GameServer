@@ -129,11 +129,11 @@ namespace IntWarsSharp.Logic.Maps
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
             // Announcer events
-            announcerEvents.Add(new Pair<bool, Tuple<long, short, bool>> { Item1 = false, Item2 = new Tuple<long, short, bool>(30 * 1000000, 119, true) }); // Welcome to SR
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(30 * 1000000, 119, true) }); // Welcome to SR
             if (firstSpawnTime - 30 * 1000000 >= 0.0f)
-                announcerEvents.Add(new Pair<bool, Tuple<long, short, bool>> { Item1 = false, Item2 = new Tuple<long, short, bool>(firstSpawnTime - 30 * 1000000, 120, true) }); // 30 seconds until minions spawn
-            announcerEvents.Add(new Pair<bool, Tuple<long, short, bool>> { Item1 = false, Item2 = new Tuple<long, short, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000000)
-            announcerEvents.Add(new Pair<bool, Tuple<long, short, bool>> { Item1 = false, Item2 = new Tuple<long, short, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000000)
+                announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime - 30 * 1000000, 120, true) }); // 30 seconds until minions spawn
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000000)
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000000)
 
             fountain.setHealLocations(this);
         }
@@ -157,12 +157,12 @@ namespace IntWarsSharp.Logic.Maps
             switch (team)
             {
                 case 0:
-                    return new Target(25.90f, 280);
+                    return new GameObjects.Target(25.90f, 280);
                 case 1:
-                    return new Target(14119, 14063);
+                    return new GameObjects.Target(14119, 14063);
             }
 
-            return new Target(25.90f, 280);
+            return new GameObjects.Target(25.90f, 280);
         }
         public override float getGoldFor(Unit u)
         {
@@ -238,7 +238,7 @@ namespace IntWarsSharp.Logic.Maps
             return 0.0f;
         }
 
-        public override Tuple<int, Vector2> getMinionSpawnPosition(int spawnPosition)
+        public override Tuple<int, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             switch (spawnPosition)
             {

@@ -1,9 +1,10 @@
 ﻿using ENet.Native;
 using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.Enet;
-using IntWarsSharp.Core.Logic.Items;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic;
+using IntWarsSharp.Logic.GameObjects;
+using IntWarsSharp.Logic.Items;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,7 +40,7 @@ namespace IntWarsSharp
 
             var basePath = RAFManager.getInstance().findGameBasePath();
 
-            if (!RAFManager.getInstance().init(Path.Combine(basePath,"filearchives")))
+            if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath,"filearchives")))
             {
                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
                 return;

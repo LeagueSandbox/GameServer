@@ -172,7 +172,7 @@ namespace IntWarsSharp.Core.Logic
         {
             for (int i = 0; i < 2; ++i)
             {
-                if (o.isVisibleByTeam(i))
+                if (o.isVisibleByTeam((TeamId)i))
                 {
                     broadcastPacketTeam((i == 0) ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE, data, channelNo, flag);
                 }

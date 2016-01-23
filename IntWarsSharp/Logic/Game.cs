@@ -11,6 +11,7 @@ using IntWarsSharp.Core.Logic.PacketHandlers;
 using IntWarsSharp.Logic.GameObjects;
 using ENet;
 using IntWarsSharp.Logic.Packets;
+using IntWarsSharp.Logic.Maps;
 
 namespace IntWarsSharp.Core.Logic
 {
@@ -72,7 +73,7 @@ namespace IntWarsSharp.Core.Logic
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
-                c.setTeam((p.Value.team.ToLower() == "blue") ? 0 : 1);
+                c.setTeam((p.Value.team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
                 c.levelUp();
 
                 player.setChampion(c);
