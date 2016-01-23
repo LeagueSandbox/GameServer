@@ -8,33 +8,34 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    enum DamageType : short
+    public enum DamageType : short
     {
         DAMAGE_TYPE_PHYSICAL = 0,
         DAMAGE_TYPE_MAGICAL = 1,
         DAMAGE_TYPE_TRUE = 2
-    };
+    }
 
-    enum DamageSource
+    public enum DamageSource
     {
         DAMAGE_SOURCE_ATTACK,
         DAMAGE_SOURCE_SPELL,
         DAMAGE_SOURCE_SUMMONER_SPELL, //Ignite shouldn't destroy Banshee's
         DAMAGE_SOURCE_PASSIVE //Red/Thornmail shouldn't as well
-    };
+    }
 
-    enum AttackType : short
+    public enum AttackType : short
     {
         ATTACK_TYPE_RADIAL,
         ATTACK_TYPE_MELEE,
         ATTACK_TYPE_TARGETED
-    };
+    }
 
-    enum MoveOrder
+    public enum MoveOrder
     {
         MOVE_ORDER_MOVE,
         MOVE_ORDER_ATTACKMOVE
-    };
+    }
+
     public class Unit : GameObject
     {
         internal const float DETECT_RANGE = 475.0f;

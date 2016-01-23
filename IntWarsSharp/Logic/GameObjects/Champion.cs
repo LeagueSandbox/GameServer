@@ -14,7 +14,7 @@ namespace IntWarsSharp.Logic.GameObjects
         protected string type;
         protected List<Spell> spells = new List<Spell>();
         protected short skillPoints = 0;
-        protected short skin;
+        protected int skin;
         protected long respawnTimer = 0;
         protected Inventory inventory;
         protected float championGoldFromMinions = 0;
@@ -299,7 +299,7 @@ namespace IntWarsSharp.Logic.GameObjects
             skillPoints = (short)_skillPoints;
         }
 
-        public void setSkin(short skin)
+        public void setSkin(int skin)
         {
             this.skin = skin;
         }

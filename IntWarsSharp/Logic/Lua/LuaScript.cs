@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic
 {
-    class LuaScript
+    public class LuaScript
     {
         private bool loaded = false;
         private Lua lua;

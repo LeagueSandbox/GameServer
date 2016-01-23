@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    enum SpellFlag : uint
+    public enum SpellFlag : uint
     {
         SPELL_FLAG_AutoCast = 0x00000002,
         SPELL_FLAG_InstantCast = 0x00000004,
@@ -47,14 +47,14 @@ namespace IntWarsSharp.Logic.GameObjects
         SPELL_FLAG_IgnoreClones = 0x80000000,
     };
 
-    enum SpellState
+    public enum SpellState
     {
         STATE_READY,
         STATE_CASTING,
         STATE_COOLDOWN
     };
 
-    enum SpellTargetType : int
+    public enum SpellTargetType : int
     {
         TARGET_SELF = 0, // teemo W ; xin Q
         TARGET_UNIT = 1, // Taric E ; Annie Q ; teemo Q ; xin E
@@ -64,11 +64,11 @@ namespace IntWarsSharp.Logic.GameObjects
         TARGET_LOC = 6, // Ez Q, W, E, R ; Mundo Q
         TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
     };
-    class Spell
+    public class Spell
     {
         protected Champion owner;
         protected short level = 0;
-        protected int slot;
+        protected byte slot;
         protected string spellName;
         protected float targetType;
         protected int flags = 0;
@@ -98,7 +98,7 @@ namespace IntWarsSharp.Logic.GameObjects
         protected Unit target;
         protected float x, y;
 
-        public Spell(Champion owner, string spellName, short slot)
+        public Spell(Champion owner, string spellName, byte slot)
         {
             this.owner = owner;
             this.spellName = spellName;
@@ -510,7 +510,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
         //public void reloadLua();
 
-        public void setSlot(int _slot)
+        public void setSlot(byte _slot)
         {
             slot = _slot;
         }
@@ -559,7 +559,7 @@ namespace IntWarsSharp.Logic.GameObjects
             return state;
         }
 
-        public int getSlot()
+        public byte getSlot()
         {
             return slot;
         }

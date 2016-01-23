@@ -15,7 +15,7 @@ namespace IntWarsSharp.Logic.Enet
         public bool versionMatch = true;
         public long userId;
         public int ticks = 0;
-        public short skinNo = 0;
+        public int skinNo = 0;
         public SpellIds[] summonerSkills = new SpellIds[2];
         public string name, rank;
         public short ribbon;

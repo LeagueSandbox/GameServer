@@ -9,11 +9,12 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers
     public enum GameCmd : uint
     {
         PKT_S2C_MoveAns = 0x61,
-        PKT_S2C_CharStats = 0xC4//todo check
+        PKT_S2C_CharStats = 0xC4 //?
     };
 
     public enum PacketCmd : uint
     {
+        PKT_S2C_MoveAns = 0x61, //?
         PKT_KeyCheck = 0x00,
         PKT_C2S_HeartBeat = 0x08,
         PKT_C2S_SellItem = 0x09,
