@@ -11,11 +11,11 @@ namespace IntWarsSharp.Core.Logic
     class PacketHandlerManager
     {
         private static PacketHandlerManager _instance;
-        private Dictionary<PacketCmd, Dictionary<Channel, PacketHandler>> _handlerTable;
+        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
 
         internal void InitHandlers()
         {
-            _handlerTable = new Dictionary<PacketCmd, Dictionary<Channel, PacketHandler>>();
+            _handlerTable = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
 
             registerHandler(new HandleKeyCheck(), PacketCmd.PKT_KeyCheck, Channel.CHL_HANDSHAKE);
             registerHandler(new HandleLoadPing(), PacketCmd.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
@@ -45,11 +45,11 @@ namespace IntWarsSharp.Core.Logic
             registerHandler(new HandleHeartBeat(), PacketCmd.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
         }
 
-        public void registerHandler(PacketHandler handler, PacketCmd pktcmd, Channel channel)
+        public void registerHandler(IPacketHandler handler, PacketCmd pktcmd, Channel channel)
         {
 
             if (!_handlerTable.ContainsKey(pktcmd))
-                _handlerTable.Add(pktcmd, new Dictionary<Channel, PacketHandler>());
+                _handlerTable.Add(pktcmd, new Dictionary<Channel, IPacketHandler>());
 
             var dict = _handlerTable[pktcmd];
             if (!dict.ContainsKey(channel))
@@ -64,6 +64,17 @@ namespace IntWarsSharp.Core.Logic
                 _instance = new PacketHandlerManager();
 
             return _instance;
+        }
+
+        internal IPacketHandler GetHandler(PacketCmd cmd, byte channelID)
+        {
+            if (_handlerTable.ContainsKey(cmd))
+            {
+                var handlers = _handlerTable[cmd];
+                if (handlers.ContainsKey((Channel)channelID))
+                    return handlers[(Channel)channelID];
+            }
+            return null;
         }
     }
 }

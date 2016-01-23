@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Core.Logic
 {
-    public interface PacketHandler
+    public interface IPacketHandler
     {
-        void HandlePacket(ENetPeer peer, ENetPacket packet);
+        unsafe bool HandlePacket(ENetPeer* peer, ENetPacket* packet);
     }
 }

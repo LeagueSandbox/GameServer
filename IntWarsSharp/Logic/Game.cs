@@ -10,6 +10,7 @@ using IntWarsSharp.Logic.Enet;
 using IntWarsSharp.Core.Logic.PacketHandlers;
 using IntWarsSharp.Logic.GameObjects;
 using ENet;
+using IntWarsSharp.Logic.Packets;
 
 namespace IntWarsSharp.Core.Logic
 {
@@ -158,16 +159,16 @@ namespace IntWarsSharp.Core.Logic
                 }
             }
 
-            PacketHeader* header = reinterpret_cast<PacketHeader*>(packet->data);
-            bool (Game::* handler)(HANDLE_ARGS) = _handlerTable[header->cmd][channelID];
+            PacketHeader header = Marshal.PtrToStructure<PacketHeader>(packet->data); //pls work
+            var handler = PacketHandlerManager.getInstace().GetHandler(header.cmd, channelID);
 
-            if (handler)
+            if (handler != null)
             {
-                return (*this.* handler)(peer, packet);
+                return handler.HandlePacket(peer, packet);
             }
             else
             {
-                CORE_WARNING("Unhandled OpCode %02X", header->cmd);
+                Logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
                 printPacket(packet->data, packet->dataLength);
             }
             return false;
@@ -228,9 +229,6 @@ bool broadcastPacketTeam(uint8 team, const Packet& packet, uint8 channelNo, uint
 bool broadcastPacketVision(Object* o, const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
 bool broadcastPacketVision(Object* o, const uint8* data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
 
-void registerHandler(bool (Game::* handler)(HANDLE_ARGS), PacketCmd pktcmd, Channel c);
-      bool (Game::* _handlerTable[0x100][0x7])(HANDLE_ARGS);
-      void initHandlers();
 
 
         SpellIds strToId(string str)

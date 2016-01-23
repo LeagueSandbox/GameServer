@@ -7,11 +7,11 @@ using ENet.Native;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
-    class HandleNull : PacketHandler
+    class HandleNull : IPacketHandler
     {
-        public void HandlePacket(ENetPeer peer, ENetPacket packet)
+        public unsafe bool HandlePacket(ENetPeer* peer, ENetPacket* packet)
         {
-           
+            return false;
         }
     }
 }
