@@ -8,6 +8,8 @@ namespace IntWarsSharp.Core.Logic
     {
         public static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
+            if (e.Exception is InvalidCastException || e.Exception is System.Collections.Generic.KeyNotFoundException)
+                return;
             WriteToLog.Log("A first chance exception was thrown", "EXCEPTION");
             WriteToLog.Log(e.Exception.Message, "EXCEPTION");
             WriteToLog.Log(e.ToString(), "EXCEPTION");

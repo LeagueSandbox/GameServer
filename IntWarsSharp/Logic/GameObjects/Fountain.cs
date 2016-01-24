@@ -15,7 +15,7 @@ namespace IntWarsSharp.Logic.GameObjects
         protected const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
         protected float fountainSize;
         protected long healTickTimer;
-        protected List<Target> healLocations;
+        protected List<Target> healLocations = new List<Target>();
 
         public Fountain()
         {

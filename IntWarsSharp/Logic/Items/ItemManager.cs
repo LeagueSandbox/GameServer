@@ -25,16 +25,26 @@ namespace IntWarsSharp.Logic.Items
         {
             itemTemplates = new Dictionary<int, ItemTemplate>();
             // TODO : this is highly inefficient
-            for (var i = 1000; i < 4000; ++i)
+            var inibins = RAFManager.getInstance().SearchFileEntries("DATA/items/");
+
+            /* for (var i = 1000; i < 4000; ++i)*/
+            foreach (var ini in inibins)
             {
-                Inibin inibin;
-                if (!RAFManager.getInstance().readInibin("DATA/items/" + i + ".inibin", out inibin))
+                //Inibin inibin;
+                //if (!RAFManager.getInstance().readInibin("DATA/items/" + i + ".inibin", out inibin))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(ini.FileName, "items/\\d.*.inibin", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                    continue;
+                var id = int.Parse(ini.ShortFileName.Replace(".inibin", ""));
+                if (id <= 1000 && id >= 4000)
                     continue;
 
-
+                var inibin = new Inibin(ini);
                 var maxStack = inibin.getIntValue("DATA", "MaxStack");
-                var price = inibin.getIntValue("DATA", "Price");
-                bool trinket = inibin.getBoolValue(0x32E2CBC9);
+                var price = inibin.GetValue<ushort>("DATA", "Price");
+                var type = inibin.GetValue<string>(3471506188);
+                bool trinket = false;
+                if (type != null && type.ToLower() == "RelicBase".ToLower())
+                    trinket = true;
 
                 float sellBack = 0.7f;
 
@@ -70,7 +80,7 @@ namespace IntWarsSharp.Logic.Items
                     ++c;
                 }
 
-                itemTemplates.Add(itemTemplates.Count, new ItemTemplate(i, maxStack, price, sellBack, trinket, statMods, recipes));
+                itemTemplates.Add(itemTemplates.Count, new ItemTemplate(id, maxStack, price, sellBack, trinket, statMods, recipes));
             }
 
 

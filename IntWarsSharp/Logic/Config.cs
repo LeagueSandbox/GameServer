@@ -1,4 +1,5 @@
 ﻿using IntWarsSharp.Core.Logic;
+using NLua;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace IntWarsSharp.Logic
             players = new Dictionary<string, PlayerConfig>();
             var script = new LuaScript();
 
-            script.loadScript("../../lua/config.lua");
+            script.loadScript(System.IO.Path.Combine(Program.ExecutingDirectory, "lua", "config.lua"));
 
             var playerList = script.getTableDictionary("players");
 
@@ -28,10 +29,13 @@ namespace IntWarsSharp.Logic
                 var playerIndex = "player" + i;
                 if (!playerList.ContainsKey(playerIndex))
                     continue;
-                var player = playerList[playerIndex] as Dictionary<object, object>;
+                var player = playerList[playerIndex] as LuaTable;
+                if (player == null)
+                    continue;
+
                 var config = new PlayerConfig();
 
-                foreach (var p in player)
+                foreach (var p in script.getTableDictionary(player))
                 {
                     switch (p.Key.ToString().ToLower())
                     {
@@ -86,58 +90,63 @@ namespace IntWarsSharp.Logic
             }
 
             mapSpawns = new MapSpawns();
-            script.loadScript("../../lua/maps/map" + gameConfig.map + ".lua");
+            script.loadScript(System.IO.Path.Combine(Program.ExecutingDirectory, "lua", "maps", "map" + gameConfig.map + ".lua"));
             var teams = script.getTableDictionary("spawnpoints");
             foreach (var team in teams)
             {
                 var teamColor = team.Key.ToString().ToLower();
-                var numOfPlayers = team.Value as Dictionary<object, object>;
-                foreach (var num in numOfPlayers)
+                var numOfPlayers = team.Value as LuaTable;
+                if (numOfPlayers == null)
+                    continue;
+
+                foreach (var num in script.getTableDictionary(numOfPlayers))
                 {
                     var number = int.Parse(num.Key.ToString());
-                    var spawns = num.Value as Dictionary<object, object>;
+                    var spawns = num.Value as LuaTable;
+                    if (spawns == null)
+                        continue;
                     var playerSpawns = new PlayerSpawns();
 
-                    foreach (var spawn in spawns)
+                    foreach (var spawn in script.getTableDictionary(spawns))
                     {
                         var spawnName = spawn.Key;
                         var spawnPoint = int.Parse(spawn.Value.ToString());
                         switch (spawnName.ToString().ToLower())
                         {
-                            case "player1X":
+                            case "player1x":
                                 playerSpawns.player1X = spawnPoint;
                                 break;
-                            case "player1Y":
+                            case "player1y":
                                 playerSpawns.player1Y = spawnPoint;
                                 break;
-                            case "player2X":
+                            case "player2x":
                                 playerSpawns.player2X = spawnPoint;
                                 break;
-                            case "player2Y":
+                            case "player2y":
                                 playerSpawns.player2Y = spawnPoint;
                                 break;
-                            case "player3X":
+                            case "player3x":
                                 playerSpawns.player3X = spawnPoint;
                                 break;
-                            case "player3Y":
+                            case "player3y":
                                 playerSpawns.player3Y = spawnPoint;
                                 break;
-                            case "player4X":
+                            case "player4x":
                                 playerSpawns.player4X = spawnPoint;
                                 break;
-                            case "player4Y":
+                            case "player4y":
                                 playerSpawns.player4Y = spawnPoint;
                                 break;
-                            case "player5X":
+                            case "player5x":
                                 playerSpawns.player5X = spawnPoint;
                                 break;
-                            case "player5Y":
+                            case "player5y":
                                 playerSpawns.player5Y = spawnPoint;
                                 break;
-                            case "player6X":
+                            case "player6x":
                                 playerSpawns.player6X = spawnPoint;
                                 break;
-                            case "player6Y":
+                            case "player6y":
                                 playerSpawns.player6Y = spawnPoint;
                                 break;
                         }

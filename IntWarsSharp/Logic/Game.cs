@@ -12,6 +12,9 @@ using IntWarsSharp.Logic.GameObjects;
 using ENet;
 using IntWarsSharp.Logic.Packets;
 using IntWarsSharp.Logic.Maps;
+using System.Net.Sockets;
+using System.Net;
+using BlowFishCS;
 
 namespace IntWarsSharp.Core.Logic
 {
@@ -36,15 +39,12 @@ namespace IntWarsSharp.Core.Logic
 
         public bool initialize(ENetAddress address, string baseKey)
         {
-            /* if (ENetApi.enet_initialize() != 0)
-                 return false;*/
+            // _server = ENetApi.enet_host_create(&address, new IntPtr(32), new IntPtr(32), 0, 0);
+            // if (_server == null)
+            //    return false;
 
-            _server = ENetApi.enet_host_create(ref address, new IntPtr(0), new IntPtr(32), 0, 0);
-            if (_server == null)
-                return false;
-
-            string key = Encoding.UTF8.GetString(Convert.FromBase64String(baseKey));
-
+            var key = Convert.FromBase64String(baseKey);
+            
             if (key.Length <= 0)
                 return false;
 
@@ -103,10 +103,22 @@ namespace IntWarsSharp.Core.Logic
             var enetEvent = new ENetEvent();
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
+
+            /*var client = new UdpClient(new IPEndPoint(IPAddress.Any, 5119));
+            var endpoint = new IPEndPoint(IPAddress.Any, 0);
+            var data = client.Receive(ref endpoint);
+
+            if (data.Length >= 8)
+                data = getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+               
+
+            var header = new IntWarsSharp.Logic.Packets.PacketHeader(data); */
+
             while (true)
             {
-                while (ENetApi.enet_host_service(_server, &enetEvent, 0) > 0)
+                while (ENetApi.enet_host_service(_server, &enetEvent, 20) > 0)
                 {
+                    Console.WriteLine("in");
                     switch (enetEvent.type)
                     {
                         case EventType.Connect:
@@ -147,7 +159,7 @@ namespace IntWarsSharp.Core.Logic
                 elapsed = watch.ElapsedMicroSeconds();
                 watch = System.Diagnostics.Stopwatch.StartNew();
                 if (elapsed < REFRESH_RATE)
-                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds((REFRESH_RATE - elapsed) * 1000)); //this is so not going to work
+                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds((REFRESH_RATE - elapsed) / 1000)); //this is so not going to work
             }
         }
 

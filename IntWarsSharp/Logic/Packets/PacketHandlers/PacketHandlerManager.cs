@@ -113,7 +113,7 @@ namespace IntWarsSharp.Core.Logic
             //	printPacket(data, length);
 
             if (source.Length >= 8)
-                source = game.getBlowfish().Encrypt(source, BlowFishMode.ECB); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+                source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 
             var ptr = allocMemory(source);
             var packet = ENetApi.enet_packet_create(ptr, new IntPtr(source.Length), flag);
@@ -134,7 +134,7 @@ namespace IntWarsSharp.Core.Logic
             Array.Copy(data, outData, outData.Length); //not gonna work lmao
 
             if (outData.Length >= 8)// length - (length % 8)
-                outData = game.getBlowfish().Encrypt(outData, BlowFishMode.ECB);
+                outData = game.getBlowfish().Encrypt_ECB(outData);
 
             var unmanagedPointer = allocMemory(outData);
             var packet = ENetApi.enet_packet_create(unmanagedPointer, new IntPtr(outData.Length), (PacketFlags)flag);
@@ -182,12 +182,14 @@ namespace IntWarsSharp.Core.Logic
 
         public bool handlePacket(ENetPeer* peer, ENetPacket* packet, byte channelID)
         {
-            var data = new byte[(int)packet->dataLength - ((int)packet->dataLength % 8)];
-            Marshal.Copy(packet->data, data, 0, data.Length); //not gonna work lmao
+            var data = new byte[(int)packet->dataLength];
+            if (((int)packet->dataLength - ((int)packet->dataLength % 8)) > 0)
+                data = new byte[(int)packet->dataLength - ((int)packet->dataLength % 8)];
 
+            Marshal.Copy(packet->data, data, 0, data.Length); //not gonna work lmao
             if ((int)packet->dataLength >= 8)
                 if (game.peerInfo(peer) != null)
-                    data = game.getBlowfish().Decrypt(data, BlowFishMode.ECB); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+                    data = game.getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);

@@ -455,7 +455,7 @@ namespace IntWarsSharp.Logic.GameObjects
         public PathNode parent;
         private static int tableInitialised;
         private const int TABLE_SIZE = (2 << 15);
-        private static List<PathNode> nodeTable;
+        private static List<PathNode> nodeTable = new List<PathNode>();
 
         public PathNode()
         {

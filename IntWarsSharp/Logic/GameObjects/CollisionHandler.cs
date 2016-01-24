@@ -13,7 +13,7 @@ namespace IntWarsSharp.Logic.GameObjects
     {
         private float width, height;
         private CollisionDivision[] managedDivisions = new CollisionDivision[3 * 3];
-        private CollisionDivision unmanagedDivision;
+        private CollisionDivision unmanagedDivision = new CollisionDivision();
         private int divisionCount;
         private Map chart;
         private bool simple = false;
@@ -32,6 +32,9 @@ namespace IntWarsSharp.Logic.GameObjects
         }
         public void init(int divisionsOverWidth)
         {
+            for (int i = 0; i < managedDivisions.Length; i++)
+                managedDivisions[i] = new CollisionDivision();
+
             width = chart.getAIMesh().getWidth();
             height = chart.getAIMesh().getHeight();
 
@@ -349,7 +352,7 @@ namespace IntWarsSharp.Logic.GameObjects
     public class CollisionDivision
     {
         public Vector2 min, max;
-        public List<GameObject> objects;
+        public List<GameObject> objects = new List<GameObject>();
         public int objectCount = 0;
 
         public void push(GameObject a)

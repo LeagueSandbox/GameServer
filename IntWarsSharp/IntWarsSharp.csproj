@@ -44,8 +44,13 @@
       <HintPath>..\packages\ENet.1.3.6.3\lib\ENet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NLua">
-      <HintPath>..\lib\NLua.dll</HintPath>
+    <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\KeraLua.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\NLua.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -148,12 +153,16 @@
       <Project>{f47ac3d4-6c0f-4f02-9a7f-fbed54cf6e0a}</Project>
       <Name>InibinSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\riot-archive\riot-archive.csproj">
-      <Project>{120c11de-81ae-4153-bb85-e0fdb4b242d7}</Project>
-      <Name>riot-archive</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+C:\windows\system32\xcopy /s /y "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"
+C:\windows\system32\xcopy /s /y "$(ProjectDir)lua" "$(TargetDir)lua\*"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

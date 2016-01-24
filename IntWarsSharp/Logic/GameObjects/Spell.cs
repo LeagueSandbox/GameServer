@@ -85,7 +85,7 @@ namespace IntWarsSharp.Logic.GameObjects
         // However, it may not be accurate and there's no way to tell whether it's the ad or ap bonus for hybrid spells
         // Sometimes, it is also stored as an effect value instead of the coefficient
         protected float coefficient;
-        protected List<List<float>> effects;
+        protected List<List<float>> effects = new List<List<float>>();
 
         protected float range = 0;
 

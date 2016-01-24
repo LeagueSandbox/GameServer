@@ -70,6 +70,14 @@ namespace IntWarsSharp.Logic.Packets
             netId = 0;
         }
 
+        public PacketHeader(byte[] bytes)
+        {
+            var reader = new BinaryReader(new MemoryStream(bytes));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            reader.Close();
+        }
+
         public PacketCmd cmd;
         public int netId;
     }
@@ -1299,13 +1307,15 @@ namespace IntWarsSharp.Logic.Packets
 
     }
 
-    struct CastSpell
+    public class CastSpell
     {
         public PacketHeader header;
         public short spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
         public short spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
-        public float x, y;
-        public float x2, y2;
+        public float x;
+        public float y;
+        public float x2;
+        public float y2;
         public int targetNetId; // If 0, use coordinates, else use target net id
     }
 

@@ -58,6 +58,9 @@ namespace IntWarsSharp.Logic.Maps
             this.collisionHandler = new CollisionHandler(this);
             this.fountain = new Fountain();
             this.id = id;
+
+            for (var i = 0; i < visionUnits.Length; i++)
+                visionUnits[i] = new Dictionary<int, Unit>();
         }
 
         public virtual void update(long diff)

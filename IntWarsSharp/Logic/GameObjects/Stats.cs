@@ -78,6 +78,9 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public Stats()
         {
+            for (var i = 0; i < stats.Length; i++)
+                stats[i] = new Dictionary<int, float>();
+
             updatedHealth = false;
             goldPerSecond = 0;
             healthPerLevel = 0;

@@ -22,9 +22,15 @@ namespace IntWarsSharp.Logic
         }
         public void loadScript(string location)
         {
-            lua.LoadFile(location);
-            loaded = true;
+            loaded = false;
+            try
+            {
+                var s = lua.DoFile(location);
+                loaded = true;
+            }
+            catch { }
         }
+
         public LuaTable getTable(string name)
         {
             if (!loaded)
@@ -32,6 +38,7 @@ namespace IntWarsSharp.Logic
 
             return lua.GetTable(name);
         }
+
         public Dictionary<object, object> getTableDictionary(string name)
         {
             if (!loaded)
@@ -39,6 +46,15 @@ namespace IntWarsSharp.Logic
 
             return lua.GetTableDict(getTable(name));
         }
+
+        public Dictionary<object, object> getTableDictionary(LuaTable table)
+        {
+            if (!loaded)
+                return null;
+
+            return lua.GetTableDict(table);
+        }
+
         //public void setFunction();
         public void setLoaded(bool load)
         {

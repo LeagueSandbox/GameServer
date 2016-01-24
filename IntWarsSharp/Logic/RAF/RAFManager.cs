@@ -1,4 +1,4 @@
-﻿using freedompeace.RiotArchive;
+﻿
 using InibinSharp;
 using InibinSharp.RAF;
 using Microsoft.Win32;
@@ -110,8 +110,19 @@ namespace IntWarsSharp.Core.Logic.RAF
             return true;
         }
 
+        internal List<RAFFileListEntry> SearchFileEntries(string path)
+        {
+            return Root.SearchFileEntries(path);
+        }
+
+
         internal bool readInibin(string path, out Inibin iniFile)
         {
+            if (Root == null)
+            {
+                iniFile = null;
+                return false;
+            }
             var entries = Root.SearchFileEntries(path);
 
             if (entries.Count < 1)
@@ -130,6 +141,12 @@ namespace IntWarsSharp.Core.Logic.RAF
 
         internal bool readAIMesh(string path, out IntWarsSharp.Logic.RAF.AIMesh aimesh)
         {
+            if (Root == null)
+            {
+                aimesh = null;
+                return false;
+            }
+
             var entries = Root.SearchFileEntries(path);
             if (entries.Count < 1)
             {

@@ -23,12 +23,15 @@ namespace IntWarsSharp
         private static ushort SERVER_PORT = 5119;
         private static string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private static string SERVER_VERSION = "0.2.0";
+        public static string ExecutingDirectory;
 
         static void Main(string[] args)
         {
             Console.WriteLine("Yorick " + SERVER_VERSION);
-            WriteToLog.ExecutingDirectory = @"C:\Users\Tom\Documents\Visual Studio 2013\Projects\IntWarsSharp\IntWarsSharp.Core\bin\Debug";
+            WriteToLog.ExecutingDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            WriteToLog.LogfileName = "IntWarsSharp.txt";
             WriteToLog.CreateLogFile();
+            ExecutingDirectory = WriteToLog.ExecutingDirectory;
 
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
@@ -38,16 +41,16 @@ namespace IntWarsSharp
 
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
-            var basePath = RAFManager.getInstance().findGameBasePath();
+            //var basePath = RAFManager.getInstance().findGameBasePath();
+            var basePath = @"C:\LolPatcherProxy\Base\RADS\projects\lol_game_client";
+            if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath, "filearchives")))
+             {
+                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
+                 return;
+             }
+            //var addr = (uint)BitConverter.ToInt32(IPAddress.Parse("127.0.0.1").GetAddressBytes(), 0);
 
-            if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath,"filearchives")))
-            {
-                Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
-                return;
-            }
-
-            //todo
-            ItemManager.getInstance().init();
+            //ItemManager.getInstance().init();
 
             Logger.LogCoreInfo("Game started");
 
@@ -55,6 +58,7 @@ namespace IntWarsSharp
             var address = new ENetAddress();
             address.host = SERVER_HOST;
             address.port = SERVER_PORT;
+
 
             if (!g.initialize(address, SERVER_KEY))
             {
