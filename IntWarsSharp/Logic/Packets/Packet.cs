@@ -219,23 +219,41 @@ namespace IntWarsSharp.Logic.Packets
         int redPlayerNo;*/
     }
 
-    public class KeyCheck
+    public class KeyCheck : Packet
     {
-        public KeyCheck()
+        public KeyCheck(long userId, int playerNo) : base(PacketCmd.PKT_KeyCheck)
         {
-            cmd = PacketCmd.PKT_KeyCheck;
-            playerNo = 0;
-            checkId = 0;
-            trash = trash2 = 0;
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
+            buffer.Write((int)playerNo);
+            buffer.Write((long)userId);
+            buffer.Write((int)0);
+            buffer.Write((long)0);
+            buffer.Write((int)0);
+        }
+        public KeyCheck(byte[] bytes) : base(PacketCmd.PKT_KeyCheck)
+        {
+            var reader = new BinaryReader(new MemoryStream(bytes));
+            cmd = (PacketCmd)reader.ReadByte();
+            partialKey[0] = reader.ReadByte();
+            partialKey[1] = reader.ReadByte();
+            partialKey[2] = reader.ReadByte();
+            playerNo = reader.ReadInt32();
+            userId = reader.ReadInt64();
+            trash = reader.ReadInt32();
+            checkId = reader.ReadInt64();
+            trash2 = reader.ReadInt32();
+            reader.Close();
         }
 
-        PacketCmd cmd;
-        short[] partialKey = new short[3];   //Bytes 1 to 3 from the blowfish key for that client
-        int playerNo;
-        long userId;         //short testVar[8];   //User id
-        int trash;
-        long checkId;        //short checkVar[8];  //Encrypted testVar
-        int trash2;
+        public PacketCmd cmd;
+        public short[] partialKey = new short[3];   //Bytes 1 to 3 from the blowfish key for that client
+        public int playerNo;
+        public long userId;         //short testVar[8];   //User id
+        public int trash;
+        public long checkId;        //short checkVar[8];  //Encrypted testVar
+        public int trash2;
     }
 
     public class CameraLock
@@ -571,15 +589,11 @@ namespace IntWarsSharp.Logic.Packets
     } ViewAns;*/
 
 
-    public class QueryStatus
+    public class QueryStatus : BasePacket
     {
-        PacketHeader header;
-        short ok;
-        public QueryStatus()
+        public QueryStatus() :base(PacketCmd.PKT_S2C_QueryStatusAns)
         {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_S2C_QueryStatusAns;
-            ok = 1;
+            buffer.Write((byte)1); //ok
         }
     }
 
@@ -595,17 +609,15 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class WorldSendGameNumber
+    public class WorldSendGameNumber : BasePacket
     {
-        PacketHeader header;
-        long gameId;
-        short[] data = new short[128];
-
-        public WorldSendGameNumber()
+        public WorldSendGameNumber(long gameId, string name) : base(PacketCmd.PKT_World_SendGameNumber)
         {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_World_SendGameNumber;
-            gameId = 0;
+            var data = Encoding.Default.GetBytes(name);
+            buffer.Write((long)gameId);
+            foreach (var d in data)
+                buffer.Write((byte)d);
+            buffer.fill(0, 128 - data.Length);
         }
     }
 

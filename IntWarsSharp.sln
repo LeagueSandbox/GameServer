@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntWarsSharp", "IntWarsShar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InibinSharp", "InibinSharp\InibinSharp.csproj", "{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENetCS", "ENetCS\ENetCS.csproj", "{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}.ReleaseKopiLua|Any CPU.ActiveCfg = Release|Any CPU
 		{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}.ReleaseKopiLua|Any CPU.Build.0 = Release|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.DebugKopiLua|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.DebugKopiLua|Any CPU.Build.0 = Debug|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.ReleaseKopiLua|Any CPU.ActiveCfg = Release|Any CPU
+		{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}.ReleaseKopiLua|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

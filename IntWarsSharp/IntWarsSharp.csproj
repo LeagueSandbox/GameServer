@@ -40,10 +40,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ENet, Version=1.3.6.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ENet.1.3.6.3\lib\ENet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
       <HintPath>..\packages\NLua.1.3.2.1\lib\net45\KeraLua.dll</HintPath>
       <Private>True</Private>
@@ -74,7 +70,6 @@
     <Compile Include="Logic\ChampionFactory.cs" />
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
-    <Compile Include="Logic\Enet\ENetHosts.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
     <Compile Include="Logic\GameObjects\Champion.cs" />
@@ -134,34 +129,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ENetX64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="ENetX86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="IntWarsSharp.Core.GPL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="libenet.dylib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ENetCS\ENetCS.csproj">
+      <Project>{d3aff7fa-96f6-42b8-b03c-e508dc80ec3a}</Project>
+      <Name>ENetCS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InibinSharp\InibinSharp.csproj">
       <Project>{f47ac3d4-6c0f-4f02-9a7f-fbed54cf6e0a}</Project>
       <Name>InibinSharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
 C:\windows\system32\xcopy /s /y "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"
-C:\windows\system32\xcopy /s /y "$(ProjectDir)lua" "$(TargetDir)lua\*"</PostBuildEvent>
+C:\windows\system32\xcopy /s /y "$(ProjectDir)lua" "$(TargetDir)lua\*"
+C:\windows\system32\xcopy /s /y "$(SolutionDir)lib" "$(TargetDir)*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,4 @@
-﻿using ENet.Native;
+﻿using static ENet.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace IntWarsSharp.Core.Logic
 {
     public interface IPacketHandler
     {
-        unsafe bool HandlePacket(ENetPeer* peer, ENetPacket* packet);
+        unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game);
     }
 }

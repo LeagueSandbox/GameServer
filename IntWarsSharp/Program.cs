@@ -1,6 +1,5 @@
-﻿using ENet.Native;
+﻿using static ENet.Native;
 using IntWarsSharp.Core.Logic;
-using IntWarsSharp.Core.Logic.Enet;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic;
 using IntWarsSharp.Logic.GameObjects;
@@ -19,7 +18,7 @@ namespace IntWarsSharp
 {
     class Program
     {
-        private static uint SERVER_HOST = (uint)ENetHosts.ENET_HOST_ANY;
+        private static uint SERVER_HOST = ENET_HOST_ANY;
         private static ushort SERVER_PORT = 5119;
         private static string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private static string SERVER_VERSION = "0.2.0";

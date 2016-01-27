@@ -1,17 +1,56 @@
-﻿using System;
+﻿using IntWarsSharp.Logic.Enet;
+using IntWarsSharp.Logic.Packets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using ENet.Native;
+using static ENet.Native;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
     class HandleKeyCheck : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, ENetPacket* packet)
+        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
+            // players[0].Item1 = peer->address.host; //temp
+            //   players[0].Item2.setPeer(enetEvent.peer);
+
+            var keyCheck = new KeyCheck(data);
+            var userId = BitConverter.ToInt64(game.getBlowfish().Decrypt_ECB(BitConverter.GetBytes(keyCheck.checkId)), 0);
+
+            if (userId != keyCheck.userId)
+                return false;
+
+            var playerNo = 0;
+
+            foreach (var p in game.getPlayers())
+            {
+                var player = p.Item2;
+                if (player.userId + 1 == userId)
+                {
+                    if (player.getPeer() != null)
+                    {
+                        Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                        return false;
+                    }
+
+                    p.Item1 = peer->address.host;
+                    player.setPeer(peer);
+                    var response = new KeyCheck(keyCheck.userId, playerNo);
+                    bool bRet = PacketHandlerManager.getInstace().sendPacket(peer, response, Channel.CHL_HANDSHAKE);
+                    handleGameNumber(player, peer, null);//Send 0x91 Packet?
+                    return true;
+                }
+                ++playerNo;
+            }
             return false;
+        }
+        unsafe bool handleGameNumber(ClientInfo client, ENetPeer* peer, ENetPacket* packet)
+        {
+            var world = new WorldSendGameNumber(1, client.getName());
+            return PacketHandlerManager.getInstace().sendPacket(peer, world, Channel.CHL_S2C);
         }
     }
 }

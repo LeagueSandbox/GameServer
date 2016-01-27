@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ENet.Native;
 using System.Runtime.InteropServices;
 using IntWarsSharp.Logic;
 using IntWarsSharp.Logic.Enet;
@@ -15,6 +14,7 @@ using IntWarsSharp.Logic.Maps;
 using System.Net.Sockets;
 using System.Net;
 using BlowFishCS;
+using static ENet.Native;
 
 namespace IntWarsSharp.Core.Logic
 {
@@ -39,12 +39,15 @@ namespace IntWarsSharp.Core.Logic
 
         public bool initialize(ENetAddress address, string baseKey)
         {
-            // _server = ENetApi.enet_host_create(&address, new IntPtr(32), new IntPtr(32), 0, 0);
-            // if (_server == null)
-            //    return false;
+            if (enet_initialize() < 0)
+                return false;
+
+            _server = enet_host_create(&address, new IntPtr(32), new IntPtr(32), 0, 0);
+            if (_server == null)
+                return false;
 
             var key = Convert.FromBase64String(baseKey);
-            
+
             if (key.Length <= 0)
                 return false;
 
@@ -100,25 +103,14 @@ namespace IntWarsSharp.Core.Logic
         }
         public void netLoop()
         {
-            var enetEvent = new ENetEvent();
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-
-            /*var client = new UdpClient(new IPEndPoint(IPAddress.Any, 5119));
-            var endpoint = new IPEndPoint(IPAddress.Any, 0);
-            var data = client.Receive(ref endpoint);
-
-            if (data.Length >= 8)
-                data = getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
-               
-
-            var header = new IntWarsSharp.Logic.Packets.PacketHeader(data); */
+            var enetEvent = new ENetEvent();
 
             while (true)
             {
-                while (ENetApi.enet_host_service(_server, &enetEvent, 20) > 0)
+                while (enet_host_service(_server, &enetEvent, 0) > 0)
                 {
-                    Console.WriteLine("in");
                     switch (enetEvent.type)
                     {
                         case EventType.Connect:
@@ -126,9 +118,7 @@ namespace IntWarsSharp.Core.Logic
 
                             /* Set some defaults */
                             //enetEvent.peer->mtu = PEER_MTU;
-                            enetEvent.data = 0;
-                            players[0].Item1 = enetEvent.peer->address.host; //temp
-                            players[0].Item2.setPeer(enetEvent.peer);
+                            // enetEvent.data = 0;
                             break;
 
                         case EventType.Receive:
@@ -139,7 +129,7 @@ namespace IntWarsSharp.Core.Logic
                             }
 
                             /* Clean up the packet now that we're done using it. */
-                            ENetApi.enet_packet_destroy(enetEvent.packet);
+                            enet_packet_destroy(enetEvent.packet);
                             break;
 
                         case EventType.Disconnect:

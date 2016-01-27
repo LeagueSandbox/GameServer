@@ -1,4 +1,4 @@
-﻿using ENet.Native;
+﻿using static ENet.Native;
 using IntWarsSharp.Core.Logic.PacketHandlers;
 using IntWarsSharp.Logic.GameObjects;
 using System;
