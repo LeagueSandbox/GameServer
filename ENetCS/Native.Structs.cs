@@ -95,6 +95,33 @@ namespace ENet
         [StructLayout(LayoutKind.Sequential)]
         public struct ENetHost
         {
+           /* ENetSocket socket;
+            ENetAddress address;                     //< Internet address of the host 
+            uint incomingBandwidth;           //< downstream bandwidth of the host 
+            uint outgoingBandwidth;           //< upstream bandwidth of the host 
+            uint bandwidthThrottleEpoch;
+            uint mtu;
+            int recalculateBandwidthLimits;
+            ENetPeer* peers;                       //< array of peers allocated for this host 
+            IntPtr peerCount;                   //< number of peers allocated for this host 
+            IntPtr channelLimit;                //< maximum number of channels allowed for connected peers 
+            uint serviceTime;
+            ENetList dispatchQueue;
+            int continueSending;
+            IntPtr packetSize;
+            byte headerFlags;
+            ENetProtocol commands[ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS];
+            IntPtr commandCount;
+            ENetBuffer buffers[ENET_BUFFER_MAXIMUM];
+            IntPtr bufferCount;
+            ENetChecksumCallback checksum;
+            ENetAddress receivedAddress;
+            byte receivedData[ENET_PROTOCOL_MAXIMUM_MTU];
+            IntPtr receivedDataLength;
+            uint totalSentData;               //< total data sent, user should reset to 0 as needed to prevent overflow 
+            uint totalSentPackets;            //< total UDP packets sent, user should reset to 0 as needed to prevent overflow 
+            uint totalReceivedData;           //< total data received, user should reset to 0 as needed to prevent overflow 
+            uint totalReceivedPackets;        //< total UDP packets received, user should reset to 0 as needed to prevent overflow */
         }
 
         #endregion
@@ -143,11 +170,13 @@ namespace ENet
         {
             public ENetListNode dispatchList;
             public ENetHost* host;
-            public ushort outgoingPeerID;
-            public ushort incomingPeerID;
+            //public ushort outgoingPeerID;
+            //public ushort incomingPeerID;
+            public byte outgoingPeerID;
+            public byte incomingPeerID;
             public uint connectID;
-            public byte outgoingSessionID;
-            public byte incomingSessionID;
+           // public byte outgoingSessionID;
+           // public byte incomingSessionID;
             public ENetAddress address;
             public IntPtr data;
             public PeerState state;
@@ -175,17 +204,17 @@ namespace ENet
             public uint packetThrottleAcceleration;
             public uint packetThrottleDeceleration;
             public uint packetThrottleInterval;
-            public uint pingInterval;
-            public uint timeoutLimit;
-            public uint timeoutMinimum;
-            public uint timeoutMaximum;
+            //public uint pingInterval;
+            //public uint timeoutLimit;
+            //public uint timeoutMinimum;
+           // public uint timeoutMaximum;
             public uint lastRoundTripTime;
             public uint lowestRoundTripTime;
             public uint lastRoundTripTimeVariance;
             public uint highestRoundTripTimeVariance;
             public uint roundTripTime;
             public uint roundTripTimeVariance;
-            public uint mtu;
+            public ushort mtu;
             public uint windowSize;
             public uint reliableDataInTransit;
             public ushort outgoingReliableSequenceNumber;

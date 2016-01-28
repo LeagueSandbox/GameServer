@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using static ENet.Native;
+using IntWarsSharp.Logic.Packets;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -12,7 +13,14 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            return false;
+            var loadInfo = new PingLoadInfo(data);
+            var peerInfo = game.peerInfo(peer);
+            if (peerInfo == null)
+                return false;
+            var response = new PingLoadInfo(loadInfo, peerInfo.userId);
+
+            //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
+            return PacketHandlerManager.getInstace().broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }
     }
 }

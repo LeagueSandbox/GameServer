@@ -147,9 +147,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-C:\windows\system32\xcopy /s /y "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"
 C:\windows\system32\xcopy /s /y "$(ProjectDir)lua" "$(TargetDir)lua\*"
-C:\windows\system32\xcopy /s /y "$(SolutionDir)lib" "$(TargetDir)*"</PostBuildEvent>
+C:\windows\system32\xcopy /s /y "$(SolutionDir)lib" "$(TargetDir)*"
+xcopy /s /y "C:\Users\Tom\Documents\Visual Studio 2013\Projects\IntWarsSharp\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

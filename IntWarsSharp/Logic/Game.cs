@@ -34,7 +34,6 @@ namespace IntWarsSharp.Core.Logic
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
         private const PacketFlags UNRELIABLE = PacketFlags.None;
-        private const string GAME_VERSION = "Version 4.20.0.315 [PUBLIC]";
         private const int REFRESH_RATE = 16666; // 60 fps
 
         public bool initialize(ENetAddress address, string baseKey)
@@ -72,7 +71,7 @@ namespace IntWarsSharp.Core.Logic
 
                 player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
 
-                Champion c = ChampionFactory.getChampionFromType(p.Value.champion, map, GetNewNetID(), player.userId);
+                Champion c = ChampionFactory.getChampionFromType(p.Value.champion, map, GetNewNetID(), (int)player.userId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
@@ -117,8 +116,8 @@ namespace IntWarsSharp.Core.Logic
                             //Logging->writeLine("A new client connected: %i.%i.%i.%i:%i", event.peer->address.host & 0xFF, (event.peer->address.host >> 8) & 0xFF, (event.peer->address.host >> 16) & 0xFF, (event.peer->address.host >> 24) & 0xFF, event.peer->address.port);
 
                             /* Set some defaults */
-                            //enetEvent.peer->mtu = PEER_MTU;
-                            // enetEvent.data = 0;
+                            enetEvent.peer->mtu = PEER_MTU;
+                            enetEvent.data = 0;
                             break;
 
                         case EventType.Receive:

@@ -36,6 +36,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                         return false;
                     }
 
+                    //TODO: add at least port or smth
                     p.Item1 = peer->address.host;
                     player.setPeer(peer);
                     var response = new KeyCheck(keyCheck.userId, playerNo);

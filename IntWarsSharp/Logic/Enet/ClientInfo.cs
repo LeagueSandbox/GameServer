@@ -13,7 +13,7 @@ namespace IntWarsSharp.Logic.Enet
     {
         public bool keyChecked = false;
         public bool versionMatch = true;
-        public int userId;
+        public long userId;
         public int ticks = 0;
         public int skinNo = 0;
         public SummonerSpellIds[] summonerSkills = new SummonerSpellIds[2];

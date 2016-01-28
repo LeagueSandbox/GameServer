@@ -14,6 +14,7 @@ namespace IntWarsSharp.Logic
         public static Dictionary<string, PlayerConfig> players;
         public static GameConfig gameConfig;
         public static MapSpawns mapSpawns;
+        public static string version = "Version 4.20.0.315 [PUBLIC]";
 
         public static void LoadConfig()
         {

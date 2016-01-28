@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using static ENet.Native;
+using IntWarsSharp.Logic.Packets;
+using IntWarsSharp.Logic;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -12,7 +14,38 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            return false;
+            var version = new SynchVersion(data);
+            //Logging->writeLine("Client version: %s", version->version);
+
+            var mapId = Config.gameConfig.map;
+            Logger.LogCoreInfo("Current map: " + mapId);
+
+            bool versionMatch = true;
+            // Version might be an invalid value, currently it trusts the client
+            if (version.version != Config.version)
+            {
+                versionMatch = false;
+                Logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.version);
+            }
+            else
+            {
+                Logger.LogCoreInfo("Accepted client version (" + version.version + ")");
+            }
+
+            foreach (var player in game.getPlayers())
+            {
+                if (player.Item1 == peer->address.host)
+                {
+                    player.Item2.setVersionMatch(versionMatch);
+                    break;
+                }
+            }
+            int map;
+            if (!int.TryParse(mapId, out map))
+                map = 1;
+            var answer = new SynchVersionAns(game.getPlayers(), Config.version, "CLASSIC", map);
+
+            return PacketHandlerManager.getInstace().sendPacket(peer, answer, Channel.CHL_S2C);
         }
     }
 }

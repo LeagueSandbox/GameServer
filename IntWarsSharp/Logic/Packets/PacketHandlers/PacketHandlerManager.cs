@@ -16,44 +16,44 @@ namespace IntWarsSharp.Core.Logic
     unsafe class PacketHandlerManager
     {
         private static PacketHandlerManager _instance;
-        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
+        private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private Game game;
 
         internal void InitHandlers(Game g)
         {
-            _handlerTable = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
+            _handlerTable = new Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>>();
 
-            registerHandler(new HandleKeyCheck(), PacketCmd.PKT_KeyCheck, Channel.CHL_HANDSHAKE);
-            registerHandler(new HandleLoadPing(), PacketCmd.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
-            registerHandler(new HandleSpawn(), PacketCmd.PKT_C2S_CharLoaded, Channel.CHL_C2S);
-            registerHandler(new HandleMap(), PacketCmd.PKT_C2S_ClientReady, Channel.CHL_LOADING_SCREEN);
-            registerHandler(new HandleSynch(), PacketCmd.PKT_C2S_SynchVersion, Channel.CHL_C2S);
-            registerHandler(new HandleCastSpell(), PacketCmd.PKT_C2S_CastSpell, Channel.CHL_C2S);
+            registerHandler(new HandleKeyCheck(), PacketCmdC2S.PKT_C2S_KeyCheck, Channel.CHL_HANDSHAKE);
+            registerHandler(new HandleLoadPing(), PacketCmdC2S.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
+            registerHandler(new HandleSpawn(), PacketCmdC2S.PKT_C2S_CharLoaded, Channel.CHL_C2S);
+            registerHandler(new HandleMap(), PacketCmdC2S.PKT_C2S_ClientReady, Channel.CHL_LOADING_SCREEN);
+            registerHandler(new HandleSynch(), PacketCmdC2S.PKT_C2S_SynchVersion, Channel.CHL_C2S);
+            registerHandler(new HandleCastSpell(), PacketCmdC2S.PKT_C2S_CastSpell, Channel.CHL_C2S);
             //registerHandler(new HandleGameNumber(),      PacketCmd.PKT_C2S_GameNumberReq, Channel.CHL_C2S);
-            registerHandler(new HandleQueryStatus(), PacketCmd.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
-            registerHandler(new HandleStartGame(), PacketCmd.PKT_C2S_StartGame, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_Exit, Channel.CHL_C2S);
-            registerHandler(new HandleView(), PacketCmd.PKT_C2S_ViewReq, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_Click, Channel.CHL_C2S);
+            registerHandler(new HandleQueryStatus(), PacketCmdC2S.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
+            registerHandler(new HandleStartGame(), PacketCmdC2S.PKT_C2S_StartGame, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Exit, Channel.CHL_C2S);
+            registerHandler(new HandleView(), PacketCmdC2S.PKT_C2S_ViewReq, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
             //registerHandler(new HandleNull(),            PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
-            registerHandler(new HandleAttentionPing(), PacketCmd.PKT_C2S_AttentionPing, Channel.CHL_C2S);
-            registerHandler(new HandleChatBoxMessage(), PacketCmd.PKT_ChatBoxMessage, Channel.CHL_COMMUNICATION);
-            registerHandler(new HandleMove(), PacketCmd.PKT_C2S_MoveReq, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_MoveConfirm, Channel.CHL_C2S);
-            registerHandler(new HandleSkillUp(), PacketCmd.PKT_C2S_SkillUp, Channel.CHL_C2S);
-            registerHandler(new HandleEmotion(), PacketCmd.PKT_C2S_Emotion, Channel.CHL_C2S);
-            registerHandler(new HandleBuyItem(), PacketCmd.PKT_C2S_BuyItemReq, Channel.CHL_C2S);
-            registerHandler(new HandleSellItem(), PacketCmd.PKT_C2S_SellItem, Channel.CHL_C2S);
-            registerHandler(new HandleSwapItems(), PacketCmd.PKT_C2S_SwapItems, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_LockCamera, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
-            registerHandler(new HandleClick(), PacketCmd.PKT_C2S_Click, Channel.CHL_C2S);
-            registerHandler(new HandleHeartBeat(), PacketCmd.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
+            registerHandler(new HandleAttentionPing(), PacketCmdC2S.PKT_C2S_AttentionPing, Channel.CHL_C2S);
+            registerHandler(new HandleChatBoxMessage(), PacketCmdC2S.PKT_C2S_ChatBoxMessage, Channel.CHL_COMMUNICATION);
+            registerHandler(new HandleMove(), PacketCmdC2S.PKT_C2S_MoveReq, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_MoveConfirm, Channel.CHL_C2S);
+            registerHandler(new HandleSkillUp(), PacketCmdC2S.PKT_C2S_SkillUp, Channel.CHL_C2S);
+            registerHandler(new HandleEmotion(), PacketCmdC2S.PKT_C2S_Emotion, Channel.CHL_C2S);
+            registerHandler(new HandleBuyItem(), PacketCmdC2S.PKT_C2S_BuyItemReq, Channel.CHL_C2S);
+            registerHandler(new HandleSellItem(), PacketCmdC2S.PKT_C2S_SellItem, Channel.CHL_C2S);
+            registerHandler(new HandleSwapItems(), PacketCmdC2S.PKT_C2S_SwapItems, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_LockCamera, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
+            registerHandler(new HandleClick(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
+            registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
 
             game = g;
         }
 
-        public void registerHandler(IPacketHandler handler, PacketCmd pktcmd, Channel channel)
+        public void registerHandler(IPacketHandler handler, PacketCmdC2S pktcmd, Channel channel)
         {
 
             if (!_handlerTable.ContainsKey(pktcmd))
@@ -74,7 +74,7 @@ namespace IntWarsSharp.Core.Logic
             return _instance;
         }
 
-        internal IPacketHandler GetHandler(PacketCmd cmd, byte channelID)
+        internal IPacketHandler GetHandler(PacketCmdC2S cmd, byte channelID)
         {
             if (_handlerTable.ContainsKey(cmd))
             {
@@ -111,7 +111,9 @@ namespace IntWarsSharp.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //	printPacket(data, length);
-
+            foreach (var b in source)
+                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+            System.Diagnostics.Debug.WriteLine("");
             if (source.Length >= 8)
                 source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 
@@ -192,6 +194,11 @@ namespace IntWarsSharp.Core.Logic
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
 
+            Console.WriteLine("Requested " + header.cmd.ToString());
+
+            if (header.cmd == PacketCmdC2S.PKT_C2S_ClientReady)
+                System.Diagnostics.Debugger.Break();
+            
             if (handler != null)
             {
                 return handler.HandlePacket(peer, data, game);
