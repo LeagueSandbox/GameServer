@@ -370,12 +370,16 @@ namespace IntWarsSharp.Logic.Packets
             }
         }
 
-        MinionSpawn(int netId) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, netId)
+
+    }
+    public class MinionSpawn2 : Packet // shhhhh....
+    {
+        public MinionSpawn2(uint netId) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn)
         {
+            buffer.Write((uint)netId);
             buffer.fill(0, 3);
         }
     }
-
     class SpellAnimation : BasePacket
     {
 
@@ -756,27 +760,21 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-   /* public class StatePacket
+    public class StatePacket : BasePacket
     {
-        PacketHeader header;
-        public StatePacket(PacketCmdS2C state)
+        public StatePacket(PacketCmdS2C state) : base(state)
         {
-            header = new PacketHeader();
-            header.cmd = state;
-        }
-    }
-    public class StatePacket2
-    {
-        PacketHeader header;
-        short nUnk;
-        public StatePacket2(PacketCmdS2C state)
-        {
-            header = new PacketHeader();
-            header.cmd = state;
-            nUnk = 0;
-        }
-    }
 
+        }
+    }
+    public class StatePacket2 : BasePacket
+    {
+        public StatePacket2(PacketCmdS2C state) : base(state)
+        {
+            buffer.Write((short)0); //unk
+        }
+    }
+    /*
     public class FogUpdate2
     {
         PacketHeader header;
@@ -808,28 +806,30 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0); // ???
             buffer.Write((int)player.getChampion().getNetId());
             buffer.Write((int)playerId); // player Id
-            buffer.Write((short)40); // netNodeID ?
-            buffer.Write((short)0); // botSkillLevel Beginner=0 Intermediate=1
+            buffer.Write((byte)40); // netNodeID ?
+            buffer.Write((byte)0); // botSkillLevel Beginner=0 Intermediate=1
             if (player.getTeam() == TeamId.TEAM_BLUE)
             {
-                buffer.Write((short)1); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
+                buffer.Write((byte)1); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
             }
             else
             {
-                buffer.Write((short)0); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
+                buffer.Write((byte)0); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
             }
-            buffer.Write((short)0); // isBot
-                                    //buffer.Write((short)0; // botRank (deprecated as of 4.18)
-            buffer.Write((short)0); // spawnPosIndex
+            buffer.Write((byte)0); // isBot
+                                   //buffer.Write((short)0; // botRank (deprecated as of 4.18)
+            buffer.Write((byte)0); // spawnPosIndex
             buffer.Write((int)player.getSkinNo());
-            buffer.Write(player.getName());
+            foreach (var b in Encoding.Default.GetBytes(player.getName()))
+                buffer.Write((byte)b);
             buffer.fill(0, 128 - player.getName().Length);
-            buffer.Write(player.getChampion().getType());
+            foreach (var b in Encoding.Default.GetBytes(player.getChampion().getType()))
+                buffer.Write((byte)b);
             buffer.fill(0, 40 - player.getChampion().getType().Length);
             buffer.Write((float)0.0f); // deathDurationRemaining
             buffer.Write((float)0.0f); // timeSinceDeath
             buffer.Write((int)0); // UNK (4.18)
-            buffer.Write((short)0); // bitField
+            buffer.Write((byte)0); // bitField
         }
     }
 
@@ -850,14 +850,21 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class TurretSpawn : BasePacket
+    public class TurretSpawn : Packet
     {
         public TurretSpawn(Turret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
-            buffer.Write(t.getNetId());
-            buffer.Write(t.getName());
+            buffer.Write((int)t.getNetId());
+            foreach (var b in Encoding.Default.GetBytes(t.getName()))
+                buffer.Write((byte)b);
             buffer.fill(0, 64 - t.getName().Length);
-            buffer.Write("\x00\x22\x00\x00\x80\x01");
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x22);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x80);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x00);
         }
 
         /*PacketHeader header;
@@ -866,7 +873,7 @@ namespace IntWarsSharp.Logic.Packets
         short type[42];*/
     }
 
-    public class GameTimer : GamePacket
+    public class GameTimer : BasePacket
     {
         public GameTimer(float fTime) : base(PacketCmdS2C.PKT_S2C_GameTimer, 0)
         {
@@ -874,7 +881,7 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class GameTimerUpdate : GamePacket
+    public class GameTimerUpdate : BasePacket
     {
         public GameTimerUpdate(float fTime) : base(PacketCmdS2C.PKT_S2C_GameTimerUpdate, 0)
         {
@@ -884,25 +891,35 @@ namespace IntWarsSharp.Logic.Packets
 
     public class HeartBeat
     {
-        public PacketHeader header = new PacketHeader();
+        public PacketCmdC2S cmd;
+        public int netId;
         public float receiveTime;
         public float ackTime;
+        public HeartBeat(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            receiveTime = reader.ReadSingle();
+            ackTime = reader.ReadSingle();
+            reader.Close();
+        }
     }
 
-   /* public class SpellSet
-    {
-        public PacketHeader header;
-        public int spellID;
-        public int level;
-        public SpellSet(int netID, int _spellID, int _level)
-        {
-            header = new PacketHeader();
-            header.cmd = (PacketCmdS2C)0x5A;
-            header.netId = netID;
-            spellID = _spellID;
-            level = _level;
-        }
-    }*/
+    /* public class SpellSet
+     {
+         public PacketHeader header;
+         public int spellID;
+         public int level;
+         public SpellSet(int netID, int _spellID, int _level)
+         {
+             header = new PacketHeader();
+             header.cmd = (PacketCmdS2C)0x5A;
+             header.netId = netID;
+             spellID = _spellID;
+             level = _level;
+         }
+     }*/
 
     public class SkillUpPacket
     {
@@ -967,16 +984,16 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-  /*  public class EmotionResponse
-    {
-        public PacketHeader header;
-        public short id;
-        public EmotionResponse()
-        {
-            header.cmd = PacketCmdS2C.PKT_S2C_Emotion;
-        }
+    /*  public class EmotionResponse
+      {
+          public PacketHeader header;
+          public short id;
+          public EmotionResponse()
+          {
+              header.cmd = PacketCmdS2C.PKT_S2C_Emotion;
+          }
 
-    }*/
+      }*/
 
     /* New Style Packets */
 
@@ -1324,13 +1341,21 @@ namespace IntWarsSharp.Logic.Packets
         public SetHealth(Unit u) : base(PacketCmdS2C.PKT_S2C_SetHealth, u.getNetId())
         {
             buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write(u.getStats().getMaxHealth());
-            buffer.Write(u.getStats().getCurrentHealth());
+            buffer.Write((float)u.getStats().getMaxHealth());
+            buffer.Write((float)u.getStats().getCurrentHealth());
         }
-
 
         public SetHealth(int itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
         {
+            buffer.Write((short)0);
+        }
+
+    }
+    public class SetHealth2 : Packet //shhhhh...
+    {
+        public SetHealth2(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth)
+        {
+            buffer.Write((uint)itemHash);
             buffer.Write((short)0);
         }
     }
@@ -1430,533 +1455,533 @@ namespace IntWarsSharp.Logic.Packets
         public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.getChampion().getNetId())
         {
             #region wtf
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x7D);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x83);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xA9);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xC5);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xD7);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xD7);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0xD7);
-            buffer.Write((short)0x14);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7D);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x83);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xA9);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC5);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xD7);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xD7);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xD7);
+            buffer.Write((byte)0x14);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
 
             buffer.Write((int)player.summonerSkills[0]);
             buffer.Write((int)player.summonerSkills[1]);
 
-            buffer.Write((short)0x41);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x42);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x04);
-            buffer.Write((short)0x52);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x61);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x62);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x64);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x71);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x72);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x82);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x92);
-            buffer.Write((short)0x74);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x41);
-            buffer.Write((short)0x75);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x42);
-            buffer.Write((short)0x75);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x02);
-            buffer.Write((short)0x43);
-            buffer.Write((short)0x75);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x02);
-            buffer.Write((short)0x52);
-            buffer.Write((short)0x75);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x62);
-            buffer.Write((short)0x75);
-            buffer.Write((short)0x03);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x1E);
-            buffer.Write((short)0x00);
+            buffer.Write((byte)0x41);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x42);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x04);
+            buffer.Write((byte)0x52);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x61);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x62);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x64);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x71);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x72);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x82);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x92);
+            buffer.Write((byte)0x74);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x41);
+            buffer.Write((byte)0x75);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x42);
+            buffer.Write((byte)0x75);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x02);
+            buffer.Write((byte)0x43);
+            buffer.Write((byte)0x75);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x02);
+            buffer.Write((byte)0x52);
+            buffer.Write((byte)0x75);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x62);
+            buffer.Write((byte)0x75);
+            buffer.Write((byte)0x03);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x1E);
+            buffer.Write((byte)0x00);
+
             #endregion
         }
 
@@ -2166,29 +2191,31 @@ namespace IntWarsSharp.Logic.Packets
         {
             public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
             {
-                buffer.Write(lp.getNetId());
+                buffer.Write((int)lp.getNetId());
                 buffer.Write((int)0x00000040); // unk
-                buffer.Write((short)0); // unk
-                buffer.Write(lp.getX());
-                buffer.Write(lp.getZ());
-                buffer.Write(lp.getY());
-                buffer.Write(0.0f); // Rotation Y
+                buffer.Write((byte)0); // unk
+                buffer.Write((float)lp.getX());
+                buffer.Write((float)lp.getZ());
+                buffer.Write((float)lp.getY());
+                buffer.Write((float)0.0f); // Rotation Y
 
-                buffer.Write(lp.getDirectionX());
-                buffer.Write(lp.getDirectionZ());
-                buffer.Write(lp.getDirectionY());
-                buffer.Write(lp.getUnk1());
-                buffer.Write(lp.getUnk2());
+                buffer.Write((float)lp.getDirectionX());
+                buffer.Write((float)lp.getDirectionZ());
+                buffer.Write((float)lp.getDirectionY());
+                buffer.Write((float)lp.getUnk1());
+                buffer.Write((float)lp.getUnk2());
 
-                buffer.Write(1.0f);
-                buffer.Write(1.0f);
-                buffer.Write(1.0f); // Scaling
+                buffer.Write((float)1.0f);
+                buffer.Write((float)1.0f);
+                buffer.Write((float)1.0f); // Scaling
                 buffer.Write((int)300); // unk
                 buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
-                buffer.Write(lp.getName());
+                foreach (var b in Encoding.Default.GetBytes(lp.getName()))
+                    buffer.Write((byte)b);
                 buffer.fill(0, 64 - lp.getName().Length);
-                buffer.Write(lp.getType());
+                foreach (var b in Encoding.Default.GetBytes(lp.getType()))
+                    buffer.Write(b);
                 buffer.fill(0, 64 - lp.getType().Length);
             }
 
@@ -2221,8 +2248,8 @@ namespace IntWarsSharp.Logic.Packets
 
         public class ViewRequest
         {
-            public short cmd;
-            public int unk1;
+            public PacketCmdC2S cmd;
+            public int netId;
             public float x;
             public float zoom;
             public float y;
@@ -2230,7 +2257,24 @@ namespace IntWarsSharp.Logic.Packets
             public int width;  //Unk
             public int height; //Unk
             public int unk2;   //Unk
-            public short requestNo;
+            public byte requestNo;
+
+            public ViewRequest(byte[] data)
+            {
+                var reader = new BinaryReader(new MemoryStream(data));
+                cmd = (PacketCmdC2S)reader.ReadByte();
+                netId = reader.ReadInt32();
+                x = reader.ReadSingle();
+                zoom = reader.ReadSingle();
+                y = reader.ReadSingle();
+                y2 = reader.ReadSingle();
+                width = reader.ReadInt32();
+                height = reader.ReadInt32();
+                unk2 = reader.ReadInt32();
+                requestNo = reader.ReadByte();
+
+                reader.Close();
+            }
         }
 
         public class LevelUp : BasePacket
@@ -2246,9 +2290,9 @@ namespace IntWarsSharp.Logic.Packets
         {
             public ViewAnswer(ViewRequest request) : base(PacketCmdS2C.PKT_S2C_ViewAns)
             {
-                buffer.Write(request.unk1);
+                buffer.Write(request.netId);
             }
-            void setRequestNo(short requestNo)
+            public void setRequestNo(byte requestNo)
             {
                 buffer.Write(requestNo);
             }
@@ -2260,7 +2304,8 @@ namespace IntWarsSharp.Logic.Packets
             public DebugMessage(string message) : base(PacketCmdS2C.PKT_S2C_DebugMessage)
             {
                 buffer.Write((int)0);
-                buffer.Write(message);
+                foreach (var b in Encoding.Default.GetBytes(message))
+                    buffer.Write((byte)b);
                 buffer.fill(0, 512 - message.Length);
             }
         }

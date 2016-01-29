@@ -111,9 +111,11 @@ namespace IntWarsSharp.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //	printPacket(data, length);
+            System.Diagnostics.Debug.Write("Sent: ");
             foreach (var b in source)
-                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+                System.Diagnostics.Debug.Write(b.ToString("x")+" ");
             System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("--------");
             if (source.Length >= 8)
                 source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 
@@ -132,14 +134,16 @@ namespace IntWarsSharp.Core.Logic
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             //printPacket(data, length);
-            byte[] outData = new byte[data.Length - (data.Length % 8)];
-            Array.Copy(data, outData, outData.Length); //not gonna work lmao
+            System.Diagnostics.Debug.Write("Broadcast: ");
+            foreach (var b in data)
+                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("--------");
+            if (data.Length >= 8)// length - (length % 8)
+                data = game.getBlowfish().Encrypt_ECB(data);
 
-            if (outData.Length >= 8)// length - (length % 8)
-                outData = game.getBlowfish().Encrypt_ECB(outData);
-
-            var unmanagedPointer = allocMemory(outData);
-            var packet = enet_packet_create(unmanagedPointer, new IntPtr(outData.Length), (PacketFlags)flag);
+            var unmanagedPointer = allocMemory(data);
+            var packet = enet_packet_create(unmanagedPointer, new IntPtr(data.Length), (PacketFlags)flag);
 
             enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
             releaseMemory(unmanagedPointer);
@@ -193,11 +197,12 @@ namespace IntWarsSharp.Core.Logic
 
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
-
+            System.Diagnostics.Debug.Write("Received: ");
+            foreach (var b in data)
+                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("--------");
             Console.WriteLine("Requested " + header.cmd.ToString());
-
-            if (header.cmd == PacketCmdC2S.PKT_C2S_ClientReady)
-                System.Diagnostics.Debugger.Break();
             
             if (handler != null)
             {

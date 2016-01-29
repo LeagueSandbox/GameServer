@@ -58,13 +58,11 @@ namespace IntWarsSharp.Logic
         */
         public void Move(long diff)
         {
-
             if (target == null)
             {
                 direction = new Vector2();
                 return;
             }
-
             var to = new Vector2(target.getX(), target.getY());
             var cur = new Vector2(getX(), getY()); //?
 
@@ -80,7 +78,7 @@ namespace IntWarsSharp.Logic
             setPosition(xx, yy);
 
             /* If the target was a simple point, stop when it is reached */
-            if (target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2)
+            if (target != null && target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2) //how can target be null here?????
             {
                 if (dashing)
                 {
@@ -91,7 +89,8 @@ namespace IntWarsSharp.Logic
                 {
                     setTarget(null);
                 }
-                else {
+                else
+                {
                     setTarget(new Target(waypoints[curWaypoint]));
                 }
             }
@@ -260,7 +259,7 @@ namespace IntWarsSharp.Logic
 
         public bool isVisibleByTeam(TeamId team)
         {
-            return (team == getTeam() || isVisibleByTeam(team));
+            return (team == getTeam() || visibleByTeam[team == TeamId.TEAM_BLUE ? 0 : 1]);
         }
 
         public void setVisibleByTeam(int team, bool visible)

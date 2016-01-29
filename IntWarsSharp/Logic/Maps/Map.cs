@@ -96,15 +96,14 @@ namespace IntWarsSharp.Logic.Maps
 
                 for (var i = 0; i < 2; ++i)
                 {
-                    var teamId = (TeamId)i;
-                    if (u.getTeam() == teamId)
+                    if (u.getTeam() == toTeamId(i))
                         continue;
 
-                    var visionUnitsTeam = visionUnits[(int)u.getTeam()];
+                    var visionUnitsTeam = visionUnits[i];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
                         var s = visionUnitsTeam[u.getNetId()];
-                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn(teamId, u))
+                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn(toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -114,15 +113,15 @@ namespace IntWarsSharp.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(teamId) && teamHasVisionOn(teamId, u))
+                    if (!u.isVisibleByTeam(toTeamId(i)) && teamHasVisionOn(toTeamId(i), u))
                     {
-                        PacketNotifier.notifyEnterVision(u, teamId);
+                        PacketNotifier.notifyEnterVision(u, toTeamId(i));
                         u.setVisibleByTeam(i, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(teamId) && !teamHasVisionOn(teamId, u))
+                    else if (u.isVisibleByTeam(toTeamId(i)) && !teamHasVisionOn(toTeamId(i), u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, teamId);
+                        PacketNotifier.notifyLeaveVision(u, toTeamId(i));
                         u.setVisibleByTeam(i, false);
                     }
                 }
@@ -264,8 +263,8 @@ namespace IntWarsSharp.Logic.Maps
                 return;
 
             collisionHandler.addObject(o);
-
-            var teamVision = visionUnits[(int)o.getTeam()];
+            var team = o.getTeam();
+            var teamVision = visionUnits[team == TeamId.TEAM_BLUE ? 0 : team == TeamId.TEAM_PURPLE ? 1 : 2];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -292,7 +291,7 @@ namespace IntWarsSharp.Logic.Maps
                 champions.Remove(c.getNetId());
 
             objects.Remove(o.getNetId());
-            visionUnits[(int)o.getTeam()].Remove(o.getNetId());
+            visionUnits[fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 
         public List<int> getExperienceToLevelUp()
@@ -445,6 +444,31 @@ namespace IntWarsSharp.Logic.Maps
         public virtual int getMapId()
         {
             return 0;
+        }
+
+        private TeamId toTeamId(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return TeamId.TEAM_BLUE;
+                case 1:
+                    return TeamId.TEAM_PURPLE;
+                default:
+                    return (TeamId)i;
+            }
+        }
+        private int fromTeamId(TeamId team)
+        {
+            switch (team)
+            {
+                case TeamId.TEAM_BLUE:
+                    return 0;
+                case TeamId.TEAM_PURPLE:
+                    return 1;
+                default:
+                    return (int)team;
+            }
         }
     }
 }

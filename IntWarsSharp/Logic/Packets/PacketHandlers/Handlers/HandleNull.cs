@@ -12,7 +12,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            return false;
+            return true;
         }
     }
 }

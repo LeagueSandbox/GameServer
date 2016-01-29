@@ -167,6 +167,30 @@ namespace IntWarsSharp.Core.Logic
             return players;
         }
 
+        public Map getMap()
+        {
+            return map;
+        }
+
+        public void IncrementReadyPlayers()
+        {
+            playersReady++;
+        }
+
+        public int getReadyPlayers()
+        {
+            return playersReady;
+        }
+
+        public bool isStarted()
+        {
+            return _started;
+        }
+
+        public void setStarted(bool b)
+        {
+            _started = b;
+        }
 
         bool handleDisconnect(ENetPeer* peer)
         {

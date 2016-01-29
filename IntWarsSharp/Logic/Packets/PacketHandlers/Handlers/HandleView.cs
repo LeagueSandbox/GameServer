@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using static ENet.Native;
+using IntWarsSharp.Logic.Packets;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -12,7 +13,18 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            return false;
+            var request = new SpawnParticle.ViewRequest(data);
+            var answer = new SpawnParticle.ViewAnswer(request);
+            if (request.requestNo == 0xFE)
+            {
+                answer.setRequestNo(0xFF);
+            }
+            else
+            {
+                answer.setRequestNo(request.requestNo);
+            }
+            PacketHandlerManager.getInstace().sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            return true;
         }
     }
 }
