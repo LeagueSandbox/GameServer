@@ -94,7 +94,7 @@ namespace IntWarsSharp.Logic.Maps
                     continue;
                 }
 
-                for (var i = 0; i < 2; ++i)
+                for (var i = 0; i < 2; i++)
                 {
                     if (u.getTeam() == toTeamId(i))
                         continue;
@@ -103,7 +103,7 @@ namespace IntWarsSharp.Logic.Maps
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
                         var s = visionUnitsTeam[u.getNetId()];
-                        if (s != visionUnitsTeam.Last().Value && teamHasVisionOn(toTeamId(i), u))
+                        if (teamHasVisionOn(toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -128,20 +128,18 @@ namespace IntWarsSharp.Logic.Maps
 
                 if (u.buffs.Count != 0)
                 {
-                    var toRemove = new List<Buff>();
-                    for (int i = u.buffs.Count; i > 0; i--)
+                    var tempBuffs = u.buffs.ToList();
+                    for (int i = tempBuffs.Count; i > 0; i--)
                     {
-                        if (u.buffs[i - 1].needsToRemove())
+                        if (tempBuffs[i - 1].needsToRemove())
                         {
-                            toRemove.Add(u.buffs[i - 1]);
+                            u.buffs.Remove(tempBuffs[i - 1]);
                             //todo move this to Buff.cpp and add every stat
-                            u.getStats().addMovementSpeedPercentageModifier(-u.getBuffs()[i - 1].getMovementSpeedPercentModifier());
+                            u.getStats().addMovementSpeedPercentageModifier(-tempBuffs[i - 1].getMovementSpeedPercentModifier());
                             continue;
                         }
-                        u.buffs[i - 1].update(diff);
+                        tempBuffs[i - 1].update(diff);
                     }
-                    foreach (var i in toRemove)
-                        u.buffs.Remove(i);
                 }
 
                 if (u.getStats().getUpdatedStats().Count > 0)

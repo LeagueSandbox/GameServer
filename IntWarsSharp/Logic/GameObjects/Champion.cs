@@ -147,7 +147,7 @@ namespace IntWarsSharp.Logic.GameObjects
             var playerIndex = "player" + playerId;
             if (Config.players.ContainsKey(playerIndex))
             {
-                switch (Config.players[playerIndex].name.ToLower())
+                switch (Config.players[playerIndex].team.ToLower())
                 {
                     case "blue":
                         return blueTeamSize;

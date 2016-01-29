@@ -23,7 +23,7 @@ namespace IntWarsSharp.Core.Logic
         ENetHost* _server;
         BlowFish _blowfish;
         bool _isAlive = false;
-        private static int dwStart = 0x40000001; //new netid
+        private static int dwStart = 0x40000000; //new netid
 
         bool _started = false;
         int playersReady = 0;
@@ -58,7 +58,7 @@ namespace IntWarsSharp.Core.Logic
             PacketNotifier.setMap(map);
             //TODO: better lua implementation
 
-            var id = 0;
+            var id = 1;
             foreach (var p in Config.players)
             {
                 var player = new ClientInfo(p.Value.rank, ((p.Value.team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.ribbon, p.Value.icon);

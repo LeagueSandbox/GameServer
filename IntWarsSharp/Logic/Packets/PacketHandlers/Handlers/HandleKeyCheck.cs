@@ -28,7 +28,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             foreach (var p in game.getPlayers())
             {
                 var player = p.Item2;
-                if (player.userId + 1 == userId)
+                if (player.userId == userId)
                 {
                     if (player.getPeer() != null)
                     {

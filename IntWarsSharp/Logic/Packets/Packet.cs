@@ -109,7 +109,7 @@ namespace IntWarsSharp.Logic.Packets
             foreach (var player in players)
             {
                 var p = player.Item2;
-                buffer.Write((long)p.userId + 1); //TODO??
+                buffer.Write((long)p.userId);
                 buffer.Write((short)0x1E); // unk
                 buffer.Write((int)p.summonerSkills[0]);
                 buffer.Write((int)p.summonerSkills[1]);
@@ -167,6 +167,7 @@ namespace IntWarsSharp.Logic.Packets
         public short unk2;
         public short unk3;
         public byte unk4;
+        public short unk5;
 
         public PingLoadInfo(byte[] data)
         {
@@ -180,6 +181,7 @@ namespace IntWarsSharp.Logic.Packets
             unk2 = reader.ReadInt16();
             unk3 = reader.ReadInt16();
             unk4 = reader.ReadByte();
+            unk5 = reader.ReadInt16();
             reader.Close();
         }
 
@@ -192,6 +194,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((short)loadInfo.unk2);
             buffer.Write((short)loadInfo.unk3);
             buffer.Write((byte)loadInfo.unk4);
+            buffer.Write((short)loadInfo.unk5);
         }
     }
 
@@ -313,23 +316,24 @@ namespace IntWarsSharp.Logic.Packets
         public MinionSpawn(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())
         {
             buffer.Write((int)0x00150017); // unk
-            buffer.Write((short)0x03); // SpawnType - 3 = minion
-            buffer.Write(m.getNetId());
+            buffer.Write((byte)0x03); // SpawnType - 3 = minion
+            buffer.Write((int)m.getNetId());
+            buffer.Write((int)m.getNetId());
             buffer.Write((int)m.getSpawnPosition());
-            buffer.Write((short)0xFF); // unk
-            buffer.Write((short)1); // wave number ?
+            buffer.Write((byte)0xFF); // unk
+            buffer.Write((byte)1); // wave number ?
 
-            buffer.Write((short)m.getType());
+            buffer.Write((byte)m.getType());
 
             if (m.getType() == MinionSpawnType.MINION_TYPE_MELEE)
             {
-                buffer.Write((short)0); // unk
+                buffer.Write((byte)0); // unk
             }
             else {
-                buffer.Write((short)1); // unk
+                buffer.Write((byte)1); // unk
             }
 
-            buffer.Write((short)0); // unk
+            buffer.Write((byte)0); // unk
 
             if (m.getType() == MinionSpawnType.MINION_TYPE_CASTER)
             {
@@ -349,7 +353,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((short)0x0000); // unk
-            buffer.Write(1.0f); // unk
+            buffer.Write((float)1.0f); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
@@ -358,15 +362,15 @@ namespace IntWarsSharp.Logic.Packets
 
             List<Vector2> waypoints = m.getWaypoints();
 
-            buffer.Write((short)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
-            buffer.Write(m.getNetId());
-            buffer.Write((short)0); // movement mask
-            buffer.Write(MovementVector.targetXToNormalFormat(m.getX()));
-            buffer.Write(MovementVector.targetYToNormalFormat(m.getY()));
+            buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((int)m.getNetId());
+            buffer.Write((byte)0); // movement mask
+            buffer.Write((short)MovementVector.targetXToNormalFormat(m.getX()));
+            buffer.Write((short)MovementVector.targetYToNormalFormat(m.getY()));
             for (int i = m.getCurWaypoint(); i < waypoints.Count; ++i)
             {
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].X));
+                buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].Y));
             }
         }
 
@@ -838,19 +842,19 @@ namespace IntWarsSharp.Logic.Packets
         public HeroSpawn2(Champion p) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, p.getNetId())
         {
             buffer.fill(0, 15);
-            buffer.Write((short)0x80); // unk
-            buffer.Write((short)0x3F); // unk
+            buffer.Write((byte)0x80); // unk
+            buffer.Write((byte)0x3F); // unk
             buffer.fill(0, 13);
-            buffer.Write((short)3); // unk
+            buffer.Write((byte)3); // unk
             buffer.Write((int)1); // unk
-            buffer.Write(p.getX());
-            buffer.Write(p.getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getY());
             buffer.Write((float)0x3F441B7D); // z ?
             buffer.Write((float)0x3F248DBB); // Rotation ?
         }
     }
 
-    public class TurretSpawn : Packet
+    public class TurretSpawn : BasePacket //TODO: check
     {
         public TurretSpawn(Turret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
@@ -1088,10 +1092,11 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write((int)player.Item2.userId);
             buffer.Write((short)Environment.TickCount);
-            buffer.Write(0x8E00); //sometimes 0x8E02
+            buffer.Write((int)0x8E00); //sometimes 0x8E02
             buffer.Write((int)0);
-            // buffer.Write((int)player.Item2.getName().Length + 1);
-            buffer.Write(player.Item2.getName());
+            buffer.Write((int)player.Item2.getName().Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Item2.getName()))
+                buffer.Write(b);
             buffer.Write((byte)0);
         }
 
@@ -1110,8 +1115,9 @@ namespace IntWarsSharp.Logic.Packets
             var player = p.Item2;
             buffer.Write((long)player.userId);
             buffer.Write((int)player.skinNo);
-            //buffer.Write((int)player.getChampion().getType().Length + 1);
-            buffer.Write(player.getChampion().getType());
+            buffer.Write((int)player.getChampion().getType().Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.getChampion().getType()))
+                buffer.Write(b);
             buffer.Write((byte)0);
         }
 
@@ -2119,13 +2125,10 @@ namespace IntWarsSharp.Logic.Packets
                 var stats = new Dictionary<byte, List<int>>();
 
                 if (partial)
-                {
                     stats = u.getStats().getUpdatedStats();
-                }
                 else
-                {
                     stats = u.getStats().getAllStats();
-                }
+                
 
                 var masks = new List<byte>();
                 byte masterMask = 0;
@@ -2137,8 +2140,8 @@ namespace IntWarsSharp.Logic.Packets
                 }
 
                 buffer.Write((byte)1);
-                buffer.Write(masterMask);
-                buffer.Write(u.getNetId());
+                buffer.Write((byte)masterMask);
+                buffer.Write((int)u.getNetId());
 
                 foreach (var m in masks)
                 {
@@ -2153,8 +2156,8 @@ namespace IntWarsSharp.Logic.Packets
                         mask |= it;
                     }
 
-                    buffer.Write(mask);
-                    buffer.Write(size);
+                    buffer.Write((int)mask);
+                    buffer.Write((byte)size);
 
                     for (int i = 0; i < 32; ++i)
                     {
@@ -2178,7 +2181,7 @@ namespace IntWarsSharp.Logic.Packets
                             }
                             else
                             {
-                                short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                                byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
                                 buffer.Write(stat);
                             }
                         }
