@@ -59,8 +59,8 @@ namespace IntWarsSharp.Logic.GameObjects
 
     public class Stats
     {
-        protected Dictionary<int, float>[] stats = new Dictionary<int, float>[5];
-        protected Dictionary<byte, List<int>> updatedStats = new Dictionary<byte, List<int>>();
+        protected PairList<int, float>[] stats = new PairList<int, float>[5];
+        protected PairList<byte, List<int>> updatedStats = new PairList<byte, List<int>>();
         protected bool updatedHealth;
 
         // Here all the stats that don't have a bitmask
@@ -79,7 +79,7 @@ namespace IntWarsSharp.Logic.GameObjects
         public Stats()
         {
             for (var i = 0; i < stats.Length; i++)
-                stats[i] = new Dictionary<int, float>();
+                stats[i] = new PairList<int, float>();
 
             updatedHealth = false;
             goldPerSecond = 0;
@@ -139,14 +139,16 @@ namespace IntWarsSharp.Logic.GameObjects
             if (!updatedStats.ContainsKey(blockId))
                 updatedStats.Add(blockId, new List<int>());
 
-            updatedStats[blockId].Add(stat);
+            if (!updatedStats[blockId].Contains(stat))
+                updatedStats[blockId].Add(stat);
 
             while (blockId > 0)
             {
                 blockId = (byte)(blockId >> 1);
                 ++block;
             }
-
+            if (!(value > 0 || value < 0 || value == 0)) //NaN?
+                System.Diagnostics.Debugger.Break();
             if (!stats[block].ContainsKey(stat))
                 stats[block].Add(stat, value);
             else
@@ -163,14 +165,14 @@ namespace IntWarsSharp.Logic.GameObjects
             generatingGold = b;
         }
 
-        public Dictionary<byte, List<int>> getUpdatedStats()
+        public PairList<byte, List<int>> getUpdatedStats()
         {
             return updatedStats;
         }
 
-        public Dictionary<byte, List<int>> getAllStats()
+        public PairList<byte, List<int>> getAllStats()
         {
-            var toReturn = new Dictionary<byte, List<int>>();
+            var toReturn = new PairList<byte, List<int>>();
 
             for (byte i = 0; i < 5; ++i)
             {
@@ -178,7 +180,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 {
                     if (!toReturn.ContainsKey((byte)(1 << i)))
                         toReturn.Add((byte)(1 << i), new List<int>());
-                    toReturn[(byte)(1 << i)].Add(kv.Key);
+                    toReturn[(byte)(1 << i)].Add(kv.Item1);
                 }
             }
             return toReturn;

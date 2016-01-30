@@ -46,7 +46,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 {
                     foreach (var c in map.getChampionsInRange(f, fountainSize))
                     {
-                        if (c.getTeam() == (TeamId)team)
+                        if (c.getTeam() == Convert.toTeamId(team))
                         {
                             float HP = c.getStats().getCurrentHealth(), MaxHP = c.getStats().getMaxHealth();
                             if (HP + MaxHP * PERCENT_MAX_HEALTH_HEAL < MaxHP)

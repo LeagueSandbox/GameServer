@@ -63,6 +63,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers
         PKT_S2C_QueryStatusAns = 0x88,
         PKT_S2C_World_SendGameNumber = 0x92,
         PKT_S2C_Ping_Load_Info = 0x95,
+        PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_TurretSpawn = 0x9D,
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
         PKT_S2C_SetHealth = 0xAE,

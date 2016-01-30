@@ -45,7 +45,7 @@ namespace IntWarsSharp.Core.Logic
             if (_server == null)
                 return false;
 
-            var key = Convert.FromBase64String(baseKey);
+            var key = System.Convert.FromBase64String(baseKey);
 
             if (key.Length <= 0)
                 return false;

@@ -36,6 +36,16 @@ namespace IntWarsSharp.Logic.Packets
         {
             return memStream.ToArray();
         }
+
+        internal void Allocate(int size)
+        {
+            var buff = GetBytes();
+            memStream = new MemoryStream(size);
+            buffer = new BinaryWriter(memStream);
+
+            foreach (var b in buff)
+                buffer.Write(b);
+        }
     }
 
     public class BasePacket : Packet
@@ -283,7 +293,7 @@ namespace IntWarsSharp.Logic.Packets
         }
 
         public PacketCmdS2C cmd;
-        public short[] partialKey = new short[3];   //Bytes 1 to 3 from the blowfish key for that client
+        public byte[] partialKey = new byte[3];   //Bytes 1 to 3 from the blowfish key for that client
         public int playerNo;
         public long userId;         //short testVar[8];   //User id
         public int trash;
@@ -358,7 +368,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((short)0x0200); // unk
-            buffer.Write((int)Environment.TickCount); // unk
+            buffer.Write((int)Environment.TickCount - (20 * 24 * 60 * 60 * 1000)); // unk
 
             List<Vector2> waypoints = m.getWaypoints();
 
@@ -563,58 +573,95 @@ namespace IntWarsSharp.Logic.Packets
 
     public class MovementReq
     {
-        PacketHeader header;
-        MoveType type;
-        float x;
-        float y;
-        int targetNetId;
-        short vectorNo;
-        int netId;
-        short moveData;
+        public PacketCmdC2S cmd;
+        public int netIdHeader;
+        public MoveType type; //byte
+        public float x;
+        public float y;
+        public int targetNetId;
+        public byte coordCount;
+        public int netId;
+        public byte[] moveData;
+
+        public MovementReq(byte[] data, Map m)
+        {
+            var baseStream = new MemoryStream(data);
+            var reader = new BinaryReader(baseStream);
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netIdHeader = reader.ReadInt32();
+            type = (MoveType)reader.ReadByte();
+            x = reader.ReadSingle();
+            y = reader.ReadSingle();
+            targetNetId = reader.ReadInt32();
+            coordCount = reader.ReadByte();
+            netId = reader.ReadInt32();
+            moveData = reader.ReadBytes(9);
+            reader.Close();
+        }
     }
 
     public class MovementAns : GamePacket
     {
         //see PKT_S2C_CharStats mask
-        public MovementAns(GameObject actor) : base(PacketCmdS2C.PKT_S2C_MoveAns, actor.getNetId())
+        //TODO movement
+        public MovementAns(GameObject actor) : base(PacketCmdS2C.PKT_S2C_MoveAns)
         {
             var waypoints = actor.getWaypoints();
-            var numCoord = waypoints.Count * 2;
+            buffer.Write((short)1);              //count
+            buffer.Write((byte)(2 * waypoints.Count));
+            buffer.Write((int)actor.getNetId());
 
+            int startPos = (int)buffer.BaseStream.Position;
+            int coordCount = 2 * waypoints.Count;
+            int maskSize = (coordCount + 5) / 8; //mask size
 
-            /*buffer.Write((short)1); //numUpdates
-            buffer.Write((byte)numCoord);//numCoords
-            buffer.Write((int)actor.getNetId());//netId*/
+            Allocate((int)buffer.BaseStream.Position + maskSize + coordCount * sizeof(short)); //reserve max total size
 
+            for (var i = 0; i < maskSize; i++)
+                buffer.Write((byte)0);
+
+            var width = actor.getMap().getWidth();
+            var height = actor.getMap().getHeight();
+            var lastCoord = new Vector2();
+            for (int i = 0; i < waypoints.Count; i++)
+            {
+                var curVector = new Vector2((waypoints[i].X - width) / 2, (waypoints[i].Y - height) / 2);
+                var relative = new Vector2(curVector.X - lastCoord.X, curVector.Y - lastCoord.Y);
+                var isAbsolute = new Pair<bool, bool>(
+                    i == 0 || relative.X < SByte.MinValue || relative.X > SByte.MaxValue,
+                    i == 0 || relative.Y < SByte.MinValue || relative.Y > SByte.MaxValue);
+
+                SetBitmaskValue(GetBytes(), 2 * i - 2, !isAbsolute.Item1);
+                if (isAbsolute.Item1)
+                {
+                    buffer.Write((short)curVector.X);
+                }
+                else
+                {
+                    buffer.Write((byte)relative.X);
+                }
+                SetBitmaskValue(GetBytes(), 2 * i - 1, !isAbsolute.Item2);
+                if (isAbsolute.Item2)
+                {
+                    buffer.Write((short)curVector.Y);
+                }
+                else
+                {
+                    buffer.Write((byte)relative.Y);
+                }
+                lastCoord = curVector;
+            }
         }
-        /* MovementVector* getVector(uint32 index)
-         {
-             if (index >= (uint8)vectorNo / 2)
-             { return NULL;
-             }
-             MovementVector* vPoints = (MovementVector*)(&moveData + maskCount());
-             return &vPoints[index];
-         }
+        static void SetBitmaskValue(byte[] mask, int pos, bool val)
+        {
+            if (pos < 0)
+                return;
 
-         int maskCount()
-         {
-             float fVal = (float)vectorNo / 2;
-             return (int)std::ceil((fVal - 1) / 4);
-         }
-
-         static uint32 size(uint8 vectorNo)
-         {
-             float fVectors = vectorNo;
-             int maskCount = (int)std::ceil((fVectors - 1) / 4);
-             return sizeof(MovementAns) + (vectorNo * sizeof(MovementVector)) + maskCount; //-1 since struct already has first moveData byte
-         }
-
-         uint32 size()
-         {
-             return size(vectorNo / 2);
-         }*/
-
-
+            if (val)
+                mask[pos / 8] |= (byte)(1 << (pos % 8));
+            else
+                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
+        }
     }
 
     /*typedef struct _ViewAns {
@@ -749,18 +796,17 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class UpdateModel : GamePacket
+    public class UpdateModel : BasePacket
     {
-        public UpdateModel(int netID, string szModel) : base((PacketCmdS2C)0x97, netID)
+        public UpdateModel(int netID, string szModel) : base(PacketCmdS2C.PKT_S2C_UpdateModel, netID)
         {
             buffer.Write((int)netID & ~0x40000000); //id
             buffer.Write((byte)1); //bOk
             buffer.Write((int)-1); //unk1
-            var ch = Encoding.BigEndianUnicode.GetBytes(szModel);
-            for (var i = 0; i < ch.Length; i++)
-                buffer.Write((byte)ch[i]);
-            if (ch.Length < 32)
-                buffer.fill(0, 32 - ch.Length);
+            foreach (var b in Encoding.Default.GetBytes(szModel))
+                buffer.Write((byte)b);
+            if (szModel.Length < 32)
+                buffer.fill(0, 32 - szModel.Length);
         }
     }
 
@@ -2122,22 +2168,23 @@ namespace IntWarsSharp.Logic.Packets
         {
             public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
             {
-                var stats = new Dictionary<byte, List<int>>();
+                var stats = new PairList<byte, List<int>>();
 
                 if (partial)
                     stats = u.getStats().getUpdatedStats();
                 else
                     stats = u.getStats().getAllStats();
-                
 
                 var masks = new List<byte>();
                 byte masterMask = 0;
 
                 foreach (var p in stats)
                 {
-                    masterMask |= p.Key;
-                    masks.Add(p.Key);
+                    masterMask |= p.Item1;
+                    masks.Add(p.Item1);
                 }
+
+                masks.Sort();
 
                 buffer.Write((byte)1);
                 buffer.Write((byte)masterMask);
@@ -2149,7 +2196,7 @@ namespace IntWarsSharp.Logic.Packets
                     byte size = 0;
 
                     var updatedStats = stats[m];
-
+                    updatedStats.Sort();
                     foreach (var it in updatedStats)
                     {
                         size += u.getStats().getSize(m, it);
@@ -2159,7 +2206,7 @@ namespace IntWarsSharp.Logic.Packets
                     buffer.Write((int)mask);
                     buffer.Write((byte)size);
 
-                    for (int i = 0; i < 32; ++i)
+                    for (int i = 0; i < 32; i++)
                     {
                         int tmpMask = (1 << i);
                         if ((tmpMask & mask) > 0)

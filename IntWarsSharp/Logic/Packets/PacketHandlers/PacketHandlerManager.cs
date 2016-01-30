@@ -101,21 +101,22 @@ namespace IntWarsSharp.Core.Logic
             Marshal.FreeHGlobal(ptr);
         }
 
-        public void printPacket(byte[] buffer)
+        public void printPacket(byte[] buffer, string str)
         {
-            string hex = BitConverter.ToString(buffer);
-            Console.WriteLine(hex.Replace("-", ""));
+            //string hex = BitConverter.ToString(buffer);
+            // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
+            System.Diagnostics.Debug.Write(str);
+            foreach (var b in buffer)
+                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("--------");
         }
         public bool sendPacket(ENetPeer* peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
-            //	printPacket(data, length);
-            System.Diagnostics.Debug.Write("Sent: ");
-            foreach (var b in source)
-                System.Diagnostics.Debug.Write(b.ToString("x")+" ");
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("--------");
+            printPacket(source, "Sent: ");
+
             if (source.Length >= 8)
                 source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 
@@ -133,12 +134,8 @@ namespace IntWarsSharp.Core.Logic
         public bool broadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
-            //printPacket(data, length);
-            System.Diagnostics.Debug.Write("Broadcast: ");
-            foreach (var b in data)
-                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("--------");
+            printPacket(data, "Broadcast: ");
+
             if (data.Length >= 8)// length - (length % 8)
                 data = game.getBlowfish().Encrypt_ECB(data);
 
@@ -177,12 +174,8 @@ namespace IntWarsSharp.Core.Logic
         public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             for (int i = 0; i < 2; ++i)
-            {
-                if (o.isVisibleByTeam((TeamId)i))
-                {
-                    broadcastPacketTeam((i == 0) ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE, data, channelNo, flag);
-                }
-            }
+                if (o.isVisibleByTeam(Convert.toTeamId(i)))
+                    broadcastPacketTeam(Convert.toTeamId(i), data, channelNo, flag);
             return true;
         }
 
@@ -197,21 +190,22 @@ namespace IntWarsSharp.Core.Logic
 
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
-            System.Diagnostics.Debug.Write("Received: ");
-            foreach (var b in data)
-                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("--------");
-            Console.WriteLine("Requested " + header.cmd.ToString());
-            
+            printPacket(data, "Received: ");
+            //Console.WriteLine("Requested " + header.cmd.ToString());
+
             if (handler != null)
             {
-                return handler.HandlePacket(peer, data, game);
+                if (!handler.HandlePacket(peer, data, game))
+                {
+                    Console.WriteLine("Handle failed for " + header.cmd.ToString());
+                    return false;
+                }
+                return true;
             }
             else
             {
                 Logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
-                printPacket(data);
+                printPacket(data, "Error: ");
             }
             return false;
         }

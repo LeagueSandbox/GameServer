@@ -35,7 +35,8 @@ namespace IntWarsSharp.Logic.Maps
 
         protected CollisionHandler collisionHandler;
         protected Fountain fountain;
-
+        protected const int MAP_WIDTH = 13982 / 2;
+        protected const int MAP_HEIGHT = 14446 / 2;
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
@@ -96,14 +97,14 @@ namespace IntWarsSharp.Logic.Maps
 
                 for (var i = 0; i < 2; i++)
                 {
-                    if (u.getTeam() == toTeamId(i))
+                    if (u.getTeam() == Convert.toTeamId(i))
                         continue;
 
                     var visionUnitsTeam = visionUnits[i];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
                         var s = visionUnitsTeam[u.getNetId()];
-                        if (teamHasVisionOn(toTeamId(i), u))
+                        if (teamHasVisionOn(Convert.toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -113,15 +114,15 @@ namespace IntWarsSharp.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(toTeamId(i)) && teamHasVisionOn(toTeamId(i), u))
+                    if (!u.isVisibleByTeam(Convert.toTeamId(i)) && teamHasVisionOn(Convert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyEnterVision(u, toTeamId(i));
+                        PacketNotifier.notifyEnterVision(u, Convert.toTeamId(i));
                         u.setVisibleByTeam(i, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(toTeamId(i)) && !teamHasVisionOn(toTeamId(i), u))
+                    else if (u.isVisibleByTeam(Convert.toTeamId(i)) && !teamHasVisionOn(Convert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, toTeamId(i));
+                        PacketNotifier.notifyLeaveVision(u, Convert.toTeamId(i));
                         u.setVisibleByTeam(i, false);
                     }
                 }
@@ -237,6 +238,16 @@ namespace IntWarsSharp.Logic.Maps
             return null;
         }
 
+        public virtual int getWidth()
+        {
+            return MAP_WIDTH;
+        }
+
+        public virtual int getHeight()
+        {
+            return MAP_HEIGHT;
+        }
+
         public virtual void setMinionStats(Minion minion)
         {
 
@@ -289,7 +300,7 @@ namespace IntWarsSharp.Logic.Maps
                 champions.Remove(c.getNetId());
 
             objects.Remove(o.getNetId());
-            visionUnits[fromTeamId(o.getTeam())].Remove(o.getNetId());
+            visionUnits[Convert.fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 
         public List<int> getExperienceToLevelUp()
@@ -442,31 +453,6 @@ namespace IntWarsSharp.Logic.Maps
         public virtual int getMapId()
         {
             return 0;
-        }
-
-        private TeamId toTeamId(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return TeamId.TEAM_BLUE;
-                case 1:
-                    return TeamId.TEAM_PURPLE;
-                default:
-                    return (TeamId)i;
-            }
-        }
-        private int fromTeamId(TeamId team)
-        {
-            switch (team)
-            {
-                case TeamId.TEAM_BLUE:
-                    return 0;
-                case TeamId.TEAM_PURPLE:
-                    return 1;
-                default:
-                    return (int)team;
-            }
         }
     }
 }

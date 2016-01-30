@@ -45,9 +45,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 Logger.LogCoreError("couldn't find champion stats for " + type);
                 return;
             }
-
-
-
+            
             stats.setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
             stats.setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
             stats.setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));

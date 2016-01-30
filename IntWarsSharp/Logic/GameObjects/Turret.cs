@@ -27,7 +27,7 @@ namespace IntWarsSharp.Logic.GameObjects
             autoAttackDelay = 4.95f / 30.0f;
             autoAttackProjectileSpeed = 1200.0f;
 
-            setTeam((TeamId)team);
+            setTeam(Convert.toTeamId(team));
         }
 
         public string getName()

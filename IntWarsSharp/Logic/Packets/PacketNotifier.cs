@@ -93,7 +93,7 @@ namespace IntWarsSharp.Logic.Packets
         public static void notifyMovement(GameObject o)
         {
             var answer = new MovementAns(o);
-            //PacketHandlerManager.getInstace().broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
+            PacketHandlerManager.getInstace().broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
         public static void notifyDamageDone(Unit source, Unit target, float amount, DamageType type)
@@ -171,10 +171,10 @@ namespace IntWarsSharp.Logic.Packets
         public static void notifySetTarget(Unit attacker, Unit target)
         {
             var st = new SetTarget(attacker, target);
-            PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
+           // PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
 
             var st2 = new SetTarget2(attacker, target);
-            PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
+           // PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
         }
 
         public static void notifyChampionDie(Champion die, Unit killer, int goldFromKill)
