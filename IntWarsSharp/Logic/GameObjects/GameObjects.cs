@@ -70,12 +70,13 @@ namespace IntWarsSharp.Logic
             direction = Vector2.Normalize(goingTo);
 
             float moveSpeed = dashing ? dashSpeed : getMoveSpeed();
-            float deltaMovement = (moveSpeed) * 0.000001f * diff;
+            float deltaMovement = (moveSpeed) * 0.001f * diff;
 
             float xx = direction.X * deltaMovement;
             float yy = direction.Y * deltaMovement;
 
-            setPosition(xx, yy);
+            x += xx;
+            y += yy;
 
             /* If the target was a simple point, stop when it is reached */
             if (target != null && target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2) //how can target be null here?????

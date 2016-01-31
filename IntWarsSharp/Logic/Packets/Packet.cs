@@ -12,6 +12,7 @@ using IntWarsSharp.Logic.GameObjects;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic.Items;
 using IntWarsSharp.Logic.Maps;
+using IntWarsSharp.Core.Logic.PacketHandlers.Packets;
 
 namespace IntWarsSharp.Logic.Packets
 {
@@ -37,13 +38,12 @@ namespace IntWarsSharp.Logic.Packets
             return memStream.ToArray();
         }
 
-        internal void Allocate(int size)
+        internal void Change(byte[] bytes)
         {
-            var buff = GetBytes();
-            memStream = new MemoryStream(size);
+            memStream = new MemoryStream();
             buffer = new BinaryWriter(memStream);
 
-            foreach (var b in buff)
+            foreach (var b in bytes)
                 buffer.Write(b);
         }
     }
@@ -177,7 +177,6 @@ namespace IntWarsSharp.Logic.Packets
         public short unk2;
         public short unk3;
         public byte unk4;
-        public short unk5;
 
         public PingLoadInfo(byte[] data)
         {
@@ -191,7 +190,6 @@ namespace IntWarsSharp.Logic.Packets
             unk2 = reader.ReadInt16();
             unk3 = reader.ReadInt16();
             unk4 = reader.ReadByte();
-            unk5 = reader.ReadInt16();
             reader.Close();
         }
 
@@ -204,7 +202,6 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((short)loadInfo.unk2);
             buffer.Write((short)loadInfo.unk3);
             buffer.Write((byte)loadInfo.unk4);
-            buffer.Write((short)loadInfo.unk5);
         }
     }
 
@@ -268,9 +265,9 @@ namespace IntWarsSharp.Logic.Packets
     {
         public KeyCheck(long userId, int playerNo) : base(PacketCmdS2C.PKT_S2C_KeyCheck)
         {
+            buffer.Write((byte)0x2A);
             buffer.Write((byte)0);
-            buffer.Write((byte)0);
-            buffer.Write((byte)0);
+            buffer.Write((byte)0xFF);
             buffer.Write((int)playerNo);
             buffer.Write((long)userId);
             buffer.Write((int)0);
@@ -539,16 +536,21 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)Environment.TickCount); // unk
 
             List<Vector2> waypoints = c.getWaypoints();
-
-            buffer.Write((short)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
+            if (waypoints != null)
+                buffer.Write((short)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
+            else
+                buffer.Write((short)0);
             buffer.Write(c.getNetId());
             buffer.Write((short)0); // movement mask; 1=KeepMoving?
             buffer.Write(MovementVector.targetXToNormalFormat(c.getX()));
             buffer.Write(MovementVector.targetYToNormalFormat(c.getY()));
-            for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
+            if (waypoints != null)
             {
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
+                {
+                    buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
+                    buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                }
             }
         }
     }
@@ -583,7 +585,7 @@ namespace IntWarsSharp.Logic.Packets
         public int netId;
         public byte[] moveData;
 
-        public MovementReq(byte[] data, Map m)
+        public MovementReq(byte[] data)
         {
             var baseStream = new MemoryStream(data);
             var reader = new BinaryReader(baseStream);
@@ -595,7 +597,7 @@ namespace IntWarsSharp.Logic.Packets
             targetNetId = reader.ReadInt32();
             coordCount = reader.ReadByte();
             netId = reader.ReadInt32();
-            moveData = reader.ReadBytes(9);
+            moveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
             reader.Close();
         }
     }
@@ -604,7 +606,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         //see PKT_S2C_CharStats mask
         //TODO movement
-        public MovementAns(GameObject actor) : base(PacketCmdS2C.PKT_S2C_MoveAns)
+        public MovementAns(GameObject actor, Map map) : base(PacketCmdS2C.PKT_S2C_MoveAns)
         {
             var waypoints = actor.getWaypoints();
             buffer.Write((short)1);              //count
@@ -612,55 +614,49 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)actor.getNetId());
 
             int startPos = (int)buffer.BaseStream.Position;
-            int coordCount = 2 * waypoints.Count;
-            int maskSize = (coordCount + 5) / 8; //mask size
-
-            Allocate((int)buffer.BaseStream.Position + maskSize + coordCount * sizeof(short)); //reserve max total size
-
-            for (var i = 0; i < maskSize; i++)
+            int coordCount = 2 * waypoints.Count();
+            var maskSize = (coordCount + 5) / 8; //mask size
+            //buffer.reserve(pos + maskSize + coordCount * sizeof(short)); //reserve max total size
+            for (uint i = 0; i < maskSize; i++)
+            {
                 buffer.Write((byte)0);
-
-            var width = actor.getMap().getWidth();
-            var height = actor.getMap().getHeight();
+            }
             var lastCoord = new Vector2();
             for (int i = 0; i < waypoints.Count; i++)
             {
-                var curVector = new Vector2((waypoints[i].X - width) / 2, (waypoints[i].Y - height) / 2);
+                var mapSize = map.getSize();
+                var curVector = new Vector2((waypoints[i].X - mapSize.X) / 2, (waypoints[i].Y - mapSize.Y) / 2);
                 var relative = new Vector2(curVector.X - lastCoord.X, curVector.Y - lastCoord.Y);
-                var isAbsolute = new Pair<bool, bool>(
-                    i == 0 || relative.X < SByte.MinValue || relative.X > SByte.MaxValue,
-                    i == 0 || relative.Y < SByte.MinValue || relative.Y > SByte.MaxValue);
+                var isAbsolute = new Tuple<bool, bool>(
+                      i == 0 || relative.X < sbyte.MinValue || relative.X > sbyte.MaxValue,
+                      i == 0 || relative.Y < sbyte.MinValue || relative.Y > sbyte.MaxValue);
 
-                SetBitmaskValue(GetBytes(), 2 * i - 2, !isAbsolute.Item1);
+                Change(SetBitmaskValue(GetBytes(), startPos, (2 * i - 2), !isAbsolute.Item1));
                 if (isAbsolute.Item1)
-                {
                     buffer.Write((short)curVector.X);
-                }
                 else
-                {
                     buffer.Write((byte)relative.X);
-                }
-                SetBitmaskValue(GetBytes(), 2 * i - 1, !isAbsolute.Item2);
+
+                Change(SetBitmaskValue(GetBytes(), startPos, (2 * i - 1), !isAbsolute.Item2));
                 if (isAbsolute.Item2)
-                {
                     buffer.Write((short)curVector.Y);
-                }
                 else
-                {
                     buffer.Write((byte)relative.Y);
-                }
+
                 lastCoord = curVector;
             }
         }
-        static void SetBitmaskValue(byte[] mask, int pos, bool val)
+        static byte[] SetBitmaskValue(byte[] mask, int startPos, int pos, bool val)
         {
             if (pos < 0)
-                return;
+                return mask;
 
             if (val)
-                mask[pos / 8] |= (byte)(1 << (pos % 8));
+                mask[startPos + (pos / 8)] |= (byte)(1 << (pos % 8));
             else
-                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
+                mask[startPos + (pos / 8)] &= (byte)(~(1 << (pos % 8)));
+
+            return mask;
         }
     }
 
@@ -775,24 +771,33 @@ namespace IntWarsSharp.Logic.Packets
 
     public class ChatMessage
     {
-        short cmd;
-        int playerId;
-        int botNetId;
-        short isBotMessage;
+        public PacketCmdC2S cmd;
+        public int playerId;
+        public int botNetId;
+        public byte isBotMessage;
 
-        ChatType type;
-        int unk1; // playerNo?
-        int length;
-        short[] unk2 = new short[32];
-        byte msg;
+        public ChatType type;
+        public int unk1; // playerNo?
+        public int length;
+        public byte[] unk2 = new byte[32];
+        public string msg;
 
-        public byte getMessage()
+        public ChatMessage(byte[] data)
         {
-            return msg;
-        }
-        public int getLength()
-        {
-            return length;
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            playerId = reader.ReadInt32();
+            botNetId = reader.ReadInt32();
+            isBotMessage = reader.ReadByte();
+            type = (ChatType)reader.ReadInt32();
+            unk1 = reader.ReadInt32();
+            length = reader.ReadInt32();
+            unk2 = reader.ReadBytes(32);
+
+            var bytes = new List<byte>();
+            for (var i = 0; i < length; i++)
+                bytes.Add(reader.ReadByte());
+            msg = Encoding.Default.GetString(bytes.ToArray());
         }
     }
 
@@ -1176,64 +1181,65 @@ namespace IntWarsSharp.Logic.Packets
 
     public class AttentionPing
     {
-        public short cmd;
+        public byte cmd;
         public int unk1;
         public float x;
         public float y;
         public int targetNetId;
-        public short type;
+        public Pings type;
+        public AttentionPing(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            unk1 = reader.ReadInt32();
+            x = reader.ReadSingle();
+            y = reader.ReadSingle();
+            targetNetId = reader.ReadInt32();
+            type = (Pings)reader.ReadByte();
+        }
         public AttentionPing()
         {
-        }
-        public AttentionPing(AttentionPing ping)
-        {
-            cmd = ping.cmd;
-            unk1 = ping.unk1;
-            x = ping.x;
-            y = ping.y;
-            targetNetId = ping.targetNetId;
-            type = ping.type;
+
         }
     }
 
     public class AttentionPingAns : Packet
     {
-
-        AttentionPingAns(ClientInfo player, AttentionPing ping) : base(PacketCmdS2C.PKT_S2C_AttentionPing)
+        public AttentionPingAns(ClientInfo player, AttentionPing ping) : base(PacketCmdS2C.PKT_S2C_AttentionPing)
         {
             buffer.Write((int)0); //unk1
-            buffer.Write(ping.x);
-            buffer.Write(ping.y);
-            buffer.Write(ping.targetNetId);
+            buffer.Write((float)ping.x);
+            buffer.Write((float)ping.y);
+            buffer.Write((int)ping.targetNetId);
             buffer.Write((int)player.getChampion().getNetId());
-            buffer.Write(ping.type);
-            buffer.Write((short)0xFB); // 4.18
-                                       /*
-                                       switch (ping.type)
-                                       {
-                                          case 0:
-                                             buffer.Write((short)0xb0;
-                                             break;
-                                          case 1:
-                                             buffer.Write((short)0xb1;
-                                             break;
-                                          case 2:
-                                             buffer.Write((short)0xb2; // Danger
-                                             break;
-                                          case 3:
-                                             buffer.Write((short)0xb3; // Enemy Missing
-                                             break;
-                                          case 4:
-                                             buffer.Write((short)0xb4; // On My Way
-                                             break;
-                                          case 5:
-                                             buffer.Write((short)0xb5; // Retreat / Fall Back
-                                             break;
-                                          case 6:
-                                             buffer.Write((short)0xb6; // Assistance Needed
-                                             break;            
-                                       }
-                                       */
+            buffer.Write((byte)ping.type);
+            buffer.Write((byte)0xFB); // 4.18
+                                      /*
+                                      switch (ping.type)
+                                      {
+                                         case 0:
+                                            buffer.Write((short)0xb0;
+                                            break;
+                                         case 1:
+                                            buffer.Write((short)0xb1;
+                                            break;
+                                         case 2:
+                                            buffer.Write((short)0xb2; // Danger
+                                            break;
+                                         case 3:
+                                            buffer.Write((short)0xb3; // Enemy Missing
+                                            break;
+                                         case 4:
+                                            buffer.Write((short)0xb4; // On My Way
+                                            break;
+                                         case 5:
+                                            buffer.Write((short)0xb5; // Retreat / Fall Back
+                                            break;
+                                         case 6:
+                                            buffer.Write((short)0xb6; // Assistance Needed
+                                            break;            
+                                      }
+                                      */
         }
     }
 
@@ -1356,7 +1362,7 @@ namespace IntWarsSharp.Logic.Packets
 
             buffer.Write((short)0);
             buffer.Write((short)7);
-            buffer.Write(die.getRespawnTimer() / 1000000.0f); // Respawn timer, float
+            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
         }
     }
 
@@ -1365,7 +1371,7 @@ namespace IntWarsSharp.Logic.Packets
 
         public ChampionDeathTimer(Champion die) : base(ExtendedPacketCmd.EPKT_S2C_ChampionDeathTimer, die.getNetId())
         {
-            buffer.Write(die.getRespawnTimer() / 1000000.0f); // Respawn timer, float
+            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
         }
     }
 

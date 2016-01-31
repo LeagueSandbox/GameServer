@@ -8,6 +8,8 @@ using static ENet.Native;
 using IntWarsSharp.Logic.Packets;
 using System.Numerics;
 using IntWarsSharp.Logic.GameObjects;
+using IntWarsSharp.Logic.Maps;
+using System.IO;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -19,9 +21,10 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             if (peerInfo == null || peerInfo.getChampion().isDashing() || peerInfo.getChampion().isDead())
                 return true;
 
-            var request = new MovementReq(data, game.getMap());
-            var vMoves = readWaypoints(request.moveData, request.coordCount);
-
+            var request = new MovementReq(data);
+            var vMoves = new List<Vector2>();//readWaypoints(request.moveData, request.coordCount, game.getMap());
+            vMoves.Add(new Vector2(peerInfo.getChampion().getX(), peerInfo.getChampion().getY()));
+            vMoves.Add(new Vector2(request.x, request.y)); // TODO
             switch (request.type)
             {
                 case MoveType.STOP:
@@ -55,7 +58,9 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 
             // Sometimes the client will send a wrong position as the first one, override it with server data
             vMoves[0] = new Vector2(peerInfo.getChampion().getX(), peerInfo.getChampion().getY());
+
             peerInfo.getChampion().setWaypoints(vMoves);
+
             var u = game.getMap().getObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
@@ -68,36 +73,27 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             return true;
         }
 
-        private List<Vector2> readWaypoints(byte[] buffer, int coordCount)
+        private List<Vector2> readWaypoints(byte[] buffer, int coordCount, Map map)
         {
-            var nPos = (coordCount + 5) / 8;
-            if (coordCount % 2 > 0)
-                nPos++;
-
-            var vectorCount = coordCount / 2;
+            var reader = new BinaryReader(new MemoryStream(buffer));
+            var mapSize = map.getSize();
+            int vectorCount = coordCount / 2;
             var vMoves = new List<Vector2>();
-            var lastCoord = new Vector2();
+            var lastCoord = new Vector2(0.0f, 0.0f);
+
+            reader.BaseStream.Position = (coordCount + 5) / 8 + coordCount % 2;
+
             for (int i = 0; i < vectorCount; i++)
             {
-                if (GetBitmaskValue(buffer, (i - 1) * 2))
-                {
-                    lastCoord.X += buffer[nPos++];
-                }
+                if (GetBitmaskValue(buffer, 2 * i - 2))
+                    lastCoord.X += reader.ReadByte();
                 else
-                {
-                    lastCoord.X = buffer[nPos];
-                    nPos += 2;
-                }
-                if (GetBitmaskValue(buffer, (i - 1) * 2 + 1))
-                {
-                    lastCoord.Y += buffer[nPos++];
-                }
+                    lastCoord.X = reader.ReadInt16();
+                if (GetBitmaskValue(buffer, 2 * i - 1))
+                    lastCoord.Y += reader.ReadByte();
                 else
-                {
-                    lastCoord.Y = buffer[nPos];
-                    nPos += 2;
-                }
-                vMoves.Add(lastCoord);
+                    lastCoord.Y = reader.ReadInt16();
+                vMoves.Add(new Vector2(2.0f * lastCoord.X + mapSize.X, 2.0f * lastCoord.Y + mapSize.Y));
             }
             return vMoves;
         }

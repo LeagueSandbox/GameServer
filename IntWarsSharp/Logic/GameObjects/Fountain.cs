@@ -37,7 +37,7 @@ namespace IntWarsSharp.Logic.GameObjects
         public void healChampions(Map map, long diff)
         {
             healTickTimer += diff;
-            if (healTickTimer > 1000000)
+            if (healTickTimer > 1000)
             {
                 healTickTimer = 0;
 

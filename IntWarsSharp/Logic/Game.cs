@@ -15,13 +15,14 @@ using System.Net.Sockets;
 using System.Net;
 using BlowFishCS;
 using static ENet.Native;
+using System.Threading;
 
 namespace IntWarsSharp.Core.Logic
 {
     public unsafe class Game
     {
         ENetHost* _server;
-        BlowFish _blowfish;
+        BlowFish* _blowfish;
         bool _isAlive = false;
         private static int dwStart = 0x40000000; //new netid
 
@@ -34,7 +35,7 @@ namespace IntWarsSharp.Core.Logic
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
         private const PacketFlags UNRELIABLE = PacketFlags.None;
-        private const int REFRESH_RATE = 16666; // 60 fps
+        private const double REFRESH_RATE = 16.666; // 60 fps
 
         public bool initialize(ENetAddress address, string baseKey)
         {
@@ -50,7 +51,11 @@ namespace IntWarsSharp.Core.Logic
             if (key.Length <= 0)
                 return false;
 
-            _blowfish = new BlowFish(key);
+            fixed (byte* s = key)
+            {
+                _blowfish = BlowFishCS.BlowFishCS.BlowFishCreate(s, new IntPtr(16));
+            }
+
             PacketHandlerManager.getInstace().InitHandlers(this);
 
             map = new SummonersRift(this);
@@ -102,10 +107,9 @@ namespace IntWarsSharp.Core.Logic
         }
         public void netLoop()
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            new Thread(new ThreadStart(update)).Start();
 
             var enetEvent = new ENetEvent();
-
             while (true)
             {
                 while (enet_host_service(_server, &enetEvent, 0) > 0)
@@ -136,23 +140,27 @@ namespace IntWarsSharp.Core.Logic
                             break;
                     }
                 }
+            }
+        }
 
-                watch.Stop();
-                var elapsed = watch.ElapsedMicroSeconds();
-                watch = System.Diagnostics.Stopwatch.StartNew();
-
+        private void update()
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            long elapsed = 0;
+            while (true)
+            {
                 if (_started)
                     map.update(elapsed);
 
                 watch.Stop();
-                elapsed = watch.ElapsedMicroSeconds();
-                watch = System.Diagnostics.Stopwatch.StartNew();
+                elapsed = watch.ElapsedMilliseconds;
+                watch.Restart();
                 if (elapsed < REFRESH_RATE)
-                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds((REFRESH_RATE - elapsed) / 1000)); //this is so not going to work
+                    Thread.Sleep(TimeSpan.FromMilliseconds(REFRESH_RATE - elapsed)); //this is so not going to work
             }
         }
 
-        public BlowFish getBlowfish()
+        public BlowFish* getBlowfish()
         {
             return _blowfish;
         }

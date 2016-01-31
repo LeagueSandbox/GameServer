@@ -205,20 +205,20 @@ namespace IntWarsSharp.Logic.GameObjects
         {
             if (getHp5() > 0 && getCurrentHealth() < getMaxHealth())
             {
-                float newHealth = getCurrentHealth() + (getHp5() * diff * 0.000001f);
+                float newHealth = getCurrentHealth() + (getHp5() * diff * 0.001f);
                 newHealth = Math.Max(getMaxHealth(), newHealth);
                 setCurrentHealth(newHealth);
             }
 
             if (getMana5() > 0 && getCurrentMana() < getMaxMana())
             {
-                float newMana = getCurrentMana() + (getMana5() * diff * 0.000001f);
+                float newMana = getCurrentMana() + (getMana5() * diff * 0.001f);
                 newMana = Math.Max(getMaxMana(), newMana);
                 setCurrentMana(newMana);
             }
             if (generatingGold && getGoldPerSecond() > 0)
             {
-                float newGold = getGold() + getGoldPerSecond() * (diff * 0.000001f);
+                float newGold = getGold() + getGoldPerSecond() * (diff * 0.001f);
                 setGold(newGold);
             }
         }

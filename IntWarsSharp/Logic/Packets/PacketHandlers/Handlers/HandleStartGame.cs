@@ -39,7 +39,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                     map.addObject(p.Item2.getChampion());
 
                     // Send the initial game time sync packets, then let the map send another
-                    float gameTime = map.getGameTime() / 1000000.0f;
+                    float gameTime = map.getGameTime() / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
                     PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), timer, Channel.CHL_S2C);

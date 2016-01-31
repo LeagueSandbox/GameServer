@@ -127,7 +127,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 }
                 else if (isAttacking && autoAttackTarget != null)
                 {
-                    autoAttackCurrentDelay += diff / 1000000.0f;
+                    autoAttackCurrentDelay += diff / 1000.0f;
                     if (autoAttackCurrentDelay >= autoAttackDelay / stats.getAttackSpeedMultiplier())
                     {
                         if (!isMelee())
@@ -191,7 +191,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
             if (autoAttackCurrentCooldown > 0)
             {
-                autoAttackCurrentCooldown -= diff / 1000000.0f;
+                autoAttackCurrentCooldown -= diff / 1000.0f;
             }
 
             statUpdateTimer += diff;

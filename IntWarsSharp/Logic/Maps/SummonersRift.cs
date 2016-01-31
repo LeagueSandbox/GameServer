@@ -86,7 +86,7 @@ namespace IntWarsSharp.Logic.Maps
            }
         };
 
-        public SummonersRift(Game game) : base(game, 5 * 1000000, 30 * 1000000, 90 * 1000000, true, 1)
+        public SummonersRift(Game game) : base(game, 5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
             {
@@ -129,9 +129,9 @@ namespace IntWarsSharp.Logic.Maps
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
             // Announcer events
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(30 * 1000000, 119, true) }); // Welcome to SR
-            if (firstSpawnTime - 30 * 1000000 >= 0.0f)
-                announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime - 30 * 1000000, 120, true) }); // 30 seconds until minions spawn
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(30 * 1000, 119, true) }); // Welcome to SR
+            if (firstSpawnTime - 30 * 1000 >= 0.0f)
+                announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime - 30 * 1000, 120, true) }); // 30 seconds until minions spawn
             announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000000)
             announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000000)
 
@@ -142,7 +142,7 @@ namespace IntWarsSharp.Logic.Maps
         {
             base.update(diff);
 
-            if (gameTime >= 120 * 1000000)
+            if (gameTime >= 120 * 1000)
             {
                 setKillReduction(false);
             }
@@ -209,11 +209,11 @@ namespace IntWarsSharp.Logic.Maps
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    return 19.0f + ((0.5f) * (int)(gameTime / (180 * 1000000)));
+                    return 19.0f + ((0.5f) * (int)(gameTime / (180 * 1000)));
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    return 14.0f + ((0.2f) * (int)(gameTime / (90 * 1000000)));
+                    return 14.0f + ((0.2f) * (int)(gameTime / (90 * 1000)));
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    return 40.0f + ((1.0f) * (int)(gameTime / (180 * 1000000)));
+                    return 40.0f + ((1.0f) * (int)(gameTime / (180 * 1000)));
             }
 
             return 0.0f;
@@ -267,27 +267,27 @@ namespace IntWarsSharp.Logic.Maps
             switch (minion.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    minion.getStats().setCurrentHealth(475.0f + ((20.0f) * (int)(gameTime / (float)(180 * 1000000))));
-                    minion.getStats().setMaxHealth(475.0f + ((20.0f) * (int)(gameTime / (float)(180 * 1000000))));
-                    minion.getStats().setBaseAd(12.0f + ((1.0f) * (int)(gameTime / (float)(180 * 1000000))));
+                    minion.getStats().setCurrentHealth(475.0f + ((20.0f) * (int)(gameTime / (float)(180 * 1000))));
+                    minion.getStats().setMaxHealth(475.0f + ((20.0f) * (int)(gameTime / (float)(180 * 1000))));
+                    minion.getStats().setBaseAd(12.0f + ((1.0f) * (int)(gameTime / (float)(180 * 1000))));
                     minion.getStats().setRange(180.0f);
                     minion.getStats().setBaseAttackSpeed(1.250f);
                     minion.setAutoAttackDelay(11.8f / 30.0f);
                     minion.setMelee(true);
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    minion.getStats().setCurrentHealth(279.0f + ((7.5f) * (int)(gameTime / (float)(90 * 1000000))));
-                    minion.getStats().setMaxHealth(279.0f + ((7.5f) * (int)(gameTime / (float)(90 * 1000000))));
-                    minion.getStats().setBaseAd(23.0f + ((1.0f) * (int)(gameTime / (float)(90 * 1000000))));
+                    minion.getStats().setCurrentHealth(279.0f + ((7.5f) * (int)(gameTime / (float)(90 * 1000))));
+                    minion.getStats().setMaxHealth(279.0f + ((7.5f) * (int)(gameTime / (float)(90 * 1000))));
+                    minion.getStats().setBaseAd(23.0f + ((1.0f) * (int)(gameTime / (float)(90 * 1000))));
                     minion.getStats().setRange(600.0f);
                     minion.getStats().setBaseAttackSpeed(0.670f);
                     minion.setAutoAttackDelay(14.1f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(650.0f);
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    minion.getStats().setCurrentHealth(700.0f + ((27.0f) * (int)(gameTime / (float)(180 * 1000000))));
-                    minion.getStats().setMaxHealth(700.0f + ((27.0f) * (int)(gameTime / (float)(180 * 1000000))));
-                    minion.getStats().setBaseAd(40.0f + ((3.0f) * (int)(gameTime / (float)(180 * 1000000))));
+                    minion.getStats().setCurrentHealth(700.0f + ((27.0f) * (int)(gameTime / (float)(180 * 1000))));
+                    minion.getStats().setMaxHealth(700.0f + ((27.0f) * (int)(gameTime / (float)(180 * 1000))));
+                    minion.getStats().setBaseAd(40.0f + ((3.0f) * (int)(gameTime / (float)(180 * 1000))));
                     minion.getStats().setRange(450.0f);
                     minion.getStats().setBaseAttackSpeed(1.0f);
                     minion.setAutoAttackDelay(9.0f / 30.0f);
@@ -343,6 +343,21 @@ namespace IntWarsSharp.Logic.Maps
         public override int getMapId()
         {
             return 1;
+        }
+
+        public override int getWidth()
+        {
+            return 13982;
+        }
+
+        public override int getHeight()
+        {
+            return 14446;
+        }
+
+        public override Vector2 getSize()
+        {
+            return new Vector2(getWidth() / 2, getHeight() / 2);
         }
     }
 }

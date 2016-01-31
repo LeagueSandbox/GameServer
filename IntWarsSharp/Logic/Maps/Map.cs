@@ -35,8 +35,6 @@ namespace IntWarsSharp.Logic.Maps
 
         protected CollisionHandler collisionHandler;
         protected Fountain fountain;
-        protected const int MAP_WIDTH = 13982 / 2;
-        protected const int MAP_HEIGHT = 14446 / 2;
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
@@ -50,7 +48,7 @@ namespace IntWarsSharp.Logic.Maps
             this.spawnInterval = spawnInterval;
             this.gameTime = 0;
             this.nextSpawnTime = firstSpawnTime;
-            this.nextSyncTime = 10 * 1000000;
+            this.nextSyncTime = 10 * 1000;
             this.announcerEvents = new List<Pair<bool, Tuple<long, byte, bool>>>();
             this.game = game;
             this.firstBlood = true;
@@ -188,7 +186,7 @@ namespace IntWarsSharp.Logic.Maps
             nextSyncTime += diff;
 
             // By default, synchronize the game time every 10 seconds
-            if (nextSyncTime >= 10 * 1000000)
+            if (nextSyncTime >= 10 * 1000)
             {
                 PacketNotifier.notifyGameTimer();
                 nextSyncTime = 0;
@@ -240,12 +238,17 @@ namespace IntWarsSharp.Logic.Maps
 
         public virtual int getWidth()
         {
-            return MAP_WIDTH;
+            return 0;
         }
 
         public virtual int getHeight()
         {
-            return MAP_HEIGHT;
+            return 0;
+        }
+
+        public virtual Vector2 getSize()
+        {
+            return new Vector2(0, 0);
         }
 
         public virtual void setMinionStats(Minion minion)
@@ -436,17 +439,19 @@ namespace IntWarsSharp.Logic.Maps
             if (o.getTeam() == team)
                 return true;
 
-            foreach (var kv in objects)
+            lock (objects)
             {
-                if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                foreach (var kv in objects)
                 {
-                    var unit = kv.Value as Unit;
-                    if (unit != null && unit.isDead())
-                        continue;
-                    return true;
+                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                    {
+                        var unit = kv.Value as Unit;
+                        if (unit != null && unit.isDead())
+                            continue;
+                        return true;
+                    }
                 }
             }
-
             return false;
         }
 

@@ -94,7 +94,7 @@ namespace IntWarsSharp.Logic.GameObjects
         
         public void update(long diff)
         {
-            timeElapsed += (float)diff / 1000000.0f;
+            timeElapsed += (float)diff / 1000.0f;
 
             //Fuck LUA
             /*  if (buffScript != null && buffScript.isLoaded())

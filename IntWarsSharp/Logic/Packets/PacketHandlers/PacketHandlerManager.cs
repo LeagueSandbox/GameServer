@@ -105,11 +105,12 @@ namespace IntWarsSharp.Core.Logic
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
-            System.Diagnostics.Debug.Write(str);
+
+            /*System.Diagnostics.Debug.Write(str);
             foreach (var b in buffer)
                 System.Diagnostics.Debug.Write(b.ToString("x") + " ");
             System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("--------");
+            System.Diagnostics.Debug.WriteLine("--------");*/
         }
         public bool sendPacket(ENetPeer* peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
@@ -117,18 +118,22 @@ namespace IntWarsSharp.Core.Logic
             //if(length < 300)
             printPacket(source, "Sent: ");
 
-            if (source.Length >= 8)
-                source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
-
-            var ptr = allocMemory(source);
-            var packet = enet_packet_create(ptr, new IntPtr(source.Length), flag);
-            if (enet_peer_send(peer, (byte)channelNo, packet) < 0)
+            fixed (byte* data = source)
             {
-                releaseMemory(ptr);
-                return false;
-            }
+                if (source.Length >= 8)
+                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), data, new IntPtr(source.Length - (source.Length % 8)));
 
-            releaseMemory(ptr);
+                //source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+
+                //  var ptr = allocMemory(source);
+                var packet = enet_packet_create(new IntPtr(data), new IntPtr(source.Length), flag);
+                if (enet_peer_send(peer, (byte)channelNo, packet) < 0)
+                {
+                    // releaseMemory(ptr);
+                    return false;
+                }
+            }
+            // releaseMemory(ptr);
             return true;
         }
         public bool broadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
@@ -136,14 +141,19 @@ namespace IntWarsSharp.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             printPacket(data, "Broadcast: ");
 
-            if (data.Length >= 8)// length - (length % 8)
-                data = game.getBlowfish().Encrypt_ECB(data);
+            fixed (byte* b = data)
+            {
+                if (data.Length >= 8)// length - (length % 8)
+                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), b, new IntPtr(data.Length - (data.Length % 8)));
 
-            var unmanagedPointer = allocMemory(data);
-            var packet = enet_packet_create(unmanagedPointer, new IntPtr(data.Length), (PacketFlags)flag);
+                //data = game.getBlowfish().Encrypt_ECB(data);
 
-            enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
-            releaseMemory(unmanagedPointer);
+                //var unmanagedPointer = allocMemory(data);
+                var packet = enet_packet_create(new IntPtr(b), new IntPtr(data.Length), (PacketFlags)flag);
+
+                enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
+                // releaseMemory(unmanagedPointer);
+            }
             return true;
         }
 
@@ -181,12 +191,12 @@ namespace IntWarsSharp.Core.Logic
 
         public bool handlePacket(ENetPeer* peer, ENetPacket* packet, byte channelID)
         {
-            var data = new byte[(int)packet->dataLength];
-            Marshal.Copy(packet->data, data, 0, data.Length);
-
             if ((int)packet->dataLength >= 8)
                 if (game.peerInfo(peer) != null)
-                    data = game.getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+                    BlowFishCS.BlowFishCS.Decrypt1(game.getBlowfish(), (byte*)packet->data, new IntPtr((int)packet->dataLength - ((int)packet->dataLength % 8)));
+            //data = game.getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+            var data = new byte[(int)packet->dataLength];
+            Marshal.Copy(packet->data, data, 0, data.Length);
 
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);

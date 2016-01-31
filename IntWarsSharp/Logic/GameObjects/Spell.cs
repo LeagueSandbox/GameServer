@@ -228,14 +228,14 @@ namespace IntWarsSharp.Logic.GameObjects
                     return;
                 case SpellState.STATE_CASTING:
 
-                    currentCastTime -= diff / 1000000.0f;
+                    currentCastTime -= diff / 1000.0f;
                     if (currentCastTime <= 0)
                     {
                         finishCasting();
                     }
                     break;
                 case SpellState.STATE_COOLDOWN:
-                    currentCooldown -= diff / 1000000.0f;
+                    currentCooldown -= diff / 1000.0f;
                     if (currentCooldown < 0)
                     {
                         state = SpellState.STATE_READY;

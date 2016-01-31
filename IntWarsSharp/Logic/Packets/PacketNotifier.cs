@@ -92,7 +92,7 @@ namespace IntWarsSharp.Logic.Packets
 
         public static void notifyMovement(GameObject o)
         {
-            var answer = new MovementAns(o);
+            var answer = new MovementAns(o, map);
             PacketHandlerManager.getInstace().broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
@@ -171,10 +171,10 @@ namespace IntWarsSharp.Logic.Packets
         public static void notifySetTarget(Unit attacker, Unit target)
         {
             var st = new SetTarget(attacker, target);
-           // PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
+            // PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
 
             var st2 = new SetTarget2(attacker, target);
-           // PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
+            // PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
         }
 
         public static void notifyChampionDie(Champion die, Unit killer, int goldFromKill)
@@ -290,7 +290,7 @@ namespace IntWarsSharp.Logic.Packets
 
         public static void notifyGameTimer()
         {
-            var gameTimer = new GameTimer(map.getGameTime() / 1000000.0f);
+            var gameTimer = new GameTimer(map.getGameTime() / 1000.0f);
             PacketHandlerManager.getInstace().broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
 

@@ -52,10 +52,7 @@ namespace IntWarsSharp.Core.Logic
         {
             var text = string.Format("({0} {1}) [{2}]: {3}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), type.ToUpper(), lines);
 
-            using (FileStream stream = File.Open(Path.Combine(ExecutingDirectory, "Logs", LogfileName), FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
-            using (var file = new StreamWriter(stream))
-                file.WriteLine();
-
+            File.AppendAllText(Path.Combine(ExecutingDirectory, "Logs", LogfileName), text);
             Console.WriteLine(text);
         }
 
@@ -64,9 +61,9 @@ namespace IntWarsSharp.Core.Logic
             //Generate A Unique file to use as a log file
             if (!Directory.Exists(Path.Combine(ExecutingDirectory, "Logs")))
                 Directory.CreateDirectory(Path.Combine(ExecutingDirectory, "Logs"));
-            LogfileName = string.Format("{0}T{1} {2}", DateTime.Now.ToShortDateString().Replace("/", "_"),
+            LogfileName = string.Format("{0}T{1}{2}", DateTime.Now.ToShortDateString().Replace("/", "_"),
                 DateTime.Now.ToShortTimeString().Replace(" ", "").Replace(":", "-"), "_" + LogfileName);
-            FileStream file = File.Create(Path.Combine(ExecutingDirectory, "Logs", LogfileName));
+            var file = File.Create(Path.Combine(ExecutingDirectory, "Logs", LogfileName));
             file.Close();
         }
     }

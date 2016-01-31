@@ -18,7 +18,8 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             //   players[0].Item2.setPeer(enetEvent.peer);
 
             var keyCheck = new KeyCheck(data);
-            var userId = BitConverter.ToInt64(game.getBlowfish().Decrypt_ECB(BitConverter.GetBytes(keyCheck.checkId)), 0);
+            var userId = (long)BlowFishCS.BlowFishCS.Decrypt2(game.getBlowfish(), (ulong)keyCheck.checkId);
+            // var userId = BitConverter.ToInt64(game.getBlowfish().Decrypt_ECB(BitConverter.GetBytes()), 0);
 
             if (userId != keyCheck.userId)
                 return false;
