@@ -13,6 +13,7 @@ namespace IntWarsSharp.Logic.GameObjects
     {
         protected const int NUM_SIDES = 2;// Change implementation when more game-modes with more teams are available
         protected const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
+        protected const float PERCENT_MAX_MANA_HEAL = 0.15f;
         protected float fountainSize;
         protected long healTickTimer;
         protected List<Target> healLocations = new List<Target>();
@@ -48,16 +49,19 @@ namespace IntWarsSharp.Logic.GameObjects
                     {
                         if (c.getTeam() == Convert.toTeamId(team))
                         {
-                            float HP = c.getStats().getCurrentHealth(), MaxHP = c.getStats().getMaxHealth();
-                            if (HP + MaxHP * PERCENT_MAX_HEALTH_HEAL < MaxHP)
-                            {
-                                c.getStats().setCurrentHealth(HP + MaxHP * PERCENT_MAX_HEALTH_HEAL);
-                            }
-                            else if (HP < MaxHP)
-                            {
-                                c.getStats().setCurrentHealth(MaxHP);
-                                Logger.LogCoreInfo("Fully healed at fountain");
-                            }
+                            var hp = c.getStats().getCurrentHealth();
+                            var maxHP = c.getStats().getMaxHealth();
+                            if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
+                                c.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
+                            else if (hp < maxHP)
+                                c.getStats().setCurrentHealth(maxHP);
+
+                            var mp = c.getStats().getCurrentMana();
+                            var maxMp = c.getStats().getMaxMana();
+                            if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
+                                c.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
+                            else if (mp < maxMp)
+                                c.getStats().setCurrentMana(maxMp);
                         }
                     }
                     team++;

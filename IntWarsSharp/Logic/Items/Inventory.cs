@@ -107,7 +107,7 @@ namespace IntWarsSharp.Logic.Items
             if (items[slot] == null)
                 return;
 
-            items.RemoveAt(slot);
+            items[slot] = null;
         }
         public ItemInstance getItemSlot(byte slot)
         {

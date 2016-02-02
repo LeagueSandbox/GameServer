@@ -167,7 +167,18 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public PairList<byte, List<int>> getUpdatedStats()
         {
-            return updatedStats;
+            var ret = new PairList<byte, List<int>>();
+            lock (updatedStats)
+            {
+                foreach (var blocks in updatedStats)
+                {
+                    var retStats = new List<int>();
+                    foreach (var stat in blocks.Item2)
+                        retStats.Add(stat);
+                    ret.Add(blocks.Item1, retStats);
+                }
+            }
+            return ret;
         }
 
         public PairList<byte, List<int>> getAllStats()
@@ -668,9 +679,9 @@ namespace IntWarsSharp.Logic.GameObjects
         {
             short mask = (short)Math.Floor(getStat(MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled) + 0.5f);
             if (enabled)
-                mask |= (short)(1 << id);
+                mask |= (short)(16 << id);
             else
-                mask |= (short)(~(1 << id));
+                mask &= (short)(~(16 << id));
             setStat(MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, (float)mask);
         }
 

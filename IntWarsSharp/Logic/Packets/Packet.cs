@@ -249,16 +249,6 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write(currentBlue);
             buffer.Write(currentPurple);
         }
-
-        /*short cmd;
-        int blueMax;
-        int redMax;
-        long bluePlayerIds[6]; //Team 1, 6 players max
-        short blueData[144];
-        long redPlayersIds[6]; //Team 2, 6 players max
-        short redData[144];
-        int bluePlayerNo;
-        int redPlayerNo;*/
     }
 
     public class KeyCheck : Packet
@@ -365,7 +355,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((short)0x0200); // unk
-            buffer.Write((int)Environment.TickCount - (20 * 24 * 60 * 60 * 1000)); // unk
+            buffer.Write((int)Environment.TickCount); // unk
 
             List<Vector2> waypoints = m.getWaypoints();
 
@@ -536,21 +526,16 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)Environment.TickCount); // unk
 
             List<Vector2> waypoints = c.getWaypoints();
-            if (waypoints != null)
-                buffer.Write((short)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
-            else
-                buffer.Write((short)0);
+
+            buffer.Write((short)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write(c.getNetId());
             buffer.Write((short)0); // movement mask; 1=KeepMoving?
             buffer.Write(MovementVector.targetXToNormalFormat(c.getX()));
             buffer.Write(MovementVector.targetYToNormalFormat(c.getY()));
-            if (waypoints != null)
+            for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
             {
-                for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
-                {
-                    buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
-                    buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
-                }
+                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
+                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
             }
         }
     }
@@ -847,10 +832,19 @@ namespace IntWarsSharp.Logic.Packets
 
     public class Click
     {
-        PacketHeader header = new PacketHeader();
-        int zero;
-        int targetNetId; // netId on which the player clicked
+        PacketCmdC2S cmd;
+        int netId;
+        public int zero;
+        public int targetNetId; // netId on which the player clicked
 
+        public Click(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            zero = reader.ReadInt32();
+            targetNetId = reader.ReadInt32();
+        }
     }
 
     public class HeroSpawn : Packet
@@ -976,19 +970,41 @@ namespace IntWarsSharp.Logic.Packets
          }
      }*/
 
-    public class SkillUpPacket
+    public class SkillUpPacket : BasePacket
     {
-        public PacketHeader header = new PacketHeader();
-        public short skill;
+        public PacketCmdC2S cmd;
+        public int netId;
+        public byte skill;
+        public SkillUpPacket(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            skill = reader.ReadByte();
+        }
+        public SkillUpPacket(int netId, byte skill, byte level, byte pointsLeft) : base(PacketCmdS2C.PKT_S2C_SkillUp, netId)
+        {
+            buffer.Write(skill);
+            buffer.Write(level);
+            buffer.Write(pointsLeft);
+        }
     }
 
     public class BuyItemReq
     {
-        public PacketHeader header = new PacketHeader();
+        PacketCmdC2S cmd;
+        int netId;
         public int id;
+        public BuyItemReq(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            id = reader.ReadInt32();
+        }
     }
 
-    public class BuyItemAns : GamePacket
+    public class BuyItemAns : BasePacket
     {
         public BuyItemAns(Champion actor, ItemInstance item) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.getNetId())
         {
@@ -1002,8 +1018,17 @@ namespace IntWarsSharp.Logic.Packets
 
     public class SellItem
     {
-        public PacketHeader header = new PacketHeader();
-        public short slotId;
+        public PacketCmdC2S cmd;
+        public int netId;
+        public byte slotId;
+
+        public SellItem(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            slotId = reader.ReadByte();
+        }
     }
 
 
@@ -1016,39 +1041,47 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class EmotionPacket
+    public class EmotionPacket : BasePacket
     {
-        public PacketHeader header = new PacketHeader();
-        public short id;
+        public PacketCmdC2S cmd;
+        public int netId;
+        public byte id;
+
+        public EmotionPacket(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            id = reader.ReadByte();
+        }
+
+        public EmotionPacket(byte id, int netId) : base(PacketCmdS2C.PKT_S2C_Emotion, netId)
+        {
+            buffer.Write((byte)id);
+        }
     }
 
-    public class SwapItemsReq
+    public class SwapItems : BasePacket
     {
-        public PacketHeader header = new PacketHeader();
-        public short slotFrom;
-        public short slotTo;
-    }
+        public PacketCmdC2S cmd;
+        public int netId;
+        public byte slotFrom;
+        public byte slotTo;
+        public SwapItems(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            slotFrom = reader.ReadByte();
+            slotTo = reader.ReadByte();
+        }
 
-    public class SwapItemsAns : BasePacket
-    {
-
-        public SwapItemsAns(Champion c, byte slotFrom, byte slotTo) : base(PacketCmdS2C.PKT_S2C_SwapItems, c.getNetId())
+        public SwapItems(Champion c, byte slotFrom, byte slotTo) : base(PacketCmdS2C.PKT_S2C_SwapItems, c.getNetId())
         {
             buffer.Write((byte)slotFrom);
             buffer.Write((byte)slotTo);
         }
     }
-
-    /*  public class EmotionResponse
-      {
-          public PacketHeader header;
-          public short id;
-          public EmotionResponse()
-          {
-              header.cmd = PacketCmdS2C.PKT_S2C_Emotion;
-          }
-
-      }*/
 
     /* New Style Packets */
 
@@ -1418,16 +1451,6 @@ namespace IntWarsSharp.Logic.Packets
         }
     }
 
-    public class SkillUpResponse : BasePacket
-    {
-        public SkillUpResponse(int netId, short skill, short level, short pointsLeft) : base(PacketCmdS2C.PKT_S2C_SkillUp, netId)
-        {
-            buffer.Write(skill);
-            buffer.Write(level);
-            buffer.Write(pointsLeft);
-        }
-    }
-
     public class TeleportRequest : BasePacket
     {
         short a = 0x01;
@@ -1458,14 +1481,29 @@ namespace IntWarsSharp.Logic.Packets
 
     public class CastSpell
     {
-        public PacketHeader header;
-        public short spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
-        public short spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
+        public PacketCmdC2S cmd;
+        public int netId;
+        public byte spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
+        public byte spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
         public float x;
         public float y;
         public float x2;
         public float y2;
         public int targetNetId; // If 0, use coordinates, else use target net id
+
+        public CastSpell(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            spellSlotType = reader.ReadByte();
+            spellSlot = reader.ReadByte();
+            x = reader.ReadSingle();
+            y = reader.ReadSingle();
+            x2 = reader.ReadSingle();
+            y2 = reader.ReadSingle();
+            targetNetId = reader.ReadInt32();
+        }
     }
 
     public class CastSpellAns : GamePacket
@@ -1475,15 +1513,15 @@ namespace IntWarsSharp.Logic.Packets
         {
             Map m = s.getOwner().getMap();
 
-            buffer.Write((short)0);
-            buffer.Write((short)0x66);
-            buffer.Write((short)0x00); // unk
-            buffer.Write(s.getId()); // Spell hash, for example hash("EzrealMysticShot")
+            buffer.Write((byte)0);
+            buffer.Write((byte)0x66);
+            buffer.Write((byte)0x00); // unk
+            buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
             buffer.Write((int)spellNetId); // Spell net ID
-            buffer.Write((short)0); // unk
-            buffer.Write(1.0f); // unk
-            buffer.Write(s.getOwner().getNetId());
-            buffer.Write(s.getOwner().getNetId());
+            buffer.Write((byte)0); // unk
+            buffer.Write((float)1.0f); // unk
+            buffer.Write((int)s.getOwner().getNetId());
+            buffer.Write((int)s.getOwner().getNetId());
             buffer.Write((int)s.getOwner().getChampionHash());
             buffer.Write((int)futureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)x);
@@ -1492,18 +1530,18 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((float)x);
             buffer.Write((float)m.getHeightAtLocation(x, y));
             buffer.Write((float)y);
-            buffer.Write((short)0); // unk
+            buffer.Write((byte)0); // unk
             buffer.Write(s.getCastTime());
             buffer.Write((float)0.0f); // unk
             buffer.Write((float)1.0f); // unk
             buffer.Write(s.getCooldown());
             buffer.Write((float)0.0f); // unk
-            buffer.Write((short)0); // unk
-            buffer.Write(s.getSlot());
-            buffer.Write(s.getCost());
-            buffer.Write(s.getOwner().getX());
-            buffer.Write(s.getOwner().getZ());
-            buffer.Write(s.getOwner().getY());
+            buffer.Write((byte)0); // unk
+            buffer.Write((byte)s.getSlot());
+            buffer.Write((float)s.getCost());
+            buffer.Write((float)s.getOwner().getX());
+            buffer.Write((float)s.getOwner().getZ());
+            buffer.Write((float)s.getOwner().getY());
             buffer.Write((long)1); // unk
         }
     }
@@ -2053,68 +2091,64 @@ namespace IntWarsSharp.Logic.Packets
         {
             float targetZ = p.getMap().getHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
 
-            buffer.Write(p.getX());
-            buffer.Write(p.getZ());
-            buffer.Write(p.getY());
-            buffer.Write(p.getX());
-            buffer.Write(p.getZ());
-            buffer.Write(p.getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.getY());
             buffer.Write((long)0x000000003f510fe2); // unk
             buffer.Write((float)0.577f); // unk
-            buffer.Write(p.getTarget().getX());
-            buffer.Write(targetZ);
-            buffer.Write(p.getTarget().getY());
-            buffer.Write(p.getX());
-            buffer.Write(p.getZ());
-            buffer.Write(p.getY());
-            buffer.Write(p.getTarget().getX());
-            buffer.Write(targetZ);
-            buffer.Write(p.getTarget().getY());
-            buffer.Write(p.getX());
-            buffer.Write(p.getZ());
-            buffer.Write(p.getY());
+            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)targetZ);
+            buffer.Write((float)p.getTarget().getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.getY());
+            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)targetZ);
+            buffer.Write((float)p.getTarget().getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.getY());
             buffer.Write((int)0); // unk
             buffer.Write((float)p.getMoveSpeed()); // Projectile speed
             buffer.Write((long)0x00000000d5002fce); // unk
             buffer.Write((int)0x7f7fffff); // unk
-            buffer.Write((short)0);
-            buffer.Write((short)0x66);
-            buffer.Write((short)0);
+            buffer.Write((byte)0);
+            buffer.Write((byte)0x66);
+            buffer.Write((byte)0);
             buffer.Write((int)p.getProjectileId()); // unk (projectile ID)
             buffer.Write((int)0); // Second net ID
-            buffer.Write((short)0); // unk
+            buffer.Write((byte)0); // unk
             buffer.Write(1.0f);
-            buffer.Write(p.getOwner().getNetId());
-            buffer.Write(p.getOwner().getNetId());
+            buffer.Write((int)p.getOwner().getNetId());
+            buffer.Write((int)p.getOwner().getNetId());
 
             var c = p.getOwner() as Champion;
             if (c != null)
-            {
                 buffer.Write((int)c.getChampionHash());
-            }
             else
-            {
                 buffer.Write((int)0);
-            }
 
-            buffer.Write(p.getNetId());
-            buffer.Write(p.getTarget().getX());
-            buffer.Write(targetZ);
-            buffer.Write(p.getTarget().getY());
-            buffer.Write(p.getTarget().getX());
-            buffer.Write(targetZ);
-            buffer.Write(p.getTarget().getY());
+            buffer.Write((int)p.getNetId());
+            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)targetZ);
+            buffer.Write((float)p.getTarget().getY());
+            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)targetZ);
+            buffer.Write((float)p.getTarget().getY());
             buffer.Write((uint)0x80000000); // unk
             buffer.Write((int)0x000000bf); // unk
             buffer.Write((uint)0x80000000); // unk
             buffer.Write((int)0x2fd5843f); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((short)0x0000); // unk
-            buffer.Write((short)0x2f); // unk
+            buffer.Write((byte)0x2f); // unk
             buffer.Write((int)0x00000000); // unk
-            buffer.Write(p.getX());
-            buffer.Write(p.getZ());
-            buffer.Write(p.getY());
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.getY());
             buffer.Write((long)0x0000000000000000); // unk
         }
 
@@ -2161,7 +2195,6 @@ namespace IntWarsSharp.Logic.Packets
 
         }
 
-
         public class DestroyProjectile : BasePacket
         {
             public DestroyProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_DestroyProjectile, p.getNetId())
@@ -2196,6 +2229,7 @@ namespace IntWarsSharp.Logic.Packets
                 buffer.Write((byte)masterMask);
                 buffer.Write((int)u.getNetId());
 
+
                 foreach (var m in masks)
                 {
                     int mask = 0;
@@ -2208,7 +2242,8 @@ namespace IntWarsSharp.Logic.Packets
                         size += u.getStats().getSize(m, it);
                         mask |= it;
                     }
-
+                    //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
+                    //  System.Diagnostics.Debugger.Break();
                     buffer.Write((int)mask);
                     buffer.Write((byte)size);
 
@@ -2366,10 +2401,8 @@ namespace IntWarsSharp.Logic.Packets
             }
         }
 
-
         public class SetCooldown : BasePacket
         {
-
             public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmdS2C.PKT_S2C_SetCooldown, netId)
             {
                 buffer.Write(slotId);

@@ -107,7 +107,7 @@ namespace IntWarsSharp.Core.Logic
         }
         public void netLoop()
         {
-            new Thread(new ThreadStart(update)).Start();
+            update();
 
             var enetEvent = new ENetEvent();
             while (true)
@@ -140,24 +140,40 @@ namespace IntWarsSharp.Core.Logic
                             break;
                     }
                 }
+                Thread.Sleep((int)REFRESH_RATE);
             }
         }
 
         private void update()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            long elapsed = 0;
-            while (true)
-            {
-                if (_started)
-                    map.update(elapsed);
+            var timer = new System.Timers.Timer(REFRESH_RATE);
+            timer.AutoReset = false;
+            timer.Elapsed += (a, b) =>
+                 {
+                     timer.Stop();
+                     watch.Stop();
+                     var elapsed = watch.ElapsedMilliseconds;
+                     watch.Restart();
+                     if (_started)
+                         map.update(elapsed);
 
-                watch.Stop();
-                elapsed = watch.ElapsedMilliseconds;
-                watch.Restart();
-                if (elapsed < REFRESH_RATE)
-                    Thread.Sleep(TimeSpan.FromMilliseconds(REFRESH_RATE - elapsed)); //this is so not going to work
-            }
+                     timer.Start();
+                 };
+            timer.Start();
+            /* var watch = System.Diagnostics.Stopwatch.StartNew();
+             long elapsed = 0;
+             while (true)
+             {
+                 if (_started)
+                     map.update(elapsed);
+
+                 watch.Stop();
+                 elapsed = watch.ElapsedMilliseconds;
+                 watch.Restart();
+                 if (elapsed < REFRESH_RATE)
+                     Thread.Sleep(TimeSpan.FromMilliseconds(REFRESH_RATE - elapsed)); //this is so not going to work
+             }*/
         }
 
         public BlowFish* getBlowfish()
@@ -202,7 +218,7 @@ namespace IntWarsSharp.Core.Logic
 
         bool handleDisconnect(ENetPeer* peer)
         {
-            var peerinfo = peerInfo(peer);
+            var peerinfo = getPeerInfo(peer);
             if (peerinfo != null)
             {
                 // TODO: Handle disconnect
@@ -211,7 +227,7 @@ namespace IntWarsSharp.Core.Logic
             return true;
         }
 
-        public ClientInfo peerInfo(ENetPeer* peer)
+        public ClientInfo getPeerInfo(ENetPeer* peer)
         {
             foreach (var player in players)
                 if (player.Item1 == peer->address.host)

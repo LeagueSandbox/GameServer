@@ -19,7 +19,6 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 
             var keyCheck = new KeyCheck(data);
             var userId = (long)BlowFishCS.BlowFishCS.Decrypt2(game.getBlowfish(), (ulong)keyCheck.checkId);
-            // var userId = BitConverter.ToInt64(game.getBlowfish().Decrypt_ECB(BitConverter.GetBytes()), 0);
 
             if (userId != keyCheck.userId)
                 return false;
@@ -49,6 +48,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             }
             return false;
         }
+
         unsafe bool handleGameNumber(ClientInfo client, ENetPeer* peer, ENetPacket* packet)
         {
             var world = new WorldSendGameNumber(1, client.getName());

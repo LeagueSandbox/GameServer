@@ -10,7 +10,7 @@ namespace IntWarsSharp.Logic.GameObjects
     public class Projectile : GameObject
     {
 
-        protected List<GameObject> objectsHit;
+        protected List<GameObject> objectsHit = new List<GameObject>();
         protected Spell originSpell;
         protected Unit owner;
         protected float moveSpeed;

@@ -20,7 +20,7 @@ namespace IntWarsSharp.Logic
          */
         protected Target target;
 
-        protected List<Vector2> waypoints;
+        protected List<Vector2> waypoints = new List<Vector2>();
         protected int curWaypoint;
         protected Map map;
         protected TeamId team;

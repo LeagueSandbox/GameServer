@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using static ENet.Native;
+using IntWarsSharp.Logic.Packets;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -12,7 +13,10 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            return false;
+            var click = new Click(data);
+            Logger.LogCoreInfo("Object " + game.getPeerInfo(peer).getChampion().getNetId() + " clicked on " + click.targetNetId);
+
+            return true;
         }
     }
 }

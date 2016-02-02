@@ -52,7 +52,7 @@ namespace IntWarsSharp.Core.Logic
         {
             var text = string.Format("({0} {1}) [{2}]: {3}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), type.ToUpper(), lines);
 
-            File.AppendAllText(Path.Combine(ExecutingDirectory, "Logs", LogfileName), text);
+            File.AppendAllText(Path.Combine(ExecutingDirectory, "Logs", LogfileName), text + Environment.NewLine);
             Console.WriteLine(text);
         }
 

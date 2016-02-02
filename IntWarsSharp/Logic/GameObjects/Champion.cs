@@ -19,7 +19,7 @@ namespace IntWarsSharp.Logic.GameObjects
         protected short skillPoints = 0;
         protected int skin;
         protected long respawnTimer = 0;
-        protected Inventory inventory;
+        protected Inventory inventory = new Inventory();
         protected float championGoldFromMinions = 0;
         protected long championHitFlagTimer = 0;
         public int playerId;

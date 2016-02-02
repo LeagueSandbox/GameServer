@@ -35,12 +35,12 @@ namespace IntWarsSharp.Logic.Items
                 if (!System.Text.RegularExpressions.Regex.IsMatch(ini.FileName, "items/\\d.*.inibin", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                     continue;
                 var id = int.Parse(ini.ShortFileName.Replace(".inibin", ""));
-                if (id <= 1000 && id >= 4000)
+                if ((id <= 1000 && id >= 4000) || itemTemplates.ContainsKey(id))
                     continue;
 
                 var inibin = new Inibin(ini);
                 var maxStack = inibin.getIntValue("DATA", "MaxStack");
-                var price = inibin.GetValue<ushort>("DATA", "Price");
+                var price = inibin.GetValue<int>("DATA", "Price");
                 var type = inibin.GetValue<string>(3471506188);
                 bool trinket = false;
                 if (type != null && type.ToLower() == "RelicBase".ToLower())
@@ -80,7 +80,7 @@ namespace IntWarsSharp.Logic.Items
                     ++c;
                 }
 
-                itemTemplates.Add(itemTemplates.Count, new ItemTemplate(id, maxStack, price, sellBack, trinket, statMods, recipes));
+                itemTemplates.Add(id, new ItemTemplate(id, maxStack, price, sellBack, trinket, statMods, recipes));
             }
 
 

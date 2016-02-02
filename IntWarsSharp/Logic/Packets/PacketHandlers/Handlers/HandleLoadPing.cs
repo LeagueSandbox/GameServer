@@ -14,7 +14,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
             var loadInfo = new PingLoadInfo(data);
-            var peerInfo = game.peerInfo(peer);
+            var peerInfo = game.getPeerInfo(peer);
             if (peerInfo == null)
                 return false;
             var response = new PingLoadInfo(loadInfo, peerInfo.userId);

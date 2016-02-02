@@ -47,9 +47,8 @@ namespace IntWarsSharp
                  Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
                  return;
              }
-            //var addr = (uint)BitConverter.ToInt32(IPAddress.Parse("127.0.0.1").GetAddressBytes(), 0);
 
-            //ItemManager.getInstance().init();
+            ItemManager.getInstance().init();
 
             Logger.LogCoreInfo("Game started");
 

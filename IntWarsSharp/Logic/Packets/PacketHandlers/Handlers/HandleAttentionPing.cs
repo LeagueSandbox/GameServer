@@ -14,8 +14,8 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
             var ping = new AttentionPing(data);
-            var response = new AttentionPingAns(game.peerInfo(peer), ping);
-            return PacketHandlerManager.getInstace().broadcastPacketTeam(game.peerInfo(peer).getTeam(), response, Channel.CHL_S2C);
+            var response = new AttentionPingAns(game.getPeerInfo(peer), ping);
+            return PacketHandlerManager.getInstace().broadcastPacketTeam(game.getPeerInfo(peer).getTeam(), response, Channel.CHL_S2C);
         }
     }
     public enum Pings : byte

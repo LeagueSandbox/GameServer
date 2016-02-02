@@ -104,6 +104,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers
         PKT_C2S_BuyItemReq = 0x82,
         PKT_C2S_Exit = 0x8F,
         PKT_C2S_CastSpell = 0x9A,
+        PKT_C2S_PauseReq = 0xA1,
         PKT_C2S_Surrender = 0xA4,
         PKT_C2S_StatsConfirm = 0xA8,
         PKT_C2S_Click = 0xAF,

@@ -49,6 +49,7 @@ namespace IntWarsSharp.Core.Logic
             registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
             registerHandler(new HandleClick(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
             registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
+            //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
 
             game = g;
         }
@@ -105,54 +106,44 @@ namespace IntWarsSharp.Core.Logic
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
-
-            /*System.Diagnostics.Debug.Write(str);
-            foreach (var b in buffer)
-                System.Diagnostics.Debug.Write(b.ToString("x") + " ");
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("--------");*/
+            lock(Program.ExecutingDirectory)
+            {
+                System.Diagnostics.Debug.Write(str);
+                foreach (var b in buffer)
+                    System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+                System.Diagnostics.Debug.WriteLine("");
+                System.Diagnostics.Debug.WriteLine("--------");
+            }
         }
         public bool sendPacket(ENetPeer* peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
-            printPacket(source, "Sent: ");
+            //printPacket(source, "Sent: ");
 
             fixed (byte* data = source)
             {
                 if (source.Length >= 8)
                     BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), data, new IntPtr(source.Length - (source.Length % 8)));
 
-                //source = game.getBlowfish().Encrypt_ECB(source); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
-
-                //  var ptr = allocMemory(source);
                 var packet = enet_packet_create(new IntPtr(data), new IntPtr(source.Length), flag);
                 if (enet_peer_send(peer, (byte)channelNo, packet) < 0)
-                {
-                    // releaseMemory(ptr);
                     return false;
-                }
             }
-            // releaseMemory(ptr);
             return true;
         }
         public bool broadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
-            printPacket(data, "Broadcast: ");
+            //printPacket(data, "Broadcast: ");
 
             fixed (byte* b = data)
             {
-                if (data.Length >= 8)// length - (length % 8)
+                if (data.Length >= 8)
                     BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), b, new IntPtr(data.Length - (data.Length % 8)));
 
-                //data = game.getBlowfish().Encrypt_ECB(data);
-
-                //var unmanagedPointer = allocMemory(data);
                 var packet = enet_packet_create(new IntPtr(b), new IntPtr(data.Length), (PacketFlags)flag);
-
                 enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
-                // releaseMemory(unmanagedPointer);
             }
             return true;
         }
@@ -192,9 +183,9 @@ namespace IntWarsSharp.Core.Logic
         public bool handlePacket(ENetPeer* peer, ENetPacket* packet, byte channelID)
         {
             if ((int)packet->dataLength >= 8)
-                if (game.peerInfo(peer) != null)
+                if (game.getPeerInfo(peer) != null)
                     BlowFishCS.BlowFishCS.Decrypt1(game.getBlowfish(), (byte*)packet->data, new IntPtr((int)packet->dataLength - ((int)packet->dataLength % 8)));
-            //data = game.getBlowfish().Decrypt_ECB(data); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
+
             var data = new byte[(int)packet->dataLength];
             Marshal.Copy(packet->data, data, 0, data.Length);
 

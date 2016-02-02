@@ -74,7 +74,8 @@ namespace IntWarsSharp.Logic.Maps
                     {
                         //collisionHandler.stackChanged(kv.Value);
                         collisionHandler.removeObject(kv.Value);
-                        objects.Remove(kv.Key);
+                        lock (objects)
+                            objects.Remove(kv.Key);
                     }
                     continue;
                 }
@@ -268,7 +269,8 @@ namespace IntWarsSharp.Logic.Maps
             if (o == null)
                 return;
 
-            objects.Add(o.getNetId(), o);
+            lock (objects)
+                objects.Add(o.getNetId(), o);
 
             var u = o as Unit;
             if (u == null)
@@ -302,7 +304,8 @@ namespace IntWarsSharp.Logic.Maps
             if (c != null)
                 champions.Remove(c.getNetId());
 
-            objects.Remove(o.getNetId());
+            lock (objects)
+                objects.Remove(o.getNetId());
             visionUnits[Convert.fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 

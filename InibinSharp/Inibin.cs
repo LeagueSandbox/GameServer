@@ -59,12 +59,12 @@ namespace InibinSharp
             var bitmask = ReadValue<UInt16>();
             _stringOffset = size - oldLength;
 
-            Debug.WriteLine("Version:" + version);
+          /*  Debug.WriteLine("Version:" + version);
             Debug.WriteLine("Length:" + size);
             Debug.WriteLine("OldLength:" + oldLength);
             Debug.WriteLine("StringOffset:" + _stringOffset);
             Debug.WriteLine("Bitmask:" + bitmask);
-            Debug.WriteLine("");
+            Debug.WriteLine("");*/
 
             if (version != 2)
             {
@@ -173,7 +173,7 @@ namespace InibinSharp
             if (!Values.ContainsKey(key))
             {
                 Values.Add(key, value);
-                Debug.WriteLine("{0} [{1}] = {2}", typeof(T).Name, HashToName(key), value);
+               // Debug.WriteLine("{0} [{1}] = {2}", typeof(T).Name, HashToName(key), value);
             }
         }
 
@@ -634,12 +634,12 @@ namespace InibinSharp
             var start = _reader.BaseStream.Position;
             var keys = ReadSegmentKeys();
             _reader.BaseStream.Position += keys.Length * size;
-            Debug.WriteLine("{0} properties skip from {1} to {2}", size, start, _reader.BaseStream.Position);
+           // Debug.WriteLine("{0} properties skip from {1} to {2}", size, start, _reader.BaseStream.Position);
         }
 
         private void ParseValues<T>(bool isBase10 = false)
         {
-            Debug.WriteLine("{0} properties start position {1}", typeof(T).Name, _reader.BaseStream.Position);
+            //Debug.WriteLine("{0} properties start position {1}", typeof(T).Name, _reader.BaseStream.Position);
             var keys = ReadSegmentKeys();
 
             if (typeof(T) == typeof(bool))
@@ -684,7 +684,7 @@ namespace InibinSharp
                 }
             }
 
-            Debug.WriteLine("");
+           // Debug.WriteLine("");
         }
 
         private T ReadValue<T>(int offset = 0)
@@ -753,7 +753,8 @@ namespace InibinSharp
             {
                 if (!Values.ContainsKey(key))
                 {
-                    throw new KeyNotFoundException(key.ToString());
+                    return default(T);
+                   // throw new KeyNotFoundException(key.ToString());
                 }
 
                 if (typeof(T) == typeof(string))
@@ -792,6 +793,8 @@ namespace InibinSharp
                             return (T)Convert.ChangeType(doubleValue, typeof(T));
                         }
                     }
+                    if (value == "")
+                        return default(T);
                 }
 
                 return (T)Convert.ChangeType(Values[key], typeof(T));

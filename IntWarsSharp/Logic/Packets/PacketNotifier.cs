@@ -152,7 +152,7 @@ namespace IntWarsSharp.Logic.Packets
 
         public static void notifyItemsSwapped(Champion c, byte fromSlot, byte toSlot)
         {
-            var sia = new SwapItemsAns(c, fromSlot, toSlot);
+            var sia = new SwapItems(c, fromSlot, toSlot);
             PacketHandlerManager.getInstace().broadcastPacketVision(c, sia, Channel.CHL_S2C);
         }
 
