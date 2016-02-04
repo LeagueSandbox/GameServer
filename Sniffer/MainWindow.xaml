@@ -1,0 +1,18 @@
+﻿<Controls:MetroWindow x:Class="SnifferApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SnifferApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="693" Width="1202">
+    <Grid>
+        <ListView x:Name="packets" HorizontalAlignment="Left" Height="655" Margin="10,5,0,0" VerticalAlignment="Top" Width="525"/>
+        <ListView x:Name="selectedPacket" HorizontalAlignment="Right" Height="350" Margin="0,5,5,0" VerticalAlignment="Top" Width="650"/>
+        <ListView x:Name="selectedPacketDesc" HorizontalAlignment="Right" Height="300" Margin="0,360,5,0" VerticalAlignment="Top" Width="650"/>
+
+
+
+    </Grid>
+</Controls:MetroWindow>

@@ -69,7 +69,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
 
             if (mainWaypoints.Count > 0)                                                      // If we have lane path instructions from the map
-                setWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[0] });       // Follow these instructions
+                setWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });       // Follow these instructions
             else
                 setWaypoints(new List<Vector2> { new Vector2(x, y), new Vector2(x, y) });     // Otherwise path to own position. (Stand still)
 
@@ -161,11 +161,14 @@ namespace IntWarsSharp.Logic.GameObjects
         }
         protected void walkToDestination()
         {
-            if ((waypoints.Count == 1) || (curWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
+            if (mainWaypoints.Count > curMainWaypoint + 1)
             {
-                //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                List<Vector2> newWaypoints = new List<Vector2> { new Vector2(x, y), mainWaypoints[curMainWaypoint] };
-                setWaypoints(newWaypoints);
+                if ((waypoints.Count == 1) || (curWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
+                {
+                    //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
+                    List<Vector2> newWaypoints = new List<Vector2> { new Vector2(x, y), mainWaypoints[curMainWaypoint] };
+                    setWaypoints(newWaypoints);
+                }
             }
         }
         protected void keepFocussingTarget()

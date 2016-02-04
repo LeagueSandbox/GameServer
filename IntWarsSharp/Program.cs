@@ -13,6 +13,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SnifferApp.Logic;
 
 namespace IntWarsSharp
 {
@@ -43,10 +44,10 @@ namespace IntWarsSharp
             //var basePath = RAFManager.getInstance().findGameBasePath();
             var basePath = @"C:\LolPatcherProxy\Base\RADS\projects\lol_game_client";
             if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath, "filearchives")))
-             {
-                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
-                 return;
-             }
+            {
+                Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
+                return;
+            }
 
             ItemManager.getInstance().init();
 
@@ -64,6 +65,9 @@ namespace IntWarsSharp
                 return;
             }
 
+            Sniffer.getInstance();
+           // var p = Process.Start("SnifferApp.exe");
+            
             g.netLoop();
 
             PathNode.DestroyTable(); // Cleanup

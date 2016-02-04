@@ -102,5 +102,9 @@ namespace IntWarsSharp.Logic.GameObjects
         {
         }
 
+        public override float getMoveSpeed()
+        {
+            return 0;
+        }
     }
 }

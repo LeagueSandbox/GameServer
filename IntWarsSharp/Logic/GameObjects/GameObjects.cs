@@ -121,6 +121,7 @@ namespace IntWarsSharp.Logic
         public void setTeam(TeamId team)
         {
             this.team = team;
+            visibleByTeam[Convert.fromTeamId(team)] = true;
         }
         public TeamId getTeam()
         {
@@ -260,7 +261,7 @@ namespace IntWarsSharp.Logic
 
         public bool isVisibleByTeam(TeamId team)
         {
-            return (team == getTeam() || visibleByTeam[team == TeamId.TEAM_BLUE ? 0 : 1]);
+            return (team == getTeam() || visibleByTeam[Convert.fromTeamId(team)]);
         }
 
         public void setVisibleByTeam(int team, bool visible)

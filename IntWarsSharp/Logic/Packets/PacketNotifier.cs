@@ -42,7 +42,7 @@ namespace IntWarsSharp.Logic.Packets
 
             if (!partial)
             {
-                PacketHandlerManager.getInstace().broadcastPacketTeam((1 - u.getTeam()) == 0 ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
+                PacketHandlerManager.getInstace().broadcastPacketTeam(u.getTeam(), us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
             }
             else
             {

@@ -86,7 +86,7 @@ namespace IntWarsSharp.Logic.Maps
            }
         };
 
-        public SummonersRift(Game game) : base(game, 5 * 1000, 30 * 1000, 90 * 1000, true, 1)
+        public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
             {
@@ -132,8 +132,8 @@ namespace IntWarsSharp.Logic.Maps
             announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(30 * 1000, 119, true) }); // Welcome to SR
             if (firstSpawnTime - 30 * 1000 >= 0.0f)
                 announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime - 30 * 1000, 120, true) }); // 30 seconds until minions spawn
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000000)
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000000)
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000)
+            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000)
 
             fountain.setHealLocations(this);
         }

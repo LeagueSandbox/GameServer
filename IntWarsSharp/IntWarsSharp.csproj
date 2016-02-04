@@ -124,6 +124,7 @@
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
+    <Compile Include="Logic\Sniffer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

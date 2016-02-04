@@ -7,6 +7,7 @@ using ENet;
 using static ENet.Native;
 using IntWarsSharp.Logic.Packets;
 using IntWarsSharp.Logic.GameObjects;
+using IntWarsSharp.Logic.Enet;
 
 namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
 {
@@ -211,10 +212,20 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                         }
                         catch { }
                         return true;
-                    case ".inv":
-                        for (byte i = 0; i < 7; i++)
-                            game.getPeerInfo(peer).getChampion().getInventory().removeItem(i);
+                    case ".mobs":
+                        if (split.Length < 2)
+                            return true;
+                        int team;
+                        if (!int.TryParse(split[1], out team))
+                            return true;
+                        var units = game.getPeerInfo(peer).getChampion().getMap().getVisionUnits(Convert.toTeamId(team)).Where(xx => xx.Value is Minion);
+                        foreach (var unit in units)
+                        {
+                            var response = new AttentionPingAns(game.getPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
+                            PacketHandlerManager.getInstace().broadcastPacketTeam(game.getPeerInfo(peer).getTeam(), response, Channel.CHL_S2C);
+                        }
                         return true;
+
                 }
             }
 

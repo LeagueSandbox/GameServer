@@ -353,7 +353,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            respawnTimer = 5000000 + getStats().getLevel() * 2500000;
+            respawnTimer = 5000 + getStats().getLevel() * 2500;
             map.stopTargeting(this);
 
             var cKiller = killer as Champion;
@@ -453,7 +453,7 @@ namespace IntWarsSharp.Logic.GameObjects
             if (cTarget == null)
                 return;
 
-            cTarget.setChampionHitFlagTimer(15 * 1000000); //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
+            cTarget.setChampionHitFlagTimer(15 * 1000); //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             cTarget.playerHitId = id;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }

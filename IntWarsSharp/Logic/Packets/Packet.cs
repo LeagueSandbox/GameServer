@@ -390,8 +390,9 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0x00000000); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write(1.0f); // unk
-            buffer.Write(animationName);
-            buffer.Write((short)0);
+            foreach (var b in Encoding.Default.GetBytes(animationName))
+                buffer.Write(b);
+            buffer.Write((byte)0);
         }
     }
 
@@ -399,14 +400,17 @@ namespace IntWarsSharp.Logic.Packets
     {
         public SetAnimation(Unit u, List<Tuple<string, string>> animationPairs) : base(PacketCmdS2C.PKT_S2C_SetAnimation, u.getNetId())
         {
-            buffer.Write((short)animationPairs.Count);
+            buffer.Write((byte)animationPairs.Count);
 
             for (int i = 0; i < animationPairs.Count; i++)
             {
                 buffer.Write((int)animationPairs[i].Item1.Length);
-                buffer.Write(animationPairs[i].Item1);
+                foreach (var b in Encoding.Default.GetBytes(animationPairs[i].Item1))
+                    buffer.Write(b);
+
                 buffer.Write((int)animationPairs[i].Item2.Length);
-                buffer.Write(animationPairs[i].Item2);
+                foreach (var b in Encoding.Default.GetBytes(animationPairs[i].Item2))
+                    buffer.Write(b);
             }
         }
     }
@@ -418,7 +422,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write(relativeX);
             buffer.Write(relativeZ);
             buffer.Write(relativeY);
-            buffer.Write((short)0);
+            buffer.Write((byte)0);
             buffer.Write((float)0.0833); // Time to turn ?
         }
     };
@@ -428,29 +432,29 @@ namespace IntWarsSharp.Logic.Packets
         public Dash(Unit u, float toX, float toY, float dashSpeed) : base(PacketCmdS2C.PKT_S2C_Dash, 0)
         {
             buffer.Write((short)1); // nb updates ?
-            buffer.Write((short)5); // unk
-            buffer.Write(u.getNetId());
-            buffer.Write((short)0); // unk
-            buffer.Write(dashSpeed); // Dash speed
+            buffer.Write((byte)5); // unk
+            buffer.Write((int)u.getNetId());
+            buffer.Write((byte)0); // unk
+            buffer.Write((float)dashSpeed); // Dash speed
             buffer.Write((int)0); // unk
-            buffer.Write(u.getX());
-            buffer.Write(u.getY());
+            buffer.Write((float)u.getX());
+            buffer.Write((float)u.getY());
             buffer.Write((int)0); // unk
-            buffer.Write((short)0);
+            buffer.Write((byte)0);
 
             buffer.Write((int)0x4c079bb5); // unk
             buffer.Write((uint)0xa30036df); // unk
             buffer.Write((int)0x200168c2); // unk
 
-            buffer.Write((short)0x00); // Vector bitmask on whether they're int16 or byte
+            buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
             MovementVector from = u.getMap().toMovementVector(u.getX(), u.getY());
             MovementVector to = u.getMap().toMovementVector(toX, toY);
 
-            buffer.Write(from.x);
-            buffer.Write(from.y);
-            buffer.Write(to.x);
-            buffer.Write(to.y);
+            buffer.Write((short)from.x);
+            buffer.Write((short)from.y);
+            buffer.Write((short)to.x);
+            buffer.Write((short)to.y);
         }
     }
 
@@ -479,27 +483,27 @@ namespace IntWarsSharp.Logic.Packets
             buffer.fill(0, 13);
             buffer.Write(1.0f);
             buffer.fill(0, 13);
-            buffer.Write((short)0x02);
+            buffer.Write((byte)0x02);
             buffer.Write((int)Environment.TickCount); // unk
 
             var waypoints = m.getWaypoints();
 
-            buffer.Write((short)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
-            buffer.Write(m.getNetId());
-            buffer.Write((short)0); // movement mask
-            buffer.Write(MovementVector.targetXToNormalFormat(m.getX()));
-            buffer.Write(MovementVector.targetYToNormalFormat(m.getY()));
-            for (int i = m.getCurWaypoint(); i < waypoints.Count; ++i)
+            buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((int)m.getNetId());
+            buffer.Write((byte)0); // movement mask
+            buffer.Write((short)MovementVector.targetXToNormalFormat(m.getX()));
+            buffer.Write((short)MovementVector.targetYToNormalFormat(m.getY()));
+            for (int i = m.getCurWaypoint(); i < waypoints.Count; i++)
             {
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].X));
+                buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].Y));
             }
         }
 
         public EnterVisionAgain(Champion c) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, c.getNetId())
         {
             buffer.Write((short)0); // extraInfo
-            buffer.Write((short)0); //c.getInventory().getItems().size(); // itemCount?
+            buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
                                     //buffer.Write((short)7; // unknown
 
             /*
@@ -522,14 +526,14 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((float)1.0f);
             buffer.fill(0, 13);
 
-            buffer.Write((short)2); // Type of data: Waypoints=2
+            buffer.Write((byte)2); // Type of data: Waypoints=2
             buffer.Write((int)Environment.TickCount); // unk
 
             List<Vector2> waypoints = c.getWaypoints();
 
-            buffer.Write((short)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((byte)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write(c.getNetId());
-            buffer.Write((short)0); // movement mask; 1=KeepMoving?
+            buffer.Write((byte)0); // movement mask; 1=KeepMoving?
             buffer.Write(MovementVector.targetXToNormalFormat(c.getX()));
             buffer.Write(MovementVector.targetYToNormalFormat(c.getY()));
             for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
@@ -1174,9 +1178,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         public LoadScreenPlayerName(Pair<uint, ClientInfo> player) : base(PacketCmdS2C.PKT_S2C_LoadName)
         {
-            buffer.Write((int)player.Item2.userId);
-            buffer.Write((short)Environment.TickCount);
-            buffer.Write((int)0x8E00); //sometimes 0x8E02
+            buffer.Write((long)player.Item2.userId);
             buffer.Write((int)0);
             buffer.Write((int)player.Item2.getName().Length + 1);
             foreach (var b in Encoding.Default.GetBytes(player.Item2.getName()))
@@ -1184,7 +1186,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((byte)0);
         }
 
-        /*short cmd;
+        /*byte cmd;
         long userId;
         int skinId;
         int length;
@@ -1205,7 +1207,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((byte)0);
         }
 
-        /*short cmd;
+        /*byte cmd;
         long userId;
         int skinId;
         int length;
@@ -1454,23 +1456,19 @@ namespace IntWarsSharp.Logic.Packets
     public class TeleportRequest : BasePacket
     {
         short a = 0x01;
-        public TeleportRequest(int netId, float x, float y, bool first) : base(PacketCmdS2C.PKT_S2C_MoveAns, (int)0x0)
+        public TeleportRequest(int netId, float x, float y, bool first) : base(PacketCmdS2C.PKT_S2C_MoveAns)
         {
             buffer.Write((int)Environment.TickCount);//not 100% sure
-            buffer.Write((short)0x01);
-            buffer.Write((short)0x00);
-            if (first == true)
-            {
-                buffer.Write((short)0x02);
-            }
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x00);
+            if (first == true) //seems to be id, 02 = before teleporting, 03 = do teleport
+                buffer.Write((byte)0x02);
             else
-            {
-                buffer.Write((short)0x03);
-            }///      }//seems to be id, 02 = before teleporting, 03 = do teleport
+                buffer.Write((byte)0x03);
             buffer.Write((int)netId);
             if (first == false)
             {
-                buffer.Write((short)a); // if it is the second part, send 0x01 before coords
+                buffer.Write((byte)a); // if it is the second part, send 0x01 before coords
                 a++;
             }
             buffer.Write((short)x);

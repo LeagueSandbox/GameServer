@@ -81,11 +81,13 @@ namespace IntWarsSharp
             switch (i)
             {
                 case 0:
+                case (int)TeamId.TEAM_BLUE:
                     return TeamId.TEAM_BLUE;
                 case 1:
+                case (int)TeamId.TEAM_PURPLE:
                     return TeamId.TEAM_PURPLE;
                 default:
-                    return (TeamId)i;
+                    return (TeamId)2;
             }
         }
         public static int fromTeamId(TeamId team)
@@ -97,7 +99,7 @@ namespace IntWarsSharp
                 case TeamId.TEAM_PURPLE:
                     return 1;
                 default:
-                    return (int)team;
+                    return 2;
             }
         }
     }

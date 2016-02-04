@@ -99,10 +99,9 @@ namespace IntWarsSharp.Logic.Maps
                     if (u.getTeam() == Convert.toTeamId(i))
                         continue;
 
-                    var visionUnitsTeam = visionUnits[i];
+                    var visionUnitsTeam = visionUnits[Convert.fromTeamId(u.getTeam())];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        var s = visionUnitsTeam[u.getNetId()];
                         if (teamHasVisionOn(Convert.toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
@@ -195,14 +194,15 @@ namespace IntWarsSharp.Logic.Maps
 
             if (waveNumber > 0)
             {
-                if (gameTime >= nextSpawnTime + waveNumber * 8 * 100000)
+                if (gameTime >= nextSpawnTime + waveNumber * 8 * 100)
                 { // Spawn new wave every 0.8s
                     if (spawn())
                     {
                         waveNumber = 0;
                         nextSpawnTime += spawnInterval;
                     }
-                    else {
+                    else
+                    {
                         ++waveNumber;
                     }
                 }
@@ -278,7 +278,7 @@ namespace IntWarsSharp.Logic.Maps
 
             collisionHandler.addObject(o);
             var team = o.getTeam();
-            var teamVision = visionUnits[team == TeamId.TEAM_BLUE ? 0 : team == TeamId.TEAM_PURPLE ? 1 : 2];
+            var teamVision = visionUnits[Convert.fromTeamId(team)];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -307,6 +307,11 @@ namespace IntWarsSharp.Logic.Maps
             lock (objects)
                 objects.Remove(o.getNetId());
             visionUnits[Convert.fromTeamId(o.getTeam())].Remove(o.getNetId());
+        }
+
+        public Dictionary<int, Unit> getVisionUnits(TeamId team)
+        {
+            return visionUnits[Convert.fromTeamId(team)];
         }
 
         public List<int> getExperienceToLevelUp()
@@ -449,7 +454,7 @@ namespace IntWarsSharp.Logic.Maps
                     if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as Unit;
-                        if (unit != null && unit.isDead())
+                        if (unit == null || unit.isDead())
                             continue;
                         return true;
                     }
