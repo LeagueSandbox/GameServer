@@ -8,11 +8,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="693" Width="1202">
     <Grid>
-        <ListView x:Name="packets" HorizontalAlignment="Left" Height="655" Margin="10,5,0,0" VerticalAlignment="Top" Width="525"/>
+        <ListView x:Name="packets" HorizontalAlignment="Left" Height="655" Margin="10,5,0,0" VerticalAlignment="Top" Width="525" SelectionChanged="packets_Selected">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderBrush" Value="White" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
         <ListView x:Name="selectedPacket" HorizontalAlignment="Right" Height="350" Margin="0,5,5,0" VerticalAlignment="Top" Width="650"/>
         <ListView x:Name="selectedPacketDesc" HorizontalAlignment="Right" Height="300" Margin="0,360,5,0" VerticalAlignment="Top" Width="650"/>
-
-
-
     </Grid>
 </Controls:MetroWindow>

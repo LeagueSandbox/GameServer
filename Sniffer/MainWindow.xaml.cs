@@ -1,6 +1,7 @@
 ﻿using IntWarsSharp.Core.Logic.PacketHandlers;
 using MahApps.Metro.Controls;
 using SnifferApp.Logic;
+using SnifferApp.Logic.Config;
 using SnifferApp.Logic.UI;
 using System;
 using System.Collections.Generic;
@@ -30,31 +31,68 @@ namespace SnifferApp
     {
         private BinaryWriter writer;
         private BinaryReader reader;
+        private List<Packet> packetsReceived = new List<Packet>();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var client = new TcpClient();
-            client.Connect("127.0.0.1", 5478);
-            reader = new BinaryReader(client.GetStream());
-            writer = new BinaryWriter(client.GetStream());
+            PacketConfig.getInstance();
 
             new Thread(new ThreadStart(() =>
             {
                 while (true)
                 {
-                    var r = Receive();
-                    if (r == null)
-                        continue;
-                   
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        var line = new PacketLine(r);
-                        packets.Items.Add(line);
-                    });
+                        var client = new TcpClient();
+                        client.Connect("127.0.0.1", 5478);
+                        reader = new BinaryReader(client.GetStream());
+                        writer = new BinaryWriter(client.GetStream());
+                        Thread.CurrentThread.Abort();
+                    }
+                    catch { }
+                    Thread.Sleep(1000);
                 }
             })).Start();
+
+            new Thread(new ThreadStart(() =>
+            {
+                while (true)
+                {
+                    var p = Receive();
+                    if (p == null)
+                        continue;
+                    packetsReceived.Add(p);
+                }
+            })).Start();
+
+            var timer = new System.Timers.Timer(10);
+            timer.AutoReset = true;
+            timer.Elapsed += (a, b) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    if (packetsReceived.Count < 1)
+                        return;
+                    var line = new PacketLine(packetsReceived[0]);
+                    packets.Items.Add(line);
+                    packetsReceived.RemoveAt(0);
+                });
+
+                /* var temp = packetsReceived.ToList();
+                System.Diagnostics.Debug.WriteLine(temp.Count);
+                Dispatcher.Invoke(() =>
+                {
+                    packets.Items.Clear();
+                    foreach (var p in temp)
+                    {
+                        var line = new PacketLine(p);
+                        packets.Items.Add(line);
+                    }
+                });*/
+            };
+            timer.Start();
         }
 
         public void Send(byte[] data)
@@ -72,17 +110,50 @@ namespace SnifferApp
         {
             if (reader == null || !reader.BaseStream.CanRead)
                 return null;
-            var packet = new Packet();
 
-            packet.len = reader.ReadInt32();
-            packet.s2c = reader.ReadByte() == 1 ? true : false;
-            packet.broadcast = reader.ReadByte() == 1 ? true : false;
-            if (packet.len < 1)
-                return null;
+            try
+            {
+                var packet = new Packet();
 
-            packet.data = reader.ReadBytes(packet.len);
+                packet.len = reader.ReadInt32();
+                packet.s2c = reader.ReadByte() == 1 ? true : false;
+                packet.broadcast = reader.ReadByte() == 1 ? true : false;
+                if (packet.len < 1)
+                    return null;
 
-            return packet;
+                packet.data = reader.ReadBytes(packet.len);
+                packet.ReceivedTime = DateTime.Now;
+                return packet;
+            }
+            catch
+            {
+                writer = null;
+                reader = null;
+            }
+            return null;
+        }
+
+        private void packets_Selected(object sender, RoutedEventArgs e)
+        {
+            var view = sender as ListView;
+            if (view == null)
+                return;
+
+            var line = view.SelectedItem as PacketLine;
+            if (line == null)
+                return;
+
+            var p = new SelectedPacket(line.packet);
+            selectedPacket.Items.Clear();
+            selectedPacket.Items.Add(p);
+
+            selectedPacketDesc.Items.Clear();
+            try
+            {
+                foreach (SelectedPacketLine i in p.Content.Items)
+                    selectedPacketDesc.Items.Add(new SelectedPacketDesc(i));
+            }
+            catch { }
         }
     }
 }

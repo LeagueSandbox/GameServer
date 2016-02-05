@@ -16,24 +16,21 @@ using System.Windows.Shapes;
 namespace SnifferApp.Logic.UI
 {
     /// <summary>
-    /// Interaction logic for PacketLine.xaml
+    /// Interaction logic for SelectedPacketLine.xaml
     /// </summary>
-    public partial class PacketLine : UserControl
+    public partial class SelectedPacketLine : UserControl
     {
-        public Packet packet;
-
-        private PacketLine()
+        public string packetType;
+        public string packetName;
+        private SelectedPacketLine()
         {
             InitializeComponent();
         }
 
-        public PacketLine(Packet p) : this()
+        public SelectedPacketLine(string type, string fieldName) : this()
         {
-            packet = p;
-            PacketDirection.Content = p.s2c ? p.broadcast ? "S2A" : "S2C" : "C2S";
-            Timestamp.Content = p.ReceivedTime.ToString("H:mm:ss.ffff");
-            Name.Content = p.Name;
-            Background = p.s2c ? p.broadcast ? Brushes.BlueViolet : Brushes.MediumBlue : Brushes.PaleVioletRed;
+            packetType = type;
+            packetName = fieldName;
         }
     }
 }

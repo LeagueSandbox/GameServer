@@ -57,6 +57,10 @@
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SharpConfig, Version=1.4.9.0, Culture=neutral, PublicKeyToken=c1deedac91bd7724, processorArchitecture=MSIL">
+      <HintPath>..\packages\sharpconfig.1.4.9\lib\net20\SharpConfig.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -87,6 +91,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Logic\UI\SelectedPacket.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Logic\UI\SelectedPacketDesc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Logic\UI\SelectedPacketLine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -95,10 +111,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Logic\Config\PacketConfig.cs" />
     <Compile Include="Logic\net\Packet.cs" />
     <Compile Include="Logic\net\PacketEnum.cs" />
+    <Compile Include="Logic\net\Packets.cs" />
     <Compile Include="Logic\UI\PacketLine.xaml.cs">
       <DependentUpon>PacketLine.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\UI\SelectedPacket.xaml.cs">
+      <DependentUpon>SelectedPacket.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\UI\SelectedPacketDesc.xaml.cs">
+      <DependentUpon>SelectedPacketDesc.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\UI\SelectedPacketLine.xaml.cs">
+      <DependentUpon>SelectedPacketLine.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -148,7 +175,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>C:\windows\system32\xcopy /s /y "$(TargetPath)" "$(SolutionDir)IntWarsSharp\bin\Debug"</PostBuildEvent>
+    <PostBuildEvent>C:\windows\system32\xcopy /y "$(ProjectDir)Packets.ini" "$(ProjectDir)$(OutDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -119,7 +119,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSwapItems.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSynch.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleView.cs" />
-    <Compile Include="Logic\Packets\Packet.cs" />
+    <Compile Include="Logic\Packets\Packets.cs" />
     <Compile Include="Logic\Packets\PacketNotifier.cs" />
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />

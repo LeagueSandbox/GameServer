@@ -22,9 +22,12 @@ namespace SnifferApp.Logic
             listener.Start();
             new Thread(new ThreadStart(() =>
             {
-                var c = listener.AcceptTcpClient();
-                writer = new BinaryWriter(c.GetStream());
-                reader = new BinaryReader(c.GetStream());
+                while (true)
+                {
+                    var c = listener.AcceptTcpClient();
+                    writer = new BinaryWriter(c.GetStream());
+                    reader = new BinaryReader(c.GetStream());
+                }
             })).Start();
 
 
@@ -32,21 +35,29 @@ namespace SnifferApp.Logic
             {
                 while (true)
                 {
-                    if (reader != null)
-                        System.Diagnostics.Debug.WriteLine(BitConverter.ToString(Receive()));
+                    try
+                    {
+                        if (reader != null)
+                            System.Diagnostics.Debug.WriteLine(BitConverter.ToString(Receive()));
+                    }
+                    catch { reader = null; }
                 }
             })).Start();
         }
 
         public void Send(byte[] data, bool s2c, bool broadcast = false)
         {
-            if (writer == null || !writer.BaseStream.CanWrite)
-                return;
+            try
+            {
+                if (writer == null || !writer.BaseStream.CanWrite)
+                    return;
 
-            writer.Write((int)data.Length);
-            writer.Write((byte)(s2c ? 1 : 0));
-            writer.Write((byte)(broadcast ? 1 : 0));
-            writer.Write(data, 0, data.Length);
+                writer.Write((int)data.Length);
+                writer.Write((byte)(s2c ? 1 : 0));
+                writer.Write((byte)(broadcast ? 1 : 0));
+                writer.Write(data, 0, data.Length);
+            }
+            catch { writer = null; }
         }
 
         public byte[] Receive()

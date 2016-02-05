@@ -34,5 +34,6 @@ namespace SnifferApp.Logic
             {
             }
         }
+        public DateTime ReceivedTime { get; set; }
     }
 }

@@ -66,8 +66,8 @@ namespace IntWarsSharp
             }
 
             Sniffer.getInstance();
-           // var p = Process.Start("SnifferApp.exe");
-            
+            // var p = Process.Start("SnifferApp.exe");
+
             g.netLoop();
 
             PathNode.DestroyTable(); // Cleanup

@@ -47,13 +47,16 @@ namespace IntWarsSharp.Core.Logic
     {
         public static string ExecutingDirectory;
         public static string LogfileName;
+        private static object locker = new object();
 
         public static void Log(string lines, string type = "LOG")
         {
             var text = string.Format("({0} {1}) [{2}]: {3}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), type.ToUpper(), lines);
-
-            File.AppendAllText(Path.Combine(ExecutingDirectory, "Logs", LogfileName), text + Environment.NewLine);
-            Console.WriteLine(text);
+            lock (locker)
+            {
+                File.AppendAllText(Path.Combine(ExecutingDirectory, "Logs", LogfileName), text + Environment.NewLine);
+                Console.WriteLine(text);
+            }
         }
 
         public static void CreateLogFile()
