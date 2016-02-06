@@ -115,6 +115,10 @@ namespace SnifferApp.net.Packets
 
             return isHeroSpawn;
         }
+        internal bool isTeleport()
+        {
+            return bytes[9] == 0x01 && bytes[10] == 0x00;
+        }
     }
     public class PKT_C2S_ClientReady : Packets
     {
@@ -505,6 +509,19 @@ namespace SnifferApp.net.Packets
             readInt("tickCount");
             readShort("updatesCount");          //count
             int coordsCount = readByte("coordsCount");
+            if (isTeleport())
+            {
+                readByte("teleportId?");
+                readInt("netId");
+                if ((reader.BaseStream.Length - reader.BaseStream.Position) > 4)
+                {
+                    readByte("unk(1)");
+                }
+                readShort("x");
+                readShort("y");
+                close();
+                return;
+            }
             readInt("actorNetId");
             for (var i = 0; i < (coordsCount + 5) / 8; i++)
                 readByte("coordsMask");
@@ -781,6 +798,7 @@ namespace SnifferApp.net.Packets
             readByte("cmd");
             readInt("netId");
             readByte("skillId");
+            close();
         }
     }
     public class PKT_S2C_SkillUp : Packets
@@ -792,1422 +810,1276 @@ namespace SnifferApp.net.Packets
             readByte("skill");
             readByte("level");
             readByte("pointsLeft");
+            close();
         }
     }
 
-    public class BuyItemReq
+    public class PKT_C2S_BuyItemReq : Packets
     {
-        PacketCmdC2S cmd;
-        int netId;
-        public int id;
-        public BuyItemReq(byte[] data)
+        public PKT_C2S_BuyItemReq(byte[] bytes) : base(bytes)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmdC2S)reader.ReadByte();
-            netId = reader.ReadInt32();
-            id = reader.ReadInt32();
+            readByte("cmd");
+            readInt("netId");
+            readInt("id");
+            close();
         }
     }
 
-    public class BuyItemAns : BasePacket
+    public class PKT_S2C_BuyItemAns : Packets
     {
-        public BuyItemAns(Champion actor, ItemInstance item) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.getNetId())
+        public PKT_S2C_BuyItemAns(byte[] bytes) : base(bytes)
         {
-            buffer.Write((int)item.getTemplate().getId());
-            buffer.Write((byte)item.getSlot());
-            buffer.Write((byte)item.getStacks());
-            buffer.Write((byte)0); //unk or stacks => short
-            buffer.Write((byte)0x40); //unk
+            readByte("cmd");
+            readInt("netId");
+            readInt("itemId");
+            readByte("itemSlot");
+            readByte("itemStack");
+            readByte("unk");
+            readByte("unk");
+            close();
         }
     }
 
-    public class SellItem
+    public class PKT_C2S_SellItem : Packets
     {
-        public PacketCmdC2S cmd;
-        public int netId;
-        public byte slotId;
-
-        public SellItem(byte[] data)
+        public PKT_C2S_SellItem(byte[] bytes) : base(bytes)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmdC2S)reader.ReadByte();
-            netId = reader.ReadInt32();
-            slotId = reader.ReadByte();
+            readByte("cmd");
+            readInt("netId");
+            readByte("slot");
+            close();
         }
     }
 
 
-    public class RemoveItem : BasePacket
+    public class PKT_S2C_RemoveItem : Packets
     {
-        public RemoveItem(Unit u, short slot, short remaining) : base(PacketCmdS2C.PKT_S2C_RemoveItem, u.getNetId())
+        public PKT_S2C_RemoveItem(byte[] bytes) : base(bytes)
         {
-            buffer.Write(slot);
-            buffer.Write(remaining);
+            readByte("cmd");
+            readInt("netId");
+            readByte("slot");
+            readByte("remaining");
         }
     }
 
-    public class EmotionPacket : BasePacket
+    public class PKT_C2S_Emotion : Packets
     {
-        public PacketCmdC2S cmd;
-        public int netId;
-        public byte id;
-
-        public EmotionPacket(byte[] data)
+        public PKT_C2S_Emotion(byte[] bytes) : base(bytes)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmdC2S)reader.ReadByte();
-            netId = reader.ReadInt32();
-            id = reader.ReadByte();
+            readByte("cmd");
+            readInt("netId");
+            readByte("id");
+            close();
         }
-
-        public EmotionPacket(byte id, int netId) : base(PacketCmdS2C.PKT_S2C_Emotion, netId)
+    }
+    public class PKT_S2C_Emotion : PKT_C2S_Emotion
+    {
+        public PKT_S2C_Emotion(byte[] bytes) : base(bytes)
         {
-            buffer.Write((byte)id);
+
         }
     }
 
-    public class SwapItems : BasePacket
+    public class PKT_C2S_SwapItems : Packets
     {
-        public PacketCmdC2S cmd;
-        public int netId;
-        public byte slotFrom;
-        public byte slotTo;
-        public SwapItems(byte[] data)
+        public PKT_C2S_SwapItems(byte[] bytes) : base(bytes)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmdC2S)reader.ReadByte();
-            netId = reader.ReadInt32();
-            slotFrom = reader.ReadByte();
-            slotTo = reader.ReadByte();
-        }
-
-        public SwapItems(Champion c, byte slotFrom, byte slotTo) : base(PacketCmdS2C.PKT_S2C_SwapItems, c.getNetId())
-        {
-            buffer.Write((byte)slotFrom);
-            buffer.Write((byte)slotTo);
+            readByte("cmd");
+            readInt("netId");
+            readByte("slotFrom");
+            readByte("slotTo");
+            close();
         }
     }
 
-    /* New Style Packets */
-
-    class Announce : BasePacket
+    public class PKT_S2C_SwapItems : PKT_C2S_SwapItems
     {
-        public Announce(byte messageId, int mapId = 0) : base(PacketCmdS2C.PKT_S2C_Announce)
+        public PKT_S2C_SwapItems(byte[] bytes) : base(bytes)
         {
-            buffer.Write((byte)messageId);
-            buffer.Write((long)0);
+        }
+    }
 
-            if (mapId > 0)
+    class PKT_S2C_Announce : Packets
+    {
+        public PKT_S2C_Announce(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readByte("msgId");
+            readLong("unk");
+            if (reader.BaseStream.Position < reader.BaseStream.Length)
+                readInt("mapId");
+            close();
+        }
+    }
+
+    public class PKT_S2C_AddBuff : Packets
+    {
+        public PKT_S2C_AddBuff(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("targetNetId");
+            readShort("unk");
+            readShort("unk");
+            readShort("stacks");
+            readShort("unk");
+            readInt("buffHash");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            readInt("sourceNetId");
+            close();
+        }
+    }
+
+    public class PKT_S2C_RemoveBuff : Packets
+    {
+        public PKT_S2C_RemoveBuff(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readShort("unk");
+            readInt("buffHash");
+            readInt("unk");
+            close();
+        }
+    }
+
+    public class PKT_S2C_DamageDone : Packets
+    {
+        public PKT_S2C_DamageDone(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readShort("type");
+            readShort("unk");
+            readFloat("dmgDone");
+            readInt("targetNetId");
+            readInt("sourceNetId");
+            close();
+        }
+    }
+
+    public class EPKT_S2C_NPC_Die : Packets
+    {
+        public EPKT_S2C_NPC_Die(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("killedNetId");
+            readByte("ecmd");
+            readByte("unk");
+            readInt("unk");
+            readShort("unk");
+            readInt("killerNetId");
+            readShort("unk");
+            readShort("unk");
+            readShort("unk");
+            close();
+        }
+    }
+
+    public class PKT_S2C_LoadName : Packets
+    {
+        public PKT_S2C_LoadName(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readLong("userId");
+            readInt("unk(0)");
+            readInt("strLen");
+            readZeroTerminatedString("name");
+            close();
+        }
+    }
+
+    public class PKT_S2C_LoadHero : Packets
+    {
+        public PKT_S2C_LoadHero(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readLong("userId");
+            readInt("skinNo");
+            readInt("strLen");
+            readZeroTerminatedString("name");
+            close();
+        }
+    }
+
+    public class PKT_C2S_AttentionPing : Packets
+    {
+        public PKT_C2S_AttentionPing(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("unk");
+            readFloat("x");
+            readFloat("y");
+            readInt("targetNetId");
+            readByte("pingType");
+            close();
+        }
+    }
+
+    public class PKT_S2C_AttentionPing : Packets
+    {
+        public PKT_S2C_AttentionPing(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readFloat("x");
+            readFloat("y");
+            readInt("targetNetId");
+            readInt("championNetId");
+            readByte("pingType");
+            readByte("unk");
+            close();
+        }
+    }
+
+    public class PKT_S2C_BeginAutoAttack : Packets
+    {
+        public PKT_S2C_BeginAutoAttack(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("attackerNetId");
+            readInt("attackedNetId");
+            readByte("unk");
+            readInt("futureProjNetId");
+            readByte("isCritical(0x49=true");
+            readByte("unk");
+            readByte("unk");
+            readShort("attackedX");
+            readByte("unk");
+            readByte("unk");
+            readShort("attackedY");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readFloat("attackerX");
+            readFloat("attackerY");
+            close();
+        }
+    }
+
+    public class PKT_S2C_NextAutoAttack : Packets
+    {
+        public PKT_S2C_NextAutoAttack(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readInt("attackedNetID");
+            readByte("isInitial(0x80=1)");
+            readInt("futureProjNetId");
+            readByte("isCritical(0x49=1)");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            close();
+        }
+    }
+
+    public class PKT_S2C_StopAutoAttack : Packets
+    {
+        public PKT_S2C_StopAutoAttack(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readInt("unk");
+            readByte("unk");
+            close();
+        }
+    }
+
+    public class EPKT_S2C_OnAttack : Packets
+    {
+        public EPKT_S2C_OnAttack(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readByte("ecmd");
+            readByte("unk");
+            readByte("attackType");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readInt("attackerNetId");
+            close();
+        }
+    }
+
+    public class PKT_S2C_SetTarget : Packets
+    {
+        public PKT_S2C_SetTarget(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("attackerNetId");
+            readInt("atackedNetId");
+            close();
+        }
+
+    }
+
+    public class PKT_S2C_SetTarget2 : PKT_S2C_SetTarget
+    {
+        public PKT_S2C_SetTarget2(byte[] bytes) : base(bytes)
+        {
+
+        }
+
+    }
+
+    public class PKT_S2C_ChampionDie : Packets
+    {
+
+        public PKT_S2C_ChampionDie(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("killedNetId");
+            readInt("goldFromKill");
+            readByte("unk");
+            readInt("killerNetId");
+            readByte("unk");
+            readByte("unk");
+            readFloat("respawnTimer");
+            close();
+        }
+    }
+
+    public class EPKT_S2C_ChampionDeathTimer : Packets
+    {
+
+        public EPKT_S2C_ChampionDeathTimer(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readByte("ecmd");
+            readByte("unk");
+            readFloat("respawnTimer");
+            close();
+        }
+    }
+
+    public class PKT_S2C_ChampionRespawn : Packets
+    {
+        public PKT_S2C_ChampionRespawn(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
+            readFloat("x");
+            readFloat("y");
+            readFloat("z");
+            close();
+        }
+    }
+
+    public class PKT_S2C_ShowProjectile : Packets
+    {
+        public PKT_S2C_ShowProjectile(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("ownerNetId");
+            readInt("projectileNetId");
+            close();
+        }
+    }
+
+    public class PKT_S2C_SetHealth : Packets
+    {
+        public PKT_S2C_SetHealth(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readUInt("netId/itemHash");
+            readShort("unk");
+            if (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                buffer.Write(mapId);
+                readFloat("maxHP");
+                readFloat("currentHp");
             }
+            close();
         }
     }
 
-    public class AddBuff : Packets
+    public class PKT_C2S_CastSpell : Packets
     {
-        public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
+        public PKT_C2S_CastSpell(byte[] bytes) : base(bytes)
         {
-            buffer.Write(u.getNetId());//target
-
-            buffer.Write((short)0x05); //maybe type?
-            buffer.Write((short)0x02);
-            buffer.Write((short)0x01); // stacks
-            buffer.Write((short)0x00); // bool value
-            buffer.Write(RAFManager.getInstance().getHash(name));
-            buffer.Write((short)0xde);
-            buffer.Write((short)0x88);
-            buffer.Write((short)0xc6);
-            buffer.Write((short)0xee);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x50);
-            buffer.Write((short)0xc3);
-            buffer.Write((short)0x46);
-
-            if (source != null)
-            {
-                buffer.Write(source.getNetId()); //source
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
+            readByte("cmd");
+            readInt("netId");
+            readByte("spellSlotType");
+            readByte("spellSlot");
+            readFloat("x");
+            readFloat("y");
+            readFloat("x2");
+            readFloat("y2");
+            readInt("targetNetId");
+            close();
         }
     }
 
-    public class RemoveBuff : BasePacket
+    public class PKT_S2C_CastSpellAns : Packets
     {
-        public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
+
+        public PKT_S2C_CastSpellAns(byte[] bytes) : base(bytes)
         {
-            buffer.Write((short)0x05);
-            buffer.Write(RAFManager.getInstance().getHash(name));
-            buffer.Write((int)0x0);
-            //buffer.Write(u.getNetId());//source?
+            readByte("cmd");
+            readInt("netId");
+            readInt("tickCount");
+
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readInt("spellHash");
+            readInt("spellNetId");
+            readByte("unk");
+            readFloat("unk");
+            readInt("ownerNetId");
+            readInt("ownerNetId");
+            readInt("ownerChampionHash");
+            readInt("futureProjectileNetId");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readByte("unk");
+            readFloat("castTime");
+            readFloat("unk");
+            readFloat("unk");
+            readFloat("cooldown");
+            readFloat("unk");
+            readByte("unk");
+            readByte("spellSlot");
+            readFloat("manacost");
+            readFloat("ownerX");
+            readFloat("ownerZ");
+            readFloat("ownerY");
+            readLong("unk");
+            close();
         }
     }
 
-    public class DamageDone : BasePacket
+    public class PKT_S2C_PlayerInfo : Packets
     {
-        public DamageDone(Unit source, Unit target, float amount, DamageType type) : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
+        public PKT_S2C_PlayerInfo(byte[] bytes) : base(bytes)
         {
-            buffer.Write((short)((((short)type) << 4) | 0x04));
-            buffer.Write((short)0x4B); // 4.18
-            buffer.Write((float)amount); // 4.18
-            buffer.Write((int)target.getNetId());
-            buffer.Write((int)source.getNetId());
-        }
-    }
-
-    public class NpcDie : ExtendedPacket
-    {
-        public NpcDie(Unit die, Unit killer) : base(ExtendedPacketCmd.EPKT_S2C_NPC_Die, die.getNetId())
-        {
-            buffer.Write((int)0);
-            buffer.Write((short)0);
-            buffer.Write(killer.getNetId());
-            buffer.Write((short)0); // unk
-            buffer.Write((short)7); // unk
-            buffer.Write((int)0); // Flags?
-        }
-    }
-
-    public class LoadScreenPlayerName : Packets
-    {
-        public LoadScreenPlayerName(Pair<uint, ClientInfo> player) : base(PacketCmdS2C.PKT_S2C_LoadName)
-        {
-            buffer.Write((long)player.Item2.userId);
-            buffer.Write((int)0);
-            buffer.Write((int)player.Item2.getName().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.getName()))
-                buffer.Write(b);
-            buffer.Write((byte)0);
-        }
-
-        /*byte cmd;
-        long userId;
-        int skinId;
-        int length;
-        byte* description;*/
-    }
-
-    public class LoadScreenPlayerChampion : Packets
-    {
-
-        public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p) : base(PacketCmdS2C.PKT_S2C_LoadHero)
-        {
-            var player = p.Item2;
-            buffer.Write((long)player.userId);
-            buffer.Write((int)player.skinNo);
-            buffer.Write((int)player.getChampion().getType().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.getChampion().getType()))
-                buffer.Write(b);
-            buffer.Write((byte)0);
-        }
-
-        /*byte cmd;
-        long userId;
-        int skinId;
-        int length;
-        byte* description;*/
-    }
-
-    public class AttentionPing
-    {
-        public byte cmd;
-        public int unk1;
-        public float x;
-        public float y;
-        public int targetNetId;
-        public Pings type;
-        public AttentionPing(byte[] data)
-        {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = reader.ReadByte();
-            unk1 = reader.ReadInt32();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            targetNetId = reader.ReadInt32();
-            type = (Pings)reader.ReadByte();
-        }
-        public AttentionPing()
-        {
-
-        }
-    }
-
-    public class AttentionPingAns : Packets
-    {
-        public AttentionPingAns(ClientInfo player, AttentionPing ping) : base(PacketCmdS2C.PKT_S2C_AttentionPing)
-        {
-            buffer.Write((int)0); //unk1
-            buffer.Write((float)ping.x);
-            buffer.Write((float)ping.y);
-            buffer.Write((int)ping.targetNetId);
-            buffer.Write((int)player.getChampion().getNetId());
-            buffer.Write((byte)ping.type);
-            buffer.Write((byte)0xFB); // 4.18
-                                      /*
-                                      switch (ping.type)
-                                      {
-                                         case 0:
-                                            buffer.Write((short)0xb0;
-                                            break;
-                                         case 1:
-                                            buffer.Write((short)0xb1;
-                                            break;
-                                         case 2:
-                                            buffer.Write((short)0xb2; // Danger
-                                            break;
-                                         case 3:
-                                            buffer.Write((short)0xb3; // Enemy Missing
-                                            break;
-                                         case 4:
-                                            buffer.Write((short)0xb4; // On My Way
-                                            break;
-                                         case 5:
-                                            buffer.Write((short)0xb5; // Retreat / Fall Back
-                                            break;
-                                         case 6:
-                                            buffer.Write((short)0xb6; // Assistance Needed
-                                            break;            
-                                      }
-                                      */
-        }
-    }
-
-    public class BeginAutoAttack : BasePacket
-    {
-        public BeginAutoAttack(Unit attacker, Unit attacked, int futureProjNetId, bool isCritical) : base(PacketCmdS2C.PKT_S2C_BeginAutoAttack, attacker.getNetId())
-        {
-            buffer.Write(attacked.getNetId());
-            buffer.Write((short)0x80); // unk
-            buffer.Write(futureProjNetId); // Basic attack projectile ID, to be spawned later
-            if (isCritical)
-                buffer.Write((short)0x49);
-            else
-                buffer.Write((short)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
-                                           // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
-            buffer.Write((short)0x80);
-            buffer.Write((short)0x01);
-            buffer.Write(MovementVector.targetXToNormalFormat(attacked.getX()));
-            buffer.Write((short)0x80);
-            buffer.Write((short)0x01);
-            buffer.Write(MovementVector.targetYToNormalFormat(attacked.getY()));
-            buffer.Write((short)0xCC);
-            buffer.Write((short)0x35);
-            buffer.Write((short)0xC4);
-            buffer.Write((short)0xD1);
-            buffer.Write(attacker.getX());
-            buffer.Write(attacker.getY());
-        }
-    }
-
-    public class NextAutoAttack : BasePacket
-    {
-
-        public NextAutoAttack(Unit attacker, Unit attacked, int futureProjNetId, bool isCritical, bool initial) : base(PacketCmdS2C.PKT_S2C_NextAutoAttack, attacker.getNetId())
-        {
-            buffer.Write(attacked.getNetId());
-            if (initial)
-                buffer.Write((short)0x80); // These flags appear to change only to 0x80 and 0x7F after the first autoattack.
-            else
-                buffer.Write((short)0x7F);
-
-            buffer.Write(futureProjNetId);
-            if (isCritical)
-                buffer.Write((short)0x49);
-            else
-                buffer.Write((short)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
-
-            // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
-            buffer.Write("\x40\x01\x7B\xEF\xEF\x01\x2E\x55\x55\x35\x94\xD3");
-        }
-    }
-
-    public class StopAutoAttack : BasePacket
-    {
-
-        public StopAutoAttack(Unit attacker) : base(PacketCmdS2C.PKT_S2C_StopAutoAttack, attacker.getNetId())
-        {
-            buffer.Write((int)0); // Unk. Rarely, this is a net ID. Dunno what for.
-            buffer.Write((short)3); // Unk. Sometimes "2", sometimes "11" when the above netId is not 0.
-        }
-    }
-
-    public class OnAttack : ExtendedPacket
-    {
-        public OnAttack(Unit attacker, Unit attacked, AttackType attackType) : base(ExtendedPacketCmd.EPKT_S2C_OnAttack, attacker.getNetId())
-        {
-            buffer.Write((short)attackType);
-            buffer.Write(attacked.getX());
-            buffer.Write(attacked.getZ());
-            buffer.Write(attacked.getY());
-            buffer.Write(attacked.getNetId());
-        }
-    }
-
-    public class SetTarget : BasePacket
-    {
-
-        public SetTarget(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget, attacker.getNetId())
-        {
-            if (attacked != null)
-            {
-                buffer.Write(attacked.getNetId());
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
-        }
-
-    }
-
-    public class SetTarget2 : BasePacket
-    {
-
-        public SetTarget2(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget2, attacker.getNetId())
-        {
-            if (attacked != null)
-            {
-                buffer.Write(attacked.getNetId());
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
-        }
-
-    }
-
-    public class ChampionDie : BasePacket
-    {
-
-        public ChampionDie(Champion die, Unit killer, int goldFromKill) : base(PacketCmdS2C.PKT_S2C_ChampionDie, die.getNetId())
-        {
-            buffer.Write(goldFromKill); // Gold from kill?
-            buffer.Write((short)0);
-            if (killer != null)
-                buffer.Write(killer.getNetId());
-            else
-                buffer.Write((int)0);
-
-            buffer.Write((short)0);
-            buffer.Write((short)7);
-            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
-        }
-    }
-
-    public class ChampionDeathTimer : ExtendedPacket
-    {
-
-        public ChampionDeathTimer(Champion die) : base(ExtendedPacketCmd.EPKT_S2C_ChampionDeathTimer, die.getNetId())
-        {
-            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
-        }
-    }
-
-    public class ChampionRespawn : BasePacket
-    {
-        public ChampionRespawn(Champion c) : base(PacketCmdS2C.PKT_S2C_ChampionRespawn, c.getNetId())
-        {
-            buffer.Write(c.getX());
-            buffer.Write(c.getY());
-            buffer.Write(c.getZ());
-        }
-    }
-
-    public class ShowProjectile : BasePacket
-    {
-
-        public ShowProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_ShowProjectile, p.getOwner().getNetId())
-        {
-            buffer.Write(p.getNetId());
-        }
-    }
-
-    public class SetHealth : BasePacket
-    {
-        public SetHealth(Unit u) : base(PacketCmdS2C.PKT_S2C_SetHealth, u.getNetId())
-        {
-            buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write((float)u.getStats().getMaxHealth());
-            buffer.Write((float)u.getStats().getCurrentHealth());
-        }
-
-        public SetHealth(int itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
-        {
-            buffer.Write((short)0);
-        }
-
-    }
-    public class SetHealth2 : Packets //shhhhh...
-    {
-        public SetHealth2(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth)
-        {
-            buffer.Write((uint)itemHash);
-            buffer.Write((short)0);
-        }
-    }
-
-    public class TeleportRequest : BasePacket
-    {
-        short a = 0x01;
-        public TeleportRequest(int netId, float x, float y, bool first) : base(PacketCmdS2C.PKT_S2C_MoveAns)
-        {
-            buffer.Write((int)Environment.TickCount);//not 100% sure
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x00);
-            if (first == true) //seems to be id, 02 = before teleporting, 03 = do teleport
-                buffer.Write((byte)0x02);
-            else
-                buffer.Write((byte)0x03);
-            buffer.Write((int)netId);
-            if (first == false)
-            {
-                buffer.Write((byte)a); // if it is the second part, send 0x01 before coords
-                a++;
-            }
-            buffer.Write((short)x);
-            buffer.Write((short)y);
-        }
-
-    }
-
-    public class CastSpell
-    {
-        public PacketCmdC2S cmd;
-        public int netId;
-        public byte spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
-        public byte spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
-        public float x;
-        public float y;
-        public float x2;
-        public float y2;
-        public int targetNetId; // If 0, use coordinates, else use target net id
-
-        public CastSpell(byte[] data)
-        {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmdC2S)reader.ReadByte();
-            netId = reader.ReadInt32();
-            spellSlotType = reader.ReadByte();
-            spellSlot = reader.ReadByte();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            x2 = reader.ReadSingle();
-            y2 = reader.ReadSingle();
-            targetNetId = reader.ReadInt32();
-        }
-    }
-
-    public class CastSpellAns : GamePacket
-    {
-
-        public CastSpellAns(Spell s, float x, float y, int futureProjNetId, int spellNetId) : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().getNetId())
-        {
-            Map m = s.getOwner().getMap();
-
-            buffer.Write((byte)0);
-            buffer.Write((byte)0x66);
-            buffer.Write((byte)0x00); // unk
-            buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
-            buffer.Write((int)spellNetId); // Spell net ID
-            buffer.Write((byte)0); // unk
-            buffer.Write((float)1.0f); // unk
-            buffer.Write((int)s.getOwner().getNetId());
-            buffer.Write((int)s.getOwner().getNetId());
-            buffer.Write((int)s.getOwner().getChampionHash());
-            buffer.Write((int)futureProjNetId); // The projectile ID that will be spawned
-            buffer.Write((float)x);
-            buffer.Write((float)m.getHeightAtLocation(x, y));
-            buffer.Write((float)y);
-            buffer.Write((float)x);
-            buffer.Write((float)m.getHeightAtLocation(x, y));
-            buffer.Write((float)y);
-            buffer.Write((byte)0); // unk
-            buffer.Write(s.getCastTime());
-            buffer.Write((float)0.0f); // unk
-            buffer.Write((float)1.0f); // unk
-            buffer.Write(s.getCooldown());
-            buffer.Write((float)0.0f); // unk
-            buffer.Write((byte)0); // unk
-            buffer.Write((byte)s.getSlot());
-            buffer.Write((float)s.getCost());
-            buffer.Write((float)s.getOwner().getX());
-            buffer.Write((float)s.getOwner().getZ());
-            buffer.Write((float)s.getOwner().getY());
-            buffer.Write((long)1); // unk
-        }
-    }
-
-    public class PlayerInfo : BasePacket
-    {
-        public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.getChampion().getNetId())
-        {
+            readByte("cmd");
+            readInt("netId");
             #region wtf
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x83);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
 
-            buffer.Write((int)player.summonerSkills[0]);
-            buffer.Write((int)player.summonerSkills[1]);
+            readInt("summonerSpell1");
+            readInt("summonerSpell2");
 
-            buffer.Write((byte)0x41);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x42);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x04);
-            buffer.Write((byte)0x52);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x61);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x62);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x64);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x71);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x72);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x82);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x92);
-            buffer.Write((byte)0x74);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x41);
-            buffer.Write((byte)0x75);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x42);
-            buffer.Write((byte)0x75);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x02);
-            buffer.Write((byte)0x43);
-            buffer.Write((byte)0x75);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x02);
-            buffer.Write((byte)0x52);
-            buffer.Write((byte)0x75);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x62);
-            buffer.Write((byte)0x75);
-            buffer.Write((byte)0x03);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x1E);
-            buffer.Write((byte)0x00);
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
 
             #endregion
+            close();
         }
-
-
     }
 
-    public class SpawnProjectile : BasePacket
+    public class PKT_S2C_SpawnProjectile : Packets
     {
 
-        public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.getNetId())
+        public PKT_S2C_SpawnProjectile(byte[] bytes) : base(bytes)
         {
-            float targetZ = p.getMap().getHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
+            readByte("cmd");
+            readInt("netId");
 
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((long)0x000000003f510fe2); // unk
-            buffer.Write((float)0.577f); // unk
-            buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((int)0); // unk
-            buffer.Write((float)p.getMoveSpeed()); // Projectile speed
-            buffer.Write((long)0x00000000d5002fce); // unk
-            buffer.Write((int)0x7f7fffff); // unk
-            buffer.Write((byte)0);
-            buffer.Write((byte)0x66);
-            buffer.Write((byte)0);
-            buffer.Write((int)p.getProjectileId()); // unk (projectile ID)
-            buffer.Write((int)0); // Second net ID
-            buffer.Write((byte)0); // unk
-            buffer.Write(1.0f);
-            buffer.Write((int)p.getOwner().getNetId());
-            buffer.Write((int)p.getOwner().getNetId());
-
-            var c = p.getOwner() as Champion;
-            if (c != null)
-                buffer.Write((int)c.getChampionHash());
-            else
-                buffer.Write((int)0);
-
-            buffer.Write((int)p.getNetId());
-            buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
-            buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
-            buffer.Write((uint)0x80000000); // unk
-            buffer.Write((int)0x000000bf); // unk
-            buffer.Write((uint)0x80000000); // unk
-            buffer.Write((int)0x2fd5843f); // unk
-            buffer.Write((int)0x00000000); // unk
-            buffer.Write((short)0x0000); // unk
-            buffer.Write((byte)0x2f); // unk
-            buffer.Write((int)0x00000000); // unk
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((long)0x0000000000000000); // unk
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readLong("unk");
+            readFloat("unk");
+            readFloat("targetX");
+            readFloat("targetZ");
+            readFloat("targetY");
+            readFloat("targetX");
+            readFloat("targetZ");
+            readFloat("targetY");
+            readFloat("targetX");
+            readFloat("targetZ");
+            readFloat("targetY");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readInt("unk");
+            readFloat("projectileMoveSpeed");
+            readLong("unk");
+            readInt("unk");
+            readByte("unk");
+            readByte("unk");
+            readByte("unk");
+            readInt("projectileId");
+            readInt("unk");
+            readByte("unk");
+            readFloat("unk");
+            readInt("ownerNetId");
+            readInt("ownerNetId");
+            readInt("championHash");
+            readInt("projectileNetId");
+            readFloat("targetX");
+            readFloat("targetZ");
+            readFloat("targetY");
+            readFloat("targetX");
+            readFloat("targetZ");
+            readFloat("targetY");
+            readUInt("unk");
+            readInt("unk");
+            readUInt("unk");
+            readInt("unk");
+            readInt("unk");
+            readShort("unk");
+            readByte("unk");
+            readInt("unk");
+            readFloat("x");
+            readFloat("z");
+            readFloat("y");
+            readLong("unk");
+            close();
         }
 
     }
 
-    public class SpawnParticle : BasePacket
+    public class PKT_S2C_SpawnParticle : Packets
     {
-        const short MAP_WIDTH = (13982 / 2);
-        const short MAP_HEIGHT = (14446 / 2);
-
-        public SpawnParticle(Champion owner, GameObjects.Target t, string particle, int netId) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
+        public PKT_S2C_SpawnParticle(byte[] bytes) : base(bytes)
         {
-            buffer.Write((short)1); // number of particles
-            buffer.Write(owner.getChampionHash());
-            buffer.Write(RAFManager.getInstance().getHash(particle));
-            buffer.Write((int)0x00000020); // flags ?
-            buffer.Write((int)0); // unk
-            buffer.Write((short)0); // unk
-            buffer.Write((short)1); // number of targets ?
-            buffer.Write(owner.getNetId());
-            buffer.Write(netId); // Particle net id ?
-            buffer.Write(owner.getNetId());
-
-            if (t.isSimpleTarget())
-                buffer.Write((int)0);
-            else
-                buffer.Write((t as GameObject).getNetId());
-
-            buffer.Write((int)0); // unk
+            readByte("cmd");
+            readInt("ownerNetId");
+            readShort("numberOfParticles");
+            readInt("championHash");
+            readInt("particleHash");
+            readInt("unk");
+            readInt("unk");
+            readShort("unk");
+            readShort("numberOfTargets?");
+            readInt("ownerNetId");
+            readInt("particleNetId");
+            readInt("ownerNetId");
+            readInt("netId");
+            readInt("unk");
 
             for (var i = 0; i < 3; ++i)
             {
-
-                buffer.Write((short)((t.getX() - MAP_WIDTH) / 2));
-                buffer.Write(50.0f);
-                buffer.Write((short)((t.getY() - MAP_HEIGHT) / 2));
+                readShort("width");
+                readFloat("unk");
+                readShort("height");
             }
 
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write(1.0f); // unk
-
+            readInt("unk");
+            readInt("unk");
+            readInt("unk");
+            readInt("unk");
+            readFloat("unk");
+            close();
         }
 
-        public class DestroyProjectile : BasePacket
+        public class PKT_S2C_DestroyProjectile : Packets
         {
-            public DestroyProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_DestroyProjectile, p.getNetId())
+            public PKT_S2C_DestroyProjectile(byte[] bytes) : base(bytes)
             {
-
+                readByte("cmd");
+                readInt("netId");
             }
         }
-
-        public class UpdateStats : GamePacket
-        {
-            public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
-            {
-                var stats = new PairList<byte, List<int>>();
-
-                if (partial)
-                    stats = u.getStats().getUpdatedStats();
-                else
-                    stats = u.getStats().getAllStats();
-
-                var masks = new List<byte>();
-                byte masterMask = 0;
-
-                foreach (var p in stats)
+        /*
+                public class PKT_S2C_CharStats : Packets
                 {
-                    masterMask |= p.Item1;
-                    masks.Add(p.Item1);
-                }
-
-                masks.Sort();
-
-                buffer.Write((byte)1);
-                buffer.Write((byte)masterMask);
-                buffer.Write((int)u.getNetId());
-
-
-                foreach (var m in masks)
-                {
-                    int mask = 0;
-                    byte size = 0;
-
-                    var updatedStats = stats[m];
-                    updatedStats.Sort();
-                    foreach (var it in updatedStats)
+                    public PKT_S2C_CharStats(byte[] bytes) : base(bytes)
                     {
-                        size += u.getStats().getSize(m, it);
-                        mask |= it;
-                    }
-                    //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
-                    //  System.Diagnostics.Debugger.Break();
-                    buffer.Write((int)mask);
-                    buffer.Write((byte)size);
+                        readByte("cmd");
+                        readInt("netId");
+                        readInt("tickCount");
 
-                    for (int i = 0; i < 32; i++)
-                    {
-                        int tmpMask = (1 << i);
-                        if ((tmpMask & mask) > 0)
+                        readByte("numUpdates");
+                        readByte("masterMask");
+                        readInt("netId");
+
+                        foreach (var m in masks)
                         {
-                            if (u.getStats().getSize(m, tmpMask) == 4)
+                            int mask = 0;
+                            byte size = 0;
+
+                            var updatedStats = stats[m];
+                            updatedStats.Sort();
+                            foreach (var it in updatedStats)
                             {
-                                float f = u.getStats().getStat(m, tmpMask);
-                                var c = BitConverter.GetBytes(f);
-                                if (c[0] >= 0xFE)
+                                size += u.getStats().getSize(m, it);
+                                mask |= it;
+                            }
+                            //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
+                            //  System.Diagnostics.Debugger.Break();
+                            buffer.Write((int)mask);
+                            buffer.Write((byte)size);
+
+                            for (int i = 0; i < 32; i++)
+                            {
+                                int tmpMask = (1 << i);
+                                if ((tmpMask & mask) > 0)
                                 {
-                                    c[0] = (byte)0xFD;
+                                    if (u.getStats().getSize(m, tmpMask) == 4)
+                                    {
+                                        float f = u.getStats().getStat(m, tmpMask);
+                                        var c = BitConverter.GetBytes(f);
+                                        if (c[0] >= 0xFE)
+                                        {
+                                            c[0] = (byte)0xFD;
+                                        }
+                                        buffer.Write(BitConverter.ToSingle(c, 0));
+                                    }
+                                    else if (u.getStats().getSize(m, tmpMask) == 2)
+                                    {
+                                        short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                                        buffer.Write(stat);
+                                    }
+                                    else
+                                    {
+                                        byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                                        buffer.Write(stat);
+                                    }
                                 }
-                                buffer.Write(BitConverter.ToSingle(c, 0));
-                            }
-                            else if (u.getStats().getSize(m, tmpMask) == 2)
-                            {
-                                short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                                buffer.Write(stat);
-                            }
-                            else
-                            {
-                                byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                                buffer.Write(stat);
                             }
                         }
                     }
                 }
-            }
-        }
-
-        public class LevelPropSpawn : BasePacket
+                */
+        public class PKT_S2C_LevelPropSpawn : Packets
         {
-            public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
+            public PKT_S2C_LevelPropSpawn(byte[] bytes) : base(bytes)
             {
-                buffer.Write((int)lp.getNetId());
-                buffer.Write((int)0x00000040); // unk
-                buffer.Write((byte)0); // unk
-                buffer.Write((float)lp.getX());
-                buffer.Write((float)lp.getZ());
-                buffer.Write((float)lp.getY());
-                buffer.Write((float)0.0f); // Rotation Y
+                readByte("cmd");
+                readInt("netId");
+                readInt("levelPropNetId");
+                readInt("unk");
+                readByte("unk");
+                readFloat("x");
+                readFloat("z");
+                readFloat("y");
+                readFloat("rotationZ");
 
-                buffer.Write((float)lp.getDirectionX());
-                buffer.Write((float)lp.getDirectionZ());
-                buffer.Write((float)lp.getDirectionY());
-                buffer.Write((float)lp.getUnk1());
-                buffer.Write((float)lp.getUnk2());
+                readFloat("directionX");
+                readFloat("directionZ");
+                readFloat("directionY");
+                readFloat("unk");
+                readFloat("unk");
 
-                buffer.Write((float)1.0f);
-                buffer.Write((float)1.0f);
-                buffer.Write((float)1.0f); // Scaling
-                buffer.Write((int)300); // unk
-                buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
-
-                foreach (var b in Encoding.Default.GetBytes(lp.getName()))
-                    buffer.Write((byte)b);
-                buffer.fill(0, 64 - lp.getName().Length);
-                foreach (var b in Encoding.Default.GetBytes(lp.getType()))
-                    buffer.Write(b);
-                buffer.fill(0, 64 - lp.getType().Length);
-            }
-
-            // TODO : remove this once we find a better solution for jungle camp spawning command
-            public LevelPropSpawn(int netId, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
-            {
-                buffer.Write(netId);
-                buffer.Write((int)0x00000040); // unk
-                buffer.Write((short)0); // unk
-                buffer.Write(x);
-                buffer.Write(z);
-                buffer.Write(y);
-                buffer.Write(0.0f); // Rotation Y
-                buffer.Write(dirX);
-                buffer.Write(dirZ);
-                buffer.Write(dirY); // Direction
-                buffer.Write(unk1);
-                buffer.Write(unk2);
-                buffer.Write(1.0f);
-                buffer.Write(1.0f);
-                buffer.Write(1.0f); // Scaling
-                buffer.Write((int)300); // unk
-                buffer.Write((short)1); // bIsProp -- if is a prop, become unselectable and use direction params
-                buffer.Write(name);
-                buffer.fill(0, 64 - name.Length);
-                buffer.Write(type);
-                buffer.fill(0, 64 - type.Length);
+                readFloat("unk");
+                readFloat("unk");
+                readFloat("unk");
+                readInt("unk");
+                readInt("propType");// nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
+                readString(64, "levelPropName");
+                readString(64, "levelPropType");
+                close();
             }
         }
 
-        public class ViewRequest
+        public class PKT_C2S_ViewReq : Packets
         {
-            public PacketCmdC2S cmd;
-            public int netId;
-            public float x;
-            public float zoom;
-            public float y;
-            public float y2;       //Unk
-            public int width;  //Unk
-            public int height; //Unk
-            public int unk2;   //Unk
-            public byte requestNo;
-
-            public ViewRequest(byte[] data)
+            public PKT_C2S_ViewReq(byte[] bytes) : base(bytes)
             {
-                var reader = new BinaryReader(new MemoryStream(data));
-                cmd = (PacketCmdC2S)reader.ReadByte();
-                netId = reader.ReadInt32();
-                x = reader.ReadSingle();
-                zoom = reader.ReadSingle();
-                y = reader.ReadSingle();
-                y2 = reader.ReadSingle();
-                width = reader.ReadInt32();
-                height = reader.ReadInt32();
-                unk2 = reader.ReadInt32();
-                requestNo = reader.ReadByte();
-
-                reader.Close();
+                readByte("cmd");
+                readInt("netId");
+                readFloat("x");
+                readFloat("zoom");
+                readFloat("y");
+                readFloat("y2");
+                readInt("width");
+                readInt("height");
+                readInt("unk");
+                readByte("requestNo");
+                close();
             }
         }
 
-        public class LevelUp : BasePacket
+        public class PKT_S2C_LevelUp : Packets
         {
-            public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
+            public PKT_S2C_LevelUp(byte[] bytes) : base(bytes)
             {
-                buffer.Write(c.getStats().getLevel());
-                buffer.Write(c.getSkillPoints());
+                readByte("cmd");
+                readInt("netId");
+                readByte("level");
+                readShort("skillPoints");
+                close();
             }
         }
 
-        public class ViewAnswer : Packets
+        public class PKT_S2C_ViewAns : Packets
         {
-            public ViewAnswer(ViewRequest request) : base(PacketCmdS2C.PKT_S2C_ViewAns)
+            public PKT_S2C_ViewAns(byte[] bytes) : base(bytes)
             {
-                buffer.Write(request.netId);
-            }
-            public void setRequestNo(byte requestNo)
-            {
-                buffer.Write(requestNo);
+                readByte("cmd");
+                readInt("netId");
+                readByte("requestNo");
+                close();
             }
         }
 
-        public class DebugMessage : BasePacket
+        public class PKT_S2C_DebugMessage : Packets
         {
-
-            public DebugMessage(string message) : base(PacketCmdS2C.PKT_S2C_DebugMessage)
+            public PKT_S2C_DebugMessage(byte[] bytes) : base(bytes)
             {
-                buffer.Write((int)0);
-                foreach (var b in Encoding.Default.GetBytes(message))
-                    buffer.Write((byte)b);
-                buffer.fill(0, 512 - message.Length);
+                readByte("cmd");
+                readInt("netId");
+                readInt("unk");
+                readString(512, "message");
+                close();
             }
         }
 
-        public class SetCooldown : BasePacket
+        public class SetCooldown : Packets
         {
             public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmdS2C.PKT_S2C_SetCooldown, netId)
             {
-                buffer.Write(slotId);
-                buffer.Write((short)0xF8); // 4.18
-                buffer.Write(totalCd);
-                buffer.Write(currentCd);
+                readByte("cmd");
+                readInt("netId");
+                readByte("slotId");
+                readShort("unk");
+                readFloat("totalCd");
+                readFloat("currentCd");
+                close();
             }
         }
     }

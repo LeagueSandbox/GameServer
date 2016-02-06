@@ -264,7 +264,7 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((long)0);
             buffer.Write((int)0);
         }
-        public KeyCheck(byte[] bytes) 
+        public KeyCheck(byte[] bytes)
         {
             var reader = new BinaryReader(new MemoryStream(bytes));
             cmd = (PacketCmdS2C)reader.ReadByte();
@@ -504,7 +504,7 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write((short)0); // extraInfo
             buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
-                                    //buffer.Write((short)7; // unknown
+                                   //buffer.Write((short)7; // unknown
 
             /*
             for (int i = 0; i < c.getInventory().getItems().size(); i++) {
@@ -1283,23 +1283,23 @@ namespace IntWarsSharp.Logic.Packets
         public BeginAutoAttack(Unit attacker, Unit attacked, int futureProjNetId, bool isCritical) : base(PacketCmdS2C.PKT_S2C_BeginAutoAttack, attacker.getNetId())
         {
             buffer.Write(attacked.getNetId());
-            buffer.Write((short)0x80); // unk
+            buffer.Write((byte)0x80); // unk
             buffer.Write(futureProjNetId); // Basic attack projectile ID, to be spawned later
             if (isCritical)
-                buffer.Write((short)0x49);
+                buffer.Write((byte)0x49);
             else
-                buffer.Write((short)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
-                                           // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
-            buffer.Write((short)0x80);
-            buffer.Write((short)0x01);
+                buffer.Write((byte)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
+                                          // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
+            buffer.Write((byte)0x80);
+            buffer.Write((byte)0x01);
             buffer.Write(MovementVector.targetXToNormalFormat(attacked.getX()));
-            buffer.Write((short)0x80);
-            buffer.Write((short)0x01);
+            buffer.Write((byte)0x80);
+            buffer.Write((byte)0x01);
             buffer.Write(MovementVector.targetYToNormalFormat(attacked.getY()));
-            buffer.Write((short)0xCC);
-            buffer.Write((short)0x35);
-            buffer.Write((short)0xC4);
-            buffer.Write((short)0xD1);
+            buffer.Write((byte)0xCC);
+            buffer.Write((byte)0x35);
+            buffer.Write((byte)0xC4);
+            buffer.Write((byte)0xD1);
             buffer.Write(attacker.getX());
             buffer.Write(attacker.getY());
         }
@@ -1312,18 +1312,28 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write(attacked.getNetId());
             if (initial)
-                buffer.Write((short)0x80); // These flags appear to change only to 0x80 and 0x7F after the first autoattack.
+                buffer.Write((byte)0x80); // These flags appear to change only to 0x80 and 0x7F after the first autoattack.
             else
-                buffer.Write((short)0x7F);
+                buffer.Write((byte)0x7F);
 
             buffer.Write(futureProjNetId);
             if (isCritical)
-                buffer.Write((short)0x49);
+                buffer.Write((byte)0x49);
             else
-                buffer.Write((short)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
+                buffer.Write((byte)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
 
-            // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
-            buffer.Write("\x40\x01\x7B\xEF\xEF\x01\x2E\x55\x55\x35\x94\xD3");
+            buffer.Write(0x40);
+            buffer.Write(0x01);
+            buffer.Write(0x7B);
+            buffer.Write(0xEF);
+            buffer.Write(0xEF);
+            buffer.Write(0x01);
+            buffer.Write(0x2E);
+            buffer.Write(0x55);
+            buffer.Write(0x55);
+            buffer.Write(0x35);
+            buffer.Write(0x94);
+            buffer.Write(0xD3);
         }
     }
 
@@ -1333,7 +1343,7 @@ namespace IntWarsSharp.Logic.Packets
         public StopAutoAttack(Unit attacker) : base(PacketCmdS2C.PKT_S2C_StopAutoAttack, attacker.getNetId())
         {
             buffer.Write((int)0); // Unk. Rarely, this is a net ID. Dunno what for.
-            buffer.Write((short)3); // Unk. Sometimes "2", sometimes "11" when the above netId is not 0.
+            buffer.Write((byte)3); // Unk. Sometimes "2", sometimes "11" when the above netId is not 0.
         }
     }
 
@@ -1341,7 +1351,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         public OnAttack(Unit attacker, Unit attacked, AttackType attackType) : base(ExtendedPacketCmd.EPKT_S2C_OnAttack, attacker.getNetId())
         {
-            buffer.Write((short)attackType);
+            buffer.Write((byte)attackType);
             buffer.Write(attacked.getX());
             buffer.Write(attacked.getZ());
             buffer.Write(attacked.getY());
@@ -1389,14 +1399,14 @@ namespace IntWarsSharp.Logic.Packets
         public ChampionDie(Champion die, Unit killer, int goldFromKill) : base(PacketCmdS2C.PKT_S2C_ChampionDie, die.getNetId())
         {
             buffer.Write(goldFromKill); // Gold from kill?
-            buffer.Write((short)0);
+            buffer.Write((byte)0);
             if (killer != null)
                 buffer.Write(killer.getNetId());
             else
                 buffer.Write((int)0);
 
-            buffer.Write((short)0);
-            buffer.Write((short)7);
+            buffer.Write((byte)0);
+            buffer.Write((byte)7);
             buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
         }
     }
