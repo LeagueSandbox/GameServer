@@ -285,12 +285,14 @@ namespace IntWarsSharp.Logic.Maps
                 teamVision.Add(o.getNetId(), u);
 
             var m = u as Minion;
-
             if (m != null)
                 PacketNotifier.notifyMinionSpawned(m, m.getTeam());
 
-            var c = o as Champion;
+            var mo = u as Monster;
+            if (mo != null)
+                PacketNotifier.notifySpawn(mo);
 
+            var c = o as Champion;
             if (c != null)
             {
                 champions[c.getNetId()] = c;
@@ -451,7 +453,7 @@ namespace IntWarsSharp.Logic.Maps
             {
                 foreach (var kv in objects)
                 {
-                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                    if (kv.Value.getTeam() == team || (kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o)))
                     {
                         var unit = kv.Value as Unit;
                         if (unit == null || unit.isDead())

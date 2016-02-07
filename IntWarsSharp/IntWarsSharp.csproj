@@ -77,6 +77,7 @@
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
     <Compile Include="Logic\GameObjects\LevelProp.cs" />
+    <Compile Include="Logic\GameObjects\Monster.cs" />
     <Compile Include="Logic\GameObjects\Minion.cs" />
     <Compile Include="Logic\GameObjects\MinionStats.cs" />
     <Compile Include="Logic\GameObjects\Projectile.cs" />

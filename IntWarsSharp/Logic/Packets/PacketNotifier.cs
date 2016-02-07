@@ -31,6 +31,8 @@ namespace IntWarsSharp.Logic.Packets
 
         public static void notifyUpdatedStats(Unit u, bool partial = true)
         {
+            //if (u is Monster)
+            //    return;
             var us = new SpawnParticle.UpdateStats(u, partial);
             var t = u as Turret;
 
@@ -171,10 +173,10 @@ namespace IntWarsSharp.Logic.Packets
         public static void notifySetTarget(Unit attacker, Unit target)
         {
             var st = new SetTarget(attacker, target);
-            // PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
+            //PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
 
             var st2 = new SetTarget2(attacker, target);
-            // PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
+            //PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
         }
 
         public static void notifyChampionDie(Champion die, Unit killer, int goldFromKill)
@@ -231,13 +233,23 @@ namespace IntWarsSharp.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
-                notifyMinionSpawned(m, 1 - m.getTeam());
+                notifyMinionSpawned(m, Convert.getEnemyTeam(m.getTeam()));
 
             var c = u as Champion;
             if (c != null)
-                notifyChampionSpawned(c, 1 - c.getTeam());
+                notifyChampionSpawned(c, Convert.getEnemyTeam(c.getTeam()));
+
+            var monster = u as Monster;
+            if (monster != null)
+                notifyMonsterSpawned(monster);
 
             notifySetHealth(u);
+        }
+
+        private static void notifyMonsterSpawned(Monster m)
+        {
+            var sp = new SpawnMonster(m);
+            PacketHandlerManager.getInstace().broadcastPacketVision(m, sp, Channel.CHL_S2C);
         }
 
         public static void notifyLeaveVision(GameObject o, TeamId team)

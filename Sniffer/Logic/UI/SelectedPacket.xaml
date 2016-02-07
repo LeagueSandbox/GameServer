@@ -9,7 +9,7 @@
     <Grid>
         
         
-        <ListView x:Name="Content" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <ListView x:Name="Content" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="Content_SelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" Orientation="Horizontal" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>

@@ -546,7 +546,6 @@ namespace SnifferApp.net.Packets
         }
     }
 
-
     public class PKT_S2C_QueryStatusAns : Packets
     {
         public PKT_S2C_QueryStatusAns(byte[] bytes) : base(bytes)
@@ -554,6 +553,16 @@ namespace SnifferApp.net.Packets
             readByte("cmd");
             readInt("netId");
             readByte("status(1=ok)");
+            close();
+        }
+    }
+
+    public class PKT_C2S_QueryStatusReq : Packets
+    {
+        public PKT_C2S_QueryStatusReq(byte[] bytes) : base(bytes)
+        {
+            readByte("cmd");
+            readInt("netId");
             close();
         }
     }
@@ -2071,7 +2080,7 @@ namespace SnifferApp.net.Packets
 
         public class SetCooldown : Packets
         {
-            public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmdS2C.PKT_S2C_SetCooldown, netId)
+            public SetCooldown(byte[] bytes) : base(bytes)
             {
                 readByte("cmd");
                 readInt("netId");

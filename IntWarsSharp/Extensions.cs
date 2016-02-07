@@ -102,5 +102,17 @@ namespace IntWarsSharp
                     return 2;
             }
         }
+
+        public static TeamId getEnemyTeam(TeamId team)
+        {
+            switch (team)
+            {
+                case TeamId.TEAM_BLUE:
+                    return TeamId.TEAM_PURPLE;
+                case TeamId.TEAM_PURPLE:
+                    return TeamId.TEAM_BLUE;
+            }
+            return (TeamId)2;
+        }
     }
 }

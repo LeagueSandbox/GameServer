@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IntWarsSharp.Logic.GameObjects
 {
-    public enum DamageType : short
+    public enum DamageType : byte
     {
         DAMAGE_TYPE_PHYSICAL = 0,
         DAMAGE_TYPE_MAGICAL = 1,
@@ -25,7 +25,7 @@ namespace IntWarsSharp.Logic.GameObjects
         DAMAGE_SOURCE_PASSIVE //Red/Thornmail shouldn't as well
     }
 
-    public enum AttackType : short
+    public enum AttackType : byte
     {
         ATTACK_TYPE_RADIAL,
         ATTACK_TYPE_MELEE,

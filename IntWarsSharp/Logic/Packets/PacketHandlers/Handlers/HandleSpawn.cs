@@ -63,7 +63,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             }
 
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
+            //if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
@@ -97,7 +97,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                 PacketHandlerManager.getInstace().sendPacket(peer, sh5, Channel.CHL_S2C);
 
             }
-            else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
+            //  else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);
@@ -111,7 +111,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                 PacketHandlerManager.getInstace().sendPacket(peer, ms2, Channel.CHL_S2C);
                 var sh2 = new SetHealth2(0xff6793d0);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh2, Channel.CHL_S2C);
-
+               
                 // Mid inhib
                 var ms3 = new MinionSpawn2(0xffff8f1f);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms3, Channel.CHL_S2C);

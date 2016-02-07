@@ -307,6 +307,78 @@ namespace IntWarsSharp.Logic.Packets
         int unk2;	//Unk
         short requestNo;
     } ViewReq;*/
+    public class SpawnMonster : Packet
+    {
+        public SpawnMonster(Monster m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn)
+        {
+
+            buffer.Write(m.getNetId());
+            buffer.Write((short)345);
+            //
+            buffer.Write((short)343);
+
+            buffer.Write((byte)99);// 99 for jungle monster, 3 for minion
+            buffer.Write(m.getNetId());
+            buffer.Write(m.getNetId());
+            buffer.Write((byte)64);
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.getZ()); //z
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.getZ()); //z
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.getFacing().X); //facing x
+            buffer.Write((float)m.getMap().getHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
+            buffer.Write((float)m.getFacing().Y); //facing y
+
+            var str = m.getName();
+            foreach (var b in Encoding.Default.GetBytes(str)) // starting with a string -> Dragon6.1.1
+                buffer.Write(b);
+            buffer.fill(0, 64 - str.Length);
+
+            foreach (var b in Encoding.Default.GetBytes(m.getModel())) // starting with a string -> Dragon
+                buffer.Write(b);
+            buffer.fill(0, 64 - m.getModel().Length);
+
+            str = m.getName();
+            foreach (var b in Encoding.Default.GetBytes(str)) // starting with a string -> Dragon6.1.1
+                buffer.Write(b);
+            buffer.fill(0, 64 - str.Length);
+
+            buffer.fill(0, 64); // empty
+
+
+            buffer.Write((int)300);
+            buffer.fill(0, 12);
+            buffer.Write((int)1); //campId 1
+            buffer.Write((int)100);
+            buffer.Write((int)74);
+            buffer.Write((long)1);
+            buffer.Write((float)115.0066f);
+            buffer.Write((byte)0);
+
+            //
+            buffer.fill(0, 13);
+            buffer.Write((sbyte)-128); // always 0x80/-128
+            buffer.Write((byte)63); // always 0x3F/63
+            buffer.fill(0, 13);
+            buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
+            buffer.Write((int)13337);
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.getY());  //y
+            buffer.Write((float)-0.8589599f);  // rotation1 from -1 to 1
+            buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
+        }
+    }
+    public class SetHealthTest : BasePacket
+    {
+        public SetHealthTest(int netId, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
+        {
+            buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
+            buffer.Write((float)maxhp);
+            buffer.Write((float)hp);
+        }
+    }
 
     public class MinionSpawn : BasePacket
     {
@@ -839,7 +911,7 @@ namespace IntWarsSharp.Logic.Packets
         PacketCmdC2S cmd;
         int netId;
         public int zero;
-        public int targetNetId; // netId on which the player clicked
+        public uint targetNetId; // netId on which the player clicked
 
         public Click(byte[] data)
         {
@@ -847,7 +919,7 @@ namespace IntWarsSharp.Logic.Packets
             cmd = (PacketCmdC2S)reader.ReadByte();
             netId = reader.ReadInt32();
             zero = reader.ReadInt32();
-            targetNetId = reader.ReadInt32();
+            targetNetId = reader.ReadUInt32();
         }
     }
 
@@ -1153,7 +1225,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         public DamageDone(Unit source, Unit target, float amount, DamageType type) : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
         {
-            buffer.Write((short)((((short)type) << 4) | 0x04));
+            buffer.Write((byte)(((byte)type << 4) | 0x04));
             buffer.Write((short)0x4B); // 4.18
             buffer.Write((float)amount); // 4.18
             buffer.Write((int)target.getNetId());
@@ -2323,7 +2395,7 @@ namespace IntWarsSharp.Logic.Packets
             {
                 buffer.Write(netId);
                 buffer.Write((int)0x00000040); // unk
-                buffer.Write((short)0); // unk
+                buffer.Write((byte)0); // unk
                 buffer.Write(x);
                 buffer.Write(z);
                 buffer.Write(y);
@@ -2337,10 +2409,12 @@ namespace IntWarsSharp.Logic.Packets
                 buffer.Write(1.0f);
                 buffer.Write(1.0f); // Scaling
                 buffer.Write((int)300); // unk
-                buffer.Write((short)1); // bIsProp -- if is a prop, become unselectable and use direction params
-                buffer.Write(name);
+                buffer.Write((int)1); // bIsProp -- if is a prop, become unselectable and use direction params
+                foreach (var b in Encoding.Default.GetBytes(name))
+                    buffer.Write((byte)b);
                 buffer.fill(0, 64 - name.Length);
-                buffer.Write(type);
+                foreach (var b in Encoding.Default.GetBytes(type))
+                    buffer.Write(b);
                 buffer.fill(0, 64 - type.Length);
             }
         }

@@ -111,7 +111,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Logic\Config\PacketConfig.cs" />
     <Compile Include="Logic\net\Packet.cs" />
     <Compile Include="Logic\net\PacketEnum.cs" />
     <Compile Include="Logic\net\Packets.cs" />

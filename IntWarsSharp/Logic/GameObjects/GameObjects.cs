@@ -46,7 +46,7 @@ namespace IntWarsSharp.Logic
             this.toRemove = false;
             this.attackerCount = 0;
             this.dashing = false;
-            this.visibleByTeam = new bool[] { false, false };
+            this.visibleByTeam = new bool[] { false, false, false };
 
         }
 

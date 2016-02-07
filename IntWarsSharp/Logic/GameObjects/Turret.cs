@@ -98,6 +98,13 @@ namespace IntWarsSharp.Logic.GameObjects
 
             base.update(diff);
         }
+
+        //todo
+        public override void die(Unit killer)
+        {
+            base.die(killer);
+        }
+
         public override void refreshWaypoints()
         {
         }

@@ -1,7 +1,6 @@
 ﻿using IntWarsSharp.Core.Logic.PacketHandlers;
 using MahApps.Metro.Controls;
 using SnifferApp.Logic;
-using SnifferApp.Logic.Config;
 using SnifferApp.Logic.UI;
 using System;
 using System.Collections.Generic;
@@ -36,8 +35,6 @@ namespace SnifferApp
         public MainWindow()
         {
             InitializeComponent();
-
-            PacketConfig.getInstance();
 
             new Thread(new ThreadStart(() =>
             {
@@ -146,7 +143,7 @@ namespace SnifferApp
             var p = new SelectedPacket(line.packet);
             selectedPacket.Items.Clear();
             selectedPacket.Items.Add(p);
-
+            p.ContentSelectionChanged += (a, b) => { selectedPacketDesc.SelectedIndex = ((ListView)a).SelectedIndex; };
             selectedPacketDesc.Items.Clear();
             try
             {

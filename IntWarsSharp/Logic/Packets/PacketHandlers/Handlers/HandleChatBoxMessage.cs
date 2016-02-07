@@ -208,7 +208,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                                     bytes.AddRange(d);
                             }
 
-                            PacketHandlerManager.getInstace().sendPacket(peer, bytes.ToArray(), Channel.CHL_LOW_PRIORITY);
+                            PacketHandlerManager.getInstace().sendPacket(peer, bytes.ToArray(), Channel.CHL_C2S);
                         }
                         catch { }
                         return true;
@@ -218,14 +218,18 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                         int team;
                         if (!int.TryParse(split[1], out team))
                             return true;
-                        var units = game.getPeerInfo(peer).getChampion().getMap().getVisionUnits(Convert.toTeamId(team)).Where(xx => xx.Value is Minion);
+                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == Convert.toTeamId(team)).Where(xx => xx.Value is Minion);
                         foreach (var unit in units)
                         {
                             var response = new AttentionPingAns(game.getPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
                             PacketHandlerManager.getInstace().broadcastPacketTeam(game.getPeerInfo(peer).getTeam(), response, Channel.CHL_S2C);
                         }
                         return true;
-
+                    case ".inhib":
+                        var sender = game.getPeerInfo(peer);
+                        var min = new Monster(game.getMap(), Game.GetNewNetID(), sender.getChampion().getX(), sender.getChampion().getY(), sender.getChampion().getX(), sender.getChampion().getY(), "AncientGolem", "AncientGolem1.1.1");
+                        game.getMap().addObject(min);
+                        return true;
                 }
             }
 

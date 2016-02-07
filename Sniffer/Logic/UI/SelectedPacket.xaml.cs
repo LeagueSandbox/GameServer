@@ -1,4 +1,5 @@
-﻿using SnifferApp.Logic.Config;
+﻿using IntWarsSharp.Core.Logic.PacketHandlers;
+using SnifferApp.net.Packets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,8 @@ namespace SnifferApp.Logic.UI
     /// </summary>
     public partial class SelectedPacket : UserControl
     {
+        public event EventHandler ContentSelectionChanged;
+
         private SelectedPacket()
         {
             InitializeComponent();
@@ -29,43 +32,49 @@ namespace SnifferApp.Logic.UI
 
         public SelectedPacket(Packet p) : this()
         {
-            var config = PacketConfig.getInstance().getConfig(p.header, p.s2c);
-            var reader = new BinaryReader(new MemoryStream(p.data));
+            Type type;
+            if (p.s2c)
+                type = Type.GetType("SnifferApp.net.Packets." + ((PacketCmdS2C)p.header).ToString());
+            else
+                type = Type.GetType("SnifferApp.net.Packets." + ((PacketCmdC2S)p.header).ToString());
 
-            foreach (var conf in config)
+            if (type == null)
             {
-                if (reader.BaseStream.Position + getLenght(conf.Key) >= reader.BaseStream.Length)
-                    continue;
+                appendBytes(p.data, "unk", "unk");
+                return;
+            }
 
-                switch (conf.Key)
+            var instance = Activator.CreateInstance(type, p.data) as Packets;
+            foreach (var conf in instance.data)
+            {
+                switch (conf.Item1)
                 {
                     case "b": //byte
-                        appendBytes(reader.ReadByte(), conf.Key, conf.Value);
+                        appendBytes((byte)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "s": //short
-                        appendBytes(reader.ReadInt16(), conf.Key, conf.Value);
+                        appendBytes((short)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "d": //int
-                        appendBytes(reader.ReadInt32(), conf.Key, conf.Value);
+                        appendBytes((int)conf.Item3, conf.Item1, conf.Item2);
                         break;
-                    case "d+": //int
-                        appendBytes(reader.ReadUInt32(), conf.Key, conf.Value);
+                    case "d+": //uint
+                        appendBytes((uint)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "l": //long
-                        appendBytes(reader.ReadInt64(), conf.Key, conf.Value);
+                        appendBytes((long)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "f": //float
-                        appendBytes(reader.ReadSingle(), conf.Key, conf.Value);
+                        appendBytes((float)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "str": //string
-                        appendString(reader.ReadString(), conf.Key, conf.Value);
+                        appendString((string)conf.Item3, conf.Item1, conf.Item2);
                         break;
                     case "fill":
+                        appendBytes((byte[])conf.Item3, conf.Item1, conf.Item2);
                         break;
                 }
             }
-            if (reader.BaseStream.Position < reader.BaseStream.Length)
-                appendBytes(reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position)), "unk", "unk");
         }
 
         private long getLenght(string key)
@@ -104,7 +113,7 @@ namespace SnifferApp.Logic.UI
         }
         private void appendBytes(float f, string type, string fieldName)
         {
-            appendHex(f.ToString("X2").Split('-'), type, fieldName);
+            appendHex(BitConverter.DoubleToInt64Bits(f).ToString("X2").Split('-'), type, fieldName);
         }
         private void appendBytes(byte[] bytes, string type, string fieldName)
         {
@@ -129,6 +138,12 @@ namespace SnifferApp.Logic.UI
                 cont += h + " ";
             line.Content.Content = cont;
             Content.Items.Add(line);
+        }
+
+        private void Content_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ContentSelectionChanged != null)
+                ContentSelectionChanged(sender, e);
         }
     }
 }

@@ -173,7 +173,7 @@ namespace InibinSharp
             if (!Values.ContainsKey(key))
             {
                 Values.Add(key, value);
-               // Debug.WriteLine("{0} [{1}] = {2}", typeof(T).Name, HashToName(key), value);
+                //Debug.WriteLine("{0} [{1}] = {2}", typeof(T).Name, HashToName(key), value);
             }
         }
 
