@@ -126,7 +126,7 @@ namespace IntWarsSharp.Core.Logic
 
                         case EventType.Receive:
                             currentPeer = enetEvent.peer;
-                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.peer, enetEvent.packet, enetEvent.channelID))
+                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.peer, enetEvent.packet, (Channel)enetEvent.channelID))
                             {
                                 //enet_peer_disconnect(event.peer, 0);
                             }

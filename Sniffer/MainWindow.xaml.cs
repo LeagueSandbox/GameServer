@@ -92,15 +92,15 @@ namespace SnifferApp
             timer.Start();
         }
 
-        public void Send(byte[] data)
+        public void Send(byte[] data, bool s2c, bool broadcast)
         {
             if (writer == null || !writer.BaseStream.CanWrite)
                 return;
 
-            byte[] toWrite = new byte[data.Length + 4];
-            BitConverter.GetBytes(data.Length).CopyTo(toWrite, 0);
-            data.CopyTo(toWrite, 4);
-            writer.Write(toWrite, 0, toWrite.Length);
+            writer.Write(data.Length);
+            writer.Write((byte)(s2c ? 1 : 0));
+            writer.Write((byte)(broadcast ? 1 : 0));
+            writer.Write(data, 0, data.Length);
         }
 
         public Packet Receive()
@@ -151,6 +151,34 @@ namespace SnifferApp
                     selectedPacketDesc.Items.Add(new SelectedPacketDesc(i));
             }
             catch { }
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange range = new TextRange(packetContent.ContentStart, packetContent.ContentEnd);
+            if (string.IsNullOrWhiteSpace(range.Text))
+                return;
+
+            var packets = range.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var packet in packets)
+            {
+                var list = new List<byte>();
+                var bytes = packet.Split(' ');
+                foreach (var b in bytes)
+                    list.Add(byte.Parse(b, System.Globalization.NumberStyles.HexNumber));
+
+                if (list.Count > 0)
+                    Send(list.ToArray(), packetDirectionS2C.IsChecked.Value, packetIsBroadcast.IsChecked.Value);
+            }
+        }
+
+        private void RichTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length < 1)
+                return;
+
+            if (!Char.IsDigit(e.Text[0]))
+                e.Handled = true;
         }
     }
 }

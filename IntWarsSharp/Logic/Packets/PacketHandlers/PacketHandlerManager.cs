@@ -76,13 +76,13 @@ namespace IntWarsSharp.Core.Logic
             return _instance;
         }
 
-        internal IPacketHandler GetHandler(PacketCmdC2S cmd, byte channelID)
+        internal IPacketHandler GetHandler(PacketCmdC2S cmd, Channel channelID)
         {
             if (_handlerTable.ContainsKey(cmd))
             {
                 var handlers = _handlerTable[cmd];
-                if (handlers.ContainsKey((Channel)channelID))
-                    return handlers[(Channel)channelID];
+                if (handlers.ContainsKey(channelID))
+                    return handlers[channelID];
             }
             return null;
         }
@@ -107,7 +107,7 @@ namespace IntWarsSharp.Core.Logic
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
-            lock(Program.ExecutingDirectory)
+            lock (Program.ExecutingDirectory)
             {
                 System.Diagnostics.Debug.Write(str);
                 foreach (var b in buffer)
@@ -183,21 +183,15 @@ namespace IntWarsSharp.Core.Logic
             return true;
         }
 
-        public bool handlePacket(ENetPeer* peer, ENetPacket* packet, byte channelID)
+        public bool handlePacket(ENetPeer* peer, byte[] data, Channel channelID)
         {
-            if ((int)packet->dataLength >= 8)
-                if (game.getPeerInfo(peer) != null)
-                    BlowFishCS.BlowFishCS.Decrypt1(game.getBlowfish(), (byte*)packet->data, new IntPtr((int)packet->dataLength - ((int)packet->dataLength % 8)));
-
-            var data = new byte[(int)packet->dataLength];
-            Marshal.Copy(packet->data, data, 0, data.Length);
-
             Sniffer.getInstance().Send(data, false);
 
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
-           // printPacket(data, "Received: ");
-            //Console.WriteLine("Requested " + header.cmd.ToString());
+            // printPacket(data, "Received: ");
+            if (header.cmd != PacketCmdC2S.PKT_C2S_StatsConfirm && header.cmd != PacketCmdC2S.PKT_C2S_MoveConfirm)
+                Console.WriteLine("Requested " + header.cmd.ToString());
 
             if (handler != null)
             {
@@ -214,6 +208,18 @@ namespace IntWarsSharp.Core.Logic
                 printPacket(data, "Error: ");
             }
             return false;
+        }
+
+        public bool handlePacket(ENetPeer* peer, ENetPacket* packet, Channel channelID)
+        {
+            if ((int)packet->dataLength >= 8)
+                if (game.getPeerInfo(peer) != null)
+                    BlowFishCS.BlowFishCS.Decrypt1(game.getBlowfish(), (byte*)packet->data, new IntPtr((int)packet->dataLength - ((int)packet->dataLength % 8)));
+
+            var data = new byte[(int)packet->dataLength];
+            Marshal.Copy(packet->data, data, 0, data.Length);
+
+            return handlePacket(peer, data, channelID);
         }
     }
 }

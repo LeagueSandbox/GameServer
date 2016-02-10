@@ -8,8 +8,29 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="693" Width="1202">
     <Grid>
-        <ListView x:Name="packets" HorizontalAlignment="Left" Height="655" Margin="10,5,0,0" VerticalAlignment="Top" Width="525" SelectionChanged="packets_Selected"/>
-        <ListView x:Name="selectedPacket" HorizontalAlignment="Right" Height="350" Margin="0,5,5,0" VerticalAlignment="Top" Width="650" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-        <ListView x:Name="selectedPacketDesc" HorizontalAlignment="Right" Height="300" Margin="0,360,5,0" VerticalAlignment="Top" Width="650" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        <TabControl>
+            <TabItem Header="Sniffer">
+                <Grid>
+                    <ListView x:Name="packets" HorizontalAlignment="Left" Height="655" Margin="10,5,0,0" VerticalAlignment="Top" Width="525" SelectionChanged="packets_Selected"/>
+                    <ListView x:Name="selectedPacket" HorizontalAlignment="Right" Height="350" Margin="0,5,5,0" VerticalAlignment="Top" Width="650" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                    <ListView x:Name="selectedPacketDesc" HorizontalAlignment="Right" Height="300" Margin="0,360,5,0" VerticalAlignment="Top" Width="650" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Send">
+                <Grid>
+                    <RichTextBox x:Name="packetContentTextBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="235" Width="1166" PreviewTextInput="RichTextBox_PreviewTextInput">
+                        <FlowDocument>
+                            <Paragraph x:Name="packetContent" />
+                        </FlowDocument>
+                    </RichTextBox>
+                    <Button Content="Send" HorizontalAlignment="Left" Margin="1093,298,0,0" VerticalAlignment="Top" Width="93" Click="SendButton_Click"/>
+                    <RadioButton x:Name="packetDirectionC2S" GroupName="packetDirection" Content="C2S" HorizontalAlignment="Right" Margin="0,250,59,0" VerticalAlignment="Top"/>
+                    <RadioButton x:Name="packetDirectionS2C" GroupName="packetDirection" Content="S2C" HorizontalAlignment="Right" Margin="0,250,10,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="packetIsBroadcast" Content="Broadcast" HorizontalAlignment="Right" Margin="0,275,27,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+
     </Grid>
 </Controls:MetroWindow>

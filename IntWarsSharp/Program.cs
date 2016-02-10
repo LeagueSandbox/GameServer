@@ -65,8 +65,8 @@ namespace IntWarsSharp
                 return;
             }
 
-            Sniffer.getInstance();
-            // var p = Process.Start("SnifferApp.exe");
+            Sniffer.getInstance().setGame(g);
+             var p = Process.Start("SnifferApp.exe");
 
             g.netLoop();
 

@@ -22,55 +22,112 @@ namespace SnifferApp.net.Packets
         }
         internal byte readByte(string name)
         {
-            byte b = reader.ReadByte();
+            byte b = 0;
+            try
+            {
+                b = reader.ReadByte();
+            }
+            catch { }
             data.Add(new Tuple<string, string, object>("b", name, b));
             return b;
         }
-        internal void readShort(string name)
+        internal short readShort(string name)
         {
-            data.Add(new Tuple<string, string, object>("s", name, reader.ReadInt16()));
+            short s = 0;
+            try
+            {
+                s = reader.ReadInt16();
+            }
+            catch { }
+            data.Add(new Tuple<string, string, object>("s", name, s));
+            return s;
         }
         internal int readInt(string name)
         {
-            int i = reader.ReadInt32();
+            int i = 0;
+            try
+            {
+                reader.ReadInt32();
+            }
+            catch { }
             data.Add(new Tuple<string, string, object>("d", name, i));
             return i;
         }
-        internal void readUInt(string name)
+        internal uint readUInt(string name)
         {
-            data.Add(new Tuple<string, string, object>("d+", name, reader.ReadUInt32()));
-        }
-        internal void readLong(string name)
-        {
-            data.Add(new Tuple<string, string, object>("l", name, reader.ReadInt64()));
-        }
-        internal void readFloat(string name)
-        {
-            data.Add(new Tuple<string, string, object>("f", name, reader.ReadSingle()));
-        }
-        internal void readFill(int len, string name)
-        {
-            data.Add(new Tuple<string, string, object>("fill", name, reader.ReadBytes(len)));
-        }
-        internal void readString(int len, string name)
-        {
-            var buff = new List<byte>();
-            for (var i = 0; i < len; i++)
-                buff.Add(reader.ReadByte());
-
-            data.Add(new Tuple<string, string, object>("str", name, Encoding.Default.GetString(buff.ToArray())));
-        }
-        internal void readZeroTerminatedString(string name)
-        {
-            var buff = new List<byte>();
-            byte b = 0;
-            do
+            uint ui = 0;
+            try
             {
-                b = reader.ReadByte();
-                buff.Add(b);
-            } while (b != 0);
+                ui = reader.ReadUInt32();
+            }
+            catch { }
+            data.Add(new Tuple<string, string, object>("d+", name, ui));
+            return ui;
+        }
+        internal long readLong(string name)
+        {
+            long l = 0;
+            try
+            {
+                l = reader.ReadInt64();
+            }
+            catch { }
+            data.Add(new Tuple<string, string, object>("l", name, l));
+            return l;
+        }
+        internal float readFloat(string name)
+        {
+            var f = float.NaN;
+            try
+            {
+                f = reader.ReadSingle();
+            }
+            catch { }
+            data.Add(new Tuple<string, string, object>("f", name, f));
+            return f;
+        }
+        internal byte[] readFill(int len, string name)
+        {
+            byte[] arr = new byte[len];
+            try
+            {
+                arr = reader.ReadBytes(len);
+            }
+            catch { }
+            data.Add(new Tuple<string, string, object>("fill", name, arr));
+            return arr;
+        }
+        internal string readString(int len, string name)
+        {
+            var buff = new List<byte>(len);
+            try
+            {
+                for (var i = 0; i < len; i++)
+                    buff.Add(reader.ReadByte());
+            }
+            catch { }
 
-            data.Add(new Tuple<string, string, object>("str", name, Encoding.Default.GetString(buff.ToArray())));
+            var s = Encoding.Default.GetString(buff.ToArray());
+            data.Add(new Tuple<string, string, object>("str", name, s));
+            return s;
+        }
+        internal string readZeroTerminatedString(string name)
+        {
+            var buff = new List<byte>();
+            try
+            {
+                byte b = 0;
+                do
+                {
+                    b = reader.ReadByte();
+                    buff.Add(b);
+                } while (b != 0);
+            }
+            catch { }
+
+            var s = Encoding.Default.GetString(buff.ToArray());
+            data.Add(new Tuple<string, string, object>("str", name, s));
+            return s;
         }
         internal void close()
         {
@@ -103,6 +160,9 @@ namespace SnifferApp.net.Packets
 
         internal bool isHeroSpawn()
         {
+            if (bytes[0] != (byte)PacketCmdS2C.PKT_S2C_HeroSpawn)
+                return false;
+
             bool isHeroSpawn = true;
             for (int i = 5; i < 20; i++)
                 if (bytes[i] != 0)
@@ -117,6 +177,9 @@ namespace SnifferApp.net.Packets
         }
         internal bool isTeleport()
         {
+            if (bytes[0] != (byte)PacketCmdS2C.PKT_S2C_MoveAns)
+                return false;
+
             return bytes[9] == 0x01 && bytes[10] == 0x00;
         }
     }

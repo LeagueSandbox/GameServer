@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntWarsSharp.Core.Logic;
+using IntWarsSharp.Logic;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
@@ -16,7 +18,9 @@ namespace SnifferApp.Logic
         private static Sniffer _instance;
         private BinaryWriter writer;
         private BinaryReader reader;
-        private Sniffer()
+        private Game game;
+
+        private unsafe Sniffer()
         {
             var listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 5478);
             listener.Start();
@@ -37,8 +41,29 @@ namespace SnifferApp.Logic
                 {
                     try
                     {
-                        if (reader != null)
-                            System.Diagnostics.Debug.WriteLine(BitConverter.ToString(Receive()));
+                        var p = Receive();
+                        if (p == null)
+                            continue;
+
+                        var players = game.getPlayers();
+                        if (players.Count < 1)
+                            return;
+
+                        var player = players[0];
+                        if (player.Item2 == null || player.Item2.getPeer() == null)
+                            return;
+
+                        if (p.s2c)
+                        {
+                            if (p.broadcast)
+                                PacketHandlerManager.getInstace().broadcastPacket(p.data, IntWarsSharp.Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                            else
+                                PacketHandlerManager.getInstace().sendPacket(player.Item2.getPeer(), p.data, IntWarsSharp.Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                        }
+                        else
+                        {
+                            PacketHandlerManager.getInstace().handlePacket(player.Item2.getPeer(), p.data, IntWarsSharp.Core.Logic.PacketHandlers.Channel.CHL_C2S);
+                        }
                     }
                     catch { reader = null; }
                 }
@@ -60,16 +85,19 @@ namespace SnifferApp.Logic
             catch { writer = null; }
         }
 
-        public byte[] Receive()
+        public SnifferPacket Receive()
         {
-            if (!reader.BaseStream.CanRead)
+            if (reader == null || !reader.BaseStream.CanRead)
                 return null;
 
-            var len = reader.ReadInt32();
-            if (len < 1)
+            var packet = new SnifferPacket();
+            packet.len = reader.ReadInt32();
+            packet.s2c = reader.ReadByte() == 1 ? true : false;
+            packet.broadcast = reader.ReadByte() == 1 ? true : false;
+            if (packet.len < 1)
                 return null;
 
-            return reader.ReadBytes(len);
+            return packet;
         }
 
         public static Sniffer getInstance()
@@ -78,6 +106,11 @@ namespace SnifferApp.Logic
                 _instance = new Sniffer();
 
             return _instance;
+        }
+
+        public void setGame(Game game)
+        {
+            this.game = game;
         }
     }
 }
