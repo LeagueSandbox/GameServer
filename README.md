@@ -1,5 +1,6 @@
 # IntWarsSharp
-DotNet port of IntWars: https://github.com/MythicManiac/IntWars/:
+DotNet port of IntWars: https://github.com/MythicManiac/IntWars/
+
 Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 
 # Installation
@@ -35,6 +36,12 @@ Gamemodes
             <data that's local to this gamemode only>
         <config files determining what data the mode uses>
 ```
+* Data should be stored in JSON files
+	* So for example, damage, range, health, etc...
+* Logic should be stored in lua files
+	* Lua is capable of using the data stored in the mentioned JSON files
+* These two should be always separate, so no mixing data into lua
+	* All predetermined values in JSON
 
 # Credits
 |            |                         |                               |
