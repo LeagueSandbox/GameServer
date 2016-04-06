@@ -41,11 +41,9 @@ namespace IntWarsSharp
 
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
-            var basePath = RAFManager.getInstance().findGameBasePath();
-            #warning If can't find your path, set the path under
-            //var basePath = @"Path to LoL\RADS\projects\lol_game_client";
+            var settings = Settings.Load("lua\\settings.json");
 
-            if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath, "filearchives")))
+            if (!RAFManager.getInstance().init(System.IO.Path.Combine(settings.RadsPath, "filearchives")))
             {
                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
                 return;
