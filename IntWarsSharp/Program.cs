@@ -42,7 +42,7 @@ namespace IntWarsSharp
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
             //var basePath = RAFManager.getInstance().findGameBasePath();
-            var basePath = RAFManager.getInstance().findGameBasePath();
+            var basePath = @"C:\Users\Nicolas\Desktop\4.20 - Base\RADS\projects\lol_game_client";
             
             if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath, "filearchives")))
             {
@@ -66,8 +66,8 @@ namespace IntWarsSharp
                 return;
             }
 
-            Sniffer.getInstance().setGame(g);
-             var p = Process.Start("SnifferApp.exe");
+            //Sniffer.getInstance().setGame(g);
+            //var p = Process.Start("SnifferApp.exe");
 
             g.netLoop();
 

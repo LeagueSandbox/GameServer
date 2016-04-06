@@ -225,6 +225,7 @@ namespace IntWarsSharp.Logic.GameObjects
             var p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(trueCoords.X, trueCoords.Y), this, projectileSpeed, (int)RAFHashManager.GetHash(spellName + "Missile"), projectileFlags > 0 ? (int)projectileFlags : flags);
             owner.getMap().addObject(p);
             PacketNotifier.notifyProjectileSpawn(p);
+            
         }
 
         /**
@@ -307,6 +308,36 @@ namespace IntWarsSharp.Logic.GameObjects
             return owner;
         }
 
+        public Unit getTarget()
+        {
+            return target;
+        }
+
+        public float getX()
+        {
+            return x;
+        }
+
+        public float getY()
+        {
+            return y;
+        }
+
+        public float getRange()
+        {
+            return range;
+        }
+
+        public void teleportTo(float x, float y)
+        {
+            PacketNotifier.notifyTeleport(owner, x, y);
+        }
+
+        public bool isWalkable(float x, float y)
+        {
+            return owner.getMap().isWalkable(x, y);
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -332,6 +363,10 @@ namespace IntWarsSharp.Logic.GameObjects
                     return "E";
                 case 3:
                     return "R";
+                case 4:
+                    return "D";
+                case 5:
+                    return "F";
             }
 
             return "undefined";
@@ -343,50 +378,52 @@ namespace IntWarsSharp.Logic.GameObjects
         public void doLua()
         {
             //Fuck LUA
-            /* LuaScript script(true);
+            LuaScript script = new LuaScript();
 
-             loadLua(script); //comment this line for no reload on the fly, better performance
+            loadLua(script); //comment this line for no reload on the fly, better performance
 
-             CORE_INFO("Spell from slot %i", getSlot());
-
-             try
-             {
-                 script.lua.script("finishCasting()");
-             }
-             catch (sol::error e)
-             {//lua error? don't crash the whole server
-                 CORE_ERROR("%s", e.what());
-             }*/
+            Logger.LogCoreInfo("Spell from slot " + getSlot());
+            try
+            {
+                script.lua.DoString("finishCasting()");
+            }
+            catch (NLua.Exceptions.LuaScriptException)
+            {
+                Logger.LogCoreError("Lua error on spell");
+            }
+            /*try
+            {
+                script.lua.script("finishCasting()");
+            }
+            catch (sol::error e)
+            {//lua error? don't crash the whole server
+                CORE_ERROR("%s", e.what());
+            }*/
         }
         public void loadLua(LuaScript script)
         {
             //Fuck LUA
-            /*std::string scriptloc = "../../lua/champions/" + owner->getType() + "/" + getStringForSlot() + ".lua"; //lua/championname/(q/w/e/r), example: /lua/Ezreal/q, also for stuff like nidalee cougar they will have diff folders!
+            string scriptloc = "../../lua/champions/" + owner.getType() + "/" + getStringForSlot() + ".lua"; //lua/championname/(q/w/e/r), example: /lua/Ezreal/q, also for stuff like nidalee cougar they will have diff folders!
+            script.lua.DoString("package.path = '../../lua/lib/?.lua;' .. package.path");
+            script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
+            script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
+            script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
+            script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("getLevel"));
+            script.lua.RegisterFunction("getChampionModel", owner,typeof(Champion).GetMethod("getModel"));
+            script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
 
-            CORE_INFO("Spell script loc is: %s", scriptloc.c_str());
+            script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
+            script.lua.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));
+            script.lua.RegisterFunction("getRange", this, typeof(Spell).GetMethod("getRange"));
 
-            script.lua.script("package.path = '../../lua/lib/?.lua;' .. package.path"); //automatically load vector lib so scripters dont have to worry about path
-            script.lua.set_function("getOwnerX", [this]() { return owner->getX(); });
-            script.lua.set_function("getOwnerY", [this]() { return owner->getY(); });
-            script.lua.set_function("getSpellLevel", [this]() { return getLevel(); });
-            script.lua.set_function("getOwnerLevel", [this]() { return owner->getStats().getLevel(); });
-            script.lua.set_function("getChampionModel", [this]() { return owner->getModel(); });
-            script.lua.set_function("getCastTarget", [this]() { return this->target; });
+            script.lua.RegisterFunction("setChampionModel", owner, typeof(Champion).GetMethod("setModel", new Type[] { typeof(string) }));
 
-            script.lua.set_function("setChampionModel", [this](const std::string&newModel) {
-                owner->setModel(newModel);
-                return;
-            });
-            script.lua.set_function("getSpellToX", [this]() { return x; });
-            script.lua.set_function("getSpellToY", [this]() { return y; });
-            script.lua.set_function("getRange", [this]() { return castRange; });
-            script.lua.set_function("teleportTo", [this](float _x, float _y) { // expose teleport to lua
-                owner->getMap()->getGame()->notifyTeleport(owner, _x, _y);
-                return;
-            });
-            script.lua.set_function("isWalkable", [this](float _x, float _y) {
-                return owner->getMap()->isWalkable(_x, _y);
-            });
+            script.lua.RegisterFunction("teleportTo", this, typeof(Spell).GetMethod("teleportTo", new Type[] { typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("isWalkable", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
+
+            Logger.LogCoreInfo("Spell script loc is: " + scriptloc);
+
+            //TODO : Add buffs
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
@@ -506,16 +543,8 @@ namespace IntWarsSharp.Logic.GameObjects
             script.lua.set_function("getChampionsInRange", [this](Target * t, float range, bool isAlive) {
                 return owner->getMap()->getChampionsInRange(t, range, isAlive);
             });
-
-            try
-            {
-                script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
-            }
-            catch (sol::error e)
-            {//lua error? don't crash the whole server
-                CORE_ERROR("Error in spell script: %s", e.what());
-            }
             */
+            script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
         }
 
         //public void reloadLua();
