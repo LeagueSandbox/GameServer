@@ -261,8 +261,7 @@ namespace IntWarsSharp.Logic.GameObjects
          * In here we apply the effects : damage, buffs, debuffs...
          */
 
-        
-        public virtual void applyEffects(Unit u, Projectile p = null)
+        public void applyEffects(Unit u, Projectile p = null)
         {
             LuaScript script = new LuaScript();
 
@@ -281,43 +280,38 @@ namespace IntWarsSharp.Logic.GameObjects
                 end");
 
             script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            script.lua["DAMAGE_TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
             script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+
 
             script.lua.DoString(@"
                 function dealPhysicalDamage(amount)
                     getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL)
                 end");
 
-            /*script.lua.set_function("getTarget", [&u]() { return u; });
+            script.lua.DoString(@"
+                function dealMagicalDamage(amount)
+                    getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL)
+                end");
 
-            script.lua.set_function("dealMagicalDamage", [this, &u](float amount) {
-                owner->dealDamageTo(u, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL);
-                return;
-            });
+            script.lua.DoString(@"
+                function getNumberObjectsHit(amount)
+                    return p.getObjectsHit().Count
+                end");
 
-            
-            script.lua.set_function("destroyProjectile", [this, &p]() {
-                p->setToRemove();
-                p->getMap()->getGame()->notifyProjectileDestroy(p);
-                return;
-            });
 
-            script.lua.set_function("getNumberObjectsHit", [this, &p]() {
-                return p->getObjectsHit().size();
-            });
+            script.lua["BUFFTYPE_TEMPORARY"] = BuffType.BUFFTYPE_TEMPORARY;
+            script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
 
-            script.lua.set_function("addBuff", [this](Buff b, Unit * u){
-                u->addBuff(new Buff(b));
-                return;
-            });
-            */
+            //script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
+
             loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
             {
                 script.lua.DoString("applyEffects()");
             }
-            catch (NLua.Exceptions.LuaException ex)
+            catch (NLua.Exceptions.LuaScriptException ex)
             {
                 Logger.LogCoreError("Lua exception " + ex.Message);
             }
@@ -384,6 +378,29 @@ namespace IntWarsSharp.Logic.GameObjects
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
+        public void addProjectileTarget(Target target)
+        {
+            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(spellName + "Missile"), projectileFlags != 0 ? projectileFlags : flags);
+            owner.getMap().addObject(p);
+            PacketNotifier.notifyProjectileSpawn(p);
+        }
+
+        public void addBuff(string buffName, float dur, BuffType type, Unit u)
+        {
+            u.addBuff(new Buff(buffName, dur, type, u));
+        }
+
+        public void addParticle(string particle, float toX, float toY)
+        {
+            Target t = new Target(toX, toY);
+            PacketNotifier.notifyParticleSpawn(owner, t, particle);
+        }
+
+        public void addParticleTarget(string particle, Target t)
+        {
+            PacketNotifier.notifyParticleSpawn(owner, t, particle);
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -433,7 +450,7 @@ namespace IntWarsSharp.Logic.GameObjects
             {
                 script.lua.DoString("finishCasting()");
             }
-            catch (NLua.Exceptions.LuaException ex)
+            catch (NLua.Exceptions.LuaScriptException ex)
             {
                 Logger.LogCoreError("Lua exception " + ex.Message);
             }
@@ -476,15 +493,12 @@ namespace IntWarsSharp.Logic.GameObjects
             script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("getCoefficient"));
 
             script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(Target) }));
 
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-            /*[this](uint32 effectNo) {
-                if (effectNo >= effects.size() || level >= effects[effectNo].size())
-                {
-                    return 0.f;
-                }
-                return effects[effectNo][level];
-            });
+
+            script.lua.RegisterFunction("addParticle", this, typeof(Spell).GetMethod("addParticle", new Type[] { typeof(string), typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
 
             /*
             * This have to be in general function, not in spell
@@ -502,23 +516,8 @@ namespace IntWarsSharp.Logic.GameObjects
                 u->getStats().addMovementSpeedPercentageModifier(b->getMovementSpeedPercentModifier());
                return;
             });*/
-            //Fuck LUA
+
             /*
-            script.lua.set_function("addBuff", [this](Buff b, Unit * u){
-                u->addBuff(new Buff(b));
-                return;
-            });
-
-            
-
-            script.lua.set_function("addProjectileTarget", [this](Target * t) {
-                Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, t, this, projectileSpeed, RAFFile::getHash(spellName + "Missile"), projectileFlags ? projectileFlags : flags);
-                owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
-
-                return;
-            });
-
             script.lua.set_function("addProjectileCustom", [this](const std::string&name, float projSpeed, float toX, float toY) {
                 Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, RAFFile::getHash(name), projectileFlags ? projectileFlags : flags);
                 owner->getMap()->addObject(p);
@@ -542,18 +541,6 @@ namespace IntWarsSharp.Logic.GameObjects
                 Projectile* p = new Projectile(owner->getMap(), futureProjNetId, owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, 0, projectileFlags ? projectileFlags : flags);
                 owner->getMap()->addObject(p);
 
-                return;
-            });
-
-            script.lua.set_function("addParticle", [this](const std::string&particle, float toX, float toY) {
-                Target* t = new Target(toX, toY);
-                owner->getMap()->getGame()->notifyParticleSpawn(owner, t, particle);
-                delete t;
-                return;
-            });
-
-            script.lua.set_function("addParticleTarget", [this](const std::string&particle, Target* u) {
-                owner->getMap()->getGame()->notifyParticleSpawn(owner, u, particle);
                 return;
             });
 

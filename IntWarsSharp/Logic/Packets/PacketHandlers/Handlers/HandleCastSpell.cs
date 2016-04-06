@@ -19,12 +19,12 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
             //Todo spellslot 0-3 qwer, 4-5 d f, 6-11 items
 
             // There are some bits triggering this
-            if ((spell.spellSlotType & 0x0F) > 0)
+            /*if ((spell.spellSlotType & 0x0F) > 0)
             {
                 Logger.LogCoreInfo("Summoner Spell Cast");
                 Logger.LogCoreInfo("Type: " + spell.spellSlotType.ToString("x") + ", Slot " + spell.spellSlot + ", coord " + spell.x + " ; " + spell.y + ", coord2 " + spell.x2 + ", " + spell.y2 + ", target NetId " + spell.targetNetId.ToString("x"));
                 return true;
-            }
+            }*/
 
             var futureProjNetId = Game.GetNewNetID();
             var spellNetId = Game.GetNewNetID();
