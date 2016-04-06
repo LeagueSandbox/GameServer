@@ -1,4 +1,5 @@
-﻿using IntWarsSharp.Logic.Maps;
+﻿using IntWarsSharp.Logic.Packets;
+using IntWarsSharp.Logic.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,6 +126,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
             owner.decrementAttackerCount();
             base.setToRemove();
+            PacketNotifier.notifyProjectileDestroy(this);
         }
 
         public int getProjectileId()

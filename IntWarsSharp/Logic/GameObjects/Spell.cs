@@ -3,6 +3,7 @@ using InibinSharp.RAF;
 using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic.Packets;
+using IntWarsSharp.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace IntWarsSharp.Logic.GameObjects
         protected string spellName;
         protected float targetType;
         protected int flags = 0;
-        protected float projectileFlags = 0.0f;
+        protected int projectileFlags = 0;
 
         protected float castTime = 0.0f;
         protected float castRange = 1000.0f;
@@ -180,7 +181,7 @@ namespace IntWarsSharp.Logic.GameObjects
 
             castRange = inibin.GetValue<float>("SpellData", "CastRange");
             projectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
-            projectileFlags = inibin.GetValue<float>("SpellData", "Flags");
+            projectileFlags = inibin.GetValue<int>("SpellData", "Flags");
         }
 
         /**
@@ -259,23 +260,42 @@ namespace IntWarsSharp.Logic.GameObjects
          * Called by projectiles when they land / hit
          * In here we apply the effects : damage, buffs, debuffs...
          */
-        public virtual void applyEffects(Unit t, Projectile p = null)
+
+        
+        public virtual void applyEffects(Unit u, Projectile p = null)
         {
-            //Fuck LUA
-            /*LuaScript script(true);
+            LuaScript script = new LuaScript();
 
-            script.lua.set_function("getTarget", [&u]() { return u; });
+            script.lua["u"] = u;
+            script.lua.DoString(@"
+                function getTarget()
+                    return u
+                end");
 
-            script.lua.set_function("dealPhysicalDamage", [this, &u](float amount) {
-                owner->dealDamageTo(u, amount, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL);
-                return;
-            });
+            script.lua.DoString("getTarget()");
+
+            script.lua["p"] = p;
+            script.lua.DoString(@"
+                function destroyProjectile()
+                    p:setToRemove()
+                end");
+
+            script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+
+            script.lua.DoString(@"
+                function dealPhysicalDamage(amount)
+                    getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL)
+                end");
+
+            /*script.lua.set_function("getTarget", [&u]() { return u; });
 
             script.lua.set_function("dealMagicalDamage", [this, &u](float amount) {
                 owner->dealDamageTo(u, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL);
                 return;
             });
 
+            
             script.lua.set_function("destroyProjectile", [this, &p]() {
                 p->setToRemove();
                 p->getMap()->getGame()->notifyProjectileDestroy(p);
@@ -290,17 +310,17 @@ namespace IntWarsSharp.Logic.GameObjects
                 u->addBuff(new Buff(b));
                 return;
             });
-
+            */
             loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
             {
-                script.lua.script("applyEffects()");
+                script.lua.DoString("applyEffects()");
             }
-            catch (sol::error e)
-            {//lua error? don't crash the whole server
-                CORE_ERROR("%s", e.what());
-            }*/
+            catch (NLua.Exceptions.LuaException ex)
+            {
+                Logger.LogCoreError("Lua exception " + ex.Message);
+            }
         }
 
         public Champion getOwner()
@@ -336,6 +356,32 @@ namespace IntWarsSharp.Logic.GameObjects
         public bool isWalkable(float x, float y)
         {
             return owner.getMap().isWalkable(x, y);
+        }
+
+        public float getProjectileSpeed()
+        {
+            return projectileSpeed;
+        }
+
+        public float getCoefficient()
+        {
+            return coefficient;
+        }
+
+        public float getEffectValue(int effectNo)
+        {
+            if (effectNo >= effects.Count || level >= effects[effectNo].Count)
+            {
+                return 0.0f;
+            }
+            return effects[effectNo][level];
+        }
+
+        public void addProjectile(float toX, float toY)
+        {
+            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(spellName + "Missile"), projectileFlags != 0 ? projectileFlags : flags);
+            owner.getMap().addObject(p);
+            PacketNotifier.notifyProjectileSpawn(p);
         }
 
         /**
@@ -387,9 +433,9 @@ namespace IntWarsSharp.Logic.GameObjects
             {
                 script.lua.DoString("finishCasting()");
             }
-            catch (NLua.Exceptions.LuaScriptException)
+            catch (NLua.Exceptions.LuaException ex)
             {
-                Logger.LogCoreError("Lua error on spell");
+                Logger.LogCoreError("Lua exception " + ex.Message);
             }
             /*try
             {
@@ -405,6 +451,7 @@ namespace IntWarsSharp.Logic.GameObjects
             //Fuck LUA
             string scriptloc = "../../lua/champions/" + owner.getType() + "/" + getStringForSlot() + ".lua"; //lua/championname/(q/w/e/r), example: /lua/Ezreal/q, also for stuff like nidalee cougar they will have diff folders!
             script.lua.DoString("package.path = '../../lua/lib/?.lua;' .. package.path");
+            script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
             script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
@@ -421,7 +468,30 @@ namespace IntWarsSharp.Logic.GameObjects
             script.lua.RegisterFunction("teleportTo", this, typeof(Spell).GetMethod("teleportTo", new Type[] { typeof(float), typeof(float) }));
             script.lua.RegisterFunction("isWalkable", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
 
-            Logger.LogCoreInfo("Spell script loc is: " + scriptloc);
+            script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
+
+
+            script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
+            script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("getCoefficient"));
+
+            script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(float), typeof(float) }));
+
+            script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
+            /*[this](uint32 effectNo) {
+                if (effectNo >= effects.size() || level >= effects[effectNo].size())
+                {
+                    return 0.f;
+                }
+                return effects[effectNo][level];
+            });
+
+            /*
+            * This have to be in general function, not in spell
+            script.lua.set_function("getTeam", [this](Object * o) { return o->getTeam(); });
+            script.lua.set_function("isDead", [this](Unit * u) { return u->isDead(); });
+            */
+
 
             //TODO : Add buffs
 
@@ -439,29 +509,7 @@ namespace IntWarsSharp.Logic.GameObjects
                 return;
             });
 
-            script.lua.set_function("getEffectValue", [this](uint32 effectNo) {
-                if (effectNo >= effects.size() || level >= effects[effectNo].size())
-                {
-                    return 0.f;
-                }
-                return effects[effectNo][level];
-            });
-
-            script.lua.set_function("getOwner", [this]() { return owner; });
-
-            script.lua.set_function("getTeam", [this](Object * o) { return o->getTeam(); });
-            script.lua.set_function("isDead", [this](Unit * u) { return u->isDead(); });
-
-            script.lua.set_function("getProjectileSpeed", [this]() { return projectileSpeed; });
-            script.lua.set_function("getCoefficient", [this]() { return coefficient; });
-
-            script.lua.set_function("addProjectile", [this](float toX, float toY) {
-                Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, RAFFile::getHash(spellName + "Missile"), projectileFlags ? projectileFlags : flags);
-                owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
-
-                return;
-            });
+            
 
             script.lua.set_function("addProjectileTarget", [this](Target * t) {
                 Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, t, this, projectileSpeed, RAFFile::getHash(spellName + "Missile"), projectileFlags ? projectileFlags : flags);
@@ -601,11 +649,6 @@ namespace IntWarsSharp.Logic.GameObjects
         public float getLineWidth()
         {
             return lineWidth;
-        }
-
-        public float getProjectileSpeed()
-        {
-            return projectileSpeed;
         }
 
         public float getProjectileFlags()
