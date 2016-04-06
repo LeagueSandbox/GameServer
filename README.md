@@ -46,11 +46,14 @@ Gamemodes
 	* All predetermined values in JSON
 
 # Credits
-|            |                         |                               |
-|------------|-------------------------|-------------------------------|
-| Intline9   | Original creator        | https://github.com/Intline9   |
-| Ltsstar    | Contributor             | https://github.com/ltsstar    |
-| Elyotna    | Contributor             | https://github.com/Elyotna    |
-| Eddy5641   | C# port original author | https://github.com/eddy5641   |
-| Chutch1122 | Contributor             | https://github.com/chutch1122 |
-| Spudgy     | Contributor             | https://github.com/spudgy     |
+|            |                         |                                 |
+|------------|-------------------------|---------------------------------|
+| Intline9   | Original creator        | https://github.com/Intline9     |
+| Ltsstar    | Contributor             | https://github.com/ltsstar      |
+| Elyotna    | Contributor             | https://github.com/Elyotna      |
+| Horato     | C# port original author | https://github.com/horato       |
+| Eddy5641   | Contributor             | https://github.com/eddy5641     |
+| Chutch1122 | Contributor             | https://github.com/chutch1122   |
+| Spudgy     | Contributor             | https://github.com/spudgy       |
+| Mythic     | Contributor             | https://github.com/MythicManiac |
+| Coquicox   | Contributor             | https://github.com/coquicox     |
