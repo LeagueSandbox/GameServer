@@ -1,4 +1,4 @@
-﻿using static ENet.Native;
+using static ENet.Native;
 using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic;
