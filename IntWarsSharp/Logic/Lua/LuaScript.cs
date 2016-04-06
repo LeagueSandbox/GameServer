@@ -10,7 +10,7 @@ namespace IntWarsSharp.Logic
     public class LuaScript
     {
         private bool loaded = false;
-        private Lua lua;
+        public Lua lua;
 
         public LuaScript()
         {

@@ -41,8 +41,10 @@ namespace IntWarsSharp
 
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
-            //var basePath = RAFManager.getInstance().findGameBasePath();
-            var basePath = @"C:\LolPatcherProxy\Base\RADS\projects\lol_game_client";
+            var basePath = RAFManager.getInstance().findGameBasePath();
+            #warning If can't find your path, set the path under
+            //var basePath = @"Path to LoL\RADS\projects\lol_game_client";
+
             if (!RAFManager.getInstance().init(System.IO.Path.Combine(basePath, "filearchives")))
             {
                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");
@@ -65,8 +67,8 @@ namespace IntWarsSharp
                 return;
             }
 
-            Sniffer.getInstance().setGame(g);
-             var p = Process.Start("SnifferApp.exe");
+            //Sniffer.getInstance().setGame(g);
+            //var p = Process.Start("SnifferApp.exe");
 
             g.netLoop();
 
