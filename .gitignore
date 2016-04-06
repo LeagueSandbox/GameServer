@@ -112,4 +112,4 @@ Backup*/
 UpgradeLog*.XML
 
 # Custom stuff
-IntWarsSharp/lua/settings.json
+IntWarsSharp/Settings/Settings.json
