@@ -1,5 +1,5 @@
 # IntWarsSharp
-DotNet port of IntWars: https://github.com/MythicManiac/IntWars/
+DotNet port of IntWars (https://github.com/MythicManiac/IntWars/)
 
 Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 
