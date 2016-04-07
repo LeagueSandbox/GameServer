@@ -52,7 +52,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="AIMesh.cs" />
     <Compile Include="Inibin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
