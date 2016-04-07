@@ -37,7 +37,7 @@ namespace IntWarsSharp.Logic
             gameConfig = new GameConfig(game);
 
             // Read spawns info
-            contentManager = new ContentManager();
+            contentManager = ContentManager.LoadGameMode(gameConfig.gameMode);
             var mapPath = contentManager.GetMapDataPath(gameConfig.map);
             var mapData = JObject.Parse(File.ReadAllText(mapPath));
             var spawns = mapData.SelectToken("spawns");
@@ -101,6 +101,7 @@ namespace IntWarsSharp.Logic
     internal class GameConfig
     {
         public int map { get { return (int)_gameData.SelectToken("map"); } }
+        public string gameMode { get { return (string)_gameData.SelectToken("gameMode"); } }
 
         private JToken _gameData;
 

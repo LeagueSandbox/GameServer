@@ -1,5 +1,8 @@
-﻿using System;
+﻿using IntWarsSharp.Core.Logic;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,34 +11,166 @@ namespace IntWarsSharp.Logic
 {
     public class ContentManager
     {
-        public ContentManager() { }
-
-        private string GetContentPath(ContentType type, string filename)
+        private static readonly string[] CONTENT_TYPES = new string[]
         {
-            var package = "Base";
-            return string.Format("Content/Data/{0}/{1}/{2}", package, type.ContentRoot, filename);
+            "Champions",
+            "Items",
+            "Maps"
+        };
+
+        private Dictionary<string, Dictionary<string, List<string>>> _content;
+        private string _gameModeName;
+
+        private ContentManager(string gameModeName)
+        {
+            _gameModeName = gameModeName;
+
+            _content = new Dictionary<string, Dictionary<string, List<string>>>();
+            foreach(var contentType in CONTENT_TYPES)
+            {
+                _content[contentType] = new Dictionary<string, List<string>>();
+            }
+        }
+
+        private void AddContent(string packageName, string contentType, JToken contentSet)
+        {
+            var contents = new string[0];
+            if (contentSet is JArray)
+            {
+                contents = contentSet.ToObject<string[]>();
+            }
+            else if(contentSet.Value<string>() == "*")
+            {
+                var contentPath = GetContentSetPath(packageName, contentType);
+                contents = GetFolderNamesFromPath(contentPath);
+            }
+            else
+            {
+                throw new Exception("Invalid content configuration");
+            }
+
+            foreach(var content in contents)
+            {
+                Logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
+                if(!_content[contentType].ContainsKey(content))
+                {
+                    _content[contentType][content] = new List<string>();
+                }
+                _content[contentType][content].Add(packageName);
+            }
+        }
+
+        private string[] GetFolderNamesFromPath(string folderPath)
+        {
+            var contents = new List<string>();
+            if (Directory.Exists(folderPath))
+            {
+                var contentDirectories = Directory.GetDirectories(folderPath);
+                foreach (var directory in contentDirectories)
+                {
+                    contents.Add(directory.Split('\\').Last());
+                }
+            }
+            return contents.ToArray();
+        }
+
+        private string GetContentRootPath()
+        {
+            return "Content";
+        }
+
+        private string GetPackagePath(string packageName)
+        {
+            return string.Format("{0}/Data/{1}", GetContentRootPath(), packageName);
+        }
+
+        private string GetContentSetPath(string packageName, string contentType)
+        {
+            if(packageName == "Self")
+            {
+                return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), _gameModeName, contentType);
+            }
+            return string.Format("{0}/{1}", GetPackagePath(packageName), contentType);
+        }
+
+        private string GetContentPath(string packageName, string contentType, string fileName)
+        {
+            return string.Format("{0}/{1}", GetContentSetPath(packageName, contentType), fileName);
+        }
+
+        private string GetContentPath(List<string> contentPackages, string contentType, string fileName)
+        {
+            var path = "";
+            var depth = contentPackages.Count;
+            while (!File.Exists(path) && depth > 0)
+            {
+                depth--;
+                path = GetContentPath(contentPackages[depth], contentType, fileName);
+            }
+            if (!File.Exists(path))
+            {
+                Logger.LogCoreError("Failed to load content [{0}][{1}]", contentType, fileName);
+            }
+            else
+            {
+                Logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
+            }
+            return path;
         }
 
         public string GetMapDataPath(int mapId)
         {
-            return GetContentPath(ContentType.MAP, string.Format("map{0}.json", mapId));
+            var mapName = string.Format("Map{0}", mapId);
+            var contentType = "Maps";
+            var contentPackages = _content[contentType][mapName];
+            var fileName = string.Format("{0}/{0}.json", mapName);
+            return GetContentPath(contentPackages, contentType, fileName);
         }
 
-        public string GetSpellScriptPath(string champion, string spell)
+        public string GetSpellScriptPath(string championName, string spellSlot)
         {
-            return GetContentPath(ContentType.CHAMPION, string.Format("{0}/{1}.lua", champion, spell));
+            var contentType = "Champions";
+            var contentPackages = _content[contentType][championName];
+            var fileName = string.Format("{0}/{1}.lua", championName, spellSlot);
+            return GetContentPath(contentPackages, contentType, fileName);
         }
-    }
 
-    public class ContentType
-    {
-        public static readonly ContentType MAP = new ContentType("Maps");
-        public static readonly ContentType CHAMPION = new ContentType("Champions");
-
-        public string ContentRoot { get; private set; }
-        private ContentType(string root)
+        public static ContentManager LoadGameMode(string gameModeName)
         {
-            ContentRoot = root;
+            var contentManager = new ContentManager(gameModeName);
+
+            var gameModeConfigurationPath = string.Format("Content/GameMode/{0}/GameMode.json", gameModeName);
+            var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
+            var dataConfiguration = gameModeConfiguration.SelectToken("data");
+
+            foreach(JProperty dataPackage in dataConfiguration)
+            {
+                if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
+
+                foreach(var contentType in CONTENT_TYPES)
+                {
+                    var contentSet = dataPackage.Value.SelectToken(contentType);
+
+                    if (contentSet == null) continue;
+
+                    contentManager.AddContent(dataPackage.Name, contentType, contentSet);
+                }
+            }
+
+            return contentManager;
+        }
+
+        private static bool ValidatePackageName(string packageName)
+        {
+            if (packageName == "Self") return true;
+
+            if (packageName.Count(c => c == '-') < 1) return false;
+            string[] parts = packageName.Split('-');
+            foreach(var part in parts)
+            {
+                if (part.Length < 2) return false;
+            }
+            return true;
         }
     }
 }

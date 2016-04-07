@@ -1,0 +1,15 @@
+{
+    "data": {
+        "Sightstone-Default": {
+            "Champions": "*",
+            "Items": "*",
+            "Maps": "*"
+        },
+        "Mythic-Dev": {
+            "Champions": ["Ezreal"]
+        },
+        "Self": {
+            "Champions": ["Ezreal"]
+        }
+    }
+}
