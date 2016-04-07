@@ -1181,23 +1181,23 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write(u.getNetId());//target
 
-            buffer.Write((short)0x05); //maybe type?
-            buffer.Write((short)0x02);
-            buffer.Write((short)0x01); // stacks
-            buffer.Write((short)0x00); // bool value
+            buffer.Write((byte)0x05); //maybe type?
+            buffer.Write((byte)0x02);
+            buffer.Write((byte)0x10); // stacks
+            buffer.Write((byte)0x00); // bool value
             buffer.Write(RAFManager.getInstance().getHash(name));
-            buffer.Write((short)0xde);
-            buffer.Write((short)0x88);
-            buffer.Write((short)0xc6);
-            buffer.Write((short)0xee);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x00);
-            buffer.Write((short)0x50);
-            buffer.Write((short)0xc3);
-            buffer.Write((short)0x46);
+            buffer.Write((byte)0xde);
+            buffer.Write((byte)0x88);
+            buffer.Write((byte)0xc6);
+            buffer.Write((byte)0xee);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x50);
+            buffer.Write((byte)0xc3);
+            buffer.Write((byte)0x46);
 
             if (source != null)
             {
@@ -1214,7 +1214,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
-            buffer.Write((short)0x05);
+            buffer.Write((byte)0x05);
             buffer.Write(RAFManager.getInstance().getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?

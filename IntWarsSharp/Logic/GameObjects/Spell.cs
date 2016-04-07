@@ -303,7 +303,7 @@ namespace IntWarsSharp.Logic.GameObjects
             script.lua["BUFFTYPE_TEMPORARY"] = BuffType.BUFFTYPE_TEMPORARY;
             script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
 
-            //script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
+            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
 
             loadLua(script); //comment this line for no reload on the fly, better performance
 
@@ -498,6 +498,11 @@ namespace IntWarsSharp.Logic.GameObjects
 
             script.lua.RegisterFunction("addParticle", this, typeof(Spell).GetMethod("addParticle", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
+
+            script.lua["BUFFTYPE_TEMPORARY"] = BuffType.BUFFTYPE_TEMPORARY;
+            script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
+
+            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit) }));
 
             /*
             * This have to be in general function, not in spell

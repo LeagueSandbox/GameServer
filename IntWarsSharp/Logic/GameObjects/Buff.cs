@@ -59,6 +59,7 @@ namespace IntWarsSharp.Logic.GameObjects
             this.attacker = attacker;
             this.buffType = type;
             this.movementSpeedPercentModifier = 0.0f;
+            PacketNotifier.notifyAddBuff(u, attacker, buffName);
         }
         public Buff(string buffName, float dur, BuffType type, Unit u) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
@@ -70,6 +71,7 @@ namespace IntWarsSharp.Logic.GameObjects
             this.attacker = u;
             this.buffType = type;
             this.movementSpeedPercentModifier = 0.0f;
+            PacketNotifier.notifyAddBuff(u, attacker, buffName);
         }
 
         public float getMovementSpeedPercentModifier()
