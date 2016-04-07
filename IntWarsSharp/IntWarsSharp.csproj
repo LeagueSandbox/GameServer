@@ -73,6 +73,7 @@
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\ChampionFactory.cs" />
     <Compile Include="Logic\Config.cs" />
+    <Compile Include="Logic\ContentManager.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
@@ -154,7 +155,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>C:\windows\system32\xcopy /s /y "$(ProjectDir)lua" "$(TargetDir)lua\*"
+    <PostBuildEvent>C:\windows\system32\xcopy /s /y "$(ProjectDir)Content" "$(TargetDir)Content\*"
+C:\windows\system32\xcopy /s /y "$(ProjectDir)Settings" "$(TargetDir)Settings\*"
+C:\windows\system32\xcopy /s /y "$(ProjectDir)LuaLib" "$(TargetDir)LuaLib\*"
 C:\windows\system32\xcopy /s /y "$(SolutionDir)lib" "$(TargetDir)*"
 C:\windows\system32\xcopy /s /y "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
   </PropertyGroup>

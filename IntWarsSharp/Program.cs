@@ -36,13 +36,13 @@ namespace IntWarsSharp
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
 
+
             Logger.LogCoreInfo("Loading Config.");
-            Config.LoadConfig();
+            Config.LoadConfig("Settings/GameInfo.json");
 
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
-            var settings = Settings.Load("lua\\settings.json");
-
+            var settings = Settings.Load("Settings/Settings.json");
             if (!RAFManager.getInstance().init(System.IO.Path.Combine(settings.RadsPath, "filearchives")))
             {
                 Logger.LogCoreError("Couldn't load RAF files. Make sure you have a 'filearchives' directory in the server's root directory. This directory is to be taken from RADS/projects/lol_game_client/");

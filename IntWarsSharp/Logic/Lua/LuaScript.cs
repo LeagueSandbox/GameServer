@@ -28,7 +28,10 @@ namespace IntWarsSharp.Logic
                 var s = lua.DoFile(location);
                 loaded = true;
             }
-            catch { }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public LuaTable getTable(string name)
