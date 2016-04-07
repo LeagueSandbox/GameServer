@@ -11,8 +11,9 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 * Download the 4.20 version of League client
 * Clone git repository
-* Copy `IntWarsSharp/lua/settings.json.template` to `IntWarsSharp/lua/settings.json`
-* Modify the just copied settings file as required
+* Copy `IntWarsSharp/Settings/Settings.json.template` to `IntWarsSharp/Settings/Settings.json`
+* Copy `IntWarsSharp/Settings/GameInfo.json.template` to `IntWarsSharp/Settings/GameInfo.json`
+* Modify the just copied settings files as required
 * Build and run
 
 # Project policies
