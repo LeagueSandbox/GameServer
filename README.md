@@ -88,7 +88,7 @@ GameMode
 6 different components:
 * League of Legends 4.20 Client
     * By Riot
-    * Will be modified on 
+    * Will be modified only by the client patcher
 * Lobby client
     * Client that can connect to lobby server
     * Game mode selection
