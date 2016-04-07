@@ -1,0 +1,10 @@
+skip_commits:
+  message: /Update.*\.(md|txt|mp3|png|jpg|jpeg|bmp|gif)/
+
+# restore NuGet packages before building
+before_build:
+- nuget restore
+
+build:
+  project: IntWarsSharp.sln
+  verbosity: minimal
