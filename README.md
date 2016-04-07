@@ -1,5 +1,6 @@
 # IntWarsSharp
-DotNet port of IntWars (https://github.com/MythicManiac/IntWars/)
+DotNet port of IntWars (https://github.com/SightstoneOfficial/IntWarsSharp/)
+Active fork of original IntWars (https://github.com/MythicManiac/IntWars/)
 
 Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 
@@ -19,7 +20,7 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
 * No StyleCop warnings should be present in new code
-* No committing to master—all changes must go through pull requests
+* No committing to masterâ€”all changes must go through pull requests
 * No self merging pull requests
 * Files and folders in `CamelCase`
 * JSON dictionary keys in `pascalCase`
