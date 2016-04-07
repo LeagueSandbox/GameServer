@@ -179,6 +179,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                             var c = new Champion(split[1], game.getMap(), game.getPeerInfo(peer).getChampion().getNetId(), (int)game.getPeerInfo(peer).userId);
                             c.setPosition(game.getPeerInfo(peer).getChampion().getX(), game.getPeerInfo(peer).getChampion().getY());
                             c.setModel(split[1]); // trigger the "modelUpdate" proc
+                            c.setTeam(game.getPeerInfo(peer).getChampion().getTeam());
                             game.getMap().removeObject(game.getPeerInfo(peer).getChampion());
                             game.getMap().addObject(c);
                             game.getPeerInfo(peer).setChampion(c);
