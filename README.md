@@ -1,5 +1,5 @@
 # IntWarsSharp
-[![Build status](https://img.shields.io/appveyor/ci/NitroXenon/intwarssharp.svg?style=flat-square)](https://ci.appveyor.com/project/NitroXenon/intwarssharp/branch/master)
+[![Build status](https://img.shields.io/appveyor/ci/NitroXenon/intwarssharp.svg?style=flat-square)](https://ci.appveyor.com/project/NitroXenon/intwarssharp)
 
 DotNet port of IntWars (https://github.com/SightstoneOfficial/IntWarsSharp/)  
 Active fork of original IntWars (https://github.com/MythicManiac/IntWars/)
