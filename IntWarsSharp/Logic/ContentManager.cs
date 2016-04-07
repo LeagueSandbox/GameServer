@@ -146,6 +146,7 @@ namespace IntWarsSharp.Logic
             foreach(JProperty dataPackage in dataConfiguration)
             {
                 if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
+
                 foreach(var contentType in CONTENT_TYPES)
                 {
                     var contentSet = dataPackage.Value.SelectToken(contentType);
@@ -161,6 +162,14 @@ namespace IntWarsSharp.Logic
 
         private static bool ValidatePackageName(string packageName)
         {
+            if (packageName == "Self") return true;
+
+            if (packageName.Count(c => c == '-') < 1) return false;
+            string[] parts = packageName.Split('-');
+            foreach(var part in parts)
+            {
+                if (part.Length < 2) return false;
+            }
             return true;
         }
     }

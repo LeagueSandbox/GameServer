@@ -1,11 +1,11 @@
 {
     "data": {
-        "Base": {
+        "Sightstone-Default": {
             "Champions": "*",
             "Items": "*",
             "Maps": "*"
         },
-        "Mythic-Derp": {
+        "Mythic-Dev": {
             "Champions": ["Ezreal"]
         },
         "Self": {
