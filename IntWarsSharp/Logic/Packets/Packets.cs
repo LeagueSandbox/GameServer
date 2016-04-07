@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using IntWarsSharp;
 using System.IO;
 using System.Numerics;
+using IntWarsSharp.Core.Logic;
 using IntWarsSharp.Logic.GameObjects;
 using IntWarsSharp.Core.Logic.RAF;
 using IntWarsSharp.Logic.Items;
@@ -52,7 +53,7 @@ namespace IntWarsSharp.Logic.Packets
     {
         public BasePacket(PacketCmdS2C cmd = PacketCmdS2C.PKT_S2C_KeyCheck, int netId = 0) : base(cmd)
         {
-            buffer.Write(netId);
+            buffer.Write((uint)netId);
         }
     }
 
@@ -505,7 +506,7 @@ namespace IntWarsSharp.Logic.Packets
         {
             buffer.Write((short)1); // nb updates ?
             buffer.Write((byte)5); // unk
-            buffer.Write((int)u.getNetId());
+            buffer.Write((uint)u.getNetId());
             buffer.Write((byte)0); // unk
             buffer.Write((float)dashSpeed); // Dash speed
             buffer.Write((int)0); // unk
@@ -514,9 +515,9 @@ namespace IntWarsSharp.Logic.Packets
             buffer.Write((int)0); // unk
             buffer.Write((byte)0);
 
-            buffer.Write((int)0x4c079bb5); // unk
+            buffer.Write((uint)0x4c079bb5); // unk
             buffer.Write((uint)0xa30036df); // unk
-            buffer.Write((int)0x200168c2); // unk
+            buffer.Write((uint)0x200168c2); // unk
 
             buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
@@ -1183,7 +1184,7 @@ namespace IntWarsSharp.Logic.Packets
 
             buffer.Write((byte)0x05); //maybe type?
             buffer.Write((byte)0x02);
-            buffer.Write((byte)0x10); // stacks
+            buffer.Write((byte)0x01); // stacks
             buffer.Write((byte)0x00); // bool value
             buffer.Write(RAFManager.getInstance().getHash(name));
             buffer.Write((byte)0xde);
@@ -2241,16 +2242,16 @@ namespace IntWarsSharp.Logic.Packets
 
         public SpawnParticle(Champion owner, GameObjects.Target t, string particle, int netId) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
         {
-            buffer.Write((short)1); // number of particles
-            buffer.Write(owner.getChampionHash());
+            buffer.Write((byte)1); // number of particles
+            buffer.Write((uint)owner.getChampionHash());
             buffer.Write(RAFManager.getInstance().getHash(particle));
             buffer.Write((int)0x00000020); // flags ?
             buffer.Write((int)0); // unk
             buffer.Write((short)0); // unk
-            buffer.Write((short)1); // number of targets ?
-            buffer.Write(owner.getNetId());
-            buffer.Write(netId); // Particle net id ?
-            buffer.Write(owner.getNetId());
+            buffer.Write((byte)1); // number of targets ?
+            buffer.Write((uint)owner.getNetId());
+            buffer.Write((uint)netId); // Particle net id ?
+            buffer.Write((uint)owner.getNetId());
 
             if (t.isSimpleTarget())
                 buffer.Write((int)0);
@@ -2267,11 +2268,11 @@ namespace IntWarsSharp.Logic.Packets
                 buffer.Write((short)((t.getY() - MAP_HEIGHT) / 2));
             }
 
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write(1.0f); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write(BitConverter.GetBytes(1.0f)); // unk
 
         }
 
