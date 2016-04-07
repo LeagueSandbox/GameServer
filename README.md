@@ -1,4 +1,6 @@
 # IntWarsSharp
+[![Build status](https://img.shields.io/appveyor/ci/NitroXenon/intwarssharp.svg?style=flat-square)](https://ci.appveyor.com/project/NitroXenon/intwarssharp)
+
 DotNet port of IntWars (https://github.com/SightstoneOfficial/IntWarsSharp/)  
 Active fork of original IntWars (https://github.com/MythicManiac/IntWars/)
 
@@ -61,3 +63,4 @@ GameMode
 | Spudgy     | Contributor             | https://github.com/spudgy       |
 | Mythic     | Contributor             | https://github.com/MythicManiac |
 | Coquicox   | Contributor             | https://github.com/coquicox     |
+| NitroXenon   | Contributor             | https://github.com/NitroXenon     |
