@@ -32,6 +32,12 @@ namespace IntWarsSharp.Core.Logic
         {
             Log(line, "CORE_INFO");
         }
+
+        public static void LogCoreInfo(string format, params object[] args)
+        {
+            Log(string.Format(format, args), "CORE_INFO");
+        }
+
         public static void LogCoreWarning(string line)
         {
             Log(line, "CORE_WARNING");
@@ -40,6 +46,11 @@ namespace IntWarsSharp.Core.Logic
         public static void LogCoreError(string line)
         {
             Log(line, "CORE_ERROR");
+        }
+
+        public static void LogCoreError(string format, params object[] args)
+        {
+            Log(string.Format(format, args), "CORE_ERROR");
         }
     }
 

@@ -1,0 +1,15 @@
+{
+    "data": {
+        "Base": {
+            "Champions": "*",
+            "Items": "*",
+            "Maps": "*"
+        },
+        "Mythic-Derp": {
+            "Champions": ["Ezreal"]
+        },
+        "Self": {
+            "Champions": ["Ezreal"]
+        }
+    }
+}
