@@ -63,3 +63,4 @@ GameMode
 | Spudgy     | Contributor             | https://github.com/spudgy       |
 | Mythic     | Contributor             | https://github.com/MythicManiac |
 | Coquicox   | Contributor             | https://github.com/coquicox     |
+| NitroXenon   | Contributor             | https://github.com/NitroXenon     |
