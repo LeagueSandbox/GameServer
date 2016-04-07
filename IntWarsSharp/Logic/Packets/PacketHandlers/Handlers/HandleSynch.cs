@@ -40,10 +40,7 @@ namespace IntWarsSharp.Core.Logic.PacketHandlers.Packets
                     break;
                 }
             }
-            int map;
-            if (!int.TryParse(mapId, out map))
-                map = 1;
-            var answer = new SynchVersionAns(game.getPlayers(), Config.version, "CLASSIC", map);
+            var answer = new SynchVersionAns(game.getPlayers(), Config.version, "CLASSIC", mapId);
 
             return PacketHandlerManager.getInstace().sendPacket(peer, answer, Channel.CHL_S2C);
         }

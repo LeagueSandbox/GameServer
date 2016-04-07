@@ -20,6 +20,8 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 * No StyleCop warnings should be present in new code
 * No committing to master—all changes must go through pull requests
 * No self merging pull requests
+* Files and folders in `CamelCase`
+* JSON dictionary keys in `pascalCase`
 
 # Planned data structure
 
@@ -32,7 +34,7 @@ Data
     SomeOtherPackage
         Champions
         ...
-Gamemodes
+GameMode
     Somemode
         Data
             <data that's local to this gamemode only>

@@ -465,9 +465,8 @@ namespace IntWarsSharp.Logic.GameObjects
         }
         public void loadLua(LuaScript script)
         {
-            //Fuck LUA
-            string scriptloc = "../../lua/champions/" + owner.getType() + "/" + getStringForSlot() + ".lua"; //lua/championname/(q/w/e/r), example: /lua/Ezreal/q, also for stuff like nidalee cougar they will have diff folders!
-            script.lua.DoString("package.path = '../../lua/lib/?.lua;' .. package.path");
+            string scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+            script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));

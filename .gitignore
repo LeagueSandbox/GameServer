@@ -113,3 +113,4 @@ UpgradeLog*.XML
 
 # Custom stuff
 IntWarsSharp/Settings/Settings.json
+IntWarsSharp/Settings/GameInfo.json

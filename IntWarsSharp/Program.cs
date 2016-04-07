@@ -38,7 +38,7 @@ namespace IntWarsSharp
 
 
             Logger.LogCoreInfo("Loading Config.");
-            Config.LoadConfig();
+            Config.LoadConfig("Settings/GameInfo.json");
 
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
