@@ -10,7 +10,7 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 * Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
 * Install StyleCop (https://stylecop.codeplex.com/)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
-* Download the 4.20 version of League client
+* Download the 4.20 version of League client (https://mega.nz/#!pFRVxBJQ!AMbsJnS9kqhvQ-tfP8QxoBikbrjlGQ4MdzNYGo0fIKM)
 * Clone git repository
 * Copy `IntWarsSharp/Settings/Settings.json.template` to `IntWarsSharp/Settings/Settings.json`
 * Copy `IntWarsSharp/Settings/GameInfo.json.template` to `IntWarsSharp/Settings/GameInfo.json`
