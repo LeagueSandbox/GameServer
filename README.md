@@ -1,5 +1,5 @@
 [![Build status](https://img.shields.io/appveyor/ci/NitroXenon/intwarssharp.svg?style=flat-square)](https://ci.appveyor.com/project/NitroXenon/intwarssharp)  
-# IntWarsSharp
+# LeagueSandbox Game Server
 DotNet port of IntWars  
 
 Active fork of original IntWars: https://github.com/MythicManiac/IntWars/  
@@ -13,8 +13,8 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 * Download the 4.20 version of League client (https://mega.nz/#!pFRVxBJQ!AMbsJnS9kqhvQ-tfP8QxoBikbrjlGQ4MdzNYGo0fIKM)
 * Clone the git repository
-* Copy `IntWarsSharp/Settings/Settings.json.template` to `IntWarsSharp/Settings/Settings.json`
-* Copy `IntWarsSharp/Settings/GameInfo.json.template` to `IntWarsSharp/Settings/GameInfo.json`
+* Copy `GameServer/Settings/Settings.json.template` to `GameServer/Settings/Settings.json`
+* Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
 * Modify the just copied settings files as required
 * Build and run
 

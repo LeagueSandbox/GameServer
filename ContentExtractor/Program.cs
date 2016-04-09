@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IntWarsSharp.Logic;
+using LeagueSandbox.GameServer.Logic;
 using LeagueLib.Tools;
 
 namespace ContentExtractor
