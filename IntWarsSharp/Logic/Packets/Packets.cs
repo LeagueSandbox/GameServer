@@ -1538,7 +1538,7 @@ namespace IntWarsSharp.Logic.Packets
 
     public class TeleportRequest : BasePacket
     {
-        short a = 0x01;
+        static short a = 0x01;
         public TeleportRequest(int netId, float x, float y, bool first) : base(PacketCmdS2C.PKT_S2C_MoveAns)
         {
             buffer.Write((int)Environment.TickCount);//not 100% sure
