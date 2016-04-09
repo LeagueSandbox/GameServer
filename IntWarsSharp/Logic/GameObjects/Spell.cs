@@ -218,15 +218,6 @@ namespace IntWarsSharp.Logic.GameObjects
 
             state = SpellState.STATE_COOLDOWN;
             currentCooldown = getCooldown();
-
-            var current = new Vector2(owner.getX(), owner.getY());
-            var to = (new Vector2(x, y) - current);
-            var trueCoords = current + (Vector2.Normalize(to) * 1150);
-
-            var p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(trueCoords.X, trueCoords.Y), this, projectileSpeed, (int)RAFHashManager.GetHash(spellName + "Missile"), projectileFlags > 0 ? (int)projectileFlags : flags);
-            owner.getMap().addObject(p);
-            PacketNotifier.notifyProjectileSpawn(p);
-            
         }
 
         /**

@@ -131,8 +131,6 @@
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
     <Compile Include="Logic\Settings.cs" />
-    <Compile Include="Logic\Sniffer\SnifferPacket.cs" />
-    <Compile Include="Logic\Sniffer\Sniffer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
