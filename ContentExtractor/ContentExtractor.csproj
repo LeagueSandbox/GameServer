@@ -51,9 +51,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IntWarsSharp\IntWarsSharp.csproj">
+    <ProjectReference Include="..\GameServer\GameServer.csproj">
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
-      <Name>IntWarsSharp</Name>
+      <Name>GameServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\LeagueLib\LeagueLib.csproj">
       <Project>{356f8a8b-cf38-4daa-8891-2bcdcb0daf46}</Project>
@@ -63,7 +63,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /s /q "$(TargetDir)Settings\"
-xcopy /s /y "$(SolutionDir)\IntWarsSharp\Settings" "$(TargetDir)Settings\*"</PostBuildEvent>
+xcopy /s /y "$(SolutionDir)\GameServer\Settings" "$(TargetDir)Settings\*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

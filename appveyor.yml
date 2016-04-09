@@ -6,5 +6,5 @@ before_build:
 - nuget restore
 
 build:
-  project: IntWarsSharp.sln
+  project: GameServer.sln
   verbosity: minimal

@@ -3,7 +3,7 @@
 [Oo]bj/
 
 #test VS2015
-IntWarsSharp.sln.ide/
+GameServer.sln.ide/
 
 # mstest test results
 TestResults
@@ -112,5 +112,5 @@ Backup*/
 UpgradeLog*.XML
 
 # Custom stuff
-IntWarsSharp/Settings/Settings.json
-IntWarsSharp/Settings/GameInfo.json
+GameServer/Settings/Settings.json
+GameServer/Settings/GameInfo.json
