@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -109,6 +110,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.slot = slot;
 
             Inibin inibin;
+
+            if (slot > 3)
+            {
+                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+                {
+                    return;
+                }
+                return;
+            }
+
             if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
                 if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
@@ -296,6 +307,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
 
+            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
+
             loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
@@ -392,6 +405,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PacketNotifier.notifyParticleSpawn(owner, t, particle);
         }
 
+        public void printChat(string msg)
+        {
+            var dm = new SpawnParticle.DebugMessage(msg);
+            PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
+        }
+
+        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
+        {
+            return owner.getMap().getUnitsInRange(t, range, isAlive);
+        }
+
+        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
+        {
+            return owner.getMap().getChampionsInRange(t, range, isAlive);
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -456,7 +485,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void loadLua(LuaScript script)
         {
-            string scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+            string scriptloc;
+
+            if (getSlot() > 3)
+            {
+                scriptloc = Config.contentManager.GetSpellScriptPath("Global", spellName);
+            }
+            else
+            {
+                scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+            }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
@@ -494,6 +532,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
 
             script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit) }));
+
+            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
+
+            script.lua.RegisterFunction("getUnitsInRange", this, typeof (Spell).GetMethod("getUnitsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
+            script.lua.RegisterFunction("getChampionsInRange", this, typeof (Spell).GetMethod("getChampionsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
 
             /*
             * This have to be in general function, not in spell
@@ -566,13 +609,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             });
 
-            script.lua.set_function("getUnitsInRange", [this](Target * t, float range, bool isAlive) {
-                return owner->getMap()->getUnitsInRange(t, range, isAlive);
-            });
-
-            script.lua.set_function("getChampionsInRange", [this](Target * t, float range, bool isAlive) {
-                return owner->getMap()->getChampionsInRange(t, range, isAlive);
-            });
+            
             */
             script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
         }

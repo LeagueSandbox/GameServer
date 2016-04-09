@@ -71,6 +71,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell3"), 2));
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell4"), 3));
+            spells.Add(new Spell(this, "SummonerHeal", 4));
+            spells.Add(new Spell(this, "SummonerFlash", 5));
+            spells.Add(new Spell(this, "Recall", 13));
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
@@ -191,16 +194,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell castSpell(byte slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
         {
-            if (slot == 13)
+            Spell s = null;
+            foreach (Spell t in spells)
             {
-                Logger.LogCoreInfo("Attempted to cast recall. Not implemented");
-                return null;
+                if (t.getSlot() == slot)
+                {
+                    s = t;
+                }
             }
 
-            if (slot >= spells.Count)
+            if (s == null)
+            {
                 return null;
-
-            Spell s = spells[slot];
+            }
 
             s.setSlot(slot);//temporary hack until we redo spells to be almost fully lua-based
 
