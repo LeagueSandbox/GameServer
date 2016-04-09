@@ -1,6 +1,6 @@
-[![Build status](https://img.shields.io/appveyor/ci/NitroXenon/intwarssharp.svg?style=flat-square)](https://ci.appveyor.com/project/NitroXenon/intwarssharp)  
+[![Build status](https://ci.appveyor.com/api/projects/status/7olahkndcs3r295p?svg=true)](https://ci.appveyor.com/project/MythicManiac/gameserver)
 # LeagueSandbox Game Server
-DotNet port of IntWars  
+DotNet port and continuation of IntWars
 
 Active fork of original IntWars: https://github.com/MythicManiac/IntWars/  
 Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
@@ -40,7 +40,7 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
     * `git add -u` - Stage all updated files for commit
     * `git add -A` - Stage all unstaged files for commit
     * `git commit -m "<commit message>"` - Create commit
-4. Push to master
+4. Push to github
     * `git push origin <branch_name>`
 5. Create pull request
 6. Checkout back to master
