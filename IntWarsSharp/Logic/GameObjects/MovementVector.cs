@@ -25,8 +25,8 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public MovementVector(float x, float y)
         {
-            x = targetXToNormalFormat(x);
-            y = targetYToNormalFormat(y);
+            x = FormatCoordinate(x, MAP_WIDTH);
+            y = FormatCoordinate(y, MAP_HEIGHT);
         }
 
         public Target toTarget()
@@ -34,15 +34,19 @@ namespace IntWarsSharp.Logic.GameObjects
             return new Target(2.0f * x + MAP_WIDTH, 2.0f * y + MAP_HEIGHT);
         }
 
-        public static short targetXToNormalFormat(float _x)
+        public static short FormatCoordinate(float coordinate, float origin)
         {
-            return (short)(((_x) - MAP_WIDTH) / 2.0f);
+            return (short)((coordinate - origin) / 2f);
         }
 
-        public static short targetYToNormalFormat(float _y)
+        public static short targetXToNormalFormat(float value)
         {
-            return (short)(((_y) - MAP_HEIGHT) / 2.0f);
+            return FormatCoordinate(value, MAP_WIDTH);
         }
 
+        public static short targetYToNormalFormat(float value)
+        {
+            return FormatCoordinate(value, MAP_HEIGHT);
+        }
     }
 }
