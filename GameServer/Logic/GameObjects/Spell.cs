@@ -10,7 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using IntWarsSharp.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -113,7 +113,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (slot > 3)
             {
-                Logger.LogCoreInfo("Casting not player spell");
                 if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
                 {
                     return;
@@ -412,6 +411,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
+        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
+        {
+            return owner.getMap().getUnitsInRange(t, range, isAlive);
+        }
+
+        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
+        {
+            return owner.getMap().getChampionsInRange(t, range, isAlive);
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -481,7 +490,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (getSlot() > 3)
             {
                 scriptloc = Config.contentManager.GetSpellScriptPath("Global", spellName);
-                Logger.LogCoreInfo("Cast slot " + spellName);
             }
             else
             {
@@ -526,6 +534,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit) }));
 
             script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
+
+            script.lua.RegisterFunction("getUnitsInRange", this, typeof (Spell).GetMethod("getUnitsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
+            script.lua.RegisterFunction("getChampionsInRange", this, typeof (Spell).GetMethod("getChampionsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
 
             /*
             * This have to be in general function, not in spell
@@ -598,13 +609,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             });
 
-            script.lua.set_function("getUnitsInRange", [this](Target * t, float range, bool isAlive) {
-                return owner->getMap()->getUnitsInRange(t, range, isAlive);
-            });
-
-            script.lua.set_function("getChampionsInRange", [this](Target * t, float range, bool isAlive) {
-                return owner->getMap()->getChampionsInRange(t, range, isAlive);
-            });
+            
             */
             script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
         }
