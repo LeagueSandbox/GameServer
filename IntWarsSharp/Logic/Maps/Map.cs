@@ -469,5 +469,10 @@ namespace IntWarsSharp.Logic.Maps
         {
             return 0;
         }
+
+        public virtual int getBluePillId()
+        {
+            return 0;
+        }
     }
 }

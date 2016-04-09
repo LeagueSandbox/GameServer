@@ -359,5 +359,10 @@ namespace IntWarsSharp.Logic.Maps
         {
             return new Vector2(getWidth() / 2, getHeight() / 2);
         }
+
+        public override int getBluePillId()
+        {
+            return 2001;
+        }
     }
 }
