@@ -114,16 +114,18 @@ GameMode
     * Pack into packages
     * Packages flow through other components like so: Package -> Lobby server -> Lobby client -> Client patcher -> League of Legends
 
-# Credits
-|            |                         |                                 |
-|------------|-------------------------|---------------------------------|
-| Intline9   | Original creator        | https://github.com/Intline9     |
-| Ltsstar    | Contributor             | https://github.com/ltsstar      |
-| Elyotna    | Contributor             | https://github.com/Elyotna      |
-| Horato     | C# port original author | https://github.com/horato       |
-| Eddy5641   | Contributor             | https://github.com/eddy5641     |
-| Chutch1122 | Contributor             | https://github.com/chutch1122   |
-| Spudgy     | Contributor             | https://github.com/spudgy       |
-| Mythic     | Current lead developer  | https://github.com/MythicManiac |
-| Coquicox   | Contributor             | https://github.com/coquicox     |
-| NitroXenon | Contributor             | https://github.com/NitroXenon   |
+# LeagueSandbox Credits
+|              |                         |                                 |
+|--------------|-------------------------|---------------------------------|
+| Intline9     | Original creator        | https://github.com/Intline9     |
+| Ltsstar      | Contributor             | https://github.com/ltsstar      |
+| Elyotna      | Contributor             | https://github.com/Elyotna      |
+| Horato       | C# port original author | https://github.com/horato       |
+| Eddy5641     | Contributor             | https://github.com/eddy5641     |
+| Chutch1122   | Contributor             | https://github.com/chutch1122   |
+| Spudgy       | Contributor             | https://github.com/spudgy       |
+| Mythic       | Current lead developer  | https://github.com/MythicManiac |
+| Coquicox     | Contributor             | https://github.com/coquicox     |
+| NitroXenon   | Contributor             | https://github.com/NitroXenon   |
+| Fighter19    | Contributor             | https://github.com/Fighter19    |
+| Molenzwiebel | Contributor             | https://github.com/molenzwiebel |
