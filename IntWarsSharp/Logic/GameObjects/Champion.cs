@@ -191,6 +191,12 @@ namespace IntWarsSharp.Logic.GameObjects
 
         public Spell castSpell(byte slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
         {
+            if (slot == 13)
+            {
+                Logger.LogCoreInfo("Attempted to cast recall. Not implemented");
+                return null;
+            }
+
             if (slot >= spells.Count)
                 return null;
 
