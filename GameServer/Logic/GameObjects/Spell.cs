@@ -110,6 +110,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.slot = slot;
 
             Inibin inibin;
+
+            if (slot > 3)
+            {
+                Logger.LogCoreInfo("Casting not player spell");
+                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+                {
+                    return;
+                }
+                return;
+            }
+
             if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
                 if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
@@ -465,7 +476,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void loadLua(LuaScript script)
         {
-            string scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+            string scriptloc;
+
+            if (getSlot() > 3)
+            {
+                scriptloc = Config.contentManager.GetSpellScriptPath("Global", spellName);
+                Logger.LogCoreInfo("Cast slot " + spellName);
+            }
+            else
+            {
+                scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+            }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
