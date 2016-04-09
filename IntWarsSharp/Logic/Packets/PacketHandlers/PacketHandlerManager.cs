@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using ENet;
 using IntWarsSharp.Logic.Enet;
 using IntWarsSharp.Logic;
-using SnifferApp.Logic;
 
 namespace IntWarsSharp.Core.Logic
 {
@@ -121,7 +120,6 @@ namespace IntWarsSharp.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //printPacket(source, "Sent: ");
-            Sniffer.getInstance().Send(source, true);
 
             fixed (byte* data = source)
             {
@@ -138,7 +136,6 @@ namespace IntWarsSharp.Core.Logic
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             //printPacket(data, "Broadcast: ");
-            Sniffer.getInstance().Send(data, true, true);
 
             fixed (byte* b = data)
             {
@@ -185,8 +182,6 @@ namespace IntWarsSharp.Core.Logic
 
         public bool handlePacket(ENetPeer* peer, byte[] data, Channel channelID)
         {
-            Sniffer.getInstance().Send(data, false);
-
             var header = new IntWarsSharp.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
             // printPacket(data, "Received: ");
