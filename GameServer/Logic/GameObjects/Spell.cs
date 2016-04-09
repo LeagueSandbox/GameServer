@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using IntWarsSharp.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -296,6 +297,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
 
+            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
+
             loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
@@ -390,6 +393,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addParticleTarget(string particle, Target t)
         {
             PacketNotifier.notifyParticleSpawn(owner, t, particle);
+        }
+
+        public void printChat(string msg)
+        {
+            var dm = new SpawnParticle.DebugMessage(msg);
+            PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
         /**
@@ -494,6 +503,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
 
             script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit) }));
+
+            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
 
             /*
             * This have to be in general function, not in spell
