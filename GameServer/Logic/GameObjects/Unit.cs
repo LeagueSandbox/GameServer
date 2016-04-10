@@ -195,7 +195,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             statUpdateTimer += diff;
-            if (statUpdateTimer >= 500000)
+            if (statUpdateTimer >= 500)
             { // update stats (hpregen, manaregen) every 0.5 seconds
                 stats.update(statUpdateTimer);
                 statUpdateTimer = 0;
