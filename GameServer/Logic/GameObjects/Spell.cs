@@ -446,10 +446,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return "E";
                 case 3:
                     return "R";
-                case 4:
-                    return "D";
-                case 5:
-                    return "F";
             }
 
             return "undefined";

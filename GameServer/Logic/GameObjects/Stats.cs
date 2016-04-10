@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -217,14 +218,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (getHp5() > 0 && getCurrentHealth() < getMaxHealth())
             {
                 float newHealth = getCurrentHealth() + (getHp5() * diff * 0.001f);
-                newHealth = Math.Max(getMaxHealth(), newHealth);
+                newHealth = Math.Min(getMaxHealth(), newHealth);
                 setCurrentHealth(newHealth);
             }
 
             if (getMana5() > 0 && getCurrentMana() < getMaxMana())
             {
                 float newMana = getCurrentMana() + (getMana5() * diff * 0.001f);
-                newMana = Math.Max(getMaxMana(), newMana);
+                newMana = Math.Min(getMaxMana(), newMana);
                 setCurrentMana(newMana);
             }
             if (generatingGold && getGoldPerSecond() > 0)
