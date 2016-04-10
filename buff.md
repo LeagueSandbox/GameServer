@@ -26,3 +26,19 @@ Red card (Z TF) | `CardmasterSlow`
 Catalyst ("env_manaheal.troy" particle) | `CatalystHeal`
 ? | `Cripple`
 DFG Debuff | `DeathfireGraspSpell`
+Defensive Ball Curl (W Rammus) | `DefensiveBallCurl`
+Destiny (R TF) | `Destiny`
+Bump (Q Alistar) | `Pulverize`
+Dragon burn (5 stacks drake) | `DragonBurning`
+Camouflage (Passive Teemo) | `Camouflage`
+Dark Binding (Q Morgana) (when hit bit projectile) | `DarkBinding`
+Dark Wind (E Fiddlesticks) | `Silence`
+? | `DragonVisionBuff`
+Drain (W Fiddlesticks)| `Drain`
+Elexir of Iron | `ElixirOfIron`
+Elixir Of Rage | `ElixirOfRage`
+Elixir Of Ruin | `ElixirOfRuin`
+Elixir Of Sorcery | `ElixirOfSorcery`
+Elixir Of Wrath | `ElixirOfWrath`
+(Targon?) | `EmblemofValor`
+Empower (W Jax) | `EmpowerTwo`
