@@ -2,6 +2,8 @@ Vector2 = require 'Vector2' -- include 2d vector lib
 
 function finishCasting()
     local current = Vector2:new(getOwnerX(), getOwnerY())
+    local x = getOwnerX()
+    local y = getOwnerY()
     local to = Vector2:new(getSpellToX(), getSpellToY()) - current
     local trueCoords
 
@@ -12,7 +14,7 @@ function finishCasting()
     else
         trueCoords = Vector2:new(getSpellToX(), getSpellToY())
     end
-
+    addParticle("jackintheboxpoof2.troy", x, y);
     teleportTo(trueCoords.x, trueCoords.y)
 end
 
