@@ -1,18 +1,41 @@
-Vector2 = require 'Vector2' -- include 2d vector lib 
-
+--DarwinAnim8or
+Vector2 = require 'Vector2' -- include 2d vector lib
+ 
 function finishCasting()
     local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
-    local range = to * 1150
-    local trueCoords = current + range
-
-    addProjectile(trueCoords.x, trueCoords.y)
+    local to = Vector2:new(getSpellToX(), getSpellToY()) - current
+    local trueCoords
+ 
+    if to:length() > 475 then
+        to = to:normalize()
+        local range = to * 475
+        trueCoords = current:copy() + range
+    else
+        trueCoords = Vector2:new(getSpellToX(), getSpellToY())
+    end
+ 
+    addParticle("Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());
+    teleportTo(trueCoords.x, trueCoords.y)
+    addParticleTarget("Ezreal_arcaneshift_flash.troy", getOwner());
+ 
+    local target = nil
+    local units = getUnitsInRange( getOwner(), 700, true )
+ 
+    for key,value in pairs( units ) do
+        local distance = 700
+        if getOwner():getTeam() ~= value:getTeam() then
+            if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then
+                target = value
+                distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))
+            end
+        end
+    end
+    if target then
+        addProjectileTarget(target)
+    end
 end
-
+ 
 function applyEffects()
-    dealPhysicalDamage(getEffectValue(0)+getOwner():getStats():getTotalAd()+(0.4*getOwner():getStats():getTotalAp()))
-    -- TODO this can be fetched from projectile inibin "HitEffectName"
-    addParticleTarget("Ezreal_mysticshot_tar.troy", getTarget())
-
+    dealMagicalDamage(getEffectValue(0)+getOwner():getStats():getTotalAp()*0.75)
     destroyProjectile()
 end
