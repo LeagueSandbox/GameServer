@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_KeyCheck = 0x00,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
+        PKT_S2C_SurrenderState = 0x0E,
         PKT_S2C_EndSpawn = 0x11,
         PKT_S2C_SkillUp = 0x15,
         PKT_S2C_BeginAutoAttack = 0x1A,
@@ -72,6 +73,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_ObjectSpawn = 0xBA,
         PKT_S2C_SetTarget2 = 0xC0,
         PKT_S2C_CharStats = 0xC4,
+        PKT_S2C_GameEnd = 0xC6,
+        PKT_S2C_Surrender = 0xC9,
 
         PKT_S2C_LevelPropSpawn = 0xD0,
         PKT_S2C_DebugMessage = 0xF7,

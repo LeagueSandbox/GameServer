@@ -52,9 +52,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
-        public static void notifyAddBuff(Unit u, Unit source, string buffName)
+        public static void notifyAddBuff(Buff b)
         {
-            var add = new AddBuff(u, source, 1, buffName);
+            var add = new AddBuff(b.getUnit(), b.getSourceUnit(), b.getStacks(), b.getName());
             PacketHandlerManager.getInstace().broadcastPacket(add, Channel.CHL_S2C);
         }
 

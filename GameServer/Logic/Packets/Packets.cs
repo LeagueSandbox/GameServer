@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SynchVersionAns(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map) : base(PacketCmdS2C.PKT_S2C_SynchVersion)
         {
             buffer.Write((byte)9); // unk
-            buffer.Write((int)map); // mapId
+            buffer.Write((uint)map); // mapId
             foreach (var player in players)
             {
                 var p = player.Item2;
@@ -151,9 +151,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes("NA1"))
                 buffer.Write((byte)b);
             buffer.fill(0, 2333); // 128 - 3 + 661 + 1546
-            buffer.Write((int)487826); // gameFeatures (turret range indicators, etc.)
+            buffer.Write((uint)487826); // gameFeatures (turret range indicators, etc.)
             buffer.fill(0, 256);
-            buffer.Write((int)0);
+            buffer.Write((uint)0);
             buffer.fill(1, 19);
         }
     }
@@ -196,8 +196,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public PingLoadInfo(PingLoadInfo loadInfo, long id) : base(PacketCmdS2C.PKT_S2C_Ping_Load_Info, loadInfo.netId)
         {
-            buffer.Write((int)loadInfo.unk1);
-            buffer.Write((long)id);
+            buffer.Write((uint)loadInfo.unk1);
+            buffer.Write((ulong)id);
             buffer.Write((float)loadInfo.loaded);
             buffer.Write((float)loadInfo.ping);
             buffer.Write((short)loadInfo.unk2);
@@ -211,8 +211,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LoadScreenInfo(List<Pair<uint, ClientInfo>> players) : base(PacketCmdS2C.PKT_S2C_LoadScreenInfo)
         {
             //Zero this complete buffer
-            buffer.Write((int)6); // blueMax
-            buffer.Write((int)6); // redMax
+            buffer.Write((uint)6); // blueMax
+            buffer.Write((uint)6); // redMax
 
             int currentBlue = 0;
             foreach (var p in players)
@@ -220,13 +220,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var player = p.Item2;
                 if (player.getTeam() == TeamId.TEAM_BLUE)
                 {
-                    buffer.Write((long)player.userId);
+                    buffer.Write((ulong)player.userId);
                     currentBlue++;
                 }
             }
 
             for (var i = 0; i < 6 - currentBlue; ++i)
-                buffer.Write((long)0);
+                buffer.Write((ulong)0);
 
             buffer.fill(0, 144);
 
@@ -236,14 +236,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var player = p.Item2;
                 if (player.getTeam() == TeamId.TEAM_PURPLE)
                 {
-                    buffer.Write((long)player.userId);
+                    buffer.Write((ulong)player.userId);
                     currentPurple++;
                 }
             }
 
             for (int i = 0; i < 6 - currentPurple; ++i)
             {
-                buffer.Write((long)0);
+                buffer.Write((ulong)0);
             }
 
             buffer.fill(0, 144);
@@ -259,11 +259,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x2A);
             buffer.Write((byte)0);
             buffer.Write((byte)0xFF);
-            buffer.Write((int)playerNo);
-            buffer.Write((long)userId);
-            buffer.Write((int)0);
+            buffer.Write((uint)playerNo);
+            buffer.Write((ulong)userId);
+            buffer.Write((uint)0);
             buffer.Write((long)0);
-            buffer.Write((int)0);
+            buffer.Write((uint)0);
         }
         public KeyCheck(byte[] bytes)
         {
@@ -272,21 +272,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             partialKey[0] = reader.ReadByte();
             partialKey[1] = reader.ReadByte();
             partialKey[2] = reader.ReadByte();
-            playerNo = reader.ReadInt32();
+            playerNo = reader.ReadUInt32();
             userId = reader.ReadInt64();
-            trash = reader.ReadInt32();
-            checkId = reader.ReadInt64();
-            trash2 = reader.ReadInt32();
+            trash = reader.ReadUInt32();
+            checkId = reader.ReadUInt64();
+            trash2 = reader.ReadUInt32();
             reader.Close();
         }
 
         public PacketCmdS2C cmd;
         public byte[] partialKey = new byte[3];   //Bytes 1 to 3 from the blowfish key for that client
-        public int playerNo;
+        public uint playerNo;
         public long userId;         //short testVar[8];   //User id
-        public int trash;
-        public long checkId;        //short checkVar[8];  //Encrypted testVar
-        public int trash2;
+        public uint trash;
+        public ulong checkId;        //short checkVar[8];  //Encrypted testVar
+        public uint trash2;
     }
 
     public class CameraLock
@@ -385,11 +385,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public MinionSpawn(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())
         {
-            buffer.Write((int)0x00150017); // unk
+            buffer.Write((uint)0x00150017); // unk
             buffer.Write((byte)0x03); // SpawnType - 3 = minion
-            buffer.Write((int)m.getNetId());
-            buffer.Write((int)m.getNetId());
-            buffer.Write((int)m.getSpawnPosition());
+            buffer.Write((uint)m.getNetId());
+            buffer.Write((uint)m.getNetId());
+            buffer.Write((uint)m.getSpawnPosition());
             buffer.Write((byte)0xFF); // unk
             buffer.Write((byte)1); // wave number ?
 
@@ -968,9 +968,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x3F); // unk
             buffer.fill(0, 13);
             buffer.Write((byte)3); // unk
-            buffer.Write((int)1); // unk
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getY());
+            buffer.Write((uint)1); // unk
+            buffer.Write(p.getX());
+            buffer.Write(p.getY());
             buffer.Write((float)0x3F441B7D); // z ?
             buffer.Write((float)0x3F248DBB); // Rotation ?
         }
@@ -1181,12 +1181,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
-
-            buffer.Write((byte)0x05); //maybe type?
-            buffer.Write((byte)0x02);
-            buffer.Write((byte)0x01); // stacks
-            buffer.Write((byte)0x00); // bool value
-            buffer.Write(RAFManager.getInstance().getHash(name));
+            buffer.Write((byte)0x01); //Slot
+            buffer.Write((byte)BuffType.Knockup); //Type
+            buffer.Write((byte)0x03); // stacks
+            buffer.Write((byte)0x01); // Visible
+            buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
             buffer.Write((byte)0xc6);
@@ -1195,6 +1194,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
+
+            buffer.Write((float)10.0f);
+
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x50);
             buffer.Write((byte)0xc3);
@@ -1447,6 +1449,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
+    }
+
+    public class Surrender : BasePacket
+    {
+        public Surrender(ClientInfo info) : base(PacketCmdS2C.PKT_S2C_Surrender)
+        {
+            buffer.Write((byte)0); //unk
+            buffer.Write(0); //surrendererNetworkId
+            buffer.Write((byte)1); //yesVotes
+            buffer.Write((byte)0); //noVotes
+            buffer.Write((byte)4); //maxVotes
+            buffer.Write((byte)TeamId.TEAM_BLUE); //team
+        }
+    }
+
+    public class GameEnd : BasePacket
+    {
+        public GameEnd(TeamId team) : base(PacketCmdS2C.PKT_S2C_GameEnd)
+        {
+            buffer.Write((byte)1);
+        }
     }
 
     public class SetTarget2 : BasePacket
