@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -1453,14 +1454,25 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Surrender : BasePacket
     {
-        public Surrender(ClientInfo info) : base(PacketCmdS2C.PKT_S2C_Surrender)
+        public Surrender() : base(PacketCmdS2C.PKT_S2C_Surrender)
         {
             buffer.Write((byte)0); //unk
             buffer.Write(0); //surrendererNetworkId
-            buffer.Write((byte)1); //yesVotes
+            buffer.Write((byte)0); //yesVotes
             buffer.Write((byte)0); //noVotes
             buffer.Write((byte)4); //maxVotes
             buffer.Write((byte)TeamId.TEAM_BLUE); //team
+        }
+    }
+
+    public class SurrenderResult : BasePacket
+    {
+        public SurrenderResult(bool early, int yes, int no, TeamId team) : base(PacketCmdS2C.PKT_S2C_SurrenderResult)
+        {
+            buffer.Write(BitConverter.GetBytes(early)); //surrendererNetworkId
+            buffer.Write((byte)yes); //yesVotes
+            buffer.Write((byte)no); //noVotes
+            buffer.Write((byte)team); //team
         }
     }
 
@@ -1468,7 +1480,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public GameEnd(TeamId team) : base(PacketCmdS2C.PKT_S2C_GameEnd)
         {
-            buffer.Write((byte)1);
+            buffer.Write((byte)1); //0 : lose 1 : Win
         }
     }
 

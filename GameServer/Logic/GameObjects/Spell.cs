@@ -117,6 +117,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     return;
                 }
+                
+                // Generate cooldown values for each level of the spell
+                for (var i = 0; i < cooldown.Length; ++i)
+                {
+                    cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown");
+                }
+
                 return;
             }
 
@@ -131,12 +138,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                 }
             }
-
-            var i = 0;
+            
             // Generate cooldown values for each level of the spell
-            for (i = 0; i < cooldown.Length; ++i)
+            for (var i = 0; i < cooldown.Length; ++i)
             {
                 cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown" + (i + 1));
+            }
+
+            for (var i = 0; i < cost.Length; ++i)
+            {
+                cost[i] = inibin.GetValue<float>("SpellData", "ManaCost" + (i + 1));
             }
 
             castTime = ((1.0f + inibin.GetValue<float>("SpellData", "DelayCastOffsetPercent"))) / 2.0f;
@@ -146,9 +157,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             projectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
             coefficient = inibin.GetValue<float>("SpellData", "Coefficient");
             lineWidth = inibin.GetValue<float>("SpellData", "LineWidth");
-
-            i = 1;
-            while (true)
+            
+            for(var i = 0; true; i++)
             {
                 string key = "Effect" + (0 + i) + "Level0Amount";
                 if (inibin.GetValue<object>("SpellData", key) == null)
