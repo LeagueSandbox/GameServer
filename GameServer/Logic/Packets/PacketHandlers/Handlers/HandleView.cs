@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            var request = new SpawnParticle.ViewRequest(data);
-            var answer = new SpawnParticle.ViewAnswer(request);
+            var request = new ViewRequest(data);
+            var answer = new ViewAnswer(request);
             if (request.requestNo == 0xFE)
             {
                 answer.setRequestNo(0xFF);

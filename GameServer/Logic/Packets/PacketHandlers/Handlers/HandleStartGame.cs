@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     if (player.Item2.getPeer() == peer && !player.Item2.isVersionMatch())
                     {
-                        var dm = new SpawnParticle.DebugMessage("Your client version does not match the server. Check the server log for more information.");
+                        var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
                         PacketHandlerManager.getInstace().sendPacket(peer, dm, Channel.CHL_S2C);
                     }
                 }

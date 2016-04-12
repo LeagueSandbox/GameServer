@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             //if (u is Monster)
             //    return;
-            var us = new SpawnParticle.UpdateStats(u, partial);
+            var us = new UpdateStats(u, partial);
             var t = u as Turret;
 
             if (t != null)
@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyProjectileDestroy(Projectile p)
         {
-            var dp = new SpawnParticle.DestroyProjectile(p);
+            var dp = new DestroyProjectile(p);
             PacketHandlerManager.getInstace().broadcastPacket(dp, Channel.CHL_S2C);
         }
 
@@ -160,7 +160,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyLevelUp(Champion c)
         {
-            var lu = new SpawnParticle.LevelUp(c);
+            var lu = new LevelUp(c);
             PacketHandlerManager.getInstace().broadcastPacket(lu, Channel.CHL_S2C);
         }
 
@@ -225,7 +225,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyDebugMessage(string htmlDebugMessage)
         {
-            var dm = new SpawnParticle.DebugMessage(htmlDebugMessage);
+            var dm = new DebugMessage(htmlDebugMessage);
             PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
@@ -296,7 +296,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifySetCooldown(Champion c, byte slotId, float currentCd, float totalCd)
         {
-            var cd = new SpawnParticle.SetCooldown(c.getNetId(), slotId, currentCd, totalCd);
+            var cd = new SetCooldown(c.getNetId(), slotId, currentCd, totalCd);
             PacketHandlerManager.getInstace().broadcastPacket(cd, Channel.CHL_S2C);
         }
 

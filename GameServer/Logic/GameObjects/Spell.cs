@@ -408,7 +408,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void printChat(string msg)
         {
-            var dm = new SpawnParticle.DebugMessage(msg);
+            var dm = new DebugMessage(msg);
             PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 

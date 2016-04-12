@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         foreach (var cc in cmd)
                             debugMsg.Append(cc + " ");
 
-                        var dm = new SpawnParticle.DebugMessage(debugMsg.ToString());
+                        var dm = new DebugMessage(debugMsg.ToString());
                         PacketHandlerManager.getInstace().sendPacket(peer, dm, Channel.CHL_S2C);
                         return true;
                     case ".spawn":
