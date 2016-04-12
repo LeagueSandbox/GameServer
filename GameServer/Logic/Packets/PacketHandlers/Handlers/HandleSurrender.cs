@@ -4,26 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ENet;
+using LeagueSandbox.GameServer.Logic.Enet;
 using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
-    class HandleView : IPacketHandler
+    class HandleSurrender : IPacketHandler
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            var request = new ViewRequest(data);
-            var answer = new ViewAnswer(request);
-            if (request.requestNo == 0xFE)
+            GameEnd surrender = new GameEnd(TeamId.TEAM_PURPLE);
+            foreach (var p in game.getPlayers())
             {
-                answer.setRequestNo(0xFF);
+                PacketHandlerManager.getInstace().sendPacket(peer, surrender, Channel.CHL_S2C);
             }
-            else
-            {
-                answer.setRequestNo(request.requestNo);
-            }
-            PacketHandlerManager.getInstace().sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
             return true;
         }
     }

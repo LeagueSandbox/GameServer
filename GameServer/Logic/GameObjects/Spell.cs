@@ -117,6 +117,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     return;
                 }
+                
+                // Generate cooldown values for each level of the spell
+                for (var i = 0; i < cooldown.Length; ++i)
+                {
+                    cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown");
+                }
+
                 return;
             }
 
@@ -131,12 +138,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                 }
             }
-
-            var i = 0;
+            
             // Generate cooldown values for each level of the spell
-            for (i = 0; i < cooldown.Length; ++i)
+            for (var i = 0; i < cooldown.Length; ++i)
             {
                 cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown" + (i + 1));
+            }
+
+            for (var i = 0; i < cost.Length; ++i)
+            {
+                cost[i] = inibin.GetValue<float>("SpellData", "ManaCost" + (i + 1));
             }
 
             castTime = ((1.0f + inibin.GetValue<float>("SpellData", "DelayCastOffsetPercent"))) / 2.0f;
@@ -146,9 +157,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             projectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
             coefficient = inibin.GetValue<float>("SpellData", "Coefficient");
             lineWidth = inibin.GetValue<float>("SpellData", "LineWidth");
-
-            i = 1;
-            while (true)
+            
+            for(var i = 0; true; i++)
             {
                 string key = "Effect" + (0 + i) + "Level0Amount";
                 if (inibin.GetValue<object>("SpellData", key) == null)
@@ -229,6 +239,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             state = SpellState.STATE_COOLDOWN;
             currentCooldown = getCooldown();
+            if (getSlot() < 4)
+            {
+                owner.getStats().setCurrentMana(owner.getStats().getCurrentMana() - getCost());
+                PacketNotifier.notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
+            }
         }
 
         /**
@@ -301,11 +316,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return p.getObjectsHit().Count
                 end");
 
-
-            script.lua["BUFFTYPE_TEMPORARY"] = BuffType.BUFFTYPE_TEMPORARY;
-            script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
-
-            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit)}));
+            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit)}));
 
             script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
 
@@ -389,9 +400,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
-        public void addBuff(string buffName, float dur, BuffType type, Unit u)
+        public void addBuff(string buffName, float dur, Unit u)
         {
-            u.addBuff(new Buff(buffName, dur, type, u));
+            u.addBuff(new Buff(buffName, dur, u));
         }
 
         public void addParticle(string particle, float toX, float toY)
@@ -407,7 +418,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void printChat(string msg)
         {
-            var dm = new SpawnParticle.DebugMessage(msg);
+            var dm = new DebugMessage(msg);
             PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
@@ -470,14 +481,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 Logger.LogCoreError("Lua exception " + ex.Message);
             }
-            /*try
-            {
-                script.lua.script("finishCasting()");
-            }
-            catch (sol::error e)
-            {//lua error? don't crash the whole server
-                CORE_ERROR("%s", e.what());
-            }*/
         }
         public void loadLua(LuaScript script)
         {
@@ -524,10 +527,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("addParticle", this, typeof(Spell).GetMethod("addParticle", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
 
-            script.lua["BUFFTYPE_TEMPORARY"] = BuffType.BUFFTYPE_TEMPORARY;
-            script.lua["BUFFTYPE_ETERNAL"] = BuffType.BUFFTYPE_ETERNAL;
-
-            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(BuffType), typeof(Unit) }));
+            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit) }));
 
             script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
 
@@ -622,7 +622,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public float getCooldown()
         {
-            return 0; // TODO: Remove this
             if (level <= 0)
                 return 0;
 
@@ -634,7 +633,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public float getCost()
         {
-            return 0; // TODO: Remove this
             if (level <= 0)
                 return 0;
 

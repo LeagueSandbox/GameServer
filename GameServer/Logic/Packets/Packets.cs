@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -116,7 +117,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SynchVersionAns(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map) : base(PacketCmdS2C.PKT_S2C_SynchVersion)
         {
             buffer.Write((byte)9); // unk
-            buffer.Write((int)map); // mapId
+            buffer.Write((uint)map); // mapId
             foreach (var player in players)
             {
                 var p = player.Item2;
@@ -151,9 +152,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes("NA1"))
                 buffer.Write((byte)b);
             buffer.fill(0, 2333); // 128 - 3 + 661 + 1546
-            buffer.Write((int)487826); // gameFeatures (turret range indicators, etc.)
+            buffer.Write((uint)487826); // gameFeatures (turret range indicators, etc.)
             buffer.fill(0, 256);
-            buffer.Write((int)0);
+            buffer.Write((uint)0);
             buffer.fill(1, 19);
         }
     }
@@ -196,8 +197,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public PingLoadInfo(PingLoadInfo loadInfo, long id) : base(PacketCmdS2C.PKT_S2C_Ping_Load_Info, loadInfo.netId)
         {
-            buffer.Write((int)loadInfo.unk1);
-            buffer.Write((long)id);
+            buffer.Write((uint)loadInfo.unk1);
+            buffer.Write((ulong)id);
             buffer.Write((float)loadInfo.loaded);
             buffer.Write((float)loadInfo.ping);
             buffer.Write((short)loadInfo.unk2);
@@ -211,8 +212,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LoadScreenInfo(List<Pair<uint, ClientInfo>> players) : base(PacketCmdS2C.PKT_S2C_LoadScreenInfo)
         {
             //Zero this complete buffer
-            buffer.Write((int)6); // blueMax
-            buffer.Write((int)6); // redMax
+            buffer.Write((uint)6); // blueMax
+            buffer.Write((uint)6); // redMax
 
             int currentBlue = 0;
             foreach (var p in players)
@@ -220,13 +221,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var player = p.Item2;
                 if (player.getTeam() == TeamId.TEAM_BLUE)
                 {
-                    buffer.Write((long)player.userId);
+                    buffer.Write((ulong)player.userId);
                     currentBlue++;
                 }
             }
 
             for (var i = 0; i < 6 - currentBlue; ++i)
-                buffer.Write((long)0);
+                buffer.Write((ulong)0);
 
             buffer.fill(0, 144);
 
@@ -236,14 +237,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var player = p.Item2;
                 if (player.getTeam() == TeamId.TEAM_PURPLE)
                 {
-                    buffer.Write((long)player.userId);
+                    buffer.Write((ulong)player.userId);
                     currentPurple++;
                 }
             }
 
             for (int i = 0; i < 6 - currentPurple; ++i)
             {
-                buffer.Write((long)0);
+                buffer.Write((ulong)0);
             }
 
             buffer.fill(0, 144);
@@ -259,11 +260,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x2A);
             buffer.Write((byte)0);
             buffer.Write((byte)0xFF);
-            buffer.Write((int)playerNo);
-            buffer.Write((long)userId);
-            buffer.Write((int)0);
+            buffer.Write((uint)playerNo);
+            buffer.Write((ulong)userId);
+            buffer.Write((uint)0);
             buffer.Write((long)0);
-            buffer.Write((int)0);
+            buffer.Write((uint)0);
         }
         public KeyCheck(byte[] bytes)
         {
@@ -272,21 +273,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             partialKey[0] = reader.ReadByte();
             partialKey[1] = reader.ReadByte();
             partialKey[2] = reader.ReadByte();
-            playerNo = reader.ReadInt32();
+            playerNo = reader.ReadUInt32();
             userId = reader.ReadInt64();
-            trash = reader.ReadInt32();
-            checkId = reader.ReadInt64();
-            trash2 = reader.ReadInt32();
+            trash = reader.ReadUInt32();
+            checkId = reader.ReadUInt64();
+            trash2 = reader.ReadUInt32();
             reader.Close();
         }
 
         public PacketCmdS2C cmd;
         public byte[] partialKey = new byte[3];   //Bytes 1 to 3 from the blowfish key for that client
-        public int playerNo;
+        public uint playerNo;
         public long userId;         //short testVar[8];   //User id
-        public int trash;
-        public long checkId;        //short checkVar[8];  //Encrypted testVar
-        public int trash2;
+        public uint trash;
+        public ulong checkId;        //short checkVar[8];  //Encrypted testVar
+        public uint trash2;
     }
 
     public class CameraLock
@@ -385,11 +386,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public MinionSpawn(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())
         {
-            buffer.Write((int)0x00150017); // unk
+            buffer.Write((uint)0x00150017); // unk
             buffer.Write((byte)0x03); // SpawnType - 3 = minion
-            buffer.Write((int)m.getNetId());
-            buffer.Write((int)m.getNetId());
-            buffer.Write((int)m.getSpawnPosition());
+            buffer.Write((uint)m.getNetId());
+            buffer.Write((uint)m.getNetId());
+            buffer.Write((uint)m.getSpawnPosition());
             buffer.Write((byte)0xFF); // unk
             buffer.Write((byte)1); // wave number ?
 
@@ -968,9 +969,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x3F); // unk
             buffer.fill(0, 13);
             buffer.Write((byte)3); // unk
-            buffer.Write((int)1); // unk
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getY());
+            buffer.Write((uint)1); // unk
+            buffer.Write(p.getX());
+            buffer.Write(p.getY());
             buffer.Write((float)0x3F441B7D); // z ?
             buffer.Write((float)0x3F248DBB); // Rotation ?
         }
@@ -1181,12 +1182,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
-
-            buffer.Write((byte)0x05); //maybe type?
-            buffer.Write((byte)0x02);
-            buffer.Write((byte)0x01); // stacks
-            buffer.Write((byte)0x00); // bool value
-            buffer.Write(RAFManager.getInstance().getHash(name));
+            buffer.Write((byte)0x01); //Slot
+            buffer.Write((byte)BuffType.Knockup); //Type
+            buffer.Write((byte)0x03); // stacks
+            buffer.Write((byte)0x01); // Visible
+            buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
             buffer.Write((byte)0xc6);
@@ -1195,6 +1195,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
+
+            buffer.Write((float)10.0f);
+
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x50);
             buffer.Write((byte)0xc3);
@@ -1447,6 +1450,38 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
+    }
+
+    public class Surrender : BasePacket
+    {
+        public Surrender() : base(PacketCmdS2C.PKT_S2C_Surrender)
+        {
+            buffer.Write((byte)0); //unk
+            buffer.Write(0); //surrendererNetworkId
+            buffer.Write((byte)0); //yesVotes
+            buffer.Write((byte)0); //noVotes
+            buffer.Write((byte)4); //maxVotes
+            buffer.Write((byte)TeamId.TEAM_BLUE); //team
+        }
+    }
+
+    public class SurrenderResult : BasePacket
+    {
+        public SurrenderResult(bool early, int yes, int no, TeamId team) : base(PacketCmdS2C.PKT_S2C_SurrenderResult)
+        {
+            buffer.Write(BitConverter.GetBytes(early)); //surrendererNetworkId
+            buffer.Write((byte)yes); //yesVotes
+            buffer.Write((byte)no); //noVotes
+            buffer.Write((byte)team); //team
+        }
+    }
+
+    public class GameEnd : BasePacket
+    {
+        public GameEnd(TeamId team) : base(PacketCmdS2C.PKT_S2C_GameEnd)
+        {
+            buffer.Write((byte)1); //0 : lose 1 : Win
+        }
     }
 
     public class SetTarget2 : BasePacket
@@ -2275,224 +2310,224 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(BitConverter.GetBytes(1.0f)); // unk
 
         }
+    }
 
-        public class DestroyProjectile : BasePacket
+    public class DestroyProjectile : BasePacket
+    {
+        public DestroyProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_DestroyProjectile, p.getNetId())
         {
-            public DestroyProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_DestroyProjectile, p.getNetId())
-            {
 
-            }
         }
+    }
 
-        public class UpdateStats : GamePacket
+    public class UpdateStats : GamePacket
+    {
+        public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
         {
-            public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
+            var stats = new PairList<byte, List<int>>();
+
+            if (partial)
+                stats = u.getStats().getUpdatedStats();
+            else
+                stats = u.getStats().getAllStats();
+
+            var masks = new List<byte>();
+            byte masterMask = 0;
+
+            foreach (var p in stats)
             {
-                var stats = new PairList<byte, List<int>>();
+                masterMask |= p.Item1;
+                masks.Add(p.Item1);
+            }
 
-                if (partial)
-                    stats = u.getStats().getUpdatedStats();
-                else
-                    stats = u.getStats().getAllStats();
+            masks.Sort();
 
-                var masks = new List<byte>();
-                byte masterMask = 0;
+            buffer.Write((byte)1);
+            buffer.Write((byte)masterMask);
+            buffer.Write((int)u.getNetId());
 
-                foreach (var p in stats)
+
+            foreach (var m in masks)
+            {
+                int mask = 0;
+                byte size = 0;
+
+                var updatedStats = stats[m];
+                updatedStats.Sort();
+                foreach (var it in updatedStats)
                 {
-                    masterMask |= p.Item1;
-                    masks.Add(p.Item1);
+                    size += u.getStats().getSize(m, it);
+                    mask |= it;
                 }
+                //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
+                //  System.Diagnostics.Debugger.Break();
+                buffer.Write((int)mask);
+                buffer.Write((byte)size);
 
-                masks.Sort();
-
-                buffer.Write((byte)1);
-                buffer.Write((byte)masterMask);
-                buffer.Write((int)u.getNetId());
-
-
-                foreach (var m in masks)
+                for (int i = 0; i < 32; i++)
                 {
-                    int mask = 0;
-                    byte size = 0;
-
-                    var updatedStats = stats[m];
-                    updatedStats.Sort();
-                    foreach (var it in updatedStats)
+                    int tmpMask = (1 << i);
+                    if ((tmpMask & mask) > 0)
                     {
-                        size += u.getStats().getSize(m, it);
-                        mask |= it;
-                    }
-                    //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
-                    //  System.Diagnostics.Debugger.Break();
-                    buffer.Write((int)mask);
-                    buffer.Write((byte)size);
-
-                    for (int i = 0; i < 32; i++)
-                    {
-                        int tmpMask = (1 << i);
-                        if ((tmpMask & mask) > 0)
+                        if (u.getStats().getSize(m, tmpMask) == 4)
                         {
-                            if (u.getStats().getSize(m, tmpMask) == 4)
+                            float f = u.getStats().getStat(m, tmpMask);
+                            var c = BitConverter.GetBytes(f);
+                            if (c[0] >= 0xFE)
                             {
-                                float f = u.getStats().getStat(m, tmpMask);
-                                var c = BitConverter.GetBytes(f);
-                                if (c[0] >= 0xFE)
-                                {
-                                    c[0] = (byte)0xFD;
-                                }
-                                buffer.Write(BitConverter.ToSingle(c, 0));
+                                c[0] = (byte)0xFD;
                             }
-                            else if (u.getStats().getSize(m, tmpMask) == 2)
-                            {
-                                short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                                buffer.Write(stat);
-                            }
-                            else
-                            {
-                                byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                                buffer.Write(stat);
-                            }
+                            buffer.Write(BitConverter.ToSingle(c, 0));
+                        }
+                        else if (u.getStats().getSize(m, tmpMask) == 2)
+                        {
+                            short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                            buffer.Write(stat);
+                        }
+                        else
+                        {
+                            byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                            buffer.Write(stat);
                         }
                     }
                 }
             }
         }
+    }
 
-        public class LevelPropSpawn : BasePacket
+    public class LevelPropSpawn : BasePacket
+    {
+        public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
-            public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
-            {
-                buffer.Write((int)lp.getNetId());
-                buffer.Write((int)0x00000040); // unk
-                buffer.Write((byte)0); // unk
-                buffer.Write((float)lp.getX());
-                buffer.Write((float)lp.getZ());
-                buffer.Write((float)lp.getY());
-                buffer.Write((float)0.0f); // Rotation Y
+            buffer.Write((int)lp.getNetId());
+            buffer.Write((int)0x00000040); // unk
+            buffer.Write((byte)0); // unk
+            buffer.Write((float)lp.getX());
+            buffer.Write((float)lp.getZ());
+            buffer.Write((float)lp.getY());
+            buffer.Write((float)0.0f); // Rotation Y
 
-                buffer.Write((float)lp.getDirectionX());
-                buffer.Write((float)lp.getDirectionZ());
-                buffer.Write((float)lp.getDirectionY());
-                buffer.Write((float)lp.getUnk1());
-                buffer.Write((float)lp.getUnk2());
+            buffer.Write((float)lp.getDirectionX());
+            buffer.Write((float)lp.getDirectionZ());
+            buffer.Write((float)lp.getDirectionY());
+            buffer.Write((float)lp.getUnk1());
+            buffer.Write((float)lp.getUnk2());
 
-                buffer.Write((float)1.0f);
-                buffer.Write((float)1.0f);
-                buffer.Write((float)1.0f); // Scaling
-                buffer.Write((int)300); // unk
-                buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
+            buffer.Write((float)1.0f);
+            buffer.Write((float)1.0f);
+            buffer.Write((float)1.0f); // Scaling
+            buffer.Write((int)300); // unk
+            buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
-                foreach (var b in Encoding.Default.GetBytes(lp.getName()))
-                    buffer.Write((byte)b);
-                buffer.fill(0, 64 - lp.getName().Length);
-                foreach (var b in Encoding.Default.GetBytes(lp.getType()))
-                    buffer.Write(b);
-                buffer.fill(0, 64 - lp.getType().Length);
-            }
-
-            // TODO : remove this once we find a better solution for jungle camp spawning command
-            public LevelPropSpawn(int netId, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
-            {
-                buffer.Write(netId);
-                buffer.Write((int)0x00000040); // unk
-                buffer.Write((byte)0); // unk
-                buffer.Write(x);
-                buffer.Write(z);
-                buffer.Write(y);
-                buffer.Write(0.0f); // Rotation Y
-                buffer.Write(dirX);
-                buffer.Write(dirZ);
-                buffer.Write(dirY); // Direction
-                buffer.Write(unk1);
-                buffer.Write(unk2);
-                buffer.Write(1.0f);
-                buffer.Write(1.0f);
-                buffer.Write(1.0f); // Scaling
-                buffer.Write((int)300); // unk
-                buffer.Write((int)1); // bIsProp -- if is a prop, become unselectable and use direction params
-                foreach (var b in Encoding.Default.GetBytes(name))
-                    buffer.Write((byte)b);
-                buffer.fill(0, 64 - name.Length);
-                foreach (var b in Encoding.Default.GetBytes(type))
-                    buffer.Write(b);
-                buffer.fill(0, 64 - type.Length);
-            }
+            foreach (var b in Encoding.Default.GetBytes(lp.getName()))
+                buffer.Write((byte)b);
+            buffer.fill(0, 64 - lp.getName().Length);
+            foreach (var b in Encoding.Default.GetBytes(lp.getType()))
+                buffer.Write(b);
+            buffer.fill(0, 64 - lp.getType().Length);
         }
 
-        public class ViewRequest
+        // TODO : remove this once we find a better solution for jungle camp spawning command
+        public LevelPropSpawn(int netId, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
-            public PacketCmdC2S cmd;
-            public int netId;
-            public float x;
-            public float zoom;
-            public float y;
-            public float y2;       //Unk
-            public int width;  //Unk
-            public int height; //Unk
-            public int unk2;   //Unk
-            public byte requestNo;
-
-            public ViewRequest(byte[] data)
-            {
-                var reader = new BinaryReader(new MemoryStream(data));
-                cmd = (PacketCmdC2S)reader.ReadByte();
-                netId = reader.ReadInt32();
-                x = reader.ReadSingle();
-                zoom = reader.ReadSingle();
-                y = reader.ReadSingle();
-                y2 = reader.ReadSingle();
-                width = reader.ReadInt32();
-                height = reader.ReadInt32();
-                unk2 = reader.ReadInt32();
-                requestNo = reader.ReadByte();
-
-                reader.Close();
-            }
+            buffer.Write(netId);
+            buffer.Write((int)0x00000040); // unk
+            buffer.Write((byte)0); // unk
+            buffer.Write(x);
+            buffer.Write(z);
+            buffer.Write(y);
+            buffer.Write(0.0f); // Rotation Y
+            buffer.Write(dirX);
+            buffer.Write(dirZ);
+            buffer.Write(dirY); // Direction
+            buffer.Write(unk1);
+            buffer.Write(unk2);
+            buffer.Write(1.0f);
+            buffer.Write(1.0f);
+            buffer.Write(1.0f); // Scaling
+            buffer.Write((int)300); // unk
+            buffer.Write((int)1); // bIsProp -- if is a prop, become unselectable and use direction params
+            foreach (var b in Encoding.Default.GetBytes(name))
+                buffer.Write((byte)b);
+            buffer.fill(0, 64 - name.Length);
+            foreach (var b in Encoding.Default.GetBytes(type))
+                buffer.Write(b);
+            buffer.fill(0, 64 - type.Length);
         }
+    }
 
-        public class LevelUp : BasePacket
+    public class ViewRequest
+    {
+        public PacketCmdC2S cmd;
+        public int netId;
+        public float x;
+        public float zoom;
+        public float y;
+        public float y2;       //Unk
+        public int width;  //Unk
+        public int height; //Unk
+        public int unk2;   //Unk
+        public byte requestNo;
+
+        public ViewRequest(byte[] data)
         {
-            public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
-            {
-                buffer.Write(c.getStats().getLevel());
-                buffer.Write(c.getSkillPoints());
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            x = reader.ReadSingle();
+            zoom = reader.ReadSingle();
+            y = reader.ReadSingle();
+            y2 = reader.ReadSingle();
+            width = reader.ReadInt32();
+            height = reader.ReadInt32();
+            unk2 = reader.ReadInt32();
+            requestNo = reader.ReadByte();
+
+            reader.Close();
         }
+    }
 
-        public class ViewAnswer : Packet
+    public class LevelUp : BasePacket
+    {
+        public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
         {
-            public ViewAnswer(ViewRequest request) : base(PacketCmdS2C.PKT_S2C_ViewAns)
-            {
-                buffer.Write(request.netId);
-            }
-            public void setRequestNo(byte requestNo)
-            {
-                buffer.Write(requestNo);
-            }
+            buffer.Write(c.getStats().getLevel());
+            buffer.Write(c.getSkillPoints());
         }
+    }
 
-        public class DebugMessage : BasePacket
+    public class ViewAnswer : Packet
+    {
+        public ViewAnswer(ViewRequest request) : base(PacketCmdS2C.PKT_S2C_ViewAns)
         {
-
-            public DebugMessage(string message) : base(PacketCmdS2C.PKT_S2C_DebugMessage)
-            {
-                buffer.Write((int)0);
-                foreach (var b in Encoding.Default.GetBytes(message))
-                    buffer.Write((byte)b);
-                buffer.fill(0, 512 - message.Length);
-            }
+            buffer.Write(request.netId);
         }
-
-        public class SetCooldown : BasePacket
+        public void setRequestNo(byte requestNo)
         {
-            public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmdS2C.PKT_S2C_SetCooldown, netId)
-            {
-                buffer.Write(slotId);
-                buffer.Write((short)0xF8); // 4.18
-                buffer.Write(totalCd);
-                buffer.Write(currentCd);
-            }
+            buffer.Write(requestNo);
+        }
+    }
+
+    public class DebugMessage : BasePacket
+    {
+
+        public DebugMessage(string message) : base(PacketCmdS2C.PKT_S2C_DebugMessage)
+        {
+            buffer.Write((int)0);
+            foreach (var b in Encoding.Default.GetBytes(message))
+                buffer.Write((byte)b);
+            buffer.fill(0, 512 - message.Length);
+        }
+    }
+
+    public class SetCooldown : BasePacket
+    {
+        public SetCooldown(int netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmdS2C.PKT_S2C_SetCooldown, netId)
+        {
+            buffer.Write(slotId);
+            buffer.Write((byte)0xF8); // 4.18
+            buffer.Write(totalCd);
+            buffer.Write(currentCd);
         }
     }
 }

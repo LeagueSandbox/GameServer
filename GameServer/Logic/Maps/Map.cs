@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                             continue;
                         }
                     }
-
+                    
                     if (!u.isVisibleByTeam(Convert.toTeamId(i)) && teamHasVisionOn(Convert.toTeamId(i), u))
                     {
                         PacketNotifier.notifyEnterVision(u, Convert.toTeamId(i));
@@ -453,10 +453,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 foreach (var kv in objects)
                 {
-                    if (kv.Value.getTeam() == team || (kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o)))
+                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as Unit;
-                        if (unit == null || unit.isDead())
+                        if (unit != null && unit.isDead())
                             continue;
                         return true;
                     }

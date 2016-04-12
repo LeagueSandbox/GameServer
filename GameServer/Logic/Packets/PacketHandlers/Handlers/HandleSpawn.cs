@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var lp = kv.Value as LevelProp;
                 if (lp != null)
                 {
-                    var lpsPacket = new SpawnParticle.LevelPropSpawn(lp);
+                    var lpsPacket = new LevelPropSpawn(lp);
                     PacketHandlerManager.getInstace().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
                 }
             }
