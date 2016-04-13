@@ -13,12 +13,19 @@ namespace LeagueSandbox.GameServer.Logic.Items
 {
     class ItemManager
     {
+        
+
         private static ItemManager _instance;
 
         private Dictionary<int, ItemTemplate> itemTemplates;
         private ItemManager()
         {
 
+        }
+
+        public int GetItemPrice(int itemId)
+        {
+            throw new NotImplementedException("Fuck yo");
         }
 
         public void init()

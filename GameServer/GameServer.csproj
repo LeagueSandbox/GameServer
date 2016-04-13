@@ -7,7 +7,7 @@
     <ProjectGuid>{CB004023-B938-4EC6-B036-29EE2F55CFA4}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeagueSandbox</RootNamespace>
+    <RootNamespace>LeagueSandbox.GameServer</RootNamespace>
     <AssemblyName>LeagueSandboxGameServer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -89,6 +89,7 @@
     <Compile Include="Logic\GameObjects\Turret.cs" />
     <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
+    <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\MovementVector.cs" />
     <Compile Include="Logic\GameObjects\Pathfinder.cs" />
     <Compile Include="Logic\GameObjects\Spell.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Logic\GameObjects\Unit.cs" />
     <Compile Include="Logic\Items\Item.cs" />
     <Compile Include="Logic\Items\ItemManager.cs" />
+    <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Lua\LuaScript.cs" />
