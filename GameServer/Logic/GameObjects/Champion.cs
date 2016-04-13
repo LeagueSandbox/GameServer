@@ -14,12 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Champion : Unit
     {
+        public Shop Shop { get; protected set; }
+        public InventoryManager Inventory { get; protected set; }
+
         protected string type;
         protected List<Spell> spells = new List<Spell>();
         protected short skillPoints = 0;
         protected int skin;
         protected long respawnTimer = 0;
-        protected Inventory inventory = new Inventory();
         protected float championGoldFromMinions = 0;
         protected long championHitFlagTimer = 0;
         public int playerId;
@@ -33,6 +35,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             this.type = type;
             this.playerId = playerId;
+
+            Inventory = InventoryManager.CreateInventory(this);
+            Shop = Shop.CreateShop(this);
 
             stats.setGold(475.0f);
             stats.setAttackSpeedMultiplier(1.0f);
@@ -358,9 +363,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ++skillPoints;
         }
 
-        public Inventory getInventory()
+        public InventoryManager getInventory()
         {
-            return inventory;
+            return Inventory;
         }
 
         public override void die(Unit killer)

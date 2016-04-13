@@ -94,6 +94,21 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private float cooldown;
         private bool recipeSearchFlag;
 
+        // Methods to make old code compatible with already refactored code
+        public int Id { get { return itemTemplate.getId(); } }
+        public bool IsTrinket { get { return itemTemplate.isTrinket(); } }
+        public int MaximumStackSize { get { return itemTemplate.getMaxStack(); } }
+        public ItemInstance IncrementCount()
+        {
+            incrementStacks();
+            if (stacks >= itemTemplate.getMaxStack())
+            {
+                decrementStacks();
+                return null;
+            }
+            return this;
+        }
+        // End compatibility methods
 
         public ItemInstance(ItemTemplate itemTemplate, byte slot = 0, byte stacks = 1)
         {
