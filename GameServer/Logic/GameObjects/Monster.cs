@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Monster(Map map, int id, float x, float y, float facingX, float facingY, string model, string name) : base(map, id, model, new Stats(), 40, x, y)
         {
-            setTeam(Convert.toTeamId(2));
+            setTeam(CustomConvert.toTeamId(2));
             for (int i = 0; i < 3; i++)
                 setVisibleByTeam(i, true);
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);

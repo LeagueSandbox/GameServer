@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.curMainWaypoint = 0;
 
             var spawnSpecifics = map.getMinionSpawnPosition(spawnPosition);
-            setTeam(Convert.toTeamId(spawnSpecifics.Item1));
+            setTeam(CustomConvert.toTeamId(spawnSpecifics.Item1));
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             map.setMinionStats(this); // Let the map decide how strong this minion has to be.

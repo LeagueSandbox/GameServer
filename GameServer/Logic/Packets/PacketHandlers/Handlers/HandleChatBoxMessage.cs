@@ -219,7 +219,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         int team;
                         if (!int.TryParse(split[1], out team))
                             return true;
-                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == Convert.toTeamId(team)).Where(xx => xx.Value is Minion);
+                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion);
                         foreach (var unit in units)
                         {
                             var response = new AttentionPingAns(game.getPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });

@@ -1,4 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Logic.Content;
 using Newtonsoft.Json.Linq;
 using NLua;
 using System;

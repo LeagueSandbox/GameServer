@@ -176,8 +176,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             for (int i = 0; i < 2; ++i)
-                if (o.isVisibleByTeam(Convert.toTeamId(i)))
-                    broadcastPacketTeam(Convert.toTeamId(i), data, channelNo, flag);
+                if (o.isVisibleByTeam(CustomConvert.toTeamId(i)))
+                    broadcastPacketTeam(CustomConvert.toTeamId(i), data, channelNo, flag);
             return true;
         }
 

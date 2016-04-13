@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -13,15 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Items
 {
     class ItemManager
     {
-        
-
         private static ItemManager _instance;
 
         private Dictionary<int, ItemTemplate> itemTemplates;
-        private ItemManager()
-        {
-
-        }
 
         public int GetItemPrice(int itemId)
         {
@@ -31,68 +26,64 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public void init()
         {
             itemTemplates = new Dictionary<int, ItemTemplate>();
-            // TODO : this is highly inefficient
-            var inibins = RAFManager.getInstance().SearchFileEntries("DATA/items/");
-
-            /* for (var i = 1000; i < 4000; ++i)*/
-            foreach (var ini in inibins)
+            var itemCollection = ItemCollection.LoadItemsFrom("Content/Data/LeagueSandbox-Default/Items");
+            foreach(var itemEntry in itemCollection)
             {
-                //Inibin inibin;
-                //if (!RAFManager.getInstance().readInibin("DATA/items/" + i + ".inibin", out inibin))
-                if (!System.Text.RegularExpressions.Regex.IsMatch(ini.FileName, "items/\\d.*.inibin", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                    continue;
-                var id = int.Parse(ini.ShortFileName.Replace(".inibin", ""));
-                if ((id <= 1000 && id >= 4000) || itemTemplates.ContainsKey(id))
-                    continue;
+                var itemData = itemEntry.Value;
 
-                var inibin = new Inibin(ini);
-                var maxStack = inibin.getIntValue("DATA", "MaxStack");
-                var price = inibin.GetValue<int>("DATA", "Price");
-                var type = inibin.GetValue<string>(3471506188);
-                bool trinket = false;
-                if (type != null && type.ToLower() == "RelicBase".ToLower())
-                    trinket = true;
 
-                float sellBack = 0.7f;
+                var maxStack = itemData.SafeGetValue("Data", "MaxStack", 0);
+                var price = itemData.SafeGetValue("Data", "Price", 0);
 
-                if (inibin.KeyExists("DATA", "SellBackModifier"))
-                    sellBack = inibin.getFloatValue("DATA", "SellBackModifier");
+                var itemGroup = itemData.SafeGetValue("Data", "ItemGroup", "");
+                bool trinket = itemGroup.ToLower() == "relicbase";
+
+                float sellBack = itemData.SafeGetValue("Data", "SellBackModifier", 0.7f);
 
                 var statMods = new List<StatMod>();
 
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ad_Flat, value = inibin.getFloatValue("DATA", "FlatPhysicalDamageMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ad_Pct, value = inibin.getFloatValue("DATA", "PercentPhysicalDamageMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ap_Flat, value = inibin.getFloatValue("DATA", "FlatMagicDamageMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Hp5, value = inibin.getFloatValue("DATA", "FlatHPRegenMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Crit_Chance, value = inibin.getFloatValue("DATA", "FlatCritChanceMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Armor, value = inibin.getFloatValue("DATA", "FlatArmorMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Magic_Armor, value = inibin.getFloatValue("DATA", "FlatSpellBlockMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Atks_multiplier, value = inibin.getFloatValue("DATA", "PercentAttackSpeedMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_LifeSteal, value = inibin.getFloatValue("DATA", "PercentLifeStealMod") });
+                // "Another part that's just completely ass" - Mythic, 14th April 2016
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ad_Flat, value = itemData.SafeGetValue("Data", "FlatPhysicalDamageMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ad_Pct, value = itemData.SafeGetValue("Data", "PercentPhysicalDamageMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Bonus_Ap_Flat, value = itemData.SafeGetValue("Data", "FlatMagicDamageMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Hp5, value = itemData.SafeGetValue("Data", "FlatHPRegenMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Crit_Chance, value = itemData.SafeGetValue("Data", "FlatCritChanceMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Armor, value = itemData.SafeGetValue("Data", "FlatArmorMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Magic_Armor, value = itemData.SafeGetValue("Data", "FlatSpellBlockMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_Atks_multiplier, value = itemData.SafeGetValue("Data", "PercentAttackSpeedMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Two, mask = FieldMask.FM2_LifeSteal, value = itemData.SafeGetValue("Data", "PercentLifeStealMod", 0f) });
 
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_MaxHp, value = inibin.getFloatValue("DATA", "FlatHPPoolMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_MaxMp, value = inibin.getFloatValue("DATA", "FlatMPPoolMod") });
-                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_Speed, value = inibin.getFloatValue("DATA", "FlatMovementSpeedMod") });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_MaxHp, value = itemData.SafeGetValue("Data", "FlatHPPoolMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_MaxMp, value = itemData.SafeGetValue("Data", "FlatMPPoolMod", 0f) });
+                statMods.Add(new StatMod { blockId = MasterMask.MM_Four, mask = FieldMask.FM4_Speed, value = itemData.SafeGetValue("Data", "FlatMovementSpeedMod", 0f) });
 
                 var recipes = new List<int>();
 
-                var c = 1;
-                while (inibin.KeyExists("DATA", "RecipeItem" + c))
+                var index = 1;
+                var componentId = itemData.SafeGetValue("Data", string.Format("RecipeItem{0}", index), -1);
+                while (componentId > -1)
                 {
-                    var componentId = inibin.getIntValue("DATA", "RecipeItem" + c);
-                    if (componentId > 0)
-                    { // sometimes there are "0" entries
-                        recipes.Add(componentId);
-                    }
-                    ++c;
+                    recipes.Add(componentId);
+                    index++;
+                    componentId = itemData.SafeGetValue("Data", string.Format("RecipeItem{0}", index), -1);
                 }
 
-                itemTemplates.Add(id, new ItemTemplate(id, maxStack, price, sellBack, trinket, statMods, recipes));
+                var itemTemplate = new ItemTemplate(
+                    itemData.ItemId,
+                    maxStack,
+                    price,
+                    sellBack,
+                    trinket,
+                    statMods,
+                    recipes
+                );
+                itemTemplates.Add(itemData.ItemId, itemTemplate);
+                Logger.LogCoreInfo("Loaded Item: {0}", itemData.ItemName);
             }
-
 
             Logger.LogCoreInfo("Loaded " + itemTemplates.Count + " items");
         }
+
         public ItemTemplate getItemTemplateById(int id)
         {
             if (!itemTemplates.ContainsKey(id))
@@ -100,7 +91,6 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
             return itemTemplates[id];
         }
-
 
         public static ItemManager getInstance()
         {

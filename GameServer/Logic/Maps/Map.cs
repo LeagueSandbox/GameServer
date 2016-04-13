@@ -96,13 +96,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 for (var i = 0; i < 2; i++)
                 {
-                    if (u.getTeam() == Convert.toTeamId(i))
+                    if (u.getTeam() == CustomConvert.toTeamId(i))
                         continue;
 
-                    var visionUnitsTeam = visionUnits[Convert.fromTeamId(u.getTeam())];
+                    var visionUnitsTeam = visionUnits[CustomConvert.fromTeamId(u.getTeam())];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        if (teamHasVisionOn(Convert.toTeamId(i), u))
+                        if (teamHasVisionOn(CustomConvert.toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -112,15 +112,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
                     
-                    if (!u.isVisibleByTeam(Convert.toTeamId(i)) && teamHasVisionOn(Convert.toTeamId(i), u))
+                    if (!u.isVisibleByTeam(CustomConvert.toTeamId(i)) && teamHasVisionOn(CustomConvert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyEnterVision(u, Convert.toTeamId(i));
+                        PacketNotifier.notifyEnterVision(u, CustomConvert.toTeamId(i));
                         u.setVisibleByTeam(i, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(Convert.toTeamId(i)) && !teamHasVisionOn(Convert.toTeamId(i), u))
+                    else if (u.isVisibleByTeam(CustomConvert.toTeamId(i)) && !teamHasVisionOn(CustomConvert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, Convert.toTeamId(i));
+                        PacketNotifier.notifyLeaveVision(u, CustomConvert.toTeamId(i));
                         u.setVisibleByTeam(i, false);
                     }
                 }
@@ -278,7 +278,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             collisionHandler.addObject(o);
             var team = o.getTeam();
-            var teamVision = visionUnits[Convert.fromTeamId(team)];
+            var teamVision = visionUnits[CustomConvert.fromTeamId(team)];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -308,12 +308,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             lock (objects)
                 objects.Remove(o.getNetId());
-            visionUnits[Convert.fromTeamId(o.getTeam())].Remove(o.getNetId());
+            visionUnits[CustomConvert.fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 
         public Dictionary<int, Unit> getVisionUnits(TeamId team)
         {
-            return visionUnits[Convert.fromTeamId(team)];
+            return visionUnits[CustomConvert.fromTeamId(team)];
         }
 
         public List<int> getExperienceToLevelUp()
