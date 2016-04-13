@@ -230,7 +230,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public ClientInfo getPeerInfo(ENetPeer* peer)
         {
             foreach (var player in players)
-                if (player.Item1 == peer->address.host)
+                if (player.Item1 == peer->address.port)
                     return player.Item2;
             return null;
         }

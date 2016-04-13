@@ -179,13 +179,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var y = 0;
             switch (playerTeam.ToLower())
             {
+                //TODO : repair function
                 case "blue":
-                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(0);
                     break;
                 case "purple":
-                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(0);
                     break;
             }
 

@@ -792,13 +792,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class CharacterStats
     {
         GameHeader header;
-        short updateNo = 1;
-        short masterMask;
+        byte updateNo = 1;
+        byte masterMask;
         int netId;
         int mask;
-        short size;
+        byte size;
         Value value;
-        public CharacterStats(short masterMask, int netId, int mask, float value)
+        public CharacterStats(byte masterMask, int netId, int mask, float value)
         {
             this.masterMask = masterMask;
             this.netId = netId;
@@ -2446,7 +2446,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(1.0f);
             buffer.Write(1.0f); // Scaling
             buffer.Write((int)300); // unk
-            buffer.Write((int)1); // bIsProp -- if is a prop, become unselectable and use direction params
+            buffer.Write((byte)1); // bIsProp -- if is a prop, become unselectable and use direction params
             foreach (var b in Encoding.Default.GetBytes(name))
                 buffer.Write((byte)b);
             buffer.fill(0, 64 - name.Length);

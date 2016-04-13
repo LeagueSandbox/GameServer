@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     }
 
                     //TODO: add at least port or smth
-                    p.Item1 = peer->address.host;
+                    p.Item1 = peer->address.port;
                     player.setPeer(peer);
                     var response = new KeyCheck(keyCheck.userId, playerNo);
                     bool bRet = PacketHandlerManager.getInstace().sendPacket(peer, response, Channel.CHL_HANDSHAKE);

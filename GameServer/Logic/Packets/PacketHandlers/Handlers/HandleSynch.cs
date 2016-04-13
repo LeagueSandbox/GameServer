@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             foreach (var player in game.getPlayers())
             {
-                if (player.Item1 == peer->address.host)
+                if (player.Item1 == peer->address.port)
                 {
                     player.Item2.setVersionMatch(versionMatch);
                     break;
