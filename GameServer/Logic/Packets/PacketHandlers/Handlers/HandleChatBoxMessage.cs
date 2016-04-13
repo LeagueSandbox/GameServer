@@ -12,7 +12,31 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleChatBoxMessage : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        void SendDebugMsgFormatted(int type, string message)
+        {
+            var formattedText = new StringBuilder();
+            int fontSize = 20;
+            switch (type)
+            {
+                case 0:
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append(message);
+                    PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    break;
+                case 1:
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append(message);
+                    PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    break;
+                case 2:
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append(message);
+                    PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    break;
+            }
+        }
+
+        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
             var message = new ChatMessage(data);
             var split = message.msg.Split(' ');
@@ -43,15 +67,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float gold;
                         if (split.Length < 2)
                         {
-                            // These should probably be in a function
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            //
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .gold goldAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            return true;
-                        }
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");                            
+                            SendDebugMsgFormatted(2, ".gold goldAmount"); // It might be better to replace this
+                            return true;                                  // in the future with something like
+                        }                                                 // ShowCommandSyntax();
                             
                         if (float.TryParse(split[1], out gold))
                             game.GetPeerInfo(peer).GetChampion().GetStats().Gold = gold;
@@ -60,11 +79,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float speed;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .speed movementSpeed <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".speed movementSpeed");
                             return true;
                         }
                         if (float.TryParse(split[1], out speed))
@@ -74,11 +90,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float hp;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .health healthAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".health healthAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out hp))
@@ -93,11 +106,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float xp;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .xp xpAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".xp xpAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out xp))
@@ -107,11 +117,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float ap;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .ap apAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".ap apAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out ap))
@@ -121,11 +128,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float ad;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .ad adAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".ad adAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out ad))
@@ -135,11 +139,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float mp;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .mana manaAmount <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".mana manaAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out mp))
@@ -153,18 +154,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             game.getPeerInfo(peer).getChampion().setModel(split[1]);
                         else
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .model modelName <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".model modelName");
                             return true;
                         }
                         return true;
                     case ".help":
-                        debugMsg.Append("List of available commands: ");
+                        SendDebugMsgFormatted(1, "List of available commands: ");
                         foreach (var cc in cmd)
-                            debugMsg.Append(cc + " ");
+                            debugMsg.Append("<font color =\"#E175FF\"><br>" + cc + "</br><font color =\"#FFB145\">, ");
 
                         var dm = new DebugMessage(debugMsg.ToString());
                         game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
@@ -176,11 +174,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float size;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .size size <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".size size");
                             return true;
                         }
                         if (float.TryParse(split[1], out size))
@@ -198,11 +193,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float lvl;
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .level level <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".level level");
                             return true;
                         }
                         if (float.TryParse(split[1], out lvl))
@@ -217,11 +209,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float x, y;
                         if (split.Length < 3)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .tp x y <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".tp x y");
                             return true;
                         }
                         if (float.TryParse(split[1], out x))
@@ -241,11 +230,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     case ".ch":
                         if (split.Length < 2)
                         {
-                            debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: Incorrect command syntax.");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-                            debugMsg.Clear();
-                            debugMsg.Append("<font color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: .ch championName <font color =\"#FF0000\">");
-                            PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                            SendDebugMsgFormatted(0, "Incorrect command syntax");
+                            SendDebugMsgFormatted(2, ".ch championName");
                             return true;
                         }
                         new System.Threading.Thread(new System.Threading.ThreadStart(() =>
@@ -324,14 +310,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         game.SetStarted(true);
                         return true;
                     default:
-                        debugMsg.Append("<font color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
-                        debugMsg.Append(split[0]);
-                        debugMsg.Append(" is not a valid command.");
-                        PacketNotifier.notifyDebugMessage(debugMsg.ToString());
-
-                        debugMsg.Clear();
-                        debugMsg.Append("<font color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: Type .help for a list of available commands <font color =\"#FF0000\">");
-                        PacketNotifier.notifyDebugMessage(debugMsg.ToString());
+                        SendDebugMsgFormatted(0, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                        SendDebugMsgFormatted(1, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");                       
                         return true;
                 }
             }
