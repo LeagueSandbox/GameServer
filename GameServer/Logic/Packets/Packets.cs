@@ -811,7 +811,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             this.value.fValue = value;
         }
 
-        public CharacterStats(short masterMask, int netId, int mask, short value)
+        public CharacterStats(byte masterMask, int netId, int mask, short value)
         {
             this.masterMask = masterMask;
             this.netId = netId;
