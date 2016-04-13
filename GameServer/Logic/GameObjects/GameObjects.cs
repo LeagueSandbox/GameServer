@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.Logic
         public void setTeam(TeamId team)
         {
             this.team = team;
-            visibleByTeam[Convert.fromTeamId(team)] = true;
+            visibleByTeam[CustomConvert.fromTeamId(team)] = true;
         }
         public TeamId getTeam()
         {
@@ -261,7 +261,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public bool isVisibleByTeam(TeamId team)
         {
-            return (team == getTeam() || visibleByTeam[Convert.fromTeamId(team)]);
+            return (team == getTeam() || visibleByTeam[CustomConvert.fromTeamId(team)]);
         }
 
         public void setVisibleByTeam(int team, bool visible)

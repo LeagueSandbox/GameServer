@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeagueSandbox.GameServer.Logic
+namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {

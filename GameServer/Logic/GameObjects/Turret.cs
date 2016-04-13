@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackDelay = 4.95f / 30.0f;
             autoAttackProjectileSpeed = 1200.0f;
 
-            setTeam(Convert.toTeamId(team));
+            setTeam(CustomConvert.toTeamId(team));
         }
 
         public string getName()

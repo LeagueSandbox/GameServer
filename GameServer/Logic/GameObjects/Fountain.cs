@@ -47,7 +47,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     foreach (var c in map.getChampionsInRange(f, fountainSize))
                     {
-                        if (c.getTeam() == Convert.toTeamId(team))
+                        if (c.getTeam() == CustomConvert.toTeamId(team))
                         {
                             var hp = c.getStats().getCurrentHealth();
                             var maxHP = c.getStats().getMaxHealth();
