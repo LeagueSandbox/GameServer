@@ -97,33 +97,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
             //Fuck LUA
-            /* var scriptloc = "../../lua/champions/" + getType() + "/Passive.lua";
-             Logger.LogCoreInfo("Loading " + scriptloc);
-             try
-             {
-                 unitScript = LuaScript(true);//fix
 
-                 unitScript.lua.set("me", this);
-
-                 unitScript.loadScript(scriptloc);
-
-                 unitScript.lua.set_function("dealMagicDamage", [this](Unit * target, float amount) { this.dealDamageTo(target, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL); });
-                 unitScript.lua.set_function("addBuff", [this](Buff b, Unit * target){
-                     target.addBuff(new Buff(b));
-                     return;
-                 });
-
-                 unitScript.lua.set_function("addParticleTarget", [this](const std::string&particle, Target* u) {
-                     this.getMap().getGame().notifyParticleSpawn(this, u, particle);
-                     return;
-                 });
-
-                 // unitScript.lua.set ("me", this);
-             }
-             catch
-             {
-
-             }*/
+            var scriptloc = Config.contentManager.GetSpellScriptPath(getType(), "Passive");
+            Logger.LogCoreInfo("Loading " + scriptloc);
+            unitScript.lua["me"] = this;
+            
+            unitScript.loadScript(scriptloc);
         }
         public string getType()
         {
@@ -184,13 +163,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var y = 0;
             switch (playerTeam.ToLower())
             {
+                //TODO : repair function
                 case "blue":
-                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(0);
                     break;
                 case "purple":
-                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(0);
                     break;
             }
 

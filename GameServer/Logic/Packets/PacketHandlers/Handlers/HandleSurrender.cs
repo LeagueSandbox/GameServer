@@ -14,11 +14,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            GameEnd surrender = new GameEnd(TeamId.TEAM_PURPLE);
-            foreach (var p in game.getPlayers())
-            {
-                PacketHandlerManager.getInstace().sendPacket(peer, surrender, Channel.CHL_S2C);
-            }
+            Surrender surrender = new Surrender();
+            PacketHandlerManager.getInstace().broadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2C);
             return true;
         }
     }

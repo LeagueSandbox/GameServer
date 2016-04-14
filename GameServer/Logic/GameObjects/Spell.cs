@@ -386,16 +386,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return effects[effectNo][level];
         }
 
-        public void addProjectile(float toX, float toY)
+        public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(spellName + "Missile"), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.getMap().addObject(p);
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
-        public void addProjectileTarget(Target target)
+        public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(spellName + "Missile"), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.getMap().addObject(p);
             PacketNotifier.notifyProjectileSpawn(p);
         }
@@ -519,8 +519,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
             script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("getCoefficient"));
 
-            script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(Target) }));
+            script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
 
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
 

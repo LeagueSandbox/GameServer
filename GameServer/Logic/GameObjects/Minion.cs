@@ -35,11 +35,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected List<Vector2> mainWaypoints;
         protected int curMainWaypoint = 0;
         protected MinionSpawnPosition spawnPosition;
-        protected MinionSpawnType type;
+        protected MinionSpawnType minionType;
 
         public Minion(Map map, int id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
         {
-            this.type = type;
+            this.minionType = type;
             this.spawnPosition = position;
             this.mainWaypoints = mainWaypoints;
             this.curMainWaypoint = 0;
@@ -66,6 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             // Set model
             setModel(minionModel);
+            
 
 
             if (mainWaypoints.Count > 0)                                                      // If we have lane path instructions from the map
@@ -87,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public MinionSpawnType getType()
         {
-            return type;
+            return minionType;
         }
 
         public override void update(long diff)
