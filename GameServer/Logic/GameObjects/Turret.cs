@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string name;
 
 
-        public Turret(Map map, int id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, int team = 0) : base(map, id, "", new TurretStats(), 50, x, y, 1200)
+        public Turret(Map map, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, int team = 0) : base(map, id, "", new TurretStats(), 50, x, y, 1200)
         {
             this.name = name;
 

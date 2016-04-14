@@ -24,14 +24,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected long respawnTimer = 0;
         protected float championGoldFromMinions = 0;
         protected long championHitFlagTimer = 0;
-        public int playerId;
-        public int playerHitId;
+        public uint playerId;
+        public uint playerHitId;
 
         public Spell getSpell(int index)
         {
             return spells[index];
         }
-        public Champion(string type, Map map, int id, int playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
+        public Champion(string type, Map map, uint id, uint playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
         {
             this.type = type;
             this.playerId = playerId;
@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return new Tuple<float, float>(x, y);
         }
 
-        public Spell castSpell(byte slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
+        public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
             Spell s = null;
             foreach (Spell t in spells)
@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!isDead() && moveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && targetUnit != null)
             {
-                Dictionary<int, GameObject> objects = map.getObjects();
+                Dictionary<uint, GameObject> objects = map.getObjects();
                 float distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 float range = Math.Max(stats.getRange(), DETECT_RANGE);

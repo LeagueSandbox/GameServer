@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         ENetHost* _server;
         BlowFish* _blowfish;
         bool _isAlive = false;
-        private static int dwStart = 0x40000000; //new netid
+        private static uint dwStart = 0x40000000; //new netid
 
         bool _started = false;
         int playersReady = 0;
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                 player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
 
-                Champion c = ChampionFactory.getChampionFromType(p.Value.champion, map, GetNewNetID(), (int)player.userId);
+                Champion c = ChampionFactory.getChampionFromType(p.Value.champion, map, GetNewNetID(), (uint)player.userId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
@@ -277,7 +277,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return 0;
         }
 
-        public static int GetNewNetID()
+        public static uint GetNewNetID()
         {
             dwStart++;
             return dwStart;

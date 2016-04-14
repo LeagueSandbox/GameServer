@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Vector2 facing;
         private string name;
 
-        public Monster(Map map, int id, float x, float y, float facingX, float facingY, string model, string name) : base(map, id, model, new Stats(), 40, x, y)
+        public Monster(Map map, uint id, float x, float y, float facingX, float facingY, string model, string name) : base(map, id, model, new Stats(), 40, x, y)
         {
             setTeam(CustomConvert.toTeamId(2));
             for (int i = 0; i < 3; i++)

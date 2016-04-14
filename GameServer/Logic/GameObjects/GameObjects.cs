@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public class GameObject : Target
     {
-        protected int id;
+        protected uint id;
         protected float xvector, yvector;
 
         /**
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic
         protected float dashSpeed;
         protected bool[] visibleByTeam;
 
-        public GameObject(Map map, int id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
+        public GameObject(Map map, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
             this.map = map;
             this.id = id;
@@ -200,7 +200,7 @@ namespace LeagueSandbox.GameServer.Logic
             toRemove = true;
         }
 
-        public int getNetId()
+        public uint getNetId()
         {
             return id;
         }

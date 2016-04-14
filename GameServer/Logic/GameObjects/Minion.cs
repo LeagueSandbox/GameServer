@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected MinionSpawnPosition spawnPosition;
         protected MinionSpawnType minionType;
 
-        public Minion(Map map, int id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
+        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
         {
             this.minionType = type;
             this.spawnPosition = position;
@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
         }
 
-        public Minion(Map map, int id, MinionSpawnType type, MinionSpawnPosition position) : this(map, id, type, position, new List<Vector2>())
+        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position) : this(map, id, type, position, new List<Vector2>())
         {
 
         }
