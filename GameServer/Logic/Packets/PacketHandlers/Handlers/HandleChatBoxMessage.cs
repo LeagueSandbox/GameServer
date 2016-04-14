@@ -12,26 +12,37 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleChatBoxMessage : IPacketHandler
     {
-        void SendDebugMsgFormatted(int type, string message)
-        {
+        enum DebugMsgType {ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL};
+
+        void SendDebugMsgFormatted(DebugMsgType type, string message = "")
+        {            
             var formattedText = new StringBuilder();
-            int fontSize = 20;
+            int fontSize = 20; // Big fonts seem to make the chatbox buggy
+                               // This may need to be removed.
             switch (type)
             {
-                case 0:
+                case DebugMsgType.ERROR: // Tag: [ERROR], Color: Red
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
                     PacketNotifier.notifyDebugMessage(formattedText.ToString());
                     break;
-                case 1:
+                case DebugMsgType.INFO: // Tag: [INFO], Color: Green
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
                     PacketNotifier.notifyDebugMessage(formattedText.ToString());
                     break;
-                case 2:
+                case DebugMsgType.SYNTAX: // Tag: [SYNTAX], Color: Blue
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
                     PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    break;
+                case DebugMsgType.SYNTAXERROR: // Tag: [ERROR], Color: Red
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append("Incorrect command syntax");
+                    PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    break;
+                case DebugMsgType.NORMAL: // No tag, no format
+                    PacketNotifier.notifyDebugMessage(message);
                     break;
             }
         }
@@ -67,10 +78,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float gold;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");                            
-                            SendDebugMsgFormatted(2, ".gold goldAmount"); // It might be better to replace this
-                            return true;                                  // in the future with something like
-                        }                                                 // ShowCommandSyntax();
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);                            
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".gold goldAmount"); // It might be better to replace this
+                            return true;                                                    // in the future with something like
+                        }                                                                   // ShowCommandSyntax();
                             
                         if (float.TryParse(split[1], out gold))
                             game.GetPeerInfo(peer).GetChampion().GetStats().Gold = gold;
@@ -79,8 +90,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float speed;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".speed movementSpeed");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".speed movementSpeed");
                             return true;
                         }
                         if (float.TryParse(split[1], out speed))
@@ -90,8 +101,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float hp;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".health healthAmount");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".health healthAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out hp))
@@ -106,8 +117,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float xp;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".xp xpAmount");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".xp xpAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out xp))
@@ -117,8 +128,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float ap;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".ap apAmount");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".ap apAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out ap))
@@ -128,8 +139,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float ad;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".ad adAmount");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".ad adAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out ad))
@@ -139,8 +150,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float mp;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".mana manaAmount");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".mana manaAmount");
                             return true;
                         }
                         if (float.TryParse(split[1], out mp))
@@ -154,15 +165,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             game.getPeerInfo(peer).getChampion().setModel(split[1]);
                         else
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".model modelName");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".model modelName");
                             return true;
                         }
                         return true;
                     case ".help":
-                        SendDebugMsgFormatted(1, "List of available commands: ");
+                        SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
                         foreach (var cc in cmd)
-                            debugMsg.Append("<font color =\"#E175FF\"><br>" + cc + "</br><font color =\"#FFB145\">, ");
+                            debugMsg.Append("<font color =\"#E175FF\"><b>" + cc + "</b><font color =\"#FFB145\">, ");
 
                         var dm = new DebugMessage(debugMsg.ToString());
                         game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
@@ -174,8 +185,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float size;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".size size");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".size size");
                             return true;
                         }
                         if (float.TryParse(split[1], out size))
@@ -193,8 +204,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float lvl;
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".level level");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".level level");
                             return true;
                         }
                         if (float.TryParse(split[1], out lvl))
@@ -209,8 +220,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         float x, y;
                         if (split.Length < 3)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".tp x y");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".tp x y");
                             return true;
                         }
                         if (float.TryParse(split[1], out x))
@@ -230,8 +241,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     case ".ch":
                         if (split.Length < 2)
                         {
-                            SendDebugMsgFormatted(0, "Incorrect command syntax");
-                            SendDebugMsgFormatted(2, ".ch championName");
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                            SendDebugMsgFormatted(DebugMsgType.SYNTAX, ".ch championName");
                             return true;
                         }
                         new System.Threading.Thread(new System.Threading.ThreadStart(() =>
@@ -287,31 +298,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         }
                         return true;
                     case ".inhib":
-                        var sender = game.GetPeerInfo(peer);
-                        var min = new Monster(game, game.GetNewNetID(), sender.GetChampion().getX(), sender.GetChampion().getY(), sender.GetChampion().getX(), sender.GetChampion().getY(), "AncientGolem", "AncientGolem1.1.1");
-                        game.GetMap().AddObject(min);
-                        return true;
-                    case ".reload":
-                        game.SetStarted(false);
-                        foreach (var obj in game.GetMap().GetObjects())
-                        {
-                            var m = obj.Value as Minion;
-                            if (m != null)
-                            {
-                                m.LoadLua();
-                            }
-
-                            var c = obj.Value as Champion;
-                            if (c != null)
-                            {
-                                c.LoadLua();
-                            }
-                        }
-                        game.SetStarted(true);
+                        var sender = game.getPeerInfo(peer);
+                        var min = new Monster(game.getMap(), Game.GetNewNetID(), sender.getChampion().getX(), sender.getChampion().getY(), sender.getChampion().getX(), sender.getChampion().getY(), "Worm", "Worm");//"AncientGolem", "AncientGolem1.1.1");
+                        game.getMap().addObject(min);
                         return true;
                     default:
-                        SendDebugMsgFormatted(0, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                        SendDebugMsgFormatted(1, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");                       
+                        SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                        SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");                       
                         return true;
                 }
             }
