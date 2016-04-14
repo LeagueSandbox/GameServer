@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
            }
         };
 
+        List<Inhibitor> inhibitors;
+
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
@@ -124,6 +127,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             addObject(new LevelProp(this, Game.GetNewNetID(), -76.0f, 1769.1589f, 94.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey"));
             addObject(new LevelProp(this, Game.GetNewNetID(), 13374.17f, 14245.673f, 194.9741f, 224.0f, 33.33f, 0.0f, 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale"));
             addObject(new LevelProp(this, Game.GetNewNetID(), -99.5613f, 855.6632f, 191.4039f, 158.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
+
+            //TODO
+            var COLLISION_RADIUS = 0;
+            var SIGHT_RANGE = 1700;
+
+            addObject(new Inhibitor(this, 0xffd23c3e, "OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 835, 3400, SIGHT_RANGE)); //top
+            addObject(new Inhibitor(this, 0xff4a20f1, "OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 2785, 3000, SIGHT_RANGE)); //mid
+            addObject(new Inhibitor(this, 0xff9303e1, "OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 3044, 1070, SIGHT_RANGE)); //bot
+            addObject(new Inhibitor(this, 0xff6793d0, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 10960, 13450, SIGHT_RANGE)); //top
+            addObject(new Inhibitor(this, 0xffff8f1f, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 11240, 11490, SIGHT_RANGE)); //mid
+            addObject(new Inhibitor(this, 0xff26ac0f, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 13200, 11200, SIGHT_RANGE)); //bot
 
             // Start at xp to reach level 1
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };

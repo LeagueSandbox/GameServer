@@ -452,8 +452,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (objects)
             {
                 foreach (var kv in objects)
-                {
-                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                {//TODO: enable mesh as soon as it works again
+                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
                     {
                         var unit = kv.Value as Unit;
                         if (unit != null && unit.isDead())

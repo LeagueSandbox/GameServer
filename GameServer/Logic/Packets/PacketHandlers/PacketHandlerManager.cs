@@ -188,8 +188,17 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var header = new LeagueSandbox.GameServer.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
             // printPacket(data, "Received: ");
-            if (header.cmd != PacketCmdC2S.PKT_C2S_StatsConfirm && header.cmd != PacketCmdC2S.PKT_C2S_MoveConfirm)
-                Console.WriteLine("Requested " + header.cmd.ToString());
+
+            switch (header.cmd)
+            {
+                case PacketCmdC2S.PKT_C2S_StatsConfirm:
+                case PacketCmdC2S.PKT_C2S_MoveConfirm:
+                case PacketCmdC2S.PKT_C2S_ViewReq:
+                    break;
+                default:
+                    Console.WriteLine("Requested " + header.cmd.ToString());
+                    break;
+            }
 
             if (handler != null)
             {
