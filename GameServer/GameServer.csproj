@@ -98,8 +98,7 @@
     <Compile Include="Logic\GameObjects\Stats.cs" />
     <Compile Include="Logic\GameObjects\Target.cs" />
     <Compile Include="Logic\GameObjects\Unit.cs" />
-    <Compile Include="Logic\Items\Item.cs" />
-    <Compile Include="Logic\Items\ItemManager.cs" />
+    <Compile Include="Logic\Content\ItemManager.cs" />
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />

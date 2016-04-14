@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
@@ -146,7 +147,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(mp, Channel.CHL_S2C);
         }
 
-        public static void notifyItemBought(Champion c, ItemInstance i)
+        public static void notifyItemBought(Champion c, Item i)
         {
             var response = new BuyItemAns(c, i);
             PacketHandlerManager.getInstace().broadcastPacketVision(c, response, Channel.CHL_S2C);

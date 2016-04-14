@@ -15,6 +15,7 @@ using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -1084,11 +1085,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class BuyItemAns : BasePacket
     {
-        public BuyItemAns(Champion actor, ItemInstance item) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.getNetId())
+        public BuyItemAns(Champion actor, Item item) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.getNetId())
         {
-            buffer.Write((int)item.getTemplate().getId());
-            buffer.Write((byte)item.getSlot());
-            buffer.Write((byte)item.getStacks());
+            buffer.Write((int)item.ItemType.ItemId);
+            buffer.Write((byte)item.Slot);
+            buffer.Write((byte)item.StackSize);
             buffer.Write((byte)0); //unk or stacks => short
             buffer.Write((byte)0x40); //unk
         }

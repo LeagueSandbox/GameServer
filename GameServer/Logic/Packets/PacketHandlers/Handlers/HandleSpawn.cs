@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
@@ -36,8 +37,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             }
 
             var peerInfo = game.getPeerInfo(peer);
-            var bluePill = ItemManager.getInstance().getItemTemplateById(game.getMap().getBluePillId());
-            var itemInstance = new ItemInstance(bluePill, 7);
+            var bluePill = game.ItemManager.GetItemType(game.getMap().getBluePillId());
+            var itemInstance = Item.CreateFromType(game, null, bluePill, 7);
             var buyItem = new BuyItemAns(peerInfo.getChampion(), itemInstance);
             PacketHandlerManager.getInstace().sendPacket(peer, buyItem, Channel.CHL_S2C);
 

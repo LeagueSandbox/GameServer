@@ -48,8 +48,6 @@ namespace LeagueSandbox
                 return;
             }
 
-            ItemManager.getInstance().init();
-
             Logger.LogCoreInfo("Game started");
 
             Game g = new Game();
