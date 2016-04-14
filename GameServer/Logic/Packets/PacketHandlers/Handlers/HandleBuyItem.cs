@@ -20,18 +20,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = game.getPeerInfo(peer).getChampion().getInventory().getAvailableRecipeParts(itemTemplate);
+            var recipeParts = game.getPeerInfo(peer).getChampion().getInventory().GetAvailableRecipeParts(itemTemplate);
             var price = itemTemplate.getTotalPrice();
             ItemInstance i;
 
-            if (recipeParts.Count == 0)
+            if (recipeParts.Length == 0)
             {
                 if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
                 {
                     return true;
                 }
 
-                i = game.getPeerInfo(peer).getChampion().getInventory().addItem(itemTemplate);
+                i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
 
                 if (i == null)
                 { // Slots full
@@ -51,10 +51,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.getTemplate().getStatMods());
                     PacketNotifier.notifyRemoveItem(game.getPeerInfo(peer).getChampion(), instance.getSlot(), 0);
-                    game.getPeerInfo(peer).getChampion().getInventory().removeItem(instance.getSlot());
+                    game.getPeerInfo(peer).getChampion().getInventory().RemoveItem(instance.getSlot());
                 }
 
-                i = game.getPeerInfo(peer).getChampion().getInventory().addItem(itemTemplate);
+                i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
             }
 
             game.getPeerInfo(peer).getChampion().getStats().setGold(game.getPeerInfo(peer).getChampion().getStats().getGold() - price);

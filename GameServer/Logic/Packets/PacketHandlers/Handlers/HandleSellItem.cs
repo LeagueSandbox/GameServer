@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var sell = new SellItem(data);
             var client = game.getPeerInfo(peer);
 
-            var i = game.getPeerInfo(peer).getChampion().getInventory().getItemSlot(sell.slotId);
+            var i = game.getPeerInfo(peer).getChampion().getInventory().GetItem(sell.slotId);
             if (i == null)
                 return false;
 
@@ -30,12 +30,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, i.getStacks());
 
                 if (i.getStacks() == 0)
-                    client.getChampion().getInventory().removeItem(sell.slotId);
+                    client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
             else
             {
                 PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, 0);
-                client.getChampion().getInventory().removeItem(sell.slotId);
+                client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
 
             return true;

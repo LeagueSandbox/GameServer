@@ -233,11 +233,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
-                notifyMinionSpawned(m, Convert.getEnemyTeam(m.getTeam()));
+                notifyMinionSpawned(m, CustomConvert.getEnemyTeam(m.getTeam()));
 
             var c = u as Champion;
             if (c != null)
-                notifyChampionSpawned(c, Convert.getEnemyTeam(c.getTeam()));
+                notifyChampionSpawned(c, CustomConvert.getEnemyTeam(c.getTeam()));
 
             var monster = u as Monster;
             if (monster != null)
