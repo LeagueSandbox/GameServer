@@ -1556,19 +1556,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)u.getStats().getCurrentHealth());
         }
 
-        public SetHealth(int itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
+        public SetHealth(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, (int)itemHash)
         {
             buffer.Write((short)0);
         }
 
-    }
-    public class SetHealth2 : Packet //shhhhh...
-    {
-        public SetHealth2(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth)
-        {
-            buffer.Write((uint)itemHash);
-            buffer.Write((short)0);
-        }
     }
 
     public class TeleportRequest : BasePacket

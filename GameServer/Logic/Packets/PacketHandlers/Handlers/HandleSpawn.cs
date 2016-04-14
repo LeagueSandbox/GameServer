@@ -21,8 +21,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             Logger.LogCoreInfo("Spawning map");
 
             int playerId = 0;
+            ClientInfo playerInfo = null;
             foreach (var p in game.getPlayers())
             {
+                if (p.Item2.getPeer() == peer)
+                {
+                    playerInfo = p.Item2;
+                }
                 var spawn = new HeroSpawn(p.Item2, playerId++);
                 PacketHandlerManager.getInstace().sendPacket(peer, spawn, Channel.CHL_S2C);
 
@@ -71,71 +76,71 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             }
 
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            //if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
+            if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
-                var sh1 = new SetHealth2(0xff10c6db);
+                var sh1 = new SetHealth(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C);
 
                 // Vision for hardcoded objects
                 // Top inhib
                 var ms2 = new MinionSpawn2(0xffd23c3e);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms2, Channel.CHL_S2C);
-                var sh2 = new SetHealth2(0xffd23c3e);
+                var sh2 = new SetHealth(0xffd23c3e);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh2, Channel.CHL_S2C);
 
                 // Mid inhib
                 var ms3 = new MinionSpawn2(0xff4a20f1);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms3, Channel.CHL_S2C);
-                var sh3 = new SetHealth2(0xff4a20f1);
+                var sh3 = new SetHealth(0xff4a20f1);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh3, Channel.CHL_S2C);
 
                 // Bottom inhib
                 var ms4 = new MinionSpawn2(0xff9303e1);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms4, Channel.CHL_S2C);
-                var sh4 = new SetHealth2(0xff9303e1);
+                var sh4 = new SetHealth(0xff9303e1);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh4, Channel.CHL_S2C);
 
                 // Nexus
                 var ms5 = new MinionSpawn2(0xfff97db5);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms5, Channel.CHL_S2C);
-                var sh5 = new SetHealth2(0xfff97db5);
+                var sh5 = new SetHealth(0xfff97db5);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh5, Channel.CHL_S2C);
 
             }
-            //  else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
+            else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
-                var sh1 = new SetHealth2(0xffa6170e);
+                var sh1 = new SetHealth(0xffa6170e);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C);
 
                 // Vision for hardcoded objects
                 // Top inhib
                 var ms2 = new MinionSpawn2(0xff6793d0);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms2, Channel.CHL_S2C);
-                var sh2 = new SetHealth2(0xff6793d0);
+                var sh2 = new SetHealth(0xff6793d0);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh2, Channel.CHL_S2C);
 
                 // Mid inhib
                 var ms3 = new MinionSpawn2(0xffff8f1f);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms3, Channel.CHL_S2C);
-                var sh3 = new SetHealth2(0xffff8f1f);
+                var sh3 = new SetHealth(0xffff8f1f);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh3, Channel.CHL_S2C);
 
                 // Bottom inhib
                 var ms4 = new MinionSpawn2(0xff26ac0f);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms4, Channel.CHL_S2C);
-                var sh4 = new SetHealth2(0xff26ac0f);
+                var sh4 = new SetHealth(0xff26ac0f);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh4, Channel.CHL_S2C);
 
                 // Nexus
                 var ms5 = new MinionSpawn2(0xfff02c0f);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms5, Channel.CHL_S2C);
-                var sh5 = new SetHealth2(0xfff02c0f);
+                var sh5 = new SetHealth(0xfff02c0f);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh5, Channel.CHL_S2C);
             }
 

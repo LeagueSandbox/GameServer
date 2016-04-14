@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected bool targetable;
         protected bool nextAutoIsCrit = false;
-        // protected LuaScript unitScript = LuaScript(true);
+        protected LuaScript unitScript = new LuaScript();
 
         protected int killDeathCounter = 0;
         public List<Buff> buffs = new List<Buff>();
