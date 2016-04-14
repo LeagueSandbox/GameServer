@@ -97,8 +97,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected SpellState state = SpellState.STATE_READY;
         protected float currentCooldown = 0;
         protected float currentCastTime = 0;
-        protected int futureProjNetId;
-        protected int spellNetId;
+        protected uint futureProjNetId;
+        protected uint spellNetId;
 
         protected Unit target;
         protected float x, y;
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /**
          * Called when the character casts the spell
          */
-        public virtual bool cast(float x, float y, Unit u = null, int futureProjNetId = 0, int spellNetId = 0)
+        public virtual bool cast(float x, float y, Unit u = null, uint futureProjNetId = 0, uint spellNetId = 0)
         {
             this.x = x;
             this.y = y;

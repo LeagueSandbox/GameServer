@@ -104,13 +104,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(dd, Channel.CHL_S2C);
         }
 
-        public static void notifyBeginAutoAttack(Unit attacker, Unit victim, int futureProjNetId, bool isCritical)
+        public static void notifyBeginAutoAttack(Unit attacker, Unit victim, uint futureProjNetId, bool isCritical)
         {
             var aa = new BeginAutoAttack(attacker, victim, futureProjNetId, isCritical);
             PacketHandlerManager.getInstace().broadcastPacket(aa, Channel.CHL_S2C);
         }
 
-        public static void notifyNextAutoAttack(Unit attacker, Unit target, int futureProjNetId, bool isCritical, bool nextAttackFlag)
+        public static void notifyNextAutoAttack(Unit attacker, Unit target, uint futureProjNetId, bool isCritical, bool nextAttackFlag)
         {
             var aa = new NextAutoAttack(attacker, target, futureProjNetId, isCritical, nextAttackFlag);
             PacketHandlerManager.getInstace().broadcastPacket(aa, Channel.CHL_S2C);

@@ -14,9 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     public class Map
     {
-        protected Dictionary<int, GameObject> objects;
-        protected Dictionary<int, Champion> champions;
-        protected Dictionary<int, Unit>[] visionUnits; //array of 3
+        protected Dictionary<uint, GameObject> objects;
+        protected Dictionary<uint, Champion> champions;
+        protected Dictionary<uint, Unit>[] visionUnits; //array of 3
         protected List<int> expToLevelUp;
         protected int waveNumber;
         protected long firstSpawnTime;
@@ -38,9 +38,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
-            this.objects = new Dictionary<int, GameObject>();
-            this.champions = new Dictionary<int, Champion>();
-            this.visionUnits = new Dictionary<int, Unit>[3];
+            this.objects = new Dictionary<uint, GameObject>();
+            this.champions = new Dictionary<uint, Champion>();
+            this.visionUnits = new Dictionary<uint, Unit>[3];
             this.expToLevelUp = new List<int>();
             this.waveNumber = 0;
             this.firstSpawnTime = firstSpawnTime;
@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.id = id;
 
             for (var i = 0; i < visionUnits.Length; i++)
-                visionUnits[i] = new Dictionary<int, Unit>();
+                visionUnits[i] = new Dictionary<uint, Unit>();
         }
 
         public virtual void update(long diff)
@@ -257,7 +257,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         }
 
-        public GameObject getObjectById(int id)
+        public GameObject getObjectById(uint id)
         {
             if (!objects.ContainsKey(id))
                 return null;
@@ -311,7 +311,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             visionUnits[CustomConvert.fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 
-        public Dictionary<int, Unit> getVisionUnits(TeamId team)
+        public Dictionary<uint, Unit> getVisionUnits(TeamId team)
         {
             return visionUnits[CustomConvert.fromTeamId(team)];
         }
@@ -355,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return game;
         }
 
-        public Dictionary<int, GameObject> getObjects()
+        public Dictionary<uint, GameObject> getObjects()
         {
             return objects;
         }
@@ -452,8 +452,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (objects)
             {
                 foreach (var kv in objects)
-                {
-                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o))
+                {//TODO: enable mesh as soon as it works again
+                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
                     {
                         var unit = kv.Value as Unit;
                         if (unit != null && unit.isDead())

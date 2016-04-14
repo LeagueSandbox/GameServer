@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool nextAttackFlag = false;
         protected Unit distressCause;
         protected long statUpdateTimer = 0;
-        protected int autoAttackProjId;
+        protected uint autoAttackProjId;
         protected MoveOrder moveOrder = MoveOrder.MOVE_ORDER_MOVE;
 
         /**
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int killDeathCounter = 0;
         public List<Buff> buffs = new List<Buff>();
 
-        public Unit(Map map, int id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, x, y, collisionRadius, visionRadius)
+        public Unit(Map map, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;

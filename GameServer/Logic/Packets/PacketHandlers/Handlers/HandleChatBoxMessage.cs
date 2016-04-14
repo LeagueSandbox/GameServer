@@ -176,7 +176,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             return true;
                         new System.Threading.Thread(new System.Threading.ThreadStart(() =>
                         {
-                            var c = new Champion(split[1], game.getMap(), game.getPeerInfo(peer).getChampion().getNetId(), (int)game.getPeerInfo(peer).userId);
+                            var c = new Champion(split[1], game.getMap(), game.getPeerInfo(peer).getChampion().getNetId(), (uint)game.getPeerInfo(peer).userId);
                             c.setPosition(game.getPeerInfo(peer).getChampion().getX(), game.getPeerInfo(peer).getChampion().getY());
                             c.setModel(split[1]); // trigger the "modelUpdate" proc
                             c.setTeam(game.getPeerInfo(peer).getChampion().getTeam());

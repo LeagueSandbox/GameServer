@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int flags;
 
 
-        public Projectile(Map map, int id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(map, id, x, y, collisionRadius)
+        public Projectile(Map map, uint id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(map, id, x, y, collisionRadius)
         {
             this.originSpell = originSpell;
             this.moveSpeed = moveSpeed;

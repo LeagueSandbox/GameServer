@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic
 {
     class ChampionFactory
     {
-        public static Champion getChampionFromType(string type, Map map, int id, int playerId)
+        public static Champion getChampionFromType(string type, Map map, uint id, uint playerId)
         {
             return new Champion(type, map, id, playerId);
         }
