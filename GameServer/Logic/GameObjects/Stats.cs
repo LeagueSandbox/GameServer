@@ -53,9 +53,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class StatMod
     {
-        public MasterMask blockId;
-        public FieldMask mask;
-        public float value;
+        public MasterMask BlockId { get; set; }
+        public FieldMask Mask { get; set; }
+        public float Value { get; set; }
+
+        public static StatMod FromValues(MasterMask blockId, FieldMask mask, float value)
+        {
+            return new StatMod()
+            {
+                BlockId = blockId,
+                Mask = mask,
+                Value = value
+            };
+        }
     }
 
     public class Stats
@@ -249,24 +259,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMp5(getMana5() + mp5RegenPerLevel);
         }
 
-        public void applyStatMods(List<StatMod> statMods)
+        public void applyStatMods(IEnumerable<StatMod> statMods)
         {
             foreach (var stat in statMods)
             {
-                if (stat.value == 0)
+                if (stat.Value == 0)
                     continue;
 
-                setStat(stat.blockId, stat.mask, getStat(stat.blockId, stat.mask) + stat.value);
+                setStat(stat.BlockId, stat.Mask, getStat(stat.BlockId, stat.Mask) + stat.Value);
             }
         }
         public void unapplyStatMods(List<StatMod> statMods)
         {
             foreach (var stat in statMods)
             {
-                if (stat.value == 0)
+                if (stat.Value == 0)
                     continue;
 
-                setStat(stat.blockId, stat.mask, getStat(stat.blockId, stat.mask) - stat.value);
+                setStat(stat.BlockId, stat.Mask, getStat(stat.BlockId, stat.Mask) - stat.Value);
             }
         }
 

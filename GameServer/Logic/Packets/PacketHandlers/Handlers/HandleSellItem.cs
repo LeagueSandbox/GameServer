@@ -21,15 +21,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (i == null)
                 return false;
 
-            float sellPrice = i.getTemplate().getTotalPrice() * i.getTemplate().getSellBackModifier();
+            float sellPrice = i.ItemType.TotalPrice * i.ItemType.TotalPrice;
             client.getChampion().getStats().setGold(client.getChampion().getStats().getGold() + sellPrice);
 
-            if (i.getTemplate().getMaxStack() > 1)
+            if (i.ItemType.MaxStack > 1)
             {
-                i.decrementStacks();
-                PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, i.getStacks());
+                i.DecrementStackSize();
+                PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, i.StackSize);
 
-                if (i.getStacks() == 0)
+                if (i.StackSize == 0)
                     client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
             else

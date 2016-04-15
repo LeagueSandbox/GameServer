@@ -7,6 +7,7 @@ using ENet;
 using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
@@ -16,15 +17,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var request = new BuyItemReq(data);
 
-            var itemTemplate = ItemManager.getInstance().getItemTemplateById(request.id);
+            var itemTemplate = game.ItemManager.SafeGetItemType(request.id);
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = game.getPeerInfo(peer).getChampion().getInventory().GetAvailableRecipeParts(itemTemplate);
-            var price = itemTemplate.getTotalPrice();
-            ItemInstance i;
+            var recipeParts = game.getPeerInfo(peer).getChampion().getInventory().GetAvailableItems(itemTemplate.Recipe);
+            var price = itemTemplate.TotalPrice;
+            Item i;
 
-            if (recipeParts.Length == 0)
+            if (recipeParts.Count == 0)
             {
                 if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
                 {
@@ -41,7 +42,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             else
             {
                 foreach (var instance in recipeParts)
-                    price -= instance.getTemplate().getTotalPrice();
+                    price -= instance.TotalPrice;
 
                 if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
                     return false;
@@ -49,16 +50,16 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                 foreach (var instance in recipeParts)
                 {
-                    game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.getTemplate().getStatMods());
-                    PacketNotifier.notifyRemoveItem(game.getPeerInfo(peer).getChampion(), instance.getSlot(), 0);
-                    game.getPeerInfo(peer).getChampion().getInventory().RemoveItem(instance.getSlot());
+                    game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
+                    PacketNotifier.notifyRemoveItem(game.getPeerInfo(peer).getChampion(), instance.Slot, 0);
+                    game.getPeerInfo(peer).getChampion().getInventory().RemoveItem(instance.Slot);
                 }
 
                 i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
             }
 
             game.getPeerInfo(peer).getChampion().getStats().setGold(game.getPeerInfo(peer).getChampion().getStats().getGold() - price);
-            game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.getStatMods());
+            game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.StatMods);
             PacketNotifier.notifyItemBought(game.getPeerInfo(peer).getChampion(), i);
 
             return true;

@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace LeagueSandbox.GameServer.Logic
 {
     class ChampionFactory
     {
-        public static Champion getChampionFromType(string type, Map map, uint id, uint playerId)
+        public static Champion getChampionFromType(Game game, string type, Map map, uint id, uint playerId)
         {
-            return new Champion(type, map, id, playerId);
+            return new Champion(game, type, map, id, playerId);
         }
     }
 }

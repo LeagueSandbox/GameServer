@@ -31,12 +31,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return spells[index];
         }
-        public Champion(string type, Map map, uint id, uint playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
+        public Champion(Game game, string type, Map map, uint id, uint playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
         {
             this.type = type;
             this.playerId = playerId;
 
-            Inventory = InventoryManager.CreateInventory(this);
+            Inventory = InventoryManager.CreateInventory(game, this);
             Shop = Shop.CreateShop(this);
 
             stats.setGold(475.0f);
