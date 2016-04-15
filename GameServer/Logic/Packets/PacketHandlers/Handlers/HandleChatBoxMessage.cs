@@ -157,11 +157,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             int count = 0;
             foreach (ChatCommand com in commandsList)
             {
-                count += 1;
-                commands = commands
-                           + "<font color =\"#E175FF\"><b>"
-                           + com.command 
-                           + "</b><font color =\"#FFB145\">, ";
+                if (!(com.hidden || com.disabled)) // We could also show disabled commands
+                {                                  // (with a different color, saying they're disabled, etc.)
+                    count += 1;
+                    commands = commands
+                               + "<font color =\"#E175FF\"><b>"
+                               + com.command
+                               + "</b><font color =\"#FFB145\">, ";
+                }
             }
             SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
             SendDebugMsgFormatted(DebugMsgType.INFO, commands);
