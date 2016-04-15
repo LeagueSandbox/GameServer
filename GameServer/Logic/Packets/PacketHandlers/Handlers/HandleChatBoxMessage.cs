@@ -20,6 +20,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         { 
             public string command;
             public string syntax;
+            public bool hidden;
+            public bool disabled;
             public delExecute execute;
 
             public ChatCommand(string command, string syntax, delExecute function)
@@ -139,6 +141,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public static void newCommandCmdFunction(ENetPeer* peer, Game game, bool receivedArguments, string arguments = "")
         {
             SendDebugMsgFormatted(DebugMsgType.INFO, "The new command added by .help has been executed");
+
+            foreach (KeyValuePair<string, ChatCommand> keyValuePair in ChatCommandsDictionary)
+            {
+                if (keyValuePair.Key == ".newcommand")
+                {
+                    commandsList.Remove(keyValuePair.Value);
+                }
+            }
         }
 
         public static void helpCmdFunction(ENetPeer* peer, Game game, bool receivedArguments, string arguments = "")
@@ -220,6 +230,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ChatCommandsDictionary.TryGetValue(split[0], out command);
                 SendDebugMsgFormatted(DebugMsgType.SYNTAX, command.syntax);
+                return;
             }
             int team;
             if (!int.TryParse(split[1], out team))
@@ -462,6 +473,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             #region Commands
             // Load commands
+            ChatCommandsDictionary.Clear();
             foreach (ChatCommand com in commandsList) {
                 if (!ChatCommandsDictionary.ContainsKey(com.command)) {
                     ChatCommandsDictionary.Add(com.command, com);
@@ -475,6 +487,17 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 ChatCommand command;
                 if (ChatCommandsDictionary.TryGetValue(split[0], out command))
                 {
+                    if (command.hidden) // This could also check if the user has access to hidden commands
+                    {
+                        SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                        SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");
+                        return true;
+                    }
+                    else if (command.disabled)
+                    {
+                        SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is disabled.");
+                        return true;
+                    }
                     command.execute(peer, game, true, message.msg);
                     return true;
                 }
