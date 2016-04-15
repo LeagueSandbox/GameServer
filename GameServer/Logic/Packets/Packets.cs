@@ -2325,24 +2325,48 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 stats = u.getStats().getUpdatedStats();
             else
                 stats = u.getStats().getAllStats();
+            var orderedStats = stats.OrderBy(x => x.Key);
 
-            /*buffer.Write((byte)1); // updating 1 unit
+            buffer.Write((byte)1); // updating 1 unit
 
             byte masterMask = 0;
-            foreach (var p in stats)
-                masterMask |= p.Item1;
+            foreach (var p in orderedStats)
+                masterMask |= (byte)p.Key;
 
             buffer.Write((byte)masterMask);
             buffer.Write((uint)u.getNetId());
 
-            foreach (var group in stats)
+            foreach (var group in orderedStats)
             {
-                var groupBitmask = 0;
-                foreach (var stat in group.Item2)
-                    groupBitmask |= stat;
+                var orderedGroup = group.Value.OrderBy(x=>x.Key);
+                uint fieldMask = 0;
+                byte size = 0;
+                foreach (var stat in orderedGroup)
+                {
+                    fieldMask |= (uint)stat.Key;
+                    size += u.getStats().getSize(group.Key, stat.Key);
+                }
+                buffer.Write((uint)fieldMask);
+                buffer.Write((byte)size);
+                foreach (var stat in orderedGroup)
+                {
+                    size = u.getStats().getSize(group.Key, stat.Key);
+                    switch (size)
+                    {
+                        case 1:
+                            buffer.Write((byte)Convert.ToByte(stat.Value));
+                            break;
+                        case 2:
+                            buffer.Write((short)Convert.ToInt16(stat.Value));
+                            break;
+                        case 4:
+                            buffer.Write((float)stat.Value);
+                            break;
+                    }
+                }
             }
-            */
-            var masks = new List<MasterMask>();
+
+            /*var masks = new List<MasterMask>();
             byte masterMask = 0;
 
             foreach (var p in stats)
@@ -2402,7 +2426,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 
