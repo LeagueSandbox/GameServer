@@ -66,8 +66,13 @@ namespace LeagueSandbox.GameServer.Logic
             var to = new Vector2(target.getX(), target.getY());
             var cur = new Vector2(getX(), getY()); //?
 
+
             var goingTo = (to - cur);
             direction = Vector2.Normalize(goingTo);
+            if (float.IsNaN(direction.X) || float.IsNaN(direction.Y))
+            {
+                direction = new Vector2(0, 0);
+            }
 
             float moveSpeed = dashing ? dashSpeed : getMoveSpeed();
             float deltaMovement = (moveSpeed) * 0.001f * diff;
@@ -79,7 +84,7 @@ namespace LeagueSandbox.GameServer.Logic
             y += yy;
 
             /* If the target was a simple point, stop when it is reached */
-            if (target != null && target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2) //how can target be null here?????
+            if (target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2) //how can target be null here?????
             {
                 if (dashing)
                 {
