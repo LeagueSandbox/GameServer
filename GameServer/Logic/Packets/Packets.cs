@@ -375,9 +375,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     }
     public class SetHealthTest : BasePacket
     {
-        public SetHealthTest(uint netId, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
+        public SetHealthTest(uint netId, short unk, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
         {
-            buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
+            buffer.Write((short)unk); // unk,maybe flags for physical/magical/true dmg
             buffer.Write((float)maxhp);
             buffer.Write((float)hp);
         }
@@ -401,7 +401,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((byte)0); // unk
             }
-            else {
+            else
+            {
                 buffer.Write((byte)1); // unk
             }
 
@@ -419,7 +420,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((int)0x0001000D);
             }
-            else {
+            else
+            {
                 buffer.Write((int)0x00010007); // unk
             }
             buffer.Write((int)0x00000000); // unk
@@ -2317,20 +2319,36 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
         {
-            var stats = new PairList<byte, List<int>>();
+            var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
             if (partial)
                 stats = u.getStats().getUpdatedStats();
             else
                 stats = u.getStats().getAllStats();
 
-            var masks = new List<byte>();
+            /*buffer.Write((byte)1); // updating 1 unit
+
+            byte masterMask = 0;
+            foreach (var p in stats)
+                masterMask |= p.Item1;
+
+            buffer.Write((byte)masterMask);
+            buffer.Write((uint)u.getNetId());
+
+            foreach (var group in stats)
+            {
+                var groupBitmask = 0;
+                foreach (var stat in group.Item2)
+                    groupBitmask |= stat;
+            }
+            */
+            var masks = new List<MasterMask>();
             byte masterMask = 0;
 
             foreach (var p in stats)
             {
-                masterMask |= p.Item1;
-                masks.Add(p.Item1);
+                masterMask |= (byte)p.Key;
+                masks.Add(p.Key);
             }
 
             masks.Sort();
@@ -2342,19 +2360,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             foreach (var m in masks)
             {
-                int mask = 0;
+                uint mask = 0;
                 byte size = 0;
 
                 var updatedStats = stats[m];
-                updatedStats.Sort();
+                updatedStats.OrderBy(x => x.Key);
                 foreach (var it in updatedStats)
                 {
-                    size += u.getStats().getSize(m, it);
-                    mask |= it;
+                    size += u.getStats().getSize(m, it.Key);
+                    mask |= (uint)it.Key;
                 }
                 //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
                 //  System.Diagnostics.Debugger.Break();
-                buffer.Write((int)mask);
+                buffer.Write((uint)mask);
                 buffer.Write((byte)size);
 
                 for (int i = 0; i < 32; i++)
@@ -2362,9 +2380,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                     int tmpMask = (1 << i);
                     if ((tmpMask & mask) > 0)
                     {
-                        if (u.getStats().getSize(m, tmpMask) == 4)
+                        if (u.getStats().getSize(m, (FieldMask)tmpMask) == 4)
                         {
-                            float f = u.getStats().getStat(m, tmpMask);
+                            float f = u.getStats().getStat(m, (FieldMask)tmpMask);
                             var c = BitConverter.GetBytes(f);
                             if (c[0] >= 0xFE)
                             {
@@ -2372,14 +2390,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                             }
                             buffer.Write(BitConverter.ToSingle(c, 0));
                         }
-                        else if (u.getStats().getSize(m, tmpMask) == 2)
+                        else if (u.getStats().getSize(m, (FieldMask)tmpMask) == 2)
                         {
-                            short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                            short stat = (short)Math.Floor(u.getStats().getStat(m, (FieldMask)tmpMask) + 0.5);
                             buffer.Write(stat);
                         }
                         else
                         {
-                            byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
+                            byte stat = (byte)Math.Floor(u.getStats().getStat(m, (FieldMask)tmpMask) + 0.5);
                             buffer.Write(stat);
                         }
                     }
