@@ -199,7 +199,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return null;
 
             s.cast(x, y, target, futureProjNetId, spellNetId);
-            //stats.setCurrentMana(stats.getCurrentMana() - (s.getCost() * (1 - stats.getSpellCostReduction()))); --> was removing mana twice dunno why
+            stats.setCurrentMana(stats.getCurrentMana() - (s.getCost() * (1 - stats.getSpellCostReduction()))); --> was removing mana twice dunno why
             return s;
         }
         public Spell levelUpSpell(short slot)
