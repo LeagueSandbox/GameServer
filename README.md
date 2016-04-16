@@ -93,7 +93,7 @@ GameMode
 * Packages are to be named using a <authorname>-<packagename> format
     * This to avoid collisions with similarly named packages
 * Content will be identified in a <Author>-<Package>-<Type>-<Name> format, thus why namespacing is required
-    
+
 # Planned overall configuration/infrastructure
 5 different components:
 * League of Legends 4.20 Client
@@ -136,3 +136,4 @@ GameMode
 | NitroXenon   | Contributor             | https://github.com/NitroXenon   |
 | Fighter19    | Contributor             | https://github.com/Fighter19    |
 | Molenzwiebel | Contributor             | https://github.com/molenzwiebel |
+| TheWebs      | Contributor             | https://github.com/TheWebs      |
