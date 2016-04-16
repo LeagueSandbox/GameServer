@@ -38,6 +38,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
 
+            client.getChampion().getStats().unapplyStatMods(i.ItemType.StatMods);
+
             return true;
         }
     }
