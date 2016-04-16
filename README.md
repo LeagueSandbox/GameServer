@@ -26,7 +26,14 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
 * Pull requests should not be merged before the build has passed
     * If the build fails, ping the pull request creator and tell him to fix it
 * Files and folders in `CamelCase`
-* JSON dictionary keys in `pascalCase`
+* JSON dictionary keys in `CamelCase`
+
+# C# guidelines
+* Function names in `CamelCase`
+* Constants in `ALL_CAPS`
+* Private variables in `_pascalCaseWithUnderscore`
+* Public properties as getters / setters in `CamelCase`
+* All public variable access should happen through getters / setters
 
 # Development flow
 1. Pull latest version of master
@@ -47,19 +54,19 @@ Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
     * `git checkout master`
 7. Repeat
 
-# Planned data structure
+# Content data structure
 ```
 Data
-    Base // Data package called "Base"
+    LeagueSandbox-Default // A content package by "LeagueSandbox" called "Default"
         Champions
         Items
         Buffs
         ...
-    SomeOtherPackage // Data package called "SomeOtherPackage"
+    SomeAuthor-SomePackage // A content package by "SomeAuthor" called "SomePackage"
         Champions
         ...
 GameMode
-    Somemode // Game mode package called "Somemode"
+    LeagueSandbox-Default // Game mode by "LeagueSandbox" called "Default"
         Data // Data that's local to this gamemode only
             Champions
             Items
@@ -83,23 +90,27 @@ GameMode
 	* Lua is capable of using the data stored in the mentioned JSON files
 * These two should be always separate, so no mixing data into lua
 	* All predetermined values in JSON
+* Packages are to be named using a <authorname>-<packagename> format
+    * This to avoid collisions with similarly named packages
+* Content will be identified in a <Author>-<Package>-<Type>-<Name> format, thus why namespacing is required
     
 # Planned overall configuration/infrastructure
-6 different components:
+5 different components:
 * League of Legends 4.20 Client
     * By Riot
     * Will be modified only by the client patcher
+* Content serializer
+    * Patches custom content into the game client's files
+    * Serializes custom content into a format the game can understand
+    * Deserializes the game's content into our custom content format
+    * Builds single file packages out of custom content packages
 * Lobby client
-    * Client that can connect to lobby server
+    * Client that can connect to lobby servers
     * Game mode selection
     * User settings (champion, summoner spells, etc)
     * Game mode settings (if a gamemode has configurable settings, say, kill limit for a deathmatch victory)
         * Host only
-    * Receives custom content from the lobby client before the game is started
-* Client patcher
-    * Gets custom content from the lobby client
-    * Patches provided content into the client files
-    * In charge of reverting all changes as well
+    * Receives custom content from the lobby server before the game is started
 * Lobby server
     * Lobby clients can create lobbies
         * Lobby creator gets host privileges
@@ -109,10 +120,6 @@ GameMode
 * Game server
     * Receives game settings from the lobby server
     * Runs the game according to the received settings
-* Content compiler
-    * Turns the custom content into a format which the League of Legends client can interpret
-    * Pack into packages
-    * Packages flow through other components like so: Package -> Lobby server -> Lobby client -> Client patcher -> League of Legends
 
 # LeagueSandbox Credits
 |              |                         |                                 |
