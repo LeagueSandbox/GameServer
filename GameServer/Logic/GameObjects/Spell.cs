@@ -241,7 +241,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             currentCooldown = getCooldown();
             if (getSlot() < 4)
             {
-                owner.getStats().setCurrentMana(owner.getStats().getCurrentMana() - getCost());
+                //owner.getStats().setCurrentMana(owner.getStats().getCurrentMana() - getCost());
                 PacketNotifier.notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
             }
         }

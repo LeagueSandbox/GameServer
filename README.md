@@ -136,3 +136,4 @@ GameMode
 | NitroXenon   | Contributor             | https://github.com/NitroXenon   |
 | Fighter19    | Contributor             | https://github.com/Fighter19    |
 | Molenzwiebel | Contributor             | https://github.com/molenzwiebel |
+| TheWebs      | Contributor             | https://github.com/TheWebs      |
