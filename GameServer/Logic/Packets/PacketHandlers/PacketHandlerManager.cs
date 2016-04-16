@@ -49,6 +49,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
             registerHandler(new HandleClick(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
             registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
+            registerHandler(new HandleSurrender(), PacketCmdC2S.PKT_C2S_Surrender, Channel.CHL_C2S);
             //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
 
             game = g;
@@ -120,13 +121,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //printPacket(source, "Sent: ");
+            var temp = source.ToArray();
 
-            fixed (byte* data = source)
+            fixed (byte* data = temp)
             {
                 if (source.Length >= 8)
-                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), data, new IntPtr(source.Length - (source.Length % 8)));
+                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), data, new IntPtr(temp.Length - (temp.Length % 8)));
 
-                var packet = enet_packet_create(new IntPtr(data), new IntPtr(source.Length), flag);
+                var packet = enet_packet_create(new IntPtr(data), new IntPtr(temp.Length), flag);
                 if (enet_peer_send(peer, (byte)channelNo, packet) < 0)
                     return false;
             }
@@ -136,13 +138,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             //printPacket(data, "Broadcast: ");
+            var temp = data.ToArray();
 
-            fixed (byte* b = data)
+            fixed (byte* b = temp)
             {
-                if (data.Length >= 8)
-                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), b, new IntPtr(data.Length - (data.Length % 8)));
+                if (temp.Length >= 8)
+                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), b, new IntPtr(temp.Length - (temp.Length % 8)));
 
-                var packet = enet_packet_create(new IntPtr(b), new IntPtr(data.Length), (PacketFlags)flag);
+                var packet = enet_packet_create(new IntPtr(b), new IntPtr(temp.Length), (PacketFlags)flag);
                 enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
             }
             return true;
@@ -175,8 +178,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             for (int i = 0; i < 2; ++i)
-                if (o.isVisibleByTeam(Convert.toTeamId(i)))
-                    broadcastPacketTeam(Convert.toTeamId(i), data, channelNo, flag);
+                if (o.isVisibleByTeam(CustomConvert.toTeamId(i)))
+                    broadcastPacketTeam(CustomConvert.toTeamId(i), data, channelNo, flag);
             return true;
         }
 
@@ -185,8 +188,17 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var header = new LeagueSandbox.GameServer.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
             // printPacket(data, "Received: ");
-            if (header.cmd != PacketCmdC2S.PKT_C2S_StatsConfirm && header.cmd != PacketCmdC2S.PKT_C2S_MoveConfirm)
-                Console.WriteLine("Requested " + header.cmd.ToString());
+
+            switch (header.cmd)
+            {
+                case PacketCmdC2S.PKT_C2S_StatsConfirm:
+                case PacketCmdC2S.PKT_C2S_MoveConfirm:
+                case PacketCmdC2S.PKT_C2S_ViewReq:
+                    break;
+                default:
+                    Console.WriteLine("Requested " + header.cmd.ToString());
+                    break;
+            }
 
             if (handler != null)
             {

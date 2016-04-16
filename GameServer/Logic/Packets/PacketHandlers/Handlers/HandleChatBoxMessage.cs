@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         foreach (var cc in cmd)
                             debugMsg.Append(cc + " ");
 
-                        var dm = new SpawnParticle.DebugMessage(debugMsg.ToString());
+                        var dm = new DebugMessage(debugMsg.ToString());
                         PacketHandlerManager.getInstace().sendPacket(peer, dm, Channel.CHL_S2C);
                         return true;
                     case ".spawn":
@@ -176,7 +176,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             return true;
                         new System.Threading.Thread(new System.Threading.ThreadStart(() =>
                         {
-                            var c = new Champion(split[1], game.getMap(), game.getPeerInfo(peer).getChampion().getNetId(), (int)game.getPeerInfo(peer).userId);
+                            var c = new Champion(game, split[1], game.getMap(), game.getPeerInfo(peer).getChampion().getNetId(), (uint)game.getPeerInfo(peer).userId);
                             c.setPosition(game.getPeerInfo(peer).getChampion().getX(), game.getPeerInfo(peer).getChampion().getY());
                             c.setModel(split[1]); // trigger the "modelUpdate" proc
                             c.setTeam(game.getPeerInfo(peer).getChampion().getTeam());
@@ -219,7 +219,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         int team;
                         if (!int.TryParse(split[1], out team))
                             return true;
-                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == Convert.toTeamId(team)).Where(xx => xx.Value is Minion);
+                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion);
                         foreach (var unit in units)
                         {
                             var response = new AttentionPingAns(game.getPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });

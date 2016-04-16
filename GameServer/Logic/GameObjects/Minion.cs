@@ -35,17 +35,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected List<Vector2> mainWaypoints;
         protected int curMainWaypoint = 0;
         protected MinionSpawnPosition spawnPosition;
-        protected MinionSpawnType type;
+        protected MinionSpawnType minionType;
 
-        public Minion(Map map, int id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
+        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
         {
-            this.type = type;
+            this.minionType = type;
             this.spawnPosition = position;
             this.mainWaypoints = mainWaypoints;
             this.curMainWaypoint = 0;
 
             var spawnSpecifics = map.getMinionSpawnPosition(spawnPosition);
-            setTeam(Convert.toTeamId(spawnSpecifics.Item1));
+            setTeam(CustomConvert.toTeamId(spawnSpecifics.Item1));
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             map.setMinionStats(this); // Let the map decide how strong this minion has to be.
@@ -66,6 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             // Set model
             setModel(minionModel);
+            
 
 
             if (mainWaypoints.Count > 0)                                                      // If we have lane path instructions from the map
@@ -76,7 +77,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
         }
 
-        public Minion(Map map, int id, MinionSpawnType type, MinionSpawnPosition position) : this(map, id, type, position, new List<Vector2>())
+        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position) : this(map, id, type, position, new List<Vector2>())
         {
 
         }
@@ -87,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public MinionSpawnType getType()
         {
-            return type;
+            return minionType;
         }
 
         public override void update(long diff)

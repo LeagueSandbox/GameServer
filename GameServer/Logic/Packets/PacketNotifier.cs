@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
@@ -33,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             //if (u is Monster)
             //    return;
-            var us = new SpawnParticle.UpdateStats(u, partial);
+            var us = new UpdateStats(u, partial);
             var t = u as Turret;
 
             if (t != null)
@@ -52,9 +53,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
-        public static void notifyAddBuff(Unit u, Unit source, string buffName)
+        public static void notifyAddBuff(Buff b)
         {
-            var add = new AddBuff(u, source, 1, buffName);
+            var add = new AddBuff(b.getUnit(), b.getSourceUnit(), b.getStacks(), b.getName());
             PacketHandlerManager.getInstace().broadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -104,13 +105,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(dd, Channel.CHL_S2C);
         }
 
-        public static void notifyBeginAutoAttack(Unit attacker, Unit victim, int futureProjNetId, bool isCritical)
+        public static void notifyBeginAutoAttack(Unit attacker, Unit victim, uint futureProjNetId, bool isCritical)
         {
             var aa = new BeginAutoAttack(attacker, victim, futureProjNetId, isCritical);
             PacketHandlerManager.getInstace().broadcastPacket(aa, Channel.CHL_S2C);
         }
 
-        public static void notifyNextAutoAttack(Unit attacker, Unit target, int futureProjNetId, bool isCritical, bool nextAttackFlag)
+        public static void notifyNextAutoAttack(Unit attacker, Unit target, uint futureProjNetId, bool isCritical, bool nextAttackFlag)
         {
             var aa = new NextAutoAttack(attacker, target, futureProjNetId, isCritical, nextAttackFlag);
             PacketHandlerManager.getInstace().broadcastPacket(aa, Channel.CHL_S2C);
@@ -130,7 +131,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyProjectileDestroy(Projectile p)
         {
-            var dp = new SpawnParticle.DestroyProjectile(p);
+            var dp = new DestroyProjectile(p);
             PacketHandlerManager.getInstace().broadcastPacket(dp, Channel.CHL_S2C);
         }
 
@@ -146,7 +147,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(mp, Channel.CHL_S2C);
         }
 
-        public static void notifyItemBought(Champion c, ItemInstance i)
+        public static void notifyItemBought(Champion c, Item i)
         {
             var response = new BuyItemAns(c, i);
             PacketHandlerManager.getInstace().broadcastPacketVision(c, response, Channel.CHL_S2C);
@@ -160,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyLevelUp(Champion c)
         {
-            var lu = new SpawnParticle.LevelUp(c);
+            var lu = new LevelUp(c);
             PacketHandlerManager.getInstace().broadcastPacket(lu, Channel.CHL_S2C);
         }
 
@@ -225,7 +226,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyDebugMessage(string htmlDebugMessage)
         {
-            var dm = new SpawnParticle.DebugMessage(htmlDebugMessage);
+            var dm = new DebugMessage(htmlDebugMessage);
             PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
@@ -233,11 +234,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
-                notifyMinionSpawned(m, Convert.getEnemyTeam(m.getTeam()));
+                notifyMinionSpawned(m, CustomConvert.getEnemyTeam(m.getTeam()));
 
             var c = u as Champion;
             if (c != null)
-                notifyChampionSpawned(c, Convert.getEnemyTeam(c.getTeam()));
+                notifyChampionSpawned(c, CustomConvert.getEnemyTeam(c.getTeam()));
 
             var monster = u as Monster;
             if (monster != null)
@@ -296,7 +297,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifySetCooldown(Champion c, byte slotId, float currentCd, float totalCd)
         {
-            var cd = new SpawnParticle.SetCooldown(c.getNetId(), slotId, currentCd, totalCd);
+            var cd = new SetCooldown(c.getNetId(), slotId, currentCd, totalCd);
             PacketHandlerManager.getInstace().broadcastPacket(cd, Channel.CHL_S2C);
         }
 

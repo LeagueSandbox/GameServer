@@ -18,7 +18,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (request.slotFrom > 6 || request.slotTo > 6)
                 return false;
 
-            game.getPeerInfo(peer).getChampion().getInventory().swapItems(request.slotFrom, request.slotTo);
+            // "Holy shit this needs refactoring" - Mythic, April 13th 2016
+            game.getPeerInfo(peer).getChampion().getInventory().SwapItems(request.slotFrom, request.slotTo);
             PacketNotifier.notifyItemsSwapped(game.getPeerInfo(peer).getChampion(), request.slotFrom, request.slotTo);
 
             return true;

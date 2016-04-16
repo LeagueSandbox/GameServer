@@ -35,12 +35,17 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public static void LogCoreInfo(string format, params object[] args)
         {
-            Log(string.Format(format, args), "CORE_INFO");
+            LogCoreInfo(string.Format(format, args));
         }
 
         public static void LogCoreWarning(string line)
         {
             Log(line, "CORE_WARNING");
+        }
+
+        public static void LogCoreWarning(string format, params object[] args)
+        {
+            LogCoreWarning(string.Format(format, args));
         }
 
         public static void LogCoreError(string line)
@@ -50,7 +55,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public static void LogCoreError(string format, params object[] args)
         {
-            Log(string.Format(format, args), "CORE_ERROR");
+            LogCoreError(string.Format(format, args));
         }
     }
 

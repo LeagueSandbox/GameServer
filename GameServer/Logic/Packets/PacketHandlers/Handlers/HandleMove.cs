@@ -28,23 +28,19 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             switch (request.type)
             {
                 case MoveType.STOP:
+                    //TODO anticheat, currently it trusts client 100%
+
+                    peerInfo.getChampion().setPosition(request.x, request.y);
+                    float x = ((request.x) - game.getMap().getWidth()) / 2;
+                    float y = ((request.y) - game.getMap().getHeight()) / 2;
+
+                    for (var i = 0; i < vMoves.Count; i++)
                     {
-                        //TODO anticheat, currently it trusts client 100%
-
-                        peerInfo.getChampion().setPosition(request.x, request.y);
-                        float x = ((request.x) - game.getMap().getWidth()) / 2;
-                        float y = ((request.y) - game.getMap().getHeight()) / 2;
-
-                        for (var i = 0; i < vMoves.Count; i++)
-                        {
-                            var v = vMoves[i];
-                            v.X = (short)request.x;
-                            v.Y = (short)request.y;
-                        }
-
-                        Logger.LogCoreInfo("Stopped at x: " + request.x + ", y: " + request.y);
-                        break;
+                        var v = vMoves[i];
+                        v.X = (short)request.x;
+                        v.Y = (short)request.y;
                     }
+                    break;
                 case MoveType.EMOTE:
                     //Logging->writeLine("Emotion");
                     return true;

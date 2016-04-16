@@ -1,4 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,134 +11,78 @@ namespace LeagueSandbox.GameServer.Logic.Items
 {
     public class Inventory
     {
-        private List<ItemInstance> items;
-        public Inventory()
+        private const int TRINKET_SLOT = 6;
+        private Item[] _items;
+        private InventoryManager _owner;
+        private Game _game;
+
+        public Item[] Items { get { return _items; } }
+
+        public Inventory(Game game, InventoryManager owner)
         {
-            items = new List<ItemInstance>() { null, null, null, null, null, null, null };
+            _game = game;
+            _owner = owner;
+            _items = new Item[7];
         }
 
-        private List<ItemInstance> _getAvailableRecipeParts(ItemTemplate recipe)
+        public Item AddItem(ItemType item)
         {
-            var toReturn = new List<ItemInstance>();
-
-            foreach (var i in items)
-            {
-                if (i == null)
-                    continue;
-
-                if (i.getTemplate().getId() == recipe.getId() && !i.getRecipeSearchFlag())
-                {
-                    toReturn.Add(i);
-                    i.setRecipeSearchFlag(true);
-                    return toReturn;
-                }
-            }
-
-            foreach (var itemId in recipe.getRecipeParts())
-            {
-                var parts = _getAvailableRecipeParts(ItemManager.getInstance().getItemTemplateById(itemId));
-                toReturn.AddRange(parts);
-            }
-
-            return toReturn;
+            if(item.GetIsTrinket()) return AddTrinketItem(item);
+            if (item.MaxStack > 1) return AddStackingItem(item);
+            return AddNewItem(item);
         }
-        public ItemInstance addItem(ItemTemplate itemTemplate)
-        {
-            var slot = -1;
 
-            if (itemTemplate.isTrinket())
+        public Item SetItem(byte slot, ItemType item)
+        {
+            if (slot > _items.Length) return null;
+            _items[slot] = Item.CreateFromType(_game, this, item, slot);
+            return _items[slot];
+        }
+
+        public Item GetItem(int slot)
+        {
+            return _items[slot];
+        }
+
+        public void RemoveItem(int slot)
+        {
+            _items[slot] = null;
+        }
+
+        public void SwapItems(int slot1, int slot2)
+        {
+            var buffer = _items[slot1];
+            _items[slot1] = _items[slot2];
+            _items[slot2] = buffer;
+        }
+
+        private Item AddTrinketItem(ItemType item)
+        {
+            if (_items[TRINKET_SLOT] != null) return null;
+            return SetItem(TRINKET_SLOT, item);
+        }
+
+        private Item AddStackingItem(ItemType item)
+        {
+            for(var i = 0; i < _items.Length; i++)
             {
-                if (items[6] == null)
-                {
-                    items[6] = new ItemInstance(itemTemplate, 6, 1);
-                    return items[6];
-                }
+                if (_items[i] == null) continue;
+                if (item.ItemId != _items[i].ItemType.ItemId) continue;
+                if (_items[i].IncrementStackSize()) return _items[i];
                 return null;
             }
+            return AddNewItem(item);
+        }
 
-            if (itemTemplate.getMaxStack() > 1)
+        private Item AddNewItem(ItemType item)
+        {
+            for(var i = 0; i < _items.Length; i++)
             {
-                for (slot = 0; slot < 6; ++slot)
-                {
-                    if (items[slot] == null)
-                        continue;
-
-                    if (items[slot].getTemplate() == itemTemplate)
-                    {
-                        if (items[slot].getStacks() < itemTemplate.getMaxStack())
-                        {
-                            items[slot].incrementStacks();
-                            return items[slot];
-                        }
-                        else if (items[slot].getStacks() == itemTemplate.getMaxStack())
-                        {
-                            return null;
-                        }
-                    }
-                }
+                if (i == TRINKET_SLOT) continue;
+                if (_items[i] != null) continue;
+                return SetItem((byte)i, item);
             }
-
-            for (slot = 0; slot < 6; ++slot)
-            {
-                if (items[slot] == null)
-                    break;
-            }
-
-            if (slot == 6)
-            { // Inventory full
-                return null;
-            }
-
-            Logger.LogCoreInfo("Adding item " + itemTemplate.getId() + " to slot " + slot);
-            items[slot] = new ItemInstance(itemTemplate, (byte)slot, 1);
-
-            return items[slot];
+            return null;
         }
-        public void swapItems(byte slotFrom, byte slotTo)
-        {
-            var to = items[slotTo];
-            items[slotTo] = items[slotFrom];
-            items[slotFrom] = to;
-        }
-        public List<ItemInstance> getItems()
-        {
-            return items;
-        }
-        public void removeItem(byte slot)
-        {
-            if (items[slot] == null)
-                return;
-
-            items[slot] = null;
-        }
-        public ItemInstance getItemSlot(byte slot)
-        {
-            if (items[slot] == null)
-                return null;
-
-            return items[slot];
-        }
-
-        public List<ItemInstance> getAvailableRecipeParts(ItemTemplate recipe)
-        {
-            var toReturn = new List<ItemInstance>();
-
-            foreach (var itemId in recipe.getRecipeParts())
-            {
-                var item = ItemManager.getInstance().getItemTemplateById(itemId);
-                if (item == null)
-                    continue;
-
-                var parts = _getAvailableRecipeParts(item);
-                toReturn.AddRange(parts);
-            }
-
-            foreach (var i in items)
-                if (i != null)
-                    i.setRecipeSearchFlag(false);
-
-            return toReturn;
-        }
-
     }
 }

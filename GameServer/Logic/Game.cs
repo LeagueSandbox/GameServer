@@ -16,6 +16,7 @@ using System.Net;
 using BlowFishCS;
 using static ENet.Native;
 using System.Threading;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -24,7 +25,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         ENetHost* _server;
         BlowFish* _blowfish;
         bool _isAlive = false;
-        private static int dwStart = 0x40000000; //new netid
+        private static uint dwStart = 0x40000000; //new netid
 
         bool _started = false;
         int playersReady = 0;
@@ -37,8 +38,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private const PacketFlags UNRELIABLE = PacketFlags.None;
         private const double REFRESH_RATE = 16.666; // 60 fps
 
+        // Object managers
+        public ItemManager ItemManager { get; protected set; }
+
         public bool initialize(ENetAddress address, string baseKey)
         {
+            ItemManager = ItemManager.LoadItems(this);
             if (enet_initialize() < 0)
                 return false;
 
@@ -76,7 +81,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                 player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
 
-                Champion c = ChampionFactory.getChampionFromType(p.Value.champion, map, GetNewNetID(), (int)player.userId);
+                Champion c = ChampionFactory.getChampionFromType(this, p.Value.champion, map, GetNewNetID(), (uint)player.userId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
@@ -230,7 +235,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public ClientInfo getPeerInfo(ENetPeer* peer)
         {
             foreach (var player in players)
-                if (player.Item1 == peer->address.host)
+                if (player.Item1 == peer->address.port)
                     return player.Item2;
             return null;
         }
@@ -277,7 +282,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return 0;
         }
 
-        public static int GetNewNetID()
+        public static uint GetNewNetID()
         {
             dwStart++;
             return dwStart;

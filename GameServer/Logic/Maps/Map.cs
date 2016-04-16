@@ -14,9 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     public class Map
     {
-        protected Dictionary<int, GameObject> objects;
-        protected Dictionary<int, Champion> champions;
-        protected Dictionary<int, Unit>[] visionUnits; //array of 3
+        protected Dictionary<uint, GameObject> objects;
+        protected Dictionary<uint, Champion> champions;
+        protected Dictionary<uint, Unit>[] visionUnits; //array of 3
         protected List<int> expToLevelUp;
         protected int waveNumber;
         protected long firstSpawnTime;
@@ -38,9 +38,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
-            this.objects = new Dictionary<int, GameObject>();
-            this.champions = new Dictionary<int, Champion>();
-            this.visionUnits = new Dictionary<int, Unit>[3];
+            this.objects = new Dictionary<uint, GameObject>();
+            this.champions = new Dictionary<uint, Champion>();
+            this.visionUnits = new Dictionary<uint, Unit>[3];
             this.expToLevelUp = new List<int>();
             this.waveNumber = 0;
             this.firstSpawnTime = firstSpawnTime;
@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.id = id;
 
             for (var i = 0; i < visionUnits.Length; i++)
-                visionUnits[i] = new Dictionary<int, Unit>();
+                visionUnits[i] = new Dictionary<uint, Unit>();
         }
 
         public virtual void update(long diff)
@@ -96,13 +96,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 for (var i = 0; i < 2; i++)
                 {
-                    if (u.getTeam() == Convert.toTeamId(i))
+                    if (u.getTeam() == CustomConvert.toTeamId(i))
                         continue;
 
-                    var visionUnitsTeam = visionUnits[Convert.fromTeamId(u.getTeam())];
+                    var visionUnitsTeam = visionUnits[CustomConvert.fromTeamId(u.getTeam())];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        if (teamHasVisionOn(Convert.toTeamId(i), u))
+                        if (teamHasVisionOn(CustomConvert.toTeamId(i), u))
                         {
                             u.setVisibleByTeam(i, true);
                             PacketNotifier.notifySpawn(u);
@@ -111,16 +111,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                             continue;
                         }
                     }
-
-                    if (!u.isVisibleByTeam(Convert.toTeamId(i)) && teamHasVisionOn(Convert.toTeamId(i), u))
+                    
+                    if (!u.isVisibleByTeam(CustomConvert.toTeamId(i)) && teamHasVisionOn(CustomConvert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyEnterVision(u, Convert.toTeamId(i));
+                        PacketNotifier.notifyEnterVision(u, CustomConvert.toTeamId(i));
                         u.setVisibleByTeam(i, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(Convert.toTeamId(i)) && !teamHasVisionOn(Convert.toTeamId(i), u))
+                    else if (u.isVisibleByTeam(CustomConvert.toTeamId(i)) && !teamHasVisionOn(CustomConvert.toTeamId(i), u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, Convert.toTeamId(i));
+                        PacketNotifier.notifyLeaveVision(u, CustomConvert.toTeamId(i));
                         u.setVisibleByTeam(i, false);
                     }
                 }
@@ -257,7 +257,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         }
 
-        public GameObject getObjectById(int id)
+        public GameObject getObjectById(uint id)
         {
             if (!objects.ContainsKey(id))
                 return null;
@@ -278,7 +278,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             collisionHandler.addObject(o);
             var team = o.getTeam();
-            var teamVision = visionUnits[Convert.fromTeamId(team)];
+            var teamVision = visionUnits[CustomConvert.fromTeamId(team)];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -308,12 +308,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             lock (objects)
                 objects.Remove(o.getNetId());
-            visionUnits[Convert.fromTeamId(o.getTeam())].Remove(o.getNetId());
+            visionUnits[CustomConvert.fromTeamId(o.getTeam())].Remove(o.getNetId());
         }
 
-        public Dictionary<int, Unit> getVisionUnits(TeamId team)
+        public Dictionary<uint, Unit> getVisionUnits(TeamId team)
         {
-            return visionUnits[Convert.fromTeamId(team)];
+            return visionUnits[CustomConvert.fromTeamId(team)];
         }
 
         public List<int> getExperienceToLevelUp()
@@ -355,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return game;
         }
 
-        public Dictionary<int, GameObject> getObjects()
+        public Dictionary<uint, GameObject> getObjects()
         {
             return objects;
         }
@@ -452,11 +452,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (objects)
             {
                 foreach (var kv in objects)
-                {
-                    if (kv.Value.getTeam() == team || (kv.Value.distanceWith(o) < kv.Value.getVisionRadius() && !mesh.isAnythingBetween(kv.Value, o)))
+                {//TODO: enable mesh as soon as it works again
+                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
                     {
                         var unit = kv.Value as Unit;
-                        if (unit == null || unit.isDead())
+                        if (unit != null && unit.isDead())
                             continue;
                         return true;
                     }

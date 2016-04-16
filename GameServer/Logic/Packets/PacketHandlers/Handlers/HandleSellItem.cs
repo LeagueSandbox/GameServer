@@ -17,25 +17,25 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var sell = new SellItem(data);
             var client = game.getPeerInfo(peer);
 
-            var i = game.getPeerInfo(peer).getChampion().getInventory().getItemSlot(sell.slotId);
+            var i = game.getPeerInfo(peer).getChampion().getInventory().GetItem(sell.slotId);
             if (i == null)
                 return false;
 
-            float sellPrice = i.getTemplate().getTotalPrice() * i.getTemplate().getSellBackModifier();
+            float sellPrice = i.ItemType.TotalPrice * i.ItemType.TotalPrice;
             client.getChampion().getStats().setGold(client.getChampion().getStats().getGold() + sellPrice);
 
-            if (i.getTemplate().getMaxStack() > 1)
+            if (i.ItemType.MaxStack > 1)
             {
-                i.decrementStacks();
-                PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, i.getStacks());
+                i.DecrementStackSize();
+                PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, i.StackSize);
 
-                if (i.getStacks() == 0)
-                    client.getChampion().getInventory().removeItem(sell.slotId);
+                if (i.StackSize == 0)
+                    client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
             else
             {
                 PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, 0);
-                client.getChampion().getInventory().removeItem(sell.slotId);
+                client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
 
             return true;

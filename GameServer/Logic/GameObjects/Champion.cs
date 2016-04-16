@@ -14,25 +14,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Champion : Unit
     {
+        public Shop Shop { get; protected set; }
+        public InventoryManager Inventory { get; protected set; }
+
         protected string type;
         protected List<Spell> spells = new List<Spell>();
         protected short skillPoints = 0;
         protected int skin;
         protected long respawnTimer = 0;
-        protected Inventory inventory = new Inventory();
         protected float championGoldFromMinions = 0;
         protected long championHitFlagTimer = 0;
-        public int playerId;
-        public int playerHitId;
+        public uint playerId;
+        public uint playerHitId;
 
         public Spell getSpell(int index)
         {
             return spells[index];
         }
-        public Champion(string type, Map map, int id, int playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
+        public Champion(Game game, string type, Map map, uint id, uint playerId) : base(map, id, type, new Stats(), 30, 0, 0, 1200)
         {
             this.type = type;
             this.playerId = playerId;
+
+            Inventory = InventoryManager.CreateInventory(game, this);
+            Shop = Shop.CreateShop(this);
 
             stats.setGold(475.0f);
             stats.setAttackSpeedMultiplier(1.0f);
@@ -92,33 +97,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
             //Fuck LUA
-            /* var scriptloc = "../../lua/champions/" + getType() + "/Passive.lua";
-             Logger.LogCoreInfo("Loading " + scriptloc);
-             try
-             {
-                 unitScript = LuaScript(true);//fix
 
-                 unitScript.lua.set("me", this);
-
-                 unitScript.loadScript(scriptloc);
-
-                 unitScript.lua.set_function("dealMagicDamage", [this](Unit * target, float amount) { this.dealDamageTo(target, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL); });
-                 unitScript.lua.set_function("addBuff", [this](Buff b, Unit * target){
-                     target.addBuff(new Buff(b));
-                     return;
-                 });
-
-                 unitScript.lua.set_function("addParticleTarget", [this](const std::string&particle, Target* u) {
-                     this.getMap().getGame().notifyParticleSpawn(this, u, particle);
-                     return;
-                 });
-
-                 // unitScript.lua.set ("me", this);
-             }
-             catch
-             {
-
-             }*/
+            var scriptloc = Config.contentManager.GetSpellScriptPath(getType(), "Passive");
+            Logger.LogCoreInfo("Loading " + scriptloc);
+            unitScript.lua["me"] = this;
+            
+            unitScript.loadScript(scriptloc);
         }
         public string getType()
         {
@@ -179,20 +163,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var y = 0;
             switch (playerTeam.ToLower())
             {
+                //TODO : repair function
                 case "blue":
-                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.blue[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.blue[teamSize].getYForPlayer(0);
                     break;
                 case "purple":
-                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(playerId);
-                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(playerId);
+                    x = Config.mapSpawns.purple[teamSize].getXForPlayer(0);
+                    y = Config.mapSpawns.purple[teamSize].getYForPlayer(0);
                     break;
             }
 
             return new Tuple<float, float>(x, y);
         }
 
-        public Spell castSpell(byte slot, float x, float y, Unit target, int futureProjNetId, int spellNetId)
+        public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
             Spell s = null;
             foreach (Spell t in spells)
@@ -237,7 +222,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!isDead() && moveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && targetUnit != null)
             {
-                Dictionary<int, GameObject> objects = map.getObjects();
+                Dictionary<uint, GameObject> objects = map.getObjects();
                 float distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 float range = Math.Max(stats.getRange(), DETECT_RANGE);
@@ -358,9 +343,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ++skillPoints;
         }
 
-        public Inventory getInventory()
+        public InventoryManager getInventory()
         {
-            return inventory;
+            return Inventory;
         }
 
         public override void die(Unit killer)

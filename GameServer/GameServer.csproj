@@ -7,7 +7,7 @@
     <ProjectGuid>{CB004023-B938-4EC6-B036-29EE2F55CFA4}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeagueSandbox</RootNamespace>
+    <RootNamespace>LeagueSandbox.GameServer</RootNamespace>
     <AssemblyName>LeagueSandboxGameServer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -73,7 +73,8 @@
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\ChampionFactory.cs" />
     <Compile Include="Logic\Config.cs" />
-    <Compile Include="Logic\ContentManager.cs" />
+    <Compile Include="Logic\Content\ContentManager.cs" />
+    <Compile Include="Logic\Content\ItemCollection.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\Inhibitor.cs" />
     <Compile Include="Logic\GameObjects\LevelProp.cs" />
     <Compile Include="Logic\GameObjects\Monster.cs" />
     <Compile Include="Logic\GameObjects\Minion.cs" />
@@ -89,18 +91,20 @@
     <Compile Include="Logic\GameObjects\Turret.cs" />
     <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
+    <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\MovementVector.cs" />
     <Compile Include="Logic\GameObjects\Pathfinder.cs" />
     <Compile Include="Logic\GameObjects\Spell.cs" />
     <Compile Include="Logic\GameObjects\Stats.cs" />
     <Compile Include="Logic\GameObjects\Target.cs" />
     <Compile Include="Logic\GameObjects\Unit.cs" />
-    <Compile Include="Logic\Items\Item.cs" />
-    <Compile Include="Logic\Items\ItemManager.cs" />
+    <Compile Include="Logic\Content\ItemManager.cs" />
+    <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Lua\LuaScript.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSurrender.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandler.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerManager.cs" />
