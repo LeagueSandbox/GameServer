@@ -10,6 +10,7 @@ namespace GameServerTests
     public class InventoryManagerTests
     {
         [TestMethod]
+        [DeploymentItem("Content", "Content")]
         public void TestAddAndGetItem()
         {
             var game = new DummyGame();
@@ -48,6 +49,7 @@ namespace GameServerTests
         }
 
         [TestMethod]
+        [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
             var game = new DummyGame();
@@ -65,6 +67,7 @@ namespace GameServerTests
         }
 
         [TestMethod]
+        [DeploymentItem("Content", "Content")]
         public void TestSwapItems()
         {
             var game = new DummyGame();
@@ -114,6 +117,7 @@ namespace GameServerTests
         }
 
         [TestMethod]
+        [DeploymentItem("Content", "Content")]
         public void TestGetAvailableItems()
         {
             var game = new DummyGame();
