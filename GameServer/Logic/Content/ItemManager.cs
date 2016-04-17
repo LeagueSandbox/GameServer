@@ -241,7 +241,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return true;
         }
 
-        internal static Item CreateFromType(Game _game, Inventory inventory, ItemType item, byte slot)
+        public void SetSlot(byte newSlot)
+        {
+            Slot = newSlot;
+        }
+
+        public static Item CreateFromType(Game _game, Inventory inventory, ItemType item, byte slot)
         {
             return new Item(_game, inventory, item, slot);
         }
