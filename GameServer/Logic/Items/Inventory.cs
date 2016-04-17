@@ -51,9 +51,20 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         public void SwapItems(int slot1, int slot2)
         {
+            if (slot1 == TRINKET_SLOT || slot2 == TRINKET_SLOT)
+                throw new Exception("Can't swap to or from the trinket slot");
+
             var buffer = _items[slot1];
             _items[slot1] = _items[slot2];
             _items[slot2] = buffer;
+            ChangeItemSlotValue(slot1, (byte)slot1);
+            ChangeItemSlotValue(slot2, (byte)slot2);
+        }
+
+        private void ChangeItemSlotValue(int itemSlot, byte value)
+        {
+            if (_items[itemSlot] == null) return;
+            _items[itemSlot].SetSlot(value);
         }
 
         private Item AddTrinketItem(ItemType item)

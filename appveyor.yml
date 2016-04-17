@@ -1,10 +1,12 @@
-skip_commits:
-  message: /Update.*\.(md|txt|mp3|png|jpg|jpeg|bmp|gif)/
-
-# restore NuGet packages before building
 before_build:
 - nuget restore
 
 build:
   project: GameServer.sln
   verbosity: minimal
+
+after_test:
+  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerTests\bin\Debug\GameServerTests.dll" -filter:"+[LeagueSandboxGameServer]*  -[LeagueSandboxGameServer]GameServer.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServer_coverage.xml
+  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+  - pip install codecov
+  - codecov -f "GameServer_coverage.xml"
