@@ -108,6 +108,7 @@ namespace GameServerTests
             try
             {
                 manager.SwapItems(3, 6);
+                Assert.Fail("This should have failed");
             }
             catch
             {
