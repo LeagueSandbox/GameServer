@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "IsPirateHunter",
+        "Name": "IsPirateHunter",
+        "ResourcePath": "DATA/Characters/MissFortune/Spells/IsPirateHunter.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_IsPirateHunter"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Health Potion",
+        "Name": "Health Potion",
+        "ResourcePath": "DATA/Spells/Health Potion.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Health_Potion"
+        }
+    }
+}

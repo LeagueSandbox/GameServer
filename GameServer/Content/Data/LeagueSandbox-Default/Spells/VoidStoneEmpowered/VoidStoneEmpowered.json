@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "VoidStoneEmpowered",
+        "Name": "VoidStoneEmpowered",
+        "ResourcePath": "DATA/Spells/VoidStoneEmpowered.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_VoidStoneEmpowered"
+        }
+    }
+}

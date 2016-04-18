@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LeblancShackleBeam",
+        "Name": "LeblancShackleBeam",
+        "ResourcePath": "DATA/Characters/Leblanc/Spells/LeblancShackleBeam.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LeblancShackleBeam"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "maokaidrain",
+        "Name": "maokaidrain",
+        "ResourcePath": "DATA/Characters/Maokai/Spells/maokaidrain.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MaokaiDrain",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

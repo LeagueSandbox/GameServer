@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionRSlow",
+        "Name": "SionRSlow",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionRSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionRSlow"
+        }
+    }
+}

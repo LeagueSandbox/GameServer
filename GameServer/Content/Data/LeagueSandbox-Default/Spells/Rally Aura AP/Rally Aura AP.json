@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Rally Aura AP",
+        "Name": "Rally Aura AP",
+        "ResourcePath": "DATA/Spells/Rally Aura AP.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Rally_Aura_AP"
+        }
+    }
+}

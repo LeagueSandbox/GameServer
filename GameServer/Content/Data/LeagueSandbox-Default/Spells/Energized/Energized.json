@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Energized",
+        "Name": "Energized",
+        "ResourcePath": "DATA/Spells/Energized.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Energized",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

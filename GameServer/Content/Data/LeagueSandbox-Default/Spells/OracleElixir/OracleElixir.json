@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "OracleElixir",
+        "Name": "OracleElixir",
+        "ResourcePath": "DATA/Spells/OracleElixir.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_OracleElixir"
+        }
+    }
+}

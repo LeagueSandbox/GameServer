@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZedUltDash",
+        "Name": "ZedUltDash",
+        "ResourcePath": "DATA/Characters/Zed/Spells/ZedUltDash.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "ZedUlt"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "XenZhaoComboAuto",
+        "Name": "XenZhaoComboAuto",
+        "ResourcePath": "DATA/Spells/XenZhaoComboAuto.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_XenZhaoComboAuto",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

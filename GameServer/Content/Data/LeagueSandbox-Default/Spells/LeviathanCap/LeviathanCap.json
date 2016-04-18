@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LeviathanCap",
+        "Name": "LeviathanCap",
+        "ResourcePath": "DATA/Spells/LeviathanCap.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LeviathanCap"
+        }
+    }
+}

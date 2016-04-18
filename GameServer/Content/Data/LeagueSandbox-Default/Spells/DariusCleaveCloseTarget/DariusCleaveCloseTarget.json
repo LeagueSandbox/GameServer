@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "DariusCleaveCloseTarget",
+        "Name": "DariusCleaveCloseTarget",
+        "ResourcePath": "DATA/Characters/Darius/Spells/DariusCleaveCloseTarget.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_DariusCleaveCloseTarget"
+        }
+    }
+}

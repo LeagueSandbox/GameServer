@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ThreeSistersLissandraDefeatedSejuani",
+        "Name": "ThreeSistersLissandraDefeatedSejuani",
+        "ResourcePath": "DATA/Spells/ThreeSistersLissandraDefeatedSejuani.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ThreeSistersLissandraDefeatedSejuani"
+        }
+    }
+}

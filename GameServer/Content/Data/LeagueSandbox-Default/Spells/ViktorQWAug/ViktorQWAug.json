@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ViktorQWAug",
+        "Name": "ViktorQWAug",
+        "ResourcePath": "DATA/Characters/Viktor/Spells/ViktorQWAug.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ViktorQWAug"
+        }
+    }
+}

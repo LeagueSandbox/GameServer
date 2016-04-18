@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Hunter's Call",
+        "Name": "Hunter's Call",
+        "ResourcePath": "DATA/Spells/Hunter's Call.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Hunter's_Call"
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZedUltExecute",
+        "Name": "ZedUltExecute",
+        "ResourcePath": "DATA/Characters/Zed/Spells/ZedUltExecute.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ZedUltExecute"
+        },
+        "UNKNOWN_HASHES": {
+            "1378003864": "ZedUlt"
+        }
+    }
+}

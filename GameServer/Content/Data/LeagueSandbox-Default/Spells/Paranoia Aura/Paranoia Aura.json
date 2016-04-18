@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Paranoia Aura",
+        "Name": "Paranoia Aura",
+        "ResourcePath": "DATA/Spells/Paranoia Aura.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Paranoia_Aura"
+        }
+    }
+}

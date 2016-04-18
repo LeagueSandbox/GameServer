@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "TailwindSelf",
+        "Name": "TailwindSelf",
+        "ResourcePath": "DATA/Characters/Janna/Spells/TailwindSelf.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_TailwindSelf"
+        }
+    }
+}

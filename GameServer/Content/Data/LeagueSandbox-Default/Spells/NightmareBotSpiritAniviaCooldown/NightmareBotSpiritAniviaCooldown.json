@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotSpiritAniviaCooldown",
+        "Name": "NightmareBotSpiritAniviaCooldown",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritAniviaCooldown.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotSpiritAniviaCooldown"
+        }
+    }
+}

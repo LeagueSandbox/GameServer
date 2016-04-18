@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotKarthusBuff",
+        "Name": "NightmareBotKarthusBuff",
+        "ResourcePath": "DATA/Characters/Karthus/Spells/NightmareBotKarthusBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotKarthusBuff"
+        }
+    }
+}

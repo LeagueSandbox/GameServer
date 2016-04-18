@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "DariusSlow",
+        "Name": "DariusSlow",
+        "ResourcePath": "DATA/Characters/Darius/Spells/DariusSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_DariusSlow"
+        }
+    }
+}

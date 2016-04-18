@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Hardening",
+        "Name": "Hardening",
+        "ResourcePath": "DATA/Spells/Hardening.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Hardening"
+        }
+    }
+}

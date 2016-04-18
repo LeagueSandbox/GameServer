@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Emblem of Valour",
+        "Name": "Emblem of Valour",
+        "ResourcePath": "DATA/Spells/Emblem of Valour.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Emblem_of_Valour"
+        }
+    }
+}

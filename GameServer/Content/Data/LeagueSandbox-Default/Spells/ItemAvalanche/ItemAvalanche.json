@@ -1,0 +1,70 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ItemAvalanche",
+        "Name": "ItemAvalanche",
+        "ResourcePath": "DATA/Spells/ItemAvalanche.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ItemAvalanche"
+        },
+        "SpellData": {
+            "AfterEffectName": "Regeneration_buf.troy",
+            "AnimationLoopName": "",
+            "AnimationName": "Spell1",
+            "AnimationWinddownName": "",
+            "ApplyAttackDamage": "0",
+            "CantCancelWhileChanneling": "0",
+            "CantCancelWhileWindingUp": "0",
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": 0,
+            "CastRadius": "100.0000",
+            "CastRange": "200.0000",
+            "CastTargetAdditionalUnitsRadius": 0,
+            "CastType": "0",
+            "Cooldown": 0,
+            "DelayCastOffsetPercent": 0,
+            "DelayTotalTimePercent": 0,
+            "Description": "game_spell_description_RegenerationPotion",
+            "DisplayName": "game_spell_displayname_RegenerationPotion",
+            "DoesntBreakChannels": 1,
+            "Flags": 494596,
+            "HaveAfterEffect": "0",
+            "HaveHitBone": "0",
+            "HaveHitEffect": "0",
+            "HavePointEffect": "0",
+            "HitBoneName": "",
+            "HitEffectName": "AnnieBasicAttack_mis.troy",
+            "InventoryIcon": "Summoner_haste.dds",
+            "IsToggleSpell": "0",
+            "LineMissileBounces": "0",
+            "LineWidth": 0,
+            "MissileBoneName": "R_hand",
+            "MissileEffect": "TrailMagic1.troy",
+            "MissileSpeed": 0,
+            "PointEffectName": "",
+            "SelectionPreference": "none",
+            "TargettingType": "0",
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "1829373218": "Instacast | AffectEnemies | AffectFriends | AffectMinions | AffectHeroes | AffectTurrets | AlwaysSelf",
+            "1832732728": "170 Damage, 35 Damage over 10 seconds, 40 Incinerate.",
+            "2257188466": "none.wav",
+            "2893618454": "none.wav",
+            "2972297017": "220 Damage, 45 Damage over 10 seconds, 50 Incinerate.",
+            "3771724453": 0,
+            "3771724454": 0,
+            "3771724455": 0,
+            "3771724456": 0,
+            "3771724457": 0,
+            "3848571446": "70 Damage, 15 Damage over 10 seconds, 20 Incinerate.",
+            "4111861306": "NONE",
+            "536890465": "0",
+            "57583389": "0",
+            "693168439": "120 Damage, 25 Damage over 10 seconds, 30 Incinerate."
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SonaPassiveDebuff",
+        "Name": "SonaPassiveDebuff",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaPassiveDebuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SonaPassiveDebuff"
+        }
+    }
+}

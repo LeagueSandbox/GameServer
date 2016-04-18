@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotLuxBuff",
+        "Name": "NightmareBotLuxBuff",
+        "ResourcePath": "DATA/Spells/NightmareBotLuxBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotLuxBuff"
+        }
+    }
+}

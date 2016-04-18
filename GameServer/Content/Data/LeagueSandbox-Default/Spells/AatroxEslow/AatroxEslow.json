@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AatroxEslow",
+        "Name": "AatroxEslow",
+        "ResourcePath": "DATA/Characters/Aatrox/Spells/AatroxEslow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LandslideDebuff"
+        }
+    }
+}

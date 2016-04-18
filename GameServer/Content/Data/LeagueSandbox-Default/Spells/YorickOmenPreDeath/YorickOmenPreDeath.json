@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "YorickOmenPreDeath",
+        "Name": "YorickOmenPreDeath",
+        "ResourcePath": "DATA/Spells/YorickOmenPreDeath.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_YorickOmenPreDeath",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

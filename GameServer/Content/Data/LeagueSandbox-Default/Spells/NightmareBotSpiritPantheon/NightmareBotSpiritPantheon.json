@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotSpiritPantheon",
+        "Name": "NightmareBotSpiritPantheon",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritPantheon.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotSpiritPantheon"
+        }
+    }
+}

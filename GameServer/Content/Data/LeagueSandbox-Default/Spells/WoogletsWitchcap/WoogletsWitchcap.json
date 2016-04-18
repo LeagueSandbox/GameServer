@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "WoogletsWitchcap",
+        "Name": "WoogletsWitchcap",
+        "ResourcePath": "DATA/Spells/WoogletsWitchcap.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Wooglets_Witchcap"
+        }
+    }
+}

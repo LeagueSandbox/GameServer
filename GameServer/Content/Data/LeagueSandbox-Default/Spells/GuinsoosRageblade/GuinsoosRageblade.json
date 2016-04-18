@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GuinsoosRageblade",
+        "Name": "GuinsoosRageblade",
+        "ResourcePath": "DATA/Spells/GuinsoosRageblade.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Rageblade"
+        }
+    }
+}

@@ -1,9 +1,9 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 1,
-        "ItemFileName": "4254",
-        "ItemId": 4254,
-        "ItemName": "4254"
+        "ContentFormatVersion": 2,
+        "Id": 4254,
+        "Name": "4254",
+        "ResourcePath": "DATA/Items/4254.inibin"
     },
     "Values": {
         "Data": {

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Soul Shroud Aura Friend",
+        "Name": "Soul Shroud Aura Friend",
+        "ResourcePath": "DATA/Spells/Soul Shroud Aura Friend.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Soul_Shroud_Aura_Friend"
+        }
+    }
+}

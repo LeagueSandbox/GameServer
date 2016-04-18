@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AlZaharNetherGraspSound",
+        "Name": "AlZaharNetherGraspSound",
+        "ResourcePath": "DATA/Spells/AlZaharNetherGraspSound.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AlZaharNetherGraspSound"
+        }
+    }
+}
