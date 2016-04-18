@@ -15,6 +15,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public Dictionary<string, object> MetaData { get; set; }
 
         public int ContentFormatVersion { get { return Convert.ToInt32(MetaData["ContentFormatVersion"]); } }
+        public string ResourcePath { get { return Convert.ToString(MetaData["ResourcePath"]); } }
+        public string Name { get { return Convert.ToString(MetaData["Name"]); } }
+        public object Id { get { return MetaData["Id"]; } }
 
         public T GetValue<T>(string section, string name)
         {
@@ -73,33 +76,31 @@ namespace LeagueSandbox.GameServer.Logic.Content
     {
     }
 
-    public class ItemCollectionEntry : ContentCollectionEntry
+    public class ItemContentCollectionEntry : ContentCollectionEntry
     {
-        public string ItemFileName { get { return Convert.ToString(MetaData["ItemFileName"]); } }
-        public string ItemName { get { return Convert.ToString(MetaData["ItemName"]); } }
-        public int ItemId { get { return Convert.ToInt32(MetaData["ItemId"]); } }
+        public int ItemId { get { return Convert.ToInt32(Id); } }
     }
 
-    public class ItemCollection : ContentCollection
+    public class ItemContentCollection : ContentCollection
     {
-        private Dictionary<int, ItemCollectionEntry> _items;
-        public Dictionary<int, ItemCollectionEntry>.Enumerator GetEnumerator() { return _items.GetEnumerator(); }
+        private Dictionary<int, ItemContentCollectionEntry> _items;
+        public Dictionary<int, ItemContentCollectionEntry>.Enumerator GetEnumerator() { return _items.GetEnumerator(); }
 
-        private ItemCollection()
+        private ItemContentCollection()
         {
-            _items = new Dictionary<int, ItemCollectionEntry>();
+            _items = new Dictionary<int, ItemContentCollectionEntry>();
         }
 
         private void AddFromPath(string dataPath)
         {
             var data = File.ReadAllText(dataPath);
-            var collectionEntry = JsonConvert.DeserializeObject<ItemCollectionEntry>(data);
+            var collectionEntry = JsonConvert.DeserializeObject<ItemContentCollectionEntry>(data);
             _items.Add(collectionEntry.ItemId, collectionEntry);
         }
 
-        public static ItemCollection LoadItemsFrom(string directoryPath)
+        public static ItemContentCollection LoadItemsFrom(string directoryPath)
         {
-            var result = new ItemCollection();
+            var result = new ItemContentCollection();
             var itemDirectoryPaths = Directory.GetDirectories(directoryPath);
             foreach(var location in itemDirectoryPaths)
             {
