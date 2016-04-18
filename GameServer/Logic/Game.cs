@@ -61,6 +61,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             PacketHandlerManager = new PacketHandlerManager(this);
             _map = new SummonersRift(this);
             PacketNotifier = new PacketNotifier(this);
+            PacketNotifier.setMap(_map);
+            ApiFunctionManager.SetMap(_map);
 
             var id = 1;
             foreach (var p in Config.Players)

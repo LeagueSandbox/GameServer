@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -42,6 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
+        internal const long UPDATE_TIME = 500;
 
         protected Stats stats;
 
@@ -77,10 +79,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private object _buffsLock = new object();
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
+        private long _timerUpdate;
+
         public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;
+        }
+
+        public virtual void LoadLua()
+        {
+            unitScript = new LuaScript();
+
+            unitScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            ApiFunctionManager.AddBaseFunctionToLuaScript(unitScript);
         }
 
         public Stats getStats()
@@ -90,18 +102,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void update(long diff)
         {
-            //fuck LUA
-            /* if (unitScript.isLoaded())
-             {
-                 try
-                 {
-                     unitScript.lua.get<sol::function>("onUpdate").call<void>(diff);
-                 }
-                 catch (sol::error e)
-                 {
-                     CORE_ERROR("%s", e.what());
-                 }
-             }*/
+            _timerUpdate += diff;
+            if (_timerUpdate >= UPDATE_TIME)
+            {
+                if (unitScript.isLoaded())
+                {
+                    try
+                    {
+                        unitScript.lua["diff"] = _timerUpdate;
+                        unitScript.lua["me"] = this;
+                        unitScript.lua.DoString("onUpdate(diff)");
+                    }
+                    catch (LuaException e)
+                    {
+                        Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    }
+                }
+                _timerUpdate = 0;
+            }
 
             if (isDead())
             {
@@ -239,37 +257,38 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.getTotalAd() : stats.getTotalAd();
             dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK);
-
-            //fuck LUA
-            /*if (unitScript.isLoaded())
-            {
-                try
-                {
-                    unitScript.lua.get<sol::function>("onAutoAttack").call<void>(target);
-                }
-                catch (sol::error e)
-                {
-                    CORE_ERROR("Error callback ondealdamage: %s", e.what());
-                }
-            }*/
-        }
-
-        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
-        {
-
-            /* //Fuck LUA
+            
             if (unitScript.isLoaded())
             {
                 try
                 {
-                    //damage = 
-                    unitScript.lua.get<sol::function>("onDealDamage").call<void>(target, damage, type, source);
+                    unitScript.lua["target"] = target;
+                    unitScript.lua.DoString("onAutoAttack(target)");
                 }
-                catch (sol::error e)
+                catch (LuaScriptException e)
                 {
-                    CORE_ERROR("Error callback ondealdamage: %s", e.what());
+
                 }
-            }*/
+            }
+        }
+
+        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
+        {
+            if (unitScript.isLoaded())
+            {
+                try
+                {
+                    unitScript.lua["target"] = target;
+                    unitScript.lua["damage"] = damage;
+                    unitScript.lua["type"] = type;
+                    unitScript.lua["source"] = source;
+                    unitScript.lua.DoString("onDealDamage(target, damage, type, source)");
+                }
+                catch (LuaScriptException e)
+                {
+
+                }
+            }
 
 
             float defense = 0;
@@ -323,6 +342,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void die(Unit killer)
         {
+            if (unitScript.isLoaded())
+            {
+                try
+                {
+                    unitScript.lua["killer"] = killer;
+                    unitScript.lua.DoString("onDie(killer)");
+                }
+                catch (LuaScriptException e)
+                {
+
+                }
+            }
+
             setToRemove();
             _game.GetMap().StopTargeting(this);
 
@@ -450,7 +482,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (_buffs.ContainsKey(name))
                     return _buffs[name];
-
                 return null;
             }
         }

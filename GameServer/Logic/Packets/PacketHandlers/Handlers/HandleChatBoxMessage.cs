@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (message.msg.StartsWith("."))
             {
-                var cmd = new string[] { ".set", ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".junglespawn", ".skillpoints", ".level", ".tp", ".coords", ".ch" };
+                var cmd = new string[] { ".set", ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".junglespawn", ".skillpoints", ".level", ".tp", ".coords", ".ch", ".reload" };
                 var debugMsg = new StringBuilder();
                 split = message.msg.ToLower().Split(' ');
                 switch (split[0])
@@ -229,6 +229,24 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var sender = game.GetPeerInfo(peer);
                         var min = new Monster(game, game.GetNewNetID(), sender.GetChampion().getX(), sender.GetChampion().getY(), sender.GetChampion().getX(), sender.GetChampion().getY(), "AncientGolem", "AncientGolem1.1.1");
                         game.GetMap().AddObject(min);
+                        return true;
+                    case ".reload":
+                        game.setStarted(false);
+                        foreach (var obj in game.getMap().getObjects())
+                        {
+                            var m = obj.Value as Minion;
+                            if (m != null)
+                            {
+                                m.LoadLua();
+                            }
+
+                            var c = obj.Value as Champion;
+                            if (c != null)
+                            {
+                                c.LoadLua();
+                            }
+                        }
+                        game.setStarted(true);
                         return true;
                 }
             }

@@ -96,12 +96,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
-            var scriptloc = game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
-            Logger.LogCoreInfo("Loading " + scriptloc);
-            unitScript.lua["me"] = this;
+            LoadLua();
+        }
 
+        public override void LoadLua()
+        {
+            base.LoadLua();
+            var scriptloc = Config.contentManager.GetSpellScriptPath(getType(), "Passive");
+            unitScript.lua["me"] = this;
             unitScript.loadScript(scriptloc);
         }
+
         public string getType()
         {
             return type;

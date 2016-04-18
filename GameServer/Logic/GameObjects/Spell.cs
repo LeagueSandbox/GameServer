@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -286,9 +287,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 function getTarget()
                     return u
                 end");
-
-            script.lua.DoString("getTarget()");
-
+            
             script.lua["p"] = p;
             script.lua.DoString(@"
                 function destroyProjectile()
@@ -314,20 +313,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 function getNumberObjectsHit(amount)
                     return p.getObjectsHit().Count
                 end");
-
-            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit) }));
-
-            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
-
             loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
             {
                 script.lua.DoString("applyEffects()");
             }
-            catch (NLua.Exceptions.LuaScriptException ex)
+            catch (LuaException e)
             {
-                Logger.LogCoreError("Lua exception " + ex.Message);
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
 
@@ -354,16 +348,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float getRange()
         {
             return range;
-        }
-
-        public void teleportTo(float x, float y)
-        {
-            owner.GetGame().PacketNotifier.notifyTeleport(owner, x, y);
-        }
-
-        public bool isWalkable(float x, float y)
-        {
-            return owner.GetGame().GetMap().IsWalkable(x, y);
         }
 
         public float getProjectileSpeed()
@@ -466,7 +450,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public void doLua()
         {
-            //Fuck LUA
             LuaScript script = new LuaScript();
 
             loadLua(script); //comment this line for no reload on the fly, better performance
@@ -476,9 +459,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 script.lua.DoString("finishCasting()");
             }
-            catch (NLua.Exceptions.LuaScriptException ex)
+            catch (LuaException e)
             {
-                Logger.LogCoreError("Lua exception " + ex.Message);
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
         public void loadLua(LuaScript script)
@@ -495,6 +478,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            ApiFunctionManager.AddBaseFunctionToLuaScript(script);
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
@@ -502,47 +486,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("getLevel"));
             script.lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
             script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
-
             script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
             script.lua.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));
             script.lua.RegisterFunction("getRange", this, typeof(Spell).GetMethod("getRange"));
-
-            script.lua.RegisterFunction("setChampionModel", owner, typeof(Champion).GetMethod("setModel", new Type[] { typeof(string) }));
-
-            script.lua.RegisterFunction("teleportTo", this, typeof(Spell).GetMethod("teleportTo", new Type[] { typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("isWalkable", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
-
-            script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("isWalkable", new Type[] { typeof(float), typeof(float) }));
-
-
             script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
-            script.lua.RegisterFunction("getCoefficient", this, typeof(Spell).GetMethod("getCoefficient"));
-
+            script.lua.RegisterFunction("getCoefficient", this, typeof (Spell).GetMethod("getCoefficient"));
             script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
-
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-
-            script.lua.RegisterFunction("addParticle", this, typeof(Spell).GetMethod("addParticle", new Type[] { typeof(string), typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
-
-            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit) }));
-
-            script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
-
-            script.lua.RegisterFunction("getUnitsInRange", this, typeof(Spell).GetMethod("getUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-            script.lua.RegisterFunction("getChampionsInRange", this, typeof(Spell).GetMethod("getChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-
-            /*
-            * This have to be in general function, not in spell
-            script.lua.set_function("getTeam", [this](Object * o) { return o->getTeam(); });
-            script.lua.set_function("isDead", [this](Unit * u) { return u->isDead(); });
-            */
-
-
-            //TODO : Add buffs
-
+            
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
                 b->setMovementSpeedPercentModifier(amount);
@@ -596,17 +548,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 std::vector < std::pair < std::string, std::string>> animationPairs;
                 owner->getMap()->getGame()->notifySetAnimation(u, animationPairs);
                 return;
-            });
+            });*/
 
-            script.lua.set_function("dashTo", [this](Unit * u, float x, float y, float dashSpeed) {
-                u->dashTo(x, y, dashSpeed);
-                u->setTargetUnit(0);
-                owner->getMap()->getGame()->notifyDash(u, x, y, dashSpeed);
-                return;
-            });
-
-            
-            */
             script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
         }
 

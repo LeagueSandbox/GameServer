@@ -1293,13 +1293,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
-        public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, int stacks, float time, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
             buffer.Write((byte)0x01); //Slot
-            buffer.Write((byte)BuffType.Knockup); //Type
-            buffer.Write((byte)0x03); // stacks
-            buffer.Write((byte)0x01); // Visible
+            buffer.Write((byte)BuffType.Fear); //Type
+            buffer.Write((byte)0x01); // stacks
+            buffer.Write((byte)0x00); // Visible
             buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
@@ -1310,7 +1310,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            buffer.Write((float)10.0f);
+            buffer.Write((float)time);
 
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x50);
@@ -1332,7 +1332,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
-            buffer.Write((byte)0x05);
+            buffer.Write((byte)0x01);
             buffer.Write(RAFManager.getInstance().getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?
@@ -1549,23 +1549,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class SetTarget : BasePacket
-    {
-
-        public SetTarget(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget, attacker.getNetId())
-        {
-            if (attacked != null)
-            {
-                buffer.Write(attacked.getNetId());
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
-        }
-
-    }
-
     public class Surrender : BasePacket
     {
         public Surrender() : base(PacketCmdS2C.PKT_S2C_Surrender)
@@ -1596,6 +1579,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(win ? (byte)1 : (byte)0); //0 : lose 1 : Win
         }
+    }
+
+    public class SetTarget : BasePacket
+    {
+
+        public SetTarget(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget, attacker.getNetId())
+        {
+            if (attacked != null)
+            {
+                buffer.Write(attacked.getNetId());
+            }
+            else
+            {
+                buffer.Write((int)0);
+            }
+        }
+
     }
 
     public class SetTarget2 : BasePacket
@@ -1740,7 +1740,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00); // unk
             buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
             buffer.Write((int)spellNetId); // Spell net ID
-            buffer.Write((byte)0); // unk
+            buffer.Write((byte)1); // unk
             buffer.Write((float)1.0f); // unk
             buffer.Write((int)s.getOwner().getNetId());
             buffer.Write((int)s.getOwner().getNetId());

@@ -4,15 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic;
+using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    /*public enum BuffType
-    {
-        BUFFTYPE_ETERNAL,
-        BUFFTYPE_TEMPORARY
-    }*/
-
     public enum BuffType : byte
     {
         Internal,
@@ -51,119 +47,138 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Buff
     {
-        protected float duration;
-        protected float movementSpeedPercentModifier;
-        protected float timeElapsed;
-        protected bool remove;
-        protected Unit attachedTo;
-        protected Unit attacker; // who added this buff to the unit it's attached to
-        protected BuffType buffType;
-        protected LuaScript buffScript;
-        protected string name;
-        protected int stacks;
+        protected float _duration;
+        protected float _movementSpeedPercentModifier;
+        protected float _timeElapsed;
+        protected bool _remove;
+        protected Unit _attachedTo;
+        protected Unit _attacker; // who added this buff to the unit it's attached to
+        protected BuffType _buffType;
+        protected LuaScript _buffScript = new LuaScript();
+        protected string _name;
+        protected int _stacks;
 
-        protected virtual void init()
+        public BuffType GetBuffType()
         {
-
+            return _buffType;
         }
 
-        public BuffType getBuffType()
+        public Unit GetUnit()
         {
-            return buffType;
+            return _attachedTo;
         }
 
-        public Unit getUnit()
+        public Unit GetSourceUnit()
         {
-            return attachedTo;
+            return _attacker;
         }
 
-        public Unit getSourceUnit()
+        public void SetName(string name)
         {
-            return attacker;
+            _name = name;
         }
 
-        public void setName(string name)
+        public bool NeedsToRemove()
         {
-            this.name = name;
+            return _remove;
         }
 
-
-        public bool needsToRemove()
+        public Buff(string buffName, float dur, int stacks, Unit onto, Unit from)
         {
-            return remove;
-        }
-        public Buff(string buffName, float dur, int stacks, Unit u, Unit attacker)
-        {
-            this.duration = dur;
-            this.stacks = stacks;
-            this.name = buffName;
-            this.timeElapsed = 0;
-            this.remove = false;
-            this.attachedTo = u;
-            this.attacker = attacker;
-            this.buffType = BuffType.Aura;
-            this.movementSpeedPercentModifier = 0.0f;
-            attachedTo.GetGame().PacketNotifier.notifyAddBuff(this);
-        }
-        public Buff(string buffName, float dur, Unit u) //no attacker specified = selfbuff, attacker aka source is same as attachedto
-        {
-            this.duration = dur;
-            this.name = buffName;
-            this.timeElapsed = 0;
-            this.remove = false;
-            this.attachedTo = u;
-            this.attacker = u;
-            this.buffType = BuffType.Aura;
-            this.movementSpeedPercentModifier = 0.0f;
-            attachedTo.GetGame().PacketNotifier.notifyAddBuff(this);
-        }
-
-        public float getMovementSpeedPercentModifier()
-        {
-            return movementSpeedPercentModifier;
-        }
-
-        public void setMovementSpeedPercentModifier(float modifier)
-        {
-            movementSpeedPercentModifier = modifier;
-        }
-
-        public string getName()
-        {
-            return name;
-        }
-
-        public void setTimeElapsed(float time)
-        {
-            timeElapsed = time;
-        }
-
-        public void update(long diff)
-        {
-            timeElapsed += (float)diff / 1000.0f;
-
-            //Fuck LUA
-            /*  if (buffScript != null && buffScript.isLoaded())
-              {
-                  buffScript.lua.get<sol::function>("onUpdate").call<void>(diff);
-              }*/
-
-            if (duration != 0.0f)
+            _duration = dur;
+            _stacks = stacks;
+            _name = buffName;
+            _timeElapsed = 0;
+            _remove = false;
+            _attachedTo = onto;
+            _attacker = from;
+            _buffType = BuffType.Aura;
+            LoadLua();
+            try
             {
-                if (timeElapsed >= duration)
+                _buffScript.lua.DoString("onAddBuff()");
+            }
+            catch (LuaException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
+            PacketNotifier.notifyAddBuff(this);
+        }
+
+        public Buff(string buffName, float dur, int stacks, Unit onto) : this(buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        {
+        }
+
+        public void LoadLua()
+        {
+            var scriptLoc = Config.contentManager.GetBuffScriptPath(_name);
+            Logger.LogCoreInfo("Loading buff from " + scriptLoc);
+
+            _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            _buffScript.lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
+            _buffScript.lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
+            
+            ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
+
+            _buffScript.loadScript(scriptLoc);
+        }
+
+        public string GetName()
+        {
+            return _name;
+        }
+
+        public void SetTimeElapsed(float time)
+        {
+            _timeElapsed = time;
+        }
+        
+        public void Update(long diff)
+        {
+            _timeElapsed += (float)diff / 1000.0f;
+            
+            if (_buffScript.isLoaded())
+            {
+                try
                 {
-                    if (name != "")
-                    { // empty name = no buff icon
-                        attachedTo.GetGame().PacketNotifier.notifyRemoveBuff(attachedTo, name);
+                    _buffScript.lua["diff"] = diff;
+                    _buffScript.lua.DoString("onUpdate(diff)");
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+
+            if (_duration != 0.0f)
+            {
+                if (_timeElapsed >= _duration)
+                {
+                    try
+                    {
+                        _buffScript.lua.DoString("onBuffEnd()");
                     }
-                    remove = true;
+                    catch (LuaException e)
+                    {
+                        Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    }
+                    if (_name != "")
+                    { // empty name = no buff icon
+                        attachedTo.GetGame().PacketNotifier.notifyRemoveBuff(_attachedTo, _name);
+                    }
+                    _remove = true;
                 }
             }
         }
 
-        public int getStacks()
+        public int GetStacks()
         {
-            return stacks;
+            return _stacks;
+        }
+
+        public float GetDuration()
+        {
+            return _duration;
         }
     }
 }
