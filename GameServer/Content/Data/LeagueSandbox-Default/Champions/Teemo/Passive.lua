@@ -1,4 +1,11 @@
+local timerPassive = 0
+
 function onUpdate(diff)
+	if(timerPassive <= 1500) then
+		timerPassive = timerPassive + diff
+	else
+		--addBuff("Camouflage", 0.0, me, me)
+	end
 end
 
 function onDamageTaken(attacker, damage, dmgType, source) --todo add callbacks for these 
@@ -6,7 +13,8 @@ function onDamageTaken(attacker, damage, dmgType, source) --todo add callbacks f
 end
 
 function onAutoAttack(target)
-    print("We just auto attacked!")
+	addBuff("ToxicShot", 4.0, target, me)
+    --[[print("We just auto attacked!")
     
     local bonus = tonumber(me:getSpell(2):getLevel()) * 10
     
@@ -22,7 +30,7 @@ function onAutoAttack(target)
         
         addParticleTarget("toxicshot_tar.troy", target)
         addParticleTarget("Global_Poison.troy", target)
-    end
+    end]]
 end
 
 function onDealDamage(target, damage, damageType, source)

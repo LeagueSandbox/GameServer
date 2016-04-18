@@ -24,9 +24,9 @@ function finishCasting()
 			mostWoundedAlliedChampion:getStats():setCurrentHealth(newHealth)
 		end
 		
-		local buff = Buff.new("Haste", 1.0, BUFFTYPE_TEMPORARY, mostWoundedAlliedChampion, owner)
-		buff:setMovementSpeedPercentModifier(30)
-		addBuff(buff, mostWoundedAlliedChampion)
+		--local buff = Buff.new("Haste", 1.0, BUFFTYPE_TEMPORARY, mostWoundedAlliedChampion, owner)
+		--buff:setMovementSpeedPercentModifier(30)
+		--addBuff(buff, mostWoundedAlliedChampion)
 		
 		addParticleTarget( "global_ss_heal_02.troy", mostWoundedAlliedChampion )
 		addParticleTarget( "global_ss_heal_speedboost.troy", mostWoundedAlliedChampion )
@@ -39,9 +39,9 @@ function finishCasting()
 		owner:getStats():setCurrentHealth(newHealth)
 	end
 	
-	local buff2 = Buff.new("Haste", 1.0, BUFFTYPE_TEMPORARY, owner)    
-	buff2:setMovementSpeedPercentModifier(30)    
-	addBuff(buff2, owner)
+	--local buff2 = Buff.new("Haste", 1.0, BUFFTYPE_TEMPORARY, owner)    
+	--buff2:setMovementSpeedPercentModifier(30)    
+	--addBuff(buff2, owner)
 	
 	addParticleTarget( "global_ss_heal.troy", owner )	
 	addParticleTarget( "global_ss_heal_speedboost.troy", owner )

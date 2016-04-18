@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void notifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.getUnit(), b.getSourceUnit(), b.getStacks(), b.getName());
+            var add = new AddBuff(b.GetUnit(), b.GetSourceUnit(), b.GetStacks(), b.GetDuration(), b.GetName());
             PacketHandlerManager.getInstace().broadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -226,10 +226,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public static void notifySetTarget(Unit attacker, Unit target)
         {
             var st = new SetTarget(attacker, target);
-            //PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
+            PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
 
             var st2 = new SetTarget2(attacker, target);
-            //PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
+            PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
         }
 
         public static void notifyChampionDie(Champion die, Unit killer, int goldFromKill)
