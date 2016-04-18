@@ -2365,68 +2365,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                     }
                 }
             }
-
-            /*var masks = new List<MasterMask>();
-            byte masterMask = 0;
-
-            foreach (var p in stats)
-            {
-                masterMask |= (byte)p.Key;
-                masks.Add(p.Key);
-            }
-
-            masks.Sort();
-
-            buffer.Write((byte)1);
-            buffer.Write((byte)masterMask);
-            buffer.Write((int)u.getNetId());
-
-
-            foreach (var m in masks)
-            {
-                uint mask = 0;
-                byte size = 0;
-
-                var updatedStats = stats[m];
-                updatedStats.OrderBy(x => x.Key);
-                foreach (var it in updatedStats)
-                {
-                    size += u.getStats().getSize(m, it.Key);
-                    mask |= (uint)it.Key;
-                }
-                //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
-                //  System.Diagnostics.Debugger.Break();
-                buffer.Write((uint)mask);
-                buffer.Write((byte)size);
-
-                for (int i = 0; i < 32; i++)
-                {
-                    int tmpMask = (1 << i);
-                    if ((tmpMask & mask) > 0)
-                    {
-                        if (u.getStats().getSize(m, (FieldMask)tmpMask) == 4)
-                        {
-                            float f = u.getStats().getStat(m, (FieldMask)tmpMask);
-                            var c = BitConverter.GetBytes(f);
-                            if (c[0] >= 0xFE)
-                            {
-                                c[0] = (byte)0xFD;
-                            }
-                            buffer.Write(BitConverter.ToSingle(c, 0));
-                        }
-                        else if (u.getStats().getSize(m, (FieldMask)tmpMask) == 2)
-                        {
-                            short stat = (short)Math.Floor(u.getStats().getStat(m, (FieldMask)tmpMask) + 0.5);
-                            buffer.Write(stat);
-                        }
-                        else
-                        {
-                            byte stat = (byte)Math.Floor(u.getStats().getStat(m, (FieldMask)tmpMask) + 0.5);
-                            buffer.Write(stat);
-                        }
-                    }
-                }
-            }*/
         }
     }
 
