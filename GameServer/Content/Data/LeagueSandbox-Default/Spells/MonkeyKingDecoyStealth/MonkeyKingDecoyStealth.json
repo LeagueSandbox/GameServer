@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "MonkeyKingDecoyStealth",
+        "Name": "MonkeyKingDecoyStealth",
+        "ResourcePath": "DATA/Spells/MonkeyKingDecoyStealth.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MonkeyKingDecoyStealth"
+        }
+    }
+}

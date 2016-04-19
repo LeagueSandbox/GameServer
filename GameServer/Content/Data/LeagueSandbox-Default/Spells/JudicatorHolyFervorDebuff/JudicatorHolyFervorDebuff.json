@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "JudicatorHolyFervorDebuff",
+        "Name": "JudicatorHolyFervorDebuff",
+        "ResourcePath": "DATA/Spells/JudicatorHolyFervorDebuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_JudicatorHolyFervorDebuff"
+        }
+    }
+}

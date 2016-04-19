@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Black Cleaver",
+        "Name": "Black Cleaver",
+        "ResourcePath": "DATA/Spells/Black Cleaver.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Black_Cleaver"
+        }
+    }
+}

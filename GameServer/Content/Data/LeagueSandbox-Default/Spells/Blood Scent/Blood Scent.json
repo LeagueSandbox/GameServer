@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Blood Scent",
+        "Name": "Blood Scent",
+        "ResourcePath": "DATA/Spells/Blood Scent.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Blood_Scent",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

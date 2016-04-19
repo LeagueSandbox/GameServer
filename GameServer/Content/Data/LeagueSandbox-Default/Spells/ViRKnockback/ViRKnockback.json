@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ViRKnockback",
+        "Name": "ViRKnockback",
+        "ResourcePath": "DATA/Characters/Vi/Spells/ViRKnockback.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ViRKnockback"
+        }
+    }
+}

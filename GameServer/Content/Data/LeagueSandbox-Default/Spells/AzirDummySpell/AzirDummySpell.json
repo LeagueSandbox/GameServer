@@ -1,0 +1,39 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AzirDummySpell",
+        "Name": "AzirDummySpell",
+        "ResourcePath": "DATA/Characters/Azir/Spells/AzirDummySpell.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AnimationName": "",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": "0",
+            "CastRange": "25000",
+            "CastType": "0",
+            "Cooldown": 0,
+            "Description": "game_spell_description_",
+            "DisplayName": "game_spell_displayname_",
+            "DynamicExtended": "game_spell_levelup_",
+            "DynamicTooltip": "game_spell_tooltip_",
+            "Flags": 262148,
+            "InventoryIcon": "",
+            "OverrideCastTime": "0",
+            "TargettingType": "0",
+            "UseAnimatorFramerate": "0"
+        },
+        "UNKNOWN_HASHES": {
+            "2629301966": 0,
+            "2629301967": 0,
+            "2629301968": 0,
+            "2629301969": 0,
+            "2629301970": 0,
+            "3771724453": 0,
+            "3771724454": 0,
+            "3771724455": 0,
+            "3771724456": 0,
+            "3771724457": 0
+        }
+    }
+}

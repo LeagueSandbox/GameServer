@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CaitlynHeadshotCount",
+        "Name": "CaitlynHeadshotCount",
+        "ResourcePath": "DATA/Characters/Caitlyn/Spells/CaitlynHeadshotCount.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CaitlynHeadshotCount",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "VelkozQSlow",
+        "Name": "VelkozQSlow",
+        "ResourcePath": "DATA/Characters/Velkoz/Spells/VelkozQSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_VelkozQSlow"
+        }
+    }
+}

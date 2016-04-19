@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ItemSmiteWeakness",
+        "Name": "ItemSmiteWeakness",
+        "ResourcePath": "DATA/Spells/ItemSmiteWeakness.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ItemSmiteWeakness"
+        }
+    }
+}

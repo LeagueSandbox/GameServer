@@ -41,8 +41,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public static ItemManager LoadItems(Game game)
         {
             var result = new ItemManager(game);
-            var itemCollection = ItemCollection.LoadItemsFrom("Content/Data/LeagueSandbox-Default/Items");
-            foreach(var entry in itemCollection)
+            var itemContentCollection = ItemContentCollection.LoadItemsFrom("Content/Data/LeagueSandbox-Default/Items");
+            foreach(var entry in itemContentCollection)
             {
                 var itemType = ItemType.Load(game, result, entry.Value);
                 result._itemTypes.Add(entry.Key, itemType);
@@ -55,9 +55,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
     {
         private Game _game;
         private ItemManager _owner;
-        private ItemCollectionEntry _itemInfo;
+        private ItemContentCollectionEntry _itemInfo;
         private StatMod[] _statMods;
-        private int _totalPrice;
 
         // Meta
         public int ItemId { get; private set; }
@@ -94,12 +93,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public int TotalPrice { get { return Recipe.TotalPrice; } }
         public List<StatMod> StatMods { get { if (_statMods == null) CreateStatMods(); return _statMods.ToList(); } }
 
-        private ItemType(Game game, ItemManager owner, ItemCollectionEntry itemInfo)
+        private ItemType(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             _game = game;
             _owner = owner;
             _itemInfo = itemInfo;
-            _totalPrice = -1;
         }
 
         public void CreateStatMods()
@@ -126,13 +124,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
             Recipe = ItemRecipe.FromItemType(_game, this);
         }
 
-        public static ItemType Load(Game game, ItemManager owner, ItemCollectionEntry itemInfo)
+        public static ItemType Load(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
             var result = new ItemType(game, owner, itemInfo)
             {
                 ItemId = itemInfo.ItemId,
-                Name = itemInfo.ItemName,
+                Name = itemInfo.Name,
                 MaxStack = itemInfo.SafeGetInt("Data", "MaxStack"),
                 Price = itemInfo.SafeGetInt("Data", "Price"),
                 ItemGroup = itemInfo.SafeGetString("Data", "ItemGroup"),

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "TabletOfCommand",
+        "Name": "TabletOfCommand",
+        "ResourcePath": "DATA/Spells/TabletOfCommand.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_TabletOfCommand"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "EvelynnStealthMarker",
+        "Name": "EvelynnStealthMarker",
+        "ResourcePath": "DATA/Spells/EvelynnStealthMarker.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_EvelynnStealthMarker",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KhazixEvolve",
+        "Name": "KhazixEvolve",
+        "ResourcePath": "DATA/Characters/Khazix/Spells/KhazixEvolve.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KhazixEvolve"
+        }
+    }
+}

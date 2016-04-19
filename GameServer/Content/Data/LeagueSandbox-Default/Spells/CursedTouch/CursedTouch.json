@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CursedTouch",
+        "Name": "CursedTouch",
+        "ResourcePath": "DATA/Spells/CursedTouch.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CursedTouch"
+        }
+    }
+}

@@ -1,0 +1,63 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "XerathRMissileWrapper",
+        "Name": "XerathRMissileWrapper",
+        "ResourcePath": "DATA/Characters/Xerath/Spells/XerathRMissileWrapper.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "XerathLocusOfPower2",
+            "AnimationName": "Attack1",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": "0",
+            "CastRange": "25000",
+            "CastType": "0",
+            "Coefficient": 0.43,
+            "Cooldown": 0.6,
+            "Description": "game_spell_description_XerathLocusOfPower",
+            "DisplayName": "game_spell_displayname_XerathLocusOfPower",
+            "DoesntBreakChannels": 1,
+            "DynamicExtended": "game_spell_levelup_XerathLocusOfPower",
+            "DynamicTooltip": "game_spell_tooltip_XerathLocusOfPower",
+            "Flags": 115748,
+            "InventoryIcon": "Xerath_R1.dds",
+            "OverrideCastTime": "0",
+            "TargettingType": 2,
+            "UseAnimatorFramerate": "0",
+            "UseMinimapTargeting": 1
+        },
+        "UNKNOWN_HASHES": {
+            "1168646476": "10",
+            "1307804625": "3200",
+            "1469470033": "190",
+            "1631135441": "300",
+            "2009634128": "3200",
+            "2109227959": "AOE",
+            "2171299536": "190",
+            "2332964944": 245,
+            "2494630352": 3,
+            "2591107560": 175,
+            "2591107561": "200",
+            "2591107562": 225,
+            "2873129039": "190",
+            "3034794447": "190",
+            "305151565": 3,
+            "3196459855": 3,
+            "3358125263": "10",
+            "3736623950": "190",
+            "3771724453": 0,
+            "3771724454": 0,
+            "3771724455": 0,
+            "3771724456": 0,
+            "3771724457": 0,
+            "3898289358": 3,
+            "4059954766": "10",
+            "4080107611": 1,
+            "4199112915": "5600",
+            "466816973": "10",
+            "605975122": "4400",
+            "767640530": "190"
+        }
+    }
+}

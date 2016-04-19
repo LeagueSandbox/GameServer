@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "EzrealEssenceFluxMissileTracker",
+        "Name": "EzrealEssenceFluxMissileTracker",
+        "ResourcePath": "DATA/Spells/EzrealEssenceFluxMissileTracker.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_EzrealEssenceFluxBuff"
+        }
+    }
+}

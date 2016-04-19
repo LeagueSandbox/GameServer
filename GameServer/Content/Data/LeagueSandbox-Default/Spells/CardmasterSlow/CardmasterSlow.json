@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CardmasterSlow",
+        "Name": "CardmasterSlow",
+        "ResourcePath": "DATA/Spells/CardmasterSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CardmasterSlow"
+        }
+    }
+}

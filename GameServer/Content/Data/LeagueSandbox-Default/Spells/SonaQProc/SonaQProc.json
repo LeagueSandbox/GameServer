@@ -1,0 +1,54 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SonaQProc",
+        "Name": "SonaQProc",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaQProc.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "SonaQ",
+            "BounceRadius": "450.0000",
+            "CantCancelWhileWindingUp": 1,
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": 0,
+            "CastRadius": "710.0000",
+            "CastRange": "25000.0000",
+            "CastRangeDisplayOverride": 0,
+            "CastTargetAdditionalUnitsRadius": 0,
+            "CastType": 1,
+            "Coefficient": 0.6,
+            "Cooldown": 0,
+            "DeathRecapPriority": 6,
+            "DelayCastOffsetPercent": -0.15,
+            "DelayTotalTimePercent": -0.6,
+            "Flags": 115716,
+            "HaveAfterEffect": 1,
+            "HaveHitBone": "0",
+            "HaveHitEffect": 1,
+            "HavePointEffect": "0",
+            "HitBoneName": "",
+            "HitEffectName": "globalhit_mana.troy",
+            "MissileBoneName": "WEAPON",
+            "MissileEffect": "SoulShackle_beam_green.troy",
+            "MissileSpeed": "2300.0000",
+            "PointEffectName": "",
+            "SelectionPreference": "foe",
+            "SpellRevealsChampion": "1.0000",
+            "TargettingType": 1,
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "1829373218": "Instacast | AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "278926620": "DefaultRangeIndicator.dds",
+            "3771724453": 0,
+            "3771724454": 0,
+            "3771724455": 0,
+            "3771724456": 0,
+            "3771724457": 0,
+            "536890465": 1,
+            "57583389": 1
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "InfectedCleaverDebuff",
+        "Name": "InfectedCleaverDebuff",
+        "ResourcePath": "DATA/Spells/InfectedCleaverDebuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_InfectedCleaverDebuff"
+        }
+    }
+}

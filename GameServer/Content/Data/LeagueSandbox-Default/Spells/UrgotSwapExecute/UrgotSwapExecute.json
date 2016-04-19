@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "UrgotSwapExecute",
+        "Name": "UrgotSwapExecute",
+        "ResourcePath": "DATA/Characters/Urgot/Spells/UrgotSwapExecute.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_UrgotSwapExecute"
+        }
+    }
+}

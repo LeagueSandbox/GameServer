@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KarmaSBBuff2",
+        "Name": "KarmaSBBuff2",
+        "ResourcePath": "DATA/Characters/Karma/Spells/KarmaSBBuff2.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KarmaSBBuff2"
+        }
+    }
+}

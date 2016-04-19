@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotFiddlesticksBuff",
+        "Name": "NightmareBotFiddlesticksBuff",
+        "ResourcePath": "DATA/Spells/NightmareBotFiddlesticksBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotFiddlesticksBuff"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GarenPassiveCooldown",
+        "Name": "GarenPassiveCooldown",
+        "ResourcePath": "DATA/Characters/Garen/Spells/GarenPassiveCooldown.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GarenPassiveCooldown"
+        }
+    }
+}

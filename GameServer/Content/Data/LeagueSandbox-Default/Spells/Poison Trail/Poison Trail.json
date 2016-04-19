@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Poison Trail",
+        "Name": "Poison Trail",
+        "ResourcePath": "DATA/Spells/Poison Trail.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_PoisonTrail"
+        }
+    }
+}

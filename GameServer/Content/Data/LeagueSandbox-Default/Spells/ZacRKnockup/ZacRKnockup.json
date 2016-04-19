@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZacRKnockup",
+        "Name": "ZacRKnockup",
+        "ResourcePath": "DATA/Characters/Zac/Spells/ZacRKnockup.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ZacRKnockup"
+        }
+    }
+}

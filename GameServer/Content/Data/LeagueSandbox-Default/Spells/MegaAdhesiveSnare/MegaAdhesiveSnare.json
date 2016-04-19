@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "MegaAdhesiveSnare",
+        "Name": "MegaAdhesiveSnare",
+        "ResourcePath": "DATA/Spells/MegaAdhesiveSnare.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MegaAdhesiveSnare"
+        }
+    }
+}

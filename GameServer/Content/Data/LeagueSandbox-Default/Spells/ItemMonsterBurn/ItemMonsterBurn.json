@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ItemMonsterBurn",
+        "Name": "ItemMonsterBurn",
+        "ResourcePath": "DATA/Spells/ItemMonsterBurn.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ItemMonsterBurn"
+        }
+    }
+}

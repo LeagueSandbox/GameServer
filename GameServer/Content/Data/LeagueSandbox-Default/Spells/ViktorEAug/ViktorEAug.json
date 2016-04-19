@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ViktorEAug",
+        "Name": "ViktorEAug",
+        "ResourcePath": "DATA/Characters/Viktor/Spells/ViktorEAug.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ViktorEAug"
+        }
+    }
+}

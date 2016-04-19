@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "RagebladeEnrage",
+        "Name": "RagebladeEnrage",
+        "ResourcePath": "DATA/Spells/RagebladeEnrage.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RagebladeEnrage"
+        }
+    }
+}

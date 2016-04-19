@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Turret Shield",
+        "Name": "Turret Shield",
+        "ResourcePath": "DATA/Spells/Turret Shield.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Turret_Shield"
+        }
+    }
+}

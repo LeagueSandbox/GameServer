@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KalistaAllyMarker",
+        "Name": "KalistaAllyMarker",
+        "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaAllyMarker.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RumbleDangerZone"
+        }
+    }
+}

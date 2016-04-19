@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZacRebirthCooldown",
+        "Name": "ZacRebirthCooldown",
+        "ResourcePath": "DATA/Characters/Zac/Spells/ZacRebirthCooldown.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ZacRebirthCooldown"
+        }
+    }
+}

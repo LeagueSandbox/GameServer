@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KalistaCoopStrikeAlly",
+        "Name": "KalistaCoopStrikeAlly",
+        "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaCoopStrikeAlly.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KalistaCoopStrikeAllyMark"
+        }
+    }
+}

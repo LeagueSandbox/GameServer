@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "RadianceAura",
+        "Name": "RadianceAura",
+        "ResourcePath": "DATA/Spells/RadianceAura.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RadianceAura"
+        }
+    }
+}

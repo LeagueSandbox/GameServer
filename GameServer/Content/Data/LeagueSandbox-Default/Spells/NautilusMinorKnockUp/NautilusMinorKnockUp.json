@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NautilusMinorKnockUp",
+        "Name": "NautilusMinorKnockUp",
+        "ResourcePath": "DATA/Spells/NautilusMinorKnockUp.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NautilusMinorKnockUp"
+        }
+    }
+}

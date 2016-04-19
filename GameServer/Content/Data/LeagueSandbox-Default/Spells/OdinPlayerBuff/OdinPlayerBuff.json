@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "OdinPlayerBuff",
+        "Name": "OdinPlayerBuff",
+        "ResourcePath": "DATA/Spells/OdinPlayerBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_OdinPlayerBuff"
+        }
+    }
+}

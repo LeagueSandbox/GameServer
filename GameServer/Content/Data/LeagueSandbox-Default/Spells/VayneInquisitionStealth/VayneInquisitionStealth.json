@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "VayneInquisitionStealth",
+        "Name": "VayneInquisitionStealth",
+        "ResourcePath": "DATA/Spells/VayneInquisitionStealth.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_VayneInquisitionStealth"
+        }
+    }
+}

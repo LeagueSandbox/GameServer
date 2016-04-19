@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Charging",
+        "Name": "Charging",
+        "ResourcePath": "DATA/Spells/Charging.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Charging"
+        }
+    }
+}

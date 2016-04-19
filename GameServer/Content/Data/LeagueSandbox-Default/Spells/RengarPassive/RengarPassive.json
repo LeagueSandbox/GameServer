@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "RengarPassive",
+        "Name": "RengarPassive",
+        "ResourcePath": "DATA/Characters/Rengar/Spells/RengarPassive.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RengarPassive"
+        }
+    }
+}

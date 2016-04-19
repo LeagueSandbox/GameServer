@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AkaliTwilightShroudDebuff",
+        "Name": "AkaliTwilightShroudDebuff",
+        "ResourcePath": "DATA/Spells/AkaliTwilightShroudDebuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AkaliTwilightShroudDebuff"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "BuffTemplate",
+        "Name": "BuffTemplate",
+        "ResourcePath": "DATA/Characters/Azir/Spells/BuffTemplate.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_"
+        }
+    }
+}

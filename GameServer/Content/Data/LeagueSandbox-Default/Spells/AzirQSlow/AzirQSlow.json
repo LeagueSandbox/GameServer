@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AzirQSlow",
+        "Name": "AzirQSlow",
+        "ResourcePath": "DATA/Characters/Azir/Spells/AzirQSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AzirQSlow"
+        }
+    }
+}
