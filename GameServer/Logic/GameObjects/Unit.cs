@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         unitScript.lua["me"] = this;
                         unitScript.lua.DoString("onUpdate(diff)");
                     }
-                    catch (LuaException e)
+                    catch (LuaScriptException e)
                     {
                         Logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
@@ -267,7 +267,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
         }
@@ -286,7 +286,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-
+                    Logger.LogCoreError("ERROR LUA : " + e.Message);
                 }
             }
 
@@ -351,7 +351,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
 
