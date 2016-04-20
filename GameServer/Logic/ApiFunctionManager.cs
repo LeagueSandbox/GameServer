@@ -28,14 +28,14 @@ namespace LeagueSandbox.GameServer.Logic
             return _map.isWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, Unit onto)
+        public static void AddBuff(string buffName, float duration, int stacks, Unit onto)
         {
-            onto.addBuff(new Buff(buffName, duration, 0, onto));
+            onto.addBuff(new Buff(buffName, duration, stacks, onto));
         }
 
-        public static void AddBuff(string buffName, float duration, Unit onto, Unit from)
+        public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
-            onto.addBuff(new Buff(buffName, duration, 0, onto, from));
+            onto.addBuff(new Buff(buffName, duration, stacks, onto, from));
         }
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY)
@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic
             luaScript.lua.RegisterFunction("teleportTo", null, typeof(ApiFunctionManager).GetMethod("TeleportTo", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
             luaScript.lua.RegisterFunction("addParticle", null, typeof(ApiFunctionManager).GetMethod("AddParticle", new Type[] { typeof(Champion), typeof(string), typeof(float), typeof(float) }));
             luaScript.lua.RegisterFunction("addParticleTarget", null, typeof(ApiFunctionManager).GetMethod("AddParticleTarget", new Type[] { typeof(Champion), typeof(string), typeof(Target) }));
-            luaScript.lua.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(Unit), typeof(Unit) }));
+            luaScript.lua.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(int), typeof(Unit), typeof(Unit) }));
             luaScript.lua.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             luaScript.lua.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             luaScript.lua.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));

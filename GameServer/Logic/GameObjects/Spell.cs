@@ -70,6 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         TARGET_LOC = 6, // Ez Q, W, E, R ; Mundo Q
         TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
     };
+
     public class Spell
     {
         protected Champion owner;
@@ -96,13 +97,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float range = 0;
 
         protected SpellState state = SpellState.STATE_READY;
-        protected float currentCooldown = 0;
+        protected float currentCooldown { get; set; }
         protected float currentCastTime = 0;
         protected uint futureProjNetId;
         protected uint spellNetId;
 
         protected Unit target;
         protected float x, y;
+
+        public static bool NO_COOLDOWN = true;
+        public static bool NO_MANACOST = true;
 
         public Spell(Champion owner, string spellName, byte slot)
         {
@@ -239,10 +243,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             doLua();
 
             state = SpellState.STATE_COOLDOWN;
-            currentCooldown = getCooldown();
+
+            if (!NO_COOLDOWN)
+                currentCooldown = getCooldown();
             if (getSlot() < 4)
             {
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
         }
 
@@ -310,7 +316,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 end");
 
             script.lua.DoString(@"
-                function getNumberObjectsHit(amount)
+                function getNumberObjectsHit()
                     return p.getObjectsHit().Count
                 end");
             loadLua(script); //comment this line for no reload on the fly, better performance
@@ -576,7 +582,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public float getCost()
         {
-            if (level <= 0)
+            if (level <= 0 || NO_MANACOST)
                 return 0;
 
             return cost[level - 1];

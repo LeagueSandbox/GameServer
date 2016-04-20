@@ -117,6 +117,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             _buffScript.lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
             _buffScript.lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
+            _buffScript.lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
             
             ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
 

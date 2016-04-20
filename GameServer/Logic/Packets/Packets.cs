@@ -1297,8 +1297,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(u.getNetId());//target
             buffer.Write((byte)0x01); //Slot
-            buffer.Write((byte)BuffType.Fear); //Type
-            buffer.Write((byte)0x01); // stacks
+            buffer.Write((byte)BuffType.Aura); //Type
+            buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
             buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);

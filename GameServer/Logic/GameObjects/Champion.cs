@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -183,6 +184,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
+            try
+            {
+                unitScript.lua["target"] = target;
+                unitScript.lua.DoString("onSpellCast(target)");
+            }
+            catch (LuaScriptException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
             Spell s = null;
             foreach (Spell t in spells)
             {
