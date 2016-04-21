@@ -31,18 +31,18 @@ namespace InibinSharp
 {
     public class AIMesh
     {
-        public const int AIMESH_TEXTURE_SIZE = 1024;
-        public BinaryReader buffer;
-        public __AIMESHFILE fileStream;
+        protected const int AIMESH_TEXTURE_SIZE = 1024;
+        protected BinaryReader buffer;
+        protected __AIMESHFILE fileStream;
 
-        public double lowX, lowY, highX, highY, lowestZ;
-        public ScanLine[] scanlineLowest = new ScanLine[AIMESH_TEXTURE_SIZE];
-        public ScanLine[] scanlineHighest = new ScanLine[AIMESH_TEXTURE_SIZE];
-        public float[] heightMap;
-        public float[] xMap;
-        public float[] yMap;
-        public float mapWidth, mapHeight;
-        public bool loaded;
+        protected double lowX, lowY, highX, highY, lowestZ;
+        protected ScanLine[] scanlineLowest = new ScanLine[AIMESH_TEXTURE_SIZE];
+        protected ScanLine[] scanlineHighest = new ScanLine[AIMESH_TEXTURE_SIZE];
+        protected float[] heightMap;
+        protected float[] xMap;
+        protected float[] yMap;
+        protected float mapWidth, mapHeight;
+        protected bool loaded;
 
         public AIMesh(byte[] data)
             : this(new MemoryStream(data))
@@ -79,16 +79,7 @@ namespace InibinSharp
 
             for (var i = 0; i < fileStream.triangle_count; i++)
             {
-                var triangle = new Triangle();
-                for (var j = 0; j < 3; j++)
-                    triangle.Face.v1[j] = buffer.ReadSingle();
-                for (var j = 0; j < 3; j++)
-                    triangle.Face.v2[j] = buffer.ReadSingle();
-                for (var j = 0; j < 3; j++)
-                    triangle.Face.v3[j] = buffer.ReadSingle();
-                triangle.unk1 = buffer.ReadInt16();
-                triangle.unk2 = buffer.ReadInt16();
-                triangle.triangle_reference = buffer.ReadInt16();
+                var triangle = ReadTriangle(buffer);
 
                 fileStream.triangles[i] = triangle;
             }
@@ -97,6 +88,29 @@ namespace InibinSharp
             ////writeFile(AIMESH_TEXTURE_SIZE, AIMESH_TEXTURE_SIZE);
 
             loaded = true;
+        }
+
+        private Triangle ReadTriangle(BinaryReader reader)
+        {
+            Triangle tri = new Triangle();
+
+            tri.Face.v1.X = reader.ReadSingle();
+            tri.Face.v1.Y = reader.ReadSingle();
+            tri.Face.v1.Z = reader.ReadSingle();
+
+            tri.Face.v2.X = reader.ReadSingle();
+            tri.Face.v2.Y = reader.ReadSingle();
+            tri.Face.v2.Z = reader.ReadSingle();
+
+            tri.Face.v3.X = reader.ReadSingle();
+            tri.Face.v3.Y = reader.ReadSingle();
+            tri.Face.v3.Z = reader.ReadSingle();
+
+            tri.neighbour1 = buffer.ReadInt16();
+            tri.neighbour2 = buffer.ReadInt16();
+            tri.neighbour3 = buffer.ReadInt16();
+
+            return tri;
         }
 
         bool outputMesh(int width, int height)
@@ -115,36 +129,36 @@ namespace InibinSharp
             // Need to find the absolute values.. So we can map it to AIMESH_TEXTURE_SIZExAIMESH_TEXTURE_SIZE instead of 13000x15000
             {
                 // Triangle low X check
-                if (fileStream.triangles[i].Face.v1[0] < lowX)
-                    lowX = fileStream.triangles[i].Face.v1[0];
-                if (fileStream.triangles[i].Face.v2[0] < lowX)
-                    lowX = fileStream.triangles[i].Face.v2[0];
-                if (fileStream.triangles[i].Face.v3[0] < lowX)
-                    lowX = fileStream.triangles[i].Face.v3[0];
+                if (fileStream.triangles[i].Face.v1.X < lowX)
+                    lowX = fileStream.triangles[i].Face.v1.X;
+                if (fileStream.triangles[i].Face.v2.X < lowX)
+                    lowX = fileStream.triangles[i].Face.v2.X;
+                if (fileStream.triangles[i].Face.v3.X < lowX)
+                    lowX = fileStream.triangles[i].Face.v3.X;
 
                 // Triangle low Y check
-                if (fileStream.triangles[i].Face.v1[2] < lowY)
-                    lowY = fileStream.triangles[i].Face.v1[2];
-                if (fileStream.triangles[i].Face.v2[2] < lowY)
-                    lowY = fileStream.triangles[i].Face.v2[2];
-                if (fileStream.triangles[i].Face.v3[2] < lowY)
-                    lowY = fileStream.triangles[i].Face.v3[2];
+                if (fileStream.triangles[i].Face.v1.Z < lowY)
+                    lowY = fileStream.triangles[i].Face.v1.Z;
+                if (fileStream.triangles[i].Face.v2.Z < lowY)
+                    lowY = fileStream.triangles[i].Face.v2.Z;
+                if (fileStream.triangles[i].Face.v3.Z < lowY)
+                    lowY = fileStream.triangles[i].Face.v3.Z;
 
                 // Triangle high X check
-                if (fileStream.triangles[i].Face.v1[0] > highX)
-                    highX = fileStream.triangles[i].Face.v1[0];
-                if (fileStream.triangles[i].Face.v2[0] > highX)
-                    highX = fileStream.triangles[i].Face.v2[0];
-                if (fileStream.triangles[i].Face.v3[0] > highX)
-                    highX = fileStream.triangles[i].Face.v3[0];
+                if (fileStream.triangles[i].Face.v1.X > highX)
+                    highX = fileStream.triangles[i].Face.v1.X;
+                if (fileStream.triangles[i].Face.v2.X > highX)
+                    highX = fileStream.triangles[i].Face.v2.X;
+                if (fileStream.triangles[i].Face.v3.X > highX)
+                    highX = fileStream.triangles[i].Face.v3.X;
 
                 // Triangle high Y check
-                if (fileStream.triangles[i].Face.v1[2] > highY)
-                    highY = fileStream.triangles[i].Face.v1[2];
-                if (fileStream.triangles[i].Face.v2[2] > highY)
-                    highY = fileStream.triangles[i].Face.v2[2];
-                if (fileStream.triangles[i].Face.v3[2] > highY)
-                    highY = fileStream.triangles[i].Face.v3[2];
+                if (fileStream.triangles[i].Face.v1.Z > highY)
+                    highY = fileStream.triangles[i].Face.v1.Z;
+                if (fileStream.triangles[i].Face.v2.Z > highY)
+                    highY = fileStream.triangles[i].Face.v2.Z;
+                if (fileStream.triangles[i].Face.v3.Z > highY)
+                    highY = fileStream.triangles[i].Face.v3.Z;
             }
 
             mapWidth = (float)(highX + lowX);
@@ -167,23 +181,23 @@ namespace InibinSharp
             for (var i = 0; i < fileStream.triangle_count; i++) // For every triangle
             {
                 Triangle t_Triangle = new Triangle();// Create a triangle that is warped to heightmap coordinates
-                t_Triangle.Face.v1[0] = (float)((fileStream.triangles[i].Face.v1[0] - lowX) * highX);
-                t_Triangle.Face.v1[1] = fileStream.triangles[i].Face.v1[1];
-                t_Triangle.Face.v1[2] = (float)((fileStream.triangles[i].Face.v1[2] - lowY) * highY);
+                t_Triangle.Face.v1.X = (float)((fileStream.triangles[i].Face.v1.X - lowX) * highX);
+                t_Triangle.Face.v1.Y = fileStream.triangles[i].Face.v1.Y;
+                t_Triangle.Face.v1.Z = (float)((fileStream.triangles[i].Face.v1.Z - lowY) * highY);
 
-                t_Triangle.Face.v2[0] = (float)((fileStream.triangles[i].Face.v2[0] - lowX) * highX);
-                t_Triangle.Face.v2[1] = fileStream.triangles[i].Face.v2[1];
-                t_Triangle.Face.v2[2] = (float)((fileStream.triangles[i].Face.v2[2] - lowY) * highY);
+                t_Triangle.Face.v2.X = (float)((fileStream.triangles[i].Face.v2.X - lowX) * highX);
+                t_Triangle.Face.v2.Y = fileStream.triangles[i].Face.v2.Y;
+                t_Triangle.Face.v2.Z = (float)((fileStream.triangles[i].Face.v2.Z - lowY) * highY);
 
-                t_Triangle.Face.v3[0] = (float)((fileStream.triangles[i].Face.v3[0] - lowX) * highX);
-                t_Triangle.Face.v3[1] = fileStream.triangles[i].Face.v3[1];
-                t_Triangle.Face.v3[2] = (float)((fileStream.triangles[i].Face.v3[2] - lowY) * highY);
+                t_Triangle.Face.v3.X = (float)((fileStream.triangles[i].Face.v3.X - lowX) * highX);
+                t_Triangle.Face.v3.Y = fileStream.triangles[i].Face.v3.Y;
+                t_Triangle.Face.v3.Z = (float)((fileStream.triangles[i].Face.v3.Z - lowY) * highY);
 
                 /*
                 // Draw just the wireframe.
-                drawLine(t_Triangle.Face.v1[0], t_Triangle.Face.v1[2], t_Triangle.Face.v2[0], t_Triangle.Face.v2[2], t_Info, width, height);
-                drawLine(t_Triangle.Face.v2[0], t_Triangle.Face.v2[2], t_Triangle.Face.v3[0], t_Triangle.Face.v3[2], t_Info, width, height);
-                drawLine(t_Triangle.Face.v3[0], t_Triangle.Face.v3[2], t_Triangle.Face.v1[0], t_Triangle.Face.v1[2], t_Info, width, height);
+                drawLine(t_Triangle.Face.v1.x, t_Triangle.Face.v1.z, t_Triangle.Face.v2.x, t_Triangle.Face.v2.z, t_Info, width, height);
+                drawLine(t_Triangle.Face.v2.x, t_Triangle.Face.v2.z, t_Triangle.Face.v3.x, t_Triangle.Face.v3.z, t_Info, width, height);
+                drawLine(t_Triangle.Face.v3.x, t_Triangle.Face.v3.z, t_Triangle.Face.v1.x, t_Triangle.Face.v1.z, t_Info, width, height);
                 */
 
                 // Draw this triangle onto the heightmap using an awesome triangle drawing function
@@ -197,22 +211,22 @@ namespace InibinSharp
         {
             // The heart of the rasterizer
 
-            Vertex[] tempVertex = new Vertex[3];
+            Vector3[] tempVertex = new Vector3[3];
 
-            tempVertex[0] = new Vertex();
-            tempVertex[0].x = triangle.Face.v1[0];
-            tempVertex[0].y = triangle.Face.v1[2];
-            tempVertex[0].z = triangle.Face.v1[1];
+            tempVertex[0] = new Vector3();
+            tempVertex[0].X = triangle.Face.v1.X;
+            tempVertex[0].Y = triangle.Face.v1.Z;
+            tempVertex[0].Z = triangle.Face.v1.Y;
 
-            tempVertex[1] = new Vertex();
-            tempVertex[1].x = triangle.Face.v2[0];
-            tempVertex[1].y = triangle.Face.v2[2];
-            tempVertex[1].z = triangle.Face.v2[1];
+            tempVertex[1] = new Vector3();
+            tempVertex[1].X = triangle.Face.v2.X;
+            tempVertex[1].Y = triangle.Face.v2.Z;
+            tempVertex[1].Z = triangle.Face.v2.Y;
 
-            tempVertex[2] = new Vertex();
-            tempVertex[2].x = triangle.Face.v3[0];
-            tempVertex[2].y = triangle.Face.v3[2];
-            tempVertex[2].z = triangle.Face.v3[1];
+            tempVertex[2] = new Vector3();
+            tempVertex[2].X = triangle.Face.v3.X;
+            tempVertex[2].Y = triangle.Face.v3.Z;
+            tempVertex[2].Z = triangle.Face.v3.Y;
 
             fillScanLine(tempVertex[0], tempVertex[1]);
             fillScanLine(tempVertex[1], tempVertex[2]);
@@ -222,8 +236,8 @@ namespace InibinSharp
             float tempHeight = height;
             // target width and width
 
-            int startY = (int)Math.Min(tempVertex[0].y, Math.Min(tempVertex[1].y, tempVertex[2].y));
-            int endY = (int)Math.Max(tempVertex[0].y, Math.Max(tempVertex[1].y, tempVertex[2].y));
+            int startY = (int)Math.Min(tempVertex[0].Y, Math.Min(tempVertex[1].Y, tempVertex[2].Y));
+            int endY = (int)Math.Max(tempVertex[0].Y, Math.Max(tempVertex[1].Y, tempVertex[2].Y));
             // Get the scanline where we start drawing and where we stop.
 
             endY = Math.Min(endY, height - 1);
@@ -297,40 +311,38 @@ namespace InibinSharp
             }
         }
 
-        void fillScanLine(Vertex vertex1, Vertex vertex2)
+        void fillScanLine(Vector3 vertex1, Vector3 vertex2)
         {
             // Fills a scanline structure with information about the triangle on this y scanline.
 
-            if (vertex1.y > vertex2.y)
+            if (vertex1.Y > vertex2.Y)
             {
                 fillScanLine(vertex2, vertex1);
                 return;
             }
             // We need to go from low to high so switch if the other one is higher
 
-            if (vertex2.y < 0 || vertex1.y >= AIMESH_TEXTURE_SIZE)
+            if (vertex2.Y < 0 || vertex1.Y >= AIMESH_TEXTURE_SIZE)
                 return;
             // There's nothing on this line
 
-            var deltaPos = new Vertex();
+            var deltaPos = new Vector3();
 
-            deltaPos.x = vertex2.x - vertex1.x;
-            deltaPos.y = vertex2.y - vertex1.y;
-            deltaPos.z = vertex2.z - vertex1.z;
+            deltaPos.X = vertex2.X - vertex1.X;
+            deltaPos.Y = vertex2.Y - vertex1.Y;
+            deltaPos.Z = vertex2.Z - vertex1.Z;
 
-            float tempWidth = AIMESH_TEXTURE_SIZE;
-            float tempHeight = AIMESH_TEXTURE_SIZE;
 
-            float t_DYResp = deltaPos.y == 0 ? 0 : 1.0f / deltaPos.y;
-            int startY = (int)vertex1.y, endY = (int)vertex2.y;
+            float t_DYResp = deltaPos.Y == 0 ? 0 : 1.0f / deltaPos.Y;
+            int startY = (int)vertex1.Y, endY = (int)vertex2.Y;
 
-            float x = vertex1.x;
-            float z = vertex1.z;
+            float x = vertex1.X;
+            float z = vertex1.Z;
 
-            float deltaX = deltaPos.x * t_DYResp;
-            float deltaZ = deltaPos.z * t_DYResp;
+            float deltaX = deltaPos.X * t_DYResp;
+            float deltaZ = deltaPos.Z * t_DYResp;
 
-            float t_Inc = 1.0f - FRACPOS(vertex1.y);
+            float t_Inc = 1.0f - FRACPOS(vertex1.Y);
 
             // subpixel correction
             startY++;
@@ -375,45 +387,44 @@ namespace InibinSharp
         {
             return x - (int)(x);
         }
+
+        public class Triangle
+        {
+            public short neighbour1 { get; internal set; }
+            public short neighbour2 { get; internal set; }
+            public short neighbour3 { get; internal set; }
+            public Face Face = new Face();
+        };
+
+        public struct Face
+        {
+            public Vector3 v1;
+            public Vector3 v2;
+            public Vector3 v3;
+        }
+
+        protected class ScanLine
+        {
+            public float x, y, z, u, v;
+        };
+
+        protected class __AIMESHFILE
+        {
+            private const int MAX_TRIANGLE_COUNT = (2 << 15);
+            public char[] magic = new char[8];
+            public int version;
+            public int triangle_count;
+            public int[] zero = new int[2];
+
+            public Triangle[] triangles = new Triangle[MAX_TRIANGLE_COUNT];
+            // TODO: I have to find a better way to do this. :/
+            // Basically, it's a set of triangles that go on for triangle_count. 
+            // Dynamic allocation is stupid, and this way is potentially well, unsafe.
+            // pointers will make the app think that the first 4 bytes are a pointer.. Sigh.
+        };
+
     }
 
 
-    public class ScanLine
-    {
-        public float x, y, z, u, v;
-    };
 
-    public class Vertex
-    {
-        public float x, y, z;
-    };
-    public class Face
-    {
-        public float[] v1 = new float[3]; // Seems to be a vertex [x,y,z]
-        public float[] v2 = new float[3]; // Seems to be a vertex [x,y,z]
-        public float[] v3 = new float[3]; // Seems to be a vertex [x,y,z]
-    }
-
-    public class Triangle
-    {
-        public short unk1;
-        public short unk2;
-        public short triangle_reference;
-        public Face Face = new Face();
-    };
-
-    public class __AIMESHFILE
-    {
-        private const int MAX_TRIANGLE_COUNT = (2 << 15);
-        public char[] magic = new char[8];
-        public int version;
-        public int triangle_count;
-        public int[] zero = new int[2];
-
-        public Triangle[] triangles = new Triangle[MAX_TRIANGLE_COUNT];
-        // TODO: I have to find a better way to do this. :/
-        // Basically, it's a set of triangles that go on for triangle_count. 
-        // Dynamic allocation is stupid, and this way is potentially well, unsafe.
-        // pointers will make the app think that the first 4 bytes are a pointer.. Sigh.
-    };
 }

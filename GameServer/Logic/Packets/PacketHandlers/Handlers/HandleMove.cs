@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System.IO;
 
+
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleMove : IPacketHandler
@@ -25,6 +26,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var vMoves = new List<Vector2>();//readWaypoints(request.moveData, request.coordCount, game.getMap());
             vMoves.Add(new Vector2(peerInfo.getChampion().getX(), peerInfo.getChampion().getY()));
             vMoves.Add(new Vector2(request.x, request.y)); // TODO
+
+            
             switch (request.type)
             {
                 case MoveType.STOP:
@@ -55,7 +58,26 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             // Sometimes the client will send a wrong position as the first one, override it with server data
             vMoves[0] = new Vector2(peerInfo.getChampion().getX(), peerInfo.getChampion().getY());
 
-            peerInfo.getChampion().setWaypoints(vMoves);
+
+            //Get path from pathfinder
+            Vector2 champPos = new Vector2(peerInfo.getChampion().getX(), peerInfo.getChampion().getY());
+            Vector2 champTarget= new Vector2(request.x, request.y) ;
+
+            GameServer.Logic.GameObjects.Path path = Pathfinder.getPath(champPos,champTarget);
+
+            if(path.isPathed()) //out of tries provide at least aproximate path
+            {
+                vMoves = path.getWaypoints();
+                vMoves[0] = champPos; //otherwise first path waypoint would be snapped to grid
+
+                peerInfo.getChampion().setWaypoints(vMoves);
+            }
+            else
+            {
+                Logger.LogCoreError("Could not find path " + vMoves[0] + " to " + vMoves[1]);
+            }
+
+           
 
             var u = game.getMap().getObjectById(request.targetNetId) as Unit;
             if (u == null)
