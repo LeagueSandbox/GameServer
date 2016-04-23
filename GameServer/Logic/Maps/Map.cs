@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                             continue;
                         }
                     }
-                    
+
                     if (!u.isVisibleByTeam(CustomConvert.toTeamId(i)) && teamHasVisionOn(CustomConvert.toTeamId(i), u))
                     {
                         PacketNotifier.notifyEnterVision(u, CustomConvert.toTeamId(i));
@@ -270,7 +270,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return;
 
             lock (objects)
-                objects.Add(o.getNetId(), o);
+            {
+                if (objects.ContainsKey(o.getNetId()))
+                    objects[o.getNetId()] = o;
+                else
+                    objects.Add(o.getNetId(), o);
+            }
 
             var u = o as Unit;
             if (u == null)
