@@ -30,6 +30,20 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Modify the just copied settings files as required
 * Build and run
 
+# Running the client
+Currently there are two options for launching the client.
+
+#### Launching from command line
+```
+start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
+```
+
+#### Using a launcher created by [TheWebs](https://github.com/TheWebs)
+1. Clone the launcher's repository from https://github.com/TheWebs/IWLauncher
+2. Build it
+3. Copy the built launcher and it's dependencies to the game server's build folder `GameServer/bin/Debug/`
+4. Run it
+
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
 * No StyleCop warnings should be present in new code
