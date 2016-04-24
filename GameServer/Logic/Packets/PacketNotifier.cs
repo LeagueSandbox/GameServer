@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.GetUnit(), b.GetSourceUnit(), b.GetStacks(), b.GetDuration(), b.GetName());
+            var add = new AddBuff(b.GetUnit(), b.GetSourceUnit(), b.GetStacks(), b.GetDuration(), b.GetName(), 1);
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 

@@ -1293,12 +1293,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
-        public AddBuff(Unit u, Unit source, int stacks, float time, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, byte stacks, float time, BuffType buffType, string name, byte slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
-            buffer.Write((byte)0x01); //Slot
-            buffer.Write((byte)BuffType.Aura); //Type
-            buffer.Write((byte)stacks); // stacks
+            buffer.Write(slot); //Slot
+            buffer.Write((byte)buffType); //Type
+            buffer.Write(stacks); // stacks
             buffer.Write((byte)0x00); // Visible
             buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);
@@ -1325,6 +1325,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((int)0);
             }
+        }
+    }
+
+    public class EditBuff : BasePacket
+    {
+        public EditBuff(Unit u, byte slot, byte stacks) : base(PacketCmdS2C.PKT_S2C_EditBuff, u.getNetId())
+        {
+            buffer.Write(slot);//slot
+            buffer.Write(stacks);//stacks
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x50);
+            buffer.Write((byte)0xC3);
+            buffer.Write((byte)0x46);
+            buffer.Write(0);
+            buffer.Write(u.getNetId());
+
         }
     }
 
