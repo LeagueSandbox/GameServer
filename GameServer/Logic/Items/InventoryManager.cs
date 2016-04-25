@@ -25,6 +25,11 @@ namespace LeagueSandbox.GameServer.Logic.Items
             return _inventory.AddItem(item);
         }
 
+        public Item SetExtraItem(byte slot, ItemType item)
+        {
+            return _inventory.SetExtraItem(slot, item);
+        }
+
         public Item GetItem(int slot)
         {
             return _inventory.GetItem(slot);
@@ -33,6 +38,16 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public void RemoveItem(int slot)
         {
             _inventory.RemoveItem(slot);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            _inventory.RemoveItem(item);
+        }
+
+        public byte GetItemSlot(Item item)
+        {
+            return (byte)_inventory.GetItemSlot(item);
         }
 
         public void SwapItems(int slot1, int slot2)

@@ -208,7 +208,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class Item
     {
-        public byte Slot { get; private set; }
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
@@ -216,13 +215,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Game _game;
         private Inventory _owner;
 
-        private Item(Game game, Inventory owner, ItemType type, byte slot)
+        private Item(Game game, Inventory owner, ItemType type)
         {
             _game = game;
             _owner = owner;
             ItemType = type;
             StackSize = 1;
-            Slot = slot;
         }
 
         public bool IncrementStackSize()
@@ -239,14 +237,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return true;
         }
 
-        public void SetSlot(byte newSlot)
+        public static Item CreateFromType(Game _game, Inventory inventory, ItemType item)
         {
-            Slot = newSlot;
-        }
-
-        public static Item CreateFromType(Game _game, Inventory inventory, ItemType item, byte slot)
-        {
-            return new Item(_game, inventory, item, slot);
+            return new Item(_game, inventory, item);
         }
     }
 }
