@@ -64,7 +64,6 @@ namespace LeagueSandbox
 
             g.netLoop();
 
-            PathNode.DestroyTable(); // Cleanup
         }
     }
 }
