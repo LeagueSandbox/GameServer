@@ -51,8 +51,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                 {
                     game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
-                    PacketNotifier.notifyRemoveItem(game.getPeerInfo(peer).getChampion(), instance.Slot, 0);
-                    game.getPeerInfo(peer).getChampion().getInventory().RemoveItem(instance.Slot);
+                    var champion = game.getPeerInfo(peer).getChampion();
+                    var inventory = champion.Inventory;
+                    PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    inventory.RemoveItem(instance);
                 }
 
                 i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);

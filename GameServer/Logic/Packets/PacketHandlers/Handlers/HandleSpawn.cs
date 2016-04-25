@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var peerInfo = game.getPeerInfo(peer);
             var bluePill = game.ItemManager.GetItemType(game.getMap().getBluePillId());
-            var itemInstance = Item.CreateFromType(game, null, bluePill, 7);
+            var itemInstance = peerInfo.getChampion().Inventory.SetExtraItem(7, bluePill);
             var buyItem = new BuyItemAns(peerInfo.getChampion(), itemInstance);
             PacketHandlerManager.getInstace().sendPacket(peer, buyItem, Channel.CHL_S2C);
 

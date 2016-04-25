@@ -20,10 +20,10 @@ namespace GameServerTests
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = manager.AddItem(game.ItemManager.GetItemType(2001));
-            Assert.AreEqual(0, item.Slot);
+            Assert.AreEqual(0, manager.GetItemSlot(item));
 
             // Make sure the added item and the one we fetch by it's slot are the same object
-            var receivedItem = manager.GetItem(item.Slot);
+            var receivedItem = manager.GetItem(manager.GetItemSlot(item));
             Assert.AreEqual(item, receivedItem);
 
             // Add a trinket and check that it goes to the slot 7 (so index 6)
@@ -39,7 +39,7 @@ namespace GameServerTests
             for (var i = 0; i < 5; i++)
             {
                 item = manager.AddItem(game.ItemManager.GetItemType(4001 + i));
-                receivedItem = manager.GetItem(item.Slot);
+                receivedItem = manager.GetItem(manager.GetItemSlot(item));
                 Assert.AreEqual(item, receivedItem);
             }
 
@@ -59,10 +59,10 @@ namespace GameServerTests
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = manager.AddItem(game.ItemManager.GetItemType(2001));
-            Assert.AreEqual(0, item.Slot);
+            Assert.AreEqual(0, manager.GetItemSlot(item));
 
             // Remove the item and make sure it doesn't exist anymore in the inventory
-            manager.RemoveItem(item.Slot);
+            manager.RemoveItem(manager.GetItemSlot(item));
             Assert.IsNull(manager.GetItem(0));
         }
 
@@ -79,28 +79,28 @@ namespace GameServerTests
             var item1 = manager.AddItem(game.ItemManager.GetItemType(4001));
             var item2 = manager.AddItem(game.ItemManager.GetItemType(4002));
             var item3 = manager.AddItem(game.ItemManager.GetItemType(4003));
-            Assert.AreEqual(0, item1.Slot);
-            Assert.AreEqual(1, item2.Slot);
-            Assert.AreEqual(2, item3.Slot);
+            Assert.AreEqual(0, manager.GetItemSlot(item1));
+            Assert.AreEqual(1, manager.GetItemSlot(item2));
+            Assert.AreEqual(2, manager.GetItemSlot(item3));
 
             // Swap 0 and 2 around and make sure their slots have swapped
             manager.SwapItems(0, 2);
-            Assert.AreEqual(2, item1.Slot);
+            Assert.AreEqual(2, manager.GetItemSlot(item1));
             Assert.AreEqual(item1, manager.GetItem(2));
-            Assert.AreEqual(0, item3.Slot);
+            Assert.AreEqual(0, manager.GetItemSlot(item3));
             Assert.AreEqual(item3, manager.GetItem(0));
 
             // Swap 0 and 1 around and make sure their slots have swapped
             manager.SwapItems(0, 1);
-            Assert.AreEqual(item3.Slot, 1);
+            Assert.AreEqual(manager.GetItemSlot(item3), 1);
             Assert.AreEqual(item3, manager.GetItem(1));
-            Assert.AreEqual(item2.Slot, 0);
+            Assert.AreEqual(manager.GetItemSlot(item2), 0);
             Assert.AreEqual(item2, manager.GetItem(0));
 
             // Swap with null and make sure it works
             manager.SwapItems(0, 3);
             Assert.IsNull(manager.GetItem(0));
-            Assert.AreEqual(item2.Slot, 3);
+            Assert.AreEqual(manager.GetItemSlot(item2), 3);
             Assert.AreEqual(item2, manager.GetItem(3));
 
             // Try to swap to the trinket slot and make sure it fails
@@ -148,7 +148,7 @@ namespace GameServerTests
             Assert.AreEqual(component2, available[1]);
 
             // Remove the first component and make sure we still have everything correctly
-            manager.RemoveItem(component1.Slot);
+            manager.RemoveItem(manager.GetItemSlot(component1));
             available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component2, available[0]);
