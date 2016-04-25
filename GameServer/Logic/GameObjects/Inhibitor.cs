@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         // 31 = inhibitor death
         // 32 - respawning soon
         // 33 - respawned
-        public Inhibitor(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new Stats(), collisionRadius, x, y, visionRadius)
+        public Inhibitor(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
         {
             stats.setCurrentHealth(4000);
             stats.setMaxHealth(4000);
