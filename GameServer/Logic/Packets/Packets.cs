@@ -791,6 +791,46 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class InhibitorStateUpdate : BasePacket
+    {
+        public InhibitorStateUpdate(Inhibitor inhi) : base(PacketCmdS2C.PKT_S2C_InhibitorState, inhi.getNetId())
+        {
+            buffer.Write((byte)inhi.getState());
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
+        }
+    }
+    public class InhibitorDeathAnimation : BasePacket
+    {
+        public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer) : base(PacketCmdS2C.PKT_S2C_InhibitorDeathAnimation, inhi.getNetId())
+        {
+            if (killer != null)
+                buffer.Write((uint)killer.getNetId());
+            else
+                buffer.Write((int)0);
+            buffer.Write((int)0); //unk
+        }
+    }
+
+    public class InhibitorAnnounce : BasePacket
+    {
+        public InhibitorAnnounce(Inhibitor inhi, ÏnhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
+        {
+            if (assists == null)
+                assists = new List<Champion>();
+
+            buffer.Write((byte)type);
+            if (killer != null)
+            {
+                buffer.Write((long)killer.getNetId());
+                buffer.Write((int)assists.Count);
+                foreach (var a in assists)
+                    buffer.Write((uint)a.getNetId());
+                for (int i = 0; i < 12 - assists.Count; i++)
+                    buffer.Write((int)0);
+            }
+        }
+    }
 
     public class CharacterStats
     {
@@ -2338,7 +2378,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             foreach (var group in orderedStats)
             {
-                var orderedGroup = group.Value.OrderBy(x=>x.Key);
+                var orderedGroup = group.Value.OrderBy(x => x.Key);
                 uint fieldMask = 0;
                 byte size = 0;
                 foreach (var stat in orderedGroup)

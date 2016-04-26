@@ -12,12 +12,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Inhibitor : Unit
     {
-        System.Timers.Timer respawnTimer;
+        private System.Timers.Timer RespawnTimer;
+        private InhibitorState State;
+        private const double RESPAWN_TIMER = 5 * 60 * 1000;
+        private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
+        private DateTime TimerStartTime;
+        private bool respawnAnnounced = false;
 
-        // 0xA3 Announce 
-        // 31 = inhibitor death
-        // 32 - respawning soon
-        // 33 - respawned
+        // TODO assists
         public Inhibitor(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
         {
             stats.setCurrentHealth(4000);
@@ -26,25 +28,57 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setTeam(team);
         }
 
-        public override float getMoveSpeed()
-        {
-            return 0;
-        }
-
         public override void die(Unit killer)
         {
-            respawnTimer = new System.Timers.Timer(10000);
-            respawnTimer.AutoReset = false;
-            respawnTimer.Elapsed += (a, b) =>
+            if (RespawnTimer != null) //?
+                RespawnTimer.Stop();
+
+            RespawnTimer = new System.Timers.Timer(RESPAWN_TIMER);
+            RespawnTimer.AutoReset = false;
+            RespawnTimer.Elapsed += (a, b) =>
             {
                 getStats().setCurrentHealth(getStats().getMaxHealth());
-                setModel("ChaosInhibitor");
+                setState(InhibitorState.Alive);
                 deathFlag = false;
             };
-            respawnTimer.Start();
-            
-            setModel("ChaosInhibitor_D");
+            RespawnTimer.Start();
+            TimerStartTime = DateTime.Now;
+
+            setState(InhibitorState.Dead, killer);
+            respawnAnnounced = false;
+
             base.die(killer);
+        }
+
+        public void setState(InhibitorState state, GameObject killer = null)
+        {
+            if (RespawnTimer != null && state == InhibitorState.Alive)
+                RespawnTimer.Stop();
+
+            State = state;
+            PacketNotifier.NotifyInhibitorState(this, killer);
+        }
+
+        public InhibitorState getState()
+        {
+            return State;
+        }
+
+        public double getRespawnTimer()
+        {
+            var diff = DateTime.Now - TimerStartTime;
+            return RESPAWN_TIMER - diff.TotalMilliseconds;
+        }
+
+        public override void update(long diff)
+        {
+            if (!respawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
+            {
+                PacketNotifier.NotifyInhibitorSpawningSoon(this);
+                respawnAnnounced = true;
+            }
+
+            base.update(diff);
         }
 
         public override void refreshWaypoints()
@@ -56,5 +90,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
 
         }
+
+        public override float getMoveSpeed()
+        {
+            return 0;
+        }
+
+    }
+
+    public enum InhibitorState : byte
+    {
+        Dead = 0x00,
+        Alive = 0x01
+    }
+
+    public enum ÏnhibitorAnnounces : byte
+    {
+        Destroyed = 0x1F,
+        AboutToSpawn = 0x20,
+        Spawned = 0x21
     }
 }

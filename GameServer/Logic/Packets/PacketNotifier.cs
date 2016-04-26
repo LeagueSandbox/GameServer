@@ -53,6 +53,33 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
+        public static void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)
+        {
+            InhibitorAnnounce announce;
+            switch (inhibitor.getState())
+            {
+                case InhibitorState.Dead:
+                    announce = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.Destroyed, killer, assists);
+                    PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
+
+                    var anim = new InhibitorDeathAnimation(inhibitor, killer);
+                    PacketHandlerManager.getInstace().broadcastPacket(anim, Channel.CHL_S2C);
+                    break;
+                case InhibitorState.Alive:
+                    announce = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.Spawned);
+                    PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
+                    break;
+            }
+            var packet = new InhibitorStateUpdate(inhibitor);
+            PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
+        }
+
+        public static void NotifyInhibitorSpawningSoon(Inhibitor inhibitor)
+        {
+            var packet = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.AboutToSpawn);
+            PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
+        }
+
         public static void notifyAddBuff(Buff b)
         {
             var add = new AddBuff(b.getUnit(), b.getSourceUnit(), b.getStacks(), b.getName());
