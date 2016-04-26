@@ -13,3 +13,7 @@ end
 function onDealDamage(target, damage, damageType, source)
 	
 end
+
+function onSpellCast(target)
+    
+end

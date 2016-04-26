@@ -27,12 +27,7 @@ namespace LeagueSandbox.GameServer.Logic
         {
             return _map.isWalkable(x, y);
         }
-
-        public static void AddBuff(string buffName, float duration, int stacks, Unit onto)
-        {
-            onto.addBuff(new Buff(buffName, duration, stacks, onto));
-        }
-
+        
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
             onto.addBuff(new Buff(buffName, duration, stacks, onto, from));
