@@ -7,6 +7,7 @@ function finishCasting()
     local trueCoords = current + range
 
     addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
+    addBuff("Haste", 10.0, 1, getOwner(), getOwner())
 end
 
 function applyEffects()

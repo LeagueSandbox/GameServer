@@ -1293,12 +1293,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
-        public AddBuff(Unit u, Unit source, byte stacks, float time, BuffType buffType, string name, byte slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
-            buffer.Write(slot); //Slot
+            buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
-            buffer.Write(stacks); // stacks
+            buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
             buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);

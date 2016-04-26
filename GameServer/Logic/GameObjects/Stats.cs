@@ -26,6 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         FM2_Bonus_Ad_Flat = 0x00004000, // AD flat bonuses
         FM2_Bonus_Ad_Pct = 0x00008000, // AD percentage bonuses. 0.5 = 50%
         FM2_Bonus_Ap_Flat = 0x00010000, // AP flat bonuses
+        FM2_Bonus_Ap_Pct = 0x00020000, // AP flat bonuses
         FM2_Atks_multiplier = 0x00080000, // Attack speed multiplier. If set to 2 and champ's base attack speed is 0.600, then his new AtkSpeed becomes 1.200
         FM2_cdr = 0x00400000, // Cooldown reduction. 0.5 = 50%   
         FM2_Armor_Pen_Flat = 0x01000000,
