@@ -2400,7 +2400,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                             buffer.Write((short)Convert.ToInt16(stat.Value));
                             break;
                         case 4:
-                            buffer.Write((float)stat.Value);
+                            var bytes = BitConverter.GetBytes(stat.Value);
+                            if (bytes[0] >= 0xFE)
+                                bytes[0] = 0xFD;
+                            buffer.Write((float)BitConverter.ToSingle(bytes, 0));
                             break;
                     }
                 }
