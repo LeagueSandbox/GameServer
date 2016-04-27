@@ -832,6 +832,65 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class HideUi : BasePacket
+    {
+        public HideUi() : base(PacketCmdS2C.PKT_S2C_HideUi)
+        {
+
+        }
+    }
+
+    public class UnlockCamera : BasePacket
+    {
+        public UnlockCamera() : base(PacketCmdS2C.PKT_S2C_UnlockCamera)
+        {
+
+        }
+    }
+
+    public class MoveCamera : BasePacket
+    {
+        public MoveCamera(Champion champ, float x, float y, float z, float speed) : base(PacketCmdS2C.PKT_S2C_MoveCamera, champ.getNetId())
+        {
+            // Unk, if somebody figures out let @horato know
+            buffer.Write((byte)0x97);
+            buffer.Write((byte)0xD4);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x58);
+            buffer.Write((byte)0xD7);
+            buffer.Write((byte)0x17);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xCD);
+            buffer.Write((byte)0xED);
+            buffer.Write((byte)0x13);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0xA0);
+            buffer.Write((byte)0x96);
+
+            buffer.Write((float)x);
+            buffer.Write((float)y);
+            buffer.Write((float)y);
+            buffer.Write((float)speed); // less = faster
+        }
+    }
+
+    public class ExplodeNexus : BasePacket
+    {
+        public ExplodeNexus(Nexus nexus) : base(PacketCmdS2C.PKT_S2C_ExplodeNexus, nexus.getNetId())
+        {
+            // animation ID?
+            buffer.Write((byte)0xE7);
+            buffer.Write((byte)0xF9);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x40);
+            // unk
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+        }
+    }
+
     public class CharacterStats
     {
         GameHeader header;
@@ -1521,9 +1580,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class GameEnd : BasePacket
     {
-        public GameEnd(TeamId team) : base(PacketCmdS2C.PKT_S2C_GameEnd)
+        public GameEnd(bool win) : base(PacketCmdS2C.PKT_S2C_GameEnd)
         {
-            buffer.Write((byte)1); //0 : lose 1 : Win
+            buffer.Write(win ? (byte)1 : (byte)0); //0 : lose 1 : Win
         }
     }
 

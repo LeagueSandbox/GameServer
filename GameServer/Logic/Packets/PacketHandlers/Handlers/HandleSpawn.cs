@@ -74,9 +74,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var lpsPacket = new LevelPropSpawn(lp);
                     PacketHandlerManager.getInstace().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
                 }
-                else if (kv.Value is Inhibitor)
+                else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
-                    var inhib = kv.Value as Inhibitor;
+                    var inhib = kv.Value as Unit;
 
                     var ms = new MinionSpawn2(inhib.getNetId());
                     PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
             }
 
-            // TODO nexus & maybe shop?
+            // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
             if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
             {
@@ -94,13 +94,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C); 
-
-                // Nexus
-                var ms5 = new MinionSpawn2(0xfff97db5);
-                PacketHandlerManager.getInstace().sendPacket(peer, ms5, Channel.CHL_S2C);
-                var sh5 = new SetHealth(0xfff97db5);
-                PacketHandlerManager.getInstace().sendPacket(peer, sh5, Channel.CHL_S2C);
-
             }
             else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
@@ -109,12 +102,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xffa6170e);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C);
-
-                // Nexus
-                var ms5 = new MinionSpawn2(0xfff02c0f);
-                PacketHandlerManager.getInstace().sendPacket(peer, ms5, Channel.CHL_S2C);
-                var sh5 = new SetHealth(0xfff02c0f);
-                PacketHandlerManager.getInstace().sendPacket(peer, sh5, Channel.CHL_S2C);
             }
 
             var end = new StatePacket(PacketCmdS2C.PKT_S2C_EndSpawn);

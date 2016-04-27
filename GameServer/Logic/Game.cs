@@ -22,17 +22,16 @@ namespace LeagueSandbox.GameServer.Core.Logic
 {
     public unsafe class Game
     {
-        ENetHost* _server;
-        BlowFish* _blowfish;
-        bool _isAlive = false;
+        private ENetHost* _server;
+        private BlowFish* _blowfish;
         private static uint dwStart = 0x40000000; //new netid
 
-        bool _started = false;
-        int playersReady = 0;
+        private bool _started = false;
+        private int playersReady = 0;
 
-        ENetPeer* currentPeer;
-        List<Pair<uint, ClientInfo>> players = new List<Pair<uint, ClientInfo>>();
-        Map map;
+        private List<Pair<uint, ClientInfo>> players = new List<Pair<uint, ClientInfo>>();
+        private Map map;
+        private System.Timers.Timer updateTimer;
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
         private const PacketFlags UNRELIABLE = PacketFlags.None;
@@ -93,22 +92,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 pair.Item2 = player;
                 players.Add(pair);
             }
-
-            // Uncomment the following to get 2-players
-            /*ClientInfo* player2 = new ClientInfo("GOLD", TEAM_PURPLE);
-            player2->setName("tseT");
-            Champion* c2 = ChampionFactory::getChampionFromType("Ezreal", map, GetNewNetID());
-            c2->setPosition(100.f, 273.55f);
-            c2->setTeam(1);
-            map->addObject(c2);
-            player2->setChampion(c2);
-            player2->setSkinNo(4);
-            player2->userId = 2; // same as StartClient.bat
-            player2->setSummoners(SPL_Ignite, SPL_Flash);
-
-            players.push_back(player2);*/
-
-            return _isAlive = true;
+            return true;
         }
         public void netLoop()
         {
@@ -130,7 +114,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
 
                         case EventType.Receive:
-                            currentPeer = enetEvent.peer;
                             if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.peer, enetEvent.packet, (Channel)enetEvent.channelID))
                             {
                                 //enet_peer_disconnect(event.peer, 0);
@@ -152,33 +135,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private void update()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            var timer = new System.Timers.Timer(REFRESH_RATE);
-            timer.AutoReset = false;
-            timer.Elapsed += (a, b) =>
+            updateTimer = new System.Timers.Timer(REFRESH_RATE);
+            updateTimer.AutoReset = false;
+            updateTimer.Elapsed += (a, b) =>
                  {
-                     timer.Stop();
                      watch.Stop();
                      var elapsed = watch.ElapsedMilliseconds;
                      watch.Restart();
                      if (_started)
                          map.update(elapsed);
 
-                     timer.Start();
+                     updateTimer.Start();
                  };
-            timer.Start();
-            /* var watch = System.Diagnostics.Stopwatch.StartNew();
-             long elapsed = 0;
-             while (true)
-             {
-                 if (_started)
-                     map.update(elapsed);
-
-                 watch.Stop();
-                 elapsed = watch.ElapsedMilliseconds;
-                 watch.Restart();
-                 if (elapsed < REFRESH_RATE)
-                     Thread.Sleep(TimeSpan.FromMilliseconds(REFRESH_RATE - elapsed)); //this is so not going to work
-             }*/
+            updateTimer.Start();
         }
 
         public BlowFish* getBlowfish()
@@ -219,6 +188,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public void setStarted(bool b)
         {
             _started = b;
+        }
+
+        public void stopGame()
+        {
+            updateTimer.Stop();
         }
 
         bool handleDisconnect(ENetPeer* peer)
