@@ -832,6 +832,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class TurretDestroy : BasePacket
+    {
+        public TurretDestroy(Turret tower, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, tower.getNetId())
+        {
+            if (assists == null)
+                assists = new List<Champion>();
+
+            buffer.Write((byte)0x24);
+            if (killer != null)
+            {
+                buffer.Write((long)killer.getNetId());
+                buffer.Write((int)assists.Count);
+                foreach (var a in assists)
+                    buffer.Write((uint)a.getNetId());
+                for (int i = 0; i < 12 - assists.Count; i++)
+                    buffer.Write((int)0);
+            }
+        }
+    }
+
     public class CharacterStats
     {
         GameHeader header;

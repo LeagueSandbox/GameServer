@@ -102,6 +102,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         //todo
         public override void die(Unit killer)
         {
+            PacketNotifier.notifyTurretDestory(this, killer);
             base.die(killer);
         }
 

@@ -80,6 +80,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
         }
 
+        public static void notifyTurretDestory(Turret tower, GameObject killer = null, List<Champion> assists = null)
+        {
+            TurretDestroy announce;
+            announce = new TurretDestroy(tower, killer, assists);
+            PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
+        }
+
         public static void notifyAddBuff(Buff b)
         {
             var add = new AddBuff(b.getUnit(), b.getSourceUnit(), b.getStacks(), b.getName());
