@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
         }
 
-        public override byte getSize(byte blockId, int stat)
+        public override byte getSize(MasterMask blockId, FieldMask stat)
         {
             return 4;
         }

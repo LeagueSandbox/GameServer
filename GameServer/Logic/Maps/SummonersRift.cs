@@ -87,8 +87,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
            }
         };
 
-        List<Inhibitor> inhibitors;
-
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))

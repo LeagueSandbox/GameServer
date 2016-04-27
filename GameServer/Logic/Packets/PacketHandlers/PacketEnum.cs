@@ -26,6 +26,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_FogUpdate2 = 0x23,
         PKT_S2C_EditBuff = 0x1C,
         PKT_S2C_PlayerInfo = 0x2A,
+        PKT_S2C_InhibitorState = 0x2B, //ayyy lmao
+        PKT_S2C_InhibitorDeathAnimation = 0x89,
         PKT_S2C_ViewAns = 0x2C,
         PKT_S2C_ChampionRespawn = 0x2F,
         PKT_S2C_StopAutoAttack = 0x34,
@@ -67,6 +69,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_TurretSpawn = 0x9D,
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
+        PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_S2C_SurrenderResult = 0xA5,
         PKT_S2C_SetHealth = 0xAE,
         PKT_S2C_SpellAnimation = 0xB0,

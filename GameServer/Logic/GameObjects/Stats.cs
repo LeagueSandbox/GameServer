@@ -70,8 +70,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Stats
     {
-        protected PairList<int, float>[] stats = new PairList<int, float>[5];
-        protected PairList<byte, List<int>> updatedStats = new PairList<byte, List<int>>();
+        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
+        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
         protected bool updatedHealth;
 
         // Here all the stats that don't have a bitmask
@@ -89,9 +89,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Stats()
         {
-            for (var i = 0; i < stats.Length; i++)
-                stats[i] = new PairList<int, float>();
-
             updatedHealth = false;
             goldPerSecond = 0;
             healthPerLevel = 0;
@@ -109,63 +106,40 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public float getStat(MasterMask blockId, MinionFieldMask stat)
         {
-            return getStat((byte)blockId, (int)stat);
+            return getStat(blockId, (FieldMask)stat);
         }
 
         public float getStat(MasterMask blockId, FieldMask stat)
         {
-            return getStat((byte)blockId, (int)stat);
-        }
+            if (stats.ContainsKey(blockId))
+                if (stats[blockId].ContainsKey(stat))
+                    return stats[blockId][stat];
 
-        public float getStat(byte blockId, int stat)
-        {
-            int block = -1;
-            while (blockId > 0)
-            {
-                blockId = (byte)(blockId >> 1);
-                ++block;
-            }
-
-            if (block >= 0 && block < stats.Length - 1)
-            {
-                var it = stats[block];
-                if (it.ContainsKey(stat))
-                    return it[stat];
-            }
             return 0;
         }
+        
         public void setStat(MasterMask blockId, MinionFieldMask stat, float value)
         {
-            setStat((byte)blockId, (int)stat, value);
+            setStat(blockId, (FieldMask)stat, value);
         }
 
         public void setStat(MasterMask blockId, FieldMask stat, float value)
         {
-            setStat((byte)blockId, (int)stat, value);
+            appendStat(updatedStats, blockId, stat, value);
+            appendStat(stats, blockId, stat, value);
         }
 
-        public void setStat(byte blockId, int stat, float value)
+        private void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
         {
-            int block = -1;
-            if (!updatedStats.ContainsKey(blockId))
-                updatedStats.Add(blockId, new List<int>());
+            if (!collection.ContainsKey(blockId))
+                collection.Add(blockId, new Dictionary<FieldMask, float>());
 
-            if (!updatedStats[blockId].Contains(stat))
-                updatedStats[blockId].Add(stat);
-
-            while (blockId > 0)
-            {
-                blockId = (byte)(blockId >> 1);
-                ++block;
-            }
-            if (!(value > 0 || value < 0 || value == 0)) //NaN?
-                System.Diagnostics.Debugger.Break();
-            if (!stats[block].ContainsKey(stat))
-                stats[block].Add(stat, value);
+            if (!collection[blockId].ContainsKey(stat))
+                collection[blockId].Add(stat, value);
             else
-                stats[block][stat] = value;
-
+                collection[blockId][stat] = value;
         }
+        
         public bool isGeneratingGold()
         {
             return generatingGold;
@@ -176,34 +150,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             generatingGold = b;
         }
 
-        public PairList<byte, List<int>> getUpdatedStats()
+        public Dictionary<MasterMask, Dictionary<FieldMask, float>> getUpdatedStats()
         {
-            var ret = new PairList<byte, List<int>>();
+            var ret = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
             lock (updatedStats)
             {
                 foreach (var blocks in updatedStats)
                 {
-                    var retStats = new List<int>();
-                    foreach (var stat in blocks.Item2)
-                        retStats.Add(stat);
-                    ret.Add(blocks.Item1, retStats);
+                    if (!ret.ContainsKey(blocks.Key))
+                        ret.Add(blocks.Key, new Dictionary<FieldMask, float>());
+                    foreach (var stat in blocks.Value)
+                        ret[blocks.Key].Add(stat.Key, stat.Value);
                 }
             }
             return ret;
         }
 
-        public PairList<byte, List<int>> getAllStats()
+        public Dictionary<MasterMask, Dictionary<FieldMask, float>> getAllStats()
         {
-            var toReturn = new PairList<byte, List<int>>();
+            var toReturn = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
-            for (byte i = 0; i < 5; ++i)
+            foreach (var block in stats)
             {
-                foreach (var kv in stats[i])
-                {
-                    if (!toReturn.ContainsKey((byte)(1 << i)))
-                        toReturn.Add((byte)(1 << i), new List<int>());
-                    toReturn[(byte)(1 << i)].Add(kv.Item1);
-                }
+                if (!toReturn.ContainsKey(block.Key))
+                    toReturn.Add(block.Key, new Dictionary<FieldMask, float>());
+                foreach (var stat in block.Value)
+                    toReturn[block.Key].Add(stat.Key, stat.Value);
             }
             return toReturn;
         }
@@ -280,23 +252,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public virtual byte getSize(byte blockId, int stat)
+        public virtual byte getSize(MasterMask blockId, FieldMask stat)
         {
             switch (blockId)
             {
-                case (byte)MasterMask.MM_One:
+                case MasterMask.MM_One:
                     switch (stat)
                     {
-                        case (int)FieldMask.FM1_Spells_Enabled:
+                        case FieldMask.FM1_Spells_Enabled:
                             return 2;
-                        case (int)FieldMask.FM1_SummonerSpells_Enabled:
+                        case FieldMask.FM1_SummonerSpells_Enabled:
                             return 2; // not 100% sure
                     }
                     break;
-                case (byte)MasterMask.MM_Four:
+                case MasterMask.MM_Four:
                     switch (stat)
                     {
-                        case (int)FieldMask.FM4_Level:
+                        case FieldMask.FM4_Level:
                             return 1;
                     }
                     break;

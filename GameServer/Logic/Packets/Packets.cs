@@ -375,9 +375,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     }
     public class SetHealthTest : BasePacket
     {
-        public SetHealthTest(uint netId, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
+        public SetHealthTest(uint netId, short unk, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
         {
-            buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
+            buffer.Write((short)unk); // unk,maybe flags for physical/magical/true dmg
             buffer.Write((float)maxhp);
             buffer.Write((float)hp);
         }
@@ -401,7 +401,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((byte)0); // unk
             }
-            else {
+            else
+            {
                 buffer.Write((byte)1); // unk
             }
 
@@ -419,7 +420,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((int)0x0001000D);
             }
-            else {
+            else
+            {
                 buffer.Write((int)0x00010007); // unk
             }
             buffer.Write((int)0x00000000); // unk
@@ -789,6 +791,46 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class InhibitorStateUpdate : BasePacket
+    {
+        public InhibitorStateUpdate(Inhibitor inhi) : base(PacketCmdS2C.PKT_S2C_InhibitorState, inhi.getNetId())
+        {
+            buffer.Write((byte)inhi.getState());
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
+        }
+    }
+    public class InhibitorDeathAnimation : BasePacket
+    {
+        public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer) : base(PacketCmdS2C.PKT_S2C_InhibitorDeathAnimation, inhi.getNetId())
+        {
+            if (killer != null)
+                buffer.Write((uint)killer.getNetId());
+            else
+                buffer.Write((int)0);
+            buffer.Write((int)0); //unk
+        }
+    }
+
+    public class InhibitorAnnounce : BasePacket
+    {
+        public InhibitorAnnounce(Inhibitor inhi, InhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
+        {
+            if (assists == null)
+                assists = new List<Champion>();
+
+            buffer.Write((byte)type);
+            if (killer != null)
+            {
+                buffer.Write((long)killer.getNetId());
+                buffer.Write((int)assists.Count);
+                foreach (var a in assists)
+                    buffer.Write((uint)a.getNetId());
+                for (int i = 0; i < 12 - assists.Count; i++)
+                    buffer.Write((int)0);
+            }
+        }
+    }
 
     public class CharacterStats
     {
@@ -2317,71 +2359,52 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
         {
-            var stats = new PairList<byte, List<int>>();
+            var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
             if (partial)
                 stats = u.getStats().getUpdatedStats();
             else
                 stats = u.getStats().getAllStats();
+            var orderedStats = stats.OrderBy(x => x.Key);
 
-            var masks = new List<byte>();
+            buffer.Write((byte)1); // updating 1 unit
+
             byte masterMask = 0;
+            foreach (var p in orderedStats)
+                masterMask |= (byte)p.Key;
 
-            foreach (var p in stats)
-            {
-                masterMask |= p.Item1;
-                masks.Add(p.Item1);
-            }
-
-            masks.Sort();
-
-            buffer.Write((byte)1);
             buffer.Write((byte)masterMask);
-            buffer.Write((int)u.getNetId());
+            buffer.Write((uint)u.getNetId());
 
-
-            foreach (var m in masks)
+            foreach (var group in orderedStats)
             {
-                int mask = 0;
+                var orderedGroup = group.Value.OrderBy(x => x.Key);
+                uint fieldMask = 0;
                 byte size = 0;
-
-                var updatedStats = stats[m];
-                updatedStats.Sort();
-                foreach (var it in updatedStats)
+                foreach (var stat in orderedGroup)
                 {
-                    size += u.getStats().getSize(m, it);
-                    mask |= it;
+                    fieldMask |= (uint)stat.Key;
+                    size += u.getStats().getSize(group.Key, stat.Key);
                 }
-                //if (updatedStats.Contains((int)FieldMask.FM1_SummonerSpells_Enabled))
-                //  System.Diagnostics.Debugger.Break();
-                buffer.Write((int)mask);
+                buffer.Write((uint)fieldMask);
                 buffer.Write((byte)size);
-
-                for (int i = 0; i < 32; i++)
+                foreach (var stat in orderedGroup)
                 {
-                    int tmpMask = (1 << i);
-                    if ((tmpMask & mask) > 0)
+                    size = u.getStats().getSize(group.Key, stat.Key);
+                    switch (size)
                     {
-                        if (u.getStats().getSize(m, tmpMask) == 4)
-                        {
-                            float f = u.getStats().getStat(m, tmpMask);
-                            var c = BitConverter.GetBytes(f);
-                            if (c[0] >= 0xFE)
-                            {
-                                c[0] = (byte)0xFD;
-                            }
-                            buffer.Write(BitConverter.ToSingle(c, 0));
-                        }
-                        else if (u.getStats().getSize(m, tmpMask) == 2)
-                        {
-                            short stat = (short)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                            buffer.Write(stat);
-                        }
-                        else
-                        {
-                            byte stat = (byte)Math.Floor(u.getStats().getStat(m, tmpMask) + 0.5);
-                            buffer.Write(stat);
-                        }
+                        case 1:
+                            buffer.Write((byte)Convert.ToByte(stat.Value));
+                            break;
+                        case 2:
+                            buffer.Write((short)Convert.ToInt16(stat.Value));
+                            break;
+                        case 4:
+                            var bytes = BitConverter.GetBytes(stat.Value);
+                            if (bytes[0] >= 0xFE)
+                                bytes[0] = 0xFD;
+                            buffer.Write((float)BitConverter.ToSingle(bytes, 0));
+                            break;
                     }
                 }
             }
