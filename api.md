@@ -19,6 +19,32 @@ isDead(unit)
 ```lua
 getSourceUnit()
 getUnit()
+modifyStats(stat, valueToAdd) 
+```
+
+# Avaible stats
+```lua
+crit
+armor
+mr
+hp5
+mp5
+range
+adFlat
+adPct
+apFlat
+apPct
+attackSpeed
+cdr
+armorPenFlat
+armorPenPct
+lifeSteal
+spellVamp
+tenacity
+maxHp
+maxMp
+moveSpeed
+size
 ```
 
 # Unit specific
