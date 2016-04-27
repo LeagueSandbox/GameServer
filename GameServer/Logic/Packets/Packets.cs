@@ -814,7 +814,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class InhibitorAnnounce : BasePacket
     {
-        public InhibitorAnnounce(Inhibitor inhi, ÏnhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
+        public InhibitorAnnounce(Inhibitor inhi, InhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
         {
             if (assists == null)
                 assists = new List<Champion>();

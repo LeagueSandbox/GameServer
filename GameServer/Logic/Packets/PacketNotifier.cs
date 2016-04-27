@@ -59,14 +59,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             switch (inhibitor.getState())
             {
                 case InhibitorState.Dead:
-                    announce = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.Destroyed, killer, assists);
+                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Destroyed, killer, assists);
                     PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
 
                     var anim = new InhibitorDeathAnimation(inhibitor, killer);
                     PacketHandlerManager.getInstace().broadcastPacket(anim, Channel.CHL_S2C);
                     break;
                 case InhibitorState.Alive:
-                    announce = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.Spawned);
+                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Spawned);
                     PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
                     break;
             }
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void NotifyInhibitorSpawningSoon(Inhibitor inhibitor)
         {
-            var packet = new InhibitorAnnounce(inhibitor, ÏnhibitorAnnounces.AboutToSpawn);
+            var packet = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.AboutToSpawn);
             PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
         }
 

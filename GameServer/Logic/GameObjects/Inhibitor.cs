@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
         private DateTime TimerStartTime;
-        private bool respawnAnnounced = false;
+        private bool respawnAnnounced = true;
 
         // TODO assists
         public Inhibitor(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
@@ -104,7 +104,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         Alive = 0x01
     }
 
-    public enum ÏnhibitorAnnounces : byte
+    public enum InhibitorAnnounces : byte
     {
         Destroyed = 0x1F,
         AboutToSpawn = 0x20,
