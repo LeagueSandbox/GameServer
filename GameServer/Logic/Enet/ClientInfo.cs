@@ -124,6 +124,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
     public enum TeamId : int
     {
         TEAM_BLUE = 0x64,
-        TEAM_PURPLE = 0xC8
-    };
+        TEAM_PURPLE = 0xC8,
+        TEAM_NEUTRAL = 0x02 // I just raped the enum. Oh well...
+    }
 }

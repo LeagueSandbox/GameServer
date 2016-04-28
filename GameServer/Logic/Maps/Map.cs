@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     {
         protected Dictionary<uint, GameObject> objects;
         protected Dictionary<uint, Champion> champions;
-        protected Dictionary<uint, Unit>[] visionUnits; //array of 3
+        protected Dictionary<TeamId, Dictionary<uint, Unit>> visionUnits; //array of 3
         protected List<int> expToLevelUp;
         protected int waveNumber;
         protected long firstSpawnTime;
@@ -35,12 +35,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         protected CollisionHandler collisionHandler;
         protected Fountain fountain;
+        private readonly List<TeamId> TeamsIterator;
+
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
             this.objects = new Dictionary<uint, GameObject>();
             this.champions = new Dictionary<uint, Champion>();
-            this.visionUnits = new Dictionary<uint, Unit>[3];
+            this.visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
             this.expToLevelUp = new List<int>();
             this.waveNumber = 0;
             this.firstSpawnTime = firstSpawnTime;
@@ -58,8 +60,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.fountain = new Fountain();
             this.id = id;
 
-            for (var i = 0; i < visionUnits.Length; i++)
-                visionUnits[i] = new Dictionary<uint, Unit>();
+            TeamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+
+            foreach (var team in TeamsIterator)
+                visionUnits.Add(team, new Dictionary<uint, Unit>());
+
         }
 
         public virtual void update(long diff)
@@ -94,17 +99,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     continue;
                 }
 
-                for (var i = 0; i < 2; i++)
+                foreach (var team in TeamsIterator)
                 {
-                    if (u.getTeam() == CustomConvert.toTeamId(i))
+                    if (u.getTeam() == team || team == TeamId.TEAM_NEUTRAL)
                         continue;
 
-                    var visionUnitsTeam = visionUnits[CustomConvert.fromTeamId(u.getTeam())];
+                    var visionUnitsTeam = visionUnits[u.getTeam()];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        if (teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                        if (teamHasVisionOn(team, u))
                         {
-                            u.setVisibleByTeam(i, true);
+                            u.setVisibleByTeam(team, true);
                             PacketNotifier.notifySpawn(u);
                             visionUnitsTeam.Remove(u.getNetId());
                             PacketNotifier.notifyUpdatedStats(u, false);
@@ -112,16 +117,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(CustomConvert.toTeamId(i)) && teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                    if (!u.isVisibleByTeam(team) && teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyEnterVision(u, CustomConvert.toTeamId(i));
-                        u.setVisibleByTeam(i, true);
+                        PacketNotifier.notifyEnterVision(u, team);
+                        u.setVisibleByTeam(team, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(CustomConvert.toTeamId(i)) && !teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                    else if (u.isVisibleByTeam(team) && !teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, CustomConvert.toTeamId(i));
-                        u.setVisibleByTeam(i, false);
+                        PacketNotifier.notifyLeaveVision(u, team);
+                        u.setVisibleByTeam(team, false);
                     }
                 }
 
@@ -232,7 +237,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return false;
         }
 
-        public virtual Tuple<int, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public virtual Tuple<TeamId, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             return null;
         }
@@ -282,8 +287,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return;
 
             collisionHandler.addObject(o);
-            var team = o.getTeam();
-            var teamVision = visionUnits[CustomConvert.fromTeamId(team)];
+            var teamVision = visionUnits[o.getTeam()];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -313,12 +317,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             lock (objects)
                 objects.Remove(o.getNetId());
-            visionUnits[CustomConvert.fromTeamId(o.getTeam())].Remove(o.getNetId());
+            visionUnits[o.getTeam()].Remove(o.getNetId());
         }
 
         public Dictionary<uint, Unit> getVisionUnits(TeamId team)
         {
-            return visionUnits[CustomConvert.fromTeamId(team)];
+            return visionUnits[team];
         }
 
         public List<int> getExperienceToLevelUp()

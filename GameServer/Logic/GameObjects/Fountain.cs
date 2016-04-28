@@ -41,30 +41,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (healTickTimer > 1000)
             {
                 healTickTimer = 0;
-
-                int team = 0;
-                foreach (var f in healLocations)
+                var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
+                foreach (var team in teams)
                 {
-                    foreach (var c in map.getChampionsInRange(f, fountainSize))
-                    {
-                        if (c.getTeam() == CustomConvert.toTeamId(team))
-                        {
-                            var hp = c.getStats().getCurrentHealth();
-                            var maxHP = c.getStats().getMaxHealth();
-                            if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                                c.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
-                            else if (hp < maxHP)
-                                c.getStats().setCurrentHealth(maxHP);
+                    if (team == TeamId.TEAM_NEUTRAL) //temp
+                        continue;
 
-                            var mp = c.getStats().getCurrentMana();
-                            var maxMp = c.getStats().getMaxMana();
-                            if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                                c.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
-                            else if (mp < maxMp)
-                                c.getStats().setCurrentMana(maxMp);
+                    foreach (var f in healLocations)
+                    {
+                        foreach (var c in map.getChampionsInRange(f, fountainSize))
+                        {
+                            if (c.getTeam() == team)
+                            {
+                                var hp = c.getStats().getCurrentHealth();
+                                var maxHP = c.getStats().getMaxHealth();
+                                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
+                                    c.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
+                                else if (hp < maxHP)
+                                    c.getStats().setCurrentHealth(maxHP);
+
+                                var mp = c.getStats().getCurrentMana();
+                                var maxMp = c.getStats().getMaxMana();
+                                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
+                                    c.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
+                                else if (mp < maxMp)
+                                    c.getStats().setCurrentMana(maxMp);
+                            }
                         }
                     }
-                    team++;
                 }
             }
         }
