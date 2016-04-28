@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected long nextSpawnTime;
         protected long firstGoldTime; // Time that gold should begin to generate
         protected long nextSyncTime;
-        protected List<Pair<bool, Tuple<long, byte, bool>>> announcerEvents;
+        protected List<GameObjects.Announce> announcerEvents;
         protected Game game;
         protected bool firstBlood;
         protected bool killReduction;
@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.gameTime = 0;
             this.nextSpawnTime = firstSpawnTime;
             this.nextSyncTime = 10 * 1000;
-            this.announcerEvents = new List<Pair<bool, Tuple<long, byte, bool>>>();
+            this.announcerEvents = new List<GameObjects.Announce>();
             this.game = game;
             this.firstBlood = true;
             this.killReduction = true;
@@ -169,23 +169,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             collisionHandler.update(diff);
 
-            foreach (var i in announcerEvents)
-            {
-                bool isCompleted = i.Item1;
-
-                if (!isCompleted)
-                {
-                    var eventTime = i.Item2.Item1;
-                    var messageId = i.Item2.Item2;
-                    var isMapSpecific = i.Item2.Item3;
-
-                    if (gameTime >= eventTime)
-                    {
-                        PacketNotifier.notifyAnnounceEvent(messageId, isMapSpecific);
-                        i.Item1 = true;
-                    }
-                }
-            }
+            foreach (var announce in announcerEvents)
+                if (!announce.IsAnnounced())
+                    if (gameTime >= announce.GetEventTime())
+                        announce.Execute();
 
             gameTime += diff;
             nextSyncTime += diff;

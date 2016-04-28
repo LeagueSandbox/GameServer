@@ -1267,7 +1267,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     class Announce : BasePacket
     {
-        public Announce(byte messageId, int mapId = 0) : base(PacketCmdS2C.PKT_S2C_Announce)
+        public Announce(Announces messageId, int mapId = 0) : base(PacketCmdS2C.PKT_S2C_Announce)
         {
             buffer.Write((byte)messageId);
             buffer.Write((long)0);

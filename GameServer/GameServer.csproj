@@ -77,6 +77,7 @@
     <Compile Include="Logic\Content\ItemCollection.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
+    <Compile Include="Logic\GameObjects\Announce.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
     <Compile Include="Logic\GameObjects\Champion.cs" />
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
