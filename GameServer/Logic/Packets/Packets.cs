@@ -850,7 +850,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class MoveCamera : BasePacket
     {
-        public MoveCamera(Champion champ, float x, float y, float z, float speed) : base(PacketCmdS2C.PKT_S2C_MoveCamera, champ.getNetId())
+        public MoveCamera(Champion champ, float x, float y, float z, float seconds) : base(PacketCmdS2C.PKT_S2C_MoveCamera, champ.getNetId())
         {
             // Unk, if somebody figures out let @horato know
             buffer.Write((byte)0x97);
@@ -870,7 +870,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)x);
             buffer.Write((float)y);
             buffer.Write((float)y);
-            buffer.Write((float)speed); // less = faster
+            buffer.Write((float)seconds);
         }
     }
 

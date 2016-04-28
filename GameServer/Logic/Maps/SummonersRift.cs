@@ -87,6 +87,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
            }
         };
 
+        private Dictionary<TeamId, float[]> endGameCameraPosition = new Dictionary<TeamId, float[]>
+        {
+            { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
+            { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
+        };
+
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
@@ -378,6 +384,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public override int getBluePillId()
         {
             return 2001;
+        }
+
+        public override float[] GetEndGameCameraPosition(TeamId team)
+        {
+            if (!endGameCameraPosition.ContainsKey(team))
+                return new float[] { 0, 0, 0 };
+
+            return endGameCameraPosition[team];
         }
     }
 }

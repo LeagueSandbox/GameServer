@@ -36,11 +36,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             foreach (var p in map.getGame().getPlayers())
             {
-                MoveCamera cam;
-                if (loosingTeam == TeamId.TEAM_BLUE)
-                    cam = new MoveCamera(p.Item2.getChampion(), 1422, 1672, 188, 2);
-                else
-                    cam = new MoveCamera(p.Item2.getChampion(), 12500, 12800, 110, 2);
+                var coords = map.GetEndGameCameraPosition(loosingTeam);
+                var cam = new MoveCamera(p.Item2.getChampion(),coords[0], coords[1], coords[2], 2);
                 PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), cam, Channel.CHL_S2C);
                 PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), new HideUi(), Channel.CHL_S2C);
             }
