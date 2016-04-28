@@ -812,26 +812,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class InhibitorAnnounce : BasePacket
-    {
-        public InhibitorAnnounce(Inhibitor inhi, InhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
-        {
-            if (assists == null)
-                assists = new List<Champion>();
-
-            buffer.Write((byte)type);
-            if (killer != null)
-            {
-                buffer.Write((long)killer.getNetId());
-                buffer.Write((int)assists.Count);
-                foreach (var a in assists)
-                    buffer.Write((uint)a.getNetId());
-                for (int i = 0; i < 12 - assists.Count; i++)
-                    buffer.Write((int)0);
-            }
-        }
-    }
-
     public class CharacterStats
     {
         GameHeader header;
@@ -1216,6 +1196,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             if (mapId > 0)
             {
                 buffer.Write(mapId);
+            }
+        }
+    }
+
+    public class Announce2 : BasePacket
+    {
+        public Announce2(Announces id, Unit target, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, target.getNetId())
+        {
+            if (assists == null)
+                assists = new List<Champion>();
+
+            buffer.Write((byte)id);
+            if (killer != null)
+            {
+                buffer.Write((long)killer.getNetId());
+                buffer.Write((int)assists.Count);
+                foreach (var a in assists)
+                    buffer.Write((uint)a.getNetId());
+                for (int i = 0; i < 12 - assists.Count; i++)
+                    buffer.Write((int)0);
             }
         }
     }

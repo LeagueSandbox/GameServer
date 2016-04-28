@@ -55,18 +55,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)
         {
-            InhibitorAnnounce announce;
+            Announce2 announce;
             switch (inhibitor.getState())
             {
                 case InhibitorState.Dead:
-                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Destroyed, killer, assists);
+                    announce = new Announce2(Announces.InhibitorDestroyed, inhibitor, killer, assists);
                     PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
 
                     var anim = new InhibitorDeathAnimation(inhibitor, killer);
                     PacketHandlerManager.getInstace().broadcastPacket(anim, Channel.CHL_S2C);
                     break;
                 case InhibitorState.Alive:
-                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Spawned);
+                    announce = new Announce2(Announces.InhibitorSpawned, inhibitor);
                     PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
                     break;
             }
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static void NotifyInhibitorSpawningSoon(Inhibitor inhibitor)
         {
-            var packet = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.AboutToSpawn);
+            var packet = new Announce2(Announces.InhibitorAboutToSpawn, inhibitor);
             PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
         }
 
@@ -340,6 +340,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
         }
 
+        public static void notifyAnnounce2Event(Announces messageId, Unit target, GameObject killer = null, List<Champion> assists = null)
+        {
+            Announce2 announce;
+            announce = new Announce2(messageId, target, killer, assists);
+            PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);
+        }
+
         public static void notifySpellAnimation(Unit u, string animation)
         {
             var sa = new SpellAnimation(u, animation);
@@ -375,5 +382,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var dash = new Dash(u, _x, _y, dashSpeed);
             PacketHandlerManager.getInstace().broadcastPacketVision(u, dash, Channel.CHL_S2C);
         }
+    }
+    public enum Announces : byte
+    {
+        InhibitorDestroyed = 0x1F,
+        InhibitorAboutToSpawn = 0x20,
+        InhibitorSpawned = 0x21,
+        TurretDestoryed = 0x24
     }
 }

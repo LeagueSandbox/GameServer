@@ -14,8 +14,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         private System.Timers.Timer RespawnTimer;
         private InhibitorState State;
-        private const double RESPAWN_TIMER = 5 * 60 * 1000;
-        private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
+        private const double RESPAWN_TIMER = 1 * 60 * 1000;
+        private const double RESPAWN_ANNOUNCE = 0.5 * 60 * 1000;
         private DateTime TimerStartTime;
         private bool respawnAnnounced = true;
 
@@ -102,12 +102,5 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         Dead = 0x00,
         Alive = 0x01
-    }
-
-    public enum InhibitorAnnounces : byte
-    {
-        Destroyed = 0x1F,
-        AboutToSpawn = 0x20,
-        Spawned = 0x21
     }
 }

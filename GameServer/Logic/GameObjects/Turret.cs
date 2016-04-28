@@ -12,12 +12,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Turret : Unit
     {
         private const float TURRET_RANGE = 905.0f;
+        private const float GOLD_WORTH = 250.0f;
         private string name;
+        private Map map;
 
 
         public Turret(Map map, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, int team = 0) : base(map, id, "", new TurretStats(), 50, x, y, 1200)
         {
             this.name = name;
+            this.map = map;
 
             stats.setCurrentHealth(hp);
             stats.setMaxHealth(hp);
@@ -102,6 +105,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         //todo
         public override void die(Unit killer)
         {
+            foreach (var player in map.getAllChampionsFromTeam(killer.getTeam()))
+            {
+                player.getStats().setGold(player.getStats().getGold() + GOLD_WORTH);
+                PacketNotifier.notifyAddGold(player, this, GOLD_WORTH);
+            }
+            PacketNotifier.notifyAnnounce2Event(Announces.TurretDestoryed, this, killer);
             base.die(killer);
         }
 
