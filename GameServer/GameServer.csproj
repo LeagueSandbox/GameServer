@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\Blowfish.cs" />
-    <Compile Include="Logic\ChampionFactory.cs" />
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
