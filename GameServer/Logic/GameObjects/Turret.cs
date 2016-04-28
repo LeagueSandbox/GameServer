@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 player.getStats().setGold(player.getStats().getGold() + GOLD_WORTH);
                 PacketNotifier.notifyAddGold(player, this, GOLD_WORTH);
             }
-            PacketNotifier.notifyTurretDestroy(this, killer);
+            PacketNotifier.notifyAnnounce2Event(Announces.TurretDestoryed, this, killer);
             base.die(killer);
         }
 
