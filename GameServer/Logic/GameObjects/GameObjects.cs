@@ -46,6 +46,7 @@ namespace LeagueSandbox.GameServer.Logic
             this.toRemove = false;
             this.attackerCount = 0;
             this.dashing = false;
+            this.visibleByTeam = new Dictionary<TeamId, bool>();
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)

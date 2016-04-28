@@ -11,65 +11,51 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Fountain
     {
-        protected const int NUM_SIDES = 2;// Change implementation when more game-modes with more teams are available
-        protected const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
-        protected const float PERCENT_MAX_MANA_HEAL = 0.15f;
-        protected float fountainSize;
-        protected long healTickTimer;
-        protected List<Target> healLocations = new List<Target>();
+        private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
+        private const float PERCENT_MAX_MANA_HEAL = 0.15f;
+        private const float HEAL_FREQUENCY = 1000f;
+        private float X;
+        private float Y;
+        private float FountainSize;
+        private long HealTickTimer;
+        private TeamId Team;
 
-        public Fountain()
+        public Fountain(TeamId team, float x, float y, float size)
         {
-            fountainSize = 1000.0f;
-            healTickTimer = 0; ;
-        }
-        public Fountain(float fountainSize)
-        {
-            this.fountainSize = fountainSize;
-            healTickTimer = 0;
-        }
-
-        public void setHealLocations(Map map)
-        {
-            for (int i = 0; i < NUM_SIDES; i++)
-                healLocations.Add(map.getRespawnLocation(i));
+            X = x;
+            Y = y;
+            FountainSize = size;
+            HealTickTimer = 0;
+            Team = team;
         }
 
-        public void healChampions(Map map, long diff)
+        internal void Update(Map map, long diff)
         {
-            healTickTimer += diff;
-            if (healTickTimer > 1000)
+            HealTickTimer += diff;
+            if (HealTickTimer < HEAL_FREQUENCY)
+                return;
+
+            HealTickTimer = 0;
+
+            var champions = map.getChampionsInRange(X, Y, FountainSize, true);
+            foreach (var champion in champions)
             {
-                healTickTimer = 0;
-                var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
-                foreach (var team in teams)
-                {
-                    if (team == TeamId.TEAM_NEUTRAL) //temp
-                        continue;
+                if (champion.getTeam() != Team)
+                    continue;
 
-                    foreach (var f in healLocations)
-                    {
-                        foreach (var c in map.getChampionsInRange(f, fountainSize))
-                        {
-                            if (c.getTeam() == team)
-                            {
-                                var hp = c.getStats().getCurrentHealth();
-                                var maxHP = c.getStats().getMaxHealth();
-                                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                                    c.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
-                                else if (hp < maxHP)
-                                    c.getStats().setCurrentHealth(maxHP);
+                var hp = champion.getStats().getCurrentHealth();
+                var maxHP = champion.getStats().getMaxHealth();
+                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
+                    champion.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
+                else if (hp < maxHP)
+                    champion.getStats().setCurrentHealth(maxHP);
 
-                                var mp = c.getStats().getCurrentMana();
-                                var maxMp = c.getStats().getMaxMana();
-                                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                                    c.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
-                                else if (mp < maxMp)
-                                    c.getStats().setCurrentMana(maxMp);
-                            }
-                        }
-                    }
-                }
+                var mp = champion.getStats().getCurrentMana();
+                var maxMp = champion.getStats().getMaxMana();
+                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
+                    champion.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
+                else if (mp < maxMp)
+                    champion.getStats().setCurrentMana(maxMp);
             }
         }
     }

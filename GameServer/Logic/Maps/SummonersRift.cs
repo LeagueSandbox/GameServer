@@ -155,8 +155,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 announcerEvents.Add(new Announce(firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
             announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
             announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
-
-            fountain.setHealLocations(this);
         }
 
         public override void update(long diff)

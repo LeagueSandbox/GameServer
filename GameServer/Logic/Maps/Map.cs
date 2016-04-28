@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected int id;
 
         protected CollisionHandler collisionHandler;
-        protected Fountain fountain;
+        protected Dictionary<TeamId, Fountain> Fountains;
         private readonly List<TeamId> TeamsIterator;
 
 
@@ -57,7 +57,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.killReduction = true;
             this.hasFountainHeal = hasFountainHeal;
             this.collisionHandler = new CollisionHandler(this);
-            this.fountain = new Fountain();
+            this.Fountains = new Dictionary<TeamId, Fountain>();
+            this.Fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
+            this.Fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
             this.id = id;
 
             TeamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
@@ -206,7 +208,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             if (hasFountainHeal)
-                fountain.healChampions(this, diff);
+            {
+                foreach (var fountain in Fountains.Values)
+                    fountain.Update(this, diff);
+            }
         }
 
         public CollisionHandler getCollisionHandler()
@@ -374,18 +379,24 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
         }
 
-        public List<Champion> getChampionsInRange(GameObjects.Target t, float range, bool isAlive = false)
+        public List<Champion> getChampionsInRange(float x, float y, float range, bool onlyAlive = false)
+        {
+            return getChampionsInRange(new Target(x, y), range, onlyAlive);
+        }
+
+        public List<Champion> getChampionsInRange(GameObjects.Target t, float range, bool onlyAlive = false)
         {
             var champs = new List<Champion>();
             foreach (var kv in champions)
             {
                 var c = kv.Value;
                 if (t.distanceWith(c) <= range)
-                    if (isAlive && !c.isDead() || !isAlive) //TODO: check
+                    if (onlyAlive && !c.isDead() || !onlyAlive)
                         champs.Add(c);
             }
             return champs;
         }
+
         public List<Unit> getUnitsInRange(GameObjects.Target t, float range, bool isAlive = false)
         {
             var units = new List<Unit>();
