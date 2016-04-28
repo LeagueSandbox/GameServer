@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(packet, Channel.CHL_S2C);
         }
 
-        public static void notifyTurretDestory(Turret tower, GameObject killer = null, List<Champion> assists = null)
+        public static void notifyTurretDestroy(Turret tower, GameObject killer = null, List<Champion> assists = null)
         {
             TurretDestroy announce;
             announce = new TurretDestroy(tower, killer, assists);
