@@ -32,11 +32,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public static unsafe void NotifyGameEnd(Nexus nexus)
         {
-            var loosingTeam = nexus.getTeam();
+            var losingTeam = nexus.getTeam();
 
             foreach (var p in map.getGame().getPlayers())
             {
-                var coords = map.GetEndGameCameraPosition(loosingTeam);
+                var coords = map.GetEndGameCameraPosition(losingTeam);
                 var cam = new MoveCamera(p.Item2.getChampion(),coords[0], coords[1], coords[2], 2);
                 PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), cam, Channel.CHL_S2C);
                 PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), new HideUi(), Channel.CHL_S2C);
@@ -48,9 +48,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             timer.Elapsed += (a, b) =>
             {
                 var win = new GameEnd(true);
-                PacketHandlerManager.getInstace().broadcastPacketTeam(CustomConvert.getEnemyTeam(loosingTeam), win, Channel.CHL_S2C);
-                var loose = new GameEnd(false);
-                PacketHandlerManager.getInstace().broadcastPacketTeam(loosingTeam, loose, Channel.CHL_S2C);
+                PacketHandlerManager.getInstace().broadcastPacketTeam(CustomConvert.getEnemyTeam(losingTeam), win, Channel.CHL_S2C);
+                var lose = new GameEnd(false);
+                PacketHandlerManager.getInstace().broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
             };
             timer.Start();
         }

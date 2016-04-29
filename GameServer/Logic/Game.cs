@@ -24,14 +24,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
     {
         private ENetHost* _server;
         private BlowFish* _blowfish;
-        private static uint dwStart = 0x40000000; //new netid
+        private static uint _dwStart = 0x40000000; //new netid
 
         private bool _started = false;
-        private int playersReady = 0;
+        private int _playersReady = 0;
 
-        private List<Pair<uint, ClientInfo>> players = new List<Pair<uint, ClientInfo>>();
-        private Map map;
-        private System.Timers.Timer updateTimer;
+        private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
+        private Map _map;
+        private System.Timers.Timer _updateTimer;
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
         private const PacketFlags UNRELIABLE = PacketFlags.None;
@@ -62,9 +62,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             PacketHandlerManager.getInstace().InitHandlers(this);
 
-            map = new SummonersRift(this);
+            _map = new SummonersRift(this);
 
-            PacketNotifier.setMap(map);
+            PacketNotifier.setMap(_map);
             //TODO: better lua implementation
 
             var id = 1;
@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                 player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
 
-                Champion c = ChampionFactory.getChampionFromType(this, p.Value.champion, map, GetNewNetID(), (uint)player.userId);
+                Champion c = ChampionFactory.getChampionFromType(this, p.Value.champion, _map, GetNewNetID(), (uint)player.userId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 player.setChampion(c);
                 var pair = new Pair<uint, ClientInfo>();
                 pair.Item2 = player;
-                players.Add(pair);
+                _players.Add(pair);
             }
             return true;
         }
@@ -135,19 +135,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private void update()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            updateTimer = new System.Timers.Timer(REFRESH_RATE);
-            updateTimer.AutoReset = false;
-            updateTimer.Elapsed += (a, b) =>
+            _updateTimer = new System.Timers.Timer(REFRESH_RATE);
+            _updateTimer.AutoReset = false;
+            _updateTimer.Elapsed += (a, b) =>
                  {
                      watch.Stop();
                      var elapsed = watch.ElapsedMilliseconds;
                      watch.Restart();
                      if (_started)
-                         map.update(elapsed);
+                         _map.update(elapsed);
 
-                     updateTimer.Start();
+                     _updateTimer.Start();
                  };
-            updateTimer.Start();
+            _updateTimer.Start();
         }
 
         public BlowFish* getBlowfish()
@@ -162,22 +162,22 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public List<Pair<uint, ClientInfo>> getPlayers()
         {
-            return players;
+            return _players;
         }
 
         public Map getMap()
         {
-            return map;
+            return _map;
         }
 
         public void IncrementReadyPlayers()
         {
-            playersReady++;
+            _playersReady++;
         }
 
         public int getReadyPlayers()
         {
-            return playersReady;
+            return _playersReady;
         }
 
         public bool isStarted()
@@ -192,7 +192,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void stopGame()
         {
-            updateTimer.Stop();
+            _updateTimer.Stop();
         }
 
         bool handleDisconnect(ENetPeer* peer)
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public ClientInfo getPeerInfo(ENetPeer* peer)
         {
-            foreach (var player in players)
+            foreach (var player in _players)
                 if (player.Item1 == peer->address.port)
                     return player.Item2;
             return null;
@@ -258,8 +258,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public static uint GetNewNetID()
         {
-            dwStart++;
-            return dwStart;
+            _dwStart++;
+            return _dwStart;
         }
     }
 }

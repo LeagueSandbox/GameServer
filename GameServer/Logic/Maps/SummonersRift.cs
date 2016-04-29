@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
            }
         };
 
-        private Dictionary<TeamId, float[]> endGameCameraPosition = new Dictionary<TeamId, float[]>
+        private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
         {
             { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
             { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
@@ -388,10 +388,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public override float[] GetEndGameCameraPosition(TeamId team)
         {
-            if (!endGameCameraPosition.ContainsKey(team))
+            if (!_endGameCameraPosition.ContainsKey(team))
                 return new float[] { 0, 0, 0 };
 
-            return endGameCameraPosition[team];
+            return _endGameCameraPosition[team];
         }
     }
 }
