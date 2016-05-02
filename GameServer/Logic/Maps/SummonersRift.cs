@@ -87,6 +87,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
            }
         };
 
+        private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
+        {
+            { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
+            { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
+        };
+
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
@@ -136,6 +142,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             addObject(new Inhibitor(this, 0xff6793d0, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 10960, 13450, SIGHT_RANGE)); //top
             addObject(new Inhibitor(this, 0xffff8f1f, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 11240, 11490, SIGHT_RANGE)); //mid
             addObject(new Inhibitor(this, 0xff26ac0f, "ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 13200, 11200, SIGHT_RANGE)); //bot
+
+            addObject(new Nexus(this, 0xfff97db5, "OrderNexus", TeamId.TEAM_BLUE, COLLISION_RADIUS, 1170, 1470, SIGHT_RANGE));
+            addObject(new Nexus(this, 0xfff02c0f, "ChaosNexus", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 12800, 13100, SIGHT_RANGE));
 
             // Start at xp to reach level 1
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
@@ -375,6 +384,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public override int getBluePillId()
         {
             return 2001;
+        }
+
+        public override float[] GetEndGameCameraPosition(TeamId team)
+        {
+            if (!_endGameCameraPosition.ContainsKey(team))
+                return new float[] { 0, 0, 0 };
+
+            return _endGameCameraPosition[team];
         }
     }
 }

@@ -479,5 +479,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             return 0;
         }
+
+        public virtual float[] GetEndGameCameraPosition(TeamId team)
+        {
+            return new float[] { 0, 0, 0 };
+        }
     }
 }

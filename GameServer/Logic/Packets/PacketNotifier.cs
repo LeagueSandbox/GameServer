@@ -30,6 +30,31 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacketVision(u, sh, Channel.CHL_S2C);
         }
 
+        public static unsafe void NotifyGameEnd(Nexus nexus)
+        {
+            var losingTeam = nexus.getTeam();
+
+            foreach (var p in map.getGame().getPlayers())
+            {
+                var coords = map.GetEndGameCameraPosition(losingTeam);
+                var cam = new MoveCamera(p.Item2.getChampion(),coords[0], coords[1], coords[2], 2);
+                PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), cam, Channel.CHL_S2C);
+                PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), new HideUi(), Channel.CHL_S2C);
+            }
+            PacketHandlerManager.getInstace().broadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
+
+            var timer = new System.Timers.Timer(5000);
+            timer.AutoReset = false;
+            timer.Elapsed += (a, b) =>
+            {
+                var win = new GameEnd(true);
+                PacketHandlerManager.getInstace().broadcastPacketTeam(CustomConvert.getEnemyTeam(losingTeam), win, Channel.CHL_S2C);
+                var lose = new GameEnd(false);
+                PacketHandlerManager.getInstace().broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
+            };
+            timer.Start();
+        }
+
         public static void notifyUpdatedStats(Unit u, bool partial = true)
         {
             //if (u is Monster)

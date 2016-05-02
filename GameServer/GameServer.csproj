@@ -82,6 +82,7 @@
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\Nexus.cs" />
     <Compile Include="Logic\GameObjects\Inhibitor.cs" />
     <Compile Include="Logic\GameObjects\LevelProp.cs" />
     <Compile Include="Logic\GameObjects\Monster.cs" />
