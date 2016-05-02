@@ -140,16 +140,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     buff.update(diff);
                 }
 
-                if (u.getStats().getUpdatedStats().Count > 0)
+                if (u.getStats().GetUpdatedStats().Count > 0)
                 {
                     PacketNotifier.notifyUpdatedStats(u);
-                    u.getStats().clearUpdatedStats();
+                    u.getStats().ClearUpdatedStats();
                 }
 
-                if (u.getStats().isUpdatedHealth())
+                if (u.getStats().IsUpdatedHealth())
                 {
                     PacketNotifier.notifySetHealth(u);
-                    u.getStats().clearUpdatedHealth();
                 }
 
                 if (u.isModelUpdated())

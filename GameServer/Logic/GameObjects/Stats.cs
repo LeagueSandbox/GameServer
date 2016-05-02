@@ -71,40 +71,209 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Stats
     {
-        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
+        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> _updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
         protected bool updatedHealth;
 
-        // Here all the stats that don't have a bitmask
-        protected float goldPerSecond;
-        protected float healthPerLevel, manaPerLevel;
-        protected float adPerLevel, armorPerLevel, magicArmorPerLevel;
-        protected float hp5RegenPerLevel, mp5RegenPerLevel;
-        protected float movementSpeedPercentageModifier;
+        private float _gold;
+        private float _level;
+        private float _experience;
+        private float _currentHealth;
+        private float _currentMana;
+        private float _spellsEnabled;
+        private float _summonerSpellsEnabled;
+
+        public float AttackSpeedFlat { get; set; }
+        public float HealthPerLevel { get; set; }
+        public float ManaPerLevel { get; set; }
+        public float AdPerLevel { get; set; }
+        public float ArmorPerLevel { get; set; }
+        public float MagicResistPerLevel { get; set; }
+        public float HealthRegenerationPerLevel { get; set; }
+        public float ManaRegenerationPerLevel { get; set; }
+        public float GrowthAttackSpeed { get; set; }
+
+        public Stat AbilityPower { get; }
+        public Stat Armor { get; }
+        public Stat ArmorPenetration { get; }
+        public Stat AttackDamage { get; }
+        public Stat AttackSpeedMultiplier { get; }
+        public Stat CriticalChance { get; }
+        public Stat GoldPerSecond { get; }
+        public Stat HealthPoints { get; }
+        public Stat HealthRegeneration { get; }
+        public Stat LifeSteal { get; }
+        public Stat MagicResist { get; }
+        public Stat MagicPenetration { get; }
+        public Stat ManaPoints { get; }
+        public Stat ManaRegeneration { get; }
+        public Stat MoveSpeed { get; }
+        public Stat Range { get; }
+        public Stat Size { get; }
+        public Stat SpellVamp { get; }
+        public Stat Tenacity { get; }
+
+        public float Gold {
+            get { return _gold; }
+            set
+            {
+                _gold = value;
+                appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Gold, _gold);
+            }
+        }
+
+        public float Level {
+            get { return _level; }
+            set
+            {
+                _level = value;
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Level, _level);
+            }
+        }
+
+        public float Experience
+        {
+            get { return _experience; }
+            set
+            {
+                _experience = value;
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_exp, _experience);
+            }
+        }
+
+        public float CurrentHealth
+        {
+            get { return _currentHealth; }
+            set
+            {
+                _currentHealth = value;
+                updatedHealth = true;
+            }
+        }
+
+        public float CurrentMana
+        {
+            get { return _currentMana; }
+            set
+            {
+                _currentMana = value;
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_CurrentMana, CurrentMana);
+            }
+        }
+        
         protected bool generatingGold; // Used to determine if the stats update should include generating gold. Changed in Champion.h
-
-        protected float baseMovement, baseAttackSpeed;
-
         protected float spellCostReduction; //URF Buff/Lissandra's passive
         protected float critDamagePct; //Default = 2... add with runes/items (change with yasuo's passive)
 
         public Stats()
         {
             updatedHealth = false;
-            goldPerSecond = 0;
-            healthPerLevel = 0;
-            manaPerLevel = 0;
-            adPerLevel = 0;
-            armorPerLevel = 0;
-            magicArmorPerLevel = 0;
-            hp5RegenPerLevel = 0;
-            mp5RegenPerLevel = 0;
-            movementSpeedPercentageModifier = 0;
-            baseMovement = 0;
-            baseAttackSpeed = 0.625f;
             spellCostReduction = 0;
             critDamagePct = 2;
+
+            AbilityPower = new Stat();
+            Armor = new Stat();
+            ArmorPenetration = new Stat();
+            AttackDamage = new Stat();
+            AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
+            CriticalChance = new Stat();
+            GoldPerSecond = new Stat();
+            HealthPoints = new Stat();
+            HealthRegeneration = new Stat();
+            LifeSteal = new Stat();
+            MagicResist = new Stat();
+            MagicPenetration = new Stat();
+            ManaPoints = new Stat();
+            ManaRegeneration = new Stat();
+            MoveSpeed = new Stat();
+            Range = new Stat();
+            Size = new Stat(1.0f, 0, 0, 0, 0);
+            SpellVamp = new Stat();
+            Tenacity = new Stat();
         }
+
+        public void AddBuff(IBuff buff)
+        {
+            if (AbilityPower.ApplyStatModificator(buff.AbilityPower))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
+            }
+            if (Armor.ApplyStatModificator(buff.Armor))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
+            }
+            if (ArmorPenetration.ApplyStatModificator(buff.ArmorPenetration))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, Armor.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, Armor.PercentBonus);
+            }
+            if (AttackDamage.ApplyStatModificator(buff.AttackDamage))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, Armor.BaseValue);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, Armor.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, Armor.PercentBonus);
+            }
+            if (AttackSpeedMultiplier.ApplyStatModificator(buff.AttackSpeed))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
+            }
+            if (CriticalChance.ApplyStatModificator(buff.CriticalChance))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
+            }
+            GoldPerSecond.ApplyStatModificator(buff.GoldPerSecond);
+            if (HealthPoints.ApplyStatModificator(buff.HealthPoints))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
+            }
+            if (HealthRegeneration.ApplyStatModificator(buff.HealthRegeneration))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Hp5, HealthRegeneration.Total);
+            }
+            if (LifeSteal.ApplyStatModificator(buff.LifeSteel))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
+            }
+            if (MagicResist.ApplyStatModificator(buff.MagicResist))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
+            }
+            if (MagicPenetration.ApplyStatModificator(buff.MagicPenetration))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicResist.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicResist.PercentBonus);
+            }
+            if (ManaPoints.ApplyStatModificator(buff.ManaPoints))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
+            }
+            if (ManaRegeneration.ApplyStatModificator(buff.ManaRegeneration))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Mp5, ManaRegeneration.Total);
+            }
+            if (MoveSpeed.ApplyStatModificator(buff.MoveSpeed))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
+            }
+            if (Range.ApplyStatModificator(buff.Range))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Range, Range.Total);
+            }
+            if (Size.ApplyStatModificator(buff.Size))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
+            }
+            if (SpellVamp.ApplyStatModificator(buff.SpellVamp))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
+            }
+            if (Tenacity.ApplyStatModificator(buff.Tenacity))
+            {
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
+            }
+        }
+
         public float getStat(MasterMask blockId, MinionFieldMask stat)
         {
             return getStat(blockId, (FieldMask)stat);
@@ -112,24 +281,57 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public float getStat(MasterMask blockId, FieldMask stat)
         {
-            if (stats.ContainsKey(blockId))
-                if (stats[blockId].ContainsKey(stat))
-                    return stats[blockId][stat];
+            if (blockId == MasterMask.MM_One)
+            {
+                switch (stat)
+                {
+                    case FieldMask.FM1_Gold:
+                        return Gold;
+                    case FieldMask.FM1_Spells_Enabled:
+                        return _spellsEnabled;
+                    case FieldMask.FM1_SummonerSpells_Enabled:
+                        return _summonerSpellsEnabled;
+                }
+            }
+            else if (blockId == MasterMask.MM_Two)
+            {
+                switch (stat)
+                {
+                    case FieldMask.FM2_Base_Ad:
+                        return AttackDamage.BaseValue;
+                    case FieldMask.FM2_Armor:
+                        return Armor.Total;
+                }
+            }
+            else if (blockId == MasterMask.MM_Three)
+            {
+                switch (stat)
+                {
 
+                }
+            }
+            else if (blockId == MasterMask.MM_Four)
+            {
+                switch (stat)
+                {
+                    case FieldMask.FM4_Level:
+                        return Level + 0.5f;
+                    case FieldMask.FM4_exp:
+                        return Experience;
+                    case FieldMask.FM4_CurrentHp:
+                        return CurrentHealth;
+                    case FieldMask.FM4_CurrentMana:
+                        return CurrentMana;
+                    case FieldMask.FM4_ModelSize:
+                        return Size.Total;
+                    case FieldMask.FM4_Speed:
+                        return MoveSpeed.Total;
+                }
+            }
+            
             return 0;
         }
         
-        public void setStat(MasterMask blockId, MinionFieldMask stat, float value)
-        {
-            setStat(blockId, (FieldMask)stat, value);
-        }
-
-        public void setStat(MasterMask blockId, FieldMask stat, float value)
-        {
-            appendStat(updatedStats, blockId, stat, value);
-            appendStat(stats, blockId, stat, value);
-        }
-
         private void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
         {
             if (!collection.ContainsKey(blockId))
@@ -140,7 +342,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
                 collection[blockId][stat] = value;
         }
-        
+
         public bool isGeneratingGold()
         {
             return generatingGold;
@@ -151,12 +353,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             generatingGold = b;
         }
 
-        public Dictionary<MasterMask, Dictionary<FieldMask, float>> getUpdatedStats()
+        public Dictionary<MasterMask, Dictionary<FieldMask, float>> GetUpdatedStats()
         {
             var ret = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-            lock (updatedStats)
+            lock (_updatedStats)
             {
-                foreach (var blocks in updatedStats)
+                foreach (var blocks in _updatedStats)
                 {
                     if (!ret.ContainsKey(blocks.Key))
                         ret.Add(blocks.Key, new Dictionary<FieldMask, float>());
@@ -167,9 +369,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return ret;
         }
 
-        public Dictionary<MasterMask, Dictionary<FieldMask, float>> getAllStats()
+        public Dictionary<MasterMask, Dictionary<FieldMask, float>> GetAllStats()
         {
             var toReturn = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
+            Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
+            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_Gold, Gold);
+            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
+            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, _summonerSpellsEnabled);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, Armor.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, Armor.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, Armor.BaseValue);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, Armor.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, Armor.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicResist.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicResist.PercentBonus);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
 
             foreach (var block in stats)
             {
@@ -181,76 +408,65 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return toReturn;
         }
 
-        public void clearUpdatedStats()
+        public void ClearUpdatedStats()
         {
-            updatedStats.Clear();
+            _updatedStats.Clear();
         }
 
-        public bool isUpdatedHealth()
+        public bool IsUpdatedHealth()
         {
-            return updatedHealth;
+            if (!updatedHealth)
+                return false;
+            if (updatedHealth)
+                updatedHealth = false;
+            return true;
         }
 
-        public void clearUpdatedHealth()
+        public float GetTotalAttackSpeed()
         {
-            updatedHealth = false;
+            return AttackSpeedFlat*AttackSpeedMultiplier.Total;
         }
 
         public void update(long diff)
         {
-            if (getHp5() > 0 && getCurrentHealth() < getMaxHealth())
+            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total)
             {
-                float newHealth = getCurrentHealth() + (getHp5() * diff * 0.001f);
-                newHealth = Math.Min(getMaxHealth(), newHealth);
-                setCurrentHealth(newHealth);
+                float newHealth = CurrentHealth + (HealthRegeneration.Total * diff * 0.001f);
+                newHealth = Math.Min(HealthPoints.Total, newHealth);
+                CurrentHealth = newHealth;
             }
 
-            if (getMana5() > 0 && getCurrentMana() < getMaxMana())
+            if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
             {
-                float newMana = getCurrentMana() + (getMana5() * diff * 0.001f);
-                newMana = Math.Min(getMaxMana(), newMana);
-                setCurrentMana(newMana);
+                float newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
+                newMana = Math.Min(ManaRegeneration.Total, newMana);
+                CurrentMana = newMana;
             }
-            if (generatingGold && getGoldPerSecond() > 0)
+            if (generatingGold && GoldPerSecond.Total > 0)
             {
-                float newGold = getGold() + getGoldPerSecond() * (diff * 0.001f);
-                setGold(newGold);
-            }
-        }
-        public void levelUp()
-        {
-            setLevel(getLevel() + 1);
-
-            setMaxHealth(getMaxHealth() + healthPerLevel);
-            setCurrentHealth((getMaxHealth() / (getMaxHealth() - healthPerLevel)) * getCurrentHealth());
-            setMaxMana(getMaxMana() + manaPerLevel);
-            setCurrentMana((getMaxMana() / (getMaxMana() - manaPerLevel)) * getCurrentMana());
-            setBaseAd(getBaseAd() + adPerLevel);
-            setArmor(getArmor() + armorPerLevel);
-            setMagicArmor(getMagicArmor() + magicArmorPerLevel);
-            setHp5(getHp5() + hp5RegenPerLevel);
-            setMp5(getMana5() + mp5RegenPerLevel);
-        }
-
-        public void applyStatMods(IEnumerable<StatMod> statMods)
-        {
-            foreach (var stat in statMods)
-            {
-                if (stat.Value == 0)
-                    continue;
-
-                setStat(stat.BlockId, stat.Mask, getStat(stat.BlockId, stat.Mask) + stat.Value);
+                float newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
+                Gold = newGold;
             }
         }
-        public void unapplyStatMods(List<StatMod> statMods)
-        {
-            foreach (var stat in statMods)
-            {
-                if (stat.Value == 0)
-                    continue;
 
-                setStat(stat.BlockId, stat.Mask, getStat(stat.BlockId, stat.Mask) - stat.Value);
-            }
+        public void LevelUp()
+        {
+            Level++;
+
+            HealthPoints.BaseValue += HealthPerLevel;
+            CurrentHealth = (HealthPoints.Total / (HealthPoints.Total - HealthPerLevel)) * CurrentHealth;
+            ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
+            CurrentMana = (ManaPoints.Total / (ManaPoints.Total - ManaPerLevel)) * CurrentMana;
+            AttackDamage.BaseValue = AttackDamage.BaseValue + AdPerLevel;
+            Armor.BaseValue = Armor.BaseValue + ArmorPerLevel;
+            MagicResist.BaseValue = MagicResist.Total + MagicResistPerLevel;
+            HealthRegeneration.BaseValue = HealthRegeneration.BaseValue + HealthRegenerationPerLevel;
+            ManaRegeneration.BaseValue = ManaRegeneration.BaseValue + ManaRegenerationPerLevel;
+        }
+
+        public float GetLevel()
+        {
+            return Level;
         }
 
         public virtual byte getSize(MasterMask blockId, FieldMask stat)
@@ -277,346 +493,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 4;
         }
 
-        public virtual float getMovementSpeedPercentageModifier()
-        {
-            return 1.0f + (movementSpeedPercentageModifier / 100.0f);
-        }
-
-        public void setBaseMovementSpeed(float ms)
-        {
-            baseMovement = ms;
-            setStat(MasterMask.MM_Four, FieldMask.FM4_Speed, baseMovement * getMovementSpeedPercentageModifier());
-        }
-
-        public void addMovementSpeedPercentageModifier(float amount)
-        {
-            movementSpeedPercentageModifier += amount;
-            setStat(MasterMask.MM_Four, FieldMask.FM4_Speed, baseMovement * getMovementSpeedPercentageModifier());
-        }
-
-        public virtual float getBaseAd()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Base_Ad);
-        }
-
-        public virtual float getBonusAdFlat()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat);
-        }
-
-        public virtual float getBonusApFlat()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat);
-        }
-
-        public virtual float getBonusAdPct()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct);
-        }
-
-        public virtual float getBaseAp()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Base_Ap);
-        }
-
-        public virtual float getCritChance()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Crit_Chance);
-        }
-
-        public virtual float getArmor()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Armor);
-        }
-
-        public virtual float getMagicArmor()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Armor);
-        }
-
-        public virtual float getRange()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Range);
-        }
-
-        public virtual float getArmorPenFlat()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat);
-        }
-
-        public virtual float getArmorPenPct()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct);
-        }
-
-        public virtual float getMagicPenFlat()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat);
-        }
-
-        public virtual float getMagicPenPct()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct);
-        }
-
-        public virtual float getCurrentHealth()
-        {
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_CurrentHp);
-        }
-
-        public virtual float getCurrentMana()
-        {
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_CurrentMana);
-        }
-
-        public virtual float getMaxHealth()
-        {
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_MaxHp);
-        }
-
-        public virtual float getMaxMana()
-        {
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_MaxMp);
-        }
-
-        public virtual float getHp5()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Hp5);
-        }
-
-        public virtual float getMana5()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Mp5);
-        }
-
-        public virtual float getCDR()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_cdr);
-        }
-
-        public virtual float getLifeSteal()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_LifeSteal);
-        }
-
-        public virtual float getSpellVamp()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_SpellVamp);
-        }
-
-        public virtual float getMovementSpeed()
-        {
-            //  CORE_INFO("Movement speed with buffs %f", getMovementSpeedPercentageModifier() * getStat(MasterMask.MM_Four, FieldMaskFour.FM4_Speed));
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_Speed);
-        }
-
-        public virtual float getBaseAttackSpeed()
-        {
-            return baseAttackSpeed;
-        }
-
-        public virtual float getAttackSpeedMultiplier()
-        {
-            return getStat(MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier);
-        }
-
-        public virtual float getGold()
-        {
-            return getStat(MasterMask.MM_One, FieldMask.FM1_Gold);
-        }
-
-        public virtual float getGoldPerSecond()
-        {
-            return goldPerSecond;
-        }
-
-        public virtual byte getLevel()
-        {
-            return (byte)Math.Floor(getStat(MasterMask.MM_Four, FieldMask.FM4_Level) + 0.5f);
-        }
-
-        public virtual float getExperience()
-        {
-            return getStat(MasterMask.MM_Four, FieldMask.FM4_exp);
-        }
-
-        public virtual void setCritChance(float crit)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, crit);
-        }
-
-        public virtual void setBaseAd(float ad)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Base_Ad, ad);
-        }
-
-        public virtual void setRange(float range)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Range, range);
-        }
-
-        public virtual void setBonusAdFlat(float ad)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, ad);
-        }
-
-        public virtual void setBonusApFlat(float ap)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, ap);
-        }
-
-        public virtual void setArmor(float armor)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Armor, armor);
-        }
-
-        public virtual void setMagicArmor(float armor)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, armor);
-        }
-
-        public virtual void setHp5(float hp5)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Hp5, hp5);
-        }
-
-        public virtual void setMp5(float mp5)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Mp5, mp5);
-        }
-
-        public virtual void setArmorPenFlat(float pen)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, pen);
-        }
-
-        public virtual void setArmorPenPct(float pen)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, pen);
-        }
-
-        public virtual void setMagicPenFlat(float pen)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, pen);
-        }
-
-        public virtual void setMagicPenPct(float pen)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, pen);
-        }
-
-        public virtual void setCurrentHealth(float health)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_CurrentHp, health);
-            updatedHealth = true;
-        }
-
-        public virtual void setCurrentMana(float mana)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_CurrentMana, mana);
-        }
-
-        public virtual void setMaxMana(float mana)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_MaxMp, mana);
-        }
-
-        public virtual void setMaxHealth(float health)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_MaxHp, health);
-            updatedHealth = true;
-        }
-
-        public virtual void setMovementSpeed(float speed)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_Speed, speed);
-        }
-
-        public virtual void setGold(float gold)
-        {
-            setStat(MasterMask.MM_One, FieldMask.FM1_Gold, gold);
-        }
-
-        public virtual void setGoldPerSecond(float gold)
-        {
-            goldPerSecond = gold;
-        }
-
-        public virtual void setBaseAp(float AP)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AP);
-        }
-
-        public virtual void setExp(float EXP)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_exp, EXP);
-        }
-
-        public virtual void setLevel(float level)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_Level, level);
-        }
-
-        public virtual void setSize(float Size)
-        {
-            setStat(MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size);
-        }
-
-        public virtual void setLifeSteal(float lifeSteal)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_LifeSteal, lifeSteal);
-        }
-
-        public virtual void setSpellVamp(float spellVamp)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_SpellVamp, spellVamp);
-        }
-
-        public virtual void setBaseAttackSpeed(float speed)
-        {
-            baseAttackSpeed = speed;
-        }
-
-        public virtual void setAttackSpeedMultiplier(float multiplier)
-        {
-            setStat(MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, multiplier);
-        }
-
-        public virtual void setAdPerLevel(float ad)
-        {
-            adPerLevel = ad;
-        }
-
-        public virtual void setHealthPerLevel(float health)
-        {
-            healthPerLevel = health;
-        }
-
-        public virtual void setManaPerLevel(float mana)
-        {
-            manaPerLevel = mana;
-        }
-
-        public virtual void setArmorPerLevel(float armor)
-        {
-            armorPerLevel = armor;
-        }
-
-        public virtual void setMagicArmorPerLevel(float magicArmor)
-        {
-            magicArmorPerLevel = magicArmor;
-        }
-
-        public virtual void setHp5RegenPerLevel(float hpRegen)
-        {
-            hp5RegenPerLevel = hpRegen;
-        }
-
-        public virtual void setMp5RegenPerLevel(float mpRegen)
-        {
-            mp5RegenPerLevel = mpRegen;
-        }
-
         public virtual float getSpellCostReduction()
         {
             return spellCostReduction;
@@ -639,58 +515,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual bool getSpellEnabled(byte id)
         {
-            short mask = (short)Math.Floor(getStat(MasterMask.MM_One, FieldMask.FM1_Spells_Enabled) + 0.5f);
+            short mask = (short)Math.Floor(_spellsEnabled + 0.5f);
             return (mask & (1 << id)) != 0;
         }
 
         public virtual void setSpellEnabled(byte id, bool enabled)
         {
-            short mask = (short)Math.Floor(getStat(MasterMask.MM_One, FieldMask.FM1_Spells_Enabled) + 0.5f);
+            short mask = (short)Math.Floor(_spellsEnabled + 0.5f);
             if (enabled)
                 mask |= (short)(1 << id);
             else
                 mask |= (short)(~(1 << id));
-            setStat(MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, (float)mask);
+            _spellsEnabled = (float) mask;
         }
 
         public virtual bool getSummonerSpellEnabled(byte id)
         {
-            short mask = (short)Math.Floor(getStat(MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled) + 0.5f);
+            short mask = (short)Math.Floor(_summonerSpellsEnabled + 0.5f);
             return (mask & (1 << id)) != 0;
         }
 
         public virtual void setSummonerSpellEnabled(byte id, bool enabled)
         {
-            short mask = (short)Math.Floor(getStat(MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled) + 0.5f);
+            short mask = (short)Math.Floor(_summonerSpellsEnabled + 0.5f);
             if (enabled)
                 mask |= (short)(16 << id);
             else
                 mask &= (short)(~(16 << id));
-            setStat(MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, (float)mask);
-        }
-
-        /**
-         * Meta-stats, relying on other stats
-         */
-
-        public float getTotalAd()
-        {
-            return (getBaseAd() + getBonusAdFlat()) * (1 + getBonusAdPct());
-        }
-
-        public float getTotalAttackSpeed()
-        {
-            return getBaseAttackSpeed() * getAttackSpeedMultiplier();
-        }
-
-        public float getTotalMovementSpeed()
-        {
-            return getMovementSpeedPercentageModifier() * baseMovement;
-        }
-
-        public float getTotalAp()
-        {
-            return (getBaseAp() + getBonusApFlat()); //Where's AP pctg? for stuff like Rabadon's
+            _summonerSpellsEnabled = (float) mask;
         }
     }
 }

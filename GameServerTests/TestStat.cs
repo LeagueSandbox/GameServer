@@ -20,17 +20,26 @@ namespace GameServerTests
             Assert.AreEqual(1, stat.Total);
             
             //Add 1 to modifed base value
-            stat.ModifiedBase += 1;
+            stat.BaseBonus += 1;
             Assert.AreEqual(2, stat.Total);
-            
+
+            stat.PercentBaseBonus = 1.0f;
+            Assert.AreEqual(4, stat.Total);
+
             //Add 1 to bonus value
-            stat.Bonus += 1;
-            Assert.AreEqual(3, stat.Total);
+            stat.FlatBonus += 1;
+            Assert.AreEqual(5, stat.Total);
+
+            //Add set to 100% bonus value
+            stat.PercentBonus = 1.0f;
+            Assert.AreEqual(10, stat.Total);
             
             //Reset everything to 0
             stat.BaseValue = 0;
-            stat.ModifiedBase = 0;
-            stat.Bonus = 0;
+            stat.BaseBonus = 0;
+            stat.PercentBaseBonus = 0;
+            stat.FlatBonus = 0;
+            stat.PercentBonus = 0;
             Assert.AreEqual(0, stat.Total);
         }
     }

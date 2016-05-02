@@ -489,7 +489,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
             script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
-            script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("getLevel"));
+            script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("GetLevel"));
             script.lua.RegisterFunction("getChampionModel", owner,typeof(Champion).GetMethod("getModel"));
             script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
             script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));

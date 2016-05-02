@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 else if (isAttacking && autoAttackTarget != null)
                 {
                     autoAttackCurrentDelay += diff / 1000.0f;
-                    if (autoAttackCurrentDelay >= autoAttackDelay / stats.getAttackSpeedMultiplier())
+                    if (autoAttackCurrentDelay >= autoAttackDelay / stats.AttackSpeedMultiplier.Total)
                     {
                         if (!isMelee())
                         {
@@ -159,15 +159,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         {
                             autoAttackHit(autoAttackTarget);
                         }
-                        autoAttackCurrentCooldown = 1.0f / (stats.getTotalAttackSpeed());
+                        autoAttackCurrentCooldown = 1.0f / stats.GetTotalAttackSpeed();
                         isAttacking = false;
                     }
 
                 }
-                else if (distanceWith(targetUnit) <= stats.getRange())
+                else if (distanceWith(targetUnit) <= stats.Range.Total)
                 {
                     refreshWaypoints();
-                    nextAutoIsCrit = new Random().Next(0, 100) <= stats.getCritChance() * 100;
+                    nextAutoIsCrit = new Random().Next(0, 100) <= stats.CriticalChance.Total * 100;
                     if (autoAttackCurrentCooldown <= 0)
                     {
                         isAttacking = true;
@@ -224,7 +224,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override float getMoveSpeed()
         {
-            return stats.getMovementSpeed();
+            return stats.MoveSpeed.Total;
         }
 
         public int getKillDeathCounter()
@@ -255,7 +255,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         */
         public virtual void autoAttackHit(Unit target)
         {
-            float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.getTotalAd() : stats.getTotalAd();
+            float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
             dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK);
             
             if (unitScript.isLoaded())
@@ -296,31 +296,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = target.getStats().getArmor();
-                    defense = ((1 - stats.getArmorPenPct()) * defense) - stats.getArmorPenFlat();
-
+                    defense = target.getStats().Armor.Total;
+                    defense = ((1 - stats.ArmorPenetration.PercentBonus) * defense) - stats.ArmorPenetration.FlatBonus;
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = target.getStats().getMagicArmor();
-                    defense = ((1 - stats.getMagicPenPct()) * defense) - stats.getMagicPenFlat();
+                    defense = target.getStats().MagicResist.Total;
+                    defense = ((1 - stats.MagicResist.PercentBonus) * defense) - stats.MagicResist.FlatBonus;
                     break;
             }
 
             switch (source)
             {
                 case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = stats.getSpellVamp();
+                    regain = stats.SpellVamp.Total;
                     break;
                 case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = stats.getLifeSteal();
+                    regain = stats.LifeSteal.Total;
                     break;
             }
 
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
 
-            target.getStats().setCurrentHealth(Math.Max(0.0f, target.getStats().getCurrentHealth() - damage));
-            if (!target.deathFlag && target.getStats().getCurrentHealth() <= 0)
+            target.getStats().CurrentHealth = Math.Max(0.0f, target.getStats().CurrentHealth - damage);
+            if (!target.deathFlag && target.getStats().CurrentHealth <= 0)
             {
                 target.deathFlag = true;
                 target.die(this);
@@ -330,7 +329,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
-                stats.setCurrentHealth(Math.Min(stats.getMaxHealth(), stats.getCurrentHealth() + (regain * damage)));
+                stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + (regain * damage));
                 PacketNotifier.notifyUpdatedStats(this);
             }
         }
@@ -369,7 +368,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 float expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
-                    c.getStats().setExp(c.getStats().getExperience() + expPerChamp);
+                    c.getStats().Experience = c.getStats().Experience + expPerChamp;
             }
 
             if (killer != null)
@@ -383,7 +382,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (gold <= 0)
                     return;
 
-                cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
+                cKiller.getStats().Gold = cKiller.getStats().Gold + gold;
                 PacketNotifier.notifyAddGold(cKiller, this, gold);
 
                 if (cKiller.killDeathCounter < 0)
@@ -520,10 +519,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void refreshWaypoints()
         {
-            if (targetUnit == null || (distanceWith(targetUnit) <= stats.getRange() && waypoints.Count == 1))
+            if (targetUnit == null || (distanceWith(targetUnit) <= stats.Range.Total && waypoints.Count == 1))
                 return;
 
-            if (distanceWith(targetUnit) <= stats.getRange() - 2.0f)
+            if (distanceWith(targetUnit) <= stats.Range.Total - 2.0f)
             {
                 setWaypoints(new List<Vector2> { new Vector2(x, y) });
             }

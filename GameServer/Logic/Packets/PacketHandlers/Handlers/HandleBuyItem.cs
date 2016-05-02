@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (recipeParts.Count == 0)
             {
-                if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
+                if (game.getPeerInfo(peer).getChampion().getStats().Gold < price)
                 {
                     return true;
                 }
@@ -43,13 +43,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                     price -= instance.TotalPrice;
 
-                if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
+                if (game.getPeerInfo(peer).getChampion().getStats().Gold < price)
                     return false;
 
 
                 foreach (var instance in recipeParts)
                 {
-                    game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
+                    // TODO : remove IBuff
+                    //game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
                     var champion = game.getPeerInfo(peer).getChampion();
                     var inventory = champion.Inventory;
                     PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
@@ -59,8 +60,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
             }
 
-            game.getPeerInfo(peer).getChampion().getStats().setGold(game.getPeerInfo(peer).getChampion().getStats().getGold() - price);
-            game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.StatMods);
+            game.getPeerInfo(peer).getChampion().getStats().Gold = game.getPeerInfo(peer).getChampion().getStats().Gold - price;
+            //TODO : apply IBuff
+            //game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.StatMods);
             PacketNotifier.notifyItemBought(game.getPeerInfo(peer).getChampion(), i);
 
             return true;
