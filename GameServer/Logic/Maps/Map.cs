@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected long nextSpawnTime;
         protected long firstGoldTime; // Time that gold should begin to generate
         protected long nextSyncTime;
-        protected List<GameObjects.Announce> announcerEvents;
+        protected List<GameObjects.Announce> _announcerEvents;
         protected Game game;
         protected bool firstBlood;
         protected bool killReduction;
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected int id;
 
         protected CollisionHandler collisionHandler;
-        protected Dictionary<TeamId, Fountain> Fountains;
+        protected Dictionary<TeamId, Fountain> _fountains;
         private readonly List<TeamId> TeamsIterator;
 
 
@@ -51,15 +51,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.gameTime = 0;
             this.nextSpawnTime = firstSpawnTime;
             this.nextSyncTime = 10 * 1000;
-            this.announcerEvents = new List<GameObjects.Announce>();
+            _announcerEvents = new List<GameObjects.Announce>();
             this.game = game;
             this.firstBlood = true;
             this.killReduction = true;
             this.hasFountainHeal = hasFountainHeal;
             this.collisionHandler = new CollisionHandler(this);
-            this.Fountains = new Dictionary<TeamId, Fountain>();
-            this.Fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
-            this.Fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
+            _fountains = new Dictionary<TeamId, Fountain>();
+            _fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
+            _fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
             this.id = id;
 
             TeamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             collisionHandler.update(diff);
 
-            foreach (var announce in announcerEvents)
+            foreach (var announce in _announcerEvents)
                 if (!announce.IsAnnounced())
                     if (gameTime >= announce.GetEventTime())
                         announce.Execute();
@@ -209,7 +209,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             if (hasFountainHeal)
             {
-                foreach (var fountain in Fountains.Values)
+                foreach (var fountain in _fountains.Values)
                     fountain.Update(this, diff);
             }
         }

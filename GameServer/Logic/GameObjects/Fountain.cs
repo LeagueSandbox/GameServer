@@ -14,33 +14,33 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
         private const float PERCENT_MAX_MANA_HEAL = 0.15f;
         private const float HEAL_FREQUENCY = 1000f;
-        private float X;
-        private float Y;
-        private float FountainSize;
-        private long HealTickTimer;
-        private TeamId Team;
+        private float _x;
+        private float _y;
+        private float _fountainSize;
+        private long _healTickTimer;
+        private TeamId _team;
 
         public Fountain(TeamId team, float x, float y, float size)
         {
-            X = x;
-            Y = y;
-            FountainSize = size;
-            HealTickTimer = 0;
-            Team = team;
+            _x = x;
+            _y = y;
+            _fountainSize = size;
+            _healTickTimer = 0;
+            _team = team;
         }
 
         internal void Update(Map map, long diff)
         {
-            HealTickTimer += diff;
-            if (HealTickTimer < HEAL_FREQUENCY)
+            _healTickTimer += diff;
+            if (_healTickTimer < HEAL_FREQUENCY)
                 return;
 
-            HealTickTimer = 0;
+            _healTickTimer = 0;
 
-            var champions = map.getChampionsInRange(X, Y, FountainSize, true);
+            var champions = map.getChampionsInRange(_x, _y, _fountainSize, true);
             foreach (var champion in champions)
             {
-                if (champion.getTeam() != Team)
+                if (champion.getTeam() != _team)
                     continue;
 
                 var hp = champion.getStats().getCurrentHealth();

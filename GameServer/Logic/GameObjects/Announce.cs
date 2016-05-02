@@ -9,33 +9,33 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Announce
     {
-        private bool Announced;
-        private long EventTime;
-        private Announces MessageId;
-        private bool IsMapSpecific;
+        private bool _announced;
+        private long _eventTime;
+        private Announces _messageId;
+        private bool _isMapSpecific;
 
         public Announce(long eventTime, Announces id, bool isMapSpecific)
         {
-            Announced = false;
-            EventTime = eventTime;
-            MessageId = id;
-            IsMapSpecific = isMapSpecific;
+            _announced = false;
+            _eventTime = eventTime;
+            _messageId = id;
+            _isMapSpecific = isMapSpecific;
         }
 
         public bool IsAnnounced()
         {
-            return Announced;
+            return _announced;
         }
 
         public long GetEventTime()
         {
-            return EventTime;
+            return _eventTime;
         }
 
         public void Execute()
         {
-            PacketNotifier.notifyAnnounceEvent(MessageId, IsMapSpecific);
-            Announced = true;
+            PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
+            _announced = true;
         }
     }
 

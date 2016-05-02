@@ -150,11 +150,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
             // Announcer events
-            announcerEvents.Add(new Announce(30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
+            _announcerEvents.Add(new Announce(30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
             if (firstSpawnTime - 30 * 1000 >= 0.0f)
-                announcerEvents.Add(new Announce(firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
-            announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
-            announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
+                _announcerEvents.Add(new Announce(firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
+            _announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
+            _announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
         }
 
         public override void update(long diff)
