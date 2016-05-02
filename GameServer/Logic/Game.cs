@@ -25,7 +25,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private ENetHost* _server;
         private BlowFish* _blowfish;
         private static uint _dwStart = 0x40000000; //new netid
-
+        private static object _lock = new object();
+        
         private bool _started = false;
         private int _playersReady = 0;
 
@@ -65,7 +66,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _map = new SummonersRift(this);
 
             PacketNotifier.setMap(_map);
-            //TODO: better lua implementation
 
             var id = 1;
             foreach (var p in Config.players)
@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                 c.setPosition(pos.Item1, pos.Item2);
                 c.setTeam((p.Value.team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
-                c.levelUp();
+                c.LevelUp();
 
                 player.setChampion(c);
                 var pair = new Pair<uint, ClientInfo>();
@@ -258,8 +258,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public static uint GetNewNetID()
         {
-            _dwStart++;
-            return _dwStart;
+            lock (_lock)
+            {
+                _dwStart++;
+                return _dwStart;
+            }
         }
     }
 }

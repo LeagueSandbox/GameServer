@@ -198,13 +198,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else // Slower, but works 
             {
-                foreach (var objectRef in chart.getObjects())
+                foreach (var objectRef in chart.GetObjects())
                 {
                     var o1 = objectRef.Value;
                     if (!(o1 is Minion) && !(o1 is Champion))
                         continue;
 
-                    foreach (var objectRef2 in chart.getObjects())
+                    foreach (var objectRef2 in chart.GetObjects())
                     {
                         if (objectRef.Key != objectRef2.Key)
                         {
@@ -257,9 +257,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (o != null)
                 //if (o->isMovementUpdated())  // Only check if they moved around.
                 {
-                    while (o.getMap().getId() != chart.getId())
+                    while (o.getMap().GetId() != chart.GetId())
                     {
-                        Logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.getMap().getId() + " (not " + chart.getId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
+                        Logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.getMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
                         removeObject(o);
                         if (j < curDiv.objects.Count)
                             o = curDiv.objects[j];

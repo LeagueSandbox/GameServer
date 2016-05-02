@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (target.isSimpleTarget())
             { // Skillshot
-                var objects = map.getObjects();
+                var objects = map.GetObjects();
                 foreach (var it in objects)
                 {
                     if (isToRemove())

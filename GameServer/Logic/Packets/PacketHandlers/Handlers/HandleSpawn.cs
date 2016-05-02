@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             peerInfo.getChampion().getStats().setSummonerSpellEnabled(0, true);
             peerInfo.getChampion().getStats().setSummonerSpellEnabled(1, true);
 
-            var objects = game.getMap().getObjects();
+            var objects = game.getMap().GetObjects();
             foreach (var kv in objects)
             {
                 if (kv.Value is Turret)
