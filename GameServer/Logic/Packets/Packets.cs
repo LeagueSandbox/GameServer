@@ -1682,8 +1682,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SetHealth(Unit u) : base(PacketCmdS2C.PKT_S2C_SetHealth, u.getNetId())
         {
             buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write((float)u.getStats().getMaxHealth());
-            buffer.Write((float)u.getStats().getCurrentHealth());
+            buffer.Write((float)u.getStats().HealthPoints.Total);
+            buffer.Write((float)u.getStats().CurrentHealth);
         }
 
         public SetHealth(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
@@ -2448,9 +2448,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
             if (partial)
-                stats = u.getStats().getUpdatedStats();
+                stats = u.getStats().GetUpdatedStats();
             else
-                stats = u.getStats().getAllStats();
+                stats = u.getStats().GetAllStats();
             var orderedStats = stats.OrderBy(x => x.Key);
 
             buffer.Write((byte)1); // updating 1 unit
@@ -2593,7 +2593,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
         {
-            buffer.Write(c.getStats().getLevel());
+            buffer.Write(c.getStats().Level);
             buffer.Write(c.getSkillPoints());
         }
     }

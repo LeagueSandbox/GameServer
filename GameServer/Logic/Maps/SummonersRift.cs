@@ -279,18 +279,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public override void SetMinionStats(Minion minion)
         {
             // Same for all minions
-            minion.getStats().setMovementSpeed(325.0f);
-            minion.getStats().setBaseAttackSpeed(0.625f);
-            minion.getStats().setAttackSpeedMultiplier(1.0f);
+            minion.getStats().MoveSpeed.BaseValue = 325.0f;
+            minion.getStats().AttackSpeedFlat = 0.625f;
 
             switch (minion.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    minion.getStats().setCurrentHealth(475.0f + ((20.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setMaxHealth(475.0f + ((20.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setBaseAd(12.0f + ((1.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setRange(180.0f);
-                    minion.getStats().setBaseAttackSpeed(1.250f);
+                    minion.getStats().CurrentHealth = 475.0f + 20.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().Range.BaseValue = 180.0f;
+                    minion.getStats().AttackSpeedFlat = 1.250f;
                     minion.setAutoAttackDelay(11.8f / 30.0f);
                     minion.setMelee(true);
                     break;
@@ -304,11 +303,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.setAutoAttackProjectileSpeed(650.0f);
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    minion.getStats().setCurrentHealth(700.0f + ((27.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setMaxHealth(700.0f + ((27.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setBaseAd(40.0f + ((3.0f) * (int)(_gameTime / (float)(180 * 1000))));
-                    minion.getStats().setRange(450.0f);
-                    minion.getStats().setBaseAttackSpeed(1.0f);
+                    minion.getStats().CurrentHealth = 700.0f + 27.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(gameTime / (float)(180 * 1000));
+                    minion.getStats().Range.BaseValue = 450.0f;
+                    minion.getStats().AttackSpeedFlat = 1.0f;
                     minion.setAutoAttackDelay(9.0f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(1200.0f);
                     break;

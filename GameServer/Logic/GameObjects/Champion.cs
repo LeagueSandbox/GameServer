@@ -40,9 +40,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Inventory = InventoryManager.CreateInventory(game, this);
             Shop = Shop.CreateShop(this);
 
-            stats.setGold(475.0f);
-            stats.setAttackSpeedMultiplier(1.0f);
-            stats.setGoldPerSecond(game.GetMap().GetGoldPerSecond());
+            stats.Gold = 475.0f;
+            stats.GoldPerSecond.BaseValue = map.getGoldPerSecond();
             stats.setGeneratingGold(false);
 
             Inibin inibin;
@@ -52,26 +51,28 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            stats.setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
-            stats.setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
-            stats.setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));
-            stats.setMaxMana(inibin.getFloatValue("Data", "BaseMP"));
-            stats.setBaseAd(inibin.getFloatValue("DATA", "BaseDamage"));
-            stats.setRange(inibin.getFloatValue("DATA", "AttackRange"));
-            stats.setBaseMovementSpeed(inibin.getFloatValue("DATA", "MoveSpeed"));
-            stats.setArmor(inibin.getFloatValue("DATA", "Armor"));
-            stats.setMagicArmor(inibin.getFloatValue("DATA", "SpellBlock"));
-            stats.setHp5(inibin.getFloatValue("DATA", "BaseStaticHPRegen"));
-            stats.setMp5(inibin.getFloatValue("DATA", "BaseStaticMPRegen"));
+            stats.HealthPoints.BaseValue = inibin.getFloatValue("Data", "BaseHP");
+            stats.CurrentHealth = stats.HealthPoints.Total;
+            stats.ManaPoints.BaseValue = inibin.getFloatValue("Data", "BaseMP");
+            stats.CurrentMana = stats.ManaPoints.Total;
+            stats.AttackDamage.BaseValue = inibin.getFloatValue("DATA", "BaseDamage");
+            stats.Range.BaseValue = inibin.getFloatValue("DATA", "AttackRange");
+            stats.MoveSpeed.BaseValue = inibin.getFloatValue("DATA", "MoveSpeed");
+            stats.Armor.BaseValue = inibin.getFloatValue("DATA", "Armor");
+            stats.MagicResist.BaseValue = inibin.getFloatValue("DATA", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f/(1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent"));
+            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
-            stats.setHealthPerLevel(inibin.getFloatValue("DATA", "HPPerLevel"));
-            stats.setManaPerLevel(inibin.getFloatValue("DATA", "MPPerLevel"));
-            stats.setAdPerLevel(inibin.getFloatValue("DATA", "DamagePerLevel"));
-            stats.setArmorPerLevel(inibin.getFloatValue("DATA", "ArmorPerLevel"));
-            stats.setMagicArmorPerLevel(inibin.getFloatValue("DATA", "SpellBlockPerLevel"));
-            stats.setHp5RegenPerLevel(inibin.getFloatValue("DATA", "HPRegenPerLevel"));
-            stats.setMp5RegenPerLevel(inibin.getFloatValue("DATA", "MPRegenPerLevel"));
-            stats.setBaseAttackSpeed(0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent")));
+            stats.HealthPerLevel = inibin.getFloatValue("DATA", "HPPerLevel");
+            stats.ManaPerLevel = inibin.getFloatValue("DATA", "MPPerLevel");
+            stats.AdPerLevel = inibin.getFloatValue("DATA", "DamagePerLevel");
+            stats.ArmorPerLevel = inibin.getFloatValue("DATA", "ArmorPerLevel");
+            stats.MagicResistPerLevel = inibin.getFloatValue("DATA", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = inibin.getFloatValue("DATA", "HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell1"), 0));
             spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
@@ -209,11 +210,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             s.setSlot(slot);//temporary hack until we redo spells to be almost fully lua-based
 
-            if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.getCurrentMana() || s.getState() != SpellState.STATE_READY)
+            if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.getState() != SpellState.STATE_READY)
                 return null;
 
             s.cast(x, y, target, futureProjNetId, spellNetId);
-            stats.setCurrentMana(stats.getCurrentMana() - (s.getCost() * (1 - stats.getSpellCostReduction())));
+            stats.CurrentMana = stats.CurrentMana - (s.getCost() * (1 - stats.getSpellCostReduction()));
             return s;
         }
         public Spell levelUpSpell(short slot)
@@ -239,7 +240,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 Dictionary<uint, GameObject> objects = _game.GetMap().GetObjects();
                 float distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
-                float range = Math.Max(stats.getRange(), DETECT_RANGE);
+                float range = Math.Max(stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
@@ -278,12 +279,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
                     _game.PacketNotifier.notifyChampionRespawn(this);
-                    getStats().setCurrentHealth(getStats().getMaxHealth());
-                    getStats().setCurrentMana(getStats().getMaxMana());
+                    getStats().CurrentHealth = getStats().HealthPoints.Total;
+                    getStats().CurrentMana = getStats().HealthPoints.Total;
                     deathFlag = false;
                 }
             }
-
             var isLevelup = LevelUp();
             if (isLevelup)
                 _game.PacketNotifier.notifyLevelUp(this);
@@ -423,7 +423,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
 
-            cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
+            cKiller.getStats().Gold = cKiller.getStats().Gold + gold;
             _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

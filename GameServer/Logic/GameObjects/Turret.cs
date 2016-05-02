@@ -19,10 +19,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             this.name = name;
 
-            stats.setCurrentHealth(hp);
-            stats.setMaxHealth(hp);
-            stats.setBaseAd(ad);
-            stats.setRange(TURRET_RANGE);
+            stats.CurrentHealth = hp;
+            stats.HealthPoints.BaseValue = hp;
+            stats.AttackDamage.BaseValue = ad;
+            stats.Range.BaseValue = TURRET_RANGE;
 
             autoAttackDelay = 4.95f / 30.0f;
             autoAttackProjectileSpeed = 1200.0f;
@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             {
                                 var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
                                 if (enemyChampTarget != null &&                                                          // Enemy Champion is targeting an ally
-                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.getStats().getRange() &&     // Enemy within range of ally
+                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.getStats().Range.Total &&     // Enemy within range of ally
                                     distanceWith(enemyChampTarget) <= TURRET_RANGE)
                                 {                                     // Enemy within range of this turret
                                     nextTarget = enemyChamp; // No priority required

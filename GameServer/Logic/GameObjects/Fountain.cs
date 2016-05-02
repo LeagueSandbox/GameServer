@@ -43,19 +43,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (champion.getTeam() != _team)
                     continue;
 
-                var hp = champion.getStats().getCurrentHealth();
-                var maxHP = champion.getStats().getMaxHealth();
-                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                    champion.getStats().setCurrentHealth(hp + maxHP * PERCENT_MAX_HEALTH_HEAL);
-                else if (hp < maxHP)
-                    champion.getStats().setCurrentHealth(maxHP);
+                int team = 0;
+                foreach (var f in healLocations)
+                {
+                    foreach (var c in map.getChampionsInRange(f, fountainSize))
+                    {
+                        if (c.getTeam() == CustomConvert.toTeamId(team))
+                        {
+                            var hp = c.getStats().CurrentHealth;
+                            var maxHP = c.getStats().HealthPoints.Total;
+                            if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
+                                c.getStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
+                            else if (hp < maxHP)
+                                c.getStats().CurrentHealth = maxHP;
 
-                var mp = champion.getStats().getCurrentMana();
-                var maxMp = champion.getStats().getMaxMana();
-                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                    champion.getStats().setCurrentMana(mp + maxMp * PERCENT_MAX_MANA_HEAL);
-                else if (mp < maxMp)
-                    champion.getStats().setCurrentMana(maxMp);
+                            var mp = c.getStats().CurrentMana;
+                            var maxMp = c.getStats().ManaPoints.Total;
+                            if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
+                                c.getStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
+                            else if (mp < maxMp)
+                                c.getStats().CurrentMana = maxMp;
+                        }
+                    }
+                    team++;
+                }
             }
         }
     }

@@ -55,11 +55,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Content\TestContentCollection.cs" />
     <Compile Include="Items\TestInventoryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Blowfish\TestBlowfish.cs" />
-    <Compile Include="TestHelpers.cs" />
     <Compile Include="TestStat.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,13 +91,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rmdir /s /q "$(TargetDir)Content\"
-rmdir /s /q "$(TargetDir)Settings\"
-xcopy /s /y /q "$(SolutionDir)GameServer\Content" "$(TargetDir)Content\*"
-xcopy /s /y /q "$(SolutionDir)GameServer\Settings" "$(TargetDir)Settings\*"
-xcopy /s /y /q "$(SolutionDir)GameServer\LuaLib" "$(TargetDir)LuaLib\*"
-xcopy /s /y /q "$(SolutionDir)lib" "$(TargetDir)*"
-xcopy /s /y /q "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
