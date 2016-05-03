@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
             var keyCheck = new KeyCheck(data);
-            var userId = game.getBlowfish().Decrypt_ECB(keyCheck.checkId);
+            var userId = game.getBlowfish().Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
                 return false;

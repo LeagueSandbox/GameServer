@@ -129,7 +129,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
-                temp = game.getBlowfish().Encrypt_ECB(source);
+                temp = game.getBlowfish().Encrypt(source);
             else
                 temp = source;
 
@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
-                temp = game.getBlowfish().Encrypt_ECB(data);
+                temp = game.getBlowfish().Encrypt(data);
             else
                 temp = data;
 
@@ -237,7 +237,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             if ((int)packet->dataLength >= 8)
                 if (game.getPeerInfo(peer) != null)
-                    data = game.getBlowfish().Decrypt_ECB(data);
+                    data = game.getBlowfish().Decrypt(data);
 
             return handlePacket(peer, data, channelID);
         }
