@@ -12,7 +12,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
-            game.IncrementReadyPlayers();
+            var peerInfo = game.getPeerInfo(peer);
+
+            if (!peerInfo.Disconnected)
+            {
+                game.IncrementReadyPlayers();
+            }
+
             if (game.getReadyPlayers() == game.getPlayers().Count)
             {
                 var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);

@@ -195,6 +195,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 // TODO: Handle disconnect
                 Logger.LogCoreInfo("Player " + peerinfo.userId + " disconnected");
+                peerinfo.Disconnected = true;
             }
             return true;
         }

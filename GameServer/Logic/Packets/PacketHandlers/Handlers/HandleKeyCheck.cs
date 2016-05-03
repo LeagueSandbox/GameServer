@@ -29,8 +29,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     if (player.getPeer() != null)
                     {
-                        Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
-                        return false;
+                        //Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                        //return false;
+                        Logger.LogCoreWarning("Player " + userId + " already connected!, but not ignoring them.");
                     }
 
                     //TODO: add at least port or smth
