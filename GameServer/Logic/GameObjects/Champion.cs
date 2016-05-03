@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             stats.Gold = 475.0f;
             stats.GoldPerSecond.BaseValue = map.getGoldPerSecond();
-            stats.setGeneratingGold(false);
+            stats.SetGeneratingGold(false);
 
             Inibin inibin;
             if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
@@ -263,9 +263,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.isGeneratingGold() && _game.GetMap().GetGameTime() >= _game.GetMap().GetFirstGoldTime())
+            if (!stats.IsGeneratingGold() && _game.GetMap().GetGameTime() >= _game.GetMap().GetFirstGoldTime())
+
             {
-                stats.setGeneratingGold(true);
+                stats.SetGeneratingGold(true);
                 Logger.LogCoreInfo("Generating Gold!");
             }
 
@@ -286,7 +287,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             var isLevelup = LevelUp();
             if (isLevelup)
+            {
                 _game.PacketNotifier.notifyLevelUp(this);
+                _game.PacketNotifier.notifyUpdatedStats(this, false);
+            }
 
             foreach (var s in spells)
                 s.update(diff);

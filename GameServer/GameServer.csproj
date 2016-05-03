@@ -92,6 +92,7 @@
     <Compile Include="Logic\GameObjects\MinionStats.cs" />
     <Compile Include="Logic\GameObjects\Projectile.cs" />
     <Compile Include="Logic\GameObjects\Stat.cs" />
+    <Compile Include="Logic\GameObjects\StatModifcator.cs" />
     <Compile Include="Logic\GameObjects\Turret.cs" />
     <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
