@@ -121,8 +121,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public float Level {
-            get { return _level; }
+        public byte Level {
+            get { return (byte)(Math.Floor(_level) + 0.5f); }
             set
             {
                 _level = value;
@@ -273,13 +273,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
             }
         }
-
-        public float getStat(MasterMask blockId, MinionFieldMask stat)
-        {
-            return getStat(blockId, (FieldMask)stat);
-        }
-
-        public float getStat(MasterMask blockId, FieldMask stat)
+        
+        public virtual float GetStat(MasterMask blockId, FieldMask stat)
         {
             if (blockId == MasterMask.MM_One)
             {
@@ -301,6 +296,41 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         return AttackDamage.BaseValue;
                     case FieldMask.FM2_Armor:
                         return Armor.Total;
+                    case FieldMask.FM2_Armor_Pen_Flat:
+                        return ArmorPenetration.FlatBonus;
+                    case FieldMask.FM2_Atks_multiplier:
+                        return AttackSpeedMultiplier.Total;
+                    case FieldMask.FM2_Base_Ap:
+                        return AbilityPower.BaseValue;
+                    case FieldMask.FM2_Armor_Pen_Pct:
+                        return ArmorPenetration.PercentBonus;
+                    case FieldMask.FM2_Bonus_Ad_Flat:
+                        return AttackDamage.FlatBonus;
+                    case FieldMask.FM2_Bonus_Ad_Pct:
+                        return AttackDamage.PercentBonus;
+                    case FieldMask.FM2_Bonus_Ap_Flat:
+                        return AbilityPower.FlatBonus;
+                    case FieldMask.FM2_Bonus_Ap_Pct:
+                        return AbilityPower.PercentBonus;
+                    case FieldMask.FM2_Crit_Chance:
+                        return CriticalChance.Total;
+                    case FieldMask.FM2_Hp5:
+                        return HealthRegeneration.Total;
+                    case FieldMask.FM2_Mp5:
+                        return ManaRegeneration.Total;
+                    case FieldMask.FM2_LifeSteal:
+                        return LifeSteal.Total;
+                    case FieldMask.FM2_Magic_Pen_Flat:
+                        return MagicPenetration.FlatBonus;
+                    case FieldMask.FM2_Magic_Pen_Pct:
+                        return MagicPenetration.PercentBonus;
+                    case FieldMask.FM2_Magic_Armor:
+                        return MagicResist.Total;
+                    case FieldMask.FM2_Tenacity:
+                        return Tenacity.Total;
+                    case FieldMask.FM2_SpellVamp:
+                        return SpellVamp.Total;
+
                 }
             }
             else if (blockId == MasterMask.MM_Three)
@@ -332,7 +362,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
         
-        private void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
+        protected void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
         {
             if (!collection.ContainsKey(blockId))
                 collection.Add(blockId, new Dictionary<FieldMask, float>());
@@ -343,12 +373,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 collection[blockId][stat] = value;
         }
 
-        public bool isGeneratingGold()
+        public bool IsGeneratingGold()
         {
             return generatingGold;
         }
 
-        public void setGeneratingGold(bool b)
+        public void SetGeneratingGold(bool b)
         {
             generatingGold = b;
         }
@@ -369,7 +399,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return ret;
         }
 
-        public Dictionary<MasterMask, Dictionary<FieldMask, float>> GetAllStats()
+        public virtual Dictionary<MasterMask, Dictionary<FieldMask, float>> GetAllStats()
         {
             var toReturn = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
             Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
@@ -439,7 +469,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
             {
                 float newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
-                newMana = Math.Min(ManaRegeneration.Total, newMana);
+                newMana = Math.Min(ManaPoints.Total, newMana);
                 CurrentMana = newMana;
             }
             if (generatingGold && GoldPerSecond.Total > 0)
@@ -527,6 +557,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
                 mask |= (short)(~(1 << id));
             _spellsEnabled = (float) mask;
+            appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
         }
 
         public virtual bool getSummonerSpellEnabled(byte id)
@@ -543,6 +574,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
                 mask &= (short)(~(16 << id));
             _summonerSpellsEnabled = (float) mask;
+            appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, _summonerSpellsEnabled);
         }
     }
 }
