@@ -22,7 +22,6 @@ using System.Runtime.InteropServices;
 
 namespace BlowFishCS
 {
-    /*
     public class BlowFish
     {
         RNGCryptoServiceProvider randomSource;
@@ -264,11 +263,13 @@ namespace BlowFishCS
         /// <returns>(En/De)crypted data</returns>
         private byte[] Crypt_ECB(byte[] text, bool decrypt)
         {
-            int paddedLen = (text.Length % 8 == 0 ? text.Length : text.Length + 8 - (text.Length % 8));
-            byte[] plainText = new byte[paddedLen];
-            Buffer.BlockCopy(text, 0, plainText, 0, text.Length);
             byte[] block = new byte[8];
-            for (int i = 0; i < plainText.Length; i += 8)
+            byte[] plainText = new byte[text.Length];
+
+            Buffer.BlockCopy(text, 0, plainText, 0, text.Length);
+
+            var n = plainText.Length - (plainText.Length % 8);
+            for (int i = 0; i < n; i += 8)
             {
                 Buffer.BlockCopy(plainText, i, block, 0, 8);
                 if (decrypt)
@@ -282,6 +283,14 @@ namespace BlowFishCS
                 Buffer.BlockCopy(block, 0, plainText, i, 8);
             }
             return plainText;
+        }
+
+        // a little hack for keycheck
+        public long Decrypt_ECB(ulong key)
+        {
+            var bytes = BitConverter.GetBytes(key);
+            BlockDecrypt(ref bytes);
+            return BitConverter.ToInt64(bytes, 0);
         }
 
         /// <summary>
@@ -752,42 +761,5 @@ namespace BlowFishCS
 
         #endregion
     }
-    */
-    public unsafe class BlowFishCS
-    {
-        private const string LIB = "libintlib.dll";
-        [DllImport(LIB)]
-        public static extern BlowFish* BlowFishCreate(byte* ucKey, IntPtr n);
-        [DllImport(LIB)]
-        public static extern void Encrypt1(BlowFish* handle, byte* buf, IntPtr n, int iMode = (int)BlowfishMode.ECB);
-
-        [DllImport(LIB)]
-        public static extern void Decrypt1(BlowFish* handle, byte* buf, IntPtr n, int iMode = (int)BlowfishMode.ECB);
-        [DllImport(LIB)]
-
-        public static extern void DestroyHandle(void* handle);
-        [DllImport(LIB)]
-        public static extern ulong Encrypt2(void* handle, ulong buf);
-        [DllImport(LIB)]
-        public static extern ulong Decrypt2(void* handle, ulong buf);
-        [DllImport(LIB)]
-        public static extern void Encrypt3(void* handle, byte* @in, byte* @out, IntPtr n, int iMode = (int)BlowfishMode.ECB);
-        [DllImport(LIB)]
-        public static extern void Decrypt3(void* handle, byte* @in, byte* @out, IntPtr n, int iMode = (int)BlowfishMode.ECB);
-
-
-
-    }
-
-    public struct BlowFish
-    {
-
-    }
-    public enum BlowfishMode
-    {
-        ECB = 0,
-        CBC = 1,
-        CFB = 2
-    };
 }
 

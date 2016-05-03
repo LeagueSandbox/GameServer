@@ -127,13 +127,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //printPacket(source, "Sent: ");
-            var temp = source.ToArray();
+            byte[] temp;
+            if (source.Length >= 8)
+                temp = game.getBlowfish().Encrypt_ECB(source);
+            else
+                temp = source;
 
             fixed (byte* data = temp)
             {
-                if (source.Length >= 8)
-                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), data, new IntPtr(temp.Length - (temp.Length % 8)));
-
                 var packet = enet_packet_create(new IntPtr(data), new IntPtr(temp.Length), flag);
                 if (enet_peer_send(peer, (byte)channelNo, packet) < 0)
                     return false;
@@ -144,13 +145,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             //printPacket(data, "Broadcast: ");
-            var temp = data.ToArray();
+            byte[] temp;
+            if (data.Length >= 8)
+                temp = game.getBlowfish().Encrypt_ECB(data);
+            else
+                temp = data;
 
             fixed (byte* b = temp)
             {
-                if (temp.Length >= 8)
-                    BlowFishCS.BlowFishCS.Encrypt1(game.getBlowfish(), b, new IntPtr(temp.Length - (temp.Length % 8)));
-
                 var packet = enet_packet_create(new IntPtr(b), new IntPtr(temp.Length), (PacketFlags)flag);
                 enet_host_broadcast(game.getServer(), (byte)channelNo, packet);
             }
@@ -230,12 +232,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool handlePacket(ENetPeer* peer, ENetPacket* packet, Channel channelID)
         {
-            if ((int)packet->dataLength >= 8)
-                if (game.getPeerInfo(peer) != null)
-                    BlowFishCS.BlowFishCS.Decrypt1(game.getBlowfish(), (byte*)packet->data, new IntPtr((int)packet->dataLength - ((int)packet->dataLength % 8)));
-
             var data = new byte[(int)packet->dataLength];
             Marshal.Copy(packet->data, data, 0, data.Length);
+
+            if ((int)packet->dataLength >= 8)
+                if (game.getPeerInfo(peer) != null)
+                    data = game.getBlowfish().Decrypt_ECB(data);
 
             return handlePacket(peer, data, channelID);
         }

@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
     public unsafe class Game
     {
         private ENetHost* _server;
-        private BlowFish* _blowfish;
+        private BlowFish _blowfish;
         private static uint _dwStart = 0x40000000; //new netid
         private static object _lock = new object();
         
@@ -56,10 +56,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             if (key.Length <= 0)
                 return false;
 
-            fixed (byte* s = key)
-            {
-                _blowfish = BlowFishCS.BlowFishCS.BlowFishCreate(s, new IntPtr(16));
-            }
+            _blowfish = new BlowFish(key);
 
             PacketHandlerManager.getInstace().InitHandlers(this);
 
@@ -150,7 +147,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _updateTimer.Start();
         }
 
-        public BlowFish* getBlowfish()
+        public BlowFish getBlowfish()
         {
             return _blowfish;
         }
