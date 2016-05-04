@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     map.AddObject(p.Item2.GetChampion());
 
                     // Send the initial game time sync packets, then let the map send another
-                    float gameTime = map.getGameTime() / 1000.0f;
+                    float gameTime = map.GetGameTime() / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
                     game.GetPacketHandlerManager().sendPacket(p.Item2.GetPeer(), timer, Channel.CHL_S2C);

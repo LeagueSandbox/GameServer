@@ -32,7 +32,6 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             this.Icon = icon;
         }
 
-
         public void SetName(string name)
         {
             this.Name = name;

@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             stats.setGold(475.0f);
             stats.setAttackSpeedMultiplier(1.0f);
-            stats.setGoldPerSecond(game.GetMap().getGoldPerSecond());
+            stats.setGoldPerSecond(game.GetMap().GetGoldPerSecond());
             stats.setGeneratingGold(false);
 
             Inibin inibin;
@@ -96,9 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
-            //Fuck LUA
-
-            var scriptloc = Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
+            var scriptloc = game.GetConfig().ContentManager.GetSpellScriptPath(getType(), "Passive");
             Logger.LogCoreInfo("Loading " + scriptloc);
             unitScript.lua["me"] = this;
 
@@ -114,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             int blueTeamSize = 0;
             int purpTeamSize = 0;
 
-            foreach (var player in Config.Players.Values)
+            foreach (var player in _game.GetConfig().Players.Values)
             {
                 switch (player.Team.ToLower())
                 {
@@ -130,9 +128,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var playerIndex = "player" + playerId;
-            if (Config.Players.ContainsKey(playerIndex))
+            if (_game.GetConfig().Players.ContainsKey(playerIndex))
             {
-                switch (Config.Players[playerIndex].Team.ToLower())
+                switch (_game.GetConfig().Players[playerIndex].Team.ToLower())
                 {
                     case "blue":
                         return blueTeamSize;
@@ -146,7 +144,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Tuple<float, float> getRespawnPosition()
         {
-            var mapId = Config.GameConfig.Map;
+            var config = _game.GetConfig();
+            var mapId = config.GameConfig.Map;
             var playerIndex = "player" + playerId;
             var playerTeam = "";
             var teamSize = getTeamSize();
@@ -154,9 +153,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (teamSize > 6) //???
                 teamSize = 6;
 
-            if (Config.Players.ContainsKey(playerIndex))
+            if (config.Players.ContainsKey(playerIndex))
             {
-                var p = Config.Players[playerIndex];
+                var p = config.Players[playerIndex];
                 playerTeam = p.Team;
             }
             var x = 0;
@@ -165,12 +164,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 //TODO : repair function
                 case "blue":
-                    x = Config.MapSpawns.Blue[teamSize].GetXForPlayer(0);
-                    y = Config.MapSpawns.Blue[teamSize].GetYForPlayer(0);
+                    x = config.MapSpawns.Blue[teamSize].GetXForPlayer(0);
+                    y = config.MapSpawns.Blue[teamSize].GetYForPlayer(0);
                     break;
                 case "purple":
-                    x = Config.MapSpawns.Purple[teamSize].GetXForPlayer(0);
-                    y = Config.MapSpawns.Purple[teamSize].GetYForPlayer(0);
+                    x = config.MapSpawns.Purple[teamSize].GetXForPlayer(0);
+                    y = config.MapSpawns.Purple[teamSize].GetYForPlayer(0);
                     break;
             }
 
@@ -248,7 +247,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.isGeneratingGold() && _game.GetMap().getGameTime() >= _game.GetMap().GetFirstGoldTime())
+            if (!stats.isGeneratingGold() && _game.GetMap().GetGameTime() >= _game.GetMap().GetFirstGoldTime())
             {
                 stats.setGeneratingGold(true);
                 Logger.LogCoreInfo("Generating Gold!");
@@ -356,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void die(Unit killer)
         {
             respawnTimer = 5000 + getStats().getLevel() * 2500;
-            _game.GetMap().stopTargeting(this);
+            _game.GetMap().StopTargeting(this);
 
             var cKiller = killer as Champion;
 
@@ -374,7 +373,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             cKiller.setChampionGoldFromMinions(0);
 
-            float gold = _game.GetMap().getGoldFor(this);
+            float gold = _game.GetMap().GetGoldFor(this);
             Logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
 
             if (cKiller.killDeathCounter < 0)
@@ -414,7 +413,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
-            _game.GetMap().stopTargeting(this);
+            _game.GetMap().StopTargeting(this);
         }
         public long getRespawnTimer()
         {

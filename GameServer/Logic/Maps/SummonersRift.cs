@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     class SummonersRift : Map
     {
-        List<List<Vector2>> laneWaypoints = new List<List<Vector2>>
+        private List<List<Vector2>> _laneWaypoints = new List<List<Vector2>>
         {
             new List<Vector2>
             { // blue top
@@ -157,21 +157,21 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
         }
 
-        public override void update(long diff)
+        public override void Update(long diff)
         {
-            base.update(diff);
+            base.Update(diff);
 
             if (_gameTime >= 120 * 1000)
             {
                 SetKillReduction(false);
             }
         }
-        public override float getGoldPerSecond()
+        public override float GetGoldPerSecond()
         {
             return 1.9f;
         }
 
-        public override Target getRespawnLocation(int team)
+        public override Target GetRespawnLocation(int team)
         {
             switch (team)
             {
@@ -183,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             return new GameObjects.Target(25.90f, 280);
         }
-        public override float getGoldFor(Unit u)
+        public override float GetGoldFor(Unit u)
         {
             var m = u as Minion;
             if (m == null)
@@ -237,7 +237,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             return 0.0f;
         }
-        public override float getExperienceFor(Unit u)
+        public override float GetExperienceFor(Unit u)
         {
             var m = u as Minion;
 
@@ -257,7 +257,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 0.0f;
         }
 
-        public override Tuple<TeamId, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public override Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             switch (spawnPosition)
             {
@@ -276,7 +276,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
-        public override void setMinionStats(Minion minion)
+        public override void SetMinionStats(Minion minion)
         {
             // Same for all minions
             minion.getStats().setMovementSpeed(325.0f);
@@ -315,7 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
         }
 
-        public override bool spawn()
+        public override bool Spawn()
         {
             var positions = new List<MinionSpawnPosition>
             {
@@ -331,7 +331,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 for (var i = 0; i < positions.Count; ++i)
                 {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, positions[i], laneWaypoints[i]);
+                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, positions[i], _laneWaypoints[i]);
                     AddObject(m);
                 }
                 return false;
@@ -341,7 +341,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 for (var i = 0; i < positions.Count; ++i)
                 {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], laneWaypoints[i]);
+                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
                     AddObject(m);
                 }
                 return false;
@@ -351,7 +351,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 for (var i = 0; i < positions.Count; ++i)
                 {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], laneWaypoints[i]);
+                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
                     AddObject(m);
                 }
                 return false;
@@ -359,27 +359,27 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return true;
         }
 
-        public override int getMapId()
+        public override int GetMapId()
         {
             return 1;
         }
 
-        public override int getWidth()
+        public override int GetWidth()
         {
             return 13982;
         }
 
-        public override int getHeight()
+        public override int GetHeight()
         {
             return 14446;
         }
 
-        public override Vector2 getSize()
+        public override Vector2 GetSize()
         {
-            return new Vector2(getWidth() / 2, getHeight() / 2);
+            return new Vector2(GetWidth() / 2, GetHeight() / 2);
         }
 
-        public override int getBluePillId()
+        public override int GetBluePillId()
         {
             return 2001;
         }

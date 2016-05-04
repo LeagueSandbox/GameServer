@@ -125,7 +125,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void notifyTeleport(Unit u, float _x, float _y)
         {
             // Can't teleport to this point of the map
-            if (!_game.GetMap().isWalkable(_x, _y))
+            if (!_game.GetMap().IsWalkable(_x, _y))
             {
                 _x = MovementVector.targetXToNormalFormat(u.getPosition().X);
                 _y = MovementVector.targetYToNormalFormat(u.getPosition().Y);
@@ -355,13 +355,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyGameTimer()
         {
-            var gameTimer = new GameTimer(_game.GetMap().getGameTime() / 1000.0f);
+            var gameTimer = new GameTimer(_game.GetMap().GetGameTime() / 1000.0f);
             _game.GetPacketHandlerManager().broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
 
         public void notifyAnnounceEvent(Announces messageId, bool isMapSpecific)
         {
-            var announce = new Announce(messageId, isMapSpecific ? _game.GetMap().getMapId() : 0);
+            var announce = new Announce(messageId, isMapSpecific ? _game.GetMap().GetMapId() : 0);
             _game.GetPacketHandlerManager().broadcastPacket(announce, Channel.CHL_S2C);
         }
 

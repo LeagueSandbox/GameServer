@@ -10,15 +10,20 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic
 {
-    class Config
+    public class Config
     {
-        public static Dictionary<string, PlayerConfig> Players;
-        public static GameConfig GameConfig;
-        public static MapSpawns MapSpawns;
-        public static ContentManager ContentManager;
-        public static string Version = "Version 4.20.0.315 [PUBLIC]";
+        public Dictionary<string, PlayerConfig> Players;
+        public GameConfig GameConfig;
+        public MapSpawns MapSpawns;
+        public ContentManager ContentManager;
+        public const string Version = "Version 4.20.0.315 [PUBLIC]";
 
-        public static void LoadConfig(string path)
+        public Config(string path)
+        {
+            LoadConfig(path);
+        }
+
+        private void LoadConfig(string path)
         {
             Players = new Dictionary<string, PlayerConfig>();
 
@@ -26,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             // Read the player configuration
             var playerConfigurations = data.SelectToken("players");
-            foreach(var player in playerConfigurations)
+            foreach (var player in playerConfigurations)
             {
                 var playerConfig = new PlayerConfig(player);
                 Players.Add(string.Format("player{0}", Players.Count + 1), playerConfig);
@@ -43,11 +48,11 @@ namespace LeagueSandbox.GameServer.Logic
             var spawns = mapData.SelectToken("spawns");
 
             MapSpawns = new MapSpawns();
-            foreach(JProperty teamSpawn in spawns)
+            foreach (JProperty teamSpawn in spawns)
             {
                 var team = teamSpawn.Name;
                 var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                for(var i = 0; i < spawnsByPlayerCount.Count; i++)
+                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
                 {
                     var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
                     MapSpawns.SetSpawns(team, playerSpawns, i);
@@ -56,18 +61,18 @@ namespace LeagueSandbox.GameServer.Logic
         }
     }
 
-    internal class MapSpawns
+    public class MapSpawns
     {
         public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();
         public Dictionary<int, PlayerSpawns> Purple = new Dictionary<int, PlayerSpawns>();
 
         public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
         {
-            if(team.ToLower() == "blue")
+            if (team.ToLower() == "blue")
             {
                 Blue[playerCount] = spawns;
             }
-            else if(team.ToLower() == "purple")
+            else if (team.ToLower() == "purple")
             {
                 Purple[playerCount] = spawns;
             }
@@ -78,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic
         }
     }
 
-    internal class PlayerSpawns
+    public class PlayerSpawns
     {
         private JArray _spawns;
 
@@ -98,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic
         }
     }
 
-    internal class GameConfig
+    public class GameConfig
     {
         public int Map { get { return (int)_gameData.SelectToken("map"); } }
         public string GameMode { get { return (string)_gameData.SelectToken("gameMode"); } }
@@ -112,7 +117,7 @@ namespace LeagueSandbox.GameServer.Logic
     }
 
 
-    internal class PlayerConfig
+    public class PlayerConfig
     {
         public string Rank { get { return (string)_playerData.SelectToken("rank"); } }
         public string Name { get { return (string)_playerData.SelectToken("name"); } }

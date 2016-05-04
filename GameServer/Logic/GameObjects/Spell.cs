@@ -363,7 +363,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool isWalkable(float x, float y)
         {
-            return owner.GetGame().GetMap().isWalkable(x, y);
+            return owner.GetGame().GetMap().IsWalkable(x, y);
         }
 
         public float getProjectileSpeed()
@@ -423,12 +423,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
         {
-            return owner.GetGame().GetMap().getUnitsInRange(t, range, isAlive);
+            return owner.GetGame().GetMap().GetUnitsInRange(t, range, isAlive);
         }
 
         public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
         {
-            return owner.GetGame().GetMap().getChampionsInRange(t, range, isAlive);
+            return owner.GetGame().GetMap().GetChampionsInRange(t, range, isAlive);
         }
 
         /**
@@ -483,15 +483,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void loadLua(LuaScript script)
         {
+            var config = owner.GetGame().GetConfig();
             string scriptloc;
 
             if (getSlot() > 3)
             {
-                scriptloc = Config.ContentManager.GetSpellScriptPath("Global", spellName);
+                scriptloc = config.ContentManager.GetSpellScriptPath("Global", spellName);
             }
             else
             {
-                scriptloc = Config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+                scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));

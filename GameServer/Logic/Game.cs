@@ -21,29 +21,33 @@ namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class Game
     {
-        private Host _server;
-        private BlowFish _blowfish;
-        private uint _dwStart = 0x40000000; //new netid
-        private object _lock = new object();
+        protected Host _server;
+        protected BlowFish _blowfish;
+        protected uint _dwStart = 0x40000000; //new netid
+        protected object _lock = new object();
 
-        private bool _started = false;
-        private int _playersReady = 0;
+        protected bool _started = false;
+        protected int _playersReady = 0;
 
-        private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
-        private Map _map;
-        private PacketNotifier _packetNotifier;
-        private PacketHandlerManager _packetHandlerManager;
-        private System.Timers.Timer _updateTimer;
-        private const int PEER_MTU = 996;
-        private const PacketFlags RELIABLE = PacketFlags.Reliable;
-        private const PacketFlags UNRELIABLE = PacketFlags.None;
-        private const double REFRESH_RATE = 16.666; // 60 fps
+        protected List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
+        protected Map _map;
+        protected PacketNotifier _packetNotifier;
+        protected PacketHandlerManager _packetHandlerManager;
+        protected Config _config;
+        protected System.Timers.Timer _updateTimer;
+        protected const int PEER_MTU = 996;
+        protected const PacketFlags RELIABLE = PacketFlags.Reliable;
+        protected const PacketFlags UNRELIABLE = PacketFlags.None;
+        protected const double REFRESH_RATE = 16.666; // 60 fps
 
         // Object managers
         public ItemManager ItemManager { get; protected set; }
 
         public bool Initialize(Address address, string baseKey)
         {
+            Logger.LogCoreInfo("Loading Config.");
+            _config = new Config("Settings/GameInfo.json");
+
             ItemManager = ItemManager.LoadItems(this);
 
             _server = new Host();
@@ -59,7 +63,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _packetNotifier = new PacketNotifier(this);
 
             var id = 1;
-            foreach (var p in Config.Players)
+            foreach (var p in _config.Players)
             {
                 var player = new ClientInfo(p.Value.Rank, ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.Ribbon, p.Value.Icon);
 
@@ -134,7 +138,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                      var elapsed = watch.ElapsedMilliseconds;
                      watch.Restart();
                      if (_started)
-                         _map.update(elapsed);
+                         _map.Update(elapsed);
 
                      _updateTimer.Start();
                  };
@@ -169,6 +173,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public PacketHandlerManager GetPacketHandlerManager()
         {
             return _packetHandlerManager;
+        }
+
+        public Config GetConfig()
+        {
+            return _config;
         }
 
         public void IncrementReadyPlayers()

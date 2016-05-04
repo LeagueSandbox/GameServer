@@ -118,7 +118,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (targetUnit != null)
             {
-                if (targetUnit.isDead() || !_game.GetMap().teamHasVisionOn(getTeam(), targetUnit))
+                if (targetUnit.isDead() || !_game.GetMap().TeamHasVisionOn(getTeam(), targetUnit))
                 {
                     setTargetUnit(null);
                     isAttacking = false;
@@ -181,7 +181,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else if (isAttacking)
             {
-                if (autoAttackTarget == null || autoAttackTarget.isDead() || !_game.GetMap().teamHasVisionOn(getTeam(), autoAttackTarget))
+                if (autoAttackTarget == null || autoAttackTarget.isDead() || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget))
                 {
                     isAttacking = false;
                     initialAttackDone = false;
@@ -324,12 +324,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void die(Unit killer)
         {
             setToRemove();
-            _game.GetMap().stopTargeting(this);
+            _game.GetMap().StopTargeting(this);
 
             _game.GetPacketNotifier().notifyNpcDie(this, killer);
 
-            float exp = _game.GetMap().getExperienceFor(this);
-            var champs = _game.GetMap().getChampionsInRange(this, EXP_RANGE, true);
+            float exp = _game.GetMap().GetExperienceFor(this);
+            var champs = _game.GetMap().GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.getTeam() == getTeam());
 
@@ -347,7 +347,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                float gold = _game.GetMap().getGoldFor(this);
+                float gold = _game.GetMap().GetGoldFor(this);
                 if (gold <= 0)
                     return;
 

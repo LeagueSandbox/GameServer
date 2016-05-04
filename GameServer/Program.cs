@@ -35,9 +35,6 @@ namespace LeagueSandbox
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
 
-            Logger.LogCoreInfo("Loading Config.");
-            Config.LoadConfig("Settings/GameInfo.json");
-
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
             var settings = Settings.Load("Settings/Settings.json");

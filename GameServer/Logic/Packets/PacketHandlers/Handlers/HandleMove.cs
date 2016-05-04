@@ -30,8 +30,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.GetChampion().setPosition(request.x, request.y);
-                    float x = ((request.x) - game.GetMap().getWidth()) / 2;
-                    float y = ((request.y) - game.GetMap().getHeight()) / 2;
+                    float x = ((request.x) - game.GetMap().GetWidth()) / 2;
+                    float y = ((request.y) - game.GetMap().GetHeight()) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         private List<Vector2> readWaypoints(byte[] buffer, int coordCount, Map map)
         {
             var reader = new BinaryReader(new MemoryStream(buffer));
-            var mapSize = map.getSize();
+            var mapSize = map.GetSize();
             int vectorCount = coordCount / 2;
             var vMoves = new List<Vector2>();
             var lastCoord = new Vector2(0.0f, 0.0f);

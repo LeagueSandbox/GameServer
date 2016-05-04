@@ -228,7 +228,7 @@ namespace LeagueSandbox.GameServer.Logic
         }
         public virtual float GetZ()
         {
-            return _game.GetMap().getHeightAtLocation(x, y);
+            return _game.GetMap().GetHeightAtLocation(x, y);
         }
 
         public void setCollisionRadius(int collisionRadius)
