@@ -74,7 +74,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected LuaScript unitScript = new LuaScript();
 
         protected int killDeathCounter = 0;
-        public List<Buff> buffs = new List<Buff>();
+        private object _buffsLock = new object();
+        private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
         public Unit(Map map, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, x, y, collisionRadius, visionRadius)
         {
@@ -133,7 +134,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!isMelee())
                         {
                             Projectile p = new Projectile(map, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
-                            map.addObject(p);
+                            map.AddObject(p);
                             PacketNotifier.notifyShowProjectile(p);
                         }
                         else
@@ -161,7 +162,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             initialAttackDone = true;
                             PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
                         }
-                        else {
+                        else
+                        {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
                             PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
                         }
@@ -201,6 +203,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 statUpdateTimer = 0;
             }
         }
+
         public override float getMoveSpeed()
         {
             return stats.getMovementSpeed();
@@ -212,9 +215,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
 
-        public List<Buff> getBuffs()
+        public Dictionary<string, Buff> GetBuffs()
         {
-            return buffs;
+            var toReturn = new Dictionary<string, Buff>();
+            lock (_buffsLock)
+            {
+                foreach (var buff in _buffs)
+                    toReturn.Add(buff.Key, buff.Value);
+
+                return toReturn;
+            }
+        }
+
+        public int GetBuffsCount()
+        {
+            return _buffs.Count;
         }
 
         /**
@@ -384,17 +399,33 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             modelUpdated = false;
         }
 
-        public void addBuff(Buff b)
+        public void AddBuff(Buff b)
         {
-            if (getBuff(b.getName()) == null)
+            lock (_buffsLock)
             {
-                buffs.Add(b);
-                getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
+                if (!_buffs.ContainsKey(b.getName()))
+                {
+                    _buffs.Add(b.getName(), b);
+                    getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
+                }
+                else
+                {
+                    _buffs[b.getName()].setTimeElapsed(0); // if buff already exists, just restart its timer
+                }
             }
-            else
-            {
-                getBuff(b.getName()).setTimeElapsed(0); // if buff already exists, just restart its timer
-            }
+        }
+
+        public void RemoveBuff(Buff b)
+        {
+            //TODO add every stat
+            getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
+            RemoveBuff(b.getName());
+        }
+
+        public void RemoveBuff(string b)
+        {
+            lock (_buffsLock)
+                _buffs.Remove(b);
         }
 
         public void setDistressCall(Unit distress)
@@ -413,13 +444,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
         //todo: use statmods
-        public Buff getBuff(string name)
+        public Buff GetBuff(string name)
         {
-            foreach (var buff in buffs)
-                if (buff.getName() == name)
-                    return buff;
+            lock (_buffsLock)
+            {
+                if (_buffs.ContainsKey(name))
+                    return _buffs[name];
 
-            return null;
+                return null;
+            }
         }
 
         public void setMoveOrder(MoveOrder moveOrder)

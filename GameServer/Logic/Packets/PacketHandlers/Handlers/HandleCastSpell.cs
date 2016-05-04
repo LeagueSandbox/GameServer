@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var futureProjNetId = Game.GetNewNetID();
             var spellNetId = Game.GetNewNetID();
-            var targetObj = game.getMap().getObjectById(spell.targetNetId);
+            var targetObj = game.getMap().GetObjectById(spell.targetNetId);
             var targetUnit = targetObj as Unit;
 
             var s = game.getPeerInfo(peer).getChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);

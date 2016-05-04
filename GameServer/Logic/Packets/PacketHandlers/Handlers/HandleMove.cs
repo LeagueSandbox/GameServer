@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             peerInfo.getChampion().setWaypoints(vMoves);
 
-            var u = game.getMap().getObjectById(request.targetNetId) as Unit;
+            var u = game.getMap().GetObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
                 peerInfo.getChampion().setTargetUnit(null);

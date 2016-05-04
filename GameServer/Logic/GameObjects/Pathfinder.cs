@@ -371,7 +371,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (chart != null)
             {
-                var objects = chart.getObjects();
+                var objects = chart.GetObjects();
                 foreach (var i in objects) // For every object
                 {
                     if (!(i.Value is Minion) && !(i.Value is Champion))

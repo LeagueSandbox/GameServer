@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (!isAttacking)
             {
-                var objects = map.getObjects();
+                var objects = map.GetObjects();
                 Unit nextTarget = null;
                 int nextTargetPriority = 10;
 

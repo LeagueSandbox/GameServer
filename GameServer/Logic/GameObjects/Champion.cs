@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 Logger.LogCoreError("couldn't find champion stats for " + type);
                 return;
             }
-            
+
             stats.setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
             stats.setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
             stats.setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));
@@ -101,7 +101,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var scriptloc = Config.contentManager.GetSpellScriptPath(getType(), "Passive");
             Logger.LogCoreInfo("Loading " + scriptloc);
             unitScript.lua["me"] = this;
-            
+
             unitScript.loadScript(scriptloc);
         }
         public string getType()
@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!isDead() && moveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && targetUnit != null)
             {
-                Dictionary<uint, GameObject> objects = map.getObjects();
+                Dictionary<uint, GameObject> objects = map.GetObjects();
                 float distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 float range = Math.Max(stats.getRange(), DETECT_RANGE);
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.isGeneratingGold() && map.getGameTime() >= map.getFirstGoldTime())
+            if (!stats.isGeneratingGold() && map.getGameTime() >= map.GetFirstGoldTime())
             {
                 stats.setGeneratingGold(true);
                 Logger.LogCoreInfo("Generating Gold!");
@@ -270,15 +270,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            bool levelup = false;
-
-            while (getStats().getLevel() < map.getExperienceToLevelUp().Count && getStats().getExperience() >= map.getExperienceToLevelUp()[getStats().getLevel()])
-            {
-                levelUp();
-                levelup = true;
-            }
-
-            if (levelup)
+            var isLevelup = LevelUp();
+            if (isLevelup)
                 PacketNotifier.notifyLevelUp(this);
 
             foreach (var s in spells)
@@ -336,11 +329,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return skillPoints;
         }
-        public void levelUp()
+
+        public bool LevelUp()
         {
-            Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + getStats().getLevel() + 1);
-            getStats().levelUp();
-            ++skillPoints;
+            var stats = getStats();
+            var expMap = map.GetExperienceToLevelUp();
+            if (stats.getLevel() >= expMap.Count)
+                return false;
+            if (stats.getExperience() < expMap[stats.getLevel()])
+                return false;
+
+            while (stats.getExperience() >= expMap[stats.getLevel()])
+            {
+                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.getLevel() + 1);
+                getStats().levelUp();
+                skillPoints++;
+            }
+            return true;
         }
 
         public InventoryManager getInventory()
@@ -357,7 +362,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null && championHitFlagTimer > 0)
             {
-                cKiller = map.getObjectById(playerHitId) as Champion;
+                cKiller = map.GetObjectById(playerHitId) as Champion;
                 Logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
@@ -390,16 +395,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (map.getKillReduction() && !map.getFirstBlood())
+            if (map.GetKillReduction() && !map.GetFirstBlood())
             {
                 gold -= gold * 0.25f;
                 //CORE_INFO("Still some minutes for full gold reward on champion kills");
             }
 
-            if (map.getFirstBlood())
+            if (map.GetFirstBlood())
             {
                 gold += 100;
-                map.setFirstBlood(false);
+                map.SetFirstBlood(false);
             }
 
             PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);

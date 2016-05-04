@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Unit nextTarget = null;
             double nextTargetPriority = 9e5;
 
-            var objects = map.getObjects();
+            var objects = map.GetObjects();
             foreach (var it in objects)
             {
                 var u = it.Value as Unit;

@@ -149,7 +149,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         {
                             if (lvl < 1 || lvl > 18)
                                 return true;
-                            game.getPeerInfo(peer).getChampion().getStats().setExp(game.getMap().getExperienceToLevelUp()[(int)lvl - 1]);
+                            game.getPeerInfo(peer).getChampion().getStats().setExp(game.getMap().GetExperienceToLevelUp()[(int)lvl - 1]);
                             //game.peerInfo(peer).getChampion().getStats().setLevel(lvl);
                         }
                         return true;
@@ -180,8 +180,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             c.setPosition(game.getPeerInfo(peer).getChampion().getX(), game.getPeerInfo(peer).getChampion().getY());
                             c.setModel(split[1]); // trigger the "modelUpdate" proc
                             c.setTeam(game.getPeerInfo(peer).getChampion().getTeam());
-                            game.getMap().removeObject(game.getPeerInfo(peer).getChampion());
-                            game.getMap().addObject(c);
+                            game.getMap().RemoveObject(game.getPeerInfo(peer).getChampion());
+                            game.getMap().AddObject(c);
                             game.getPeerInfo(peer).setChampion(c);
                         })).Start();
                         return true;
@@ -219,7 +219,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         int team;
                         if (!int.TryParse(split[1], out team))
                             return true;
-                        var units = game.getPeerInfo(peer).getChampion().getMap().getObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion);
+                        var units = game.getPeerInfo(peer).getChampion().getMap().GetObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion);
                         foreach (var unit in units)
                         {
                             var response = new AttentionPingAns(game.getPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
@@ -229,7 +229,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     case ".inhib":
                         var sender = game.getPeerInfo(peer);
                         var min = new Monster(game.getMap(), Game.GetNewNetID(), sender.getChampion().getX(), sender.getChampion().getY(), sender.getChampion().getX(), sender.getChampion().getY(), "AncientGolem", "AncientGolem1.1.1");
-                        game.getMap().addObject(min);
+                        game.getMap().AddObject(min);
                         return true;
                 }
             }

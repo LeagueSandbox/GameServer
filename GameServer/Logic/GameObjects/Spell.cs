@@ -388,20 +388,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addProjectile(string nameMissile, float toX, float toY)
         {
             Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.getMap().addObject(p);
+            owner.getMap().AddObject(p);
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
             Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.getMap().addObject(p);
+            owner.getMap().AddObject(p);
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addBuff(string buffName, float dur, Unit u)
         {
-            u.addBuff(new Buff(buffName, dur, u));
+            u.AddBuff(new Buff(buffName, dur, u));
         }
 
         public void addParticle(string particle, float toX, float toY)

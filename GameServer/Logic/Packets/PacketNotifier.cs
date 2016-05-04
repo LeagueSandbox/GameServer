@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var losingTeam = nexus.getTeam();
 
-            foreach (var p in map.getGame().getPlayers())
+            foreach (var p in map.GetGame().getPlayers())
             {
                 var coords = map.GetEndGameCameraPosition(losingTeam);
                 var cam = new MoveCamera(p.Item2.getChampion(),coords[0], coords[1], coords[2], 2);
