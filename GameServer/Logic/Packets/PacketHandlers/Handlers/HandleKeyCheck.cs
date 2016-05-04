@@ -14,11 +14,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
         {
-            // players[0].Item1 = peer->address.host; //temp
-            //   players[0].Item2.setPeer(enetEvent.peer);
-
             var keyCheck = new KeyCheck(data);
-            var userId = (long)BlowFishCS.BlowFishCS.Decrypt2(game.getBlowfish(), (ulong)keyCheck.checkId);
+            var userId = game.getBlowfish().Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
                 return false;
