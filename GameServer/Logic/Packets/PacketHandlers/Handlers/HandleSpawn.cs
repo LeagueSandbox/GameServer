@@ -21,13 +21,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             Logger.LogCoreInfo("Spawning map");
 
             int playerId = 0;
-            ClientInfo playerInfo = null;
             foreach (var p in game.getPlayers())
             {
-                if (p.Item2.getPeer() == peer)
-                {
-                    playerInfo = p.Item2;
-                }
                 var spawn = new HeroSpawn(p.Item2, playerId++);
                 PacketHandlerManager.getInstace().sendPacket(peer, spawn, Channel.CHL_S2C);
 
@@ -86,7 +81,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
+            if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
@@ -94,7 +89,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var sh1 = new SetHealth(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C); 
             }
-            else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
+            else if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);
