@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Maps;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string type;
         private float z, dirX, dirY, dirZ, unk1, unk2;
 
-        public LevelProp(Map map, uint id, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2, string name, string type) : base(map, id, x, y, 0)
+        public LevelProp(Game game, uint id, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2, string name, string type) : base(game, id, x, y, 0)
         {
             this.z = z;
             this.dirX = dirX;
@@ -25,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.type = type;
         }
 
-        public override float getZ()
+        public override float GetZ()
         {
             return z;
         }

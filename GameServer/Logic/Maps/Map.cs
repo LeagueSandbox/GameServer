@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 if (obj.isMovementUpdated())
                 {
-                    PacketNotifier.notifyMovement(obj);
+                    _game.GetPacketNotifier().notifyMovement(obj);
                     obj.clearMovementUpdated();
                 }
 
@@ -109,22 +109,22 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         if (teamHasVisionOn(team, u))
                         {
                             u.setVisibleByTeam(team, true);
-                            PacketNotifier.notifySpawn(u);
+                            _game.GetPacketNotifier().notifySpawn(u);
                             RemoveVisionUnit(u);
-                            PacketNotifier.notifyUpdatedStats(u, false);
+                            _game.GetPacketNotifier().notifyUpdatedStats(u, false);
                             continue;
                         }
                     }
 
                     if (!u.isVisibleByTeam(team) && teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyEnterVision(u, team);
+                        _game.GetPacketNotifier().notifyEnterVision(u, team);
                         u.setVisibleByTeam(team, true);
-                        PacketNotifier.notifyUpdatedStats(u, false);
+                        _game.GetPacketNotifier().notifyUpdatedStats(u, false);
                     }
                     else if (u.isVisibleByTeam(team) && !teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, team);
+                        _game.GetPacketNotifier().notifyLeaveVision(u, team);
                         u.setVisibleByTeam(team, false);
                     }
                 }
@@ -142,19 +142,19 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 if (u.getStats().getUpdatedStats().Count > 0)
                 {
-                    PacketNotifier.notifyUpdatedStats(u);
+                    _game.GetPacketNotifier().notifyUpdatedStats(u);
                     u.getStats().clearUpdatedStats();
                 }
 
                 if (u.getStats().isUpdatedHealth())
                 {
-                    PacketNotifier.notifySetHealth(u);
+                    _game.GetPacketNotifier().notifySetHealth(u);
                     u.getStats().clearUpdatedHealth();
                 }
 
                 if (u.isModelUpdated())
                 {
-                    PacketNotifier.notifyModelUpdate(u);
+                    _game.GetPacketNotifier().notifyModelUpdate(u);
                     u.clearModelUpdated();
                 }
             }
@@ -172,7 +172,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // By default, synchronize the game time every 10 seconds
             if (_nextSyncTime >= 10 * 1000)
             {
-                PacketNotifier.notifyGameTimer();
+                _game.GetPacketNotifier().notifyGameTimer();
                 _nextSyncTime = 0;
             }
 
@@ -273,9 +273,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             AddVisionUnit(o as Unit);
 
             if (o is Minion)
-                PacketNotifier.notifyMinionSpawned(o as Minion, o.getTeam());
+                _game.GetPacketNotifier().notifyMinionSpawned(o as Minion, o.getTeam());
             else if (o is Monster)
-                PacketNotifier.notifySpawn(o as Monster);
+                _game.GetPacketNotifier().notifySpawn(o as Monster);
             else if (o is Champion)
                 AddChampion(o as Champion);
         }
@@ -300,7 +300,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (_championsLock)
                 _champions.Add(champion.getNetId(), champion);
 
-            PacketNotifier.notifyChampionSpawned(champion, champion.getTeam());
+            _game.GetPacketNotifier().notifyChampionSpawned(champion, champion.getTeam());
         }
 
         public void RemoveChampion(Champion champion)
@@ -374,11 +374,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 0;
         }
 
-        public Game GetGame()
-        {
-            return _game;
-        }
-
         public Dictionary<uint, GameObject> GetObjects()
         {
             var ret = new Dictionary<uint, GameObject>();
@@ -403,7 +398,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     {
                         u.setTargetUnit(null);
                         u.setAutoAttackTarget(null);
-                        PacketNotifier.notifySetTarget(u, null);
+                        _game.GetPacketNotifier().notifySetTarget(u, null);
                     }
                 }
             }

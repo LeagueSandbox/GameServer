@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System;
@@ -37,18 +38,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected MinionSpawnPosition spawnPosition;
         protected MinionSpawnType minionType;
 
-        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(map, id, "", new MinionStats(), 40, 0, 0, 1100)
+        public Minion(Game game, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(game, id, "", new MinionStats(), 40, 0, 0, 1100)
         {
             this.minionType = type;
             this.spawnPosition = position;
             this.mainWaypoints = mainWaypoints;
             this.curMainWaypoint = 0;
 
-            var spawnSpecifics = map.getMinionSpawnPosition(spawnPosition);
+            var spawnSpecifics = _game.GetMap().getMinionSpawnPosition(spawnPosition);
             setTeam(spawnSpecifics.Item1);
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            map.setMinionStats(this); // Let the map decide how strong this minion has to be.
+            _game.GetMap().setMinionStats(this); // Let the map decide how strong this minion has to be.
 
             string minionModel = "";
             if (spawnSpecifics.Item1 == 0) // If we're the blue side
@@ -66,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             // Set model
             setModel(minionModel);
-            
+
 
 
             if (mainWaypoints.Count > 0)                                                      // If we have lane path instructions from the map
@@ -77,7 +78,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
         }
 
-        public Minion(Map map, uint id, MinionSpawnType type, MinionSpawnPosition position) : this(map, id, type, position, new List<Vector2>())
+        public Minion(Game game, uint id, MinionSpawnType type, MinionSpawnPosition position) : this(game, id, type, position, new List<Vector2>())
         {
 
         }
@@ -131,7 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Unit nextTarget = null;
             double nextTargetPriority = 9e5;
 
-            var objects = map.GetObjects();
+            var objects = _game.GetMap().GetObjects();
             foreach (var it in objects)
             {
                 var u = it.Value as Unit;
@@ -141,7 +142,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                      u.isDead() ||                                  // alive
                      u.getTeam() == getTeam() ||                    // not on our team
                      distanceWith(u) > DETECT_RANGE ||              // in range
-                     !getMap().teamHasVisionOn(getTeam(), u))       // visible to this minion
+                     !_game.GetMap().teamHasVisionOn(getTeam(), u))       // visible to this minion
                     continue;                                       // If not, look for something else
 
                 var priority = classifyTarget(u);  // get the priority.
@@ -155,7 +156,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (nextTarget != null) // If we have a target
             {
                 setTargetUnit(nextTarget); // Set the new target and refresh waypoints
-                PacketNotifier.notifySetTarget(this, nextTarget);
+                _game.GetPacketNotifier().notifySetTarget(this, nextTarget);
                 return true;
             }
             return false;
@@ -177,7 +178,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (isAttacking && (targetUnit == null || distanceWith(targetUnit) > stats.getRange()))
             // If target is dead or out of range
             {
-                PacketNotifier.notifyStopAutoAttack(this);
+                _game.GetPacketNotifier().notifyStopAutoAttack(this);
                 isAttacking = false;
             }
         }

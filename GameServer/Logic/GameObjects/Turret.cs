@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System;
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         private string name;
 
-        public Turret(Map map, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(map, id, "", new TurretStats(), 50, x, y, 1200)
+        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new TurretStats(), 50, x, y, 1200)
         {
             this.name = name;
 
@@ -37,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (!isAttacking)
             {
-                var objects = map.GetObjects();
+                var objects = _game.GetMap().GetObjects();
                 Unit nextTarget = null;
                 int nextTargetPriority = 10;
 
@@ -85,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     targetUnit = nextTarget;
-                    PacketNotifier.notifySetTarget(this, nextTarget);
+                    _game.GetPacketNotifier().notifySetTarget(this, nextTarget);
                 }
             }
 
@@ -93,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (targetUnit != null && distanceWith(targetUnit) > TURRET_RANGE)
             {
                 setTargetUnit(null);
-                PacketNotifier.notifySetTarget(this, null);
+                _game.GetPacketNotifier().notifySetTarget(this, null);
             }
 
             base.update(diff);

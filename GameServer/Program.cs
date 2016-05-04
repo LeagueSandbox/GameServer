@@ -35,7 +35,6 @@ namespace LeagueSandbox
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
 
-
             Logger.LogCoreInfo("Loading Config.");
             Config.LoadConfig("Settings/GameInfo.json");
 
@@ -50,16 +49,16 @@ namespace LeagueSandbox
 
             Logger.LogCoreInfo("Game started");
 
-            Game g = new Game();
+            var game = new Game();
             var address = new Address(SERVER_HOST, SERVER_PORT);
             
-            if (!g.initialize(address, SERVER_KEY))
+            if (!game.Initialize(address, SERVER_KEY))
             {
                 Logger.LogCoreError("Couldn't listen on port " + SERVER_PORT + ", or invalid key");
                 return;
             }
 
-            g.netLoop();
+            game.NetLoop();
 
             PathNode.DestroyTable(); // Cleanup
         }

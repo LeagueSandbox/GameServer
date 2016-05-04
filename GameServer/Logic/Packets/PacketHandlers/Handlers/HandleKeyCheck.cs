@@ -15,19 +15,19 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var keyCheck = new KeyCheck(data);
-            var userId = game.getBlowfish().Decrypt(keyCheck.checkId);
+            var userId = game.GetBlowfish().Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
                 return false;
 
             var playerNo = 0;
 
-            foreach (var p in game.getPlayers())
+            foreach (var p in game.GetPlayers())
             {
                 var player = p.Item2;
-                if (player.userId == userId)
+                if (player.UserId == userId)
                 {
-                    if (player.getPeer() != null)
+                    if (player.GetPeer() != null)
                     {
                         Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
                         return false;
@@ -35,10 +35,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                     //TODO: add at least port or smth
                     p.Item1 = peer.Address.port;
-                    player.setPeer(peer);
+                    player.SetPeer(peer);
                     var response = new KeyCheck(keyCheck.userId, playerNo);
-                    bool bRet = PacketHandlerManager.getInstace().sendPacket(peer, response, Channel.CHL_HANDSHAKE);
-                    handleGameNumber(player, peer);//Send 0x91 Packet?
+                    bool bRet = game.GetPacketHandlerManager().sendPacket(peer, response, Channel.CHL_HANDSHAKE);
+                    handleGameNumber(player, peer, game);//Send 0x91 Packet?
                     return true;
                 }
                 ++playerNo;
@@ -46,10 +46,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             return false;
         }
 
-        bool handleGameNumber(ClientInfo client, Peer peer)
+        bool handleGameNumber(ClientInfo client, Peer peer, Game game)
         {
-            var world = new WorldSendGameNumber(1, client.getName());
-            return PacketHandlerManager.getInstace().sendPacket(peer, world, Channel.CHL_S2C);
+            var world = new WorldSendGameNumber(1, client.GetName());
+            return game.GetPacketHandlerManager().sendPacket(peer, world, Channel.CHL_S2C);
         }
     }
 }

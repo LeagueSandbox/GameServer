@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.attacker = attacker;
             this.buffType = BuffType.Aura;
             this.movementSpeedPercentModifier = 0.0f;
-            PacketNotifier.notifyAddBuff(this);
+            attachedTo.GetGame().GetPacketNotifier().notifyAddBuff(this);
         }
         public Buff(string buffName, float dur, Unit u) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.attacker = u;
             this.buffType = BuffType.Aura;
             this.movementSpeedPercentModifier = 0.0f;
-            PacketNotifier.notifyAddBuff(this);
+            attachedTo.GetGame().GetPacketNotifier().notifyAddBuff(this);
         }
 
         public float getMovementSpeedPercentModifier()
@@ -137,7 +137,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             timeElapsed = time;
         }
-        
+
         public void update(long diff)
         {
             timeElapsed += (float)diff / 1000.0f;
@@ -154,7 +154,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     if (name != "")
                     { // empty name = no buff icon
-                        PacketNotifier.notifyRemoveBuff(attachedTo, name);
+                        attachedTo.GetGame().GetPacketNotifier().notifyRemoveBuff(attachedTo, name);
                     }
                     remove = true;
                 }

@@ -11,114 +11,102 @@ namespace LeagueSandbox.GameServer.Logic.Enet
 {
     public class ClientInfo
     {
-        public bool keyChecked = false;
-        public bool versionMatch = true;
-        public long userId;
-        public int ticks = 0;
-        public int skinNo = 0;
-        public SummonerSpellIds[] summonerSkills = new SummonerSpellIds[2];
-        public string name, rank;
-        public short ribbon;
-        public int icon;
-        public TeamId team;
+        public bool KeyChecked = false;
+        public bool VersionMatch = true;
+        public long UserId;
+        public int SkinNo = 0;
+        public SummonerSpellIds[] SummonerSkills = new SummonerSpellIds[2];
+        public string Name, Rank;
+        public short Ribbon;
+        public int Icon;
+        public TeamId Team;
 
-        Champion champion;
-        Peer peer;
+        private Champion _champion;
+        private Peer _peer;
 
         public ClientInfo(string rank, TeamId team, short ribbon, int icon)
         {
-            this.rank = rank;
-            this.team = team;
-            this.ribbon = ribbon;
-            this.icon = icon;
+            this.Rank = rank;
+            this.Team = team;
+            this.Ribbon = ribbon;
+            this.Icon = icon;
         }
 
 
-        public void setName(string name)
+        public void SetName(string name)
         {
-            this.name = name;
+            this.Name = name;
         }
 
-        public void setChampion(Champion champion)
+        public void SetChampion(Champion champion)
         {
-            this.champion = champion; //ChampionFactory::getChampionFromType(type);
-            champion.setSkin(skinNo);
+            this._champion = champion; //ChampionFactory::getChampionFromType(type);
+            champion.setSkin(SkinNo);
         }
 
-        public void setSkinNo(short skinNo)
+        public void SetSkinNo(short skinNo)
         {
-            this.skinNo = skinNo;
+            this.SkinNo = skinNo;
         }
 
-        public string getRank()
+        public string GetRank()
         {
-            return rank;
+            return Rank;
         }
-        public TeamId getTeam()
+        public TeamId GetTeam()
         {
-            return team;
-        }
-
-        public Champion getChampion()
-        {
-            return champion;
+            return Team;
         }
 
-        public string getName()
+        public Champion GetChampion()
         {
-            return name;
+            return _champion;
         }
 
-        public int getSkinNo()
+        public string GetName()
         {
-            return skinNo;
+            return Name;
         }
 
-        public void setSummoners(SummonerSpellIds sum1, SummonerSpellIds sum2)
+        public int GetSkinNo()
         {
-            summonerSkills[0] = sum1;
-            summonerSkills[1] = sum2;
+            return SkinNo;
         }
 
-        public void setTicks(int a)
+        public void SetSummoners(SummonerSpellIds sum1, SummonerSpellIds sum2)
         {
-            ticks = a;
+            SummonerSkills[0] = sum1;
+            SummonerSkills[1] = sum2;
+        }
+        
+        public int GetRibbon()
+        {
+            return Ribbon;
         }
 
-        public int getRibbon()
+        public int GetIcon()
         {
-            return ribbon;
+            return Icon;
         }
 
-        public int getIcon()
+        public void SetPeer(Peer peer)
         {
-            return icon;
+            this._peer = peer;
         }
 
-        public int getTicks()
+        public Peer GetPeer()
         {
-            ticks++;
-            return ticks;
+            return _peer;
         }
 
-        public void setPeer(Peer peer)
+        public void SetVersionMatch(bool versionMatch)
         {
-            this.peer = peer;
+            this.VersionMatch = versionMatch;
         }
 
-        public Peer getPeer()
+        public bool IsVersionMatch()
         {
-            return peer;
-        }
-
-        public void setVersionMatch(bool versionMatch)
-        {
-            this.versionMatch = versionMatch;
-        }
-
-        public bool isVersionMatch()
-        {
-            return versionMatch;
+            return VersionMatch;
         }
     }
     public enum TeamId : int

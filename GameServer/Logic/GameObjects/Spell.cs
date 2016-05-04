@@ -117,7 +117,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     return;
                 }
-                
+
                 // Generate cooldown values for each level of the spell
                 for (var i = 0; i < cooldown.Length; ++i)
                 {
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                 }
             }
-            
+
             // Generate cooldown values for each level of the spell
             for (var i = 0; i < cooldown.Length; ++i)
             {
@@ -157,8 +157,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             projectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
             coefficient = inibin.GetValue<float>("SpellData", "Coefficient");
             lineWidth = inibin.GetValue<float>("SpellData", "LineWidth");
-            
-            for(var i = 0; true; i++)
+
+            for (var i = 0; true; i++)
             {
                 string key = "Effect" + (0 + i) + "Level0Amount";
                 if (inibin.GetValue<object>("SpellData", key) == null)
@@ -241,7 +241,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             currentCooldown = getCooldown();
             if (getSlot() < 4)
             {
-                PacketNotifier.notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
+                owner.GetGame().GetPacketNotifier().notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
             }
         }
 
@@ -315,7 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return p.getObjectsHit().Count
                 end");
 
-            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit)}));
+            script.lua.RegisterFunction("addBuff", this, typeof(Spell).GetMethod("addBuff", new Type[] { typeof(string), typeof(float), typeof(Unit) }));
 
             script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
 
@@ -358,12 +358,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void teleportTo(float x, float y)
         {
-            PacketNotifier.notifyTeleport(owner, x, y);
+            owner.GetGame().GetPacketNotifier().notifyTeleport(owner, x, y);
         }
 
         public bool isWalkable(float x, float y)
         {
-            return owner.getMap().isWalkable(x, y);
+            return owner.GetGame().GetMap().isWalkable(x, y);
         }
 
         public float getProjectileSpeed()
@@ -387,16 +387,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.getMap().AddObject(p);
-            PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            owner.GetGame().GetMap().AddObject(p);
+            owner.GetGame().GetPacketNotifier().notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(owner.getMap(), Game.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.getMap().AddObject(p);
-            PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            owner.GetGame().GetMap().AddObject(p);
+            owner.GetGame().GetPacketNotifier().notifyProjectileSpawn(p);
         }
 
         public void addBuff(string buffName, float dur, Unit u)
@@ -407,28 +407,28 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addParticle(string particle, float toX, float toY)
         {
             Target t = new Target(toX, toY);
-            PacketNotifier.notifyParticleSpawn(owner, t, particle);
+            owner.GetGame().GetPacketNotifier().notifyParticleSpawn(owner, t, particle);
         }
 
         public void addParticleTarget(string particle, Target t)
         {
-            PacketNotifier.notifyParticleSpawn(owner, t, particle);
+            owner.GetGame().GetPacketNotifier().notifyParticleSpawn(owner, t, particle);
         }
 
         public void printChat(string msg)
         {
             var dm = new DebugMessage(msg);
-            PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
+            owner.GetGame().GetPacketHandlerManager().broadcastPacket(dm, Channel.CHL_S2C);
         }
 
         public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
         {
-            return owner.getMap().getUnitsInRange(t, range, isAlive);
+            return owner.GetGame().GetMap().getUnitsInRange(t, range, isAlive);
         }
 
         public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
         {
-            return owner.getMap().getChampionsInRange(t, range, isAlive);
+            return owner.GetGame().GetMap().getChampionsInRange(t, range, isAlive);
         }
 
         /**
@@ -487,11 +487,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (getSlot() > 3)
             {
-                scriptloc = Config.contentManager.GetSpellScriptPath("Global", spellName);
+                scriptloc = Config.ContentManager.GetSpellScriptPath("Global", spellName);
             }
             else
             {
-                scriptloc = Config.contentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+                scriptloc = Config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
@@ -499,7 +499,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
             script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
             script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("getLevel"));
-            script.lua.RegisterFunction("getChampionModel", owner,typeof(Champion).GetMethod("getModel"));
+            script.lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
             script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
 
             script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
@@ -530,8 +530,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             script.lua.RegisterFunction("printChat", this, typeof(Spell).GetMethod("printChat", new Type[] { typeof(string) }));
 
-            script.lua.RegisterFunction("getUnitsInRange", this, typeof (Spell).GetMethod("getUnitsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
-            script.lua.RegisterFunction("getChampionsInRange", this, typeof (Spell).GetMethod("getChampionsInRange", new Type[] {typeof (Target), typeof (float), typeof (bool)}));
+            script.lua.RegisterFunction("getUnitsInRange", this, typeof(Spell).GetMethod("getUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
+            script.lua.RegisterFunction("getChampionsInRange", this, typeof(Spell).GetMethod("getChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
 
             /*
             * This have to be in general function, not in spell

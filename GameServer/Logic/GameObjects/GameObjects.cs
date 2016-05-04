@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System;
@@ -22,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         protected List<Vector2> waypoints = new List<Vector2>();
         protected int curWaypoint;
-        protected Map map;
+        protected Game _game;
         protected TeamId team;
         protected bool movementUpdated;
         protected bool toRemove;
@@ -34,9 +35,9 @@ namespace LeagueSandbox.GameServer.Logic
         protected float dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
 
-        public GameObject(Map map, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
+        public GameObject(Game game, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
-            this.map = map;
+            _game = game;
             this.id = id;
             this.target = null;
             this.collisionRadius = collisionRadius;
@@ -213,9 +214,9 @@ namespace LeagueSandbox.GameServer.Logic
             return id;
         }
 
-        public Map getMap()
+        public Game GetGame()
         {
-            return map;
+            return _game;
         }
 
         public override void setPosition(float x, float y)
@@ -225,9 +226,9 @@ namespace LeagueSandbox.GameServer.Logic
 
             setTarget(null);
         }
-        public virtual float getZ()
+        public virtual float GetZ()
         {
-            return map.getHeightAtLocation(x, y);
+            return _game.GetMap().getHeightAtLocation(x, y);
         }
 
         public void setCollisionRadius(int collisionRadius)

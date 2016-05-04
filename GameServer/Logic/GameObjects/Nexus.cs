@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Nexus : Unit
     {
-        public Nexus(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
+        public Nexus(Game game, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
         {
             stats.setCurrentHealth(5500);
             stats.setMaxHealth(5500);
@@ -22,8 +22,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            map.GetGame().stopGame();
-            PacketNotifier.NotifyGameEnd(this);
+            _game.StopGame();
+            _game.GetPacketNotifier().NotifyGameEnd(this);
         }
 
         public override void refreshWaypoints()

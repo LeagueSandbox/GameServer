@@ -13,13 +13,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var loadInfo = new PingLoadInfo(data);
-            var peerInfo = game.getPeerInfo(peer);
+            var peerInfo = game.GetPeerInfo(peer);
             if (peerInfo == null)
                 return false;
-            var response = new PingLoadInfo(loadInfo, peerInfo.userId);
+            var response = new PingLoadInfo(loadInfo, peerInfo.UserId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-            return PacketHandlerManager.getInstace().broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+            return game.GetPacketHandlerManager().broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }
     }
 }

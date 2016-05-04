@@ -12,39 +12,42 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
+            if (game.IsStarted())
+                return true;
+
             game.IncrementReadyPlayers();
-            if (game.getReadyPlayers() == game.getPlayers().Count)
+            if (game.GetReadyPlayers() == game.GetPlayers().Count)
             {
                 var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);
-                PacketHandlerManager.getInstace().broadcastPacket(start, Channel.CHL_S2C);
+                game.GetPacketHandlerManager().broadcastPacket(start, Channel.CHL_S2C);
 
-                foreach (var player in game.getPlayers())
+                foreach (var player in game.GetPlayers())
                 {
-                    if (player.Item2.getPeer() == peer && !player.Item2.isVersionMatch())
+                    if (player.Item2.GetPeer() == peer && !player.Item2.IsVersionMatch())
                     {
                         var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
-                        PacketHandlerManager.getInstace().sendPacket(peer, dm, Channel.CHL_S2C);
+                        game.GetPacketHandlerManager().sendPacket(peer, dm, Channel.CHL_S2C);
                     }
                 }
 
-                game.setStarted(true);
+                game.SetStarted(true);
             }
 
-            if (game.isStarted())
+            if (game.IsStarted())
             {
-                foreach (var p in game.getPlayers())
+                foreach (var p in game.GetPlayers())
                 {
-                    var map = game.getMap();
-                    map.AddObject(p.Item2.getChampion());
+                    var map = game.GetMap();
+                    map.AddObject(p.Item2.GetChampion());
 
                     // Send the initial game time sync packets, then let the map send another
                     float gameTime = map.getGameTime() / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
-                    PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), timer, Channel.CHL_S2C);
+                    game.GetPacketHandlerManager().sendPacket(p.Item2.GetPeer(), timer, Channel.CHL_S2C);
 
                     var timer2 = new GameTimerUpdate(gameTime); // 0xC2
-                    PacketHandlerManager.getInstace().sendPacket(p.Item2.getPeer(), timer2, Channel.CHL_S2C);
+                    game.GetPacketHandlerManager().sendPacket(p.Item2.GetPeer(), timer2, Channel.CHL_S2C);
                 }
             }
 

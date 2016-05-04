@@ -15,14 +15,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var skillUpPacket = new SkillUpPacket(data);
             //!TODO Check if can up skill? :)
 
-            var s = game.getPeerInfo(peer).getChampion().levelUpSpell(skillUpPacket.skill);
+            var s = game.GetPeerInfo(peer).GetChampion().levelUpSpell(skillUpPacket.skill);
 
             if (s == null)
                 return false;
 
-            var skillUpResponse = new SkillUpPacket(game.getPeerInfo(peer).getChampion().getNetId(), skillUpPacket.skill, (byte)s.getLevel(), (byte)s.getOwner().getSkillPoints());
-            PacketHandlerManager.getInstace().sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            game.getPeerInfo(peer).getChampion().getStats().setSpellEnabled(skillUpPacket.skill, true);
+            var skillUpResponse = new SkillUpPacket(game.GetPeerInfo(peer).GetChampion().getNetId(), skillUpPacket.skill, (byte)s.getLevel(), (byte)s.getOwner().getSkillPoints());
+            game.GetPacketHandlerManager().sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+            game.GetPeerInfo(peer).GetChampion().getStats().setSpellEnabled(skillUpPacket.skill, true);
 
             return true;
         }

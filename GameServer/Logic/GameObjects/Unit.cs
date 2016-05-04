@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private object _buffsLock = new object();
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
-        public Unit(Map map, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, x, y, collisionRadius, visionRadius)
+        public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;
@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     setTargetUnit(null);
                     autoAttackTarget = null;
                     isAttacking = false;
-                    PacketNotifier.notifySetTarget(this, null);
+                    _game.GetPacketNotifier().notifySetTarget(this, null);
                     initialAttackDone = false;
                 }
                 return;
@@ -118,11 +118,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (targetUnit != null)
             {
-                if (targetUnit.isDead() || !getMap().teamHasVisionOn(getTeam(), targetUnit))
+                if (targetUnit.isDead() || !_game.GetMap().teamHasVisionOn(getTeam(), targetUnit))
                 {
                     setTargetUnit(null);
                     isAttacking = false;
-                    PacketNotifier.notifySetTarget(this, null);
+                    _game.GetPacketNotifier().notifySetTarget(this, null);
                     initialAttackDone = false;
 
                 }
@@ -133,9 +133,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         if (!isMelee())
                         {
-                            Projectile p = new Projectile(map, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
-                            map.AddObject(p);
-                            PacketNotifier.notifyShowProjectile(p);
+                            Projectile p = new Projectile(_game, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
+                            _game.GetMap().AddObject(p);
+                            _game.GetPacketNotifier().notifyShowProjectile(p);
                         }
                         else
                         {
@@ -154,22 +154,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         isAttacking = true;
                         autoAttackCurrentDelay = 0;
-                        autoAttackProjId = Game.GetNewNetID();
+                        autoAttackProjId = _game.GetNewNetID();
                         autoAttackTarget = targetUnit;
 
                         if (!initialAttackDone)
                         {
                             initialAttackDone = true;
-                            PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
+                            _game.GetPacketNotifier().notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
                         }
                         else
                         {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
-                            PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
+                            _game.GetPacketNotifier().notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
                         }
 
                         var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        PacketNotifier.notifyOnAttack(this, targetUnit, attackType);
+                        _game.GetPacketNotifier().notifyOnAttack(this, targetUnit, attackType);
                     }
 
                 }
@@ -181,7 +181,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else if (isAttacking)
             {
-                if (autoAttackTarget == null || autoAttackTarget.isDead() || !getMap().teamHasVisionOn(getTeam(), autoAttackTarget))
+                if (autoAttackTarget == null || autoAttackTarget.isDead() || !_game.GetMap().teamHasVisionOn(getTeam(), autoAttackTarget))
                 {
                     isAttacking = false;
                     initialAttackDone = false;
@@ -306,13 +306,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.deathFlag = true;
                 target.die(this);
             }
-            PacketNotifier.notifyDamageDone(this, target, damage, type);
+            _game.GetPacketNotifier().notifyDamageDone(this, target, damage, type);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
                 stats.setCurrentHealth(Math.Min(stats.getMaxHealth(), stats.getCurrentHealth() + (regain * damage)));
-                PacketNotifier.notifyUpdatedStats(this);
+                _game.GetPacketNotifier().notifyUpdatedStats(this);
             }
         }
 
@@ -324,12 +324,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void die(Unit killer)
         {
             setToRemove();
-            map.stopTargeting(this);
+            _game.GetMap().stopTargeting(this);
 
-            PacketNotifier.notifyNpcDie(this, killer);
+            _game.GetPacketNotifier().notifyNpcDie(this, killer);
 
-            float exp = map.getExperienceFor(this);
-            var champs = map.getChampionsInRange(this, EXP_RANGE, true);
+            float exp = _game.GetMap().getExperienceFor(this);
+            var champs = _game.GetMap().getChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.getTeam() == getTeam());
 
@@ -347,12 +347,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                float gold = map.getGoldFor(this);
+                float gold = _game.GetMap().getGoldFor(this);
                 if (gold <= 0)
                     return;
 
                 cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
-                PacketNotifier.notifyAddGold(cKiller, this, gold);
+                _game.GetPacketNotifier().notifyAddGold(cKiller, this, gold);
 
                 if (cKiller.killDeathCounter < 0)
                 {

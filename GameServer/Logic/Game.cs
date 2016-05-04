@@ -23,14 +23,16 @@ namespace LeagueSandbox.GameServer.Core.Logic
     {
         private Host _server;
         private BlowFish _blowfish;
-        private static uint _dwStart = 0x40000000; //new netid
-        private static object _lock = new object();
+        private uint _dwStart = 0x40000000; //new netid
+        private object _lock = new object();
 
         private bool _started = false;
         private int _playersReady = 0;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
         private Map _map;
+        private PacketNotifier _packetNotifier;
+        private PacketHandlerManager _packetHandlerManager;
         private System.Timers.Timer _updateTimer;
         private const int PEER_MTU = 996;
         private const PacketFlags RELIABLE = PacketFlags.Reliable;
@@ -40,56 +42,52 @@ namespace LeagueSandbox.GameServer.Core.Logic
         // Object managers
         public ItemManager ItemManager { get; protected set; }
 
-        public bool initialize(Address address, string baseKey)
+        public bool Initialize(Address address, string baseKey)
         {
             ItemManager = ItemManager.LoadItems(this);
-            
+
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
             var key = System.Convert.FromBase64String(baseKey);
-
             if (key.Length <= 0)
                 return false;
 
             _blowfish = new BlowFish(key);
-
-            PacketHandlerManager.getInstace().InitHandlers(this);
-
+            _packetHandlerManager = new PacketHandlerManager(this);
             _map = new SummonersRift(this);
-
-            PacketNotifier.setMap(_map);
+            _packetNotifier = new PacketNotifier(this);
 
             var id = 1;
-            foreach (var p in Config.players)
+            foreach (var p in Config.Players)
             {
-                var player = new ClientInfo(p.Value.rank, ((p.Value.team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.ribbon, p.Value.icon);
+                var player = new ClientInfo(p.Value.Rank, ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.Ribbon, p.Value.Icon);
 
-                player.setName(p.Value.name);
+                player.SetName(p.Value.Name);
 
-                player.setSkinNo(p.Value.skin);
-                player.userId = id; // same as StartClient.bat
+                player.SetSkinNo(p.Value.Skin);
+                player.UserId = id; // same as StartClient.bat
                 id++;
 
-                player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
+                player.SetSummoners(StrToId(p.Value.Summoner1), StrToId(p.Value.Summoner2));
 
-                var c = new Champion(this, p.Value.champion, _map, GetNewNetID(), (uint)player.userId);
+                var c = new Champion(this, p.Value.Champion, GetNewNetID(), (uint)player.UserId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);
-                c.setTeam((p.Value.team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
+                c.setTeam((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
                 c.LevelUp();
 
-                player.setChampion(c);
+                player.SetChampion(c);
                 var pair = new Pair<uint, ClientInfo>();
                 pair.Item2 = player;
                 _players.Add(pair);
             }
             return true;
         }
-        public void netLoop()
+        public void NetLoop()
         {
-            update();
+            Update();
 
             var enetEvent = new Event();
             while (true)
@@ -107,7 +105,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
 
                         case EventType.Receive:
-                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
+                            if (!_packetHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
                             {
                                 //enet_peer_disconnect(event.peer, 0);
                             }
@@ -117,7 +115,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
 
                         case EventType.Disconnect:
-                            handleDisconnect(enetEvent.Peer);
+                            HandleDisconnect(enetEvent.Peer);
                             break;
                     }
                 }
@@ -125,7 +123,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
         }
 
-        private void update()
+        private void Update()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             _updateTimer = new System.Timers.Timer(REFRESH_RATE);
@@ -143,24 +141,34 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _updateTimer.Start();
         }
 
-        public BlowFish getBlowfish()
+        public BlowFish GetBlowfish()
         {
             return _blowfish;
         }
 
-        public Host getServer()
+        public Host GetServer()
         {
             return _server;
         }
 
-        public List<Pair<uint, ClientInfo>> getPlayers()
+        public List<Pair<uint, ClientInfo>> GetPlayers()
         {
             return _players;
         }
 
-        public Map getMap()
+        public Map GetMap()
         {
             return _map;
+        }
+
+        public PacketNotifier GetPacketNotifier()
+        {
+            return _packetNotifier;
+        }
+
+        public PacketHandlerManager GetPacketHandlerManager()
+        {
+            return _packetHandlerManager;
         }
 
         public void IncrementReadyPlayers()
@@ -168,38 +176,38 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _playersReady++;
         }
 
-        public int getReadyPlayers()
+        public int GetReadyPlayers()
         {
             return _playersReady;
         }
 
-        public bool isStarted()
+        public bool IsStarted()
         {
             return _started;
         }
 
-        public void setStarted(bool b)
+        public void SetStarted(bool b)
         {
             _started = b;
         }
 
-        public void stopGame()
+        public void StopGame()
         {
             _updateTimer.Stop();
         }
 
-        bool handleDisconnect(Peer peer)
+        private bool HandleDisconnect(Peer peer)
         {
-            var peerinfo = getPeerInfo(peer);
+            var peerinfo = GetPeerInfo(peer);
             if (peerinfo != null)
             {
                 // TODO: Handle disconnect
-                Logger.LogCoreInfo("Player " + peerinfo.userId + " disconnected");
+                Logger.LogCoreInfo("Player " + peerinfo.UserId + " disconnected");
             }
             return true;
         }
 
-        public ClientInfo getPeerInfo(Peer peer)
+        public ClientInfo GetPeerInfo(Peer peer)
         {
             foreach (var player in _players)
                 if (player.Item1 == peer.Address.port)
@@ -207,7 +215,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return null;
         }
 
-        SummonerSpellIds strToId(string str)
+        private SummonerSpellIds StrToId(string str)
         {
             if (str == "FLASH")
             {
@@ -249,7 +257,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return 0;
         }
 
-        public static uint GetNewNetID()
+        public uint GetNewNetID()
         {
             lock (_lock)
             {
