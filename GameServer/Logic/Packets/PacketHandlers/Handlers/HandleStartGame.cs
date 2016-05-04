@@ -17,7 +17,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (!peerInfo.Disconnected)
             {
                 game.IncrementReadyPlayers();
+            }
+            else
+            {
                 peerInfo.Disconnected = false;
+                PacketNotifier.notifyDebugMessage("Player " + game.getPeerInfo(peer).userId + " reconnected.");
             }
 
             if (game.getReadyPlayers() == game.getPlayers().Count)

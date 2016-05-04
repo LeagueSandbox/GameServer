@@ -59,6 +59,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     // To suppress game HP-related errors for enemy turrets out of vision
                     var sh = new SetHealth(t);
                     PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+
+                    var u = kv.Value as Unit;
+                    if (u != null)
+                    {
+                        PacketNotifier.notifyUpdatedStats(u, false);
+                    }
+
                     continue;
                 }
                 else if (kv.Value is LevelProp)
@@ -67,6 +74,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                     var lpsPacket = new LevelPropSpawn(lp);
                     PacketHandlerManager.getInstace().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
+                    continue;
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
@@ -76,6 +84,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
                     var sh = new SetHealth(inhib.getNetId());
                     PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+
+                    var u = kv.Value as Unit;
+                    if (u != null)
+                    {
+                        PacketNotifier.notifyUpdatedStats(u, false);
+                    }
+
+                    continue;
                 }
                 else if (kv.Value is Minion)
                 {
@@ -86,16 +102,46 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
                         var sh = new SetHealth(m);
                         PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+
+                        var u = kv.Value as Unit;
+                        if (u != null)
+                        {
+                            PacketNotifier.notifyUpdatedStats(u, false);
+                        }
                     }
+                    continue;
+                }
+                else if (kv.Value is Champion)
+                {
+                    var c = kv.Value as Champion;
+                    if (c.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var cs = new ChampionRespawn(c);
+                        PacketHandlerManager.getInstace().sendPacket(peer, cs, Channel.CHL_S2C);
+                        var sh = new SetHealth(c);
+                        PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+
+                        var u = kv.Value as Unit;
+                        if (u != null)
+                        {
+                            PacketNotifier.notifyUpdatedStats(u, false);
+                        }
+                    }
+                    continue;
+                }
+                else if (kv.Value is Projectile)
+                {
+                    var p = kv.Value as Projectile;
+                    if (p.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var sp = new SpawnProjectile(p);
+                        PacketHandlerManager.getInstace().sendPacket(peer, sp, Channel.CHL_S2C);
+                    }
+                    continue;
                 }
                 else
                 {
-                    Logger.LogCoreWarning("Object not handled in HandleSpawn.");
-                }
-                var u = kv.Value as Unit;
-                if (u != null)
-                {
-                    PacketNotifier.notifyUpdatedStats(u, false);
+                    Logger.LogCoreWarning("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
 
