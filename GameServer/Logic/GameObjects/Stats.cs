@@ -74,13 +74,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Dictionary<MasterMask, Dictionary<FieldMask, float>> _updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
         protected bool updatedHealth;
 
-        private float _gold;
-        private float _level;
-        private float _experience;
-        private float _currentHealth;
-        private float _currentMana;
-        private float _spellsEnabled;
-        private float _summonerSpellsEnabled;
+        protected float _gold;
+        protected float _level;
+        protected float _experience;
+        protected float _currentHealth;
+        protected float _currentMana;
+        protected float _spellsEnabled;
+        protected float _summonerSpellsEnabled;
 
         public float AttackSpeedFlat { get; set; }
         public float HealthPerLevel { get; set; }
@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Stat SpellVamp { get; }
         public Stat Tenacity { get; }
 
-        public float Gold {
+        public virtual float Gold {
             get { return _gold; }
             set
             {
@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public byte Level {
+        public virtual byte Level {
             get { return (byte)(Math.Floor(_level) + 0.5f); }
             set
             {
@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public float Experience
+        public virtual float Experience
         {
             get { return _experience; }
             set
@@ -140,7 +140,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public float CurrentHealth
+        public virtual float CurrentHealth
         {
             get { return _currentHealth; }
             set
@@ -150,7 +150,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public float CurrentMana
+        public virtual float CurrentMana
         {
             get { return _currentMana; }
             set

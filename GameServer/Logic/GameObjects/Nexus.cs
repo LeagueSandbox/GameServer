@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Nexus : Unit
     {
-        public Nexus(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
+        public Nexus(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new BuildingStats(), collisionRadius, x, y, visionRadius)
         {
-            stats.setCurrentHealth(5500);
-            stats.setMaxHealth(5500);
+            stats.CurrentHealth = 5500;
+            stats.HealthPoints.BaseValue = 5500;
 
             setTeam(team);
         }
