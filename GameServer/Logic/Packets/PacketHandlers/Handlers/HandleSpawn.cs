@@ -77,6 +77,17 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var sh = new SetHealth(inhib.getNetId());
                     PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
                 }
+                else if (kv.Value is Minion)
+                {
+                    var m = kv.Value as Minion;
+                    if (m.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var ms = new MinionSpawn(m);
+                        PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
+                        var sh = new SetHealth(m);
+                        PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                    }
+                }
             }
 
             // TODO shop map specific?
@@ -87,7 +98,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var ms1 = new MinionSpawn2(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xff10c6db);
-                PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C); 
+                PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C);
             }
             else if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
