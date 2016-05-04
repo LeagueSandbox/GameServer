@@ -20,9 +20,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Monster(Map map, uint id, float x, float y, float facingX, float facingY, string model, string name) : base(map, id, model, new Stats(), 40, x, y)
         {
-            setTeam(CustomConvert.toTeamId(2));
-            for (int i = 0; i < 3; i++)
-                setVisibleByTeam(i, true);
+            setTeam(TeamId.TEAM_NEUTRAL);
+
+            var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
+            foreach(var team in teams)
+                setVisibleByTeam(team, true);
+
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
             facing = new Vector2(facingX, facingY);
             stats.setAttackSpeedMultiplier(1.0f);

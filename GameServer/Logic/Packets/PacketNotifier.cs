@@ -359,7 +359,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
 
-        public static void notifyAnnounceEvent(byte messageId, bool isMapSpecific)
+        public static void notifyAnnounceEvent(Announces messageId, bool isMapSpecific)
         {
             var announce = new Announce(messageId, isMapSpecific ? map.getMapId() : 0);
             PacketHandlerManager.getInstace().broadcastPacket(announce, Channel.CHL_S2C);

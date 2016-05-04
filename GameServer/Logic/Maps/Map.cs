@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     {
         protected Dictionary<uint, GameObject> objects;
         protected Dictionary<uint, Champion> champions;
-        protected Dictionary<uint, Unit>[] visionUnits; //array of 3
+        protected Dictionary<TeamId, Dictionary<uint, Unit>> visionUnits; //array of 3
         protected List<int> expToLevelUp;
         protected int waveNumber;
         protected long firstSpawnTime;
@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected long nextSpawnTime;
         protected long firstGoldTime; // Time that gold should begin to generate
         protected long nextSyncTime;
-        protected List<Pair<bool, Tuple<long, byte, bool>>> announcerEvents;
+        protected List<GameObjects.Announce> _announcerEvents;
         protected Game game;
         protected bool firstBlood;
         protected bool killReduction;
@@ -34,13 +34,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected int id;
 
         protected CollisionHandler collisionHandler;
-        protected Fountain fountain;
+        protected Dictionary<TeamId, Fountain> _fountains;
+        private readonly List<TeamId> TeamsIterator;
+
 
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
             this.objects = new Dictionary<uint, GameObject>();
             this.champions = new Dictionary<uint, Champion>();
-            this.visionUnits = new Dictionary<uint, Unit>[3];
+            this.visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
             this.expToLevelUp = new List<int>();
             this.waveNumber = 0;
             this.firstSpawnTime = firstSpawnTime;
@@ -49,17 +51,22 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             this.gameTime = 0;
             this.nextSpawnTime = firstSpawnTime;
             this.nextSyncTime = 10 * 1000;
-            this.announcerEvents = new List<Pair<bool, Tuple<long, byte, bool>>>();
+            _announcerEvents = new List<GameObjects.Announce>();
             this.game = game;
             this.firstBlood = true;
             this.killReduction = true;
             this.hasFountainHeal = hasFountainHeal;
             this.collisionHandler = new CollisionHandler(this);
-            this.fountain = new Fountain();
+            _fountains = new Dictionary<TeamId, Fountain>();
+            _fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
+            _fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
             this.id = id;
 
-            for (var i = 0; i < visionUnits.Length; i++)
-                visionUnits[i] = new Dictionary<uint, Unit>();
+            TeamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+
+            foreach (var team in TeamsIterator)
+                visionUnits.Add(team, new Dictionary<uint, Unit>());
+
         }
 
         public virtual void update(long diff)
@@ -94,17 +101,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     continue;
                 }
 
-                for (var i = 0; i < 2; i++)
+                foreach (var team in TeamsIterator)
                 {
-                    if (u.getTeam() == CustomConvert.toTeamId(i))
+                    if (u.getTeam() == team || team == TeamId.TEAM_NEUTRAL)
                         continue;
 
-                    var visionUnitsTeam = visionUnits[CustomConvert.fromTeamId(u.getTeam())];
+                    var visionUnitsTeam = visionUnits[u.getTeam()];
                     if (visionUnitsTeam.ContainsKey(u.getNetId()))
                     {
-                        if (teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                        if (teamHasVisionOn(team, u))
                         {
-                            u.setVisibleByTeam(i, true);
+                            u.setVisibleByTeam(team, true);
                             PacketNotifier.notifySpawn(u);
                             visionUnitsTeam.Remove(u.getNetId());
                             PacketNotifier.notifyUpdatedStats(u, false);
@@ -112,16 +119,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(CustomConvert.toTeamId(i)) && teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                    if (!u.isVisibleByTeam(team) && teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyEnterVision(u, CustomConvert.toTeamId(i));
-                        u.setVisibleByTeam(i, true);
+                        PacketNotifier.notifyEnterVision(u, team);
+                        u.setVisibleByTeam(team, true);
                         PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(CustomConvert.toTeamId(i)) && !teamHasVisionOn(CustomConvert.toTeamId(i), u))
+                    else if (u.isVisibleByTeam(team) && !teamHasVisionOn(team, u))
                     {
-                        PacketNotifier.notifyLeaveVision(u, CustomConvert.toTeamId(i));
-                        u.setVisibleByTeam(i, false);
+                        PacketNotifier.notifyLeaveVision(u, team);
+                        u.setVisibleByTeam(team, false);
                     }
                 }
 
@@ -164,23 +171,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             collisionHandler.update(diff);
 
-            foreach (var i in announcerEvents)
-            {
-                bool isCompleted = i.Item1;
-
-                if (!isCompleted)
-                {
-                    var eventTime = i.Item2.Item1;
-                    var messageId = i.Item2.Item2;
-                    var isMapSpecific = i.Item2.Item3;
-
-                    if (gameTime >= eventTime)
-                    {
-                        PacketNotifier.notifyAnnounceEvent(messageId, isMapSpecific);
-                        i.Item1 = true;
-                    }
-                }
-            }
+            foreach (var announce in _announcerEvents)
+                if (!announce.IsAnnounced())
+                    if (gameTime >= announce.GetEventTime())
+                        announce.Execute();
 
             gameTime += diff;
             nextSyncTime += diff;
@@ -214,7 +208,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             if (hasFountainHeal)
-                fountain.healChampions(this, diff);
+            {
+                foreach (var fountain in _fountains.Values)
+                    fountain.Update(this, diff);
+            }
         }
 
         public CollisionHandler getCollisionHandler()
@@ -232,7 +229,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return false;
         }
 
-        public virtual Tuple<int, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public virtual Tuple<TeamId, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             return null;
         }
@@ -282,8 +279,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return;
 
             collisionHandler.addObject(o);
-            var team = o.getTeam();
-            var teamVision = visionUnits[CustomConvert.fromTeamId(team)];
+            var teamVision = visionUnits[o.getTeam()];
             if (teamVision.ContainsKey(o.getNetId()))
                 teamVision[o.getNetId()] = u;
             else
@@ -313,12 +309,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             lock (objects)
                 objects.Remove(o.getNetId());
-            visionUnits[CustomConvert.fromTeamId(o.getTeam())].Remove(o.getNetId());
+            visionUnits[o.getTeam()].Remove(o.getNetId());
         }
 
         public Dictionary<uint, Unit> getVisionUnits(TeamId team)
         {
-            return visionUnits[CustomConvert.fromTeamId(team)];
+            return visionUnits[team];
         }
 
         public List<int> getExperienceToLevelUp()
@@ -383,18 +379,24 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
         }
 
-        public List<Champion> getChampionsInRange(GameObjects.Target t, float range, bool isAlive = false)
+        public List<Champion> getChampionsInRange(float x, float y, float range, bool onlyAlive = false)
+        {
+            return getChampionsInRange(new Target(x, y), range, onlyAlive);
+        }
+
+        public List<Champion> getChampionsInRange(GameObjects.Target t, float range, bool onlyAlive = false)
         {
             var champs = new List<Champion>();
             foreach (var kv in champions)
             {
                 var c = kv.Value;
                 if (t.distanceWith(c) <= range)
-                    if (isAlive && !c.isDead() || !isAlive) //TODO: check
+                    if (onlyAlive && !c.isDead() || !onlyAlive)
                         champs.Add(c);
             }
             return champs;
         }
+
         public List<Unit> getUnitsInRange(GameObjects.Target t, float range, bool isAlive = false)
         {
             var units = new List<Unit>();

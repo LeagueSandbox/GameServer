@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic
         protected int visionRadius;
         protected bool dashing;
         protected float dashSpeed;
-        protected bool[] visibleByTeam;
+        protected Dictionary<TeamId, bool> visibleByTeam;
 
         public GameObject(Map map, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
@@ -46,8 +46,11 @@ namespace LeagueSandbox.GameServer.Logic
             this.toRemove = false;
             this.attackerCount = 0;
             this.dashing = false;
-            this.visibleByTeam = new bool[] { false, false, false };
+            this.visibleByTeam = new Dictionary<TeamId, bool>();
 
+            var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
+            foreach (var team in teams)
+                visibleByTeam.Add(team, false);
         }
 
         public virtual void onCollision(GameObject collider) { }
@@ -126,7 +129,7 @@ namespace LeagueSandbox.GameServer.Logic
         public void setTeam(TeamId team)
         {
             this.team = team;
-            visibleByTeam[CustomConvert.fromTeamId(team)] = true;
+            visibleByTeam[team] = true;
         }
         public TeamId getTeam()
         {
@@ -266,10 +269,10 @@ namespace LeagueSandbox.GameServer.Logic
 
         public bool isVisibleByTeam(TeamId team)
         {
-            return (team == getTeam() || visibleByTeam[CustomConvert.fromTeamId(team)]);
+            return (team == getTeam() || visibleByTeam[team]);
         }
 
-        public void setVisibleByTeam(int team, bool visible)
+        public void setVisibleByTeam(TeamId team, bool visible)
         {
             visibleByTeam[team] = visible;
         }

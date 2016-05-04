@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                 player.setSummoners(strToId(p.Value.summoner1), strToId(p.Value.summoner2));
 
-                Champion c = ChampionFactory.getChampionFromType(this, p.Value.champion, _map, GetNewNetID(), (uint)player.userId);
+                var c = new Champion(this, p.Value.champion, _map, GetNewNetID(), (uint)player.userId);
                 var pos = c.getRespawnPosition();
 
                 c.setPosition(pos.Item1, pos.Item2);

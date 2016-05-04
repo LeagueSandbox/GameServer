@@ -18,6 +18,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private static PacketHandlerManager _instance;
         private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private Game game;
+        private List<TeamId> TeamsEnumerator;
+
+        public PacketHandlerManager()
+        {
+            TeamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+        }
 
         internal void InitHandlers(Game g)
         {
@@ -177,9 +183,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            for (int i = 0; i < 2; ++i)
-                if (o.isVisibleByTeam(CustomConvert.toTeamId(i)))
-                    broadcastPacketTeam(CustomConvert.toTeamId(i), data, channelNo, flag);
+            foreach (var team in TeamsEnumerator)
+            {
+                if (team == TeamId.TEAM_NEUTRAL)
+                    continue;
+
+                if (o.isVisibleByTeam(team))
+                    broadcastPacketTeam(team, data, channelNo, flag);
+            }
             return true;
         }
 

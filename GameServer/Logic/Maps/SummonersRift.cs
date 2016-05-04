@@ -102,30 +102,30 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             collisionHandler.init(3); // Needs to be initialised after AIMesh
 
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_R_03_A", 10097.62f, 808.73f, 2550, 156, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_R_02_A", 6512.53f, 1262.62f, 2550, 170, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_07_A", 3747.26f, 1041.04f, 2550, 190, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_03_A", 13459.0f, 4284.0f, 2550, 156, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_02_A", 12920.0f, 8005.0f, 2550, 170, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_01_A", 13205.0f, 10474.0f, 2550, 190, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_05_A", 5448.02f, 6169.10f, 2550, 156, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_04_A", 4657.66f, 4591.91f, 2550, 170, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_03_A", 3233.99f, 3447.24f, 2550, 190, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_01_A", 1341.63f, 2029.98f, 2425, 180, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_02_A", 1768.19f, 1589.47f, 2425, 180, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_05_A", 8548.0f, 8289.0f, 2550, 156, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_04_A", 9361.0f, 9892.0f, 2550, 170, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_03_A", 10743.0f, 11010.0f, 2550, 190, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_01_A", 12662.0f, 12442.0f, 2425, 180, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_02_A", 12118.0f, 12876.0f, 2425, 180, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_OrderTurretShrine_A", -236.05f, -53.32f, 9999, 999, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_ChaosTurretShrine_A", 14157.0f, 14456.0f, 9999, 999, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_L_03_A", 574.66f, 10220.47f, 2550, 156, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_L_02_A", 1106.26f, 6485.25f, 2550, 170, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_06_A", 802.81f, 4052.36f, 2550, 190, 0));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_03_A", 3911.0f, 13654.0f, 2550, 156, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_02_A", 7536.0f, 13190.0f, 2550, 170, 1));
-            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_01_A", 10261.0f, 13465.0f, 2550, 190, 1));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_R_03_A", 10097.62f, 808.73f, 2550, 156, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_R_02_A", 6512.53f, 1262.62f, 2550, 170, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_07_A", 3747.26f, 1041.04f, 2550, 190, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_03_A", 13459.0f, 4284.0f, 2550, 156, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_02_A", 12920.0f, 8005.0f, 2550, 170, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_R_01_A", 13205.0f, 10474.0f, 2550, 190, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_05_A", 5448.02f, 6169.10f, 2550, 156, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_04_A", 4657.66f, 4591.91f, 2550, 170, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_03_A", 3233.99f, 3447.24f, 2550, 190, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_01_A", 1341.63f, 2029.98f, 2425, 180, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_02_A", 1768.19f, 1589.47f, 2425, 180, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_05_A", 8548.0f, 8289.0f, 2550, 156, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_04_A", 9361.0f, 9892.0f, 2550, 170, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_03_A", 10743.0f, 11010.0f, 2550, 190, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_01_A", 12662.0f, 12442.0f, 2425, 180, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_C_02_A", 12118.0f, 12876.0f, 2425, 180, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_OrderTurretShrine_A", -236.05f, -53.32f, 9999, 999, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_ChaosTurretShrine_A", 14157.0f, 14456.0f, 9999, 999, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_L_03_A", 574.66f, 10220.47f, 2550, 156, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_L_02_A", 1106.26f, 6485.25f, 2550, 170, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T1_C_06_A", 802.81f, 4052.36f, 2550, 190, TeamId.TEAM_BLUE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_03_A", 3911.0f, 13654.0f, 2550, 156, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_02_A", 7536.0f, 13190.0f, 2550, 170, TeamId.TEAM_PURPLE));
+            addObject(new Turret(this, Game.GetNewNetID(), "@Turret_T2_L_01_A", 10261.0f, 13465.0f, 2550, 190, TeamId.TEAM_PURPLE));
 
             addObject(new LevelProp(this, Game.GetNewNetID(), 12465.0f, 14422.257f, 101.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey"));
             addObject(new LevelProp(this, Game.GetNewNetID(), -76.0f, 1769.1589f, 94.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey"));
@@ -150,13 +150,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
             // Announcer events
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(30 * 1000, 119, true) }); // Welcome to SR
+            _announcerEvents.Add(new Announce(30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
             if (firstSpawnTime - 30 * 1000 >= 0.0f)
-                announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime - 30 * 1000, 120, true) }); // 30 seconds until minions spawn
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 127, false) }); // Minions have spawned (90 * 1000)
-            announcerEvents.Add(new Pair<bool, Tuple<long, byte, bool>> { Item1 = false, Item2 = new Tuple<long, byte, bool>(firstSpawnTime, 118, false) }); // Minions have spawned [2] (90 * 1000)
-
-            fountain.setHealLocations(this);
+                _announcerEvents.Add(new Announce(firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
+            _announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
+            _announcerEvents.Add(new Announce(firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
         }
 
         public override void update(long diff)
@@ -259,24 +257,24 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 0.0f;
         }
 
-        public override Tuple<int, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public override Tuple<TeamId, Vector2> getMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             switch (spawnPosition)
             {
                 case MinionSpawnPosition.SPAWN_BLUE_TOP:
-                    return new Tuple<int, Vector2>(0, new Vector2(907, 1715));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(907, 1715));
                 case MinionSpawnPosition.SPAWN_BLUE_BOT:
-                    return new Tuple<int, Vector2>(0, new Vector2(1533, 1321));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1533, 1321));
                 case MinionSpawnPosition.SPAWN_BLUE_MID:
-                    return new Tuple<int, Vector2>(0, new Vector2(1443, 1663));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1443, 1663));
                 case MinionSpawnPosition.SPAWN_RED_TOP:
-                    return new Tuple<int, Vector2>(1, new Vector2(14455, 13159));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(14455, 13159));
                 case MinionSpawnPosition.SPAWN_RED_BOT:
-                    return new Tuple<int, Vector2>(1, new Vector2(12967, 12695));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12967, 12695));
                 case MinionSpawnPosition.SPAWN_RED_MID:
-                    return new Tuple<int, Vector2>(1, new Vector2(12433, 12623));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12433, 12623));
             }
-            return new Tuple<int, Vector2>(0, new Vector2());
+            return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
         public override void setMinionStats(Minion minion)
         {
