@@ -52,90 +52,90 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 if (kv.Value is Turret)
                 {
-                    var t = kv.Value as Turret;
-                    var turretSpawn = new TurretSpawn(t);
-                    PacketHandlerManager.getInstace().sendPacket(peer, turretSpawn, Channel.CHL_S2C);
+                    var Turret = kv.Value as Turret;
+                    var TurretSpawnPacket = new TurretSpawn(Turret);
+                    PacketHandlerManager.getInstace().sendPacket(peer, TurretSpawnPacket, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision
-                    var sh = new SetHealth(t);
-                    PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                    var SetHealthPacket = new SetHealth(Turret);
+                    PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                    var u = kv.Value as Unit;
-                    if (u != null)
+                    /*var Unit = kv.Value as Unit;
+                    if (Unit != null)
                     {
-                        PacketNotifier.notifyUpdatedStats(u, false);
-                    }
+                        PacketNotifier.notifyUpdatedStats(Unit, false);
+                    }*/
 
                     continue;
                 }
                 else if (kv.Value is LevelProp)
                 {
-                    var lp = kv.Value as LevelProp;
+                    var LevelProp = kv.Value as LevelProp;
 
-                    var lpsPacket = new LevelPropSpawn(lp);
-                    PacketHandlerManager.getInstace().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
+                    var LevelPropSpawnPacket = new LevelPropSpawn(LevelProp);
+                    PacketHandlerManager.getInstace().sendPacket(peer, LevelPropSpawnPacket, Channel.CHL_S2C);
                     continue;
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
-                    var inhib = kv.Value as Unit;
+                    var InhibitorOrNexus = kv.Value as Unit;
 
-                    var ms = new MinionSpawn2(inhib.getNetId());
-                    PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
-                    var sh = new SetHealth(inhib.getNetId());
-                    PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                    var InhibitorOrNexusSpawnPacket = new MinionSpawn2(InhibitorOrNexus.getNetId());
+                    PacketHandlerManager.getInstace().sendPacket(peer, InhibitorOrNexusSpawnPacket, Channel.CHL_S2C);
+                    var SetHealthPacket = new SetHealth(InhibitorOrNexus.getNetId());
+                    PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                    var u = kv.Value as Unit;
-                    if (u != null)
+                    /*var Unit = kv.Value as Unit;
+                    if (Unit != null)
                     {
-                        PacketNotifier.notifyUpdatedStats(u, false);
-                    }
+                        PacketNotifier.notifyUpdatedStats(Unit, false);
+                    }*/
 
                     continue;
                 }
                 else if (kv.Value is Minion)
                 {
-                    var m = kv.Value as Minion;
-                    if (m.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    var Minion = kv.Value as Minion;
+                    if (Minion.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
                     {
-                        var ms = new MinionSpawn(m);
-                        PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
-                        var sh = new SetHealth(m);
-                        PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                        var MinionSpawnPacket = new MinionSpawn(Minion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, MinionSpawnPacket, Channel.CHL_S2C);
+                        var SetHealthPacket = new SetHealth(Minion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                        var u = kv.Value as Unit;
-                        if (u != null)
+                        /*var Unit = kv.Value as Unit;
+                        if (Unit != null)
                         {
-                            PacketNotifier.notifyUpdatedStats(u, false);
-                        }
+                            PacketNotifier.notifyUpdatedStats(Unit, false);
+                        }*/
                     }
                     continue;
                 }
                 else if (kv.Value is Champion)
                 {
-                    var c = kv.Value as Champion;
-                    if (c.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    var Champion = kv.Value as Champion;
+                    if (Champion.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
                     {
-                        var cs = new ChampionRespawn(c);
-                        PacketHandlerManager.getInstace().sendPacket(peer, cs, Channel.CHL_S2C);
-                        var sh = new SetHealth(c);
-                        PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                        var ChampionRespawnPacket = new ChampionRespawn(Champion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, ChampionRespawnPacket, Channel.CHL_S2C);
+                        var SetHealthPacket = new SetHealth(Champion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                        var u = kv.Value as Unit;
-                        if (u != null)
+                        /*var Unit = kv.Value as Unit;
+                        if (Unit != null)
                         {
-                            PacketNotifier.notifyUpdatedStats(u, false);
-                        }
+                            PacketNotifier.notifyUpdatedStats(Unit, false);
+                        }*/
                     }
                     continue;
                 }
                 else if (kv.Value is Projectile)
                 {
-                    var p = kv.Value as Projectile;
-                    if (p.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    var Projectile = kv.Value as Projectile;
+                    if (Projectile.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
                     {
-                        var sp = new SpawnProjectile(p);
-                        PacketHandlerManager.getInstace().sendPacket(peer, sp, Channel.CHL_S2C);
+                        var SpawnProjectilePacket = new SpawnProjectile(Projectile);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SpawnProjectilePacket, Channel.CHL_S2C);
                     }
                     continue;
                 }
