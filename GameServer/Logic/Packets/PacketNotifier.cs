@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             PacketHandlerManager.getInstace().broadcastPacketVision(u, sh, Channel.CHL_S2C);
         }
 
-        public static unsafe void NotifyGameEnd(Nexus nexus)
+        public static void NotifyGameEnd(Nexus nexus)
         {
             var losingTeam = nexus.getTeam();
 

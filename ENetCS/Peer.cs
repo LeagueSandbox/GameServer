@@ -6,7 +6,7 @@ using System;
 
 namespace ENet
 {
-    public unsafe struct Peer
+    public unsafe class Peer
     {
         private Native.ENetPeer* _peer;
 
@@ -48,6 +48,17 @@ namespace ENet
                 CheckCreated();
                 _peer->data = value;
             }
+        }
+
+        public ushort Mtu
+        {
+            get { return _peer->mtu; }
+            set { _peer->mtu = value; }
+        }
+
+        public Native.ENetAddress Address
+        {
+            get { return _peer->address; }
         }
 
         private void CheckCreated()

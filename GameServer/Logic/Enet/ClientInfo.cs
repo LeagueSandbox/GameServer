@@ -1,15 +1,15 @@
-﻿using static ENet.Native;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ENet;
 
 namespace LeagueSandbox.GameServer.Logic.Enet
 {
-    public unsafe class ClientInfo
+    public class ClientInfo
     {
         public bool keyChecked = false;
         public bool versionMatch = true;
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
         public TeamId team;
 
         Champion champion;
-        ENetPeer* peer;
+        Peer peer;
 
         public ClientInfo(string rank, TeamId team, short ribbon, int icon)
         {
@@ -101,12 +101,12 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             return ticks;
         }
 
-        public void setPeer(ENetPeer* peer)
+        public void setPeer(Peer peer)
         {
             this.peer = peer;
         }
 
-        public ENetPeer* getPeer()
+        public Peer getPeer()
         {
             return peer;
         }

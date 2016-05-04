@@ -1,14 +1,14 @@
-﻿using static ENet.Native;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ENet;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
     public interface IPacketHandler
     {
-        unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game);
+        bool HandlePacket(Peer peer, byte[] data, Game game);
     }
 }

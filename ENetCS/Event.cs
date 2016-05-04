@@ -1,12 +1,16 @@
 ﻿namespace ENet
 {
-    public unsafe struct Event
+    public unsafe class Event
     {
         internal Native.ENetEvent _event;
 
         public Event(Native.ENetEvent @event)
         {
             _event = @event;
+        }
+        public Event()
+        {
+
         }
 
         public byte ChannelID
@@ -17,6 +21,7 @@
         public uint Data
         {
             get { return _event.data; }
+            set { _event.data = value; }
         }
 
         public Native.ENetEvent NativeData

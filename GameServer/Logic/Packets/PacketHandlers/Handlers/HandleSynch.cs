@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ENet;
-using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic;
 
@@ -12,7 +11,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleSynch : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var version = new SynchVersion(data);
             //Logging->writeLine("Client version: %s", version->version);
@@ -34,7 +33,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             foreach (var player in game.getPlayers())
             {
-                if (player.Item1 == peer->address.port)
+                if (player.Item1 == peer.Address.port)
                 {
                     player.Item2.setVersionMatch(versionMatch);
                     break;

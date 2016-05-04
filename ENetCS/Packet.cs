@@ -97,7 +97,11 @@ namespace ENet
             {
                 throw new ArgumentOutOfRangeException();
             }
-            Create(data, offset, length, flags);
+
+            var ptr = Marshal.AllocHGlobal(length);
+            Marshal.Copy(data, offset, ptr, length);
+            Create(ptr, length, flags);
+            Marshal.FreeHGlobal(ptr);
         }
 
         public void Create(IntPtr data, int length, PacketFlags flags)
