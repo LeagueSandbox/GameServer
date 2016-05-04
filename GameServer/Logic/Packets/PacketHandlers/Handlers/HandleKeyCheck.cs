@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using ENet;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static ENet.Native;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleKeyCheck : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var keyCheck = new KeyCheck(data);
             var userId = game.getBlowfish().Decrypt(keyCheck.checkId);
@@ -34,11 +34,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     }
 
                     //TODO: add at least port or smth
-                    p.Item1 = peer->address.port;
+                    p.Item1 = peer.Address.port;
                     player.setPeer(peer);
                     var response = new KeyCheck(keyCheck.userId, playerNo);
                     bool bRet = PacketHandlerManager.getInstace().sendPacket(peer, response, Channel.CHL_HANDSHAKE);
-                    handleGameNumber(player, peer, null);//Send 0x91 Packet?
+                    handleGameNumber(player, peer);//Send 0x91 Packet?
                     return true;
                 }
                 ++playerNo;
@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             return false;
         }
 
-        unsafe bool handleGameNumber(ClientInfo client, ENetPeer* peer, ENetPacket* packet)
+        bool handleGameNumber(ClientInfo client, Peer peer)
         {
             var world = new WorldSendGameNumber(1, client.getName());
             return PacketHandlerManager.getInstace().sendPacket(peer, world, Channel.CHL_S2C);

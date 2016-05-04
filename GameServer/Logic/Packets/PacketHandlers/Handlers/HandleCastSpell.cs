@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ENet;
-using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System.Numerics;
@@ -13,7 +12,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleCastSpell : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var spell = new CastSpell(data);
             //Todo spellslot 0-3 qwer, 4-5 d f, 6-11 items

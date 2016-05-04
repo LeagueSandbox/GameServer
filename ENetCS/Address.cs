@@ -15,6 +15,13 @@ namespace ENet
 
         private Native.ENetAddress _address;
 
+        public Address(uint host, ushort port)
+        {
+            _address = new Native.ENetAddress();
+            _address.host = host;
+            _address.port = port;
+        }
+
         public Native.ENetAddress NativeData
         {
             get { return _address; }
@@ -50,7 +57,7 @@ namespace ENet
 
         public override bool Equals(object obj)
         {
-            return obj is Address && Equals((Address) obj);
+            return obj is Address && Equals((Address)obj);
         }
 
         public override int GetHashCode()
@@ -60,7 +67,7 @@ namespace ENet
 
         public byte[] GetHostBytes()
         {
-            return BitConverter.GetBytes(IPAddress.NetworkToHostOrder((int) IPv4Host));
+            return BitConverter.GetBytes(IPAddress.NetworkToHostOrder((int)IPv4Host));
         }
 
         public string GetHostName()
@@ -68,7 +75,7 @@ namespace ENet
             var name = new byte[256];
             fixed (byte* hostName = name)
             {
-                if (Native.enet_address_get_host(ref _address, hostName, (IntPtr) name.Length) < 0)
+                if (Native.enet_address_get_host(ref _address, hostName, (IntPtr)name.Length) < 0)
                 {
                     return null;
                 }
@@ -81,7 +88,7 @@ namespace ENet
             var ip = new byte[256];
             fixed (byte* hostIP = ip)
             {
-                if (Native.enet_address_get_host_ip(ref _address, hostIP, (IntPtr) ip.Length) < 0)
+                if (Native.enet_address_get_host_ip(ref _address, hostIP, (IntPtr)ip.Length) < 0)
                 {
                     return null;
                 }

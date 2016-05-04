@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ENet;
-using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
@@ -15,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleMove : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var peerInfo = game.getPeerInfo(peer);
             if (peerInfo == null || peerInfo.getChampion().isDashing() || peerInfo.getChampion().isDead())

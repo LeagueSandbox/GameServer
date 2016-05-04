@@ -14,19 +14,18 @@ using LeagueSandbox.GameServer.Logic.Maps;
 using System.Net.Sockets;
 using System.Net;
 using BlowFishCS;
-using static ENet.Native;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
-    public unsafe class Game
+    public class Game
     {
-        private ENetHost* _server;
+        private Host _server;
         private BlowFish _blowfish;
         private static uint _dwStart = 0x40000000; //new netid
         private static object _lock = new object();
-        
+
         private bool _started = false;
         private int _playersReady = 0;
 
@@ -41,15 +40,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         // Object managers
         public ItemManager ItemManager { get; protected set; }
 
-        public bool initialize(ENetAddress address, string baseKey)
+        public bool initialize(Address address, string baseKey)
         {
             ItemManager = ItemManager.LoadItems(this);
-            if (enet_initialize() < 0)
-                return false;
-
-            _server = enet_host_create(&address, new IntPtr(32), new IntPtr(32), 0, 0);
-            if (_server == null)
-                return false;
+            
+            _server = new Host();
+            _server.Create(address, 32, 32, 0, 0);
 
             var key = System.Convert.FromBase64String(baseKey);
 
@@ -95,33 +91,33 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             update();
 
-            var enetEvent = new ENetEvent();
+            var enetEvent = new Event();
             while (true)
             {
-                while (enet_host_service(_server, &enetEvent, 0) > 0)
+                while (_server.Service(0, out enetEvent) > 0)
                 {
-                    switch (enetEvent.type)
+                    switch (enetEvent.Type)
                     {
                         case EventType.Connect:
                             //Logging->writeLine("A new client connected: %i.%i.%i.%i:%i", event.peer->address.host & 0xFF, (event.peer->address.host >> 8) & 0xFF, (event.peer->address.host >> 16) & 0xFF, (event.peer->address.host >> 24) & 0xFF, event.peer->address.port);
 
                             /* Set some defaults */
-                            enetEvent.peer->mtu = PEER_MTU;
-                            enetEvent.data = 0;
+                            enetEvent.Peer.Mtu = PEER_MTU;
+                            enetEvent.Data = 0;
                             break;
 
                         case EventType.Receive:
-                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.peer, enetEvent.packet, (Channel)enetEvent.channelID))
+                            if (!PacketHandlerManager.getInstace().handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
                             {
                                 //enet_peer_disconnect(event.peer, 0);
                             }
 
                             /* Clean up the packet now that we're done using it. */
-                            enet_packet_destroy(enetEvent.packet);
+                            enetEvent.Packet.Dispose();
                             break;
 
                         case EventType.Disconnect:
-                            handleDisconnect(enetEvent.peer);
+                            handleDisconnect(enetEvent.Peer);
                             break;
                     }
                 }
@@ -152,7 +148,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return _blowfish;
         }
 
-        public ENetHost* getServer()
+        public Host getServer()
         {
             return _server;
         }
@@ -192,7 +188,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _updateTimer.Stop();
         }
 
-        bool handleDisconnect(ENetPeer* peer)
+        bool handleDisconnect(Peer peer)
         {
             var peerinfo = getPeerInfo(peer);
             if (peerinfo != null)
@@ -203,10 +199,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return true;
         }
 
-        public ClientInfo getPeerInfo(ENetPeer* peer)
+        public ClientInfo getPeerInfo(Peer peer)
         {
             foreach (var player in _players)
-                if (player.Item1 == peer->address.port)
+                if (player.Item1 == peer.Address.port)
                     return player.Item2;
             return null;
         }

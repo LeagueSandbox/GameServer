@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ENet;
-using static ENet.Native;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
@@ -15,20 +14,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleSpawn : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public  bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var start = new StatePacket2(PacketCmdS2C.PKT_S2C_StartSpawn);
             PacketHandlerManager.getInstace().sendPacket(peer, start, Channel.CHL_S2C);
             Logger.LogCoreInfo("Spawning map");
 
             int playerId = 0;
-            ClientInfo playerInfo = null;
             foreach (var p in game.getPlayers())
             {
-                if (p.Item2.getPeer() == peer)
-                {
-                    playerInfo = p.Item2;
-                }
                 var spawn = new HeroSpawn(p.Item2, playerId++);
                 PacketHandlerManager.getInstace().sendPacket(peer, spawn, Channel.CHL_S2C);
 
@@ -87,7 +81,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_BLUE)
+            if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
@@ -95,7 +89,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var sh1 = new SetHealth(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C); 
             }
-            else if (playerInfo != null && playerInfo.getTeam() == TeamId.TEAM_PURPLE)
+            else if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);

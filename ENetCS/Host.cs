@@ -80,6 +80,12 @@ namespace ENet
             }
             CheckChannelLimit(channelLimit);
 
+            var ret = Native.enet_initialize();
+            if (ret < 0)
+            {
+                throw new ENetException(ret, "Initialization failed.");
+            }
+
             if (address != null)
             {
                 var nativeAddress = address.Value.NativeData;

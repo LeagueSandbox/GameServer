@@ -1,4 +1,3 @@
-using static ENet.Native;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic;
@@ -13,12 +12,13 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ENet;
 
 namespace LeagueSandbox
 {
     class Program
     {
-        private static uint SERVER_HOST = ENET_HOST_ANY;
+        private static uint SERVER_HOST = Address.IPv4HostAny;
         private static ushort SERVER_PORT = 5119;
         private static string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private static string SERVER_VERSION = "0.2.0";
@@ -51,11 +51,8 @@ namespace LeagueSandbox
             Logger.LogCoreInfo("Game started");
 
             Game g = new Game();
-            var address = new ENetAddress();
-            address.host = SERVER_HOST;
-            address.port = SERVER_PORT;
-
-
+            var address = new Address(SERVER_HOST, SERVER_PORT);
+            
             if (!g.initialize(address, SERVER_KEY))
             {
                 Logger.LogCoreError("Couldn't listen on port " + SERVER_PORT + ", or invalid key");
