@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (!peerInfo.Disconnected)
             {
                 game.IncrementReadyPlayers();
+                peerInfo.Disconnected = false;
             }
 
             if (game.getReadyPlayers() == game.getPlayers().Count)

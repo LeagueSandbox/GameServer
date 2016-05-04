@@ -88,6 +88,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
                     }
                 }
+                else
+                {
+                    Logger.LogCoreWarning("Object not handled in HandleSpawn.");
+                }
+                var u = kv.Value as Unit;
+                if (u != null)
+                {
+                    PacketNotifier.notifyUpdatedStats(u, false);
+                }
             }
 
             // TODO shop map specific?
