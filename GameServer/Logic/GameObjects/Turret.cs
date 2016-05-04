@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         private string name;
 
-        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new TurretStats(), 50, x, y, 1200)
+        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new Stats(), 50, x, y, 1200)
         {
             this.name = name;
 
@@ -23,6 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.HealthPoints.BaseValue = hp;
             stats.AttackDamage.BaseValue = ad;
             stats.Range.BaseValue = TURRET_RANGE;
+            stats.AttackSpeedFlat = 0.83f;
 
             autoAttackDelay = 4.95f / 30.0f;
             autoAttackProjectileSpeed = 1200.0f;

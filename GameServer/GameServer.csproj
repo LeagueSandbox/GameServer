@@ -83,6 +83,7 @@
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\BuildingStats.cs" />
     <Compile Include="Logic\GameObjects\Nexus.cs" />
     <Compile Include="Logic\GameObjects\IBuff.cs" />
     <Compile Include="Logic\GameObjects\Inhibitor.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="Logic\GameObjects\Stat.cs" />
     <Compile Include="Logic\GameObjects\StatModifcator.cs" />
     <Compile Include="Logic\GameObjects\Turret.cs" />
-    <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\MovementVector.cs" />
