@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleExit : IPacketHandler
     {
-        public unsafe bool HandlePacket(ENetPeer* peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var peerinfo = game.getPeerInfo(peer);
             Logger.LogCoreInfo("Player " + peerinfo.userId + " exited the game.");
