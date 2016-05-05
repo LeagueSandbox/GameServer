@@ -60,11 +60,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var SetHealthPacket = new SetHealth(Turret);
                     PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                    /*var Unit = kv.Value as Unit;
+                    var Unit = kv.Value as Unit;
                     if (Unit != null)
                     {
                         PacketNotifier.notifyUpdatedStats(Unit, false);
-                    }*/
+                    }
 
                     continue;
                 }
@@ -85,11 +85,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var SetHealthPacket = new SetHealth(InhibitorOrNexus.getNetId());
                     PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                    /*var Unit = kv.Value as Unit;
+                    var Unit = kv.Value as Unit;
                     if (Unit != null)
                     {
                         PacketNotifier.notifyUpdatedStats(Unit, false);
-                    }*/
+                    }
 
                     continue;
                 }
@@ -103,11 +103,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var SetHealthPacket = new SetHealth(Minion);
                         PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                        /*var Unit = kv.Value as Unit;
+                        var Unit = kv.Value as Unit;
                         if (Unit != null)
                         {
                             PacketNotifier.notifyUpdatedStats(Unit, false);
-                        }*/
+                        }
                     }
                     continue;
                 }
@@ -121,11 +121,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var SetHealthPacket = new SetHealth(Champion);
                         PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
 
-                        /*var Unit = kv.Value as Unit;
+                        var Unit = kv.Value as Unit;
                         if (Unit != null)
                         {
                             PacketNotifier.notifyUpdatedStats(Unit, false);
-                        }*/
+                        }
                     }
                     continue;
                 }
