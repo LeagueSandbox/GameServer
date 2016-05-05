@@ -47,6 +47,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     }
                     else
                     {
+                        PacketNotifier.notifyChampionSpawned(p.Item2.getChampion(), p.Item2.getChampion().getTeam());
                         p.Item2.Disconnected = false;
                         PacketNotifier.notifyDebugMessage("Player " + game.getPeerInfo(peer).userId + " reconnected.");
                     }
