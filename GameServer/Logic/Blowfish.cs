@@ -40,7 +40,10 @@ namespace BlowFishCS
         //HALF-BLOCKS
         private uint xl_par;
         private uint xr_par;
-        
+
+        // This is dumb as fuck
+        private object _blowfishLock = new object();
+
         /// <summary>
         /// Constructor for byte key
         /// </summary>
@@ -58,7 +61,8 @@ namespace BlowFishCS
         /// <returns>Ciphertext bytes</returns>
         public byte[] Encrypt(byte[] pt)
         {
-            return Crypt_ECB(pt, false);
+            lock (_blowfishLock)
+                return Crypt_ECB(pt, false);
         }
 
         /// <summary>
@@ -68,7 +72,8 @@ namespace BlowFishCS
         /// <returns>Plaintext</returns>
         public byte[] Decrypt(byte[] ct)
         {
-            return Crypt_ECB(ct, true);
+            lock (_blowfishLock)
+                return Crypt_ECB(ct, true);
         }
 
         #region Cryptography
@@ -169,9 +174,12 @@ namespace BlowFishCS
         // a little hack for keycheck
         public long Decrypt(ulong key)
         {
-            var bytes = BitConverter.GetBytes(key);
-            BlockDecrypt(ref bytes);
-            return BitConverter.ToInt64(bytes, 0);
+            lock (_blowfishLock)
+            {
+                var bytes = BitConverter.GetBytes(key);
+                BlockDecrypt(ref bytes);
+                return BitConverter.ToInt64(bytes, 0);
+            }
         }
 
         /// <summary>
