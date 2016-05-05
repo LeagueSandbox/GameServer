@@ -18,11 +18,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 game.IncrementReadyPlayers();
             }
-            else
-            {
-                peerInfo.Disconnected = false;
-                PacketNotifier.notifyDebugMessage("Player " + game.getPeerInfo(peer).userId + " reconnected.");
-            }
 
             if (game.getReadyPlayers() == game.getPlayers().Count)
             {
@@ -46,7 +41,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var p in game.getPlayers())
                 {
                     var map = game.getMap();
-                    map.AddObject(p.Item2.getChampion());
+                    if (!p.Item2.Disconnected)
+                    {
+                        map.AddObject(p.Item2.getChampion());
+                    }
+                    else
+                    {
+                        p.Item2.Disconnected = false;
+                        PacketNotifier.notifyDebugMessage("Player " + game.getPeerInfo(peer).userId + " reconnected.");
+                    }
 
                     // Send the initial game time sync packets, then let the map send another
                     float gameTime = map.getGameTime() / 1000.0f;
