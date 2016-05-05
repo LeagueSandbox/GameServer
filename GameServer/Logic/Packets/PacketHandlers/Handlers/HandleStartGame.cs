@@ -47,6 +47,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         {
                             var HeroSpawn2Packet = new HeroSpawn2(Player.Item2.getChampion());
                             PacketHandlerManager.getInstace().sendPacket(peer, HeroSpawn2Packet, Channel.CHL_S2C);
+
+                            /* This is probably not the best way
+                             * of updating a champion's level, but it works */
+                            var LevelUpPacket = new LevelUp(Player.Item2.getChampion());
+                            PacketHandlerManager.getInstace().broadcastPacket(LevelUpPacket, Channel.CHL_S2C);
                         }
                     }
                     peerInfo.Disconnected = false;
