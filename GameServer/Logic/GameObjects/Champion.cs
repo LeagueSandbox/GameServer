@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Content;
 using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -41,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = map.getGoldPerSecond();
+            stats.GoldPerSecond.BaseValue = game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
             Inibin inibin;
@@ -104,7 +105,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void LoadLua()
         {
             base.LoadLua();
-            var scriptloc = Config.contentManager.GetSpellScriptPath(getType(), "Passive");
+            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
             unitScript.lua["me"] = this;
             unitScript.loadScript(scriptloc);
         }
@@ -264,7 +265,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             if (!stats.IsGeneratingGold() && _game.GetMap().GetGameTime() >= _game.GetMap().GetFirstGoldTime())
-
             {
                 stats.SetGeneratingGold(true);
                 Logger.LogCoreInfo("Generating Gold!");
@@ -280,11 +280,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
                     _game.PacketNotifier.notifyChampionRespawn(this);
-                    getStats().CurrentHealth = getStats().HealthPoints.Total;
-                    getStats().CurrentMana = getStats().HealthPoints.Total;
+                    GetStats().CurrentHealth = GetStats().HealthPoints.Total;
+                    GetStats().CurrentMana = GetStats().HealthPoints.Total;
                     deathFlag = false;
                 }
             }
+            
             var isLevelup = LevelUp();
             if (isLevelup)
             {
@@ -350,17 +351,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool LevelUp()
         {
-            var stats = getStats();
+            var stats = GetStats();
             var expMap = _game.GetMap().GetExperienceToLevelUp();
-            if (stats.getLevel() >= expMap.Count)
+            if (stats.GetLevel() >= expMap.Count)
                 return false;
-            if (stats.getExperience() < expMap[stats.getLevel()])
+            if (stats.Experience < expMap[stats.Level])
                 return false;
 
-            while (stats.getExperience() >= expMap[stats.getLevel()])
+            while (stats.Experience >= expMap[stats.Level])
             {
-                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.getLevel() + 1);
-                getStats().levelUp();
+                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.Level);
+                GetStats().LevelUp();
                 skillPoints++;
             }
             return true;
@@ -373,7 +374,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            respawnTimer = 5000 + getStats().getLevel() * 2500;
+            respawnTimer = 5000 + GetStats().Level * 2500;
             _game.GetMap().StopTargeting(this);
 
             var cKiller = killer as Champion;
@@ -427,7 +428,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
 
-            cKiller.getStats().Gold = cKiller.getStats().Gold + gold;
+            cKiller.GetStats().Gold = cKiller.GetStats().Gold + gold;
             _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

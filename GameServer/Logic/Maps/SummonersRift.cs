@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
         };
 
-        public SummonersRift(Game game) : base(game, /*90*/50000 * 1000, 30 * 1000, 90 * 1000, true, 1)
+        public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
             {
@@ -279,35 +279,35 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public override void SetMinionStats(Minion minion)
         {
             // Same for all minions
-            minion.getStats().MoveSpeed.BaseValue = 325.0f;
-            minion.getStats().AttackSpeedFlat = 0.625f;
+            minion.GetStats().MoveSpeed.BaseValue = 325.0f;
+            minion.GetStats().AttackSpeedFlat = 0.625f;
 
             switch (minion.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    minion.getStats().CurrentHealth = 475.0f + 20.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().Range.BaseValue = 180.0f;
-                    minion.getStats().AttackSpeedFlat = 1.250f;
+                    minion.GetStats().CurrentHealth = 475.0f + 20.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().Range.BaseValue = 180.0f;
+                    minion.GetStats().AttackSpeedFlat = 1.250f;
                     minion.setAutoAttackDelay(11.8f / 30.0f);
                     minion.setMelee(true);
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    minion.getStats().setCurrentHealth(279.0f + ((7.5f) * (int)(_gameTime / (float)(90 * 1000))));
-                    minion.getStats().setMaxHealth(279.0f + ((7.5f) * (int)(_gameTime / (float)(90 * 1000))));
-                    minion.getStats().setBaseAd(23.0f + ((1.0f) * (int)(_gameTime / (float)(90 * 1000))));
-                    minion.getStats().setRange(600.0f);
-                    minion.getStats().setBaseAttackSpeed(0.670f);
+                    minion.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(_gameTime / (float)(90 * 1000));
+                    minion.GetStats().HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_gameTime / (float)(90 * 1000));
+                    minion.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_gameTime / (float)(90 * 1000));
+                    minion.GetStats().Range.BaseValue = 600.0f;
+                    minion.GetStats().AttackSpeedFlat = 0.670f;
                     minion.setAutoAttackDelay(14.1f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(650.0f);
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    minion.getStats().CurrentHealth = 700.0f + 27.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(gameTime / (float)(180 * 1000));
-                    minion.getStats().Range.BaseValue = 450.0f;
-                    minion.getStats().AttackSpeedFlat = 1.0f;
+                    minion.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().Range.BaseValue = 450.0f;
+                    minion.GetStats().AttackSpeedFlat = 1.0f;
                     minion.setAutoAttackDelay(9.0f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(1200.0f);
                     break;

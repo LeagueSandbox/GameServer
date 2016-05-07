@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             {
                                 var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
                                 if (enemyChampTarget != null &&                                                          // Enemy Champion is targeting an ally
-                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.getStats().Range.Total &&     // Enemy within range of ally
+                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.GetStats().Range.Total &&     // Enemy within range of ally
                                     distanceWith(enemyChampTarget) <= TURRET_RANGE)
                                 {                                     // Enemy within range of this turret
                                     nextTarget = enemyChamp; // No priority required

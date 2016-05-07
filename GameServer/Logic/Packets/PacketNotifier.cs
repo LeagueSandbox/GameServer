@@ -116,11 +116,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
-        internal static void setMap(Map m)
-        {
-            map = m;
-        }
-
         public void notifyRemoveBuff(Unit u, string buffName)
         {
             var remove = new RemoveBuff(u, buffName);
@@ -231,10 +226,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void notifySetTarget(Unit attacker, Unit target)
         {
             var st = new SetTarget(attacker, target);
-            _game.PacketHandlerManager.getInstace().broadcastPacket(st, Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(st, Channel.CHL_S2C);
 
             var st2 = new SetTarget2(attacker, target);
-            _game.PacketHandlerManager.getInstace().broadcastPacket(st2, Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(st2, Channel.CHL_S2C);
         }
 
         public void notifyChampionDie(Champion die, Unit killer, int goldFromKill)

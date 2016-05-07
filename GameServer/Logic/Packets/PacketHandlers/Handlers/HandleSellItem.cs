@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return false;
 
             float sellPrice = i.ItemType.TotalPrice * i.ItemType.TotalPrice;
-            client.GetChampion().getStats().setGold(client.GetChampion().getStats().getGold() + sellPrice);
+            client.GetChampion().GetStats().Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)
             {
@@ -36,8 +36,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, 0);
                 client.GetChampion().getInventory().RemoveItem(sell.slotId);
             }
-
-            client.GetChampion().getStats().unapplyStatMods(i.ItemType.StatMods);
+            
+            client.GetChampion().GetStats().RemoveBuff(i.ItemType);
 
             return true;
         }

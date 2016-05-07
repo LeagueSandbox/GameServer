@@ -34,38 +34,24 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (message.msg.StartsWith("."))
             {
-                var cmd = new string[] { ".set", ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".junglespawn", ".skillpoints", ".level", ".tp", ".coords", ".ch", ".reload" };
+                var cmd = new string[] { ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".junglespawn", ".skillpoints", ".level", ".tp", ".coords", ".ch", ".reload" };
                 var debugMsg = new StringBuilder();
                 split = message.msg.ToLower().Split(' ');
                 switch (split[0])
                 {
-                    case ".set":
-                        if (split.Length < 4)
-                            return true;
-                        int blockNo, fieldNo = 0;
-                        float value = 0;
-                        if (int.TryParse(split[1], out blockNo))
-                            if (int.TryParse(split[2], out fieldNo))
-                                if (float.TryParse(split[3], out value))
-                                {
-                                    // blockNo = 1 << (blockNo - 1);
-                                    //var mask = 1 << (fieldNo - 1);
-                                    game.GetPeerInfo(peer).GetChampion().getStats().setStat((MasterMask)blockNo, (FieldMask)fieldNo, value);
-                                }
-                        return true;
                     case ".gold":
                         float gold;
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out gold))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setGold(gold);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().Gold = gold;
                         return true;
                     case ".speed":
                         float speed;
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out speed))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setMovementSpeed(speed);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().MoveSpeed.BaseValue = speed;
                         return true;
                     case ".health":
                         float hp;
@@ -73,8 +59,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             return true;
                         if (float.TryParse(split[1], out hp))
                         {
-                            game.GetPeerInfo(peer).GetChampion().getStats().setCurrentHealth(hp);
-                            game.GetPeerInfo(peer).GetChampion().getStats().setMaxHealth(hp);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().CurrentHealth = hp;
+                            game.GetPeerInfo(peer).GetChampion().GetStats().HealthPoints.BaseValue = hp;
 
                             game.PacketNotifier.notifySetHealth(game.GetPeerInfo(peer).GetChampion());
                         }
@@ -84,21 +70,21 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out xp))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setExp(xp);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().Experience = xp;
                         return true;
                     case ".ap":
                         float ap;
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out ap))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setBonusApFlat(ap);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().AbilityPower.FlatBonus = ap;
                         return true;
                     case ".ad":
                         float ad;
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out ad))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setBonusAdFlat(ad);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().AttackDamage.FlatBonus = ad;
                         return true;
                     case ".mana":
                         float mp;
@@ -106,8 +92,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             return true;
                         if (float.TryParse(split[1], out mp))
                         {
-                            game.GetPeerInfo(peer).GetChampion().getStats().setCurrentMana(mp);
-                            game.GetPeerInfo(peer).GetChampion().getStats().setMaxMana(mp);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().CurrentMana = mp;
+                            game.GetPeerInfo(peer).GetChampion().GetStats().ManaPoints.BaseValue = mp;
                         }
                         return true;
                     case ".model":
@@ -130,7 +116,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         if (split.Length < 2)
                             return true;
                         if (float.TryParse(split[1], out size))
-                            game.GetPeerInfo(peer).GetChampion().getStats().setSize(size);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().Size.BaseValue = size;
                         return true;
                     case ".junglespawn":
                         cmd = new string[] { "c baron", "c wolves", "c red", "c blue", "c dragon", "c wraiths", "c golems" };
@@ -148,8 +134,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         {
                             if (lvl < 1 || lvl > 18)
                                 return true;
-                            game.GetPeerInfo(peer).GetChampion().getStats().setExp(game.GetMap().GetExperienceToLevelUp()[(int)lvl - 1]);
-                            //game.peerInfo(peer).getChampion().getStats().setLevel(lvl);
+                            game.GetPeerInfo(peer).GetChampion().GetStats().Experience = game.GetMap().GetExperienceToLevelUp()[(int)lvl - 1];
+                            //game.peerInfo(peer).getChampion().GetStats().setLevel(lvl);
                         }
                         return true;
                     case ".tp":
@@ -231,8 +217,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         game.GetMap().AddObject(min);
                         return true;
                     case ".reload":
-                        game.setStarted(false);
-                        foreach (var obj in game.getMap().getObjects())
+                        game.SetStarted(false);
+                        foreach (var obj in game.GetMap().GetObjects())
                         {
                             var m = obj.Value as Minion;
                             if (m != null)
@@ -246,7 +232,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                                 c.LoadLua();
                             }
                         }
-                        game.setStarted(true);
+                        game.SetStarted(true);
                         return true;
                 }
             }

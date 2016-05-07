@@ -389,38 +389,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
-        public void addBuff(string buffName, float dur, Unit u)
-        {
-            u.AddBuff(new Buff(buffName, dur, u));
-        }
-
-        public void addParticle(string particle, float toX, float toY)
-        {
-            Target t = new Target(toX, toY);
-            owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, t, particle);
-        }
-
-        public void addParticleTarget(string particle, Target t)
-        {
-            owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, t, particle);
-        }
-
-        public void printChat(string msg)
-        {
-            var dm = new DebugMessage(msg);
-            owner.GetGame().PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
-        }
-
-        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
-        {
-            return owner.GetGame().GetMap().GetUnitsInRange(t, range, isAlive);
-        }
-
-        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
-        {
-            return owner.GetGame().GetMap().GetChampionsInRange(t, range, isAlive);
-        }
-
         /**
          * @return Spell's unique ID
          */
@@ -489,7 +457,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
             script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
             script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
-            script.lua.RegisterFunction("getOwnerLevel", owner.getStats(), typeof(Stats).GetMethod("getLevel"));
+            script.lua.RegisterFunction("getOwnerLevel", owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             script.lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
             script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
             script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
@@ -505,7 +473,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 Buff* b = new Buff(duration);
                 b->setMovementSpeedPercentModifier(amount);
                 u->addBuff(b);
-                u->getStats().addMovementSpeedPercentageModifier(b->getMovementSpeedPercentModifier());
+                u->GetStats().addMovementSpeedPercentageModifier(b->getMovementSpeedPercentModifier());
                return;
             });*/
 

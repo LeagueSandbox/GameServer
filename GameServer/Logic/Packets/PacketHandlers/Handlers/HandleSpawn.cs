@@ -42,10 +42,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             skillUp = new SkillUpPacket(peerInfo.GetChampion().getNetId(), 14, 1, (byte)peerInfo.GetChampion().getSkillPoints());
             game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
-            peerInfo.GetChampion().getStats().setSpellEnabled(7, true);
-            peerInfo.GetChampion().getStats().setSpellEnabled(14, true);
-            peerInfo.GetChampion().getStats().setSummonerSpellEnabled(0, true);
-            peerInfo.GetChampion().getStats().setSummonerSpellEnabled(1, true);
+            peerInfo.GetChampion().GetStats().setSpellEnabled(7, true);
+            peerInfo.GetChampion().GetStats().setSpellEnabled(14, true);
+            peerInfo.GetChampion().GetStats().setSummonerSpellEnabled(0, true);
+            peerInfo.GetChampion().GetStats().setSummonerSpellEnabled(1, true);
 
             var objects = game.GetMap().GetObjects();
             foreach (var kv in objects)

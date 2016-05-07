@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected string _name;
         protected int _stacks;
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
+        protected Game _game;
 
         public BuffType GetBuffType()
         {
@@ -85,8 +86,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _remove;
         }
 
-        public Buff(string buffName, float dur, int stacks, Unit onto, Unit from)
+        public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
         {
+            _game = game;
             _duration = dur;
             _stacks = stacks;
             _name = buffName;
@@ -104,16 +106,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 Logger.LogCoreError("LUA ERROR : " + e.Message);
             }
-            PacketNotifier.notifyAddBuff(this);
         }
         
-        public Buff(string buffName, float dur, int stacks, Unit onto) : this(buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
 
         public void LoadLua()
         {
-            var scriptLoc = Config.contentManager.GetBuffScriptPath(_name);
+            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
@@ -167,10 +168,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     catch (LuaException e)
                     {
                         Logger.LogCoreError("LUA ERROR : " + e.Message);
-                    }
-                    if (_name != "")
-                    {
-                        attachedTo.PacketNotifier.notifyRemoveBuff(_attachedTo, _name);
                     }
                     _remove = true;
                 }

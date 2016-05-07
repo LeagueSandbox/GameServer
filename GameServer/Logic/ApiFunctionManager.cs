@@ -11,53 +11,55 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public static class ApiFunctionManager
     {
-        private static Map _map;
+        private static Game _game;
 
-        internal static void SetMap(Map m)
+        internal static void SetGame(Game game)
         {
-            _map = m;
+            _game = game;
         }
 
         public static void TeleportTo(Unit unit, float x, float y)
         {
-            PacketNotifier.notifyTeleport(unit, x, y);
+            _game.PacketNotifier.notifyTeleport(unit, x, y);
         }
 
         public static bool IsWalkable(float x, float y)
         {
-            return _map.isWalkable(x, y);
+            return _game.GetMap().IsWalkable(x, y);
         }
         
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
-            onto.addBuff(new Buff(buffName, duration, stacks, onto, from));
+            var buff = new Buff(_game, buffName, duration, stacks, onto, from);
+            onto.AddBuff(buff);
+            _game.PacketNotifier.notifyAddBuff(buff);
         }
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY)
         {
             Target t = new Target(toX, toY);
-            PacketNotifier.notifyParticleSpawn(champion, t, particle);
+            _game.PacketNotifier.notifyParticleSpawn(champion, t, particle);
         }
 
         public static void AddParticleTarget(Champion champion, string particle, Target target)
         {
-            PacketNotifier.notifyParticleSpawn(champion, target, particle);
+            _game.PacketNotifier.notifyParticleSpawn(champion, target, particle);
         }
 
         public static void PrintChat(string msg)
         {
             var dm = new DebugMessage(msg);
-            PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
         }
 
         public static List<Unit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
-            return _map.getUnitsInRange(target, range, isAlive);
+            return _game.GetMap().GetUnitsInRange(target, range, isAlive);
         }
 
         public static List<Champion> GetChampionsInRange(Target target, float range, bool isAlive)
         {
-            return _map.getChampionsInRange(target, range, isAlive);
+            return _game.GetMap().GetChampionsInRange(target, range, isAlive);
         }
 
         public static void SetChampionModel(Champion champion, string model)
@@ -69,7 +71,7 @@ namespace LeagueSandbox.GameServer.Logic
         {
             unit.dashTo(x, y, dashSpeed);
             unit.setTargetUnit(null);
-            PacketNotifier.notifyDash(unit, x, y, dashSpeed);
+            _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed);
         }
 
         public static TeamId GetTeam(GameObject gameObject)

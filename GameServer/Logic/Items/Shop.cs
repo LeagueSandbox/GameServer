@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         //    if (recipeParts.Length == 0)
         //    {
-        //        if (_owner.getStats().getGold() < price)
+        //        if (_owner.GetStats().getGold() < price)
         //        {
         //            return true;
         //        }
@@ -46,13 +46,13 @@ namespace LeagueSandbox.GameServer.Logic.Items
         //        foreach (var instance in recipeParts)
         //            price -= instance.TotalPrice;
 
-        //        if (_owner.getStats().getGold() < price)
+        //        if (_owner.GetStats().getGold() < price)
         //            return false;
 
 
         //        foreach (var instance in recipeParts)
         //        {
-        //            _owner.getStats().unapplyStatMods(instance.getTemplate().getStatMods());
+        //            _owner.GetStats().unapplyStatMods(instance.getTemplate().getStatMods());
         //            PacketNotifier.notifyRemoveItem(_owner, instance.getSlot(), 0);
         //            _owner.getInventory().RemoveItem(instance.getSlot());
         //        }
@@ -60,8 +60,8 @@ namespace LeagueSandbox.GameServer.Logic.Items
         //        i = game.getPeerInfo(peer).getChampion().getInventory().addItem(itemTemplate);
         //    }
 
-        //    _owner.getStats().setGold(_owner.getStats().getGold() - price);
-        //    _owner.getStats().applyStatMods(itemTemplate.getStatMods());
+        //    _owner.GetStats().setGold(_owner.GetStats().getGold() - price);
+        //    _owner.GetStats().applyStatMods(itemTemplate.getStatMods());
         //    PacketNotifier.notifyItemBought(game.getPeerInfo(peer).getChampion(), i);
 
         //    return true;

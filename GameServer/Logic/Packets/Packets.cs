@@ -1682,8 +1682,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SetHealth(Unit u) : base(PacketCmdS2C.PKT_S2C_SetHealth, u.getNetId())
         {
             buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write((float)u.getStats().HealthPoints.Total);
-            buffer.Write((float)u.getStats().CurrentHealth);
+            buffer.Write((float)u.GetStats().HealthPoints.Total);
+            buffer.Write((float)u.GetStats().CurrentHealth);
         }
 
         public SetHealth(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
@@ -2448,9 +2448,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
             if (partial)
-                stats = u.getStats().GetUpdatedStats();
+                stats = u.GetStats().GetUpdatedStats();
             else
-                stats = u.getStats().GetAllStats();
+                stats = u.GetStats().GetAllStats();
             var orderedStats = stats.OrderBy(x => x.Key);
 
             buffer.Write((byte)1); // updating 1 unit
@@ -2470,13 +2470,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 foreach (var stat in orderedGroup)
                 {
                     fieldMask |= (uint)stat.Key;
-                    size += u.getStats().getSize(group.Key, stat.Key);
+                    size += u.GetStats().getSize(group.Key, stat.Key);
                 }
                 buffer.Write((uint)fieldMask);
                 buffer.Write((byte)size);
                 foreach (var stat in orderedGroup)
                 {
-                    size = u.getStats().getSize(group.Key, stat.Key);
+                    size = u.GetStats().getSize(group.Key, stat.Key);
                     switch (size)
                     {
                         case 1:
@@ -2593,7 +2593,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
         {
-            buffer.Write(c.getStats().Level);
+            buffer.Write(c.GetStats().Level);
             buffer.Write(c.getSkillPoints());
         }
     }
