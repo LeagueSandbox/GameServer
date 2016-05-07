@@ -262,7 +262,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.IsGeneratingGold() && map.getGameTime() >= map.getFirstGoldTime())
+            if (!stats.IsGeneratingGold() && map.getGameTime() >= map.GetFirstGoldTime())
             {
                 stats.SetGeneratingGold(true);
                 Logger.LogCoreInfo("Generating Gold!");
@@ -286,7 +286,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             bool levelup = false;
 
-            while (getStats().Level < map.getExperienceToLevelUp().Count && getStats().Experience >= map.getExperienceToLevelUp()[(int)getStats().Level])
+            while (getStats().Level < map.GetExperienceToLevelUp().Count && getStats().Experience >= map.GetExperienceToLevelUp()[(int)getStats().Level])
             {
                 LevelUp();
                 levelup = true;
@@ -358,15 +358,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var stats = getStats();
             var expMap = map.GetExperienceToLevelUp();
-            if (stats.getLevel() >= expMap.Count)
+            if (stats.GetLevel() >= expMap.Count)
                 return false;
-            if (stats.getExperience() < expMap[stats.getLevel()])
+            if (stats.Experience < expMap[stats.Level])
                 return false;
 
-            while (stats.getExperience() >= expMap[stats.getLevel()])
+            while (stats.Experience >= expMap[stats.Level])
             {
-                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.getLevel() + 1);
-                getStats().levelUp();
+                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.Level);
+                getStats().LevelUp();
                 skillPoints++;
             }
             return true;

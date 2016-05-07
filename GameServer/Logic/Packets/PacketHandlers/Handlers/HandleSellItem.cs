@@ -36,9 +36,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 PacketNotifier.notifyRemoveItem(client.getChampion(), sell.slotId, 0);
                 client.getChampion().getInventory().RemoveItem(sell.slotId);
             }
-
-            //TODO : remove IBuff
-            //client.getChampion().getStats().unapplyStatMods(i.ItemType.StatMods);
+            
+            client.getChampion().getStats().RemoveBuff(i.ItemType);
 
             return true;
         }

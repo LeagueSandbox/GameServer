@@ -51,12 +51,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType
+    public class ItemType : IBuff
     {
         private Game _game;
         private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
-        private StatMod[] _statMods;
 
         // Meta
         public int ItemId { get; private set; }
@@ -69,18 +68,25 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float SellBackModifier { get; private set; }
 
         // Stats
-        public float FlatPhysicalDamageMod { get; private set; }
-        public float PercentPhysicalDamageMod { get; private set; }
-        public float FlatMagicDamageMod { get; private set; }
-        public float FlatHPRegenMod { get; private set; }
-        public float FlatCritChanceMod { get; private set; }
-        public float FlatArmorMod { get; private set; }
-        public float FlatSpellBlockMod { get; private set; }
-        public float PercentAttackSpeedMod { get; private set; }
-        public float PercentLifeStealMod { get; private set; }
-        public float FlatHPPoolMod { get; private set; }
-        public float FlatMPPoolMod { get; private set; }
-        public float FlatMovementSpeedMod { get; private set; }
+        public StatModifcator HealthPoints { get; set; }
+        public StatModifcator HealthRegeneration { get; set; }
+        public StatModifcator AttackDamage { get; set; }
+        public StatModifcator AbilityPower { get; set; }
+        public StatModifcator CriticalChance { get; set; }
+        public StatModifcator Armor { get; set; }
+        public StatModifcator MagicResist { get; set; }
+        public StatModifcator AttackSpeed { get; set; }
+        public StatModifcator ArmorPenetration { get; set; }
+        public StatModifcator MagicPenetration { get; set; }
+        public StatModifcator ManaPoints { get; set; }
+        public StatModifcator ManaRegeneration { get; set; }
+        public StatModifcator LifeSteel { get; set; }
+        public StatModifcator SpellVamp { get; set; }
+        public StatModifcator Tenacity { get; set; }
+        public StatModifcator Size { get; set; }
+        public StatModifcator Range { get; set; }
+        public StatModifcator MoveSpeed { get; set; }
+        public StatModifcator GoldPerSecond { get; set; }
 
         // Recipes
         public int RecipeItem1 { get; private set; }
@@ -91,32 +97,32 @@ namespace LeagueSandbox.GameServer.Logic.Content
         // Not from data
         public ItemRecipe Recipe { get; private set; }
         public int TotalPrice { get { return Recipe.TotalPrice; } }
-        public List<StatMod> StatMods { get { if (_statMods == null) CreateStatMods(); return _statMods.ToList(); } }
 
         private ItemType(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             _game = game;
             _owner = owner;
             _itemInfo = itemInfo;
-        }
 
-        public void CreateStatMods()
-        {
-            _statMods = new StatMod[]
-            {
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, FlatPhysicalDamageMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, PercentPhysicalDamageMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, FlatMagicDamageMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Hp5, FlatHPRegenMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, FlatCritChanceMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Armor, FlatArmorMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, FlatSpellBlockMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, PercentAttackSpeedMod),
-                StatMod.FromValues(MasterMask.MM_Two, FieldMask.FM2_LifeSteal, PercentLifeStealMod),
-                StatMod.FromValues(MasterMask.MM_Four, FieldMask.FM4_MaxHp, FlatHPPoolMod),
-                StatMod.FromValues(MasterMask.MM_Four, FieldMask.FM4_MaxMp, FlatMPPoolMod),
-                StatMod.FromValues(MasterMask.MM_Four, FieldMask.FM4_Speed, FlatMovementSpeedMod)
-            };
+            HealthPoints = new StatModifcator();
+            HealthRegeneration = new StatModifcator();
+            AttackDamage = new StatModifcator();
+            AbilityPower = new StatModifcator();
+            CriticalChance = new StatModifcator();
+            Armor = new StatModifcator();
+            MagicResist = new StatModifcator();
+            AttackSpeed = new StatModifcator();
+            ArmorPenetration = new StatModifcator();
+            MagicPenetration = new StatModifcator();
+            ManaPoints = new StatModifcator();
+            ManaRegeneration = new StatModifcator();
+            LifeSteel = new StatModifcator();
+            SpellVamp = new StatModifcator();
+            Tenacity = new StatModifcator();
+            Size = new StatModifcator();
+            Range = new StatModifcator();
+            MoveSpeed = new StatModifcator();
+            GoldPerSecond = new StatModifcator();
         }
 
         private void CreateRecipe()
@@ -135,23 +141,36 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 Price = itemInfo.SafeGetInt("Data", "Price"),
                 ItemGroup = itemInfo.SafeGetString("Data", "ItemGroup"),
                 SellBackModifier = itemInfo.SafeGetFloat("Data", "SellBackModifier", 0.7f),
-                FlatPhysicalDamageMod = itemInfo.SafeGetFloat("Data", "FlatPhysicalDamageMod"),
-                PercentPhysicalDamageMod = itemInfo.SafeGetFloat("Data", "PercentPhysicalDamageMod"),
-                FlatMagicDamageMod = itemInfo.SafeGetFloat("Data", "FlatMagicDamageMod"),
-                FlatHPRegenMod = itemInfo.SafeGetFloat("Data", "FlatHPRegenMod"),
-                FlatCritChanceMod = itemInfo.SafeGetFloat("Data", "FlatCritChanceMod"),
-                FlatArmorMod = itemInfo.SafeGetFloat("Data", "FlatArmorMod"),
-                FlatSpellBlockMod = itemInfo.SafeGetFloat("Data", "FlatSpellBlockMod"),
-                PercentAttackSpeedMod = itemInfo.SafeGetFloat("Data", "PercentAttackSpeedMod"),
-                PercentLifeStealMod = itemInfo.SafeGetFloat("Data", "PercentLifeStealMod"),
-                FlatHPPoolMod = itemInfo.SafeGetFloat("Data", "FlatHPPoolMod"),
-                FlatMPPoolMod = itemInfo.SafeGetFloat("Data", "FlatMPPoolMod"),
-                FlatMovementSpeedMod = itemInfo.SafeGetFloat("Data", "FlatMovementSpeedMod"),
+
                 RecipeItem1 = itemInfo.SafeGetInt("Data", "RecipeItem1", -1),
                 RecipeItem2 = itemInfo.SafeGetInt("Data", "RecipeItem2", -1),
                 RecipeItem3 = itemInfo.SafeGetInt("Data", "RecipeItem3", -1),
                 RecipeItem4 = itemInfo.SafeGetInt("Data", "RecipeItem4", -1)
             };
+
+            result.Armor.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatArmorMod");
+            result.CriticalChance.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatCritChanceMod");
+            //itemInfo.SafeGetFloat("Data", "FlatCritDamageMod"); // TODO
+            result.HealthPoints.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatHPPoolMod");
+            result.ManaPoints.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMPPoolMod");
+            result.AbilityPower.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMagicDamageMod");
+            result.MagicPenetration.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMagicPenetrationMod");
+            result.MoveSpeed.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMovementSpeedMod");
+            result.AttackDamage.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatPhysicalDamageMod");
+            result.MagicResist.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatSpellBlockMod");
+            result.Armor.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentArmorMod");
+            result.AttackSpeed.FlatBonus = itemInfo.SafeGetFloat("Data", "PercentAttackSpeedMod");
+            //itemInfo.SafeGetFloat("Data", "PercentCritDamageMod"); // TODO
+            //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
+            result.HealthPoints.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentHPPoolMod");
+            result.HealthRegeneration.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentBaseHPRegenMod");
+            result.ManaPoints.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMPPoolMod");
+            result.ManaRegeneration.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentBaseMPRegenMod");
+            result.AbilityPower.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMagicDamageMod");
+            result.MoveSpeed.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMovementSpeedMod");
+            result.AttackDamage.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentPhysicalDamageMod");
+            result.MagicResist.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentSpellBlockMod");
+
             result.CreateRecipe();
             return result;
         }

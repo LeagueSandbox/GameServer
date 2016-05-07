@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class BuildingStats : Stats
     {
-        public float CurrentHealth
+        public override float CurrentHealth
         {
             get
             {

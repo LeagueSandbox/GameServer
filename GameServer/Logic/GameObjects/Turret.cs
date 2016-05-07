@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         private string name;
 
-        public Turret(Map map, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, int team = 0) : base(map, id, "", new Stats(), 50, x, y, 1200)
+        public Turret(Map map, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(map, id, "", new Stats(), 50, x, y, 1200)
         {
             this.name = name;
 

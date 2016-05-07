@@ -132,12 +132,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var tempBuffs = u.GetBuffs();
                 foreach (var buff in tempBuffs.Values)
                 {
-                    if (buff.needsToRemove())
+                    if (buff.NeedsToRemove())
                     {
                         u.RemoveBuff(buff);
                         continue;
                     }
-                    buff.update(diff);
+                    buff.Update(diff);
                 }
 
                 if (u.getStats().GetUpdatedStats().Count > 0)

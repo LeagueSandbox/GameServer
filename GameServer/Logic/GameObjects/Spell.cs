@@ -390,38 +390,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PacketNotifier.notifyProjectileSpawn(p);
         }
 
-        public void addBuff(string buffName, float dur, Unit u)
-        {
-            u.AddBuff(new Buff(buffName, dur, u));
-        }
-
-        public void addParticle(string particle, float toX, float toY)
-        {
-            Target t = new Target(toX, toY);
-            PacketNotifier.notifyParticleSpawn(owner, t, particle);
-        }
-
-        public void addParticleTarget(string particle, Target t)
-        {
-            PacketNotifier.notifyParticleSpawn(owner, t, particle);
-        }
-
-        public void printChat(string msg)
-        {
-            var dm = new DebugMessage(msg);
-            PacketHandlerManager.getInstace().broadcastPacket(dm, Channel.CHL_S2C);
-        }
-
-        public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
-        {
-            return owner.getMap().getUnitsInRange(t, range, isAlive);
-        }
-
-        public List<Champion> getChampionsInRange(Target t, float range, bool isAlive)
-        {
-            return owner.getMap().getChampionsInRange(t, range, isAlive);
-        }
-
         /**
          * @return Spell's unique ID
          */

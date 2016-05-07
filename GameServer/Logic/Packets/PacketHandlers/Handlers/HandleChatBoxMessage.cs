@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         {
                             if (lvl < 1 || lvl > 18)
                                 return true;
-                            game.getPeerInfo(peer).getChampion().getStats().Experience = game.getMap().getExperienceToLevelUp()[(int)lvl - 1];
+                            game.getPeerInfo(peer).getChampion().getStats().Experience = game.getMap().GetExperienceToLevelUp()[(int)lvl - 1];
                             //game.peerInfo(peer).getChampion().getStats().setLevel(lvl);
                         }
                         return true;
@@ -223,7 +223,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         return true;
                     case ".reload":
                         game.setStarted(false);
-                        foreach (var obj in game.getMap().getObjects())
+                        foreach (var obj in game.getMap().GetObjects())
                         {
                             var m = obj.Value as Minion;
                             if (m != null)

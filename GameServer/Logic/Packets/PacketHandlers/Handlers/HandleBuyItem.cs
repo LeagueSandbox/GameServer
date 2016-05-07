@@ -49,8 +49,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                 foreach (var instance in recipeParts)
                 {
-                    // TODO : remove IBuff
-                    //game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
+                    game.getPeerInfo(peer).getChampion().getStats().RemoveBuff(instance.ItemType);
                     var champion = game.getPeerInfo(peer).getChampion();
                     var inventory = champion.Inventory;
                     PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
@@ -61,8 +60,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             }
 
             game.getPeerInfo(peer).getChampion().getStats().Gold = game.getPeerInfo(peer).getChampion().getStats().Gold - price;
-            //TODO : apply IBuff
-            //game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.StatMods);
+            game.getPeerInfo(peer).getChampion().getStats().AddBuff(itemTemplate);
             PacketNotifier.notifyItemBought(game.getPeerInfo(peer).getChampion(), i);
 
             return true;

@@ -434,14 +434,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             lock (_buffsLock)
             {
-                if (!_buffs.ContainsKey(b.getName()))
+                if (!_buffs.ContainsKey(b.GetName()))
                 {
-                    _buffs.Add(b.getName(), b);
-                    getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
+                    _buffs.Add(b.GetName(), b);
                 }
                 else
                 {
-                    _buffs[b.getName()].setTimeElapsed(0); // if buff already exists, just restart its timer
+                    _buffs[b.GetName()].SetTimeElapsed(0); // if buff already exists, just restart its timer
                 }
             }
         }
@@ -449,8 +448,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void RemoveBuff(Buff b)
         {
             //TODO add every stat
-            getStats().addMovementSpeedPercentageModifier(b.getMovementSpeedPercentModifier());
-            RemoveBuff(b.getName());
+            RemoveBuff(b.GetName());
         }
 
         public void RemoveBuff(string b)

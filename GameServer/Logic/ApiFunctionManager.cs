@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic
         
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
-            onto.addBuff(new Buff(buffName, duration, stacks, onto, from));
+            onto.AddBuff(new Buff(buffName, duration, stacks, onto, from));
         }
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY)

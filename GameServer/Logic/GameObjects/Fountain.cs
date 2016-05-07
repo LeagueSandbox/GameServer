@@ -43,30 +43,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (champion.getTeam() != _team)
                     continue;
 
-                int team = 0;
-                foreach (var f in healLocations)
-                {
-                    foreach (var c in map.getChampionsInRange(f, fountainSize))
-                    {
-                        if (c.getTeam() == CustomConvert.toTeamId(team))
-                        {
-                            var hp = c.getStats().CurrentHealth;
-                            var maxHP = c.getStats().HealthPoints.Total;
-                            if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                                c.getStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
-                            else if (hp < maxHP)
-                                c.getStats().CurrentHealth = maxHP;
+                var hp = champion.getStats().CurrentHealth;
+                var maxHP = champion.getStats().HealthPoints.Total;
+                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
+                    champion.getStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
+                else if (hp > maxHP)
+                    champion.getStats().CurrentHealth = maxHP;
 
-                            var mp = c.getStats().CurrentMana;
-                            var maxMp = c.getStats().ManaPoints.Total;
-                            if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                                c.getStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
-                            else if (mp < maxMp)
-                                c.getStats().CurrentMana = maxMp;
-                        }
-                    }
-                    team++;
-                }
+                var mp = champion.getStats().CurrentMana;
+                var maxMp = champion.getStats().ManaPoints.Total;
+                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
+                    champion.getStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
+                else if (mp > maxMp)
+                    champion.getStats().CurrentMana = maxMp;
             }
         }
     }
