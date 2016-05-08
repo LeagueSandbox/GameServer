@@ -64,6 +64,10 @@
     <Compile Include="TestStats.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ENetCS\ENetCS.csproj">
+      <Project>{D3AFF7FA-96F6-42B8-B03C-E508DC80EC3A}</Project>
+      <Name>ENetCS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameServer\GameServer.csproj">
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
       <Name>GameServer</Name>
