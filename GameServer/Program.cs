@@ -34,8 +34,8 @@ namespace LeagueSandbox
 
             System.AppDomain.CurrentDomain.FirstChanceException += Logger.CurrentDomain_FirstChanceException;
             System.AppDomain.CurrentDomain.UnhandledException += Logger.CurrentDomain_UnhandledException;
-
             Logger.LogCoreInfo("Loading RAF files in filearchives/.");
+
 
             var settings = Settings.Load("Settings/Settings.json");
             if (!RAFManager.getInstance().init(System.IO.Path.Combine(settings.RadsPath, "filearchives")))

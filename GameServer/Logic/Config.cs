@@ -12,11 +12,11 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public class Config
     {
-        public Dictionary<string, PlayerConfig> Players;
-        public GameConfig GameConfig;
-        public MapSpawns MapSpawns;
-        public ContentManager ContentManager;
-        public const string Version = "Version 4.20.0.315 [PUBLIC]";
+        public Dictionary<string, PlayerConfig> Players { get; private set; }
+        public GameConfig GameConfig { get; private set; }
+        public MapSpawns MapSpawns { get; private set; }
+        public ContentManager ContentManager { get; private set; }
+        public const string VERSION = "Version 4.20.0.315 [PUBLIC]";
 
         public Config(string path)
         {

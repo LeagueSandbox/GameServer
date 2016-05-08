@@ -16,15 +16,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var version = new SynchVersion(data);
             //Logging->writeLine("Client version: %s", version->version);
 
-            var mapId = game.GetConfig().GameConfig.Map;
+            var mapId = game.Config.GameConfig.Map;
             Logger.LogCoreInfo("Current map: " + mapId);
 
             bool versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
-            if (version.version != Config.Version)
+            if (version.version != Config.VERSION)
             {
                 versionMatch = false;
-                Logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.Version);
+                Logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.VERSION);
             }
             else
             {
@@ -39,9 +39,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     break;
                 }
             }
-            var answer = new SynchVersionAns(game.GetPlayers(), Config.Version, "CLASSIC", mapId);
+            var answer = new SynchVersionAns(game.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
 
-            return game.GetPacketHandlerManager().sendPacket(peer, answer, Channel.CHL_S2C);
+            return game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C);
         }
     }
 }

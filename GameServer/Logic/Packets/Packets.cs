@@ -122,10 +122,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var player in players)
             {
                 var p = player.Item2;
+                var summonerSpells = p.getSummoners();
                 buffer.Write((long)p.UserId);
                 buffer.Write((short)0x1E); // unk
-                buffer.Write((int)p.SummonerSkills[0]);
-                buffer.Write((int)p.SummonerSkills[1]);
+                buffer.Write((int)summonerSpells[0]);
+                buffer.Write((int)summonerSpells[1]);
                 buffer.Write((byte)0); // bot boolean
                 buffer.Write((int)p.GetTeam());
                 buffer.fill(0, 64); // name is no longer here
@@ -1378,7 +1379,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var player = p.Item2;
             buffer.Write((long)player.UserId);
-            buffer.Write((int)player.SkinNo);
+            buffer.Write((int)player.GetSkinNo());
             buffer.Write((int)player.GetChampion().getType().Length + 1);
             foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
                 buffer.Write(b);
@@ -1882,8 +1883,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            buffer.Write((int)player.SummonerSkills[0]);
-            buffer.Write((int)player.SummonerSkills[1]);
+            var summonerSpells = player.getSummoners();
+            buffer.Write((int)summonerSpells[0]);
+            buffer.Write((int)summonerSpells[1]);
 
             buffer.Write((byte)0x41);
             buffer.Write((byte)0x74);

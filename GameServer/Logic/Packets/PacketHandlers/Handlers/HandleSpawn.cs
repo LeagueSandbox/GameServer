@@ -17,30 +17,30 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var start = new StatePacket2(PacketCmdS2C.PKT_S2C_StartSpawn);
-            game.GetPacketHandlerManager().sendPacket(peer, start, Channel.CHL_S2C);
+            game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
             Logger.LogCoreInfo("Spawning map");
 
             int playerId = 0;
             foreach (var p in game.GetPlayers())
             {
                 var spawn = new HeroSpawn(p.Item2, playerId++);
-                game.GetPacketHandlerManager().sendPacket(peer, spawn, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, spawn, Channel.CHL_S2C);
 
                 var info = new PlayerInfo(p.Item2);
-                game.GetPacketHandlerManager().sendPacket(peer, info, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, info, Channel.CHL_S2C);
             }
 
             var peerInfo = game.GetPeerInfo(peer);
             var bluePill = game.ItemManager.GetItemType(game.GetMap().GetBluePillId());
             var itemInstance = peerInfo.GetChampion().Inventory.SetExtraItem(7, bluePill);
             var buyItem = new BuyItemAns(peerInfo.GetChampion(), itemInstance);
-            game.GetPacketHandlerManager().sendPacket(peer, buyItem, Channel.CHL_S2C);
+            game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
             var skillUp = new SkillUpPacket(peerInfo.GetChampion().getNetId(), 7, 1, (byte)peerInfo.GetChampion().getSkillPoints());
-            game.GetPacketHandlerManager().sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
+            game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
             skillUp = new SkillUpPacket(peerInfo.GetChampion().getNetId(), 14, 1, (byte)peerInfo.GetChampion().getSkillPoints());
-            game.GetPacketHandlerManager().sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
+            game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
             peerInfo.GetChampion().getStats().setSpellEnabled(7, true);
             peerInfo.GetChampion().getStats().setSpellEnabled(14, true);
@@ -54,11 +54,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     var t = kv.Value as Turret;
                     var turretSpawn = new TurretSpawn(t);
-                    game.GetPacketHandlerManager().sendPacket(peer, turretSpawn, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision
                     var sh = new SetHealth(t);
-                    game.GetPacketHandlerManager().sendPacket(peer, sh, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
                     continue;
                 }
                 else if (kv.Value is LevelProp)
@@ -66,16 +66,16 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var lp = kv.Value as LevelProp;
 
                     var lpsPacket = new LevelPropSpawn(lp);
-                    game.GetPacketHandlerManager().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(peer, lpsPacket, Channel.CHL_S2C);
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
                     var inhib = kv.Value as Unit;
 
                     var ms = new MinionSpawn2(inhib.getNetId());
-                    game.GetPacketHandlerManager().sendPacket(peer, ms, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(peer, ms, Channel.CHL_S2C);
                     var sh = new SetHealth(inhib.getNetId());
-                    game.GetPacketHandlerManager().sendPacket(peer, sh, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
                 }
             }
 
@@ -85,21 +85,21 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
-                game.GetPacketHandlerManager().sendPacket(peer, ms1, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xff10c6db);
-                game.GetPacketHandlerManager().sendPacket(peer, sh1, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, sh1, Channel.CHL_S2C);
             }
             else if (peerInfo != null && peerInfo.GetTeam() == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);
-                game.GetPacketHandlerManager().sendPacket(peer, ms1, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xffa6170e);
-                game.GetPacketHandlerManager().sendPacket(peer, sh1, Channel.CHL_S2C);
+                game.PacketHandlerManager.sendPacket(peer, sh1, Channel.CHL_S2C);
             }
 
             var end = new StatePacket(PacketCmdS2C.PKT_S2C_EndSpawn);
-            return game.GetPacketHandlerManager().sendPacket(peer, end, Channel.CHL_S2C);
+            return game.PacketHandlerManager.sendPacket(peer, end, Channel.CHL_S2C);
         }
     }
 }

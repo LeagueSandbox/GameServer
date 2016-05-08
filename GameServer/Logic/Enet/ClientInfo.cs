@@ -11,25 +11,24 @@ namespace LeagueSandbox.GameServer.Logic.Enet
 {
     public class ClientInfo
     {
-        public bool KeyChecked = false;
-        public bool VersionMatch = true;
-        public long UserId;
-        public int SkinNo = 0;
-        public SummonerSpellIds[] SummonerSkills = new SummonerSpellIds[2];
-        public string Name, Rank;
-        public short Ribbon;
-        public int Icon;
-        public TeamId Team;
+        public long UserId { get; set; }
+        private bool VersionMatch = true;
+        private int SkinNo = 0;
+        private SummonerSpellIds[] SummonerSkills = new SummonerSpellIds[2];
+        private string Name, Rank;
+        private short Ribbon;
+        private int Icon;
+        private TeamId Team;
 
         private Champion _champion;
         private Peer _peer;
 
         public ClientInfo(string rank, TeamId team, short ribbon, int icon)
         {
-            this.Rank = rank;
-            this.Team = team;
-            this.Ribbon = ribbon;
-            this.Icon = icon;
+            Rank = rank;
+            Team = team;
+            Ribbon = ribbon;
+            Icon = icon;
         }
 
         public void SetName(string name)
@@ -77,7 +76,12 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             SummonerSkills[0] = sum1;
             SummonerSkills[1] = sum2;
         }
-        
+
+        public SummonerSpellIds[] getSummoners()
+        {
+            return SummonerSkills;
+        }
+
         public int GetRibbon()
         {
             return Ribbon;

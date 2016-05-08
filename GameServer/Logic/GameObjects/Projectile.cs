@@ -126,7 +126,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             owner.decrementAttackerCount();
             base.setToRemove();
-            _game.GetPacketNotifier().notifyProjectileDestroy(this);
+            _game.PacketNotifier.notifyProjectileDestroy(this);
         }
 
         public int getProjectileId()

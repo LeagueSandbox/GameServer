@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     setTargetUnit(null);
                     autoAttackTarget = null;
                     isAttacking = false;
-                    _game.GetPacketNotifier().notifySetTarget(this, null);
+                    _game.PacketNotifier.notifySetTarget(this, null);
                     initialAttackDone = false;
                 }
                 return;
@@ -122,7 +122,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     setTargetUnit(null);
                     isAttacking = false;
-                    _game.GetPacketNotifier().notifySetTarget(this, null);
+                    _game.PacketNotifier.notifySetTarget(this, null);
                     initialAttackDone = false;
 
                 }
@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         {
                             Projectile p = new Projectile(_game, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
                             _game.GetMap().AddObject(p);
-                            _game.GetPacketNotifier().notifyShowProjectile(p);
+                            _game.PacketNotifier.notifyShowProjectile(p);
                         }
                         else
                         {
@@ -160,16 +160,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!initialAttackDone)
                         {
                             initialAttackDone = true;
-                            _game.GetPacketNotifier().notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
+                            _game.PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
                         }
                         else
                         {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
-                            _game.GetPacketNotifier().notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
+                            _game.PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
                         }
 
                         var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        _game.GetPacketNotifier().notifyOnAttack(this, targetUnit, attackType);
+                        _game.PacketNotifier.notifyOnAttack(this, targetUnit, attackType);
                     }
 
                 }
@@ -306,13 +306,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.deathFlag = true;
                 target.die(this);
             }
-            _game.GetPacketNotifier().notifyDamageDone(this, target, damage, type);
+            _game.PacketNotifier.notifyDamageDone(this, target, damage, type);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
                 stats.setCurrentHealth(Math.Min(stats.getMaxHealth(), stats.getCurrentHealth() + (regain * damage)));
-                _game.GetPacketNotifier().notifyUpdatedStats(this);
+                _game.PacketNotifier.notifyUpdatedStats(this);
             }
         }
 
@@ -326,7 +326,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setToRemove();
             _game.GetMap().StopTargeting(this);
 
-            _game.GetPacketNotifier().notifyNpcDie(this, killer);
+            _game.PacketNotifier.notifyNpcDie(this, killer);
 
             float exp = _game.GetMap().GetExperienceFor(this);
             var champs = _game.GetMap().GetChampionsInRange(this, EXP_RANGE, true);
@@ -352,7 +352,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return;
 
                 cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
-                _game.GetPacketNotifier().notifyAddGold(cKiller, this, gold);
+                _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
 
                 if (cKiller.killDeathCounter < 0)
                 {

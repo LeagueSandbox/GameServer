@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     if (int.TryParse(split[1], out y))
                     {
                         var response = new AttentionPingAns(game.GetPeerInfo(peer), new AttentionPing { x = x, y = y, targetNetId = 0, type = 0 });
-                        game.GetPacketHandlerManager().broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+                        game.PacketHandlerManager.broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
                     }
                 }
             }
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             game.GetPeerInfo(peer).GetChampion().getStats().setCurrentHealth(hp);
                             game.GetPeerInfo(peer).GetChampion().getStats().setMaxHealth(hp);
 
-                            game.GetPacketNotifier().notifySetHealth(game.GetPeerInfo(peer).GetChampion());
+                            game.PacketNotifier.notifySetHealth(game.GetPeerInfo(peer).GetChampion());
                         }
                         return true;
                     case ".xp":
@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             debugMsg.Append(cc + " ");
 
                         var dm = new DebugMessage(debugMsg.ToString());
-                        game.GetPacketHandlerManager().sendPacket(peer, dm, Channel.CHL_S2C);
+                        game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                         return true;
                     case ".spawn":
                         Logger.LogCoreInfo("Not implemented command .spawn");
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     case ".skillpoints":
                         game.GetPeerInfo(peer).GetChampion().setSkillPoints(17);
                         var skillUpResponse = new SkillUpPacket(game.GetPeerInfo(peer).GetChampion().getNetId(), 0, 0, 17);
-                        game.GetPacketHandlerManager().sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+                        game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
                         return true;
                     case ".level":
                         float lvl;
@@ -158,7 +158,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                             return true;
                         if (float.TryParse(split[1], out x))
                             if (float.TryParse(split[2], out y))
-                                game.GetPacketNotifier().notifyTeleport(game.GetPeerInfo(peer).GetChampion(), x, y);
+                                game.PacketNotifier.notifyTeleport(game.GetPeerInfo(peer).GetChampion(), x, y);
                         return true;
                     case ".coords":
                         Logger.LogCoreInfo("At " + game.GetPeerInfo(peer).GetChampion().getX() + ";" + game.GetPeerInfo(peer).GetChampion().getY());
@@ -168,7 +168,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         debugMsg.Append(game.GetPeerInfo(peer).GetChampion().getY());
                         debugMsg.Append(" Z: ");
                         debugMsg.Append(game.GetPeerInfo(peer).GetChampion().GetZ());
-                        game.GetPacketNotifier().notifyDebugMessage(debugMsg.ToString());
+                        game.PacketNotifier.notifyDebugMessage(debugMsg.ToString());
                         return true;
                     case ".ch":
                         if (split.Length < 2)
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                                     bytes.AddRange(d);
                             }
 
-                            game.GetPacketHandlerManager().sendPacket(peer, bytes.ToArray(), Channel.CHL_C2S);
+                            game.PacketHandlerManager.sendPacket(peer, bytes.ToArray(), Channel.CHL_C2S);
                         }
                         catch { }
                         return true;
@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         foreach (var unit in units)
                         {
                             var response = new AttentionPingAns(game.GetPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
-                            game.GetPacketHandlerManager().broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+                            game.PacketHandlerManager.broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
                         }
                         return true;
                     case ".inhib":
@@ -237,12 +237,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             switch (message.type)
             {
                 case ChatType.CHAT_ALL:
-                    return game.GetPacketHandlerManager().broadcastPacket(data, Channel.CHL_COMMUNICATION);
+                    return game.PacketHandlerManager.broadcastPacket(data, Channel.CHL_COMMUNICATION);
                 case ChatType.CHAT_TEAM:
-                    return game.GetPacketHandlerManager().broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), data, Channel.CHL_COMMUNICATION);
+                    return game.PacketHandlerManager.broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), data, Channel.CHL_COMMUNICATION);
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");
-                    return game.GetPacketHandlerManager().sendPacket(peer, data, Channel.CHL_COMMUNICATION);
+                    return game.PacketHandlerManager.sendPacket(peer, data, Channel.CHL_COMMUNICATION);
             }
         }
     }

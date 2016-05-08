@@ -19,14 +19,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (game.GetReadyPlayers() == game.GetPlayers().Count)
             {
                 var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);
-                game.GetPacketHandlerManager().broadcastPacket(start, Channel.CHL_S2C);
+                game.PacketHandlerManager.broadcastPacket(start, Channel.CHL_S2C);
 
                 foreach (var player in game.GetPlayers())
                 {
                     if (player.Item2.GetPeer() == peer && !player.Item2.IsVersionMatch())
                     {
                         var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
-                        game.GetPacketHandlerManager().sendPacket(peer, dm, Channel.CHL_S2C);
+                        game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
                 }
 
@@ -44,10 +44,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     float gameTime = map.GetGameTime() / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
-                    game.GetPacketHandlerManager().sendPacket(p.Item2.GetPeer(), timer, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(p.Item2.GetPeer(), timer, Channel.CHL_S2C);
 
                     var timer2 = new GameTimerUpdate(gameTime); // 0xC2
-                    game.GetPacketHandlerManager().sendPacket(p.Item2.GetPeer(), timer2, Channel.CHL_S2C);
+                    game.PacketHandlerManager.sendPacket(p.Item2.GetPeer(), timer2, Channel.CHL_S2C);
                 }
             }
 

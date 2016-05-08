@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
-            var scriptloc = game.GetConfig().ContentManager.GetSpellScriptPath(getType(), "Passive");
+            var scriptloc = game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
             Logger.LogCoreInfo("Loading " + scriptloc);
             unitScript.lua["me"] = this;
 
@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             int blueTeamSize = 0;
             int purpTeamSize = 0;
 
-            foreach (var player in _game.GetConfig().Players.Values)
+            foreach (var player in _game.Config.Players.Values)
             {
                 switch (player.Team.ToLower())
                 {
@@ -128,9 +128,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var playerIndex = "player" + playerId;
-            if (_game.GetConfig().Players.ContainsKey(playerIndex))
+            if (_game.Config.Players.ContainsKey(playerIndex))
             {
-                switch (_game.GetConfig().Players[playerIndex].Team.ToLower())
+                switch (_game.Config.Players[playerIndex].Team.ToLower())
                 {
                     case "blue":
                         return blueTeamSize;
@@ -144,7 +144,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Tuple<float, float> getRespawnPosition()
         {
-            var config = _game.GetConfig();
+            var config = _game.Config;
             var mapId = config.GameConfig.Map;
             var playerIndex = "player" + playerId;
             var playerTeam = "";
@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     setTargetUnit(nextTarget);
-                    _game.GetPacketNotifier().notifySetTarget(this, nextTarget);
+                    _game.PacketNotifier.notifySetTarget(this, nextTarget);
                 }
             }
 
@@ -262,7 +262,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     float respawnX = spawnPos.Item1;
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
-                    _game.GetPacketNotifier().notifyChampionRespawn(this);
+                    _game.PacketNotifier.notifyChampionRespawn(this);
                     getStats().setCurrentHealth(getStats().getMaxHealth());
                     getStats().setCurrentMana(getStats().getMaxMana());
                     deathFlag = false;
@@ -271,7 +271,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             var isLevelup = LevelUp();
             if (isLevelup)
-                _game.GetPacketNotifier().notifyLevelUp(this);
+                _game.PacketNotifier.notifyLevelUp(this);
 
             foreach (var s in spells)
                 s.update(diff);
@@ -367,7 +367,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null)
             {
-                _game.GetPacketNotifier().notifyChampionDie(this, killer, 0);
+                _game.PacketNotifier.notifyChampionDie(this, killer, 0);
                 return;
             }
 
@@ -390,7 +390,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (gold > 0)
             {
-                _game.GetPacketNotifier().notifyChampionDie(this, cKiller, 0);
+                _game.PacketNotifier.notifyChampionDie(this, cKiller, 0);
                 return;
             }
 
@@ -406,10 +406,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.GetMap().SetFirstBlood(false);
             }
 
-            _game.GetPacketNotifier().notifyChampionDie(this, cKiller, (int)gold);
+            _game.PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
 
             cKiller.getStats().setGold(cKiller.getStats().getGold() + gold);
-            _game.GetPacketNotifier().notifyAddGold(cKiller, this, gold);
+            _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 

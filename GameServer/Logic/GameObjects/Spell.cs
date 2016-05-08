@@ -241,7 +241,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             currentCooldown = getCooldown();
             if (getSlot() < 4)
             {
-                owner.GetGame().GetPacketNotifier().notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), getCooldown(), getCooldown());
             }
         }
 
@@ -358,7 +358,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void teleportTo(float x, float y)
         {
-            owner.GetGame().GetPacketNotifier().notifyTeleport(owner, x, y);
+            owner.GetGame().PacketNotifier.notifyTeleport(owner, x, y);
         }
 
         public bool isWalkable(float x, float y)
@@ -389,14 +389,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().GetPacketNotifier().notifyProjectileSpawn(p);
+            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().GetPacketNotifier().notifyProjectileSpawn(p);
+            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addBuff(string buffName, float dur, Unit u)
@@ -407,18 +407,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addParticle(string particle, float toX, float toY)
         {
             Target t = new Target(toX, toY);
-            owner.GetGame().GetPacketNotifier().notifyParticleSpawn(owner, t, particle);
+            owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, t, particle);
         }
 
         public void addParticleTarget(string particle, Target t)
         {
-            owner.GetGame().GetPacketNotifier().notifyParticleSpawn(owner, t, particle);
+            owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, t, particle);
         }
 
         public void printChat(string msg)
         {
             var dm = new DebugMessage(msg);
-            owner.GetGame().GetPacketHandlerManager().broadcastPacket(dm, Channel.CHL_S2C);
+            owner.GetGame().PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
         }
 
         public List<Unit> getUnitsInRange(Target t, float range, bool isAlive)
@@ -483,7 +483,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void loadLua(LuaScript script)
         {
-            var config = owner.GetGame().GetConfig();
+            var config = owner.GetGame().Config;
             string scriptloc;
 
             if (getSlot() > 3)

@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 RespawnTimer.Stop();
 
             State = state;
-            _game.GetPacketNotifier().NotifyInhibitorState(this, killer);
+            _game.PacketNotifier.NotifyInhibitorState(this, killer);
         }
 
         public InhibitorState getState()
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (!respawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
-                _game.GetPacketNotifier().NotifyInhibitorSpawningSoon(this);
+                _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
                 respawnAnnounced = true;
             }
 

@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     targetUnit = nextTarget;
-                    _game.GetPacketNotifier().notifySetTarget(this, nextTarget);
+                    _game.PacketNotifier.notifySetTarget(this, nextTarget);
                 }
             }
 
@@ -94,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (targetUnit != null && distanceWith(targetUnit) > TURRET_RANGE)
             {
                 setTargetUnit(null);
-                _game.GetPacketNotifier().notifySetTarget(this, null);
+                _game.PacketNotifier.notifySetTarget(this, null);
             }
 
             base.update(diff);

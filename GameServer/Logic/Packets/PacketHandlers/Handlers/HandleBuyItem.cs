@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     game.GetPeerInfo(peer).GetChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
                     var champion = game.GetPeerInfo(peer).GetChampion();
                     var inventory = champion.Inventory;
-                    game.GetPacketNotifier().notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             game.GetPeerInfo(peer).GetChampion().getStats().setGold(game.GetPeerInfo(peer).GetChampion().getStats().getGold() - price);
             game.GetPeerInfo(peer).GetChampion().getStats().applyStatMods(itemTemplate.StatMods);
-            game.GetPacketNotifier().notifyItemBought(game.GetPeerInfo(peer).GetChampion(), i);
+            game.PacketNotifier.notifyItemBought(game.GetPeerInfo(peer).GetChampion(), i);
 
             return true;
         }

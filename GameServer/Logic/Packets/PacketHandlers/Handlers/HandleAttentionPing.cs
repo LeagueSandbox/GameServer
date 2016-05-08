@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var ping = new AttentionPing(data);
             var response = new AttentionPingAns(game.GetPeerInfo(peer), ping);
-            return game.GetPacketHandlerManager().broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+            return game.PacketHandlerManager.broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
         }
     }
     public enum Pings : byte

@@ -26,14 +26,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                game.GetPacketNotifier().notifyRemoveItem(client.GetChampion(), sell.slotId, i.StackSize);
+                game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, i.StackSize);
 
                 if (i.StackSize == 0)
                     client.GetChampion().getInventory().RemoveItem(sell.slotId);
             }
             else
             {
-                game.GetPacketNotifier().notifyRemoveItem(client.GetChampion(), sell.slotId, 0);
+                game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, 0);
                 client.GetChampion().getInventory().RemoveItem(sell.slotId);
             }
 

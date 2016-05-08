@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void Execute()
         {
-            _game.GetPacketNotifier().notifyAnnounceEvent(_messageId, _isMapSpecific);
+            _game.PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
             _announced = true;
         }
     }

@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var response = new PingLoadInfo(loadInfo, peerInfo.UserId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-            return game.GetPacketHandlerManager().broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+            return game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }
     }
 }
