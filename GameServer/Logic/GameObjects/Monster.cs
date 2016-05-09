@@ -28,7 +28,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
             facing = new Vector2(facingX, facingY);
-            stats.setAttackSpeedMultiplier(1.0f);
             this.name = name;
 
             Inibin inibin;
@@ -38,26 +37,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            stats.setCurrentHealth(inibin.getFloatValue("Data", "BaseHP"));
-            stats.setMaxHealth(inibin.getFloatValue("Data", "BaseHP"));
-            // stats.setCurrentMana(inibin.getFloatValue("Data", "BaseMP"));
-            // stats.setMaxMana(inibin.getFloatValue("Data", "BaseMP"));
-            stats.setBaseAd(inibin.getFloatValue("DATA", "BaseDamage"));
-            stats.setRange(inibin.getFloatValue("DATA", "AttackRange"));
-            stats.setBaseMovementSpeed(inibin.getFloatValue("DATA", "MoveSpeed"));
-            stats.setArmor(inibin.getFloatValue("DATA", "Armor"));
-            stats.setMagicArmor(inibin.getFloatValue("DATA", "SpellBlock"));
-            stats.setHp5(inibin.getFloatValue("DATA", "BaseStaticHPRegen"));
-            stats.setMp5(inibin.getFloatValue("DATA", "BaseStaticMPRegen"));
+            stats.HealthPoints.BaseValue = inibin.getFloatValue("Data", "BaseHP");
+            stats.CurrentHealth = stats.HealthPoints.Total;
+            stats.ManaPoints.BaseValue = inibin.getFloatValue("Data", "BaseMP");
+            stats.CurrentMana = stats.ManaPoints.Total;
+            stats.AttackDamage.BaseValue = inibin.getFloatValue("DATA", "BaseDamage");
+            stats.Range.BaseValue = inibin.getFloatValue("DATA", "AttackRange");
+            stats.MoveSpeed.BaseValue = inibin.getFloatValue("DATA", "MoveSpeed");
+            stats.Armor.BaseValue = inibin.getFloatValue("DATA", "Armor");
+            stats.MagicResist.BaseValue = inibin.getFloatValue("DATA", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent"));
 
-            stats.setHealthPerLevel(inibin.getFloatValue("DATA", "HPPerLevel"));
-            stats.setManaPerLevel(inibin.getFloatValue("DATA", "MPPerLevel"));
-            stats.setAdPerLevel(inibin.getFloatValue("DATA", "DamagePerLevel"));
-            stats.setArmorPerLevel(inibin.getFloatValue("DATA", "ArmorPerLevel"));
-            stats.setMagicArmorPerLevel(inibin.getFloatValue("DATA", "SpellBlockPerLevel"));
-            stats.setHp5RegenPerLevel(inibin.getFloatValue("DATA", "HPRegenPerLevel"));
-            stats.setMp5RegenPerLevel(inibin.getFloatValue("DATA", "MPRegenPerLevel"));
-            stats.setBaseAttackSpeed(0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent")));
+            stats.HealthPerLevel = inibin.getFloatValue("DATA", "HPPerLevel");
+            stats.ManaPerLevel = inibin.getFloatValue("DATA", "MPPerLevel");
+            stats.AdPerLevel = inibin.getFloatValue("DATA", "DamagePerLevel");
+            stats.ArmorPerLevel = inibin.getFloatValue("DATA", "ArmorPerLevel");
+            stats.MagicResistPerLevel = inibin.getFloatValue("DATA", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = inibin.getFloatValue("DATA", "HPRegenPerLevel");
+                stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
+                stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
