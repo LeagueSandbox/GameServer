@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.Items;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
 
 namespace GameServerTests
 {
@@ -13,7 +11,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestAddAndGetItem()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -52,7 +50,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestItemStacking()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -93,7 +91,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestSetExtraItem()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -119,7 +117,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestGetItemSlot()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -151,7 +149,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -177,7 +175,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestSwapItems()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -228,7 +226,7 @@ namespace GameServerTests
         [DeploymentItem("Content", "Content")]
         public void TestGetAvailableItems()
         {
-            var game = new DummyGame();
+            var game = new TestHelpers.DummyGame();
             game.LoadItems();
 
             var manager = InventoryManager.CreateInventory(game, null);
@@ -270,16 +268,6 @@ namespace GameServerTests
             // Make sure we have no available items, even though there are some in the inventory
             available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(0, available.Count);
-        }
-    }
-
-    public class DummyGame : Game
-    {
-        public DummyGame() : base() { }
-
-        public void LoadItems()
-        {
-            ItemManager = ItemManager.LoadItems(this);
         }
     }
 }
