@@ -40,15 +40,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             return memStream.ToArray();
         }
-
-        internal void Change(byte[] bytes)
-        {
-            memStream = new MemoryStream();
-            buffer = new BinaryWriter(memStream);
-
-            foreach (var b in bytes)
-                buffer.Write(b);
-        }
     }
 
     public class BasePacket : Packet
@@ -671,59 +662,79 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class MovementAns : GamePacket
     {
-        //see PKT_S2C_CharStats mask
-        //TODO movement
-        public MovementAns(GameObject actor, Map map) : base(PacketCmdS2C.PKT_S2C_MoveAns)
+        public MovementAns(GameObject obj, Map map) : this(new List<GameObject> { obj }, map)
         {
-            var waypoints = actor.getWaypoints();
-            buffer.Write((short)1);              //count
-            buffer.Write((byte)(2 * waypoints.Count));
-            buffer.Write((int)actor.getNetId());
 
-            int startPos = (int)buffer.BaseStream.Position;
-            int coordCount = 2 * waypoints.Count();
-            var maskSize = (coordCount + 5) / 8; //mask size
-            //buffer.reserve(pos + maskSize + coordCount * sizeof(short)); //reserve max total size
-            for (uint i = 0; i < maskSize; i++)
-            {
-                buffer.Write((byte)0);
-            }
-            var lastCoord = new Vector2();
-            for (int i = 0; i < waypoints.Count; i++)
+        }
+
+        public MovementAns(List<GameObject> actors, Map map) : base(PacketCmdS2C.PKT_S2C_MoveAns)
+        {
+            buffer.Write((short)actors.Count);
+
+            foreach (var actor in actors)
             {
                 var mapSize = map.GetSize();
-                var curVector = new Vector2((waypoints[i].X - mapSize.X) / 2, (waypoints[i].Y - mapSize.Y) / 2);
-                var relative = new Vector2(curVector.X - lastCoord.X, curVector.Y - lastCoord.Y);
-                var isAbsolute = new Tuple<bool, bool>(
-                      i == 0 || relative.X < sbyte.MinValue || relative.X > sbyte.MaxValue,
-                      i == 0 || relative.Y < sbyte.MinValue || relative.Y > sbyte.MaxValue);
+                var waypoints = actor.getWaypoints();
+                var numCoords = waypoints.Count * 2;
+                buffer.Write((byte)numCoords);
+                buffer.Write((int)actor.getNetId());
 
-                Change(SetBitmaskValue(GetBytes(), startPos, (2 * i - 2), !isAbsolute.Item1));
-                if (isAbsolute.Item1)
-                    buffer.Write((short)curVector.X);
-                else
-                    buffer.Write((byte)relative.X);
+                var maskBytes = new byte[((numCoords - 3) / 8) + 1];
+                var memStream = new MemoryStream();
+                var tempBuffer = new BinaryWriter(memStream);
 
-                Change(SetBitmaskValue(GetBytes(), startPos, (2 * i - 1), !isAbsolute.Item2));
-                if (isAbsolute.Item2)
-                    buffer.Write((short)curVector.Y);
-                else
-                    buffer.Write((byte)relative.Y);
+                var lastCoord = new Vector2();
+                var coordinate = 0;
+                foreach (var waypoint in waypoints)
+                {
+                    var curVector = new Vector2((waypoint.X - mapSize.X) / 2, (waypoint.Y - mapSize.Y) / 2);
+                    if (coordinate == 0)
+                    {
+                        tempBuffer.Write((short)curVector.X);
+                        tempBuffer.Write((short)curVector.Y);
+                    }
+                    else
+                    {
+                        var relative = new Vector2(curVector.X - lastCoord.X, curVector.Y - lastCoord.Y);
+                        var isAbsolute = IsAbsolute(relative);
 
-                lastCoord = curVector;
+                        if (isAbsolute.Item1)
+                            tempBuffer.Write((short)curVector.X);
+                        else
+                            tempBuffer.Write((byte)relative.X);
+
+                        if (isAbsolute.Item2)
+                            tempBuffer.Write((short)curVector.Y);
+                        else
+                            tempBuffer.Write((byte)relative.Y);
+
+                        SetBitmaskValue(ref maskBytes, coordinate - 2, !isAbsolute.Item1);
+                        SetBitmaskValue(ref maskBytes, coordinate - 1, !isAbsolute.Item2);
+                    }
+                    lastCoord = curVector;
+                    coordinate += 2;
+                }
+                if (numCoords > 2)
+                    buffer.Write(maskBytes);
+                buffer.Write(memStream.ToArray());
             }
         }
-        static byte[] SetBitmaskValue(byte[] mask, int startPos, int pos, bool val)
+
+        private Pair<bool, bool> IsAbsolute(Vector2 vec)
         {
-            if (pos < 0)
-                return mask;
+            var ret = new Pair<bool, bool>();
+            ret.Item1 = vec.X < sbyte.MinValue || vec.X > sbyte.MaxValue;
+            ret.Item2 = vec.Y < sbyte.MinValue || vec.Y > sbyte.MaxValue;
 
+            return ret;
+        }
+
+        static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
+        {
             if (val)
-                mask[startPos + (pos / 8)] |= (byte)(1 << (pos % 8));
+                mask[pos / 8] |= (byte)(1 << (pos % 8));
             else
-                mask[startPos + (pos / 8)] &= (byte)(~(1 << (pos % 8)));
-
-            return mask;
+                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
         }
     }
 

@@ -9,6 +9,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System.IO;
+using System.Collections;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
@@ -21,9 +22,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return true;
 
             var request = new MovementReq(data);
-            var vMoves = new List<Vector2>();//readWaypoints(request.moveData, request.coordCount, game.getMap());
-            vMoves.Add(new Vector2(peerInfo.GetChampion().getX(), peerInfo.GetChampion().getY()));
-            vMoves.Add(new Vector2(request.x, request.y)); // TODO
+            var vMoves = readWaypoints(request.moveData, request.coordCount, game.GetMap());
+
             switch (request.type)
             {
                 case MoveType.STOP:
@@ -51,9 +51,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     break;
             }
 
-            // Sometimes the client will send a wrong position as the first one, override it with server data
             vMoves[0] = new Vector2(peerInfo.GetChampion().getX(), peerInfo.GetChampion().getY());
-
             peerInfo.GetChampion().setWaypoints(vMoves);
 
             var u = game.GetMap().GetObjectById(request.targetNetId) as Unit;
@@ -70,31 +68,42 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
         private List<Vector2> readWaypoints(byte[] buffer, int coordCount, Map map)
         {
-            var reader = new BinaryReader(new MemoryStream(buffer));
+            if (coordCount % 2 > 0)
+                coordCount++;
+
             var mapSize = map.GetSize();
-            int vectorCount = coordCount / 2;
-            var vMoves = new List<Vector2>();
-            var lastCoord = new Vector2(0.0f, 0.0f);
+            var reader = new BinaryReader(new MemoryStream(buffer));
 
-            reader.BaseStream.Position = (coordCount + 5) / 8 + coordCount % 2;
+            BitArray mask = null;
+            if (coordCount > 2)
+                mask = new BitArray(reader.ReadBytes(((coordCount - 3) / 8) + 1));
+            var lastCoord = new Vector2(reader.ReadInt16(), reader.ReadInt16());
+            var vMoves = new List<Vector2> { TranslateCoordinates(lastCoord, mapSize) };
 
-            for (int i = 0; i < vectorCount; i++)
+            if (coordCount < 3)
+                return vMoves;
+
+            for (int i = 0; i < coordCount - 2; i += 2)
             {
-                if (GetBitmaskValue(buffer, 2 * i - 2))
-                    lastCoord.X += reader.ReadByte();
+                if (mask[i])
+                    lastCoord.X += reader.ReadSByte();
                 else
                     lastCoord.X = reader.ReadInt16();
-                if (GetBitmaskValue(buffer, 2 * i - 1))
-                    lastCoord.Y += reader.ReadByte();
+
+                if (mask[i + 1])
+                    lastCoord.Y += reader.ReadSByte();
                 else
                     lastCoord.Y = reader.ReadInt16();
-                vMoves.Add(new Vector2(2.0f * lastCoord.X + mapSize.X, 2.0f * lastCoord.Y + mapSize.Y));
+                vMoves.Add(TranslateCoordinates(lastCoord, mapSize));
             }
             return vMoves;
         }
-        private bool GetBitmaskValue(byte[] mask, int pos)
+
+        private Vector2 TranslateCoordinates(Vector2 vector, Vector2 mapSize)
         {
-            return pos >= 0 && ((1 << (pos % 8)) & mask[pos / 8]) != 0;
+            // For ???? reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
+            // mapSize contains the real center point coordinates, meaning width/2, height/2
+            return new Vector2(2 * vector.X + mapSize.X, 2 * vector.Y + mapSize.Y);
         }
     }
 }
