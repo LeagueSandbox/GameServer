@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Packets;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private long _eventTime;
         private Announces _messageId;
         private bool _isMapSpecific;
+        private Game _game;
 
-        public Announce(long eventTime, Announces id, bool isMapSpecific)
+        public Announce(Game game, long eventTime, Announces id, bool isMapSpecific)
         {
             _announced = false;
             _eventTime = eventTime;
             _messageId = id;
             _isMapSpecific = isMapSpecific;
+            _game = game;
         }
 
         public bool IsAnnounced()
@@ -34,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void Execute()
         {
-            PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
+            _game.PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
             _announced = true;
         }
     }

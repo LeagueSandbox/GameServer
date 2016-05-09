@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 answer.setRequestNo(request.requestNo);
             }
-            PacketHandlerManager.getInstace().sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
             return true;
         }
     }

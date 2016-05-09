@@ -18,8 +18,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return false;
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            game.getPeerInfo(peer).getChampion().getInventory().SwapItems(request.slotFrom, request.slotTo);
-            PacketNotifier.notifyItemsSwapped(game.getPeerInfo(peer).getChampion(), request.slotFrom, request.slotTo);
+            game.GetPeerInfo(peer).GetChampion().getInventory().SwapItems(request.slotFrom, request.slotTo);
+            game.PacketNotifier.notifyItemsSwapped(game.GetPeerInfo(peer).GetChampion(), request.slotFrom, request.slotTo);
 
             return true;
         }

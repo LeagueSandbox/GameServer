@@ -20,18 +20,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = game.getPeerInfo(peer).getChampion().getInventory().GetAvailableItems(itemTemplate.Recipe);
+            var recipeParts = game.GetPeerInfo(peer).GetChampion().getInventory().GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
 
             if (recipeParts.Count == 0)
             {
-                if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
+                if (game.GetPeerInfo(peer).GetChampion().getStats().getGold() < price)
                 {
                     return true;
                 }
 
-                i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
+                i = game.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
 
                 if (i == null)
                 { // Slots full
@@ -43,25 +43,25 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                     price -= instance.TotalPrice;
 
-                if (game.getPeerInfo(peer).getChampion().getStats().getGold() < price)
+                if (game.GetPeerInfo(peer).GetChampion().getStats().getGold() < price)
                     return false;
 
 
                 foreach (var instance in recipeParts)
                 {
-                    game.getPeerInfo(peer).getChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
-                    var champion = game.getPeerInfo(peer).getChampion();
+                    game.GetPeerInfo(peer).GetChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
+                    var champion = game.GetPeerInfo(peer).GetChampion();
                     var inventory = champion.Inventory;
-                    PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
-                i = game.getPeerInfo(peer).getChampion().getInventory().AddItem(itemTemplate);
+                i = game.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
             }
 
-            game.getPeerInfo(peer).getChampion().getStats().setGold(game.getPeerInfo(peer).getChampion().getStats().getGold() - price);
-            game.getPeerInfo(peer).getChampion().getStats().applyStatMods(itemTemplate.StatMods);
-            PacketNotifier.notifyItemBought(game.getPeerInfo(peer).getChampion(), i);
+            game.GetPeerInfo(peer).GetChampion().getStats().setGold(game.GetPeerInfo(peer).GetChampion().getStats().getGold() - price);
+            game.GetPeerInfo(peer).GetChampion().getStats().applyStatMods(itemTemplate.StatMods);
+            game.PacketNotifier.notifyItemBought(game.GetPeerInfo(peer).GetChampion(), i);
 
             return true;
         }

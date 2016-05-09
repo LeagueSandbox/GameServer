@@ -18,12 +18,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Vector2 facing;
         private string name;
 
-        public Monster(Map map, uint id, float x, float y, float facingX, float facingY, string model, string name) : base(map, id, model, new Stats(), 40, x, y)
+        public Monster(Game game, uint id, float x, float y, float facingX, float facingY, string model, string name) : base(game, id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
-            foreach(var team in teams)
+            foreach (var team in teams)
                 setVisibleByTeam(team, true);
 
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);

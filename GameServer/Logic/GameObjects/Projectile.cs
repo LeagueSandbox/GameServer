@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -18,8 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int projectileId;
         protected int flags;
 
-
-        public Projectile(Map map, uint id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(map, id, x, y, collisionRadius)
+        public Projectile(Game game, uint id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(game, id, x, y, collisionRadius)
         {
             this.originSpell = originSpell;
             this.moveSpeed = moveSpeed;
@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (target.isSimpleTarget())
             { // Skillshot
-                var objects = map.GetObjects();
+                var objects = _game.GetMap().GetObjects();
                 foreach (var it in objects)
                 {
                     if (isToRemove())
@@ -126,7 +126,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             owner.decrementAttackerCount();
             base.setToRemove();
-            PacketNotifier.notifyProjectileDestroy(this);
+            _game.PacketNotifier.notifyProjectileDestroy(this);
         }
 
         public int getProjectileId()

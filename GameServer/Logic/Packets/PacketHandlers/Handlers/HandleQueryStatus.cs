@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var response = new QueryStatus();
-            return PacketHandlerManager.getInstace().sendPacket(peer, response, Channel.CHL_S2C);
+            return game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_S2C);
         }
     }
 }

@@ -122,20 +122,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var player in players)
             {
                 var p = player.Item2;
-                buffer.Write((long)p.userId);
+                var summonerSpells = p.getSummoners();
+                buffer.Write((long)p.UserId);
                 buffer.Write((short)0x1E); // unk
-                buffer.Write((int)p.summonerSkills[0]);
-                buffer.Write((int)p.summonerSkills[1]);
+                buffer.Write((int)summonerSpells[0]);
+                buffer.Write((int)summonerSpells[1]);
                 buffer.Write((byte)0); // bot boolean
-                buffer.Write((int)p.getTeam());
+                buffer.Write((int)p.GetTeam());
                 buffer.fill(0, 64); // name is no longer here
                 buffer.fill(0, 64);
                 //buffer.Write(p.getRank());
-                foreach (var b in Encoding.Default.GetBytes(p.getRank()))
+                foreach (var b in Encoding.Default.GetBytes(p.GetRank()))
                     buffer.Write((byte)b);
-                buffer.fill(0, 24 - p.getRank().Length);
-                buffer.Write((int)p.getIcon());
-                buffer.Write((short)p.getRibbon());
+                buffer.fill(0, 24 - p.GetRank().Length);
+                buffer.Write((int)p.GetIcon());
+                buffer.Write((short)p.GetRibbon());
             }
 
             for (var i = 0; i < 12 - players.Count; ++i)
@@ -220,9 +221,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var p in players)
             {
                 var player = p.Item2;
-                if (player.getTeam() == TeamId.TEAM_BLUE)
+                if (player.GetTeam() == TeamId.TEAM_BLUE)
                 {
-                    buffer.Write((ulong)player.userId);
+                    buffer.Write((ulong)player.UserId);
                     currentBlue++;
                 }
             }
@@ -236,9 +237,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var p in players)
             {
                 var player = p.Item2;
-                if (player.getTeam() == TeamId.TEAM_PURPLE)
+                if (player.GetTeam() == TeamId.TEAM_PURPLE)
                 {
-                    buffer.Write((ulong)player.userId);
+                    buffer.Write((ulong)player.UserId);
                     currentPurple++;
                 }
             }
@@ -325,13 +326,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(m.getNetId());
             buffer.Write((byte)64);
             buffer.Write((float)m.getX()); //x
-            buffer.Write((float)m.getZ()); //z
+            buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.getY()); //y
             buffer.Write((float)m.getX()); //x
-            buffer.Write((float)m.getZ()); //z
+            buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.getY()); //y
             buffer.Write((float)m.getFacing().X); //facing x
-            buffer.Write((float)m.getMap().getHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
+            buffer.Write((float)m.GetGame().GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
             var str = m.getName();
@@ -525,8 +526,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
-            MovementVector from = u.getMap().toMovementVector(u.getX(), u.getY());
-            MovementVector to = u.getMap().toMovementVector(toX, toY);
+            MovementVector from = u.GetGame().GetMap().ToMovementVector(u.getX(), u.getY());
+            MovementVector to = u.GetGame().GetMap().ToMovementVector(toX, toY);
 
             buffer.Write((short)from.x);
             buffer.Write((short)from.y);
@@ -690,7 +691,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var lastCoord = new Vector2();
             for (int i = 0; i < waypoints.Count; i++)
             {
-                var mapSize = map.getSize();
+                var mapSize = map.GetSize();
                 var curVector = new Vector2((waypoints[i].X - mapSize.X) / 2, (waypoints[i].Y - mapSize.Y) / 2);
                 var relative = new Vector2(curVector.X - lastCoord.X, curVector.Y - lastCoord.Y);
                 var isAbsolute = new Tuple<bool, bool>(
@@ -1033,11 +1034,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public HeroSpawn(ClientInfo player, int playerId) : base(PacketCmdS2C.PKT_S2C_HeroSpawn)
         {
             buffer.Write((int)0); // ???
-            buffer.Write((int)player.getChampion().getNetId());
+            buffer.Write((int)player.GetChampion().getNetId());
             buffer.Write((int)playerId); // player Id
             buffer.Write((byte)40); // netNodeID ?
             buffer.Write((byte)0); // botSkillLevel Beginner=0 Intermediate=1
-            if (player.getTeam() == TeamId.TEAM_BLUE)
+            if (player.GetTeam() == TeamId.TEAM_BLUE)
             {
                 buffer.Write((byte)1); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
             }
@@ -1048,13 +1049,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0); // isBot
                                    //buffer.Write((short)0; // botRank (deprecated as of 4.18)
             buffer.Write((byte)0); // spawnPosIndex
-            buffer.Write((int)player.getSkinNo());
-            foreach (var b in Encoding.Default.GetBytes(player.getName()))
+            buffer.Write((int)player.GetSkinNo());
+            foreach (var b in Encoding.Default.GetBytes(player.GetName()))
                 buffer.Write((byte)b);
-            buffer.fill(0, 128 - player.getName().Length);
-            foreach (var b in Encoding.Default.GetBytes(player.getChampion().getType()))
+            buffer.fill(0, 128 - player.GetName().Length);
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
                 buffer.Write((byte)b);
-            buffer.fill(0, 40 - player.getChampion().getType().Length);
+            buffer.fill(0, 40 - player.GetChampion().getType().Length);
             buffer.Write((float)0.0f); // deathDurationRemaining
             buffer.Write((float)0.0f); // timeSinceDeath
             buffer.Write((int)0); // UNK (4.18)
@@ -1356,10 +1357,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public LoadScreenPlayerName(Pair<uint, ClientInfo> player) : base(PacketCmdS2C.PKT_S2C_LoadName)
         {
-            buffer.Write((long)player.Item2.userId);
+            buffer.Write((long)player.Item2.UserId);
             buffer.Write((int)0);
-            buffer.Write((int)player.Item2.getName().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.getName()))
+            buffer.Write((int)player.Item2.GetName().Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Item2.GetName()))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }
@@ -1377,10 +1378,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p) : base(PacketCmdS2C.PKT_S2C_LoadHero)
         {
             var player = p.Item2;
-            buffer.Write((long)player.userId);
-            buffer.Write((int)player.skinNo);
-            buffer.Write((int)player.getChampion().getType().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.getChampion().getType()))
+            buffer.Write((long)player.UserId);
+            buffer.Write((int)player.GetSkinNo());
+            buffer.Write((int)player.GetChampion().getType().Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }
@@ -1424,7 +1425,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)ping.x);
             buffer.Write((float)ping.y);
             buffer.Write((int)ping.targetNetId);
-            buffer.Write((int)player.getChampion().getNetId());
+            buffer.Write((int)player.GetChampion().getNetId());
             buffer.Write((byte)ping.type);
             buffer.Write((byte)0xFB); // 4.18
                                       /*
@@ -1531,7 +1532,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write((byte)attackType);
             buffer.Write(attacked.getX());
-            buffer.Write(attacked.getZ());
+            buffer.Write(attacked.GetZ());
             buffer.Write(attacked.getY());
             buffer.Write(attacked.getNetId());
         }
@@ -1636,7 +1637,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(c.getX());
             buffer.Write(c.getY());
-            buffer.Write(c.getZ());
+            buffer.Write(c.GetZ());
         }
     }
 
@@ -1721,7 +1722,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId) : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().getNetId())
         {
-            Map m = s.getOwner().getMap();
+            var m = s.getOwner().GetGame().GetMap();
 
             buffer.Write((byte)0);
             buffer.Write((byte)0x66);
@@ -1735,10 +1736,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)s.getOwner().getChampionHash());
             buffer.Write((int)futureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)x);
-            buffer.Write((float)m.getHeightAtLocation(x, y));
+            buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
             buffer.Write((float)x);
-            buffer.Write((float)m.getHeightAtLocation(x, y));
+            buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
             buffer.Write((byte)0); // unk
             buffer.Write(s.getCastTime());
@@ -1750,7 +1751,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)s.getSlot());
             buffer.Write((float)s.getCost());
             buffer.Write((float)s.getOwner().getX());
-            buffer.Write((float)s.getOwner().getZ());
+            buffer.Write((float)s.getOwner().GetZ());
             buffer.Write((float)s.getOwner().getY());
             buffer.Write((long)1); // unk
         }
@@ -1758,7 +1759,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class PlayerInfo : BasePacket
     {
-        public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.getChampion().getNetId())
+        public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().getNetId())
         {
             #region wtf
             buffer.Write((byte)0x7D);
@@ -1882,8 +1883,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            buffer.Write((int)player.summonerSkills[0]);
-            buffer.Write((int)player.summonerSkills[1]);
+            var summonerSpells = player.getSummoners();
+            buffer.Write((int)summonerSpells[0]);
+            buffer.Write((int)summonerSpells[1]);
 
             buffer.Write((byte)0x41);
             buffer.Write((byte)0x74);
@@ -2290,8 +2292,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             #endregion
         }
-
-
     }
 
     public class SpawnProjectile : BasePacket
@@ -2299,13 +2299,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.getNetId())
         {
-            float targetZ = p.getMap().getHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
+            float targetZ = p.GetGame().GetMap().GetHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
 
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((long)0x000000003f510fe2); // unk
             buffer.Write((float)0.577f); // unk
@@ -2313,13 +2313,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)targetZ);
             buffer.Write((float)p.getTarget().getY());
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((float)p.getTarget().getX());
             buffer.Write((float)targetZ);
             buffer.Write((float)p.getTarget().getY());
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((int)0); // unk
             buffer.Write((float)p.getMoveSpeed()); // Projectile speed
@@ -2357,7 +2357,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x2f); // unk
             buffer.Write((int)0x00000000); // unk
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.getZ());
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((long)0x0000000000000000); // unk
         }
@@ -2478,7 +2478,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0x00000040); // unk
             buffer.Write((byte)0); // unk
             buffer.Write((float)lp.getX());
-            buffer.Write((float)lp.getZ());
+            buffer.Write((float)lp.GetZ());
             buffer.Write((float)lp.getY());
             buffer.Write((float)0.0f); // Rotation Y
 

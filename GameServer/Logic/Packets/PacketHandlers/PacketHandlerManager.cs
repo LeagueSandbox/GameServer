@@ -12,19 +12,22 @@ using LeagueSandbox.GameServer.Logic;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
-    class PacketHandlerManager
+    public class PacketHandlerManager
     {
         private static PacketHandlerManager _instance;
         private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private Game _game;
         private List<TeamId> _teamsEnumerator;
 
-        public PacketHandlerManager()
+        public PacketHandlerManager(Game game)
         {
+            _game = game;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+
+            InitHandlers();
         }
 
-        internal void InitHandlers(Game g)
+        private void InitHandlers()
         {
             _handlerTable = new Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>>();
 
@@ -56,8 +59,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
             registerHandler(new HandleSurrender(), PacketCmdC2S.PKT_C2S_Surrender, Channel.CHL_C2S);
             //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
-
-            _game = g;
         }
 
         public void registerHandler(IPacketHandler handler, PacketCmdC2S pktcmd, Channel channel)
@@ -71,14 +72,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 dict.Add(channel, handler);
             else
                 dict[channel] = handler;
-        }
-
-        public static PacketHandlerManager getInstace()
-        {
-            if (_instance == null)
-                _instance = new PacketHandlerManager();
-
-            return _instance;
         }
 
         internal IPacketHandler GetHandler(PacketCmdC2S cmd, Channel channelID)
@@ -128,7 +121,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
-                temp = _game.getBlowfish().Encrypt(source);
+                temp = _game.GetBlowfish().Encrypt(source);
             else
                 temp = source;
 
@@ -141,13 +134,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
-                temp = _game.getBlowfish().Encrypt(data);
+                temp = _game.GetBlowfish().Encrypt(data);
             else
                 temp = data;
 
             var packet = new Packet();
             packet.Create(temp);
-            _game.getServer().Broadcast((byte)channelNo, ref packet);
+            _game.GetServer().Broadcast((byte)channelNo, ref packet);
 
             return true;
         }
@@ -160,9 +153,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var ci in _game.getPlayers())
-                if (ci.Item2.getPeer() != null && ci.Item2.getTeam() == team)
-                    sendPacket(ci.Item2.getPeer(), data, channelNo, flag);
+            foreach (var ci in _game.GetPlayers())
+                if (ci.Item2.GetPeer() != null && ci.Item2.GetTeam() == team)
+                    sendPacket(ci.Item2.GetPeer(), data, channelNo, flag);
             return true;
         }
 
@@ -229,8 +222,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
             if (data.Length >= 8)
-                if (_game.getPeerInfo(peer) != null)
-                    data = _game.getBlowfish().Decrypt(data);
+                if (_game.GetPeerInfo(peer) != null)
+                    data = _game.GetBlowfish().Decrypt(data);
 
             return handlePacket(peer, data, channelID);
         }

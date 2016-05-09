@@ -25,18 +25,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return true;
             }*/
 
-            var futureProjNetId = Game.GetNewNetID();
-            var spellNetId = Game.GetNewNetID();
-            var targetObj = game.getMap().GetObjectById(spell.targetNetId);
+            var futureProjNetId = game.GetNewNetID();
+            var spellNetId = game.GetNewNetID();
+            var targetObj = game.GetMap().GetObjectById(spell.targetNetId);
             var targetUnit = targetObj as Unit;
 
-            var s = game.getPeerInfo(peer).getChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);
+            var s = game.GetPeerInfo(peer).GetChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);
 
             if (s == null)
                 return false;
 
             var response = new CastSpellAns(s, spell.x, spell.y, futureProjNetId, spellNetId);
-            PacketHandlerManager.getInstace().broadcastPacket(response, Channel.CHL_S2C);
+            game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }
     }

@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             Surrender surrender = new Surrender();
-            PacketHandlerManager.getInstace().broadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2C);
+            game.PacketHandlerManager.broadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2C);
             return true;
         }
     }

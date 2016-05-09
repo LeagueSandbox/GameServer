@@ -66,9 +66,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (obj.getMap() != chart)
+            var map = obj.GetGame().GetMap();
+            if (map != null && map != chart)
             {
-                Logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + obj.getMap() + " (not " + chart + "). Not adding it.");
+                Logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + obj.GetGame().GetMap() + " (not " + chart + "). Not adding it.");
                 return;
             }
 
@@ -257,9 +258,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (o != null)
                 //if (o->isMovementUpdated())  // Only check if they moved around.
                 {
-                    while (o.getMap().GetId() != chart.GetId())
+                    while (o.GetGame().GetMap().GetId() != chart.GetId())
                     {
-                        Logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.getMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
+                        Logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.GetGame().GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
                         removeObject(o);
                         if (j < curDiv.objects.Count)
                             o = curDiv.objects[j];

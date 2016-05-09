@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private bool respawnAnnounced = true;
 
         // TODO assists
-        public Inhibitor(Map map, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(map, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
+        public Inhibitor(Game game, uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, model, new MinionStats(), collisionRadius, x, y, visionRadius)
         {
             stats.setCurrentHealth(4000);
             stats.setMaxHealth(4000);
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 RespawnTimer.Stop();
 
             State = state;
-            PacketNotifier.NotifyInhibitorState(this, killer);
+            _game.PacketNotifier.NotifyInhibitorState(this, killer);
         }
 
         public InhibitorState getState()
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (!respawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
-                PacketNotifier.NotifyInhibitorSpawningSoon(this);
+                _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
                 respawnAnnounced = true;
             }
 
