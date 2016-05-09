@@ -52,30 +52,96 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 if (kv.Value is Turret)
                 {
-                    var t = kv.Value as Turret;
-                    var turretSpawn = new TurretSpawn(t);
-                    PacketHandlerManager.getInstace().sendPacket(peer, turretSpawn, Channel.CHL_S2C);
+                    var Turret = kv.Value as Turret;
+                    var TurretSpawnPacket = new TurretSpawn(Turret);
+                    PacketHandlerManager.getInstace().sendPacket(peer, TurretSpawnPacket, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision
-                    var sh = new SetHealth(t);
-                    PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                    var SetHealthPacket = new SetHealth(Turret);
+                    PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
+
+                    /*var Unit = kv.Value as Unit;
+                    if (Unit != null)
+                    {
+                        PacketNotifier.notifyUpdatedStats(Unit, false);
+                    }*/
+
                     continue;
                 }
                 else if (kv.Value is LevelProp)
                 {
-                    var lp = kv.Value as LevelProp;
+                    var LevelProp = kv.Value as LevelProp;
 
-                    var lpsPacket = new LevelPropSpawn(lp);
-                    PacketHandlerManager.getInstace().sendPacket(peer, lpsPacket, Channel.CHL_S2C);
+                    var LevelPropSpawnPacket = new LevelPropSpawn(LevelProp);
+                    PacketHandlerManager.getInstace().sendPacket(peer, LevelPropSpawnPacket, Channel.CHL_S2C);
+                    continue;
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
-                    var inhib = kv.Value as Unit;
+                    var InhibitorOrNexus = kv.Value as Unit;
 
-                    var ms = new MinionSpawn2(inhib.getNetId());
-                    PacketHandlerManager.getInstace().sendPacket(peer, ms, Channel.CHL_S2C);
-                    var sh = new SetHealth(inhib.getNetId());
-                    PacketHandlerManager.getInstace().sendPacket(peer, sh, Channel.CHL_S2C);
+                    var InhibitorOrNexusSpawnPacket = new MinionSpawn2(InhibitorOrNexus.getNetId());
+                    PacketHandlerManager.getInstace().sendPacket(peer, InhibitorOrNexusSpawnPacket, Channel.CHL_S2C);
+                    var SetHealthPacket = new SetHealth(InhibitorOrNexus.getNetId());
+                    PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
+
+                    /*var Unit = kv.Value as Unit;
+                    if (Unit != null)
+                    {
+                        PacketNotifier.notifyUpdatedStats(Unit, false);
+                    }*/
+
+                    continue;
+                }
+                else if (kv.Value is Minion)
+                {
+                    var Minion = kv.Value as Minion;
+                    if (Minion.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var MinionSpawnPacket = new MinionSpawn(Minion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, MinionSpawnPacket, Channel.CHL_S2C);
+                        var SetHealthPacket = new SetHealth(Minion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
+
+                        /*var Unit = kv.Value as Unit;
+                        if (Unit != null)
+                        {
+                            PacketNotifier.notifyUpdatedStats(Unit, false);
+                        }*/
+                    }
+                    continue;
+                }
+                else if (kv.Value is Champion)
+                {
+                    var Champion = kv.Value as Champion;
+                    if (Champion.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var ChampionRespawnPacket = new ChampionRespawn(Champion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, ChampionRespawnPacket, Channel.CHL_S2C);
+                        var SetHealthPacket = new SetHealth(Champion);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SetHealthPacket, Channel.CHL_S2C);
+
+                        /*var Unit = kv.Value as Unit;
+                        if (Unit != null)
+                        {
+                            PacketNotifier.notifyUpdatedStats(Unit, false);
+                        }*/
+                    }
+                    continue;
+                }
+                else if (kv.Value is Projectile)
+                {
+                    var Projectile = kv.Value as Projectile;
+                    if (Projectile.isVisibleByTeam(game.getPeerInfo(peer).getTeam()))
+                    {
+                        var SpawnProjectilePacket = new SpawnProjectile(Projectile);
+                        PacketHandlerManager.getInstace().sendPacket(peer, SpawnProjectilePacket, Channel.CHL_S2C);
+                    }
+                    continue;
+                }
+                else
+                {
+                    Logger.LogCoreWarning("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
 
@@ -87,7 +153,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var ms1 = new MinionSpawn2(0xff10c6db);
                 PacketHandlerManager.getInstace().sendPacket(peer, ms1, Channel.CHL_S2C);
                 var sh1 = new SetHealth(0xff10c6db);
-                PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C); 
+                PacketHandlerManager.getInstace().sendPacket(peer, sh1, Channel.CHL_S2C);
             }
             else if (peerInfo != null && peerInfo.getTeam() == TeamId.TEAM_PURPLE)
             {

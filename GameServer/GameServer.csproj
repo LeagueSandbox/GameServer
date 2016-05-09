@@ -105,6 +105,7 @@
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Lua\LuaScript.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleExit.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSurrender.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandler.cs" />

@@ -12,7 +12,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     {
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
-            game.IncrementReadyPlayers();
+            var peerInfo = game.getPeerInfo(peer);
+
+            if (!peerInfo.Disconnected)
+            {
+                game.IncrementReadyPlayers();
+            }
+
             if (game.getReadyPlayers() == game.getPlayers().Count)
             {
                 var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);
@@ -32,9 +38,38 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (game.isStarted())
             {
+                var map = game.getMap();
+                if (peerInfo.Disconnected)
+                {
+                    foreach (var Player in game.getPlayers())
+                    {
+                        if (Player.Item2.getTeam() == peerInfo.getTeam())
+                        {
+                            var HeroSpawn2Packet = new HeroSpawn2(Player.Item2.getChampion());
+                            PacketHandlerManager.getInstace().sendPacket(peer, HeroSpawn2Packet, Channel.CHL_S2C);
+
+                            /* This is probably not the best way
+                             * of updating a champion's level, but it works */
+                            var LevelUpPacket = new LevelUp(Player.Item2.getChampion());
+                            PacketHandlerManager.getInstace().broadcastPacket(LevelUpPacket, Channel.CHL_S2C);
+                        }
+                    }
+                    peerInfo.Disconnected = false;
+                    PacketNotifier.notifyDebugMessage("Player " + peerInfo.userId + " reconnected.");
+
+                    // Send the initial game time sync packets, then let the map send another
+                    float gameTime = map.getGameTime() / 1000.0f;
+
+                    var timer = new GameTimer(gameTime); // 0xC1
+                    PacketHandlerManager.getInstace().sendPacket(peerInfo.getPeer(), timer, Channel.CHL_S2C);
+
+                    var timer2 = new GameTimerUpdate(gameTime); // 0xC2
+                    PacketHandlerManager.getInstace().sendPacket(peerInfo.getPeer(), timer2, Channel.CHL_S2C);
+                    return true;
+                }
+
                 foreach (var p in game.getPlayers())
                 {
-                    var map = game.getMap();
                     map.AddObject(p.Item2.getChampion());
 
                     // Send the initial game time sync packets, then let the map send another

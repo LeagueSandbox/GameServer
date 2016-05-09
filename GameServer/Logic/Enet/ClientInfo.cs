@@ -13,6 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
     {
         public bool keyChecked = false;
         public bool versionMatch = true;
+        public bool Disconnected = false;
         public long userId;
         public int ticks = 0;
         public int skinNo = 0;
