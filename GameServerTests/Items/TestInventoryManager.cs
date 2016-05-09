@@ -50,6 +50,105 @@ namespace GameServerTests
 
         [TestMethod]
         [DeploymentItem("Content", "Content")]
+        public void TestItemStacking()
+        {
+            var game = new DummyGame();
+            game.LoadItems();
+
+            var manager = InventoryManager.CreateInventory(game, null);
+
+            // Get two stacking item types
+            var itemType1 = game.ItemManager.GetItemType(2038);
+            var itemType2 = game.ItemManager.GetItemType(2040);
+
+            // Add items
+            var item1 = manager.AddItem(itemType1);
+            var item2 = manager.AddItem(itemType2);
+
+            // Check existance of items
+            Assert.AreEqual(item1, manager.GetItem(0));
+            Assert.AreEqual(item2, manager.GetItem(1));
+
+            // Check stack sizes
+            Assert.AreEqual(1, item1.StackSize);
+            Assert.AreEqual(1, item2.StackSize);
+
+            // Stack the second item, and make sure the second gets stacked
+            for(int i = 0; i < itemType2.MaxStack - 1; i++)
+            {
+                var item2Reference = manager.AddItem(itemType2);
+                Assert.AreEqual(item2, item2Reference);
+                Assert.AreEqual(1 + (i + 1), item2.StackSize);
+            }
+
+            // Make sure the first item's stack is unchanged
+            Assert.AreEqual(1, item1.StackSize);
+
+            // Make sure we can't add any more of the second item to the stack
+            var shouldBeNull = manager.AddItem(itemType2);
+            Assert.IsNull(shouldBeNull);
+        }
+
+        [TestMethod]
+        [DeploymentItem("Content", "Content")]
+        public void TestSetExtraItem()
+        {
+            var game = new DummyGame();
+            game.LoadItems();
+
+            var manager = InventoryManager.CreateInventory(game, null);
+
+            // Add an item and make sure it exists in the proper slot
+            var item = manager.SetExtraItem(7, game.ItemManager.GetItemType(2001));
+            var slot = manager.GetItemSlot(item);
+            Assert.AreEqual(7, slot);
+
+            // Try to add an extra item to an invalid slot, make sure it fails
+            try
+            {
+                var fail = manager.SetExtraItem(6, game.ItemManager.GetItemType(2001));
+                Assert.Fail("This should fail");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Invalid extra item slot—must be greater than base inventory size!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("Content", "Content")]
+        public void TestGetItemSlot()
+        {
+            var game = new DummyGame();
+            game.LoadItems();
+
+            var manager = InventoryManager.CreateInventory(game, null);
+
+            // Add an item, and make sure the slot is right
+            var item = manager.AddItem(game.ItemManager.GetItemType(2001));
+            var slot = manager.GetItemSlot(item);
+            Assert.AreEqual(0, slot);
+
+            // Remove the item, and make sure the item slot fetching fails
+            manager.RemoveItem(item);
+            try
+            {
+                var fail = manager.GetItemSlot(item);
+                Assert.Fail("This should fail");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Specified item doesn't exist in the inventory!", e.Message);
+            }
+
+            // Add an extra item to a specific slot, and make sure this still works
+            var extraItem = manager.SetExtraItem(7, game.ItemManager.GetItemType(4002));
+            var extraSlot = manager.GetItemSlot(extraItem);
+            Assert.AreEqual(7, extraSlot);
+        }
+
+        [TestMethod]
+        [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
             var game = new DummyGame();
@@ -63,6 +162,14 @@ namespace GameServerTests
 
             // Remove the item and make sure it doesn't exist anymore in the inventory
             manager.RemoveItem(manager.GetItemSlot(item));
+            Assert.IsNull(manager.GetItem(0));
+
+            // Add a new item and make sure it's added to the first (0) slot
+            item = manager.AddItem(game.ItemManager.GetItemType(2001));
+            Assert.AreEqual(0, manager.GetItemSlot(item));
+
+            // Remove the item another way and make sure it doesn't exist anymore in the inventory
+            manager.RemoveItem(item);
             Assert.IsNull(manager.GetItem(0));
         }
 
@@ -152,6 +259,17 @@ namespace GameServerTests
             available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component2, available[0]);
+
+            // Remove the other comopnent as well
+            manager.RemoveItem(manager.GetItemSlot(component2));
+
+            // Add an unrelated item and make sure it exists
+            var unrelated = manager.AddItem(game.ItemManager.GetItemType(4001));
+            Assert.IsNotNull(manager.GetItem(manager.GetItemSlot(unrelated)));
+
+            // Make sure we have no available items, even though there are some in the inventory
+            available = manager.GetAvailableItems(zephyr.Recipe);
+            Assert.AreEqual(0, available.Count);
         }
     }
 
