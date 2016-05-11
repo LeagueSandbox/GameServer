@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 
-namespace LeagueSandbox.GameServer.Logic
+namespace LeagueSandbox.GameServer.Logic.API
 {
     public static class ApiFunctionManager
     {
