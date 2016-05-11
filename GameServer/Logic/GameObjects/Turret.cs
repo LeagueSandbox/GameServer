@@ -15,14 +15,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         private string name;
 
-        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new TurretStats(), 50, x, y, 1200)
+        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new Stats(), 50, x, y, 1200)
         {
             this.name = name;
 
-            stats.setCurrentHealth(hp);
-            stats.setMaxHealth(hp);
-            stats.setBaseAd(ad);
-            stats.setRange(TURRET_RANGE);
+            stats.CurrentHealth = hp;
+            stats.HealthPoints.BaseValue = hp;
+            stats.AttackDamage.BaseValue = ad;
+            stats.Range.BaseValue = TURRET_RANGE;
+            stats.AttackSpeedFlat = 0.83f;
 
             autoAttackDelay = 4.95f / 30.0f;
             autoAttackProjectileSpeed = 1200.0f;
@@ -73,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             {
                                 var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
                                 if (enemyChampTarget != null &&                                                          // Enemy Champion is targeting an ally
-                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.getStats().getRange() &&     // Enemy within range of ally
+                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.GetStats().Range.Total &&     // Enemy within range of ally
                                     distanceWith(enemyChampTarget) <= TURRET_RANGE)
                                 {                                     // Enemy within range of this turret
                                     nextTarget = enemyChamp; // No priority required

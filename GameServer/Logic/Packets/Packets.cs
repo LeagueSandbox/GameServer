@@ -1293,13 +1293,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
-        public AddBuff(Unit u, Unit source, int stacks, string name) : base(PacketCmdS2C.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
-            buffer.Write((byte)0x01); //Slot
-            buffer.Write((byte)BuffType.Knockup); //Type
-            buffer.Write((byte)0x03); // stacks
-            buffer.Write((byte)0x01); // Visible
+            buffer.Write((byte)slot); //Slot
+            buffer.Write((byte)buffType); //Type
+            buffer.Write((byte)stacks); // stacks
+            buffer.Write((byte)0x00); // Visible
             buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
@@ -1310,7 +1310,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            buffer.Write((float)10.0f);
+            buffer.Write((float)time);
 
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x50);
@@ -1328,11 +1328,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class EditBuff : BasePacket
+    {
+        public EditBuff(Unit u, byte slot, byte stacks) : base(PacketCmdS2C.PKT_S2C_EditBuff, u.getNetId())
+        {
+            buffer.Write(slot);//slot
+            buffer.Write(stacks);//stacks
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x50);
+            buffer.Write((byte)0xC3);
+            buffer.Write((byte)0x46);
+            buffer.Write(0);
+            buffer.Write(u.getNetId());
+
+        }
+    }
+
     public class RemoveBuff : BasePacket
     {
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
-            buffer.Write((byte)0x05);
+            buffer.Write((byte)0x01);
             buffer.Write(RAFManager.getInstance().getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?
@@ -1549,23 +1565,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class SetTarget : BasePacket
-    {
-
-        public SetTarget(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget, attacker.getNetId())
-        {
-            if (attacked != null)
-            {
-                buffer.Write(attacked.getNetId());
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
-        }
-
-    }
-
     public class Surrender : BasePacket
     {
         public Surrender() : base(PacketCmdS2C.PKT_S2C_Surrender)
@@ -1596,6 +1595,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(win ? (byte)1 : (byte)0); //0 : lose 1 : Win
         }
+    }
+
+    public class SetTarget : BasePacket
+    {
+
+        public SetTarget(Unit attacker, Unit attacked) : base(PacketCmdS2C.PKT_S2C_SetTarget, attacker.getNetId())
+        {
+            if (attacked != null)
+            {
+                buffer.Write(attacked.getNetId());
+            }
+            else
+            {
+                buffer.Write((int)0);
+            }
+        }
+
     }
 
     public class SetTarget2 : BasePacket
@@ -1666,8 +1682,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SetHealth(Unit u) : base(PacketCmdS2C.PKT_S2C_SetHealth, u.getNetId())
         {
             buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write((float)u.getStats().getMaxHealth());
-            buffer.Write((float)u.getStats().getCurrentHealth());
+            buffer.Write((float)u.GetStats().HealthPoints.Total);
+            buffer.Write((float)u.GetStats().CurrentHealth);
         }
 
         public SetHealth(uint itemHash) : base(PacketCmdS2C.PKT_S2C_SetHealth, itemHash)
@@ -1740,7 +1756,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00); // unk
             buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
             buffer.Write((int)spellNetId); // Spell net ID
-            buffer.Write((byte)0); // unk
+            buffer.Write((byte)1); // unk
             buffer.Write((float)1.0f); // unk
             buffer.Write((int)s.getOwner().getNetId());
             buffer.Write((int)s.getOwner().getNetId());
@@ -2432,9 +2448,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
             if (partial)
-                stats = u.getStats().getUpdatedStats();
+                stats = u.GetStats().GetUpdatedStats();
             else
-                stats = u.getStats().getAllStats();
+                stats = u.GetStats().GetAllStats();
             var orderedStats = stats.OrderBy(x => x.Key);
 
             buffer.Write((byte)1); // updating 1 unit
@@ -2454,13 +2470,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 foreach (var stat in orderedGroup)
                 {
                     fieldMask |= (uint)stat.Key;
-                    size += u.getStats().getSize(group.Key, stat.Key);
+                    size += u.GetStats().getSize(group.Key, stat.Key);
                 }
                 buffer.Write((uint)fieldMask);
                 buffer.Write((byte)size);
                 foreach (var stat in orderedGroup)
                 {
-                    size = u.getStats().getSize(group.Key, stat.Key);
+                    size = u.GetStats().getSize(group.Key, stat.Key);
                     switch (size)
                     {
                         case 1:
@@ -2577,7 +2593,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public LevelUp(Champion c) : base(PacketCmdS2C.PKT_S2C_LevelUp, c.getNetId())
         {
-            buffer.Write(c.getStats().getLevel());
+            buffer.Write(c.GetStats().Level);
             buffer.Write(c.getSkillPoints());
         }
     }

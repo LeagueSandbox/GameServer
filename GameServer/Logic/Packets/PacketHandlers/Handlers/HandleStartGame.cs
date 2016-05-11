@@ -28,6 +28,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
                         game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
+                    game.PacketNotifier.notifyUpdatedStats(player.Item2.GetChampion(), false);
                 }
 
                 game.SetStarted(true);

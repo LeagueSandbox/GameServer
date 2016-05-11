@@ -175,7 +175,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         protected void keepFocussingTarget()
         {
-            if (isAttacking && (targetUnit == null || distanceWith(targetUnit) > stats.getRange()))
+            if (isAttacking && (targetUnit == null || distanceWith(targetUnit) > stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.notifyStopAutoAttack(this);

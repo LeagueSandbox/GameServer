@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (recipeParts.Count == 0)
             {
-                if (game.GetPeerInfo(peer).GetChampion().getStats().getGold() < price)
+                if (game.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
                 {
                     return true;
                 }
@@ -43,13 +43,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                     price -= instance.TotalPrice;
 
-                if (game.GetPeerInfo(peer).GetChampion().getStats().getGold() < price)
+                if (game.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
                     return false;
 
 
                 foreach (var instance in recipeParts)
                 {
-                    game.GetPeerInfo(peer).GetChampion().getStats().unapplyStatMods(instance.ItemType.StatMods);
+                    game.GetPeerInfo(peer).GetChampion().GetStats().RemoveBuff(instance.ItemType);
                     var champion = game.GetPeerInfo(peer).GetChampion();
                     var inventory = champion.Inventory;
                     game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
@@ -59,8 +59,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 i = game.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
             }
 
-            game.GetPeerInfo(peer).GetChampion().getStats().setGold(game.GetPeerInfo(peer).GetChampion().getStats().getGold() - price);
-            game.GetPeerInfo(peer).GetChampion().getStats().applyStatMods(itemTemplate.StatMods);
+            game.GetPeerInfo(peer).GetChampion().GetStats().Gold = game.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
+            game.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(itemTemplate);
             game.PacketNotifier.notifyItemBought(game.GetPeerInfo(peer).GetChampion(), i);
 
             return true;

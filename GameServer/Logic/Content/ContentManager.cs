@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             "Champions",
             "Items",
+            "Buffs",
             "Maps"
         };
 
@@ -132,6 +133,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var contentType = "Champions";
             var contentPackages = _content[contentType][championName];
             var fileName = string.Format("{0}/{1}.lua", championName, spellSlot);
+            return GetContentPath(contentPackages, contentType, fileName);
+        }
+
+        public string GetBuffScriptPath(string buffName)
+        {
+            var contentType = "Buffs";
+            var contentPackages = _content[contentType][buffName];
+            var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
