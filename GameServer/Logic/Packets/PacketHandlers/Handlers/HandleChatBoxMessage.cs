@@ -7,12 +7,14 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleChatBoxMessage : IPacketHandler
     {
-        static SortedDictionary<string, ChatCommand> ChatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
+        /*static SortedDictionary<string, ChatCommand> ChatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
         {
             {".ad", new AdCommand(".ad", ".ad bonusAd")},
             {".ap", new ApCommand(".ap", ".ap bonusAp")},
@@ -35,9 +37,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {".speed",  new SpeedCommand(".speed", ".speed speed")},
             {".tp",  new TpCommand(".tp", ".tp x y")},
             {".xp",  new XpCommand(".xp", ".xp xp")}
-        };
+        };*/
 
-        abstract class ChatCommand
+        /*abstract class ChatCommand
         {
             public string Command { get; set; }
             public string Syntax { get; set; }
@@ -50,7 +52,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     Logger.LogCoreInfo("The command \"" + command + "\"" + " already exists in the chat commands dictionary, won't be added again.");
                     return;
-                }*/
+                }
                 Command = command;
                 Syntax = syntax;
                 //ChatCommandsDictionary.Add(command, this);
@@ -62,10 +64,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 SendDebugMsgFormatted(DebugMsgType.SYNTAX, game, Syntax);
             }
-        }
+        }*/
 
         #region Command classes
-        class AdCommand : ChatCommand
+        /*class AdCommand : ChatCommand
         {
             public AdCommand(string command, string syntax) : base(command, syntax) { }
 
@@ -529,7 +531,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         #endregion
 
         #region SendDebugMsgFormatted:
-        public enum DebugMsgType { ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL };
+        /*public enum DebugMsgType { ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL };
 
         public static void SendDebugMsgFormatted(DebugMsgType type, Game game, string message = "")
         {
@@ -562,7 +564,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     game.PacketNotifier.notifyDebugMessage(message);
                     break;
             }
-        }
+        }*/
         #endregion
 
         public bool HandlePacket(Peer peer, byte[] data, Game game)
@@ -588,26 +590,16 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 split = message.msg.ToLower().Split(' ');
 
-                if (ChatCommandsDictionary.ContainsKey(split[0]))
+                ChatCommand command = game.ChatboxManager.GetCommand(split[0]);
+                if (command != null)
                 {
-                    if (ChatCommandsDictionary[split[0]].IsHidden) // This could also check if the user has access to hidden commands
-                    {
-                        SendDebugMsgFormatted(DebugMsgType.ERROR, game, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                        SendDebugMsgFormatted(DebugMsgType.INFO, game, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");
-                        return true;
-                    }
-                    else if (ChatCommandsDictionary[split[0]].IsDisabled)
-                    {
-                        SendDebugMsgFormatted(DebugMsgType.ERROR, game, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is disabled.");
-                        return true;
-                    }
-                    ChatCommandsDictionary[split[0]].Execute(peer, game, true, message.msg);
+                    command.Execute(peer, true, message.msg);
                     return true;
                 }
                 else
                 {
-                    SendDebugMsgFormatted(DebugMsgType.ERROR, game, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                    SendDebugMsgFormatted(DebugMsgType.INFO, game, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");
+                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");
                     return true;
                 }
             }

@@ -16,6 +16,7 @@ using System.Net;
 using BlowFishCS;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Chatbox;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -42,6 +43,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         // Object managers
         public ItemManager ItemManager { get; protected set; }
+        // Other managers
+        public ChatboxManager ChatboxManager { get; protected set; }
 
         public bool Initialize(Address address, string baseKey)
         {
@@ -49,6 +52,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Config = new Config("Settings/GameInfo.json");
 
             ItemManager = ItemManager.LoadItems(this);
+            ChatboxManager = new ChatboxManager(this);
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
