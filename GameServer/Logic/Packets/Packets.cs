@@ -824,14 +824,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class InhibitorAnnounce : BasePacket
+    public class UnitAnnounce : BasePacket
     {
-        public InhibitorAnnounce(Inhibitor inhi, InhibitorAnnounces type, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, inhi.getNetId())
+        public UnitAnnounce(UnitAnnounces id, Unit target, GameObject killer = null, List<Champion> assists = null) : base(PacketCmdS2C.PKT_S2C_Announce2, target.getNetId())
         {
             if (assists == null)
                 assists = new List<Champion>();
 
-            buffer.Write((byte)type);
+            buffer.Write((byte)id);
             if (killer != null)
             {
                 buffer.Write((long)killer.getNetId());
