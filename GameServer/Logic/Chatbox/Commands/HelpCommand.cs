@@ -17,19 +17,19 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             string commands = "";
             int count = 0;
-            foreach (ChatCommand command in _owner.GetCommands())
+            foreach (var command in _owner.GetCommandsStrings())
             {
                 count += 1;
                 commands = commands
                            + "<font color =\"#E175FF\"><b>"
-                           + command.Command
+                           + _owner.GetGame().ChatboxManager.CommandStarterCharacter + command
                            + "</b><font color =\"#FFB145\">, ";
             }
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, commands);
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count.ToString() + " commands");
 
-            _owner.AddCommand(new NewCommand(".newcommand", "", _owner));
+            _owner.AddCommand(new NewCommand("newcommand", "", _owner));
         }
     }
 }

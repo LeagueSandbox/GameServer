@@ -42,8 +42,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             buffer.Write((int)0);
 
             game.PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);*/
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "The new command added by .help has been executed");
-            //_owner.RemoveCommand(Command);
+            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "The new command added by " + _owner.CommandStarterCharacter + "help has been executed");
+            _owner.RemoveCommand(Command);
         }
     }
 }

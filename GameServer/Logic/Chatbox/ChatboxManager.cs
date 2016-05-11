@@ -11,6 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
     public class ChatboxManager
     {
         private Game _game;
+        public string CommandStarterCharacter= ".";
 
         private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
         {
@@ -75,9 +76,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         public ChatboxManager(Game game)
         {
             _game = game;
-            AddCommand(new AdCommand(".ad", ".ad bonusAd", this));
-            AddCommand(new ApCommand(".ap", ".ap bonusAp", this));
-            AddCommand(new HelpCommand(".help", "", this));
+            AddCommand(new AdCommand("ad", "ad bonusAd", this));
+            AddCommand(new ApCommand("ap", "ap bonusAp", this));
+            AddCommand(new HelpCommand("help", "", this));
         }
 
         public bool AddCommand(ChatCommand command)
@@ -93,14 +94,40 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public void RemoveCommand()
+        public bool RemoveCommand(ChatCommand command)
         {
-            return; // TODO: Remove command
+            if (_chatCommandsDictionary.ContainsValue(command))
+            {
+                _chatCommandsDictionary.Remove(command.Command);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool RemoveCommand(string commandString)
+        {
+            if (_chatCommandsDictionary.ContainsKey(commandString))
+            {
+                _chatCommandsDictionary.Remove(commandString);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public List<ChatCommand> GetCommands()
         {
             return _chatCommandsDictionary.Values.ToList();
+        }
+
+        public List<string> GetCommandsStrings()
+        {
+            return _chatCommandsDictionary.Keys.ToList();
         }
 
         public ChatCommand GetCommand(string commandString)

@@ -586,8 +586,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             #region Commands
             // Execute commands
-            if (message.msg.StartsWith("."))
+            var CommandStarterCharacter = game.ChatboxManager.CommandStarterCharacter;
+            if (message.msg.StartsWith(CommandStarterCharacter))
             {
+                message.msg = message.msg.Remove(0, 1);
                 split = message.msg.ToLower().Split(' ');
 
                 ChatCommand command = game.ChatboxManager.GetCommand(split[0]);
@@ -598,8 +600,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
                 else
                 {
-                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>.help</b><font color =\"#AFBF00\"> for a list of available commands");
+                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + game.ChatboxManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                    game.ChatboxManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>" + game.ChatboxManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> for a list of available commands");
                     return true;
                 }
             }
