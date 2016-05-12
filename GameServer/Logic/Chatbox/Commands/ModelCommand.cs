@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var split = arguments.ToLower().Split(' ');
+            var split = arguments.Split(' ');
             if (split.Length >= 2)
                 _owner.GetGame().GetPeerInfo(peer).GetChampion().setModel(split[1]);
             else
