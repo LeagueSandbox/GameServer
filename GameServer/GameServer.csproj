@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Logic\ApiFunctionManager.cs" />
+    <Compile Include="Logic\API\ApiFunctionManager.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatboxManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />

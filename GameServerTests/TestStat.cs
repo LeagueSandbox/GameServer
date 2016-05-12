@@ -42,5 +42,27 @@ namespace GameServerTests
             stat.PercentBonus = 0;
             Assert.AreEqual(0, stat.Total);
         }
+
+        [TestMethod]
+        public void TestModified()
+        {
+            //Create Stat with nothing modified (so everything = 0)
+            var stat = new Stat();
+
+            //Test if it's not modified
+            Assert.IsFalse(stat.Modified);
+
+            //Modify stat
+            stat.FlatBonus = 10;
+
+            //Test if it's modified
+            Assert.IsTrue(stat.Modified);
+
+            //Set back to 0
+            stat.FlatBonus = 0;
+
+            //Test if it still modified
+            Assert.IsTrue(stat.Modified);
+        }
     }
 }
