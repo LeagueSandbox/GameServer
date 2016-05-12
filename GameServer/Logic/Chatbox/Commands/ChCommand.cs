@@ -22,16 +22,13 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-            {
-                var c = new Champion(_owner.GetGame(), split[1], _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId(), (uint)_owner.GetGame().GetPeerInfo(peer).UserId);
-                c.setPosition(_owner.GetGame().GetPeerInfo(peer).GetChampion().getX(), _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
-                c.setModel(split[1]); // trigger the "modelUpdate" proc
-                c.setTeam(_owner.GetGame().GetPeerInfo(peer).GetChampion().getTeam());
-                _owner.GetGame().GetMap().RemoveObject(_owner.GetGame().GetPeerInfo(peer).GetChampion());
-                _owner.GetGame().GetMap().AddObject(c);
-                _owner.GetGame().GetPeerInfo(peer).SetChampion(c);
-            })).Start();
+            var c = new Champion(_owner.GetGame(), split[1], _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId(), (uint)_owner.GetGame().GetPeerInfo(peer).UserId);
+            c.setPosition(_owner.GetGame().GetPeerInfo(peer).GetChampion().getX(), _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
+            c.setModel(split[1]); // trigger the "modelUpdate" proc
+            c.setTeam(_owner.GetGame().GetPeerInfo(peer).GetChampion().getTeam());
+            _owner.GetGame().GetMap().RemoveObject(_owner.GetGame().GetPeerInfo(peer).GetChampion());
+            _owner.GetGame().GetMap().AddObject(c);
+            _owner.GetGame().GetPeerInfo(peer).SetChampion(c);
         }
     }
 }
