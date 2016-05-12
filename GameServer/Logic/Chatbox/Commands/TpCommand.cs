@@ -20,6 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
+                return;
             }
             if (float.TryParse(split[1], out x))
                 if (float.TryParse(split[2], out y))

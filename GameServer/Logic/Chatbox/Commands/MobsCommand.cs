@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             int team;
             if (!int.TryParse(split[1], out team))
                 return;
-            var units = _owner.GetGame().GetMap().GetObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion);
+            var units = _owner.GetGame().GetMap().GetObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion || xx.Value is Monster);
             foreach (var unit in units)
             {
                 var response = new AttentionPingAns(_owner.GetGame().GetPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
