@@ -285,7 +285,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     deathFlag = false;
                 }
             }
-            
+
             var isLevelup = LevelUp();
             if (isLevelup)
             {
@@ -360,8 +360,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             while (stats.Experience >= expMap[stats.Level])
             {
-                Logger.LogCoreInfo("Champion " + getType() + "Levelup to " + stats.Level);
                 GetStats().LevelUp();
+                Logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
                 skillPoints++;
             }
             return true;
