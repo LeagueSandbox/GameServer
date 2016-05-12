@@ -15,10 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
         {
-            /*{".ad", new AdCommand(".ad", ".ad bonusAd")},
-            {".ap", new ApCommand(".ap", ".ap bonusAp")},
-            {".ch",  new ChCommand(".ch", ".ch championName")},
-            {".coords",  new CoordsCommand(".coords", "")},
+            /*
             {".gold",  new GoldCommand(".gold", ".gold goldAmount")},
             {".health",  new HealthCommand(".health", ".health maxHealth")},
             {".help",  new HelpCommand(".help", "")},
@@ -78,9 +75,26 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             _game = game;
             AddCommand(new AdCommand("ad", "ad bonusAd", this));
             AddCommand(new ApCommand("ap", "ap bonusAp", this));
-            AddCommand(new ChCommand(".ch", ".ch championName", this));
-            AddCommand(new CoordsCommand(".coords", "", this));
+            AddCommand(new ChCommand("ch", "ch championName", this));
+            AddCommand(new CoordsCommand("coords", "", this));
             AddCommand(new HelpCommand("help", "", this));
+            AddCommand(new GoldCommand("gold", "gold goldAmount", this));
+            AddCommand(new HealthCommand("health", "health maxHealth", this));
+            AddCommand(new HelpCommand("help", "", this));
+            AddCommand(new InhibCommand("inhib", "", this));
+            AddCommand(new JunglespawnCommand("junglespawn", "", this));
+            AddCommand(new LevelCommand("level", "level level", this));
+            AddCommand(new ManaCommand("mana", "mana maxMana", this));
+            AddCommand(new MobsCommand("mobs", "mobs teamNumber", this));
+            AddCommand(new ModelCommand("model", "model modelName", this));
+            AddCommand(new PacketCommand("packet", "No idea, too lazy to read the code", this));
+            AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
+            AddCommand(new SizeCommand("size", "size size", this));
+            AddCommand(new SkillpointsCommand("skillpoints", "", this));
+            AddCommand(new SpawnCommand("spawn", "", this));
+            AddCommand(new SpeedCommand("speed", "speed speed", this));
+            AddCommand(new TpCommand("tp", "tp x y", this));
+            AddCommand(new XpCommand("xp", "xp xp", this));
         }
 
         public bool AddCommand(ChatCommand command)
