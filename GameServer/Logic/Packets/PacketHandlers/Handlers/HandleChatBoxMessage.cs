@@ -14,58 +14,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleChatBoxMessage : IPacketHandler
     {
-        /*static SortedDictionary<string, ChatCommand> ChatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
-        {
-            {".ad", new AdCommand(".ad", ".ad bonusAd")},
-            {".ap", new ApCommand(".ap", ".ap bonusAp")},
-            {".ch",  new ChCommand(".ch", ".ch championName")},
-            {".coords",  new CoordsCommand(".coords", "")},
-            {".gold",  new GoldCommand(".gold", ".gold goldAmount")},
-            {".health",  new HealthCommand(".health", ".health maxHealth")},
-            {".help",  new HelpCommand(".help", "")},
-            {".inhib",  new InhibCommand(".inhib", "")},
-            {".junglespawn",  new JunglespawnCommand(".junglespawn", "")},
-            {".level",  new LevelCommand(".level", ".level level")},
-            {".mana",  new ManaCommand(".mana", ".mana maxMana")},
-            {".mobs",  new MobsCommand(".mobs", ".mobs teamNumber")},
-            {".model",  new ModelCommand(".model", ".model modelName")},
-            {".packet",  new PacketCommand(".packet", "No idea, too lazy to read the code")},
-            {".set",  new SetCommand(".set", ".set masterMask fieldMask")},
-            {".size",  new SizeCommand(".size", ".size size")},
-            {".skillpoints",  new SkillpointsCommand(".skillpoints", "") },
-            {".spawn",  new SpawnCommand(".spawn", "")},
-            {".speed",  new SpeedCommand(".speed", ".speed speed")},
-            {".tp",  new TpCommand(".tp", ".tp x y")},
-            {".xp",  new XpCommand(".xp", ".xp xp")}
-        };*/
-
-        /*abstract class ChatCommand
-        {
-            public string Command { get; set; }
-            public string Syntax { get; set; }
-            public bool IsHidden { get; set; }
-            public bool IsDisabled { get; set; }
-
-            public ChatCommand(string command, string syntax)
-            {
-                /*if (ChatCommandsDictionary.ContainsKey(command))
-                {
-                    Logger.LogCoreInfo("The command \"" + command + "\"" + " already exists in the chat commands dictionary, won't be added again.");
-                    return;
-                }
-                Command = command;
-                Syntax = syntax;
-                //ChatCommandsDictionary.Add(command, this);
-            }
-
-            public abstract void Execute(Peer peer, Game game, bool hasReceivedArguments, string arguments = "");
-
-            public void ShowSyntax(Game game)
-            {
-                SendDebugMsgFormatted(DebugMsgType.SYNTAX, game, Syntax);
-            }
-        }*/
-
         #region Command classes
         /*class AdCommand : ChatCommand
         {
@@ -526,43 +474,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
                 if (float.TryParse(split[1], out xp))
                     game.GetPeerInfo(peer).GetChampion().GetStats().Experience = xp;
-            }
-        }
-        #endregion
-
-        #region SendDebugMsgFormatted:
-        /*public enum DebugMsgType { ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL };
-
-        public static void SendDebugMsgFormatted(DebugMsgType type, Game game, string message = "")
-        {
-            var formattedText = new StringBuilder();
-            int fontSize = 20; // Big fonts seem to make the chatbox buggy
-                               // This may need to be removed.
-            switch (type)
-            {
-                case DebugMsgType.ERROR: // Tag: [ERROR], Color: Red
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
-                    formattedText.Append(message);
-                    game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
-                    break;
-                case DebugMsgType.INFO: // Tag: [INFO], Color: Green
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
-                    formattedText.Append(message);
-                    game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
-                    break;
-                case DebugMsgType.SYNTAX: // Tag: [SYNTAX], Color: Blue
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
-                    formattedText.Append(message);
-                    game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
-                    break;
-                case DebugMsgType.SYNTAXERROR: // Tag: [ERROR], Color: Red
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
-                    formattedText.Append("Incorrect command syntax");
-                    game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
-                    break;
-                case DebugMsgType.NORMAL: // No tag, no format
-                    game.PacketNotifier.notifyDebugMessage(message);
-                    break;
             }
         }*/
         #endregion
