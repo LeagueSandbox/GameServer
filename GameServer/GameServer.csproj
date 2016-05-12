@@ -72,6 +72,12 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\ApiFunctionManager.cs" />
     <Compile Include="Logic\Blowfish.cs" />
+    <Compile Include="Logic\Chatbox\ChatboxManager.cs" />
+    <Compile Include="Logic\Chatbox\ChatCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\AdCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\ApCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\HelpCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\NewCommand.cs" />
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
