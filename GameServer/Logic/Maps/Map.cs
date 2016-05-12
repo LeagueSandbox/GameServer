@@ -429,6 +429,18 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return champs;
         }
 
+        public List<Champion> GetAllChampionsFromTeam(TeamId team)
+        {
+            var champs = new List<Champion>();
+            foreach (var kv in _champions)
+            {
+                Champion c = kv.Value;
+                if (c.getTeam() == team)
+                    champs.Add(c);
+            }
+            return champs;
+        }
+
         public List<Unit> GetUnitsInRange(GameObjects.Target t, float range, bool onlyAlive = false)
         {
             var units = new List<Unit>();
