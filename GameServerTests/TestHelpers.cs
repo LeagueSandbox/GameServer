@@ -18,6 +18,11 @@ namespace GameServerTests
             {
                 ItemManager = ItemManager.LoadItems(this);
             }
+
+            public void LoadChatboxManager()
+            {
+                ChatboxManager = new LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager(this);
+            }
         }
     }
 }

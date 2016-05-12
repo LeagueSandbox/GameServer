@@ -9,7 +9,7 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class HelpCommand : ChatCommand
+    public class HelpCommand : ChatCommand
     {
         public HelpCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
 
