@@ -85,18 +85,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)
         {
-            InhibitorAnnounce announce;
+            UnitAnnounce announce;
             switch (inhibitor.getState())
             {
                 case InhibitorState.Dead:
-                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Destroyed, killer, assists);
+                    announce = new UnitAnnounce(UnitAnnounces.InhibitorDestroyed, inhibitor, killer, assists);
                     _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
 
                     var anim = new InhibitorDeathAnimation(inhibitor, killer);
                     _game.PacketHandlerManager.broadcastPacket(anim, Channel.CHL_S2C);
                     break;
                 case InhibitorState.Alive:
-                    announce = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.Spawned);
+                    announce = new UnitAnnounce(UnitAnnounces.InhibitorSpawned, inhibitor, killer, assists);
                     _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
                     break;
             }
@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyInhibitorSpawningSoon(Inhibitor inhibitor)
         {
-            var packet = new InhibitorAnnounce(inhibitor, InhibitorAnnounces.AboutToSpawn);
+            var packet = new UnitAnnounce(UnitAnnounces.InhibitorAboutToSpawn, inhibitor);
             _game.PacketHandlerManager.broadcastPacket(packet, Channel.CHL_S2C);
         }
 
@@ -358,7 +358,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var gameTimer = new GameTimer(_game.GetMap().GetGameTime() / 1000.0f);
             _game.PacketHandlerManager.broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
-
+        public void notifyUnitAnnounceEvent(UnitAnnounces messageId, Unit target, GameObject killer = null, List<Champion> assists = null)
+        {
+            UnitAnnounce announce;
+            announce = new UnitAnnounce(messageId, target, killer, assists);
+            _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
+        }
         public void notifyAnnounceEvent(Announces messageId, bool isMapSpecific)
         {
             var announce = new Announce(messageId, isMapSpecific ? _game.GetMap().GetMapId() : 0);
