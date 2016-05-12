@@ -13,11 +13,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Turret : Unit
     {
         private const float TURRET_RANGE = 905.0f;
+        private const float GOLD_WORTH = 250.0f;
         private string name;
+        private Game game;
 
         public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new Stats(), 50, x, y, 1200)
         {
             this.name = name;
+            this.game = game;
 
             stats.CurrentHealth = hp;
             stats.HealthPoints.BaseValue = hp;
@@ -104,6 +107,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         //todo
         public override void die(Unit killer)
         {
+            foreach (var player in game.GetMap().GetAllChampionsFromTeam(killer.getTeam()))
+            {
+                player.GetStats().Gold = player.GetStats().Gold + GOLD_WORTH;
+                _game.PacketNotifier.notifyAddGold(player, this, GOLD_WORTH);
+            }
+            _game.PacketNotifier.notifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
             base.die(killer);
         }
 

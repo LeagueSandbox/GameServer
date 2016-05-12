@@ -627,4 +627,14 @@ in the following order:
             return 10;*/
         }
     }
+
+    public enum UnitAnnounces : byte
+    {
+        InhibitorDestroyed = 0x1F,
+        InhibitorAboutToSpawn = 0x20,
+        InhibitorSpawned = 0x21,
+        TurretDestroyed = 0x24,
+        SummonerDisconnected = 0x47,
+        SummonerReconnected = 0x48
+    }
 }

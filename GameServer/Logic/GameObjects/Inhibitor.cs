@@ -103,11 +103,4 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         Dead = 0x00,
         Alive = 0x01
     }
-
-    public enum InhibitorAnnounces : byte
-    {
-        Destroyed = 0x1F,
-        AboutToSpawn = 0x20,
-        Spawned = 0x21
-    }
 }
