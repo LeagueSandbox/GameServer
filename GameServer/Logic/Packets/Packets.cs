@@ -1114,6 +1114,68 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         short type[42];*/
     }
 
+    public class BlueTip : BasePacket
+    {
+        public BlueTip(string title, string text, uint netid, int slot = 0, bool delete = false) : base(PacketCmdS2C.PKT_S2C_BlueTip, netid)
+        {
+            foreach (var b in Encoding.Default.GetBytes(text))
+                buffer.Write(b);
+            buffer.fill(0, 128 - text.Length);
+            foreach (var b in Encoding.Default.GetBytes(title))
+                buffer.Write(b);
+            buffer.fill(0, 256 - title.Length);
+            if (delete)
+            {
+                buffer.Write((byte)0x01);
+            }
+            else
+            {
+                buffer.Write((byte)0x00);
+            }
+            buffer.Write((int)slot);
+        }
+    }
+
+    public class BlueTipClicked
+    {
+        public byte cmd;
+        public int netid;
+        public byte unk;
+        public int slot;
+
+        public BlueTipClicked(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            netid = reader.ReadInt32();
+            unk = reader.ReadByte();
+            slot = reader.ReadInt32();
+        }
+        public BlueTipClicked()
+        {
+
+        }
+    }
+
+    public class AutoAttackOption
+    {
+        public byte cmd;
+        public int netid;
+        public byte activated;
+
+        public AutoAttackOption(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            netid = reader.ReadInt32();
+            activated = reader.ReadByte();
+        }
+        public AutoAttackOption()
+        {
+
+        }
+    }
+
     public class GameTimer : BasePacket
     {
         public GameTimer(float fTime) : base(PacketCmdS2C.PKT_S2C_GameTimer, 0)
@@ -1478,7 +1540,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                                             break;
                                          case 6:
                                             buffer.Write((short)0xb6; // Assistance Needed
-                                            break;            
+                                            break;
                                       }
                                       */
         }
