@@ -358,7 +358,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (stats.Experience < expMap[stats.Level])
                 return false;
 
-            while (stats.Experience >= expMap[stats.Level])
+            while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 GetStats().LevelUp();
                 Logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
