@@ -58,6 +58,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleClick(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
             registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
             registerHandler(new HandleSurrender(), PacketCmdC2S.PKT_C2S_Surrender, Channel.CHL_C2S);
+            registerHandler(new HandleBlueTipClicked(), PacketCmdC2S.PKT_C2S_BlueTipClicked, Channel.CHL_C2S);
+            registerHandler(new HandleAutoAttackOption(), PacketCmdC2S.PKT_C2S_AutoAttackOption, Channel.CHL_C2S);
+
+
             //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
         }
 
@@ -109,7 +113,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 System.Diagnostics.Debug.Write(str);
                 foreach (var b in buffer)
-                    System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+                    System.Diagnostics.Debug.Write(b.ToString("X2") + " ");
                 System.Diagnostics.Debug.WriteLine("");
                 System.Diagnostics.Debug.WriteLine("--------");
             }

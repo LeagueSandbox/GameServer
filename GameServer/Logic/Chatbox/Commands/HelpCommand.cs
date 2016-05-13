@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Packets;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -24,6 +26,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count.ToString() + " commands");
 
             _owner.AddCommand(new NewCommand("newcommand", "", _owner));
+
+            var removeBlueTip = new BlueTip("", "", _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId(), 0, true);
+            _owner.GetGame().PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
+
         }
     }
 }
