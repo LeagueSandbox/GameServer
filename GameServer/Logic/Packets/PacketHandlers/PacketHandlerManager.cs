@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 System.Diagnostics.Debug.Write(str);
                 foreach (var b in buffer)
-                    System.Diagnostics.Debug.Write(b.ToString("x") + " ");
+                    System.Diagnostics.Debug.Write(b.ToString("X2") + " ");
                 System.Diagnostics.Debug.WriteLine("");
                 System.Diagnostics.Debug.WriteLine("--------");
             }

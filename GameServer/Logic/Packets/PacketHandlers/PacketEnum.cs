@@ -22,6 +22,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_UnlockCamera = 0x0E, //?? Well it unlocks camera so...
         PKT_S2C_EndSpawn = 0x11,
         PKT_S2C_SkillUp = 0x15,
+        PKT_S2C_FloatingText = 0x18,
         PKT_S2C_BeginAutoAttack = 0x1A,
         PKT_S2C_AddGold = 0x22,
         PKT_S2C_FogUpdate2 = 0x23,
@@ -47,6 +48,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_FaceDirection = 0x50,
         PKT_S2C_LeaveVision = 0x51,
         PKT_S2C_SynchVersion = 0x54,
+        PKT_S2C_ShowTip = 0x55,
         PKT_S2C_DestroyProjectile = 0x5A,
         PKT_S2C_StartGame = 0x5C,
         PKT_S2C_ChampionDie = 0x5E,
@@ -109,6 +111,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_C2S_ScoreBord = 0x56,
         PKT_C2S_AttentionPing = 0x57,
         PKT_C2S_ClientReady = 0x64,
+        PKT_C2S_TipClicked = 0x6D,
         PKT_C2S_MoveReq = 0x72,
         PKT_C2S_MoveConfirm = 0x77,
         PKT_C2S_LockCamera = 0x81,
