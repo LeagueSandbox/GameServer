@@ -109,6 +109,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public static bool NO_COOLDOWN = true;
         public static bool NO_MANACOST = true;
 
+        private LuaScript _script;
+
         public Spell(Champion owner, string spellName, byte slot)
         {
             this.owner = owner;
@@ -116,6 +118,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.slot = slot;
 
             Inibin inibin;
+
+            _script = new LuaScript();
+
+            LoadLua(_script);
 
             if (slot > 3)
             {
@@ -241,7 +247,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public virtual void finishCasting()
         {
-            doLua();
+            
+            Logger.LogCoreInfo("Spell from slot " + getSlot());
+            try
+            {
+                _script.lua.DoString("finishCasting()");
+            }
+            catch (LuaException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
 
             state = SpellState.STATE_COOLDOWN;
 
@@ -286,45 +301,42 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
 
         public void applyEffects(Unit u, Projectile p = null)
-        {
-            LuaScript script = new LuaScript();
-
-            script.lua["u"] = u;
-            script.lua.DoString(@"
+        { 
+            _script.lua["u"] = u;
+            _script.lua.DoString(@"
                 function getTarget()
                     return u
                 end");
             
-            script.lua["p"] = p;
-            script.lua.DoString(@"
+            _script.lua["p"] = p;
+            _script.lua.DoString(@"
                 function destroyProjectile()
                     p:setToRemove()
                 end");
 
-            script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            script.lua["DAMAGE_TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+            _script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["DAMAGE_TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
 
 
-            script.lua.DoString(@"
+            _script.lua.DoString(@"
                 function dealPhysicalDamage(amount)
                     getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL)
                 end");
 
-            script.lua.DoString(@"
+            _script.lua.DoString(@"
                 function dealMagicalDamage(amount)
                     getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL)
                 end");
 
-            script.lua.DoString(@"
+            _script.lua.DoString(@"
                 function getNumberObjectsHit()
                     return p.getObjectsHit().Count
                 end");
-            loadLua(script); //comment this line for no reload on the fly, better performance
 
             try
             {
-                script.lua.DoString("applyEffects()");
+                _script.lua.DoString("applyEffects()");
             }
             catch (LuaException e)
             {
@@ -420,26 +432,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return "undefined";
         }
 
-        /*
-         * does spell effects in lua if defined.
-         */
-        public void doLua()
-        {
-            LuaScript script = new LuaScript();
-
-            loadLua(script); //comment this line for no reload on the fly, better performance
-
-            Logger.LogCoreInfo("Spell from slot " + getSlot());
-            try
-            {
-                script.lua.DoString("finishCasting()");
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
-        }
-        public void loadLua(LuaScript script)
+        public void LoadLua(LuaScript script)
         {
             var config = owner.GetGame().Config;
             string scriptloc;
