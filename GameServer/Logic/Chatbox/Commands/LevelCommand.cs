@@ -21,8 +21,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 if (lvl < 1 || lvl > 18)
                     return;
 
-                _owner.GetGame().GetPeerInfo(peer).GetChampion().GetStats().Level = lvl;
-                _owner.GetGame().GetPeerInfo(peer).GetChampion().LevelUp();
+                var experienceToLevelUp = _owner.GetGame().GetMap().GetExperienceToLevelUp()[lvl-1];
+                _owner.GetGame().GetPeerInfo(peer).GetChampion().GetStats().Experience = experienceToLevelUp;
             }
         }
     }
