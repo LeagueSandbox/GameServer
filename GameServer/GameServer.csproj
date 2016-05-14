@@ -134,6 +134,7 @@
     <Compile Include="Logic\Lua\LuaScript.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleQuestClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleBlueTipClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSurrender.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />

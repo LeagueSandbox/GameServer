@@ -60,6 +60,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleSurrender(), PacketCmdC2S.PKT_C2S_Surrender, Channel.CHL_C2S);
             registerHandler(new HandleBlueTipClicked(), PacketCmdC2S.PKT_C2S_BlueTipClicked, Channel.CHL_C2S);
             registerHandler(new HandleAutoAttackOption(), PacketCmdC2S.PKT_C2S_AutoAttackOption, Channel.CHL_C2S);
+            registerHandler(new HandleQuestClicked(), PacketCmdC2S.PKT_C2S_QuestClicked, Channel.CHL_C2S);
+
 
 
             //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
