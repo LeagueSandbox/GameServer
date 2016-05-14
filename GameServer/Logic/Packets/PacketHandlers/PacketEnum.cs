@@ -69,6 +69,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_SpawnParticle = 0x87,
         PKT_S2C_QueryStatusAns = 0x88,
         PKT_S2C_ExplodeNexus = 0x89,
+        PKT_S2C_Quest = 0x8C,
         PKT_S2C_World_SendGameNumber = 0x92,
         PKT_S2C_Ping_Load_Info = 0x95,
         PKT_S2C_UpdateModel = 0x97,
@@ -124,6 +125,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_C2S_Click = 0xAF,
         PKT_C2S_SynchVersion = 0xBD,
         PKT_C2S_CharLoaded = 0xBE,
+        PKT_C2S_QuestClicked = 0xCD,
         PKT_C2S_Batch = 0xFF
     }
 

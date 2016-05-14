@@ -758,6 +758,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class Quest : BasePacket
+    {
+        public Quest(string questName, string questDescription, byte type, byte remove, uint netid,  byte success = 0) : base(PacketCmdS2C.PKT_S2C_Quest)
+        {
+            buffer.Write(Encoding.Default.GetBytes(questName));
+            buffer.fill(0, 256 - questName.Length);
+            buffer.Write(Encoding.Default.GetBytes(questDescription));
+            buffer.fill(0, 256 - questDescription.Length);
+            buffer.Write((byte)type);
+            buffer.Write((byte)remove);
+            buffer.Write((byte)success); // 252 to 255: Success, anything else: Fail
+            buffer.Write((int)netid);
+        }
+    }
+
     public class SynchVersion : BasePacket
     {
         public PacketCmdS2C cmd;
@@ -1116,7 +1131,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class BlueTip : BasePacket
     {
-        public BlueTip(string title, string text, uint netid, int slot = 0, bool delete = false) : base(PacketCmdS2C.PKT_S2C_BlueTip, netid)
+        public BlueTip(string title, string text, uint playernetid, uint netid, bool delete = false) : base(PacketCmdS2C.PKT_S2C_BlueTip, playernetid)
         {
             foreach (var b in Encoding.Default.GetBytes(text))
                 buffer.Write(b);
@@ -1132,26 +1147,47 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 buffer.Write((byte)0x00);
             }
-            buffer.Write((int)slot);
+            buffer.Write((int)netid);
         }
     }
 
     public class BlueTipClicked
     {
         public byte cmd;
-        public int netid;
+        public uint playernetid;
         public byte unk;
-        public int slot;
+        public uint netid;
 
         public BlueTipClicked(byte[] data)
         {
             var reader = new BinaryReader(new MemoryStream(data));
             cmd = reader.ReadByte();
-            netid = reader.ReadInt32();
+            playernetid = reader.ReadUInt32();
             unk = reader.ReadByte();
-            slot = reader.ReadInt32();
+            netid = reader.ReadUInt32();
         }
         public BlueTipClicked()
+        {
+
+        }
+    }
+
+    public class QuestClicked
+    {
+        public byte cmd;
+        public uint playernetid;
+        public byte unk;
+        public uint netid;
+
+        public QuestClicked(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            playernetid = reader.ReadUInt32();
+            unk = reader.ReadByte();
+            netid = reader.ReadUInt32();
+        }
+        public QuestClicked()
         {
 
         }
