@@ -17,41 +17,22 @@ namespace GameServerTests
         {
             byte[] shouldBe = { 0xC6, 0x00, 0x10, 0x45, 0xF8};
             var byteArray = ApiFunctionManager.StringToByteArray("C6001045F8");
-            Assert.AreEqual(shouldBe.Length, byteArray.Length);
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
 
             byteArray = ApiFunctionManager.StringToByteArray("C6 00 10 45 F8");
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
 
             byteArray = ApiFunctionManager.StringToByteArray("C60010       45F8");
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
 
             byteArray = ApiFunctionManager.StringToByteArray("C6001045F8      ");
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
 
             byteArray = ApiFunctionManager.StringToByteArray("    C6001045F8");
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
 
             byteArray = ApiFunctionManager.StringToByteArray("C600   1045  F8");
-            for (int i = 0; i < shouldBe.Length; i++)
-            {
-                Assert.AreEqual(shouldBe[i], byteArray[i]);
-            }
+            CollectionAssert.AreEqual(shouldBe, byteArray);
         }
     }
 }
