@@ -375,6 +375,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class HighlightUnit : BasePacket
+    {
+        public HighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_HighlightUnit)
+        {
+            // The following is from bruteforcing, it may be incomplete or wrong
+            buffer.Write((uint)netId);
+        }
+    }
+
+    public class RemoveHighlightUnit : BasePacket
+    {
+        public RemoveHighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_RemoveHighlightUnit)
+        {
+            // The following is from bruteforcing, it may be incomplete or wrong
+            buffer.Write((uint)netId);
+        }
+    }
+
     public class MinionSpawn : BasePacket
     {
         public MinionSpawn(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())
