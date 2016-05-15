@@ -444,6 +444,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class AFKWarningWindow : Packet
+    {
+        public AFKWarningWindow() : base(PacketCmdS2C.PKT_S2C_AFKWarningWindow)
+        {
+            // The following structure may be incomplete or wrong
+        }
+    }
+
     public class BasicTutorialMessageWindowClicked
     {
         public byte cmd;

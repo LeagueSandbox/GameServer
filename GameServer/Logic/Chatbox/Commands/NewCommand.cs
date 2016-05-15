@@ -13,11 +13,23 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var netid = _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId();
-            var test = new Packets.Packet((PacketCmdS2C)0xF9);
+            var test = new Packets.Packet((PacketCmdS2C)0xB8);
 
             var buffer = test.getBuffer();
+            buffer.Write(netid);
+            //buffer.Write(netid);
+            //buffer.Write(Encoding.Default.GetBytes("gggggg"));
+            buffer.Write(0x03);
+            buffer.Write(0x03);
+            buffer.Write(0x4D);
             buffer.Write(0x00);
-            buffer.Write(0xFF);
+            buffer.Write(0x00);
+            buffer.Write(0x20);
+            buffer.Write(0x42);
+            buffer.Write(0x00);
+            buffer.Write(0x00);
+            buffer.Write(0x20);
+            buffer.Write(0x42);
 
             _owner.GetGame().PacketHandlerManager.sendPacket(peer, test, Channel.CHL_S2C);
 
