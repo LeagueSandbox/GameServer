@@ -379,7 +379,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public HighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_HighlightUnit)
         {
-            // The following is from bruteforcing, it may be incomplete or wrong
+            // The following structure may be incomplete or wrong
             buffer.Write((uint)netId);
         }
     }
@@ -388,8 +388,76 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public RemoveHighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_RemoveHighlightUnit)
         {
-            // The following is from bruteforcing, it may be incomplete or wrong
+            // The following structure may be incomplete or wrong
             buffer.Write((uint)netId);
+        }
+    }
+
+    public class BasicTutorialMessageWindow : BasePacket
+    {
+        public BasicTutorialMessageWindow(string message) : base(PacketCmdS2C.PKT_S2C_BasicTutorialMessageWindow)
+        {
+            // The following structure may be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message)); // It seems to show up to 189 characters, which is strange
+            buffer.Write(0x00);
+        }
+    }
+
+    public class MessageBoxTop : BasePacket
+    {
+        public MessageBoxTop(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxTop)
+        {
+            // The following structure may be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class MessageBoxRight : BasePacket
+    {
+        public MessageBoxRight(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxRight)
+        {
+            // The following structure may be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class PauseGame : Packet
+    {
+        public PauseGame(byte seconds) : base(PacketCmdS2C.PKT_S2C_PauseGame)
+        {
+            // The following structure may be incomplete or wrong
+            buffer.Write(0x00);
+            buffer.Write(0x00);
+            buffer.Write((byte)seconds);
+        }
+    }
+
+    public class MessagesAvailable : Packet
+    {
+        public MessagesAvailable(byte messagesAvailable) : base(PacketCmdS2C.PKT_S2C_MessagesAvailable)
+        {
+            // The following structure may be incomplete or wrong
+            buffer.Write(0x00);
+            buffer.Write((byte)messagesAvailable);
+        }
+    }
+
+    public class BasicTutorialMessageWindowClicked
+    {
+        public byte cmd;
+        public int unk;
+
+        public BasicTutorialMessageWindowClicked(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            unk = reader.ReadInt32(); // Seems to be always 0
+        }
+        public BasicTutorialMessageWindowClicked()
+        {
+
         }
     }
 
