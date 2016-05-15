@@ -27,9 +27,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             _owner.AddCommand(new NewCommand("newcommand", "", _owner));
 
-            var removeBlueTip = new BlueTip("", "", _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId(), 0, true);
-            _owner.GetGame().PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
-
+            var topText = new Packets.MessageBoxTop("TOP");
+            var rightText = new Packets.MessageBoxRight("RIGHT");
+            _owner.GetGame().PacketHandlerManager.sendPacket(peer, topText, Channel.CHL_S2C);
+            _owner.GetGame().PacketHandlerManager.sendPacket(peer, rightText, Channel.CHL_S2C);
         }
     }
 }

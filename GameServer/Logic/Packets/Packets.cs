@@ -379,7 +379,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public HighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_HighlightUnit)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write((uint)netId);
         }
     }
@@ -388,7 +388,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public RemoveHighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_RemoveHighlightUnit)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write((uint)netId);
         }
     }
@@ -397,7 +397,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public BasicTutorialMessageWindow(string message) : base(PacketCmdS2C.PKT_S2C_BasicTutorialMessageWindow)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write(Encoding.Default.GetBytes(message)); // It seems to show up to 189 characters, which is strange
             buffer.Write(0x00);
         }
@@ -407,9 +407,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public MessageBoxTop(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxTop)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write(Encoding.Default.GetBytes(message));
             buffer.Write(0x00);
+        }
+    }
+
+    public class EditMessageBoxTop : BasePacket
+    {
+        public EditMessageBoxTop(string message) : base(PacketCmdS2C.PKT_S2C_EditMessageBoxTop)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class RemoveMessageBoxTop : BasePacket
+    {
+        public RemoveMessageBoxTop() : base(PacketCmdS2C.PKT_S2C_RemoveMessageBoxTop)
+        {
+            // The following structure might be incomplete or wrong
         }
     }
 
@@ -417,9 +435,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public MessageBoxRight(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxRight)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write(Encoding.Default.GetBytes(message));
             buffer.Write(0x00);
+        }
+    }
+
+    public class EditMessageBoxRight : BasePacket
+    {
+        public EditMessageBoxRight(string message) : base(PacketCmdS2C.PKT_S2C_EditMessageBoxRight)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class RemoveMessageBoxRight : BasePacket
+    {
+        public RemoveMessageBoxRight() : base(PacketCmdS2C.PKT_S2C_RemoveMessageBoxRight)
+        {
+            // The following structure might be incomplete or wrong
         }
     }
 
@@ -427,7 +463,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PauseGame(byte seconds) : base(PacketCmdS2C.PKT_S2C_PauseGame)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write(0x00);
             buffer.Write(0x00);
             buffer.Write((byte)seconds);
@@ -438,7 +474,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public MessagesAvailable(byte messagesAvailable) : base(PacketCmdS2C.PKT_S2C_MessagesAvailable)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
             buffer.Write(0x00);
             buffer.Write((byte)messagesAvailable);
         }
@@ -448,7 +484,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public AFKWarningWindow() : base(PacketCmdS2C.PKT_S2C_AFKWarningWindow)
         {
-            // The following structure may be incomplete or wrong
+            // The following structure might be incomplete or wrong
         }
     }
 

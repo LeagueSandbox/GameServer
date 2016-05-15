@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_KeyCheck = 0x00,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
+        PKT_S2C_EditMessageBoxTop = 0x0D,
         PKT_S2C_SurrenderState = 0x0E,
         PKT_S2C_UnlockCamera = 0x0E, //?? Well it unlocks camera so...
         PKT_S2C_EndSpawn = 0x11,
@@ -79,10 +80,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
         PKT_S2C_MessageBoxRight = 0xA0,
         PKT_S2C_PauseGame = 0xA1,
+        PKT_S2C_RemoveMessageBoxTop = 0xA2,
+        PKT_S2C_RemoveMessageBoxRight = 0xA7,
         PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_S2C_SurrenderResult = 0xA5,
         PKT_S2C_SetHealth = 0xAE,
         PKT_S2C_SpellAnimation = 0xB0,
+        PKT_S2C_EditMessageBoxRight = 0xB1,
         PKT_S2C_BasicTutorialMessageWindow = 0xB3,
         PKT_S2C_RemoveHighlightUnit = 0xB4,
         PKT_S2C_CastSpellAns = 0xB5,
