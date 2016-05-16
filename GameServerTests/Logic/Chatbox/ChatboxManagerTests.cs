@@ -25,5 +25,24 @@ namespace GameServerTests
             result = game.ChatboxManager.AddCommand(command);
             Assert.AreEqual(false, result);
         }
+
+        [TestMethod()]
+        public void RemoveCommandTest()
+        {
+            var game = new TestHelpers.DummyGame();
+            game.LoadChatboxManager();
+
+            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", game.ChatboxManager);
+            var result = game.ChatboxManager.AddCommand(command);
+            Assert.AreEqual(true, result);
+
+            var result2 = game.ChatboxManager.RemoveCommand("ChatboxManagerTestsTestCommand");
+            var commands = game.ChatboxManager.GetCommandsStrings();
+            Assert.AreEqual(true, result2);
+            if (commands.Contains("ChatboxManagerTestsTestCommand"))
+            {
+                Assert.Fail();
+            }
+        }
     }
 }
