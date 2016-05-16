@@ -132,7 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var tempBuffs = u.GetBuffs();
                 foreach (var buff in tempBuffs.Values)
                 {
-                    if (buff.NeedsToRemove())
+                    /*if (buff.NeedsToRemove())
                     {
                         if (buff.GetName() != "")
                         {
@@ -140,7 +140,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                         u.RemoveBuff(buff);
                         continue;
-                    }
+                    }*/
                     buff.Update(diff);
                 }
 

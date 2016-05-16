@@ -1574,9 +1574,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveBuff : BasePacket
     {
-        public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
+        public RemoveBuff(Unit u, string name, byte slot) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
-            buffer.Write((byte)0x01);
+            buffer.Write((byte)slot);
             buffer.Write(RAFManager.getInstance().getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?

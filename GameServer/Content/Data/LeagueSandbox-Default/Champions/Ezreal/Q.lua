@@ -7,7 +7,19 @@ function finishCasting()
     local trueCoords = current + range
 
     addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
-    addBuff("Haste", 10.0, 1, getOwner(), getOwner())
+    local buff = getBuff("Haste")
+    local buff2 = getBuff("ToxicShot")
+    
+    if buff == nil then
+        addBuff("Haste", 100.0, getOwner(), getOwner())
+    else
+        buff:SetStacks(buff:GetStacks()+1)
+    end
+    if buff == nil then
+        addBuff("ToxicShot", 100.0, getOwner(), getOwner())
+    else
+        buff2:SetStacks(buff2:GetStacks()+1)
+    end
 end
 
 function applyEffects()

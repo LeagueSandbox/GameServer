@@ -49,6 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Buff
     {
+        protected BuffManager _owner;
         protected float _duration;
         protected float _movementSpeedPercentModifier;
         protected float _timeElapsed;
@@ -59,8 +60,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected LuaScript _buffScript = new LuaScript();
         protected string _name;
         protected int _stacks;
+        protected byte _slot;
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
-        protected Game _game;
 
         public BuffType GetBuffType()
         {
@@ -87,11 +88,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
+        public Buff(BuffManager owner, string buffName, float dur, int stacks, byte slot, Unit onto, Unit from)
         {
-            _game = game;
+            _owner = owner;
             _duration = dur;
             _stacks = stacks;
+            _slot = slot;
             _name = buffName;
             _timeElapsed = 0;
             _remove = false;
@@ -108,14 +110,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 Logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
-        
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+
+        public Buff(BuffManager owner, string buffName, float dur, int stacks, byte slot, Unit onto) : this(owner, buffName, dur, stacks, slot, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
 
         public void LoadLua()
         {
-            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
+            var scriptLoc = _owner.GetGame().Config.ContentManager.GetBuffScriptPath(_name);
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
@@ -125,7 +127,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _buffScript.lua.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
             _buffScript.lua.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
             _buffScript.lua.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
-        
+
             ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
 
             _buffScript.loadScript(scriptLoc);
@@ -140,11 +142,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _timeElapsed = time;
         }
-        
+
         public void Update(long diff)
         {
             _timeElapsed += (float)diff / 1000.0f;
-            
+
             if (_buffScript.isLoaded())
             {
                 try
@@ -170,7 +172,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         Logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
-                    _remove = true;
+                    _owner.RemoveBuff(this);
                 }
             }
         }
@@ -180,9 +182,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _stacks;
         }
 
+        public void SetStacks(int stacks)
+        {
+            _stacks = stacks;
+            _owner.GetGame().PacketNotifier.notifyEditBuff(this);
+        }
+
         public float GetDuration()
         {
             return _duration;
+        }
+
+        public byte GetSlot()
+        {
+            return _slot;
         }
     }
 }
