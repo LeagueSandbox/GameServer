@@ -375,6 +375,136 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class HighlightUnit : BasePacket
+    {
+        public HighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_HighlightUnit)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write((uint)netId);
+        }
+    }
+
+    public class RemoveHighlightUnit : BasePacket
+    {
+        public RemoveHighlightUnit(uint netId) : base(PacketCmdS2C.PKT_S2C_RemoveHighlightUnit)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write((uint)netId);
+        }
+    }
+
+    public class BasicTutorialMessageWindow : BasePacket
+    {
+        public BasicTutorialMessageWindow(string message) : base(PacketCmdS2C.PKT_S2C_BasicTutorialMessageWindow)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message)); // It seems to show up to 189 characters, which is strange
+            buffer.Write(0x00);
+        }
+    }
+
+    public class MessageBoxTop : BasePacket
+    {
+        public MessageBoxTop(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxTop)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class EditMessageBoxTop : BasePacket
+    {
+        public EditMessageBoxTop(string message) : base(PacketCmdS2C.PKT_S2C_EditMessageBoxTop)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class RemoveMessageBoxTop : BasePacket
+    {
+        public RemoveMessageBoxTop() : base(PacketCmdS2C.PKT_S2C_RemoveMessageBoxTop)
+        {
+            // The following structure might be incomplete or wrong
+        }
+    }
+
+    public class MessageBoxRight : BasePacket
+    {
+        public MessageBoxRight(string message) : base(PacketCmdS2C.PKT_S2C_MessageBoxRight)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class EditMessageBoxRight : BasePacket
+    {
+        public EditMessageBoxRight(string message) : base(PacketCmdS2C.PKT_S2C_EditMessageBoxRight)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
+        }
+    }
+
+    public class RemoveMessageBoxRight : BasePacket
+    {
+        public RemoveMessageBoxRight() : base(PacketCmdS2C.PKT_S2C_RemoveMessageBoxRight)
+        {
+            // The following structure might be incomplete or wrong
+        }
+    }
+
+    public class PauseGame : Packet
+    {
+        public PauseGame(byte seconds) : base(PacketCmdS2C.PKT_S2C_PauseGame)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(0x00);
+            buffer.Write(0x00);
+            buffer.Write((byte)seconds);
+        }
+    }
+
+    public class MessagesAvailable : Packet
+    {
+        public MessagesAvailable(byte messagesAvailable) : base(PacketCmdS2C.PKT_S2C_MessagesAvailable)
+        {
+            // The following structure might be incomplete or wrong
+            buffer.Write(0x00);
+            buffer.Write((byte)messagesAvailable);
+        }
+    }
+
+    public class AFKWarningWindow : Packet
+    {
+        public AFKWarningWindow() : base(PacketCmdS2C.PKT_S2C_AFKWarningWindow)
+        {
+            // The following structure might be incomplete or wrong
+        }
+    }
+
+    public class BasicTutorialMessageWindowClicked
+    {
+        public byte cmd;
+        public int unk;
+
+        public BasicTutorialMessageWindowClicked(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            unk = reader.ReadInt32(); // Seems to be always 0
+        }
+        public BasicTutorialMessageWindowClicked()
+        {
+
+        }
+    }
+
     public class MinionSpawn : BasePacket
     {
         public MinionSpawn(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())

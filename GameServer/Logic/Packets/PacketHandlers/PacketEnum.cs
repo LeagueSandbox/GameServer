@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_KeyCheck = 0x00,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
+        PKT_S2C_EditMessageBoxTop = 0x0D,
         PKT_S2C_SurrenderState = 0x0E,
         PKT_S2C_UnlockCamera = 0x0E, //?? Well it unlocks camera so...
         PKT_S2C_EndSpawn = 0x11,
@@ -35,6 +36,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_ChampionRespawn = 0x2F,
         PKT_S2C_StopAutoAttack = 0x34,
         PKT_S2C_DeleteObject = 0x35, // not sure what this is, happens when turret leaves vision
+        PKT_S2C_MessageBoxTop = 0x36,
         PKT_S2C_SpawnProjectile = 0x3B,
         PKT_S2C_SwapItems = 0x3E,
         PKT_S2C_LevelUp = 0x3F,
@@ -48,6 +50,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_FaceDirection = 0x50,
         PKT_S2C_LeaveVision = 0x51,
         PKT_S2C_SynchVersion = 0x54,
+        PKT_S2C_HighlightUnit = 0x59,
         PKT_S2C_BlueTip = 0x55,
         PKT_S2C_DestroyProjectile = 0x5A,
         PKT_S2C_StartGame = 0x5C,
@@ -75,11 +78,19 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_TurretSpawn = 0x9D,
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
+        PKT_S2C_MessageBoxRight = 0xA0,
+        PKT_S2C_PauseGame = 0xA1,
+        PKT_S2C_RemoveMessageBoxTop = 0xA2,
+        PKT_S2C_RemoveMessageBoxRight = 0xA7,
         PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_S2C_SurrenderResult = 0xA5,
         PKT_S2C_SetHealth = 0xAE,
         PKT_S2C_SpellAnimation = 0xB0,
+        PKT_S2C_EditMessageBoxRight = 0xB1,
+        PKT_S2C_BasicTutorialMessageWindow = 0xB3,
+        PKT_S2C_RemoveHighlightUnit = 0xB4,
         PKT_S2C_CastSpellAns = 0xB5,
+        PKT_S2C_AFKWarningWindow = 0xB8,
         PKT_S2C_ObjectSpawn = 0xBA,
         PKT_S2C_HideUi = 0xBC,
         PKT_S2C_SetTarget2 = 0xC0,
@@ -88,7 +99,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_Surrender = 0xC9,
 
         PKT_S2C_LevelPropSpawn = 0xD0,
+        PKT_S2C_DominionPoints = 0xD9,
         PKT_S2C_DebugMessage = 0xF7,
+        PKT_S2C_MessagesAvailable = 0xF9,
         PKT_S2C_Extended = 0xFE,
         PKT_S2C_Batch = 0xFF
     };
