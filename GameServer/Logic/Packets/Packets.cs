@@ -1556,6 +1556,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class AddXP : BasePacket
+    {
+        public AddXP(Unit u, float xp) : base(PacketCmdS2C.PKT_S2C_AddXP)
+        {
+            buffer.Write(u.getNetId());
+            buffer.Write(xp);
+        }
+    }
+
     public class EditBuff : BasePacket
     {
         public EditBuff(Unit u, byte slot, byte stacks) : base(PacketCmdS2C.PKT_S2C_EditBuff, u.getNetId())
