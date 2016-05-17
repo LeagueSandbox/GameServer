@@ -119,6 +119,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            _buffScript.lua.DoString(@"
+                function onAddBuff()
+                end");
+            _buffScript.lua.DoString(@"
+                function onUpdate(diff)
+                end");
+            _buffScript.lua.DoString(@"
+                function onBuffEnd()
+                end");
             _buffScript.lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
             _buffScript.lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
             _buffScript.lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
