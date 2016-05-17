@@ -247,7 +247,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public virtual void finishCasting()
         {
-            
+
             Logger.LogCoreInfo("Spell from slot " + getSlot());
             try
             {
@@ -260,8 +260,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             state = SpellState.STATE_COOLDOWN;
 
-            if (!NO_COOLDOWN)
-                currentCooldown = getCooldown();
+            currentCooldown = getCooldown();
+
             if (getSlot() < 4)
             {
                 owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
@@ -301,13 +301,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
 
         public void applyEffects(Unit u, Projectile p = null)
-        { 
+        {
             _script.lua["u"] = u;
             _script.lua.DoString(@"
                 function getTarget()
                     return u
                 end");
-            
+
             _script.lua["p"] = p;
             _script.lua.DoString(@"
                 function destroyProjectile()
@@ -462,7 +462,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-            
+
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
                 b->setMovementSpeedPercentModifier(amount);
@@ -488,9 +488,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             });
 
-            
+
              //For spells that don't require SpawnProjectile, but for which we still need to track the projectile server-side
-             
+
             script.lua.set_function("addServerProjectile", [this](float toX, float toY) {
                 Projectile* p = new Projectile(owner->getMap(), futureProjNetId, owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, 0, projectileFlags ? projectileFlags : flags);
                 owner->getMap()->addObject(p);
@@ -533,7 +533,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public float getCooldown()
         {
-            if (level <= 0)
+            if (level <= 0 || NO_COOLDOWN)
                 return 0;
 
             return cooldown[level - 1];
