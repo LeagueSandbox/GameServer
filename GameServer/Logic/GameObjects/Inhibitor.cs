@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private InhibitorState State;
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
+        private const float GOLD_WORTH = 50.0f;
         private DateTime TimerStartTime;
         private bool respawnAnnounced = true;
 
@@ -43,6 +44,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             };
             RespawnTimer.Start();
             TimerStartTime = DateTime.Now;
+
+            if (killer != null && killer is Champion)
+            {
+                Champion c = killer as Champion;
+                c.GetStats().Gold += GOLD_WORTH;
+                _game.PacketNotifier.notifyAddGold(c, this, GOLD_WORTH);
+            }
 
             setState(InhibitorState.Dead, killer);
             respawnAnnounced = false;

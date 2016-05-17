@@ -13,31 +13,110 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Turret : Unit
     {
         private const float TURRET_RANGE = 905.0f;
-        private const float GOLD_WORTH = 250.0f;
         private string name;
         private Game game;
+        private TurretType type;
+        private float globalGold = 250.0f;
+        private float globalExp = 0.0f;
 
-        public Turret(Game game, uint id, string name, float x = 0, float y = 0, float hp = 0, float ad = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, "", new Stats(), 50, x, y, 1200)
+        public Turret(Game game, uint id, string name, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE, TurretType type = TurretType.OuterTurret) : base(game, id, "", new Stats(), 50, x, y, 1200)
         {
             this.name = name;
             this.game = game;
+            this.type = type;
 
-            stats.CurrentHealth = hp;
-            stats.HealthPoints.BaseValue = hp;
-            stats.AttackDamage.BaseValue = ad;
-            stats.Range.BaseValue = TURRET_RANGE;
-            stats.AttackSpeedFlat = 0.83f;
-
-            autoAttackDelay = 4.95f / 30.0f;
-            autoAttackProjectileSpeed = 1200.0f;
+            buildTurret(type);
 
             setTeam(team);
+        }
+
+        public void buildTurret(TurretType type)
+        {
+            switch (type)
+            {
+                case TurretType.InnerTurret:
+                    globalGold = 100;
+
+                    stats.CurrentHealth = 2000;
+                    stats.HealthPoints.BaseValue = 2000;
+                    stats.AttackDamage.BaseValue = 100;
+                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.AttackSpeedFlat = 0.83f;
+                    stats.Armor.PercentBonus = 0.5f;
+                    stats.MagicResist.PercentBonus = 0.5f;
+
+                    autoAttackDelay = 4.95f / 30.0f;
+                    autoAttackProjectileSpeed = 1200.0f;
+                    break;
+                case TurretType.OuterTurret:
+                    globalGold = 125;
+
+                    stats.CurrentHealth = 2000;
+                    stats.HealthPoints.BaseValue = 2000;
+                    stats.AttackDamage.BaseValue = 100;
+                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.AttackSpeedFlat = 0.83f;
+                    stats.Armor.PercentBonus = 0.5f;
+                    stats.MagicResist.PercentBonus = 0.5f;
+
+                    autoAttackDelay = 4.95f / 30.0f;
+                    autoAttackProjectileSpeed = 1200.0f;
+                    break;
+                case TurretType.InhibitorTurret:
+                    globalGold = 150;
+                    globalExp = 500;
+
+                    stats.CurrentHealth = 2500;
+                    stats.HealthPoints.BaseValue = 2500;
+                    stats.HealthRegeneration.BaseValue = 5;
+                    stats.ArmorPenetration.PercentBonus = 0.825f;
+                    stats.AttackDamage.BaseValue = 100;
+                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.AttackSpeedFlat = 0.83f;
+                    stats.Armor.PercentBonus = 0.5f;
+                    stats.MagicResist.PercentBonus = 0.5f;
+
+                    autoAttackDelay = 4.95f / 30.0f;
+                    autoAttackProjectileSpeed = 1200.0f;
+                    break;
+                case TurretType.NexusTurret:
+                    globalGold = 50;
+
+                    stats.CurrentHealth = 2500;
+                    stats.HealthPoints.BaseValue = 2500;
+                    stats.HealthRegeneration.BaseValue = 5;
+                    stats.ArmorPenetration.PercentBonus = 0.825f;
+                    stats.AttackDamage.BaseValue = 100;
+                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.AttackSpeedFlat = 0.83f;
+                    stats.Armor.PercentBonus = 0.5f;
+                    stats.MagicResist.PercentBonus = 0.5f;
+
+                    autoAttackDelay = 4.95f / 30.0f;
+                    autoAttackProjectileSpeed = 1200.0f;
+                    break;
+                default:
+
+                    stats.CurrentHealth = 2000;
+                    stats.HealthPoints.BaseValue = 2000;
+                    stats.AttackDamage.BaseValue = 100;
+                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.AttackSpeedFlat = 0.83f;
+                    stats.Armor.PercentBonus = 0.5f;
+                    stats.MagicResist.PercentBonus = 0.5f;
+
+                    autoAttackDelay = 4.95f / 30.0f;
+                    autoAttackProjectileSpeed = 1200.0f;
+
+                    break;
+            }
         }
 
         public string getName()
         {
             return name;
         }
+
         public override void update(long diff)
         {
             if (!isAttacking)
@@ -109,8 +188,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             foreach (var player in game.GetMap().GetAllChampionsFromTeam(killer.getTeam()))
             {
-                player.GetStats().Gold = player.GetStats().Gold + GOLD_WORTH;
-                _game.PacketNotifier.notifyAddGold(player, this, GOLD_WORTH);
+                var goldEarn = globalGold;
+
+                // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
+                if (player.distanceWith(this) <= (TURRET_RANGE * 1.5f) && !player.isDead())
+                {
+                    goldEarn = globalGold * 2.5f;
+                    if(globalExp > 0)
+                        player.GetStats().Experience += globalExp;
+                }
+                
+
+                player.GetStats().Gold += goldEarn;
+                _game.PacketNotifier.notifyAddGold(player, this, goldEarn);
             }
             _game.PacketNotifier.notifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
             base.die(killer);
@@ -124,5 +214,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return 0;
         }
+        
+    }
+
+    public enum TurretType
+    {
+        OuterTurret,
+        InnerTurret,
+        InhibitorTurret,
+        NexusTurret,
+        FountainTurret
     }
 }
