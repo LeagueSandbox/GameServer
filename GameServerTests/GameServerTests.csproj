@@ -63,6 +63,7 @@
     <Compile Include="TestHelpers.cs" />
     <Compile Include="TestStat.cs" />
     <Compile Include="TestStats.cs" />
+    <Compile Include="TestStatModificator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ENetCS\ENetCS.csproj">

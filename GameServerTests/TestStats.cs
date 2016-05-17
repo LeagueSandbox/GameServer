@@ -68,5 +68,17 @@ namespace GameServerTests
             Assert.AreEqual(6, stats.ManaPoints.BaseValue);
             Assert.AreEqual(7, stats.ManaRegeneration.BaseValue);
         }
+
+        [TestMethod]
+        public void TestGeneratingGold()
+        {
+            var stats = new Stats();
+
+            Assert.IsFalse(stats.IsGeneratingGold());
+
+            stats.SetGeneratingGold(true);
+
+            Assert.IsTrue(stats.IsGeneratingGold());
+        }
     }
 }
