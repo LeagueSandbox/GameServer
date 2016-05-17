@@ -93,6 +93,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             unitScript = new LuaScript();
 
             unitScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            unitScript.lua.DoString(@"
+                function onAutoAttack(target)
+                end");
+            unitScript.lua.DoString(@"
+                function onUpdate(diff)
+                end");
+            unitScript.lua.DoString(@"
+                function onDealDamage(target, damage, type, source)
+                end");
+            unitScript.lua.DoString(@"
+                function onDie(killer)
+                end");
+            
             ApiFunctionManager.AddBaseFunctionToLuaScript(unitScript);
         }
 
