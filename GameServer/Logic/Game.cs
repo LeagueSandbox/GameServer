@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,11 +37,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public PacketNotifier PacketNotifier { get; protected set; }
         public PacketHandlerManager PacketHandlerManager { get; protected set; }
         public Config Config { get; protected set; }
-        protected System.Timers.Timer _updateTimer;
         protected const int PEER_MTU = 996;
         protected const PacketFlags RELIABLE = PacketFlags.Reliable;
         protected const PacketFlags UNRELIABLE = PacketFlags.None;
         protected const double REFRESH_RATE = 16.666; // 60 fps
+        protected long _timeElapsed;
 
         // Object managers
         public ItemManager ItemManager { get; protected set; }
@@ -97,8 +98,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         }
         public void NetLoop()
         {
-            Update();
-
+            var watch = new Stopwatch();
             var enetEvent = new Event();
             while (true)
             {
@@ -129,26 +129,18 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
                     }
                 }
-                Thread.Sleep((int)REFRESH_RATE);
+                if (_started)
+                    _map.Update(_timeElapsed);
+                watch.Stop();
+                _timeElapsed = watch.ElapsedMilliseconds;
+                watch.Restart();
+                var timeToWait = REFRESH_RATE - _timeElapsed;
+                if (timeToWait < 0)
+                {
+                    timeToWait = 0;
+                }
+                Thread.Sleep((int)timeToWait);
             }
-        }
-
-        private void Update()
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            _updateTimer = new System.Timers.Timer(REFRESH_RATE);
-            _updateTimer.AutoReset = false;
-            _updateTimer.Elapsed += (a, b) =>
-                 {
-                     watch.Stop();
-                     var elapsed = watch.ElapsedMilliseconds;
-                     watch.Restart();
-                     if (_started)
-                         _map.Update(elapsed);
-
-                     _updateTimer.Start();
-                 };
-            _updateTimer.Start();
         }
 
         public BlowFish GetBlowfish()
@@ -193,7 +185,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void StopGame()
         {
-            _updateTimer.Stop();
+            _started = false;
         }
 
         private bool HandleDisconnect(Peer peer)
