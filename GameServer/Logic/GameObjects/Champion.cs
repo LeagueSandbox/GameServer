@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void LoadLua()
         {
             base.LoadLua();
-            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
+            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(GetType(), "Passive");
             unitScript.lua["me"] = this;
             unitScript.lua.DoString(@"
                 function onSpellCast(target)
@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             unitScript.loadScript(scriptloc);
         }
 
-        public string getType()
+        public new string GetType()
         {
             return type;
         }
@@ -364,7 +364,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 GetStats().LevelUp();
-                Logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
+                Logger.LogCoreInfo("Champion " + GetType() + " leveled up to " + stats.Level);
                 skillPoints++;
             }
             return true;

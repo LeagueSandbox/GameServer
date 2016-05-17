@@ -52,23 +52,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         FM4_Unk = 0x00010000 //Unk -> Transparent-ish Life bar when changed:: MAYBE IF UNIT IS TARGETABLE
     }
 
-    public class StatMod
-    {
-        public MasterMask BlockId { get; set; }
-        public FieldMask Mask { get; set; }
-        public float Value { get; set; }
-
-        public static StatMod FromValues(MasterMask blockId, FieldMask mask, float value)
-        {
-            return new StatMod()
-            {
-                BlockId = blockId,
-                Mask = mask,
-                Value = value
-            };
-        }
-    }
-
     public class Stats
     {
         protected Dictionary<MasterMask, Dictionary<FieldMask, float>> _updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();

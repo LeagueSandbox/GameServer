@@ -141,9 +141,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
+                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/Spells/" + spellName + ".inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
+                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/" + spellName + ".inibin", out inibin))
                     {
                         Logger.LogCoreError("Couldn't find spell stats for " + spellName);
                         return;
@@ -196,13 +196,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
+                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
                     {
-                        if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
+                        if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/" + spellName + "Missile.inibin", out inibin))
                         {
-                            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
+                            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
                             {
-                                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
+                                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.GetType() + "/" + spellName + "Mis.inibin", out inibin))
                                 {
                                     return;
                                 }
@@ -443,7 +443,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else
             {
-                scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+                scriptloc = config.ContentManager.GetSpellScriptPath(owner.GetType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
             script.lua.DoString(@"
@@ -524,7 +524,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             });*/
 
-            script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
+            script.loadScript(scriptloc);
         }
 
         //public void reloadLua();

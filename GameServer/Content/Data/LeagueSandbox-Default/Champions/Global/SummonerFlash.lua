@@ -1,6 +1,6 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
-function finishCasting()
+function onFinishCasting()
     local current = Vector2:new(getOwnerX(), getOwnerY())
     local to = Vector2:new(getSpellToX(), getSpellToY()) - current
     local trueCoords

@@ -1,4 +1,4 @@
-function finishCasting()
+function onFinishCasting()
 	local owner = getOwner()
 	local myTeam = owner:getTeam()
 	local units = getChampionsInRange( owner, 850, true )
@@ -40,9 +40,7 @@ function finishCasting()
 		owner:getStats():setCurrentHealth(newHealth)
 	end
 	
-	addBuff("Haste", 1.0, owner)    
-	-- buff2:setMovementSpeedPercentModifier(30)    
-	-- addBuff(buff2, owner)
+	addBuff("Haste", 1.0, owner, owner)
 	
 	addParticleTarget(owner, "global_ss_heal.troy", owner )	
 	addParticleTarget(owner, "global_ss_heal_speedboost.troy", owner )

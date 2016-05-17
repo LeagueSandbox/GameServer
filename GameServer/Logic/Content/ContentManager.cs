@@ -16,7 +16,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
             "Champions",
             "Items",
             "Buffs",
-            "Maps"
+            "Maps",
+            "Commands"
         };
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
@@ -142,6 +143,19 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var contentPackages = _content[contentType][buffName];
             var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
             return GetContentPath(contentPackages, contentType, fileName);
+        }
+
+        public string[] GetCommandScriptPath()
+        {
+            var contentType = "Commands";
+            List<string> commands = new List<string>();
+            foreach (var command in _content[contentType])
+            {
+                var contentPackages = _content[contentType][command.Key];
+                var fileName = string.Format("{0}/{1}.lua", command.Key, command.Key);
+                commands.Add(GetContentPath(contentPackages, contentType, fileName));
+            }
+            return commands.ToArray();
         }
 
         public static ContentManager LoadGameMode(string gameModeName)

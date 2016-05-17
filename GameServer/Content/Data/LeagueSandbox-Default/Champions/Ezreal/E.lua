@@ -1,7 +1,7 @@
 --DarwinAnim8or
 Vector2 = require 'Vector2' -- include 2d vector lib
  
-function finishCasting()
+function onFinishCasting()
     local current = Vector2:new(getOwnerX(), getOwnerY())
     local to = Vector2:new(getSpellToX(), getSpellToY()) - current
     local trueCoords
@@ -14,16 +14,17 @@ function finishCasting()
         trueCoords = Vector2:new(getSpellToX(), getSpellToY())
     end
  
-    addParticle("Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());
-    teleportTo(trueCoords.x, trueCoords.y)
-    addParticleTarget("Ezreal_arcaneshift_flash.troy", getOwner());
+    addParticle(getOwner(), "Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());
+    teleportTo(getOwner(), trueCoords.x, trueCoords.y)
+    addParticleTarget(getOwner(), "Ezreal_arcaneshift_flash.troy", getOwner());
  
     local target = nil
     local units = getUnitsInRange( getOwner(), 700, true )
  
-    for key,value in pairs( units ) do
+    for i=0,units.Count-1 do
+		value = units[i]
         local distance = 700
-        if getOwner():getTeam() ~= value:getTeam() then
+        if getOwner():GetTeam() ~= value:GetTeam() then
             if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then
                 target = value
                 distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))
@@ -36,6 +37,6 @@ function finishCasting()
 end
  
 function applyEffects()
-    dealMagicalDamage(getEffectValue(0)+getOwner():getStats():getTotalAp()*0.75)
+    dealMagicalDamage(getEffectValue(0)+getOwner():GetStats().AbilityPower.Total*0.75)
     destroyProjectile()
 end
