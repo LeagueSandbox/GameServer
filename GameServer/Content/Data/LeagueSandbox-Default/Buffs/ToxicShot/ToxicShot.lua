@@ -3,7 +3,7 @@ function onAddBuff()
 end
 
 function onUpdate(diff)
-	printChat("onUpdate("..diff..")")
+	--printChat("onUpdate("..diff..")")
 end
 
 function onBuffEnd()

@@ -23,6 +23,11 @@ namespace GameServerTests
             {
                 ChatboxManager = new LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager(this);
             }
+
+            public void LoadBuffManager()
+            {
+                BuffManager = new LeagueSandbox.GameServer.Logic.GameObjects.BuffManager(this);
+            }
         }
     }
 }

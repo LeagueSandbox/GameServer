@@ -46,6 +46,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public ItemManager ItemManager { get; protected set; }
         // Other managers
         public ChatboxManager ChatboxManager { get; protected set; }
+        public BuffManager BuffManager { get; protected set; }
 
         public bool Initialize(Address address, string baseKey)
         {
@@ -54,6 +55,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             ItemManager = ItemManager.LoadItems(this);
             ChatboxManager = new ChatboxManager(this);
+            BuffManager = new BuffManager(this);
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);

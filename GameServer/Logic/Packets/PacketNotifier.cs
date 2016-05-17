@@ -112,13 +112,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.GetUnit(), b.GetSourceUnit(), b.GetStacks(), b.GetDuration(), BuffType.Aura, b.GetName(), 1);
+            var add = new AddBuff(b.GetUnit(), b.GetSourceUnit(), b.GetStacks(), b.GetDuration(), BuffType.Aura, b.GetName(), b.GetSlot());
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
-        public void notifyRemoveBuff(Unit u, string buffName)
+        public void notifyEditBuff(Buff b)
         {
-            var remove = new RemoveBuff(u, buffName);
+            var edit = new EditBuff(b.GetUnit(), b.GetSlot(), (byte)b.GetStacks());
+            _game.PacketHandlerManager.broadcastPacket(edit, Channel.CHL_S2C);
+        }
+
+        public void notifyRemoveBuff(Buff b)
+        {
+            var remove = new RemoveBuff(b.GetUnit(), b.GetName(), b.GetSlot());
             _game.PacketHandlerManager.broadcastPacket(remove, Channel.CHL_S2C);
         }
 
