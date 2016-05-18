@@ -251,7 +251,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Logger.LogCoreInfo("Spell from slot " + getSlot());
             try
             {
-                _script.lua.DoString("finishCasting()");
+                _script.lua.DoString("onFinishCasting()");
             }
             catch (LuaException e)
             {
@@ -446,6 +446,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            script.lua.DoString(@"
+                function onFinishCasting()
+                end");
+            script.lua.DoString(@"
+                function applyEffects()
+                end");
             ApiFunctionManager.AddBaseFunctionToLuaScript(script);
             script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
             script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
