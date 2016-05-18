@@ -1815,6 +1815,38 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class UnpauseGame : BasePacket
+    {
+        public UnpauseGame(uint unpauserNetId) : base(PacketCmdS2C.PKT_S2C_UnpauseGame)
+        {
+            buffer.Write(unpauserNetId);
+        }
+    }
+
+    public class GameSpeed : BasePacket
+    {
+        public GameSpeed(float gameSpeed) : base(PacketCmdS2C.PKT_S2C_GameSpeed)
+        {
+            buffer.Write((float)gameSpeed);
+        }
+    }
+
+    public class SurrenderState : ExtendedPacket
+    {
+        public SurrenderState(uint playernetid, byte state) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        {
+            buffer.Write((byte)state);
+        }
+    }
+
+    public class ResourceType : ExtendedPacket
+    {
+        public ResourceType(uint playernetid, byte resourceType) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        {
+            buffer.Write((byte)resourceType);
+        }
+    }
+
     public class SurrenderResult : BasePacket
     {
         public SurrenderResult(bool early, int yes, int no, TeamId team) : base(PacketCmdS2C.PKT_S2C_SurrenderResult)

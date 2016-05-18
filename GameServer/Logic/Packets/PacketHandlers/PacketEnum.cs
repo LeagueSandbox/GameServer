@@ -16,13 +16,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
     {
         PKT_S2C_MoveAns = 0x61, //?
         PKT_S2C_KeyCheck = 0x00,
+        PKT_S2C_UnpauseGame = 0x0A,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
         PKT_S2C_EditMessageBoxTop = 0x0D,
-        PKT_S2C_SurrenderState = 0x0E,
         PKT_S2C_UnlockCamera = 0x0E, //?? Well it unlocks camera so...
         PKT_S2C_AddXP = 0x10,
         PKT_S2C_EndSpawn = 0x11,
+        PKT_S2C_GameSpeed = 0x12,
         PKT_S2C_SkillUp = 0x15,
         PKT_S2C_FloatingText = 0x18,
         PKT_S2C_BeginAutoAttack = 0x1A,
@@ -145,8 +146,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 
     public enum ExtendedPacketCmd : uint
     {
+        EPKT_S2C_SurrenderState = 0x0E,
         EPKT_S2C_OnAttack = 0x0F,
         EPKT_S2C_ChampionDeathTimer = 0x17,
+        EPKT_S2C_ResourceType = 0x19,
         EPKT_S2C_NPC_Die = 0x26,
     };
 
