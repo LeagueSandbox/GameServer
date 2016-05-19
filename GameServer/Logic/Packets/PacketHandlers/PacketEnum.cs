@@ -86,6 +86,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_RemoveMessageBoxRight = 0xA7,
         PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_S2C_SurrenderResult = 0xA5,
+        PKT_S2C_EnableFOW = 0xAB,
         PKT_S2C_SetHealth = 0xAE,
         PKT_S2C_SpellAnimation = 0xB0,
         PKT_S2C_EditMessageBoxRight = 0xB1,

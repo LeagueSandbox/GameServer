@@ -2901,4 +2901,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(currentCd);
         }
     }
+
+    public class EnableFOW : BasePacket
+    {
+        public EnableFOW(bool activate) : base(PacketCmdS2C.PKT_S2C_EnableFOW)
+        {
+            buffer.Write(activate ? 0x01 : 0x00);
+        }
+    }
 }
