@@ -125,7 +125,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_C2S_AutoAttackOption = 0x47,
         PKT_C2S_Emotion = 0x48,
         PKT_C2S_StartGame = 0x52,
-        PKT_C2S_ScoreBord = 0x56,
+        PKT_C2S_Scoreboard = 0x56,
         PKT_C2S_AttentionPing = 0x57,
         PKT_C2S_ClientReady = 0x64,
         PKT_C2S_BlueTipClicked = 0x6D,
