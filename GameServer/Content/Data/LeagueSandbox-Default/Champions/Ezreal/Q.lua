@@ -1,6 +1,6 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
-function finishCasting()
+function onFinishCasting()
     local current = Vector2:new(getOwnerX(), getOwnerY())
     local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
     local range = to * 1150
@@ -8,6 +8,7 @@ function finishCasting()
 
     addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
     addBuff("Haste", 10.0, 1, getOwner(), getOwner())
+	printChat("You used Q");
 end
 
 function applyEffects()
