@@ -7,7 +7,7 @@ function onFinishCasting()
     local trueCoords = current + range
 	
 	-- "EzrealMysticShotMissile" is not the name, if someone knows it please write it
-    addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
+    addProjectile("EzrealEssenceFluxMissile", trueCoords.x, trueCoords.y);
 	printChat("You used W");
 end
 
