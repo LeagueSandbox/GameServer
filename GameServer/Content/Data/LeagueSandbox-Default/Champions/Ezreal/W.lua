@@ -12,7 +12,10 @@ function onFinishCasting()
 end
 
 function applyEffects()
-	dealPhysicalDamage(getEffectValue(0)+getOwner():getStats():getTotalAd()+(0.4*getOwner():getStats():getTotalAp()))
+	local attackDamage = getOwner():GetStats().AttackDamage
+    local abilityPower = getOwner():GetStats().AbilityPower
+    local damage = getEffectValue(0) + attackDamage.Total + (0.4 * abilityPower.Total)
+    dealPhysicalDamage(damage)
     -- TODO this can be fetched from projectile inibin "HitEffectName"
 	
 	-- This is not the name of the particle, if someone knows it please write it
