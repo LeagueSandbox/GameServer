@@ -17,8 +17,10 @@ end
 function applyEffects()
     local attackDamage = getOwner():GetStats().AttackDamage
     local abilityPower = getOwner():GetStats().AbilityPower
-    local damage = getEffectValue(0) + attackDamage.Total + (0.4 * abilityPower.Total)
+    local damage = getEffectValue(0) + (1.1 * attackDamage.Total) + (0.4 * abilityPower.Total)
     dealPhysicalDamage(damage)
+	
+	
     -- TODO this can be fetched from projectile inibin "HitEffectName"
     addParticleTarget("Ezreal_mysticshot_tar.troy", getTarget())
 
