@@ -7,12 +7,20 @@ function onFinishCasting()
     local trueCoords = current + range
 
     addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
-    addBuff("Haste", 10.0, 1, getOwner(), getOwner())
 	printChat("You used Q");
+	
+	-- This buff isnt in the main servers
+    -- addBuff("Haste", 10.0, 1, getOwner(), getOwner())
+
 end
 
 function applyEffects()
-    dealPhysicalDamage(getEffectValue(0)+getOwner():getStats():getTotalAd()+(0.4*getOwner():getStats():getTotalAp()))
+    local attackDamage = getOwner():GetStats().AttackDamage
+    local abilityPower = getOwner():GetStats().AbilityPower
+    local damage = getEffectValue(0) + 1.1 * attackDamage.Total + (0.4 * abilityPower.Total)
+    dealPhysicalDamage(damage)
+	
+	
     -- TODO this can be fetched from projectile inibin "HitEffectName"
     addParticleTarget("Ezreal_mysticshot_tar.troy", getTarget())
 
