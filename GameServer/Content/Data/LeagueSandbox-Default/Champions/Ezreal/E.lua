@@ -18,12 +18,12 @@ function onFinishCasting()
     addParticleTarget(getOwner(), "Ezreal_arcaneshift_flash.troy", getOwner());
  
     local target = nil
-    local units = getUnitsInRange( getOwner(), 700, true )
+    local units = getUnitsInRange(getOwner(), 700, true)
  
     for i=0,units.Count-1 do
 		value = units[i]
         local distance = 700
-        if getOwner():GetTeam() ~= value:GetTeam() then
+        if getOwner():getTeam() ~= value:getTeam() then
             if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then
                 target = value
                 distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))
@@ -31,11 +31,12 @@ function onFinishCasting()
         end
     end
     if target then
-        addProjectileTarget(target)
+        addProjectileTarget("EzrealArcaneShiftMissile", target)
     end
 end
  
 function applyEffects()
-    dealMagicalDamage(getEffectValue(0)+getOwner():GetStats().AbilityPower.Total*0.75)
+    dealMagicalDamage(25+getSpellLevel()*50+getOwner():GetStats().AbilityPower.Total*0.75)
+    addParticleTarget(getOwner(), "Ezreal_arcaneshift_tar.troy", getTarget())
     destroyProjectile()
 end
