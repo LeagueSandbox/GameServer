@@ -1,0 +1,224 @@
+[1mdiff --git a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/E.lua b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/E.lua[m
+[1mindex 8f477c9..74680ab 100644[m
+[1m--- a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/E.lua[m
+[1m+++ b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/E.lua[m
+[36m@@ -1,42 +1,42 @@[m
+[31m-Vector2 = require 'Vector2' -- include 2d vector lib[m
+[31m- [m
+[31m-function onFinishCasting()[m
+[31m-    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[31m-    local to = Vector2:new(getSpellToX(), getSpellToY()) - current[m
+[31m-    local trueCoords[m
+[31m- [m
+[31m-    if to:length() > 475 then[m
+[31m-        to = to:normalize()[m
+[31m-        local range = to * 475[m
+[31m-        trueCoords = current:copy() + range[m
+[31m-    else[m
+[31m-        trueCoords = Vector2:new(getSpellToX(), getSpellToY())[m
+[31m-    end[m
+[31m- [m
+[31m-    addParticle(getOwner(), "Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());[m
+[31m-    teleportTo(getOwner(), trueCoords.x, trueCoords.y)[m
+[31m-    addParticleTarget(getOwner(), "Ezreal_arcaneshift_flash.troy", getOwner());[m
+[31m- [m
+[31m-    local target = nil[m
+[31m-    local units = getUnitsInRange(getOwner(), 700, true)[m
+[31m- [m
+[31m-    for i=0,units.Count-1 do[m
+[31m-		value = units[i][m
+[31m-        local distance = 700[m
+[31m-        if getOwner():getTeam() ~= value:getTeam() then[m
+[31m-            if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then[m
+[31m-                target = value[m
+[31m-                distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))[m
+[31m-            end[m
+[31m-        end[m
+[31m-    end[m
+[31m-    if target then[m
+[31m-        addProjectileTarget("EzrealArcaneShiftMissile", target)[m
+[31m-    end[m
+[31m-end[m
+[31m- [m
+[31m-function applyEffects()[m
+[31m-    dealMagicalDamage(25+getSpellLevel()*50+getOwner():GetStats().AbilityPower.Total*0.75)[m
+[31m-    addParticleTarget(getOwner(), "Ezreal_arcaneshift_tar.troy", getTarget())[m
+[31m-    destroyProjectile()[m
+[31m-end[m
+[32m+[m[32mVector2 = require 'Vector2' -- include 2d vector lib[m
+[32m+[m[41m [m
+[32m+[m[32mfunction onFinishCasting()[m
+[32m+[m[32m    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[32m+[m[32m    local to = Vector2:new(getSpellToX(), getSpellToY()) - current[m
+[32m+[m[32m    local trueCoords[m
+[32m+[m[41m [m
+[32m+[m[32m    if to:length() > 475 then[m
+[32m+[m[32m        to = to:normalize()[m
+[32m+[m[32m        local range = to * 475[m
+[32m+[m[32m        trueCoords = current:copy() + range[m
+[32m+[m[32m    else[m
+[32m+[m[32m        trueCoords = Vector2:new(getSpellToX(), getSpellToY())[m
+[32m+[m[32m    end[m
+[32m+[m[41m [m
+[32m+[m[32m    addParticle(getOwner(), "Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());[m
+[32m+[m[32m    teleportTo(getOwner(), trueCoords.x, trueCoords.y)[m
+[32m+[m[32m    addParticleTarget(getOwner(), "Ezreal_arcaneshift_flash.troy", getOwner());[m
+[32m+[m[41m [m
+[32m+[m[32m    local target = nil[m
+[32m+[m[32m    local units = getUnitsInRange(getOwner(), 700, true)[m
+[32m+[m[41m [m
+[32m+[m[32m    for i=0,units.Count-1 do[m
+[32m+[m		[32mvalue = units[i][m
+[32m+[m[32m        local distance = 700[m
+[32m+[m[32m        if getOwner():getTeam() ~= value:getTeam() then[m
+[32m+[m[32m            if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then[m
+[32m+[m[32m                target = value[m
+[32m+[m[32m                distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))[m
+[32m+[m[32m            end[m
+[32m+[m[32m        end[m
+[32m+[m[32m    end[m
+[32m+[m[32m    if target then[m
+[32m+[m[32m        addProjectileTarget("EzrealArcaneShiftMissile", target)[m
+[32m+[m[32m    end[m
+[32m+[m[32mend[m
+[32m+[m[41m [m
+[32m+[m[32mfunction applyEffects()[m
+[32m+[m[32m    dealMagicalDamage(25+getSpellLevel()*50+getOwner():GetStats().AbilityPower.Total*0.75)[m
+[32m+[m[32m    addParticleTarget(getOwner(), "Ezreal_arcaneshift_tar.troy", getTarget())[m
+[32m+[m[32m    destroyProjectile()[m
+[32m+[m[32mend[m
+[1mdiff --git a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/Q.lua b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/Q.lua[m
+[1mindex d70ca00..e8c8b1e 100644[m
+[1m--- a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/Q.lua[m
+[1m+++ b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/Q.lua[m
+[36m@@ -1,22 +1,22 @@[m
+[31m-Vector2 = require 'Vector2' -- include 2d vector lib [m
+[31m-[m
+[31m-function onFinishCasting()[m
+[31m-    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[31m-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[31m-    local range = to * 1150[m
+[31m-    local trueCoords = current + range[m
+[31m-[m
+[31m-    addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)[m
+[31m-end[m
+[31m-[m
+[31m-function applyEffects()[m
+[31m-    local AD = getOwner():GetStats().AttackDamage.Total*1.1[m
+[31m-    local AP = getOwner():GetStats().AbilityPower.Total*0.4[m
+[31m-    local damage = getEffectValue(0) + AD + AP[m
+[31m-    dealPhysicalDamage(damage)[m
+[31m-	[m
+[31m-	-- TODO this can be fetched from projectile inibin "HitEffectName"[m
+[31m-    addParticleTarget(getOwner(), "Ezreal_mysticshot_tar.troy", getTarget())[m
+[31m-[m
+[31m-    destroyProjectile()[m
+[31m-end[m
+[32m+[m[32mVector2 = require 'Vector2' -- include 2d vector lib[m[41m [m
+[32m+[m
+[32m+[m[32mfunction onFinishCasting()[m
+[32m+[m[32m    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[32m+[m[32m    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[32m+[m[32m    local range = to * 1150[m
+[32m+[m[32m    local trueCoords = current + range[m
+[32m+[m
+[32m+[m[32m    addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)[m
+[32m+[m[32mend[m
+[32m+[m
+[32m+[m[32mfunction applyEffects()[m
+[32m+[m[32m    local AD = getOwner():GetStats().AttackDamage.Total*1.1[m
+[32m+[m[32m    local AP = getOwner():GetStats().AbilityPower.Total*0.4[m
+[32m+[m[32m    local damage = getEffectValue(0) + AD + AP[m
+[32m+[m[32m    dealPhysicalDamage(damage)[m
+[32m+[m[41m	[m
+[32m+[m	[32m-- TODO this can be fetched from projectile inibin "HitEffectName"[m
+[32m+[m[32m    addParticleTarget(getOwner(), "Ezreal_mysticshot_tar.troy", getTarget())[m
+[32m+[m
+[32m+[m[32m    destroyProjectile()[m
+[32m+[m[32mend[m
+[1mdiff --git a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/R.lua b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/R.lua[m
+[1mindex 6b9053a..6c7c52b 100644[m
+[1m--- a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/R.lua[m
+[1m+++ b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/R.lua[m
+[36m@@ -1,21 +1,21 @@[m
+[31m-Vector2 = require 'Vector2' -- include 2d vector lib [m
+[31m-[m
+[31m-function onFinishCasting()[m
+[31m-    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[31m-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[31m-    local range = to * 20000[m
+[31m-    local trueCoords = current + range[m
+[31m-[m
+[31m-    addProjectile("EzrealTrueshotBarrage", trueCoords.x, trueCoords.y)	[m
+[31m-end[m
+[31m-[m
+[31m-function applyEffects()[m
+[31m-    --Uncomment these when getNumberObjectsHit() is fixed[m
+[31m-    --local reduc = math.min(getNumberObjectsHit(), 3)[m
+[31m-    local bonusAD = getOwner():GetStats().AttackDamage.Total - getOwner():GetStats().AttackDamage.BaseValue[m
+[31m-    local AP = getOwner():GetStats().AbilityPower.Total*0.9[m
+[31m-    local damage = 200+getSpellLevel()*150 + bonusAD + AP[m
+[31m-	dealMagicalDamage(damage) -- damage * (1 - reduc/10)[m
+[31m-    [m
+[31m-    addParticleTarget(getOwner(), "Ezreal_TrueShot_tar.troy", getTarget())[m
+[31m-end[m
+[32m+[m[32mVector2 = require 'Vector2' -- include 2d vector lib[m[41m [m
+[32m+[m
+[32m+[m[32mfunction onFinishCasting()[m
+[32m+[m[32m    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[32m+[m[32m    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[32m+[m[32m    local range = to * 20000[m
+[32m+[m[32m    local trueCoords = current + range[m
+[32m+[m
+[32m+[m[32m    addProjectile("EzrealTrueshotBarrage", trueCoords.x, trueCoords.y)[m[41m	[m
+[32m+[m[32mend[m
+[32m+[m
+[32m+[m[32mfunction applyEffects()[m
+[32m+[m[32m    --Uncomment these when getNumberObjectsHit() is fixed[m
+[32m+[m[32m    --local reduc = math.min(getNumberObjectsHit(), 3)[m
+[32m+[m[32m    local bonusAD = getOwner():GetStats().AttackDamage.Total - getOwner():GetStats().AttackDamage.BaseValue[m
+[32m+[m[32m    local AP = getOwner():GetStats().AbilityPower.Total*0.9[m
+[32m+[m[32m    local damage = 200+getSpellLevel()*150 + bonusAD + AP[m
+[32m+[m	[32mdealMagicalDamage(damage) -- damage * (1 - reduc/10)[m
+[32m+[m[41m    [m
+[32m+[m[32m    addParticleTarget(getOwner(), "Ezreal_TrueShot_tar.troy", getTarget())[m
+[32m+[m[32mend[m
+[1mdiff --git a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/W.lua b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/W.lua[m
+[1mindex f311379..ef1348f 100644[m
+[1m--- a/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/W.lua[m
+[1m+++ b/GameServer/Content/Data/LeagueSandbox-Default/Champions/Ezreal/W.lua[m
+[36m@@ -1,17 +1,17 @@[m
+[31m-Vector2 = require 'Vector2' -- include 2d vector lib [m
+[31m-[m
+[31m-function onFinishCasting()[m
+[31m-    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[31m-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[31m-    local range = to * 1000[m
+[31m-    local trueCoords = current + range[m
+[31m-	[m
+[31m-    addProjectile("EzrealEssenceFluxMissile", trueCoords.x, trueCoords.y)[m
+[31m-end[m
+[31m-[m
+[31m-function applyEffects()[m
+[31m-    if getOwner():getTeam() ~= getTarget():getTeam() then[m
+[31m-        dealMagicalDamage(25+getSpellLevel()*45+getOwner():GetStats().AbilityPower.Total*0.8)[m
+[31m-	    addParticleTarget(getOwner(), "Ezreal_essenceflux_tar.troy", getTarget())[m
+[31m-    end[m
+[31m-end[m
+[32m+[m[32mVector2 = require 'Vector2' -- include 2d vector lib[m[41m [m
+[32m+[m
+[32m+[m[32mfunction onFinishCasting()[m
+[32m+[m[32m    local current = Vector2:new(getOwnerX(), getOwnerY())[m
+[32m+[m[32m    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()[m
+[32m+[m[32m    local range = to * 1000[m
+[32m+[m[32m    local trueCoords = current + range[m
+[32m+[m[41m	[m
+[32m+[m[32m    addProjectile("EzrealEssenceFluxMissile", trueCoords.x, trueCoords.y)[m
+[32m+[m[32mend[m
+[32m+[m
+[32m+[m[32mfunction applyEffects()[m
+[32m+[m[32m    if getOwner():getTeam() ~= getTarget():getTeam() then[m
+[32m+[m[32m        dealMagicalDamage(25+getSpellLevel()*45+getOwner():GetStats().AbilityPower.Total*0.8)[m
+[32m+[m	[32m    addParticleTarget(getOwner(), "Ezreal_essenceflux_tar.troy", getTarget())[m
+[32m+[m[32m    end[m
+[32m+[m[32mend[m

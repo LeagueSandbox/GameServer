@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "HeimerdingerEngineAudio",
+        "Name": "HeimerdingerEngineAudio",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Spells/HeimerdingerEngineAudio.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "DynamicTooltip": "game_buff_tooltip_HeimerdingerQPower",
+            "Version": 1
+        }
+    }
+}

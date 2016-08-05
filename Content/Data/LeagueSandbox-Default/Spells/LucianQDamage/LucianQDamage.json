@@ -1,0 +1,58 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LucianQDamage",
+        "Name": "LucianQDamage",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianQDamage.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "LucianQ",
+            "AnimationName": "Spell1",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": 0.1,
+            "CastRadiusTexture": "AOE.tga",
+            "CastRange": "25000",
+            "CastRangeUseBoundingBoxes": 1,
+            "CastType": "0",
+            "Coefficient": "0",
+            "Cooldown": "1.0000",
+            "Description": "game_spell_description_LucianQ",
+            "DisplayName": "game_spell_displayname_LucianQ",
+            "DynamicExtended": "game_spell_levelup_LucianQ",
+            "DynamicTooltip": "game_spell_tooltip_LucianQ",
+            "Flags": 115712,
+            "FloatVarsDecimals1": "0",
+            "InventoryIcon": "Lucian_Q.dds",
+            "LineWidth": "65.0000",
+            "OverrideCastTime": 0.42,
+            "TargettingType": 1,
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "1090971346": "120",
+            "1168646476": "80.0000",
+            "1792800849": 105,
+            "1954466257": "240.0000",
+            "2494630352": "90",
+            "2629301966": "1.0000",
+            "2629301967": "1.0000",
+            "2629301968": "1.0000",
+            "2629301969": "1.000",
+            "2629301970": "1.0000",
+            "2656295760": "200.0000",
+            "278926620": "DefaultRangeIndicator.dds",
+            "305151565": "60",
+            "3196459855": 75,
+            "3358125263": "160.0000",
+            "3771724453": 0,
+            "3771724454": 0,
+            "3771724455": 0,
+            "3771724456": 0,
+            "3771724457": 0,
+            "3898289358": "60",
+            "4059954766": "120.0000",
+            "466816973": "80.0000"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "EliseHumanEHeal",
+        "Name": "EliseHumanEHeal",
+        "ResourcePath": "DATA/Characters/Elise/Spells/EliseHumanEHeal.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_EliseHumanEHeal"
+        }
+    }
+}

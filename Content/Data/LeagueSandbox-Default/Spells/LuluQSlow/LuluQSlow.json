@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LuluQSlow",
+        "Name": "LuluQSlow",
+        "ResourcePath": "DATA/Spells/LuluQSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LuluQSlow"
+        }
+    }
+}

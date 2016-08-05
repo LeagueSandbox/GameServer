@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LuxEEnd",
+        "Name": "LuxEEnd",
+        "ResourcePath": "DATA/Spells/LuxEEnd.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LuxEEnd",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

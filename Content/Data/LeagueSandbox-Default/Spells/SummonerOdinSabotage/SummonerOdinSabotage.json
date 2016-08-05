@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SummonerOdinSabotage",
+        "Name": "SummonerOdinSabotage",
+        "ResourcePath": "DATA/Spells/SummonerOdinSabotage.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SummonerOdinSabotage"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Spell Shield",
+        "Name": "Spell Shield",
+        "ResourcePath": "DATA/Characters/Sivir/Spells/Spell Shield.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Spell_Shield",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

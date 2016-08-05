@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GnarQSlow",
+        "Name": "GnarQSlow",
+        "ResourcePath": "DATA/Characters/Gnar/Spells/GnarQSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GnarQSlow"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LucianRDisable",
+        "Name": "LucianRDisable",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianRDisable.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LucianR"
+        },
+        "SpellData": {
+            "AlternateName": "LucianR",
+            "CantCancelWhileChanneling": "0",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": 9.425,
+            "CastRange": "10000.0000",
+            "CastRangeDisplayOverride": "1200.0000",
+            "CastType": "0",
+            "Coefficient": 0.1,
+            "Coefficient2": 0.25,
+            "Description": "game_spell_description_LucianR",
+            "DisplayName": "game_spell_displayname_LucianR",
+            "DynamicExtended": "game_spell_levelup_LucianR",
+            "DynamicTooltip": "game_spell_tooltip_LucianR",
+            "Flags": 329732,
+            "FloatVarsDecimals1": "0",
+            "FloatVarsDecimals2": "0",
+            "FloatVarsDecimals3": "0",
+            "InventoryIcon": "Lucian_R.dds",
+            "IsToggleSpell": 1,
+            "LineWidth": "60.0000",
+            "TargettingType": "0"
+        },
+        "UNKNOWN_HASHES": {
+            "1168646476": 3,
+            "1183899362": "0",
+            "1631135441": 3.5,
+            "1829373218": "AffectFriends | AffectHeroes | AlwaysSelf | Instacast",
+            "2332964944": 3,
+            "2494630352": "60",
+            "2629301966": "0",
+            "2629301967": "0",
+            "2629301968": "0",
+            "3034794447": 2.5,
+            "305151565": "40",
+            "3196459855": "50",
+            "3358125263": 3,
+            "3736623950": 2.5,
+            "3771724453": "0",
+            "3771724454": "0",
+            "3771724455": "0",
+            "3898289358": "40",
+            "4059954766": 3,
+            "466816973": 3
+        }
+    }
+}

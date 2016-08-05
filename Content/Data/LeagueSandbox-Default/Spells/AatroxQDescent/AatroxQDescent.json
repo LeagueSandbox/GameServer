@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AatroxQDescent",
+        "Name": "AatroxQDescent",
+        "ResourcePath": "DATA/Characters/Aatrox/Spells/AatroxQDescent.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "AatroxQ"
+        }
+    }
+}

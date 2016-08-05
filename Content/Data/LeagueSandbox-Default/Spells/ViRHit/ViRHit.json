@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ViRHit",
+        "Name": "ViRHit",
+        "ResourcePath": "DATA/Characters/Vi/Spells/ViRHit.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "ViR",
+            "Description": "game_spell_description_ViR",
+            "DisplayName": "game_spell_displayname_ViR",
+            "DynamicExtended": "game_spell_levelup_ViR",
+            "DynamicTooltip": "game_spell_tooltip_ViR"
+        }
+    }
+}

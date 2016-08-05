@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Ferocious Howl",
+        "Name": "Ferocious Howl",
+        "ResourcePath": "DATA/Spells/Ferocious Howl.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Ferocious_Howl",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

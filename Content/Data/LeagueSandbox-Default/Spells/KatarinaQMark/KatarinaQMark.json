@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KatarinaQMark",
+        "Name": "KatarinaQMark",
+        "ResourcePath": "DATA/Spells/KatarinaQMark.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KatarinaDaggered"
+        }
+    }
+}

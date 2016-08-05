@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "RelicYellowWard",
+        "Name": "RelicYellowWard",
+        "ResourcePath": "DATA/Spells/RelicYellowWard.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RelicYellowWard"
+        }
+    }
+}

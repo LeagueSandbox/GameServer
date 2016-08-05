@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "YasuoRSound3",
+        "Name": "YasuoRSound3",
+        "ResourcePath": "DATA/Characters/Yasuo/Spells/YasuoRSound3.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RumbleDangerZone"
+        }
+    }
+}

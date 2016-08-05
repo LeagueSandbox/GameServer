@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "TTBossBuff",
+        "Name": "TTBossBuff",
+        "ResourcePath": "DATA/Spells/TTBossBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_TTBossBuff"
+        }
+    }
+}

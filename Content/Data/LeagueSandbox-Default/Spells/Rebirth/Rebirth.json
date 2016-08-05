@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Rebirth",
+        "Name": "Rebirth",
+        "ResourcePath": "DATA/Spells/Rebirth.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Rebirth"
+        }
+    }
+}

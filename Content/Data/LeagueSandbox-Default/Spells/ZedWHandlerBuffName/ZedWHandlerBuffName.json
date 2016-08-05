@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZedWHandlerBuffName",
+        "Name": "ZedWHandlerBuffName",
+        "ResourcePath": "DATA/Characters/Zed/Spells/ZedWHandlerBuffName.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ZedWHandler",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

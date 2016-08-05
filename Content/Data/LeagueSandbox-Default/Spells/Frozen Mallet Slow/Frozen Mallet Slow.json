@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Frozen Mallet Slow",
+        "Name": "Frozen Mallet Slow",
+        "ResourcePath": "DATA/Spells/Frozen Mallet Slow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Frozen_Mallet_Slow"
+        }
+    }
+}

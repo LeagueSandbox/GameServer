@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ThreeSistersAsheHuntingSejuani",
+        "Name": "ThreeSistersAsheHuntingSejuani",
+        "ResourcePath": "DATA/Spells/ThreeSistersAsheHuntingSejuani.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ThreeSistersAsheHuntingSejuani"
+        }
+    }
+}

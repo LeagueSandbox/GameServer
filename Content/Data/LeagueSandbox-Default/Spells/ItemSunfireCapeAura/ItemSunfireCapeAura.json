@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ItemSunfireCapeAura",
+        "Name": "ItemSunfireCapeAura",
+        "ResourcePath": "DATA/Spells/ItemSunfireCapeAura.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Sunfire_Cape_Aura"
+        }
+    }
+}

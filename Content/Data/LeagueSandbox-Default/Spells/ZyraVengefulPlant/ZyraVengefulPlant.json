@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ZyraVengefulPlant",
+        "Name": "ZyraVengefulPlant",
+        "ResourcePath": "DATA/Spells/ZyraVengefulPlant.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Absolute_Zero_Slow"
+        }
+    }
+}

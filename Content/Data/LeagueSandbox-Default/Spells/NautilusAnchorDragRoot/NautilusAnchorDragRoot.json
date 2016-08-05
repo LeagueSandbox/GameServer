@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NautilusAnchorDragRoot",
+        "Name": "NautilusAnchorDragRoot",
+        "ResourcePath": "DATA/Spells/NautilusAnchorDragRoot.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NautilusAnchorDragRoot"
+        }
+    }
+}

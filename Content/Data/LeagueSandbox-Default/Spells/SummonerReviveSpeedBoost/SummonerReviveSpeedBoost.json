@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SummonerReviveSpeedBoost",
+        "Name": "SummonerReviveSpeedBoost",
+        "ResourcePath": "DATA/Spells/SummonerReviveSpeedBoost.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SummonerReviveSpeedBoost"
+        }
+    }
+}

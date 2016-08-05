@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Zephyr",
+        "Name": "Zephyr",
+        "ResourcePath": "DATA/Characters/Janna/Spells/Zephyr.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Zephyr"
+        }
+    }
+}

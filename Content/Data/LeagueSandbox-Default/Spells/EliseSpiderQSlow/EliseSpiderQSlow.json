@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "EliseSpiderQSlow",
+        "Name": "EliseSpiderQSlow",
+        "ResourcePath": "DATA/Characters/Elise/Spells/EliseSpiderQSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_EliseSpiderQSlow"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Infernal Guardian",
+        "Name": "Infernal Guardian",
+        "ResourcePath": "DATA/Characters/Annie/Spells/Infernal Guardian.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Infernal_Guardian"
+        }
+    }
+}

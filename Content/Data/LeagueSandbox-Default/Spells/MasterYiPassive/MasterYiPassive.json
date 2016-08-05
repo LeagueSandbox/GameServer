@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "MasterYiPassive",
+        "Name": "MasterYiPassive",
+        "ResourcePath": "DATA/Characters/MasterYi/Spells/MasterYiPassive.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MasterYiPassive"
+        }
+    }
+}

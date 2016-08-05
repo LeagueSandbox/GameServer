@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionPassiveZombie",
+        "Name": "SionPassiveZombie",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionPassiveZombie.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionPassiveZombie"
+        },
+        "UNKNOWN_HASHES": {
+            "1015219584": "SionPassiveZombie",
+            "1378003864": "SionPassiveZombie",
+            "1441538562": "OrderConfirmation"
+        }
+    }
+}

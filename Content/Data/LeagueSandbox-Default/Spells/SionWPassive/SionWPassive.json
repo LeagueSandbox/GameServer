@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionWPassive",
+        "Name": "SionWPassive",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionWPassive.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionWPassive"
+        }
+    }
+}

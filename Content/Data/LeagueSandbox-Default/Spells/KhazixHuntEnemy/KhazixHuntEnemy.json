@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KhazixHuntEnemy",
+        "Name": "KhazixHuntEnemy",
+        "ResourcePath": "DATA/Characters/Khazix/Spells/KhazixHuntEnemy.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KhazixHuntEnemy"
+        }
+    }
+}

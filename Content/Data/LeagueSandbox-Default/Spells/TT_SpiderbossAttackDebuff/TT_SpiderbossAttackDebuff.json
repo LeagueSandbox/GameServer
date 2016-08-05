@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "TT_SpiderbossAttackDebuff",
+        "Name": "TT_SpiderbossAttackDebuff",
+        "ResourcePath": "DATA/Spells/TT_SpiderbossAttackDebuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_TTSpiderbossAttackDebuff"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "JinxQIcon",
+        "Name": "JinxQIcon",
+        "ResourcePath": "DATA/Characters/Jinx/Spells/JinxQIcon.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_JinxQIcon"
+        }
+    }
+}

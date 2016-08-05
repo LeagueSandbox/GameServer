@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SwainDampeningFieldMana",
+        "Name": "SwainDampeningFieldMana",
+        "ResourcePath": "DATA/Spells/SwainDampeningFieldMana.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SwainDampeningFieldMana"
+        },
+        "SpellData": {
+            "FloatVarsDecimals1": "0",
+            "FloatVarsDecimals2": "0"
+        }
+    }
+}

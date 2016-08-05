@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "MasteryBladeWeaving",
+        "Name": "MasteryBladeWeaving",
+        "ResourcePath": "DATA/Spells/MasteryBladeWeaving.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_BladeWeaving"
+        }
+    }
+}

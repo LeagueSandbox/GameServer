@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AlZaharSummonVoidlingBuff",
+        "Name": "AlZaharSummonVoidlingBuff",
+        "ResourcePath": "DATA/Spells/AlZaharSummonVoidlingBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AlZaharSummonVoidlingBuff",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

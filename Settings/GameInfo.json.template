@@ -1,0 +1,19 @@
+﻿{
+	"players": [
+        {
+            "rank": "DIAMOND",
+            "name": "Test",
+            "champion": "Ezreal",
+            "team": "BLUE",
+            "skin": 0,
+            "summoner1": "HEAL",
+            "summoner2": "FLASH",
+            "ribbon": 2,
+            "icon": 0
+        }
+    ],
+    "game": {
+        "map": 1,
+        "gameMode": "LeagueSandbox-Default"
+    }
+}

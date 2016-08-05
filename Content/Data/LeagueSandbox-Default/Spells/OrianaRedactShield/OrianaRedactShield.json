@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "OrianaRedactShield",
+        "Name": "OrianaRedactShield",
+        "ResourcePath": "DATA/Spells/OrianaRedactShield.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_OrianaRedactShield"
+        }
+    }
+}
