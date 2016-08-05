@@ -8,13 +8,15 @@ function onFinishCasting()
 	printChat("You used E");
  
     addParticle(getOwner(), "Lucian_E_Buf.troy", getOwnerX(), getOwnerY());
+	addParticleTarget(getOwner(), "Lucian_E_Buf.troy", getOwner())
 	
 	-- ==============================================================================
 	-- WARNING WARNING WARNING WARNING
 	-- DASHTO HAS A VISUAL BUG WHICH TELEPORTS THE PLAYER TO THE MIDDLE OF THE MAP
 	-- WHEN YOU CLICK TO MOVE THE VISUAL BUG DISSAPEARS
 	-- ==============================================================================
-	dashTo(getOwner(), trueCoords.x, trueCoords.y, 445);
+	dashTo(getOwner(), trueCoords.x, trueCoords.y, 1000);
+	spellAnimation("Spell3", getOwner())
 
 	
 end
