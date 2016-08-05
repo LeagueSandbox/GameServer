@@ -14,7 +14,7 @@ function onFinishCasting()
 	-- DASHTO HAS A VISUAL BUG WHICH TELEPORTS THE PLAYER TO THE MIDDLE OF THE MAP
 	-- WHEN YOU CLICK TO MOVE THE VISUAL BUG DISSAPEARS
 	-- ==============================================================================
-	dashTo(getOwner(), trueCoords.x, trueCoords.y, 100);
+	dashTo(getOwner(), trueCoords.x, trueCoords.y, 400);
 
 	
 end
