@@ -492,7 +492,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public MovementVector ToMovementVector(float x, float y)
         {
-             return new MovementVector((int)((x - mesh.getWidth() / 2) / 2), (int)((y - mesh.getHeight() / 2) / 2));
+            return new MovementVector((int)((x - mesh.getWidth() / 2) / 2), (int)((y - mesh.getHeight() / 2) / 2));
         }
 
         public bool TeamHasVisionOn(TeamId team, GameObject o)
