@@ -433,6 +433,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, target, particleName);
         }
 
+        public int getOtherSpellLevel(int slotId)
+        {
+            return owner.getSpell(slotId).getLevel();
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -504,6 +509,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
             script.lua.RegisterFunction("dashTo", this, typeof(Spell).GetMethod("dashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
+            script.lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
