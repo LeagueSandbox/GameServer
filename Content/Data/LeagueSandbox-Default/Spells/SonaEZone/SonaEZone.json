@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SonaEZone",
+        "Name": "SonaEZone",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaEZone.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SonaEZone"
+        }
+    }
+}

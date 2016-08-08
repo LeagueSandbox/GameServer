@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "DariusAxeGrabArmorPen",
+        "Name": "DariusAxeGrabArmorPen",
+        "ResourcePath": "DATA/Characters/Darius/Spells/DariusAxeGrabArmorPen.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_DariusAxeGrabArmorPen"
+        }
+    }
+}

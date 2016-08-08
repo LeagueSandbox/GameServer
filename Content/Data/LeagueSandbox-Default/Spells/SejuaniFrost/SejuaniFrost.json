@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SejuaniFrost",
+        "Name": "SejuaniFrost",
+        "ResourcePath": "DATA/Characters/Sejuani/Spells/SejuaniFrost.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SejuaniFrost"
+        }
+    }
+}

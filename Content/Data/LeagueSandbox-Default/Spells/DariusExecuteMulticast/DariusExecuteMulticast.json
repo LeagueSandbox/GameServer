@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "DariusExecuteMulticast",
+        "Name": "DariusExecuteMulticast",
+        "ResourcePath": "DATA/Characters/Darius/Spells/DariusExecuteMulticast.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_DariusExecuteMulticast",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

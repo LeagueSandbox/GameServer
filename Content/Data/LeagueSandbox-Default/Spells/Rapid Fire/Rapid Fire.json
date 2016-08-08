@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Rapid Fire",
+        "Name": "Rapid Fire",
+        "ResourcePath": "DATA/Characters/Tristana/Spells/Rapid Fire.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Rapid_Fire",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

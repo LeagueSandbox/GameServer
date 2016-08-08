@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "BuffEliseVenomousBite",
+        "Name": "BuffEliseVenomousBite",
+        "ResourcePath": "DATA/Characters/Elise/Spells/BuffEliseVenomousBite.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_BuffEliseVenomousBite"
+        }
+    }
+}

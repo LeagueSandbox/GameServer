@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LeblancDisplacement",
+        "Name": "LeblancDisplacement",
+        "ResourcePath": "DATA/Characters/Leblanc/Spells/LeblancDisplacement.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LeblancDisplacement",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

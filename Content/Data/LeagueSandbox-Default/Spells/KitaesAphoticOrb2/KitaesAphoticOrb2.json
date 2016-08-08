@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KitaesAphoticOrb2",
+        "Name": "KitaesAphoticOrb2",
+        "ResourcePath": "DATA/Spells/KitaesAphoticOrb2.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KitaesAphoticOrb2"
+        }
+    }
+}

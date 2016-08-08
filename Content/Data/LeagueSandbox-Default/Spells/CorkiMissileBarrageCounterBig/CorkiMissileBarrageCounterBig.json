@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CorkiMissileBarrageCounterBig",
+        "Name": "CorkiMissileBarrageCounterBig",
+        "ResourcePath": "DATA/Spells/CorkiMissileBarrageCounterBig.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CorkiMissileBarrageCounterBig",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

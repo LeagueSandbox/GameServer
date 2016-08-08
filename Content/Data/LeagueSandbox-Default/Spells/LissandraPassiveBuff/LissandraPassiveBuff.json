@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LissandraPassiveBuff",
+        "Name": "LissandraPassiveBuff",
+        "ResourcePath": "DATA/Characters/Lissandra/Spells/LissandraPassiveBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LissandraPassiveBuff"
+        }
+    }
+}

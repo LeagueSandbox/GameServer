@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NamiPassivett",
+        "Name": "NamiPassivett",
+        "ResourcePath": "DATA/Characters/Nami/Spells/NamiPassivett.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NamiPassivett"
+        }
+    }
+}

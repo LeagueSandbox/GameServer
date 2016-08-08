@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotVeigarBuff",
+        "Name": "NightmareBotVeigarBuff",
+        "ResourcePath": "DATA/Characters/Veigar/Spells/NightmareBotVeigarBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotVeigarBuff"
+        }
+    }
+}

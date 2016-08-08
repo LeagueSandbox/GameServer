@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SonaPassiveCount",
+        "Name": "SonaPassiveCount",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaPassiveCount.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SonaPassiveCount",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

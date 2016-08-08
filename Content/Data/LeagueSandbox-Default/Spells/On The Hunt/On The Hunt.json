@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "On The Hunt",
+        "Name": "On The Hunt",
+        "ResourcePath": "DATA/Characters/Sivir/Spells/On The Hunt.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_On_The_Hunt",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

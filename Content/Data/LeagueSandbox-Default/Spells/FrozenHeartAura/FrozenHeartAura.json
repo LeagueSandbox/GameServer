@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "FrozenHeartAura",
+        "Name": "FrozenHeartAura",
+        "ResourcePath": "DATA/Spells/FrozenHeartAura.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_FrozenHeartAura"
+        }
+    }
+}

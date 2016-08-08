@@ -585,10 +585,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public SpellAnimation(Unit u, string animationName) : base(PacketCmdS2C.PKT_S2C_SpellAnimation, u.getNetId())
         {
-            buffer.Write((int)0x00000005); // unk
-            buffer.Write((int)0x00000000); // unk
-            buffer.Write((int)0x00000000); // unk
-            buffer.Write(1.0f); // unk
+            Console.WriteLine("Requested SpellAnimation: " + animationName);
+            buffer.Write((byte)0xC4); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((ushort)0); // unk
+            buffer.Write((byte)0x80); // unk
+            buffer.Write((byte)0x3F); // unk
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 buffer.Write(b);
             buffer.Write((byte)0);
@@ -597,18 +600,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     class SetAnimation : BasePacket
     {
-        public SetAnimation(Unit u, List<Tuple<string, string>> animationPairs) : base(PacketCmdS2C.PKT_S2C_SetAnimation, u.getNetId())
+        public SetAnimation(Unit u, List<string> animationPairs) : base(PacketCmdS2C.PKT_S2C_SetAnimation, u.getNetId())
         {
             buffer.Write((byte)animationPairs.Count);
 
             for (int i = 0; i < animationPairs.Count; i++)
             {
-                buffer.Write((int)animationPairs[i].Item1.Length);
-                foreach (var b in Encoding.Default.GetBytes(animationPairs[i].Item1))
-                    buffer.Write(b);
-
-                buffer.Write((int)animationPairs[i].Item2.Length);
-                foreach (var b in Encoding.Default.GetBytes(animationPairs[i].Item2))
+                buffer.Write((int)animationPairs[i].Length);
+                foreach (var b in Encoding.Default.GetBytes(animationPairs[i]))
                     buffer.Write(b);
             }
         }
@@ -890,7 +889,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Quest : BasePacket
     {
-        public Quest(string questName, string questDescription, byte type, byte remove, uint netid,  byte success = 0) : base(PacketCmdS2C.PKT_S2C_Quest)
+        public Quest(string questName, string questDescription, byte type, byte remove, uint netid, byte success = 0) : base(PacketCmdS2C.PKT_S2C_Quest)
         {
             buffer.Write(Encoding.Default.GetBytes(questName));
             buffer.fill(0, 256 - questName.Length);
@@ -2633,9 +2632,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0); // unk
             buffer.Write((short)0); // unk
             buffer.Write((byte)1); // number of targets ?
-            buffer.Write((uint)owner.getNetId());
-            buffer.Write((uint)netId); // Particle net id ?
-            buffer.Write((uint)owner.getNetId());
+            if (t == owner)
+            {
+                buffer.Write((uint)owner.getNetId());
+                buffer.Write((uint)netId); // Particle net id ?
+                buffer.Write((uint)owner.getNetId());
+            }
+            else
+            {
+                buffer.Write((uint)(t as GameObject).getNetId());
+                buffer.Write((uint)netId); // Particle net id ?
+                buffer.Write((uint)(t as GameObject).getNetId());
+            }
 
             if (t.isSimpleTarget())
                 buffer.Write((int)0);

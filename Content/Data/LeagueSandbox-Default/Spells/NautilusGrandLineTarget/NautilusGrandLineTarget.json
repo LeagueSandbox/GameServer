@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NautilusGrandLineTarget",
+        "Name": "NautilusGrandLineTarget",
+        "ResourcePath": "DATA/Spells/NautilusGrandLineTarget.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NautilusGrandLineTarget"
+        }
+    }
+}

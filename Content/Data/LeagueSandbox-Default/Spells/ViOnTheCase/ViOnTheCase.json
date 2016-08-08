@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ViOnTheCase",
+        "Name": "ViOnTheCase",
+        "ResourcePath": "DATA/Characters/Vi/Spells/ViOnTheCase.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ViOnTheCase"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Flee",
+        "Name": "Flee",
+        "ResourcePath": "DATA/Spells/Flee.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Flee"
+        }
+    }
+}

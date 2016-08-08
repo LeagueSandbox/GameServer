@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotEzrealBuff",
+        "Name": "NightmareBotEzrealBuff",
+        "ResourcePath": "DATA/Spells/NightmareBotEzrealBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotEzrealBuff"
+        }
+    }
+}

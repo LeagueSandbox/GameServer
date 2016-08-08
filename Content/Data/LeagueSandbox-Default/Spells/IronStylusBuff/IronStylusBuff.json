@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "IronStylusBuff",
+        "Name": "IronStylusBuff",
+        "ResourcePath": "DATA/Spells/IronStylusBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_IronStylusBuff"
+        }
+    }
+}

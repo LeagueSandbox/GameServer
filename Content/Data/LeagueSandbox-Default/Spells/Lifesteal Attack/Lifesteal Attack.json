@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Lifesteal Attack",
+        "Name": "Lifesteal Attack",
+        "ResourcePath": "DATA/Spells/Lifesteal Attack.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Lifesteal_Attack"
+        }
+    }
+}

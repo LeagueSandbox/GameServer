@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "YasuoDashGhosted",
+        "Name": "YasuoDashGhosted",
+        "ResourcePath": "DATA/Characters/Yasuo/Spells/YasuoDashGhosted.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RumbleDangerZone"
+        }
+    }
+}

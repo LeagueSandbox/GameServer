@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NightmareBotSpiritWarwick",
+        "Name": "NightmareBotSpiritWarwick",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritWarwick.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NightmareBotSpiritWarwick"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LightningRodReady",
+        "Name": "LightningRodReady",
+        "ResourcePath": "DATA/Spells/LightningRodReady.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LightningRodReady"
+        }
+    }
+}

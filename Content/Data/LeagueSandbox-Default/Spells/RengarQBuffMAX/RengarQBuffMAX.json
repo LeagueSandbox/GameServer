@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "RengarQBuffMAX",
+        "Name": "RengarQBuffMAX",
+        "ResourcePath": "DATA/Characters/Rengar/Spells/RengarQBuffMAX.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RengarQBuffMAX"
+        }
+    }
+}

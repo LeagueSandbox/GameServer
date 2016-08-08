@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "KalistaWSight",
+        "Name": "KalistaWSight",
+        "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaWSight.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_KalistaWSight"
+        }
+    }
+}

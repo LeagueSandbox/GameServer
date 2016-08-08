@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "HeimerdingerRWVO",
+        "Name": "HeimerdingerRWVO",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Spells/HeimerdingerRWVO.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "CastType": "0",
+            "Flags": "34820",
+            "TargettingType": 4,
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "1829373218": "Instacast | AffectFriends | AffectMinions"
+        }
+    }
+}

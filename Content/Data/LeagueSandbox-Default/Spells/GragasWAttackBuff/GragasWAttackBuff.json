@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GragasWAttackBuff",
+        "Name": "GragasWAttackBuff",
+        "ResourcePath": "DATA/Characters/Gragas/Spells/GragasWAttackBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GragasWAttack",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

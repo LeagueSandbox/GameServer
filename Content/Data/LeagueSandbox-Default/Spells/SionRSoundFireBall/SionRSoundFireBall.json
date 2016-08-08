@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionRSoundFireBall",
+        "Name": "SionRSoundFireBall",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionRSoundFireBall.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionWPassive"
+        },
+        "UNKNOWN_HASHES": {
+            "1441538562": "OrderConfirmation",
+            "1706124924": 0,
+            "218475640": 0,
+            "2407954427": 0,
+            "3109783930": 0,
+            "3811613433": 0
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GarenPassiveHeal",
+        "Name": "GarenPassiveHeal",
+        "ResourcePath": "DATA/Characters/Garen/Spells/GarenPassiveHeal.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GarenPassiveHeal"
+        }
+    }
+}

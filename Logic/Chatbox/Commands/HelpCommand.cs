@@ -1,0 +1,36 @@
+﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Packets;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+
+namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
+{
+    public class HelpCommand : ChatCommand
+    {
+        public HelpCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+
+        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        {
+            string commands = "";
+            int count = 0;
+            foreach (var command in _owner.GetCommandsStrings())
+            {
+                count += 1;
+                commands = commands
+                           + "<font color =\"#E175FF\"><b>"
+                           + _owner.GetGame().ChatboxManager.CommandStarterCharacter + command
+                           + "</b><font color =\"#FFB145\">, ";
+            }
+            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
+            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, commands);
+            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count.ToString() + " commands");
+
+            _owner.AddCommand(new NewCommand("newcommand", "", _owner));
+
+            var topText = new Packets.MessageBoxTop("TOP");
+            var rightText = new Packets.MessageBoxRight("RIGHT");
+            _owner.GetGame().PacketHandlerManager.sendPacket(peer, topText, Channel.CHL_S2C);
+            _owner.GetGame().PacketHandlerManager.sendPacket(peer, rightText, Channel.CHL_S2C);
+        }
+    }
+}

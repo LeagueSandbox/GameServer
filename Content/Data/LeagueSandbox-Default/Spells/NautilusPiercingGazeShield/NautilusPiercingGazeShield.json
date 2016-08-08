@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "NautilusPiercingGazeShield",
+        "Name": "NautilusPiercingGazeShield",
+        "ResourcePath": "DATA/Spells/NautilusPiercingGazeShield.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_NautilusPiercingGazeShield"
+        }
+    }
+}

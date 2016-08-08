@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LuluRSlow",
+        "Name": "LuluRSlow",
+        "ResourcePath": "DATA/Spells/LuluRSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Slow",
+            "HideDurationInUI": 1
+        }
+    }
+}

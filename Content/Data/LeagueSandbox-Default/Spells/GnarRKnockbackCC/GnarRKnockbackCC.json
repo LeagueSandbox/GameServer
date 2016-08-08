@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GnarRKnockbackCC",
+        "Name": "GnarRKnockbackCC",
+        "ResourcePath": "DATA/Characters/Gnar/Spells/GnarRKnockbackCC.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GnarRKnockback"
+        }
+    }
+}

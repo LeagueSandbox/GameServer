@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Trample Buff",
+        "Name": "Trample Buff",
+        "ResourcePath": "DATA/Spells/Trample Buff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Trample_Buff"
+        }
+    }
+}

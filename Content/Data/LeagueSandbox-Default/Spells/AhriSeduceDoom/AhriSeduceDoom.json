@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AhriSeduceDoom",
+        "Name": "AhriSeduceDoom",
+        "ResourcePath": "DATA/Characters/Ahri/Spells/AhriSeduceDoom.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AhriSeduceDoom"
+        }
+    }
+}

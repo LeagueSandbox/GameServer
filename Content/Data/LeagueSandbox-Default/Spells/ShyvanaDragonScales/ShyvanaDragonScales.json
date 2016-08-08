@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ShyvanaDragonScales",
+        "Name": "ShyvanaDragonScales",
+        "ResourcePath": "DATA/Spells/ShyvanaDragonScales.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ShyvanaDragonScales"
+        }
+    }
+}

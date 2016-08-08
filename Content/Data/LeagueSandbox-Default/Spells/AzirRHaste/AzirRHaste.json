@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "AzirRHaste",
+        "Name": "AzirRHaste",
+        "ResourcePath": "DATA/Characters/Azir/Spells/AzirRHaste.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_AzirRHaste"
+        }
+    }
+}

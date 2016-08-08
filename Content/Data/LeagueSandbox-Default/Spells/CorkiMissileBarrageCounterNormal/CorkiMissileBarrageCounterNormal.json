@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CorkiMissileBarrageCounterNormal",
+        "Name": "CorkiMissileBarrageCounterNormal",
+        "ResourcePath": "DATA/Spells/CorkiMissileBarrageCounterNormal.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CorkiMissileBarrageCounterNormal",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

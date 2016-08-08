@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CassiopeiaPoisonTicker2",
+        "Name": "CassiopeiaPoisonTicker2",
+        "ResourcePath": "DATA/Characters/Cassiopeia/Spells/CassiopeiaPoisonTicker2.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CassiopeiaPoisonTicker2",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

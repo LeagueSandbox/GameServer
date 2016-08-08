@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionEMinion",
+        "Name": "SionEMinion",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionEMinion.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionEMinion"
+        }
+    }
+}

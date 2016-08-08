@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "GnarTransformSoon",
+        "Name": "GnarTransformSoon",
+        "ResourcePath": "DATA/Characters/Gnar/Spells/GnarTransformSoon.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GnarTransformSoon",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

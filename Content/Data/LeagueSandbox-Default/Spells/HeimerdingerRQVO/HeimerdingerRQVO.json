@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "HeimerdingerRQVO",
+        "Name": "HeimerdingerRQVO",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Spells/HeimerdingerRQVO.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "DynamicTooltip": "game_buff_tooltip_HeimerdingerQPower",
+            "Version": 1
+        }
+    }
+}

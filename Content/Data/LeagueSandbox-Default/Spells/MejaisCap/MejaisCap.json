@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "MejaisCap",
+        "Name": "MejaisCap",
+        "ResourcePath": "DATA/Spells/MejaisCap.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MejaisCap"
+        }
+    }
+}

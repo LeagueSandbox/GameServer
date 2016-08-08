@@ -1,0 +1,16 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "LeblancChaosOrbProc",
+        "Name": "LeblancChaosOrbProc",
+        "ResourcePath": "DATA/Characters/Leblanc/Spells/LeblancChaosOrbProc.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LeblancChaosOrbProc"
+        },
+        "SpellData": {
+            "AlternateName": "LeblancChaosOrb"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "TreelineMasterBuffT1RightHexakill",
+        "Name": "TreelineMasterBuffT1RightHexakill",
+        "ResourcePath": "DATA/Spells/TreelineMasterBuffT1RightHexakill.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_TreelineMasterBuffT1Hexakill"
+        }
+    }
+}

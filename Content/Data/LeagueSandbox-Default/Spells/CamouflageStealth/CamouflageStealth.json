@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "CamouflageStealth",
+        "Name": "CamouflageStealth",
+        "ResourcePath": "DATA/Spells/CamouflageStealth.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CamouflageStealth",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

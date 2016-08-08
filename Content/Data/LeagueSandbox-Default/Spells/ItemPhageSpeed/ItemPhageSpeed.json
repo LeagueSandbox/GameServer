@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ItemPhageSpeed",
+        "Name": "ItemPhageSpeed",
+        "ResourcePath": "DATA/Spells/ItemPhageSpeed.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ItemPhageSpeed"
+        }
+    }
+}

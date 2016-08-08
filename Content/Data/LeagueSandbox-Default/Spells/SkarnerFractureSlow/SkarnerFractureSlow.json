@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SkarnerFractureSlow",
+        "Name": "SkarnerFractureSlow",
+        "ResourcePath": "DATA/Characters/Skarner/Spells/SkarnerFractureSlow.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SkarnerVirulentSlashSlow"
+        }
+    }
+}
