@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             continue;
 
                         var n = u as Nexus;
-                        if (i != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                        if (n != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                             continue;
 
                         var c = u as Champion;
