@@ -402,6 +402,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
+        public void spellAnimation(string animName, Unit target)
+        {
+            owner.GetGame().PacketNotifier.notifySpellAnimation(target, animName);
+        }
+
+        public void setAnimation(string animation, string animation2, Unit target)
+        {
+            List<string> animList = new List<string>();
+            animList.Add(animation);
+            animList.Add(animation2);
+            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+        }
+
+        public void resetAnimations(Unit target)
+        {
+            List<string> animList = new List<string>();
+            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+        }
+
+        public void dashTo(Unit target, float x, float y, float dashSpeed)
+        {
+            target.dashTo(x, y, dashSpeed);
+            target.setTargetUnit(null);
+            owner.GetGame().PacketNotifier.notifyDash(target, x, y, dashSpeed);
+        }
+
+        public void addParticleTarget(string particleName, Target target)
+        {
+            owner.GetGame().PacketNotifier.notifyParticleSpawn(owner, target, particleName);
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -468,6 +499,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
+            script.lua.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
+            script.lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
+            script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
+            script.lua.RegisterFunction("dashTo", this, typeof(Spell).GetMethod("dashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float) }));
+            script.lua.RegisterFunction("addParticleTarget", this, typeof(Spell).GetMethod("addParticleTarget", new Type[] { typeof(string), typeof(Target) }));
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
