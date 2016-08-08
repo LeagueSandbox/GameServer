@@ -1,15 +1,13 @@
-function finishCasting()
-	local owner = getOwner()
-	local myTeam = owner:getTeam()
-	local units = getChampionsInRange( owner, 850, true )
-	local lowestHealthPercentage = 100
+function onFinishCasting()
+	local units = getChampionsInRange(getOwner(), 850, true)
 	local mostWoundedAlliedChampion = nil
+	local lowestHealthPercentage = 100
 	for i=0,units.Count-1 do
 		value = units[i]
-		if myTeam == value:getTeam() and i ~= 0 then
-			local currentHealth = value:getStats():getCurrentHealth()
-			local maxHealth = value:getStats():getMaxHealth()
-			if (currentHealth*100/maxHealth < lowestHealthPercentage) and (getOwner() ~= value) then
+		if getOwner():getTeam() == value:getTeam() and i ~= 0 then
+			local currentHealth = value:GetStats().CurrentHealth
+			local maxHealth = value:GetStats().HealthPoints.Total
+			if (currentHealth*100/maxHealth < 100) and (getOwner() ~= value) then
 				lowestHealthPercentage = currentHealth*100/maxHealth
 				mostWoundedAlliedChampion = value
 			end
@@ -17,36 +15,35 @@ function finishCasting()
 	end
 	
 	if mostWoundedAlliedChampion then
-		local newHealth = mostWoundedAlliedChampion:getStats():getCurrentHealth() + 75 + owner:getStats():getLevel()*15
-		local maxHealth = mostWoundedAlliedChampion:getStats():getMaxHealth()    
+		local newHealth = mostWoundedAlliedChampion:GetStats().CurrentHealth + 75 + getOwner():GetStats():GetLevel()*15
+		local maxHealth = mostWoundedAlliedChampion:GetStats().HealthPoints.Total    
 		if newHealth >= maxHealth then
-			mostWoundedAlliedChampion:getStats():setCurrentHealth(maxHealth)
+			mostWoundedAlliedChampion:GetStats().CurrentHealth = maxHealth
 		else
-			mostWoundedAlliedChampion:getStats():setCurrentHealth(newHealth)
+			mostWoundedAlliedChampion:GetStats().CurrentHealth = newHealth
 		end
 		
-		local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, owner)
+		local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, getOwner())
 		buff:setMovementSpeedPercentModifier(30)
-		addBuff(buff, mostWoundedAlliedChampion)
+		addBuff(buff)
 		
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_02.troy", mostWoundedAlliedChampion )
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_speedboost.troy", mostWoundedAlliedChampion )
 	end
-	newHealth = owner:getStats():getCurrentHealth() + 75 + owner:getStats():getLevel()*15
-	maxHealth = owner:getStats():getMaxHealth()
+	newHealth = getOwner():GetStats().CurrentHealth + 75 + getOwner():GetStats():GetLevel()*15
+	maxHealth = getOwner():GetStats().HealthPoints.Total
 	if newHealth >= maxHealth then
-		owner:getStats():setCurrentHealth(maxHealth)
+		getOwner():GetStats().CurrentHealth = maxHealth
 	else
-		owner:getStats():setCurrentHealth(newHealth)
+		getOwner():GetStats().CurrentHealth = newHealth
 	end
 	
-	addBuff("Haste", 1.0, owner)    
-	-- buff2:setMovementSpeedPercentModifier(30)    
-	-- addBuff(buff2, owner)
+	local buff2 = Buff.new("Haste", 1.0, getOwner(), getOwner())
+	buff2:setMovementSpeedPercentModifier(30)    
+	addBuff(buff2)
 	
-	addParticleTarget(owner, "global_ss_heal.troy", owner )	
-	addParticleTarget(owner, "global_ss_heal_speedboost.troy", owner )
-	
+	addParticleTarget(getOwner(), "global_ss_heal.troy", getOwner())	
+	addParticleTarget(getOwner(), "global_ss_heal_speedboost.troy", getOwner())
 end
 
 function applyEffects()
