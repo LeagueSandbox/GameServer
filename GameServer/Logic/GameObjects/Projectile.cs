@@ -74,8 +74,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (m != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
                             continue;
 
+                        var o = u as Monster;
+                        if (o != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                            continue;
+
                         var t = u as Turret;
                         if (t != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                            continue;
+
+                        var i = u as Inhibitor;
+                        if (i != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                            continue;
+
+                        var n = u as Nexus;
+                        if (n != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                             continue;
 
                         var c = u as Champion;
