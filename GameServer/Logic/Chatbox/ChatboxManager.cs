@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new ManaCommand("mana", "mana maxMana", this));
             AddCommand(new MobsCommand("mobs", "mobs teamNumber", this));
             AddCommand(new ModelCommand("model", "model modelName", this));
-            AddCommand(new PacketCommand("packet", "No idea, too lazy to read the code", this));
+            AddCommand(new PacketCommand("packet", "packet XX XX XX...", this));
             AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
             AddCommand(new SizeCommand("size", "size size", this));
             AddCommand(new SkillpointsCommand("skillpoints", "", this));

@@ -1555,6 +1555,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class AddXP : BasePacket
+    {
+        public AddXP(Unit u, float xp) : base(PacketCmdS2C.PKT_S2C_AddXP)
+        {
+            buffer.Write(u.getNetId());
+            buffer.Write(xp);
+        }
+    }
+
     public class EditBuff : BasePacket
     {
         public EditBuff(Unit u, byte slot, byte stacks) : base(PacketCmdS2C.PKT_S2C_EditBuff, u.getNetId())
@@ -1802,6 +1811,38 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0); //noVotes
             buffer.Write((byte)4); //maxVotes
             buffer.Write((byte)TeamId.TEAM_BLUE); //team
+        }
+    }
+
+    public class UnpauseGame : BasePacket
+    {
+        public UnpauseGame(uint unpauserNetId) : base(PacketCmdS2C.PKT_S2C_UnpauseGame)
+        {
+            buffer.Write(unpauserNetId);
+        }
+    }
+
+    public class GameSpeed : BasePacket
+    {
+        public GameSpeed(float gameSpeed) : base(PacketCmdS2C.PKT_S2C_GameSpeed)
+        {
+            buffer.Write((float)gameSpeed);
+        }
+    }
+
+    public class SurrenderState : ExtendedPacket
+    {
+        public SurrenderState(uint playernetid, byte state) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        {
+            buffer.Write((byte)state);
+        }
+    }
+
+    public class ResourceType : ExtendedPacket
+    {
+        public ResourceType(uint playernetid, byte resourceType) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        {
+            buffer.Write((byte)resourceType);
         }
     }
 
@@ -2857,6 +2898,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xF8); // 4.18
             buffer.Write(totalCd);
             buffer.Write(currentCd);
+        }
+    }
+
+    public class EnableFOW : BasePacket
+    {
+        public EnableFOW(bool activate) : base(PacketCmdS2C.PKT_S2C_EnableFOW)
+        {
+            buffer.Write(activate ? 0x01 : 0x00);
         }
     }
 }
