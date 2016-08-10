@@ -93,6 +93,15 @@ namespace LeagueSandbox.GameServer.Logic
                 if (dashing)
                 {
                     dashing = false;
+
+                    if (this is Unit)
+                    {
+                        var u = this as Unit;
+
+                        List<string> animList = new List<string>();
+                        u.GetGame().PacketNotifier.notifySetAnimation(u, animList);
+                    }
+
                     setTarget(null);
                 }
                 else if (++curWaypoint >= waypoints.Count)
