@@ -602,7 +602,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SetAnimation(Unit u, List<string> animationPairs) : base(PacketCmdS2C.PKT_S2C_SetAnimation, u.getNetId())
         {
-            buffer.Write((byte)animationPairs.Count);
+            buffer.Write((byte)(animationPairs.Count/2));
 
             for (int i = 0; i < animationPairs.Count; i++)
             {

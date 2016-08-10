@@ -1,13 +1,13 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
-function finishCasting()
+function onFinishCasting()
     -- Create projectile for slowing enemies
     local current = Vector2:new(getOwnerX(), getOwnerY())
     local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
     local range = to * 1000
     local trueCoords = current + range
     
-    addProjectile(trueCoords.x, trueCoords.y)
+    addProjectile("CaitlynEntrapmentMissile", trueCoords.x, trueCoords.y)
 
     -- Apply knockback
     local original = Vector2:new(getOwnerX(), getOwnerY())
@@ -16,10 +16,7 @@ function finishCasting()
     range = current * 400
     trueCoords = original + range
 
-    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1000)
-    setAnimation("RUN", "SPELL3B", getOwner())
-    
-    resetAnimations(getOwner())
+    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1000, "SPELL3B")
 end
 
 function applyEffects()

@@ -77,8 +77,15 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.setModel(model);
         }
 
-        public static void DashTo(Unit unit, float x, float y, float dashSpeed)
+        public static void DashTo(Unit unit, float x, float y, float dashSpeed, string animation = null)
         {
+            if (animation != null)
+            {
+                List<string> animList = new List<string>();
+                animList.Add("RUN");
+                animList.Add(animation);
+                _game.PacketNotifier.notifySetAnimation(unit, animList);
+            }
             unit.dashTo(x, y, dashSpeed);
             unit.setTargetUnit(null);
             _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed);
@@ -112,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             luaScript.lua.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             luaScript.lua.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             luaScript.lua.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-            luaScript.lua.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float) }));
+            luaScript.lua.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(string) }));
             luaScript.lua.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             luaScript.lua.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));
             luaScript.lua.RegisterFunction("sendPacket", null, typeof(ApiFunctionManager).GetMethod("SendPacket", new Type[] { typeof(string) }));
