@@ -266,6 +266,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
+
+            owner.SetCastingSpell(false);
         }
 
         /**
@@ -278,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 case SpellState.STATE_READY:
                     return;
                 case SpellState.STATE_CASTING:
-
+                    owner.SetCastingSpell(true);
                     currentCastTime -= diff / 1000.0f;
                     if (currentCastTime <= 0)
                     {

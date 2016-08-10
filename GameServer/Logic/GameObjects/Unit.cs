@@ -82,6 +82,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private long _timerUpdate;
 
+        private bool isCastingSpell = false;
+
         public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
@@ -105,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             unitScript.lua.DoString(@"
                 function onDie(killer)
                 end");
-            
+
             ApiFunctionManager.AddBaseFunctionToLuaScript(unitScript);
         }
 
@@ -271,7 +273,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
             dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK);
-            
+
             if (unitScript.isLoaded())
             {
                 try
@@ -352,6 +354,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool isDead()
         {
             return deathFlag;
+        }
+
+        public bool IsCastingSpell()
+        {
+            return isCastingSpell;
+        }
+
+        public void SetCastingSpell(bool newState)
+        {
+            isCastingSpell = newState;
         }
 
         public virtual void die(Unit killer)
@@ -508,7 +520,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (target == null) // If we are unsetting the target (moving around)
             {
                 if (targetUnit != null) // and we had a target
-                    targetUnit.setDistressCall(null); // Unset the distress call	
+                    targetUnit.setDistressCall(null); // Unset the distress call
                                                       // TODO: Replace this with a delay?
             }
             else
@@ -559,10 +571,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public int classifyTarget(Unit target)
         {
             /*
-Under normal circumstances, a minion痴 behavior is simple. Minions follow their attack route until they reach an enemy to engage. 
-Every few seconds, they will scan the area around them for the highest priority target. When a minion receives a call for help 
-from an ally, it will evaluate its current target in relation to the target designated by the call. It will switch its attack 
-to the new target if and only if the new target is of a higher priority than their current target. Minions prioritize targets 
+Under normal circumstances, a minion痴 behavior is simple. Minions follow their attack route until they reach an enemy to engage.
+Every few seconds, they will scan the area around them for the highest priority target. When a minion receives a call for help
+from an ally, it will evaluate its current target in relation to the target designated by the call. It will switch its attack
+to the new target if and only if the new target is of a higher priority than their current target. Minions prioritize targets
 in the following order:
 
     1. An enemy champion designated by a call for help from an allied champion. (Enemy champion attacking an Allied champion)

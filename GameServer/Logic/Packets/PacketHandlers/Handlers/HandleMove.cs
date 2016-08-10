@@ -18,7 +18,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var peerInfo = game.GetPeerInfo(peer);
-            if (peerInfo == null || peerInfo.GetChampion().isDashing() || peerInfo.GetChampion().isDead())
+            var champion = peerInfo.GetChampion();
+            if (peerInfo == null || champion.isDashing() || champion.isDead() || champion.IsCastingSpell())
                 return true;
 
             var request = new MovementReq(data);
