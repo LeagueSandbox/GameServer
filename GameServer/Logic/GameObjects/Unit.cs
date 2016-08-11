@@ -395,7 +395,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 float expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
+                {
                     c.GetStats().Experience += expPerChamp;
+                    _game.PacketNotifier.NotifyAddXP(c, expPerChamp);
+                }
             }
 
             if (killer != null)
