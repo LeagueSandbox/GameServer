@@ -7,7 +7,7 @@ function onFinishCasting()
 		if getOwner():getTeam() == value:getTeam() and i ~= 0 then
 			local currentHealth = value:GetStats().CurrentHealth
 			local maxHealth = value:GetStats().HealthPoints.Total
-			if (currentHealth*100/maxHealth < 100) and (getOwner() ~= value) then
+			if (currentHealth*100/maxHealth < lowestHealthPercentage) and (getOwner() ~= value) then
 				lowestHealthPercentage = currentHealth*100/maxHealth
 				mostWoundedAlliedChampion = value
 			end

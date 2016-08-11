@@ -376,7 +376,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(u, sa, Channel.CHL_S2C);
         }
 
-        public void notifySetAnimation(Unit u, List<Tuple<string, string>> animationPairs)
+        public void notifySetAnimation(Unit u, List<string> animationPairs)
         {
             var setAnimation = new SetAnimation(u, animationPairs);
             _game.PacketHandlerManager.broadcastPacketVision(u, setAnimation, Channel.CHL_S2C);

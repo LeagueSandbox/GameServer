@@ -266,6 +266,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
+
+            owner.SetCastingSpell(false);
         }
 
         /**
@@ -278,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 case SpellState.STATE_READY:
                     return;
                 case SpellState.STATE_CASTING:
-
+                    owner.SetCastingSpell(true);
                     currentCastTime -= diff / 1000.0f;
                     if (currentCastTime <= 0)
                     {
@@ -402,6 +404,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
+        public void spellAnimation(string animName, Unit target)
+        {
+            owner.GetGame().PacketNotifier.notifySpellAnimation(target, animName);
+        }
+
+        public void setAnimation(string animation, string animation2, Unit target)
+        {
+            List<string> animList = new List<string>();
+            animList.Add(animation);
+            animList.Add(animation2);
+            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+        }
+
+        public void resetAnimations(Unit target)
+        {
+            List<string> animList = new List<string>();
+            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+        }
+
+        public int getOtherSpellLevel(int slotId)
+        {
+            return owner.getSpell(slotId).getLevel();
+        }
+
         /**
          * @return Spell's unique ID
          */
@@ -468,6 +494,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
             script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
             script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
+            script.lua.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
+            script.lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
+            script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
+            script.lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);

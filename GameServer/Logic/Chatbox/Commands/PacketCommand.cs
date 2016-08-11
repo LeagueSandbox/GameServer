@@ -22,25 +22,23 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     return;
                 }
 
-                var bytes = new List<byte>();
+                var opcode = Convert.ToByte(s[1], 16);
+                var packet = new Packets.Packet((PacketCmdS2C)opcode);
+                var buffer = packet.getBuffer();
 
-                for (var i = 1; i < s.Length; i++)
+                for (int i = 2; i < s.Length; i++)
                 {
-                    var ss = s[i].Split(':');
-                    var type = ss[0];
-                    dynamic num;
-                    if (ss[1] == "netid")
-                        num = _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId();
+                    if (s[i] == "netid")
+                    {
+                        buffer.Write(_owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId());
+                    }
                     else
-                        num = System.Convert.ChangeType(int.Parse(ss[1]), Type.GetType("System." + type));
-                    var d = BitConverter.GetBytes(num);
-                    if (num.GetType() == typeof(byte))
-                        bytes.Add(num);
-                    else
-                        bytes.AddRange(d);
+                    {
+                        buffer.Write(Convert.ToByte(s[i], 16));
+                    }
                 }
 
-                _owner.GetGame().PacketHandlerManager.sendPacket(peer, bytes.ToArray(), Channel.CHL_S2C);
+                _owner.GetGame().PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);
             }
             catch { }
         }
