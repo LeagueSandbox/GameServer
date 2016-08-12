@@ -270,6 +270,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(ag, Channel.CHL_S2C);
         }
 
+        public void NotifyAddXP(Champion champion, float experience)
+        {
+            var xp = new AddXP(champion, experience);
+            _game.PacketHandlerManager.broadcastPacket(xp, Channel.CHL_S2C);
+        }
+
         public void notifyStopAutoAttack(Unit attacker)
         {
             var saa = new StopAutoAttack(attacker);
