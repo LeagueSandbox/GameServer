@@ -74,6 +74,8 @@
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatboxManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\KillCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\SpawnStateCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\AdCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ApCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ChCommand.cs" />
