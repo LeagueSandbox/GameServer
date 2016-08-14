@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
@@ -95,6 +96,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new SpeedCommand("speed", "speed speed", this));
             AddCommand(new TpCommand("tp", "tp x y", this));
             AddCommand(new XpCommand("xp", "xp xp", this));
+            var commands = GetGame().Config.ContentManager.GetCommandScriptPath();
+            foreach (var command in commands)
+            {
+                AddCommand(new LuaChatCommand(command, this));
+            }
         }
 
         public bool AddCommand(ChatCommand command)
