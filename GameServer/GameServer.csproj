@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
+    <Compile Include="Logic\API\LuaChatCommand.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatboxManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />
@@ -189,13 +190,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rmdir /s /q "$(TargetDir)Content\"
-rmdir /s /q "$(TargetDir)Settings\"
-xcopy /s /y /q "$(ProjectDir)Content" "$(TargetDir)Content\*"
-xcopy /s /y /q "$(ProjectDir)Settings" "$(TargetDir)Settings\*"
-xcopy /s /y /q "$(ProjectDir)LuaLib" "$(TargetDir)LuaLib\*"
-xcopy /s /y /q "$(SolutionDir)lib" "$(TargetDir)*"
-xcopy /s /y /q "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
+    <PostBuildEvent>xcopy /s /y /q /d "$(ProjectDir)Content" "$(TargetDir)Content\*"
+xcopy /s /y /q /d "$(ProjectDir)Settings" "$(TargetDir)Settings\*"
+xcopy /s /y /q /d "$(ProjectDir)LuaLib" "$(TargetDir)LuaLib\*"
+xcopy /s /y /q /d "$(SolutionDir)lib" "$(TargetDir)*"
+xcopy /s /y /q /d "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
