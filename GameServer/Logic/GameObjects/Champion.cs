@@ -175,12 +175,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 //TODO : repair function
                 case "blue":
-                    x = config.MapSpawns.Blue[teamSize].GetXForPlayer(0);
-                    y = config.MapSpawns.Blue[teamSize].GetYForPlayer(0);
+                    x = config.MapSpawns.Blue[teamSize - 1].GetXForPlayer(0);
+                    y = config.MapSpawns.Blue[teamSize - 1].GetYForPlayer(0);
                     break;
                 case "purple":
-                    x = config.MapSpawns.Purple[teamSize].GetXForPlayer(0);
-                    y = config.MapSpawns.Purple[teamSize].GetYForPlayer(0);
+                    x = config.MapSpawns.Purple[teamSize - 1].GetXForPlayer(0);
+                    y = config.MapSpawns.Purple[teamSize - 1].GetYForPlayer(0);
                     break;
             }
 
