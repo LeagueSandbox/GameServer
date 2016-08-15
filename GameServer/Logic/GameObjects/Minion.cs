@@ -37,6 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int curMainWaypoint = 0;
         protected MinionSpawnPosition spawnPosition;
         protected MinionSpawnType minionType;
+        protected bool _AIPaused;
 
         public Minion(Game game, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(game, id, "", new MinionStats(), 40, 0, 0, 1100)
         {
@@ -44,6 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.spawnPosition = position;
             this.mainWaypoints = mainWaypoints;
             this.curMainWaypoint = 0;
+            _AIPaused = false;
 
             var spawnSpecifics = _game.GetMap().GetMinionSpawnPosition(spawnPosition);
             setTeam(spawnSpecifics.Item1);
@@ -92,6 +94,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return minionType;
         }
 
+        public void PauseAI(bool b)
+        {
+            _AIPaused = b;
+        }
+
         public override void update(long diff)
         {
             base.update(diff);
@@ -100,10 +107,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (dashing)
                     return;
-                else if (scanForTargets())     // returns true if we have a target
-                    keepFocussingTarget(); // fight target
-                else
-                    walkToDestination(); // walk to destination (or target)
+                if (!_AIPaused)
+                {
+                    if (scanForTargets())     // returns true if we have a target
+                        keepFocussingTarget(); // fight target
+                    else
+                        walkToDestination(); // walk to destination (or target)
+                }
             }
         }
 

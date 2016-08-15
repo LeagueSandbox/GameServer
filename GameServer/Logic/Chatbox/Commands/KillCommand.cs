@@ -1,0 +1,38 @@
+﻿using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+
+namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
+{
+    class KillCommand : ChatCommand
+    {
+        public KillCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+
+        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        {
+            var split = arguments.ToLower().Split(' ');
+
+            if (split.Length < 2)
+            {
+                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ShowSyntax();
+            }
+            else if (split[1] == "minions")
+            {
+                var objects = _owner.GetGame().GetMap().GetObjects();
+                foreach (var o in objects)
+                {
+                    if (o.Value is Minion)
+                    {
+                        (o.Value as Unit).die(_owner.GetGame().GetPeerInfo(peer).GetChampion()); // :(
+                    }
+                }
+            }
+            else
+            {
+                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ShowSyntax();
+            }
+        }
+    }
+}

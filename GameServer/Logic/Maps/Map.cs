@@ -35,6 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected bool _firstBlood;
         protected bool _killReduction;
         protected bool _hasFountainHeal;
+        protected bool _spawnEnabled;
         protected RAF.AIMesh mesh;
         protected int _id;
 
@@ -60,6 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game = game;
             _firstBlood = true;
             _killReduction = true;
+            _spawnEnabled = false;
             _hasFountainHeal = hasFountainHeal;
             _collisionHandler = new CollisionHandler(this);
             _fountains = new Dictionary<TeamId, Fountain>();
@@ -179,25 +181,28 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _nextSyncTime = 0;
             }
 
-            if (_waveNumber > 0)
+            if (_spawnEnabled)
             {
-                if (_gameTime >= _nextSpawnTime + _waveNumber * 8 * 100)
-                { // Spawn new wave every 0.8s
-                    if (Spawn())
-                    {
-                        _waveNumber = 0;
-                        _nextSpawnTime += _spawnInterval;
-                    }
-                    else
-                    {
-                        _waveNumber++;
+                if (_waveNumber > 0)
+                {
+                    if (_gameTime >= _nextSpawnTime + _waveNumber * 8 * 100)
+                    { // Spawn new wave every 0.8s
+                        if (Spawn())
+                        {
+                            _waveNumber = 0;
+                            _nextSpawnTime += _spawnInterval;
+                        }
+                        else
+                        {
+                            _waveNumber++;
+                        }
                     }
                 }
-            }
-            else if (_gameTime >= _nextSpawnTime)
-            {
-                Spawn();
-                _waveNumber++;
+                else if (_gameTime >= _nextSpawnTime)
+                {
+                    Spawn();
+                    _waveNumber++;
+                }
             }
 
             if (_hasFountainHeal)
@@ -215,6 +220,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public virtual float GetGoldPerSecond()
         {
             return 0;
+        }
+
+        public void SetSpawnState(bool state)
+        {
+            _spawnEnabled = state;
         }
 
         public virtual bool Spawn()

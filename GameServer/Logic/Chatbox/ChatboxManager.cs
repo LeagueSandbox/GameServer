@@ -83,6 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new HelpCommand("help", "", this));
             AddCommand(new InhibCommand("inhib", "", this));
             AddCommand(new JunglespawnCommand("junglespawn", "", this));
+            AddCommand(new KillCommand("kill", "kill minions", this));
             AddCommand(new LevelCommand("level", "level level", this));
             AddCommand(new ManaCommand("mana", "mana maxMana", this));
             AddCommand(new MobsCommand("mobs", "mobs teamNumber", this));
@@ -91,7 +92,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
             AddCommand(new SizeCommand("size", "size size", this));
             AddCommand(new SkillpointsCommand("skillpoints", "", this));
-            AddCommand(new SpawnCommand("spawn", "", this));
+            AddCommand(new SpawnCommand("spawn", "spawn minions", this));
+            AddCommand(new SpawnStateCommand("spawnstate", "spawnstate 0 (disable) / 1 (enable)", this));
             AddCommand(new SpeedCommand("speed", "speed speed", this));
             AddCommand(new TpCommand("tp", "tp x y", this));
             AddCommand(new XpCommand("xp", "xp xp", this));
