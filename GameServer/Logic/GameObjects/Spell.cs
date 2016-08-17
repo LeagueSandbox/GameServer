@@ -458,6 +458,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return "undefined";
         }
 
+        public void AddPlaceable(float toX, float toY, string model, string name)
+        {
+            var game = owner.GetGame();
+            var p = new Placeable(game, game.GetNewNetID(), toX, toY, model, name);
+            p.setTeam(owner.getTeam());
+
+            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);   // Temporary hack
+            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true); //
+
+            p.GetStats().CurrentHealth = 100;
+            p.GetStats().HealthPoints.BaseBonus = 100;
+
+            game.GetMap().AddObject(p);
+        }
+
         public void LoadLua(LuaScript script)
         {
             var config = owner.GetGame().Config;
@@ -498,6 +513,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
             script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
             script.lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
+            script.lua.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);

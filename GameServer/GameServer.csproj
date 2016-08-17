@@ -110,6 +110,7 @@
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
     <Compile Include="Logic\GameObjects\BuildingStats.cs" />
+    <Compile Include="Logic\GameObjects\Placeable.cs" />
     <Compile Include="Logic\GameObjects\Nexus.cs" />
     <Compile Include="Logic\GameObjects\IBuff.cs" />
     <Compile Include="Logic\GameObjects\Inhibitor.cs" />

@@ -365,6 +365,89 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
         }
     }
+
+    public class SpawnPlaceable : Packet
+    {
+        public SpawnPlaceable(Placeable p) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn)
+        {
+
+            buffer.Write(p.getNetId());
+
+            buffer.Write((byte)0xB5);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xB3);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x7C);
+
+            buffer.Write(p.getNetId());
+            buffer.Write(p.getNetId());
+
+            buffer.Write((byte)0x20);
+
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x40);
+            buffer.Write((byte)0x40);
+
+            buffer.Write((float)p.getX()); //x
+            buffer.Write((float)p.GetZ()); //z
+            buffer.Write((float)p.getY()); //y
+
+            buffer.fill(0, 8);
+
+            buffer.Write((byte)p.getTeam());
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x92);
+            buffer.Write((byte)0x00);
+
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x02);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+
+            var name = p.getName();
+            foreach (var b in Encoding.Default.GetBytes(name))
+                buffer.Write(b);
+            buffer.fill(0, 64 - name.Length);
+
+            foreach (var b in Encoding.Default.GetBytes(p.getModel()))
+                buffer.Write(b);
+            buffer.fill(0, 64 - p.getModel().Length);
+
+            buffer.Write((byte)0x01);
+
+            buffer.fill(0, 18);
+
+            buffer.Write((byte)0x80);
+            buffer.Write((byte)0x3F);
+
+            buffer.fill(0, 13);
+
+            buffer.Write((byte)0x03);
+
+            buffer.Write((byte)0xB1); // <--|
+            buffer.Write((byte)0x20); //    | Unknown, changes between packets
+            buffer.Write((byte)0x18); //    |
+            buffer.Write((byte)0x00); // <--|
+
+            buffer.Write((float)p.getX());
+            buffer.Write((float)p.getY());
+
+            buffer.Write((byte)0x00); // 0.0f
+            buffer.Write((byte)0x00); // Probably a float, see SpawnMonster
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+
+            buffer.Write((byte)0xFF); // 1.0f
+            buffer.Write((byte)0xFF); // Probably a float, see SpawnMonster
+            buffer.Write((byte)0x7F);
+            buffer.Write((byte)0x3F);
+        }
+    }
+
     public class SetHealthTest : BasePacket
     {
         public SetHealthTest(uint netId, short unk, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
@@ -1789,6 +1872,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class StopAutoAttackUnk : BasePacket
+    {
+
+        public StopAutoAttackUnk(Unit attacker) : base(PacketCmdS2C.PKT_S2C_StopAutoAttack, attacker.getNetId())
+        {
+            // Same number of bytes as StopAutoAttack, but might have a different structure
+            // It could also just be the same packet
+            buffer.Write((byte)0x43);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+        }
+    }
+
     public class OnAttack : ExtendedPacket
     {
         public OnAttack(Unit attacker, Unit attacked, AttackType attackType) : base(ExtendedPacketCmd.EPKT_S2C_OnAttack, attacker.getNetId())
@@ -1959,6 +2057,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((short)0);
         }
 
+    }
+
+    public class SetTransparentModel : BasePacket
+    {
+        public SetTransparentModel(Unit u) : base(PacketCmdS2C.PKT_S2C_SetTransparentModel, u.getNetId())
+        {
+            // Applied to Teemo's mushrooms for example
+            buffer.Write((byte)0xDB);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xC0);
+            buffer.Write((byte)0x3F);
+            buffer.Write((byte)0x9A);
+            buffer.Write((byte)0x99);
+            buffer.Write((byte)0x99);
+            buffer.Write((byte)0x3E);
+        }
     }
 
     public class TeleportRequest : BasePacket

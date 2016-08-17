@@ -302,7 +302,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             if (monster != null)
                 notifyMonsterSpawned(monster);
 
+            var placeable = u as Placeable;
+            if (placeable != null)
+            {
+                NotifyPlaceableSpawned(placeable);
+            }
+
             notifySetHealth(u);
+        }
+
+        private void NotifyPlaceableSpawned(Placeable placeable)
+        {
+            var spawnPacket = new SpawnPlaceable(placeable);
+            _game.PacketHandlerManager.broadcastPacketVision(placeable, spawnPacket, Channel.CHL_S2C);
         }
 
         private void notifyMonsterSpawned(Monster m)

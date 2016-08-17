@@ -292,6 +292,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _game.PacketNotifier.notifySpawn(o as Monster);
             else if (o is Champion)
                 AddChampion(o as Champion);
+            else if (o is Placeable)
+            {
+                _game.PacketNotifier.notifySpawn(o as Placeable);
+            }
         }
 
         public void RemoveObject(GameObject o)
