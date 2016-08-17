@@ -1266,6 +1266,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class UseObject
+    {
+        PacketCmdC2S cmd;
+        int netId;
+        public uint targetNetId; // netId of the object used
+
+        public UseObject(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmdC2S)reader.ReadByte();
+            netId = reader.ReadInt32();
+            targetNetId = reader.ReadUInt32();
+        }
+    }
+
     public class HeroSpawn : Packet
     {
 

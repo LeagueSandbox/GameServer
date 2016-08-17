@@ -123,6 +123,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_C2S_SwapItems = 0x20,
         PKT_C2S_ViewReq = 0x2E,
         PKT_C2S_SkillUp = 0x39,
+        PKT_C2S_UseObject = 0x3A,
         PKT_C2S_AutoAttackOption = 0x47,
         PKT_C2S_Emotion = 0x48,
         PKT_C2S_StartGame = 0x52,
