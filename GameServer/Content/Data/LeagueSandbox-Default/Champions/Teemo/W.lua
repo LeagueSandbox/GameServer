@@ -1,6 +1,6 @@
-function finishCasting()
+function onFinishCasting()
     local speedIncrease = 12 + getSpellLevel() * 8
-    local buff = Buff.new("MoveQuick", 5.0, BUFFTYPE_TEMPORARY, getOwner())
+    local buff = Buff.new("MoveQuick", 5.0, 1, getOwner(), getOwner())
     
     print("Speed increase" .. speedIncrease)
     

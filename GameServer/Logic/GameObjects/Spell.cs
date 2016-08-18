@@ -266,6 +266,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
+            else if (getSlot() == 4) //Done this because summ-spells are hard-coded
+            {                        //Fix these when they are not
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
+            }
+            else if (getSlot() == 5)
+            {
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
+            }
 
             owner.SetCastingSpell(false);
         }
@@ -316,24 +324,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     p:setToRemove()
                 end");
 
-            _script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            _script.lua["DAMAGE_TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            _script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+            _script.lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["TYPE_TRUE"] = DamageType.DAMAGE_TYPE_TRUE;
+            _script.lua["SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+            _script.lua["countObjectsHit"] = p.getObjectsHit().Count;
 
 
             _script.lua.DoString(@"
                 function dealPhysicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL)
+                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL)
                 end");
 
             _script.lua.DoString(@"
                 function dealMagicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL)
+                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL)
+                end");
+
+            _script.lua.DoString(@"
+                function dealTrueDamage(amount)
+                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL)
                 end");
 
             _script.lua.DoString(@"
                 function getNumberObjectsHit()
-                    return p.getObjectsHit().Count
+                    return countObjectsHit
                 end");
 
             try
@@ -464,11 +479,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var p = new Placeable(game, game.GetNewNetID(), toX, toY, model, name);
             p.setTeam(owner.getTeam());
 
-            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);   // Temporary hack
-            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true); //
-
-            p.GetStats().CurrentHealth = 100;
-            p.GetStats().HealthPoints.BaseBonus = 100;
+            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);   
+            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
             game.GetMap().AddObject(p);
         }
