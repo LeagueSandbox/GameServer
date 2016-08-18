@@ -12,8 +12,8 @@ spell.FinishCasting:Add(function(sender,args)
 		local damage = spell:getEffectValue(0) + AD + AP
 		me:dealDamageTo(unit, damage, DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL)
 		addParticleTarget(me, "Ezreal_mysticshot_tar.troy", unit)
-		me:onHit(unit)
-		p:setToRemove()
+		me:OnHit(unit)
+		sender:setToRemove()
 	end)
 end)
 

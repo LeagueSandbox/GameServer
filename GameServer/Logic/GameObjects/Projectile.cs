@@ -147,9 +147,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     Hit -= handler;
                 }
             }
+            _game.PacketNotifier.notifyProjectileDestroy(this);
             owner.decrementAttackerCount();
             base.setToRemove();
-            _game.PacketNotifier.notifyProjectileDestroy(this);
         }
 
         public int getProjectileId()
