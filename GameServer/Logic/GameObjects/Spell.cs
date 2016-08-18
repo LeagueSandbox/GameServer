@@ -112,8 +112,52 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private LuaScript _script;
 
         public event EventHandler StartCasting;
+        public void OnStartCasting()
+        {
+            if (StartCasting != null)
+            {
+                try
+                {
+                    StartCasting(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
         public event EventHandler<long> Update;
+        public void OnUpdate(long diff)
+        {
+            if (Update != null)
+            {
+                try
+                {
+                    Update(this, diff);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
         public event EventHandler FinishCasting;
+        public void OnFinishCasting()
+        {
+            if (FinishCasting != null)
+            {
+                try
+                {
+                    FinishCasting(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
 
 
         public Spell(Champion owner, string spellName, byte slot)
@@ -233,8 +277,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.futureProjNetId = futureProjNetId;
             this.spellNetId = spellNetId;
 
-            if (StartCasting != null)
-                StartCasting(this, new EventArgs());
+            OnStartCasting();
             if (castTime > 0 && flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
             {
                 owner.setPosition(owner.getX(), owner.getY());//stop moving serverside too. TODO: check for each spell if they stop movement or not
@@ -254,15 +297,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public virtual void finishCasting()
         {
-            try
-            {
-                if (FinishCasting != null)
-                    FinishCasting(this, new EventArgs());
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
             state = SpellState.STATE_COOLDOWN;
 
             currentCooldown = getCooldown();
@@ -273,6 +307,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             owner.SetCastingSpell(false);
+            OnFinishCasting();
         }
 
         /**
@@ -300,8 +335,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
-            if (Update != null)
-                Update(this, diff);
+            OnUpdate(diff);
         }
 
         public Champion getOwner()

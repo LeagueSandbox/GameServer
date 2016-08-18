@@ -8,6 +8,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using NLua.Exceptions;
+
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -39,7 +41,16 @@ namespace LeagueSandbox.GameServer.Logic
         public void OnRemove()
         {
             if (Remove != null)
-                Remove(this, new EventArgs());
+            {
+                try
+                {
+                    Remove(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
         }
 
 

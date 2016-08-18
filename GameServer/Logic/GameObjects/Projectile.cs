@@ -23,14 +23,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public event EventHandler<Unit> Hit;
         public void OnHit(Unit unit)
         {
-            try
+            if (Hit != null)
             {
-                if (Hit != null)
+                try
+                {
                     Hit(this, unit);
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
             }
         }
 

@@ -63,9 +63,51 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Game _game;
 
         public event EventHandler AddBuff;
-        public event EventHandler<float> UpdateBuff;
+        public void OnAddBuff()
+        {
+            if (AddBuff != null)
+            {
+                try
+                {
+                    AddBuff(this, new EventArgs());
+                }
+                catch(LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+        public event EventHandler<long> UpdateBuff;
+        public void OnUpdateBuff(long diff)
+        {
+            if (UpdateBuff != null)
+            {
+                try
+                {
+                    UpdateBuff(this, diff);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
         public event EventHandler EndBuff;
-        public event EventHandler RemoveBuff;
+        public void OnEndBuff()
+        {
+            if (EndBuff != null)
+            {
+                try
+                {
+                    EndBuff(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
 
         public BuffType GetBuffType()
         {
@@ -104,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _attacker = from;
             _buffType = BuffType.Aura;
             LoadLua();
-            AddBuff(this, new EventArgs());
+            OnAddBuff();
         }
         
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
@@ -139,13 +181,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _timeElapsed += (float)diff / 1000.0f;
 
-            UpdateBuff(this, diff);
+            OnUpdateBuff(diff);
 
             if (_duration != 0.0f)
             {
                 if (_timeElapsed >= _duration)
                 {
-                    EndBuff(this, new EventArgs());
                     Remove();
                 }
             }
@@ -163,8 +204,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         
         public void Remove()
         {
-            RemoveBuff(this, new EventArgs());
-            _buffScript.removeEvents();
+            OnEndBuff();
             if (AddBuff != null)
             {
                 foreach (EventHandler handler in AddBuff.GetInvocationList())
@@ -174,7 +214,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (UpdateBuff != null)
             {
-                foreach (EventHandler<float> handler in UpdateBuff.GetInvocationList())
+                foreach (EventHandler<long> handler in UpdateBuff.GetInvocationList())
                 {
                     UpdateBuff -= handler;
                 }
@@ -186,13 +226,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     EndBuff -= handler;
                 }
             }
-            if (RemoveBuff != null)
-            {
-                foreach (EventHandler handler in RemoveBuff.GetInvocationList())
-                {
-                    RemoveBuff -= handler;
-                }
-            }
+            _buffScript.removeEvents();
             _remove = true;
         }
     }

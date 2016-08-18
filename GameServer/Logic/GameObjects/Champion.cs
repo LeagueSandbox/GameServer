@@ -60,6 +60,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
         public event EventHandler<SpellCastArgs> SpellCast;
+        public void OnSpellCast(byte slot, float x, float y, Unit target)
+        {
+            if (SpellCast != null)
+            {
+                try
+                {
+                    SpellCast(this, new SpellCastArgs(slot,x,y,target));
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
 
         public class LevelUpSpellArgs : EventArgs
         {
@@ -75,7 +89,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             
         }
         public event EventHandler<LevelUpSpellArgs> LevelUpSpell;
-        
+        public void OnLevelUpSpell(short slot)
+        {
+            if (LevelUpSpell != null)
+            {
+                try
+                {
+                    LevelUpSpell(this, new LevelUpSpellArgs(slot));
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
         public Spell getSpell(int index)
         {
 
@@ -270,8 +298,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.getState() != SpellState.STATE_READY)
                 return null;
-            if(SpellCast != null)
-                SpellCast(this, new SpellCastArgs(slot, x, y, target));
+            OnSpellCast(slot, x, y, target);
             s.cast(x, y, target, futureProjNetId, spellNetId);
             stats.CurrentMana = stats.CurrentMana - (s.getCost() * (1 - stats.getSpellCostReduction()));
             return s;
@@ -281,8 +308,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (slot >= spells.Count)
                 return null;
 
-            if (LevelUpSpell != null)
-                LevelUpSpell(this, new LevelUpSpellArgs(slot));
+            OnLevelUpSpell(slot);
 
             if (skillPoints == 0)
                 return null;
@@ -495,6 +521,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.GetMap().StopTargeting(this);
+            OnDie(killer);
         }
         public long getRespawnTimer()
         {
