@@ -47,14 +47,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var maxHP = champion.GetStats().HealthPoints.Total;
                 if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
                     champion.GetStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
-                else if (hp > maxHP)
+                else
                     champion.GetStats().CurrentHealth = maxHP;
 
                 var mp = champion.GetStats().CurrentMana;
                 var maxMp = champion.GetStats().ManaPoints.Total;
                 if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
                     champion.GetStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
-                else if (mp > maxMp)
+                else
                     champion.GetStats().CurrentMana = maxMp;
             }
         }
