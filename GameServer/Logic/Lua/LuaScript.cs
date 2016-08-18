@@ -15,7 +15,13 @@ namespace LeagueSandbox.GameServer.Logic
         public LuaScript()
         {
             lua = new Lua();
+            lua.DoString("function removeEvents() end");
         }
+        public void removeEvents()
+        {
+            lua.DoString("removeEvents()");
+        }
+
         public bool isLoaded()
         {
             return loaded;

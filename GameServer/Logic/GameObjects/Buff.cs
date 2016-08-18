@@ -62,6 +62,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
+        public event EventHandler AddBuff;
+        public event EventHandler<float> UpdateBuff;
+        public event EventHandler EndBuff;
+        public event EventHandler RemoveBuff;
+
         public BuffType GetBuffType()
         {
             return _buffType;
@@ -99,14 +104,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _attacker = from;
             _buffType = BuffType.Aura;
             LoadLua();
-            try
-            {
-                _buffScript.lua.DoString("onAddBuff()");
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
+            AddBuff(this, new EventArgs());
         }
         
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
@@ -119,22 +117,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            _buffScript.lua.DoString(@"
-                function onAddBuff()
-                end");
-            _buffScript.lua.DoString(@"
-                function onUpdate(diff)
-                end");
-            _buffScript.lua.DoString(@"
-                function onBuffEnd()
-                end");
-            _buffScript.lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
-            _buffScript.lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
-            _buffScript.lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
-        
+            _buffScript.lua["target"] = _attachedTo;
+            _buffScript.lua["source"] = _attacker;
+            _buffScript.lua["buff"] = this;        
             ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
 
             _buffScript.loadScript(scriptLoc);
@@ -153,33 +138,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void Update(long diff)
         {
             _timeElapsed += (float)diff / 1000.0f;
-            
-            if (_buffScript.isLoaded())
-            {
-                try
-                {
-                    _buffScript.lua["diff"] = diff;
-                    _buffScript.lua.DoString("onUpdate(diff)");
-                }
-                catch (LuaException e)
-                {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
-                }
-            }
+
+            UpdateBuff(this, diff);
 
             if (_duration != 0.0f)
             {
                 if (_timeElapsed >= _duration)
                 {
-                    try
-                    {
-                        _buffScript.lua.DoString("onBuffEnd()");
-                    }
-                    catch (LuaException e)
-                    {
-                        Logger.LogCoreError("LUA ERROR : " + e.Message);
-                    }
-                    _remove = true;
+                    EndBuff(this, new EventArgs());
+                    Remove();
                 }
             }
         }
@@ -192,6 +159,41 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float GetDuration()
         {
             return _duration;
+        }
+        
+        public void Remove()
+        {
+            RemoveBuff(this, new EventArgs());
+            _buffScript.removeEvents();
+            if (AddBuff != null)
+            {
+                foreach (EventHandler handler in AddBuff.GetInvocationList())
+                {
+                    AddBuff -= handler;
+                }
+            }
+            if (UpdateBuff != null)
+            {
+                foreach (EventHandler<float> handler in UpdateBuff.GetInvocationList())
+                {
+                    UpdateBuff -= handler;
+                }
+            }
+            if (EndBuff != null)
+            {
+                foreach (EventHandler handler in EndBuff.GetInvocationList())
+                {
+                    EndBuff -= handler;
+                }
+            }
+            if (RemoveBuff != null)
+            {
+                foreach (EventHandler handler in RemoveBuff.GetInvocationList())
+                {
+                    RemoveBuff -= handler;
+                }
+            }
+            _remove = true;
         }
     }
 }

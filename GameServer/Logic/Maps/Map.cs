@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game = game;
             _firstBlood = true;
             _killReduction = true;
-            _spawnEnabled = false;
+            _spawnEnabled = true;
             _hasFountainHeal = hasFountainHeal;
             _collisionHandler = new CollisionHandler(this);
             _fountains = new Dictionary<TeamId, Fountain>();

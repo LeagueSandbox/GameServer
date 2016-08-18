@@ -84,6 +84,75 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private bool isCastingSpell = false;
 
+
+        public event EventHandler<Unit> AutoAttack;
+        public void OnAutoAttack(Unit target)
+        {
+            try
+            {
+            if (AutoAttack != null)
+                AutoAttack(this, target);
+            }
+            catch (LuaException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
+        }
+
+        public event EventHandler<Unit> Hit;
+        public void OnHit(Unit target)
+        {
+            try
+            {
+                if (Hit != null)
+                    Hit(this, target);
+            }
+            catch (LuaException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
+        }
+
+        public event EventHandler<long> Update;
+        public event EventHandler<Unit> Die;
+
+        public class DealDamageArgs : EventArgs
+        {
+            public DealDamageArgs(Unit target,float damage, DamageType type, DamageSource source)
+            {
+                _target = target;
+                _damage = damage;
+                _type = type;
+                _source = source;
+            }
+            private Unit _target;
+            private float _damage;
+            private DamageType _type;
+            private DamageSource _source;
+            public Unit target
+            {
+                get { return target; }
+            }
+            public float damage
+            {
+                get { return _damage; }
+                set { _damage = value; }
+            }
+            public DamageType type
+            {
+                get { return _type; }
+            }
+            
+            public DamageSource source
+            {
+                get { return _source;  }
+            }
+        }
+        public event EventHandler<DealDamageArgs> DealDamage;
+        
+
+
+
         public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
@@ -93,21 +162,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void LoadLua()
         {
             unitScript = new LuaScript();
-
             unitScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            unitScript.lua.DoString(@"
-                function onAutoAttack(target)
-                end");
-            unitScript.lua.DoString(@"
-                function onUpdate(diff)
-                end");
-            unitScript.lua.DoString(@"
-                function onDealDamage(target, damage, type, source)
-                end");
-            unitScript.lua.DoString(@"
-                function onDie(killer)
-                end");
-
             ApiFunctionManager.AddBaseFunctionToLuaScript(unitScript);
         }
 
@@ -127,7 +182,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         unitScript.lua["diff"] = _timerUpdate;
                         unitScript.lua["me"] = this;
-                        unitScript.lua.DoString("onUpdate(diff)");
+                        if (Update != null)
+                            Update(this, diff);
                     }
                     catch (LuaScriptException e)
                     {
@@ -168,6 +224,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!isMelee())
                         {
                             Projectile p = new Projectile(_game, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
+                            p.Hit += (pro, unit) => { autoAttackHit(unit); p.setToRemove(); };
                             _game.GetMap().AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
@@ -273,40 +330,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
             dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK);
-
-            if (unitScript.isLoaded())
-            {
-                try
-                {
-                    unitScript.lua["target"] = target;
-                    unitScript.lua.DoString("onAutoAttack(target)");
-                }
-                catch (LuaScriptException e)
-                {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
-                }
-            }
+            OnAutoAttack(target);
+            OnHit(target);
         }
 
         public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
         {
-            if (unitScript.isLoaded())
-            {
-                try
-                {
-                    unitScript.lua["target"] = target;
-                    unitScript.lua["damage"] = damage;
-                    unitScript.lua["type"] = type;
-                    unitScript.lua["source"] = source;
-                    unitScript.lua.DoString("onDealDamage(target, damage, type, source)");
-                }
-                catch (LuaScriptException e)
-                {
-                    Logger.LogCoreError("ERROR LUA : " + e.Message);
-                }
-            }
-
-
             float defense = 0;
             float regain = 0;
             switch (type)
@@ -349,6 +378,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.notifyUpdatedStats(this);
             }
+
+            if (DealDamage != null)
+                DealDamage(this, new DealDamageArgs(target, damage, type, source));
         }
 
         public bool isDead()
@@ -373,15 +405,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 try
                 {
                     unitScript.lua["killer"] = killer;
-                    unitScript.lua.DoString("onDie(killer)");
+                    if (Die != null)
+                        Die(this, killer);
                 }
                 catch (LuaScriptException e)
                 {
                     Logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
-
-            setToRemove();
+            
             _game.GetMap().StopTargeting(this);
 
             _game.PacketNotifier.notifyNpcDie(this, killer);
@@ -427,6 +459,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     cKiller.killDeathCounter += 1;
                 }
             }
+            setToRemove();
+        }
+        public override void setToRemove()
+        {
+            //AutoAttack,Hit, Update,Die, DealDamageArgs
+            if (AutoAttack != null)
+            {
+                foreach (EventHandler<Unit> handler in AutoAttack.GetInvocationList())
+                {
+                    AutoAttack -= handler;
+                }
+            }
+            if (Hit != null)
+            {
+                foreach (EventHandler<Unit> handler in Hit.GetInvocationList())
+                {
+                    Hit -= handler;
+                }
+            }
+            if (Update != null)
+            {
+                foreach (EventHandler<long> handler in Update.GetInvocationList())
+                {
+                    Update -= handler;
+                }
+            }
+            if (Die != null)
+            {
+                foreach (EventHandler<Unit> handler in Die.GetInvocationList())
+                {
+                    Die -= handler;
+                }
+            }
+            if (DealDamage != null)
+            {
+                foreach (EventHandler<DealDamageArgs> handler in DealDamage.GetInvocationList())
+                {
+                    DealDamage -= handler;
+                }
+            }
+            base.setToRemove();
+            unitScript.removeEvents();
         }
 
         public void setAutoAttackDelay(float newDelay)

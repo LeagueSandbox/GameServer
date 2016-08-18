@@ -29,8 +29,56 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public uint playerId;
         public uint playerHitId;
 
+        public class SpellCastArgs : EventArgs
+        {
+            public SpellCastArgs(byte slot, float x,float y, Unit target)
+            {
+                _slot = slot;
+                _x = x;
+                _y = y;
+                _target = target;
+            }
+            private byte _slot;
+            private float _x;
+            private float _y;
+            private Unit _target;
+            public byte slot
+            {
+                get { return _slot; }
+            }
+            public float x
+            {
+                get { return x; }
+            }
+            public float y
+            {
+                get { return y; }
+            }
+            public Unit target
+            {
+                get { return _target; }
+            }
+        }
+        public event EventHandler<SpellCastArgs> SpellCast;
+
+        public class LevelUpSpellArgs : EventArgs
+        {
+            public LevelUpSpellArgs(short slot)
+            {
+                _slot = slot;
+            }
+            private short _slot;
+            public short slot
+            {
+                get { return _slot; }
+            }
+            
+        }
+        public event EventHandler<LevelUpSpellArgs> LevelUpSpell;
+        
         public Spell getSpell(int index)
         {
+
             return spells[index];
         }
         public Champion(Game game, string type, uint id, uint playerId) : base(game, id, type, new Stats(), 30, 0, 0, 1200)
@@ -101,15 +149,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             LoadLua();
         }
+        public override void setToRemove()
+        {
+            if (SpellCast != null)
+            {
+                foreach (EventHandler<SpellCastArgs> handler in SpellCast.GetInvocationList())
+                {
+                    SpellCast -= handler;
+                }
+            }
+            if (LevelUpSpell != null)
+            {
+                foreach (EventHandler<LevelUpSpellArgs> handler in LevelUpSpell.GetInvocationList())
+                {
+                    LevelUpSpell -= handler;
+                }
+            }
+            base.setToRemove();
+        }
 
         public override void LoadLua()
         {
             base.LoadLua();
             var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
             unitScript.lua["me"] = this;
-            unitScript.lua.DoString(@"
-                function onSpellCast(slot, target)
-                end");
             unitScript.loadScript(scriptloc);
         }
 
@@ -189,16 +252,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
-            try
-            {
-                unitScript.lua["slot"] = slot;
-                unitScript.lua["target"] = target;
-                unitScript.lua.DoString("onSpellCast(slot, target)");
-            }
-            catch (LuaScriptException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
             Spell s = null;
             foreach (Spell t in spells)
             {
@@ -217,7 +270,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.getState() != SpellState.STATE_READY)
                 return null;
-
+            if(SpellCast != null)
+                SpellCast(this, new SpellCastArgs(slot, x, y, target));
             s.cast(x, y, target, futureProjNetId, spellNetId);
             stats.CurrentMana = stats.CurrentMana - (s.getCost() * (1 - stats.getSpellCostReduction()));
             return s;
@@ -226,6 +280,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (slot >= spells.Count)
                 return null;
+
+            if (LevelUpSpell != null)
+                LevelUpSpell(this, new LevelUpSpellArgs(slot));
 
             if (skillPoints == 0)
                 return null;

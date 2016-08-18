@@ -35,6 +35,14 @@ namespace LeagueSandbox.GameServer.Logic
         protected float dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
 
+        public event EventHandler Remove;
+        public void OnRemove()
+        {
+            if (Remove != null)
+                Remove(this, new EventArgs());
+        }
+
+
         public GameObject(Game game, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
             _game = game;
@@ -215,6 +223,8 @@ namespace LeagueSandbox.GameServer.Logic
 
         public virtual void setToRemove()
         {
+            if (Remove != null)
+                Remove(this, new EventArgs());
             toRemove = true;
         }
 
