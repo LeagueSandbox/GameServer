@@ -101,6 +101,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
+        public event EventHandler<Unit> SpellEffect;
+        public void OnSpellEffect(Unit target)
+        {
+            if (SpellEffect != null)
+            {
+                try
+                {
+                    SpellEffect(this, target);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
         public event EventHandler<long> Update;
         public void OnUpdate(long diff)
         {

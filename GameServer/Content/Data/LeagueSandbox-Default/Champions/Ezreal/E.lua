@@ -35,6 +35,7 @@ spell.FinishCasting:Add(function(sender,args)
 		p.Hit:Add(function(sender,unit)
 			me:dealDamageTo(unit, 25+spell:getLevel()*50+me:GetStats().AbilityPower.Total*0.75, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL )
 			addParticleTarget(me, "Ezreal_arcaneshift_tar.troy", target)
+			me:OnSpellEffect(unit)
 			sender:setToRemove()
 		end)
     end
