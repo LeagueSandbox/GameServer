@@ -108,6 +108,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
             unitScript.lua["me"] = this;
             unitScript.lua.DoString(@"
+                function getOwner()
+                    return me
+                end");
+            unitScript.lua.DoString(@"
                 function onSpellCast(slot, target)
                 end");
             unitScript.loadScript(scriptloc);

@@ -318,8 +318,10 @@ namespace InibinSharp
             deltaPos.y = vertex2.y - vertex1.y;
             deltaPos.z = vertex2.z - vertex1.z;
 
+            /*These are unused
             float tempWidth = AIMESH_TEXTURE_SIZE;
             float tempHeight = AIMESH_TEXTURE_SIZE;
+            */
 
             float t_DYResp = deltaPos.y == 0 ? 0 : 1.0f / deltaPos.y;
             int startY = (int)vertex1.y, endY = (int)vertex2.y;

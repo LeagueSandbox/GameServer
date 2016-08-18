@@ -422,7 +422,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 switch (stat)
                 {
-
+                    case FieldMask.FM3_Armor_Pen_Pct:
+                        return ArmorPenetration.PercentBonus;
+                    case FieldMask.FM3_Magic_Pen_Pct:
+                        return MagicPenetration.PercentBonus;
                 }
             }
             else if (blockId == MasterMask.MM_Four)
@@ -641,7 +644,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 mask |= (short)(1 << id);
             else
                 mask |= (short)(~(1 << id));
-            _spellsEnabled = (float) mask;
+            _spellsEnabled = mask;
             appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
         }
 

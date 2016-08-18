@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -63,7 +64,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (u.getTeam() == owner.getTeam() && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                             continue;
 
-                        if (u.getTeam() != owner.getTeam() && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                        if (u.getTeam() == TeamId.TEAM_NEUTRAL && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                            continue;
+
+                        if (u.getTeam() != owner.getTeam() && u.getTeam() != TeamId.TEAM_NEUTRAL && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                             continue;
 
 
@@ -74,8 +78,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (m != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
                             continue;
 
-                        var o = u as Monster;
-                        if (o != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                        var p = u as Placeable;
+                        if (p != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
                             continue;
 
                         var t = u as Turret;
@@ -118,14 +122,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             base.update(diff);
         }
+
         public override float getMoveSpeed()
         {
             return moveSpeed;
         }
+
         public Unit getOwner()
         {
             return owner;
         }
+
         public List<GameObject> getObjectsHit()
         {
             return objectsHit;
