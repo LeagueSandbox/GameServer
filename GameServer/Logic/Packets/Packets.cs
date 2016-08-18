@@ -506,6 +506,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class ChangeSpell : BasePacket
+    {
+        public ChangeSpell(Unit unit, int slot, string spell) : base(PacketCmdS2C.PKT_S2C_ChangeSpell, unit.getNetId())
+        {
+            buffer.Write((byte)slot);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x02);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write(Encoding.Default.GetBytes(spell));
+            buffer.Write(0x00);
+        }
+    }
+
     public class RemoveMessageBoxTop : BasePacket
     {
         public RemoveMessageBoxTop() : base(PacketCmdS2C.PKT_S2C_RemoveMessageBoxTop)
