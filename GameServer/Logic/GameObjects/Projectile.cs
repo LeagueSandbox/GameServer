@@ -122,6 +122,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (u != null && collide(u))
                 { 
                     OnHit(u);
+                    setToRemove();
                 }
             }
 
@@ -142,6 +143,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void setToRemove()
         {
+
             if (Hit != null)
             {
                 foreach (EventHandler<Unit> handler in Hit.GetInvocationList())
@@ -149,6 +151,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     Hit -= handler;
                 }
             }
+            
+            if (target != null && !target.isSimpleTarget())
+                (target as GameObject).decrementAttackerCount();
             _game.PacketNotifier.notifyProjectileDestroy(this);
             owner.decrementAttackerCount();
             base.setToRemove();

@@ -5,8 +5,7 @@ spell.FinishCasting:Add(function(sender,args)
     local to = (Vector2:new(spell:getX(), spell:getY()) - current):normalize()
     local range = to * 1000
     local trueCoords = current + range
-	p=spell:addProjectile("EzrealEssenceFluxMissile", trueCoords.x, trueCoords.y)
-	
+	p=spell:addProjectile("EzrealEssenceFluxMissile", trueCoords.x, trueCoords.y, true)
 	p.Hit:Add(function(sender,unit)
 		if me:getTeam() ~= unit:getTeam() then
 			me:dealDamageTo(unit, 25+getSpellLevel()*45+me:GetStats().AbilityPower.Total*0.8, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL)

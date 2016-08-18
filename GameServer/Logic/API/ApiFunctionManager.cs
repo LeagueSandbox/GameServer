@@ -38,11 +38,12 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.GetMap().IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
+        public static Buff AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, onto, from);
+            Buff buff = new Buff(_game, buffName, duration, stacks, onto, from);
             onto.AddBuff(buff);
             _game.PacketNotifier.notifyAddBuff(buff);
+            return buff;
         }
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY)

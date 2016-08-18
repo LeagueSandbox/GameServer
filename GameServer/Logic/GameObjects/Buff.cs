@@ -163,8 +163,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _buffScript.lua["source"] = _attacker;
             _buffScript.lua["buff"] = this;        
             ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
-
-            _buffScript.loadScript(scriptLoc);
+            try
+            {
+                _buffScript.loadScript(scriptLoc);
+            }catch(LuaException e)
+            {
+                Logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
         }
 
         public string GetName()
@@ -226,7 +231,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     EndBuff -= handler;
                 }
             }
-            _buffScript.removeEvents();
+            //_buffScript.removeEvents();
             _remove = true;
         }
     }

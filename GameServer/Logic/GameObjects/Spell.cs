@@ -278,16 +278,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.spellNetId = spellNetId;
 
             OnStartCasting();
-            if (castTime > 0 && flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
+            if (flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
             {
                 owner.setPosition(owner.getX(), owner.getY());//stop moving serverside too. TODO: check for each spell if they stop movement or not
-                state = SpellState.STATE_CASTING;
-                currentCastTime = castTime;
             }
-            else
-            {
-                finishCasting();
-            }
+            state = SpellState.STATE_CASTING;
+            currentCastTime = castTime;
             return true;
         }
 
@@ -382,19 +378,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return effects[effectNo][level];
         }
 
-        public Projectile addProjectile(string nameMissile, float toX, float toY)
+        public Projectile addProjectile(string nameMissile, float toX, float toY, bool notify)
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            if(notify)
+                owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
             return p;
         }
 
-        public Projectile addProjectileTarget(string nameMissile, Target target)
+        public Projectile addProjectileTarget(string nameMissile, Target target, bool notify)
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            if (notify)
+                owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
             return p;
         }
 

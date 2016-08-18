@@ -31,7 +31,7 @@ spell.FinishCasting:Add(function(sender,args)
         end
     end
     if target then
-        p=spell:addProjectileTarget("EzrealArcaneShiftMissile", target)
+        p=spell:addProjectileTarget("EzrealArcaneShiftMissile", target, true)
 		p.Hit:Add(function(sender,unit)
 			me:dealDamageTo(unit, 25+spell:getLevel()*50+me:GetStats().AbilityPower.Total*0.75, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL )
 			addParticleTarget(me, "Ezreal_arcaneshift_tar.troy", target)

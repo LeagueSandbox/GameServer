@@ -1,28 +1,25 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
-function finishCasting()
-	local castTarget = getCastTarget()
-	local current = Vector2:new(getOwnerX(), getOwnerY())
-	if current:distance(Vector2:new(castTarget:getX(), castTarget:getY())) <= 580 then	
-		addProjectileTarget( castTarget )
-	else
-		print("Target is too far away")
-	end
+
+spell.FinishCasting:Add(function(sender,args)
+	local castTarget = spell:getTarget()
+	local current = Vector2:new(me:getX(), me:getY())
 	
-end
-
-function applyEffects()
-	local castTarget = getCastTarget()
-
-    if ( ( not ( castTarget == 0 ) ) and ( not isDead( castTarget ) ) ) then
-		print(getEffectValue(0))
-		local owner = getOwner();
-		local damage = getEffectValue(0) + owner:getStats():getTotalAp()*0.8
-
-		owner:dealDamageTo( castTarget, damage, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL );
-		local buff = Buff.new("Blind", 1.25+getSpellLevel()*0.25, BUFFTYPE_TEMPORARY, castTarget, owner)
-		addBuff(buff, castTarget)
+	if current:distance(Vector2:new(castTarget:getX(), castTarget:getY())) <= 580 then	
+		p=spell:addProjectileTarget("BlindingDart", castTarget, false)
+		p.Hit:Add(function(sender,unit)
+			if ( ( not ( castTarget == 0 ) ) and ( not isDead( castTarget ) ) ) then
+				local baseDamage = 80
+				local bonusDamage = me:GetStats().AbilityPower.Total*0.8
+				local damage = baseDamage + bonusDamage
+				me:dealDamageTo(unit, damage, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL );
+				addBuff("Blind", 3, 1, unit, me)
+				me:OnSpellEffect(unit)
+			end
+		end)
 	end
+end)
 
-    destroyProjectile()
-end
+
+
+

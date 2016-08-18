@@ -5,7 +5,7 @@ spell.FinishCasting:Add(function(sender,args)
     local to = (Vector2:new(spell:getX(), spell:getY()) - current):normalize()
     local range = to * 1150
     local trueCoords = current + range
-	p=spell:addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y)
+	p=spell:addProjectile("EzrealMysticShotMissile", trueCoords.x, trueCoords.y, true)
 	p.Hit:Add(function(sender,unit)
 		local AD = me:GetStats().AttackDamage.Total*1.1
 		local AP = me:GetStats().AbilityPower.Total*0.4
