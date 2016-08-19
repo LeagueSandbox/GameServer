@@ -1000,6 +1000,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class ChangeCrystalScarNexusHP : BasePacket
+    {
+        public ChangeCrystalScarNexusHP(TeamId team, int hp) : base(PacketCmdS2C.PKT_S2C_ChangeCrystalScarNexusHP)
+        {
+            buffer.Write((byte)team);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)hp);
+        }
+    }
+
     public class SynchVersion : BasePacket
     {
         public PacketCmdS2C cmd;
