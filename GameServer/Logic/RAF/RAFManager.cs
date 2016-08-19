@@ -147,14 +147,20 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
                 return false;
             }
 
-            var entries = Root.SearchFileEntries(path);
+            var entries = Root.SearchFileEntries(path, RAFSearchType.End);
             if (entries.Count < 1)
             {
                 aimesh = null;
                 return false;
             }
             if (entries.Count > 1)
-                Logger.LogCoreInfo("Found more than one AIMesh for query " + path);
+            {
+                Logger.LogCoreError("Found " + entries.Count + " AIMesh for query " + path);
+                foreach (var e in entries)
+                {
+                    Logger.LogCoreInfo(e.FileName);
+                }
+            }
 
             var entry = entries.First();
             aimesh = new LeagueSandbox.GameServer.Logic.RAF.AIMesh(entry);
