@@ -25,6 +25,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_EndSpawn = 0x11,
         PKT_S2C_GameSpeed = 0x12,
         PKT_S2C_SkillUp = 0x15,
+        PKT_S2C_ChangeSpell = 0x17,
         PKT_S2C_FloatingText = 0x18,
         PKT_S2C_BeginAutoAttack = 0x1A,
         PKT_S2C_AddGold = 0x22,

@@ -1,4 +1,3 @@
--- variables of W passive
 local timePassedTotal = 0
 
 me.Update:Add(function(sender,diff)

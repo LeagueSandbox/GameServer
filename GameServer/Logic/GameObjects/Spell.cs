@@ -301,6 +301,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
+            else if (getSlot() == 4) //Done this because summ-spells are hard-coded
+            {                        //Fix these when they are not
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
+            }
+            else if (getSlot() == 5)
+            {
+                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
+            }
 
             owner.SetCastingSpell(false);
             OnFinishCasting();
@@ -331,6 +339,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
+
             OnUpdate(diff);
         }
 
@@ -456,11 +465,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var p = new Placeable(game, game.GetNewNetID(), toX, toY, model, name);
             p.setTeam(owner.getTeam());
 
-            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);   // Temporary hack
-            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true); //
-
-            p.GetStats().CurrentHealth = 100;
-            p.GetStats().HealthPoints.BaseBonus = 100;
+            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);   
+            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
             game.GetMap().AddObject(p);
             return p;

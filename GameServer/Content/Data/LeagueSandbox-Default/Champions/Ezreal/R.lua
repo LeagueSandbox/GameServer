@@ -20,5 +20,3 @@ end)
 function removeEvents()
 	
 end
-
-
