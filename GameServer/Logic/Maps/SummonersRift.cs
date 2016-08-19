@@ -363,21 +363,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 1;
         }
 
-        public override int GetWidth()
-        {
-            return 13982;
-        }
-
-        public override int GetHeight()
-        {
-            return 14446;
-        }
-
-        public override Vector2 GetSize()
-        {
-            return new Vector2(GetWidth() / 2, GetHeight() / 2);
-        }
-
         public override int GetBluePillId()
         {
             return 2001;
