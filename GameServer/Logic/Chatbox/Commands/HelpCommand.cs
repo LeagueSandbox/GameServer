@@ -26,11 +26,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count.ToString() + " commands");
 
             _owner.AddCommand(new NewCommand("newcommand", "", _owner));
-
-            var topText = new Packets.MessageBoxTop("TOP");
-            var rightText = new Packets.MessageBoxRight("RIGHT");
-            _owner.GetGame().PacketHandlerManager.sendPacket(peer, topText, Channel.CHL_S2C);
-            _owner.GetGame().PacketHandlerManager.sendPacket(peer, rightText, Channel.CHL_S2C);
         }
     }
 }
