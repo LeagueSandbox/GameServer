@@ -237,19 +237,19 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return null;
         }
 
-        public virtual int GetWidth()
+        public virtual float GetWidth()
         {
-            return 0;
+            return mesh.getWidth();
         }
 
-        public virtual int GetHeight()
+        public virtual float GetHeight()
         {
-            return 0;
+            return mesh.getHeight();
         }
 
         public virtual Vector2 GetSize()
         {
-            return new Vector2(0, 0);
+            return new Vector2(GetWidth() / 2, GetHeight() / 2);
         }
 
         public virtual void SetMinionStats(Minion minion)
