@@ -1008,7 +1008,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
-            buffer.Write((byte)hp);
+            buffer.Write(hp);
         }
     }
 
@@ -2101,9 +2101,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     }
 
-    public class SetTransparentModel : BasePacket
+    public class SetModelTransparency : BasePacket
     {
-        public SetTransparentModel(Unit u) : base(PacketCmdS2C.PKT_S2C_SetTransparentModel, u.getNetId())
+        public SetModelTransparency(Unit u, float transparency) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
         {
             // Applied to Teemo's mushrooms for example
             buffer.Write((byte)0xDB);
@@ -2112,10 +2112,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0xC0);
             buffer.Write((byte)0x3F);
-            buffer.Write((byte)0x9A);
-            buffer.Write((byte)0x99);
-            buffer.Write((byte)0x99);
-            buffer.Write((byte)0x3E);
+            buffer.Write(transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
     }
 
