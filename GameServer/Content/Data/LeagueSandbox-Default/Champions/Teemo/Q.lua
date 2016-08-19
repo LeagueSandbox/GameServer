@@ -19,7 +19,3 @@ spell.FinishCasting:Add(function(sender,args)
 		end)
 	end
 end)
-
-
-
-

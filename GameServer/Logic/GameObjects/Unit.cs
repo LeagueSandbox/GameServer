@@ -165,22 +165,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public class DealDamageArgs : EventArgs
+        public class DamageArgs : EventArgs
         {
-            public DealDamageArgs(Unit target,float damage, DamageType type, DamageSource source)
+            public DamageArgs(Unit unit,float damage, DamageType type, DamageSource source)
             {
-                _target = target;
+                _unit = unit;
                 _damage = damage;
                 _type = type;
                 _source = source;
             }
-            private Unit _target;
+            private Unit _unit;
             private float _damage;
             private DamageType _type;
             private DamageSource _source;
-            public Unit target
+            public Unit unit
             {
-                get { return target; }
+                get { return _unit; }
             }
             public float damage
             {
@@ -197,14 +197,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 get { return _source;  }
             }
         }
-        public event EventHandler<DealDamageArgs> DealDamage;
+        public event EventHandler<DamageArgs> DealDamage;
         public void OnDealDamage(Unit target, float damage, DamageType type, DamageSource source)
         {
             if (DealDamage != null)
             {
                 try
                 {
-                    DealDamage(this,new DealDamageArgs(target,damage,type,source));
+                    DealDamage(this,new DamageArgs(target,damage,type,source));
                 }
                 catch (LuaException e)
                 {
@@ -213,7 +213,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-
+        public event EventHandler<DamageArgs> RecieveDamage;
+        public void OnRecieveDamage(Unit unit, float damage, DamageType type, DamageSource source)
+        {
+            if (RecieveDamage != null)
+            {
+                try
+                {
+                    RecieveDamage(this, new DamageArgs(unit, damage, type, source));
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
 
         public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
         {
@@ -439,6 +453,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.notifyUpdatedStats(this);
             }
+            target.OnRecieveDamage(this, damage, type, source);
             OnDealDamage(target, damage, type, source);
         }
 
@@ -509,7 +524,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public override void setToRemove()
         {
-            //AutoAttack,Hit, Update,Die, DealDamageArgs
+            //AutoAttack,Hit, Update,Die, DamageArgs
             if (HitEffect != null)
             {
                 foreach (EventHandler<Unit> handler in HitEffect.GetInvocationList())
@@ -533,9 +548,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (DealDamage != null)
             {
-                foreach (EventHandler<DealDamageArgs> handler in DealDamage.GetInvocationList())
+                foreach (EventHandler<DamageArgs> handler in DealDamage.GetInvocationList())
                 {
                     DealDamage -= handler;
+                }
+            }
+            if (RecieveDamage != null)
+            {
+                foreach (EventHandler<DamageArgs> handler in RecieveDamage.GetInvocationList())
+                {
+                    RecieveDamage -= handler;
                 }
             }
             base.setToRemove();
