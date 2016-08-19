@@ -38,14 +38,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.GetMap().IsWalkable(x, y);
         }
 
-        public static Buff AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
-        {
-            Buff buff = new Buff(_game, buffName, duration, stacks, onto, from);
-            onto.AddBuff(buff);
-            _game.PacketNotifier.notifyAddBuff(buff);
-            return buff;
-        }
-
         public static void AddParticle(Champion champion, string particle, float toX, float toY)
         {
             Target t = new Target(toX, toY);
@@ -116,7 +108,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             luaScript.lua.RegisterFunction("teleportTo", null, typeof(ApiFunctionManager).GetMethod("TeleportTo", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
             luaScript.lua.RegisterFunction("addParticle", null, typeof(ApiFunctionManager).GetMethod("AddParticle", new Type[] { typeof(Champion), typeof(string), typeof(float), typeof(float) }));
             luaScript.lua.RegisterFunction("addParticleTarget", null, typeof(ApiFunctionManager).GetMethod("AddParticleTarget", new Type[] { typeof(Champion), typeof(string), typeof(Target) }));
-            luaScript.lua.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(int), typeof(Unit), typeof(Unit) }));
             luaScript.lua.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             luaScript.lua.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             luaScript.lua.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));

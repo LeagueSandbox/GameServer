@@ -13,7 +13,7 @@ spell.FinishCasting:Add(function(sender,args)
 				local bonusDamage = me:GetStats().AbilityPower.Total*0.8
 				local damage = baseDamage + bonusDamage
 				me:dealDamageTo(unit, damage, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL );
-				addBuff("Blind", 3, 1, unit, me)
+				unit:addBuff("Blind", 3, 1, me)
 				me:OnSpellEffect(unit)
 			end
 		end)

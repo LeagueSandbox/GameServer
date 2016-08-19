@@ -573,17 +573,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             modelUpdated = false;
         }
 
-        public void AddBuff(Buff b)
+        public Buff AddBuff(string buffName, float duration, int stacks, Unit from)
         {
             lock (_buffsLock)
             {
-                if (!_buffs.ContainsKey(b.GetName()))
+                if (!_buffs.ContainsKey(buffName))
                 {
-                    _buffs.Add(b.GetName(), b);
+                    Buff buff = new Buff(_game, buffName, duration, stacks, this, from);
+                    _buffs.Add(buffName, buff);
+                    _game.PacketNotifier.notifyAddBuff(buff);
+                    return buff;
                 }
                 else
                 {
-                    _buffs[b.GetName()].SetTimeElapsed(0); // if buff already exists, just restart its timer
+                    _buffs[buffName].OnAddNew(duration, stacks, from);
+                    _game.PacketNotifier.notifyAddBuff(_buffs[buffName]);
+                    return _buffs[buffName];
                 }
             }
         }

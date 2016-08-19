@@ -1,11 +1,3 @@
-function onAddBuff()
-	printChat("onAddBuff")
-end
+buff.Update:Add(function(sender,diff)
 
-function onUpdate(diff)
-	printChat("onUpdate("..diff..")")
-end
-
-function onBuffEnd()
-	printChat("onBuffEnd")
-end
+end)
