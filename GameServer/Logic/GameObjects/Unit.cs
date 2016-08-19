@@ -266,6 +266,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _buffs.Count;
         }
 
+        public override void onCollision(GameObject collider)
+        {
+            base.onCollision(collider);
+            if (unitScript.isLoaded())
+            {
+                try
+                {
+                    unitScript.lua["object"] = collider;
+                    unitScript.lua.DoString("onCollide(object)");
+                }
+                catch (LuaScriptException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
         /**
         * This is called by the AA projectile when it hits its target
         */

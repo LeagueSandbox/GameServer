@@ -450,6 +450,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void onCollision(GameObject collider)
         {
+            base.onCollision(collider);
             if (collider == null)
             {
                 //CORE_INFO("I bumped into a wall!");
