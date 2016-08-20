@@ -65,10 +65,20 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(this);
-            _map = new SummonersRift(this);
+              switch(Config.GameConfig.Map)
+            {
+                case 1:
+                    _map = new SummonersRift(this);
+                    break;
+                case 10:
+                    _map = new TwistedTreeline(this);
+                    break;
+                default:
+                    _map = new SummonersRift(this);
+                    break;
+            }
             PacketNotifier = new PacketNotifier(this);
             ApiFunctionManager.SetGame(this);
-
             var id = 1;
             foreach (var p in Config.Players)
             {

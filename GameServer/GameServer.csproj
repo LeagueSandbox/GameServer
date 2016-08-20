@@ -136,6 +136,7 @@
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
+    <Compile Include="Logic\Maps\TwistedTreeline.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUseObject.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleQuestClicked.cs" />
