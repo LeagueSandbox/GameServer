@@ -189,7 +189,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private int _totalPrice;
 
         public List<ItemType> Items { get { if (_items == null) FindRecipeItems(); return _items.ToList(); } }
-        public int TotalPrice { get
+        public int TotalPrice
+        {
+            get
             {
                 if (_totalPrice <= -1)
                     FindPrice();
