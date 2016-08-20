@@ -151,9 +151,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void notifyDamageDone(Unit source, Unit target, float amount, DamageType type)
+        public void notifyDamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damagetext)
         {
-            var dd = new DamageDone(source, target, amount, type);
+            var dd = new DamageDone(source, target, amount, type, damagetext);
             _game.PacketHandlerManager.broadcastPacket(dd, Channel.CHL_S2C);
         }
 
