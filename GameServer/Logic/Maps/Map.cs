@@ -221,7 +221,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             return 0;
         }
-
+        
+        public bool GetSpawnState()
+        {
+            return _spawnEnabled;
+        }
+        
         public void SetSpawnState(bool state)
         {
             _spawnEnabled = state;
