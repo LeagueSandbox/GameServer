@@ -26,7 +26,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                Console.WriteLine(i.StackSize + " remaining");
                 game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
