@@ -300,11 +300,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
             if (nextAutoIsCrit)
             {
-                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, DamageText.DAMAGE_TEXT_CRITICAL);
+                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+                                             DamageSource.DAMAGE_SOURCE_ATTACK,
+                                             DamageText.DAMAGE_TEXT_CRITICAL);
             }
             else
             {
-                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, DamageText.DAMAGE_TEXT_NORMAL);
+                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+                                             DamageSource.DAMAGE_SOURCE_ATTACK,
+                                             DamageText.DAMAGE_TEXT_NORMAL);
             }
 
             if (unitScript.isLoaded())

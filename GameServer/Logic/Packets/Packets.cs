@@ -1718,7 +1718,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class DamageDone : BasePacket
     {
-        public DamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damageText) : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
+        public DamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damageText)
+               : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
         {
             buffer.Write((byte)damageText);
             buffer.Write((short)((short)type << 8));
