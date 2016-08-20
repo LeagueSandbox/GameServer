@@ -19,6 +19,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         DAMAGE_TYPE_TRUE = 2
     }
 
+    public enum DamageText : byte
+    {
+        DAMAGE_TEXT_INVULNERABLE = 0x00,
+        DAMAGE_TEXT_DODGE = 0x02,
+        DAMAGE_TEXT_CRITICAL = 0x03,
+        DAMAGE_TEXT_NORMAL = 0x04,
+        DAMAGE_TEXT_MISS = 0x05,
+    }
+
     public enum DamageSource
     {
         DAMAGE_SOURCE_ATTACK,
@@ -289,7 +298,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void autoAttackHit(Unit target)
         {
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
-            dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK);
+            if (nextAutoIsCrit)
+            {
+                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, DamageText.DAMAGE_TEXT_CRITICAL);
+            }
+            else
+            {
+                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, DamageText.DAMAGE_TEXT_NORMAL);
+            }
 
             if (unitScript.isLoaded())
             {
@@ -305,7 +321,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
+        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
         {
             if (unitScript.isLoaded())
             {
@@ -358,7 +374,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.deathFlag = true;
                 target.die(this);
             }
-            _game.PacketNotifier.notifyDamageDone(this, target, damage, type);
+            _game.PacketNotifier.notifyDamageDone(this, target, damage, type, damageText);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
