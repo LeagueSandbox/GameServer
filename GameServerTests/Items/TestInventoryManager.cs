@@ -269,5 +269,23 @@ namespace GameServerTests
             available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(0, available.Count);
         }
+
+        [TestMethod]
+        [DeploymentItem("Content", "Content")]
+        public void TestTotalPrice()
+        {
+            var game = new TestHelpers.DummyGame();
+            game.LoadItems();
+
+            var manager = InventoryManager.CreateInventory(game, null);
+
+            // Amplifying Tome which has a total cost of 435
+            var item1 = manager.AddItem(game.ItemManager.GetItemType(1052));
+            Assert.AreEqual(435, item1.TotalPrice);
+
+            // Iceborn Gauntlet which has a total cost of 2900
+            var item2 = manager.AddItem(game.ItemManager.GetItemType(3025));
+            Assert.AreEqual(2900, item1.TotalPrice);
+        }
     }
 }
