@@ -260,7 +260,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool DecrementStackSize()
         {
-            if (StackSize <= 1) return false;
+            if (StackSize < 1) return false;
             StackSize--;
             return true;
         }
