@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         // Not from data
         public ItemRecipe Recipe { get; private set; }
-        public int TotalPrice { get { return Recipe.TotalPrice; } }
+        public int TotalPrice { get { return getTotalItemPrice(); } }
 
         private ItemType(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
@@ -123,6 +123,21 @@ namespace LeagueSandbox.GameServer.Logic.Content
             Range = new StatModifcator();
             MoveSpeed = new StatModifcator();
             GoldPerSecond = new StatModifcator();
+        }
+
+        private int getTotalItemPrice()
+        {
+            int _price = 0;
+            foreach (ItemType i in Recipe.Items)
+            {
+                if (i != null)
+                {
+                    i.Recipe = ItemRecipe.FromItemType(_game, i);
+                    _price += i.TotalPrice;
+                }
+            }
+            _price += Price;
+            return _price;
         }
 
         private void CreateRecipe()
@@ -189,13 +204,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private int _totalPrice;
 
         public List<ItemType> Items { get { if (_items == null) FindRecipeItems(); return _items.ToList(); } }
-        public int TotalPrice { get { if (_totalPrice < -1) FindPrice(); return _totalPrice; } }
+        public int TotalPrice { get { if (_totalPrice <= -1) FindPrice(); return _totalPrice; } }
 
         private ItemRecipe(Game game, ItemType owner)
         {
             _game = game;
             _owner = owner;
-            _totalPrice = -1;
         }
 
         private void FindRecipeItems()
@@ -214,7 +228,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice = 0;
             foreach (var item in Items)
             {
-                _totalPrice += item.TotalPrice;
+                _totalPrice += item.Price;
             }
             _totalPrice += _owner.Price;;
         }

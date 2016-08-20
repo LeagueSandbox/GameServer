@@ -20,23 +20,25 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (i == null)
                 return false;
 
-            float sellPrice = i.ItemType.TotalPrice * i.ItemType.TotalPrice;
+            float sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
             client.GetChampion().GetStats().Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
+                Console.WriteLine(i.StackSize + " remaining");
                 game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, i.StackSize);
-
                 if (i.StackSize == 0)
+                {
                     client.GetChampion().getInventory().RemoveItem(sell.slotId);
+                }
             }
             else
             {
                 game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, 0);
                 client.GetChampion().getInventory().RemoveItem(sell.slotId);
             }
-            
+
             client.GetChampion().GetStats().RemoveBuff(i.ItemType);
 
             return true;
