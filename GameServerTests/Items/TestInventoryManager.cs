@@ -285,7 +285,7 @@ namespace GameServerTests
 
             // Iceborn Gauntlet which has a total cost of 2900
             var item2 = manager.AddItem(game.ItemManager.GetItemType(3025));
-            Assert.AreEqual(2900, item1.TotalPrice);
+            Assert.AreEqual(2900, item2.TotalPrice);
         }
     }
 }
