@@ -450,6 +450,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void onCollision(GameObject collider)
         {
+            base.onCollision(collider);
             if (collider == null)
             {
                 //CORE_INFO("I bumped into a wall!");
@@ -474,9 +475,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             championHitFlagTimer = time;
         }
 
-        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source)
+        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
         {
-            base.dealDamageTo(target, damage, type, source);
+            base.dealDamageTo(target, damage, type, source, damageText);
 
             var cTarget = target as Champion;
             if (cTarget == null)
