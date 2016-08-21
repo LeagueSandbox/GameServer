@@ -1578,7 +1578,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveItem : BasePacket
     {
-        public RemoveItem(Unit u, short slot, short remaining) : base(PacketCmdS2C.PKT_S2C_RemoveItem, u.getNetId())
+        public RemoveItem(Unit u, byte slot, short remaining) : base(PacketCmdS2C.PKT_S2C_RemoveItem, u.getNetId())
         {
             buffer.Write(slot);
             buffer.Write(remaining);
