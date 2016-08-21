@@ -149,7 +149,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // Start at xp to reach level 1
             _expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
-			// Set first minion spawn and gold regen time to be 1:15
+            // Set first minion spawn and gold regen time to be 1:15
             _firstSpawnTime = 75 * 1000;
             _firstGoldTime = _firstSpawnTime;
 			
@@ -318,7 +318,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.setAutoAttackDelay(9.0f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(1200.0f);
                     break;
-				case MinionSpawnType.MINION_TYPE_SUPER:
+                case MinionSpawnType.MINION_TYPE_SUPER:
                     minion.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(_gameTime / (float)(180 * 1000));
                     minion.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_gameTime / (float)(180 * 1000));
                     minion.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_gameTime / (float)(180 * 1000));

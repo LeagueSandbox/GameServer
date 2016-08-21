@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private TurretType type;
         private float globalGold = 250.0f;
         private float globalExp = 0.0f;
-	private bool _turretHPUpdated = false;
+        private bool _turretHPUpdated = false;
 
         public Turret(Game game, uint id, string name, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE, TurretType type = TurretType.OuterTurret) : base(game, id, "", new Stats(), 50, x, y, 1200)
         {
@@ -218,7 +218,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.notifySetTarget(this, null);
             }
 
-			//Update stats if it's time
+            //Update stats if it's time
             switch (type)
             {
                 case TurretType.OuterTurret:
