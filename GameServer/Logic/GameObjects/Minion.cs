@@ -64,8 +64,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 minionModel += "Basic";
             else if (type == MinionSpawnType.MINION_TYPE_CASTER)
                 minionModel += "Wizard";
-            else
+            else if (type == MinionSpawnType.MINION_TYPE_CANNON)
                 minionModel += "MechCannon";
+            else
+                minionModel += "MechMelee";
 
             // Set model
             setModel(minionModel);

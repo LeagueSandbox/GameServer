@@ -89,8 +89,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
         {
-            { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
-            { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
+            { TeamId.TEAM_BLUE, new float[] { 1170, 1470, 188 } },
+            { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
         };
 
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
@@ -149,6 +149,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // Start at xp to reach level 1
             _expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
+			// Set first minion spawn and gold regen time to be 1:15
+            _firstSpawnTime = 75 * 1000;
+            _firstGoldTime = _firstSpawnTime;
+			
             // Announcer events
             _announcerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
             if (_firstSpawnTime - 30 * 1000 >= 0.0f)
@@ -228,10 +232,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    return 19.0f + ((0.5f) * (int)(_gameTime / (180 * 1000)));
+                    return 19.8f + ((0.2f) * (int)(_gameTime / (90 * 1000)));
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    return 14.0f + ((0.2f) * (int)(_gameTime / (90 * 1000)));
+                    return 16.8f + ((0.2f) * (int)(_gameTime / (90 * 1000)));
                 case MinionSpawnType.MINION_TYPE_CANNON:
+                    return 40.0f + ((0.5f) * (int)(_gameTime / (90 * 1000)));
+                case MinionSpawnType.MINION_TYPE_SUPER:
                     return 40.0f + ((1.0f) * (int)(_gameTime / (180 * 1000)));
             }
 
@@ -247,11 +253,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    return 58.88f;
+                    return 64.0f;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    return 29.44f;
+                    return 32.0f;
                 case MinionSpawnType.MINION_TYPE_CANNON:
                     return 92.0f;
+                case MinionSpawnType.MINION_TYPE_SUPER:
+                    return 97.0f;
             }
 
             return 0.0f;
@@ -280,7 +288,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             // Same for all minions
             minion.GetStats().MoveSpeed.BaseValue = 325.0f;
-            minion.GetStats().AttackSpeedFlat = 0.625f;
 
             switch (minion.getType())
             {
@@ -310,6 +317,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().AttackSpeedFlat = 1.0f;
                     minion.setAutoAttackDelay(9.0f / 30.0f);
                     minion.setAutoAttackProjectileSpeed(1200.0f);
+                    break;
+				case MinionSpawnType.MINION_TYPE_SUPER:
+                    minion.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_gameTime / (float)(180 * 1000));
+                    minion.GetStats().Range.BaseValue = 170.0f;
+                    minion.GetStats().AttackSpeedFlat = 0.694f;
+                    minion.GetStats().Armor.BaseValue = 30.0f;
+                    minion.GetStats().MagicResist.BaseValue = -30.0f;
+                    minion.setMelee(true);
+                    minion.setAutoAttackDelay(5.9f / 30.0f); //Pretty sure this aint the true value
                     break;
             }
         }

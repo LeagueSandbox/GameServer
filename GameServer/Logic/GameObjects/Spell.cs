@@ -324,26 +324,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     p:setToRemove()
                 end");
 
-            _script.lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_PHYSICAL;
             _script.lua["TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
             _script.lua["TYPE_TRUE"] = DamageType.DAMAGE_TYPE_TRUE;
             _script.lua["SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+            _script.lua["SOURCE_SUMMONER_SPELL"] = DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL;
+            _script.lua["SOURCE_ATTACK"] = DamageSource.DAMAGE_SOURCE_ATTACK;
+            _script.lua["SOURCE_PASSIVE"] = DamageSource.DAMAGE_SOURCE_PASSIVE;
+            _script.lua["TEXT_NORMAL"] = DamageText.DAMAGE_TEXT_NORMAL;
+            _script.lua["TEXT_CRITICAL"] = DamageText.DAMAGE_TEXT_CRITICAL;
+            _script.lua["TEXT_MISS"] = DamageText.DAMAGE_TEXT_MISS;
+            _script.lua["TEXT_DODGE"] = DamageText.DAMAGE_TEXT_DODGE;
+            _script.lua["TEXT_INVULNERABLE"] = DamageText.DAMAGE_TEXT_INVULNERABLE;
             _script.lua["countObjectsHit"] = p.getObjectsHit().Count;
 
 
             _script.lua.DoString(@"
                 function dealPhysicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL)
+                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, TEXT_NORMAL)
                 end");
 
             _script.lua.DoString(@"
                 function dealMagicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL)
+                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, TEXT_NORMAL)
                 end");
 
             _script.lua.DoString(@"
                 function dealTrueDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL)
+                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, TEXT_NORMAL)
                 end");
 
             _script.lua.DoString(@"
