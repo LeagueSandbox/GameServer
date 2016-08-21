@@ -293,9 +293,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             else if (o is Champion)
                 AddChampion(o as Champion);
             else if (o is Placeable)
-            {
                 _game.PacketNotifier.notifySpawn(o as Placeable);
-            }
         }
 
         public void RemoveObject(GameObject o)
@@ -453,6 +451,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 }
             }
             return champs;
+        }
+		
+        public List<Unit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false)
+        {
+            return GetUnitsInRange(new Target(x, y), range, onlyAlive);
         }
 
         public List<Unit> GetUnitsInRange(GameObjects.Target t, float range, bool onlyAlive = false)
