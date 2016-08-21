@@ -13,6 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     class SummonersRift : Map
     {
+        private int countWithoutCannon;
+        
         private List<List<Vector2>> _laneWaypoints = new List<List<Vector2>>
         {
             new List<Vector2>
@@ -89,8 +91,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
         {
-            { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
-            { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
+            { TeamId.TEAM_BLUE, new float[] { 1170, 1470, 188 } },
+            { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
         };
 
         public SummonersRift(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
@@ -325,35 +327,117 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 MinionSpawnPosition.SPAWN_RED_BOT,
                 MinionSpawnPosition.SPAWN_RED_MID,
             };
-
-            if (_waveNumber < 3)
+            if (_game.GetMap().GetSpawnState())
             {
-                for (var i = 0; i < positions.Count; ++i)
+                if (_waveNumber < 3) //First 3 melee minions spawn whatever situation is
                 {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
+                    for (var i = 0; i < positions.Count; ++i)
+                    {
+                        Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, positions[i], _laneWaypoints[i]);
+                        AddObject(m);
+                    }
+                    return false;
                 }
-                return false;
-            }
+                if ((int)_gameTime > (35 * 60 * 1000)) //Past 35 mins, one cannon and 3 casters spawn every wave
+                {
+                    if (_waveNumber == 3)
+                    {
+                        for (var i = 0; i < positions.Count; ++i)
+                        {
+                            Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
+                            AddObject(m);
+                        }
+                        return false;
+                    }
 
-            if (_waveNumber == 3)
-            {
-                for (var i = 0; i < positions.Count; ++i)
-                {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
+                    if (_waveNumber < 7)
+                    {
+                        for (var i = 0; i < positions.Count; ++i)
+                        {
+                            Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
+                            AddObject(m);
+                        }
+                        return false;
+                    }
                 }
-                return false;
-            }
+                else if ((int)_gameTime > (20 * 60 * 1000)) //Past 20 mins, cannon minions spawn every 2 waves.
+                {
+                    if (countWithoutCannon == 1) //If one wave past without cannon minion
+                    {
+                        if (_waveNumber == 3)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
 
-            if (_waveNumber < 7)
-            {
-                for (var i = 0; i < positions.Count; ++i)
-                {
-                    Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
+                        if (_waveNumber < 7)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
+                        countWithoutCannon = 0;
+                    }
+                    else
+                    {
+                        if (_waveNumber < 6)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
+                        countWithoutCannon++;
+                    }
                 }
-                return false;
+                else //Before 20 min, cannon minions spawn every 3 wave.
+                {
+                    if (countWithoutCannon == 2) //If 2 waves past without cannon minion
+                    {
+                        if (_waveNumber == 3)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
+
+                        if (_waveNumber < 7)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
+                        countWithoutCannon = 0;
+                    }
+                    else
+                    {
+                        if (_waveNumber < 6)
+                        {
+                            for (var i = 0; i < positions.Count; ++i)
+                            {
+                                Minion m = new Minion(_game, _game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
+                                AddObject(m);
+                            }
+                            return false;
+                        }
+                        countWithoutCannon++;
+                    }
+                }
             }
             return true;
         }
