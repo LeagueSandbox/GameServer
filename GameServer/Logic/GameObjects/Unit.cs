@@ -285,7 +285,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     unitScript.lua["object"] = collider;
                     unitScript.lua.DoString("onCollide(object)");
                 }
-                catch (LuaScriptException e)
+                catch (LuaException e)
                 {
                     Logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
