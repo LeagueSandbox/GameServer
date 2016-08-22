@@ -341,17 +341,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _script.lua.DoString(@"
                 function dealPhysicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, TEXT_NORMAL)
+                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
                 end");
 
             _script.lua.DoString(@"
                 function dealMagicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, TEXT_NORMAL)
+                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
                 end");
 
             _script.lua.DoString(@"
                 function dealTrueDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, TEXT_NORMAL)
+                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, false)
                 end");
 
             _script.lua.DoString(@"
