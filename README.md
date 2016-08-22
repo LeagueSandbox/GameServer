@@ -3,6 +3,7 @@
 # The League Sandbox project's game server
 Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
 Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
+Project board on Waffle: https://waffle.io/LeagueSandbox/leaguesandbox.github.io
 
 # Contributing
 We're looking for people interested in contributing to the project.  
@@ -21,9 +22,8 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Install Microsoft Visual Studio 2015 (Community Edition is fine)
 * Install DotNet 4.6.1 Framework
 * Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
-* Install StyleCop (https://stylecop.codeplex.com/)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
-* Download the 4.20 version of League client (https://mega.nz/#!pFRVxBJQ!AMbsJnS9kqhvQ-tfP8QxoBikbrjlGQ4MdzNYGo0fIKM)
+* Download the 4.20 version of League client (https://mega.nz/#!M0M2ib7A!1MXKTj9As5DYN6xhSLSv14m-6rW53WF9eNKPPonenos)
 * Clone the git repository
 * Copy `GameServer/Settings/Settings.json.template` to `GameServer/Settings/Settings.json`
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
