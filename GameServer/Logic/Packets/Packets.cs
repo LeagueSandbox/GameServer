@@ -1066,6 +1066,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0);
         }
     }
+
+    public class FloatingText : BasePacket
+    {
+        public FloatingText(Unit u, string text) : base(PacketCmdS2C.PKT_S2C_FloatingText, u.getNetId())
+        {
+            buffer.Write((int)0); // netid?
+            buffer.fill(0, 10);
+            buffer.Write((int)0); // netid?
+            buffer.Write(Encoding.Default.GetBytes(text));
+            buffer.Write((byte)0x00);
+        }
+    }
+
     public class InhibitorDeathAnimation : BasePacket
     {
         public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer) : base(PacketCmdS2C.PKT_S2C_InhibitorDeathAnimation, inhi.getNetId())
