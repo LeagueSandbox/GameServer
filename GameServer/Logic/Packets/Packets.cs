@@ -1000,6 +1000,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class ChangeCrystalScarNexusHP : BasePacket
+    {
+        public ChangeCrystalScarNexusHP(TeamId team, int hp) : base(PacketCmdS2C.PKT_S2C_ChangeCrystalScarNexusHP)
+        {
+            buffer.Write((byte)team);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write(hp);
+        }
+    }
+
     public class SynchVersion : BasePacket
     {
         public PacketCmdS2C cmd;
@@ -1566,7 +1578,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveItem : BasePacket
     {
-        public RemoveItem(Unit u, short slot, short remaining) : base(PacketCmdS2C.PKT_S2C_RemoveItem, u.getNetId())
+        public RemoveItem(Unit u, byte slot, short remaining) : base(PacketCmdS2C.PKT_S2C_RemoveItem, u.getNetId())
         {
             buffer.Write(slot);
             buffer.Write(remaining);
@@ -1706,11 +1718,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class DamageDone : BasePacket
     {
-        public DamageDone(Unit source, Unit target, float amount, DamageType type) : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
+        public DamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damageText)
+               : base(PacketCmdS2C.PKT_S2C_DamageDone, target.getNetId())
         {
-            buffer.Write((byte)(((byte)type << 4) | 0x04));
-            buffer.Write((short)0x4B); // 4.18
-            buffer.Write((float)amount); // 4.18
+            buffer.Write((byte)damageText);
+            buffer.Write((short)((short)type << 8));
+            buffer.Write((float)amount);
             buffer.Write((int)target.getNetId());
             buffer.Write((int)source.getNetId());
         }
@@ -2089,9 +2102,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     }
 
-    public class SetTransparentModel : BasePacket
+    public class SetModelTransparency : BasePacket
     {
-        public SetTransparentModel(Unit u) : base(PacketCmdS2C.PKT_S2C_SetTransparentModel, u.getNetId())
+        public SetModelTransparency(Unit u, float transparency) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
         {
             // Applied to Teemo's mushrooms for example
             buffer.Write((byte)0xDB);
@@ -2100,10 +2113,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0xC0);
             buffer.Write((byte)0x3F);
-            buffer.Write((byte)0x9A);
-            buffer.Write((byte)0x99);
-            buffer.Write((byte)0x99);
-            buffer.Write((byte)0x3E);
+            buffer.Write(transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
     }
 

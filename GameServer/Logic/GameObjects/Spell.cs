@@ -341,6 +341,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             OnUpdate(diff);
+
+        }
+
+        /**
+         * Called by projectiles when they land / hit
+         * In here we apply the effects : damage, buffs, debuffs...
+         */
+
+        public void applyEffects(Unit u, Projectile p = null)
+        {
+ 
         }
 
         public Champion getOwner()
