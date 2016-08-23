@@ -2115,6 +2115,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     }
 
+    public class SetScreenTint : BasePacket
+    {
+        public SetScreenTint(Unit u, bool enable, float duration, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
+        {
+            if (enable)
+                buffer.Write((byte)0x01);   // enable
+            else
+                buffer.Write((byte)0x00);   // disable 
+            buffer.Write(duration);         // transition time in seconds
+            buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write(blue);
+            buffer.Write(green);
+            buffer.Write(red);
+            buffer.Write((byte)0xFF);
+            buffer.Write(alpha);
+        }
+    }
+
     public class SetModelTransparency : BasePacket
     {
         public SetModelTransparency(Unit u, float transparency) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
