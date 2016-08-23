@@ -2114,6 +2114,44 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
 
     }
+    // 93 0D 00 00 40 5F 00 60 00 00 00 00 00 
+
+    public class SetModelTransparencyTest1 : BasePacket
+    {
+        public SetModelTransparencyTest1(Unit u) : base(PacketCmdS2C.PKT_S2C_SetModelTransparencyTest1, u.getNetId())
+        {
+            // Applied to Teemo's mushrooms for example
+            buffer.Write((byte)0x5F);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x60);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+        }
+    }
+
+    public class SetScreenTint : BasePacket
+    {
+        public SetScreenTint(Unit u, bool enable, float duration, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
+        {
+            if (enable)
+                buffer.Write((byte)0x01);   // enable
+            else
+                buffer.Write((byte)0x00);   // disable 
+            buffer.Write(duration);         // transition time in seconds
+            buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write(blue);
+            buffer.Write(green);
+            buffer.Write(red);
+            buffer.Write((byte)0xFF);
+            buffer.Write(alpha);
+        }
+    }
 
     public class SetModelTransparency : BasePacket
     {
