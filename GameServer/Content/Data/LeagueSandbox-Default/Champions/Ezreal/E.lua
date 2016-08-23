@@ -1,8 +1,8 @@
 Vector2 = require 'Vector2' -- include 2d vector lib
- 
-function onFinishCasting()
-    local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = Vector2:new(getSpellToX(), getSpellToY()) - current
+
+spell.FinishCasting:Add(function(sender,args)
+    local current = Vector2:new(me:getX(), me:getY())
+    local to = Vector2:new(spell:getX(), spell:getY()) - current
     local trueCoords
  
     if to:length() > 475 then
@@ -10,20 +10,20 @@ function onFinishCasting()
         local range = to * 475
         trueCoords = current:copy() + range
     else
-        trueCoords = Vector2:new(getSpellToX(), getSpellToY())
+        trueCoords = Vector2:new(spell:getX(), spell:getY())
     end
  
-    addParticle(getOwner(), "Ezreal_arcaneshift_cas.troy", getOwnerX(), getOwnerY());
-    teleportTo(getOwner(), trueCoords.x, trueCoords.y)
-    addParticleTarget(getOwner(), "Ezreal_arcaneshift_flash.troy", getOwner());
+    addParticle(me, "Ezreal_arcaneshift_cas.troy", me:getX(), me:getY());
+    teleportTo(me, trueCoords.x, trueCoords.y)
+    addParticleTarget(me, "Ezreal_arcaneshift_flash.troy", me);
  
     local target = nil
-    local units = getUnitsInRange(getOwner(), 700, true)
+    local units = getUnitsInRange(me, 700, true)
  
     for i=0,units.Count-1 do
 		value = units[i]
         local distance = 700
-        if getOwner():getTeam() ~= value:getTeam() then
+        if me:getTeam() ~= value:getTeam() then
             if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then
                 target = value
                 distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))
@@ -31,12 +31,17 @@ function onFinishCasting()
         end
     end
     if target then
-        addProjectileTarget("EzrealArcaneShiftMissile", target)
+        p=spell:addProjectileTarget("EzrealArcaneShiftMissile", target, true)
+		p.Hit:Add(function(sender,unit)
+			me:dealDamageTo(unit, 25+spell:getLevel()*50+me:GetStats().AbilityPower.Total*0.75, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL )
+			addParticleTarget(me, "Ezreal_arcaneshift_tar.troy", target)
+			me:OnSpellEffect(unit)
+			sender:setToRemove()
+		end)
     end
-end
- 
-function applyEffects()
-    dealMagicalDamage(25+getSpellLevel()*50+getOwner():GetStats().AbilityPower.Total*0.75)
-    addParticleTarget(getOwner(), "Ezreal_arcaneshift_tar.troy", getTarget())
-    destroyProjectile()
+end)
+
+
+function removeEvents()
+	
 end

@@ -111,6 +111,55 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private LuaScript _script;
 
+        public event EventHandler StartCasting;
+        public void OnStartCasting()
+        {
+            if (StartCasting != null)
+            {
+                try
+                {
+                    StartCasting(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
+        public event EventHandler<long> Update;
+        public void OnUpdate(long diff)
+        {
+            if (Update != null)
+            {
+                try
+                {
+                    Update(this, diff);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
+        public event EventHandler FinishCasting;
+        public void OnFinishCasting()
+        {
+            if (FinishCasting != null)
+            {
+                try
+                {
+                    FinishCasting(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
+
         public Spell(Champion owner, string spellName, byte slot)
         {
             this.owner = owner;
@@ -228,16 +277,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.futureProjNetId = futureProjNetId;
             this.spellNetId = spellNetId;
 
-            if (castTime > 0 && flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
+            OnStartCasting();
+            if (flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
             {
                 owner.setPosition(owner.getX(), owner.getY());//stop moving serverside too. TODO: check for each spell if they stop movement or not
-                state = SpellState.STATE_CASTING;
-                currentCastTime = castTime;
             }
-            else
-            {
-                finishCasting();
-            }
+            state = SpellState.STATE_CASTING;
+            currentCastTime = castTime;
             return true;
         }
 
@@ -247,17 +293,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public virtual void finishCasting()
         {
-
-            Logger.LogCoreInfo("Spell from slot " + getSlot());
-            try
-            {
-                _script.lua.DoString("onFinishCasting()");
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
-
             state = SpellState.STATE_COOLDOWN;
 
             currentCooldown = getCooldown();
@@ -276,6 +311,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             owner.SetCastingSpell(false);
+            OnFinishCasting();
         }
 
         /**
@@ -303,6 +339,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
+
+            OnUpdate(diff);
+
         }
 
         /**
@@ -312,61 +351,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void applyEffects(Unit u, Projectile p = null)
         {
-            _script.lua["u"] = u;
-            _script.lua.DoString(@"
-                function getTarget()
-                    return u
-                end");
-
-            _script.lua["p"] = p;
-            _script.lua.DoString(@"
-                function destroyProjectile()
-                    p:setToRemove()
-                end");
-
-            _script.lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_PHYSICAL;
-            _script.lua["TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            _script.lua["TYPE_TRUE"] = DamageType.DAMAGE_TYPE_TRUE;
-            _script.lua["SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
-            _script.lua["SOURCE_SUMMONER_SPELL"] = DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL;
-            _script.lua["SOURCE_ATTACK"] = DamageSource.DAMAGE_SOURCE_ATTACK;
-            _script.lua["SOURCE_PASSIVE"] = DamageSource.DAMAGE_SOURCE_PASSIVE;
-            _script.lua["TEXT_NORMAL"] = DamageText.DAMAGE_TEXT_NORMAL;
-            _script.lua["TEXT_CRITICAL"] = DamageText.DAMAGE_TEXT_CRITICAL;
-            _script.lua["TEXT_MISS"] = DamageText.DAMAGE_TEXT_MISS;
-            _script.lua["TEXT_DODGE"] = DamageText.DAMAGE_TEXT_DODGE;
-            _script.lua["TEXT_INVULNERABLE"] = DamageText.DAMAGE_TEXT_INVULNERABLE;
-            _script.lua["countObjectsHit"] = p.getObjectsHit().Count;
-
-
-            _script.lua.DoString(@"
-                function dealPhysicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, TEXT_NORMAL)
-                end");
-
-            _script.lua.DoString(@"
-                function dealMagicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, TEXT_NORMAL)
-                end");
-
-            _script.lua.DoString(@"
-                function dealTrueDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, TEXT_NORMAL)
-                end");
-
-            _script.lua.DoString(@"
-                function getNumberObjectsHit()
-                    return countObjectsHit
-                end");
-
-            try
-            {
-                _script.lua.DoString("applyEffects()");
-            }
-            catch (LuaException e)
-            {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
+ 
         }
 
         public Champion getOwner()
@@ -413,18 +398,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return effects[effectNo][level];
         }
 
-        public void addProjectile(string nameMissile, float toX, float toY)
+        public Projectile addProjectile(string nameMissile, float toX, float toY, bool notify)
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            if(notify)
+                owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            return p;
         }
 
-        public void addProjectileTarget(string nameMissile, Target target)
+        public Projectile addProjectileTarget(string nameMissile, Target target, bool notify)
         {
             Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            if (notify)
+                owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            return p;
         }
 
         public void spellAnimation(string animName, Unit target)
@@ -481,7 +470,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return "undefined";
         }
 
-        public void AddPlaceable(float toX, float toY, string model, string name)
+        public Placeable AddPlaceable(float toX, float toY, string model, string name)
         {
             var game = owner.GetGame();
             var p = new Placeable(game, game.GetNewNetID(), toX, toY, model, name);
@@ -491,6 +480,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
             game.GetMap().AddObject(p);
+            return p;
         }
 
         public void LoadLua(LuaScript script)
@@ -507,89 +497,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
             script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            script.lua.DoString(@"
-                function onFinishCasting()
-                end");
-            script.lua.DoString(@"
-                function applyEffects()
-                end");
+            script.lua["me"] = owner;
+            script.lua["spell"] = this;
+            _script.lua["DAMAGE_TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["DAMAGE_TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.lua["DAMAGE_SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
             ApiFunctionManager.AddBaseFunctionToLuaScript(script);
-            script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
-            script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
-            script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
-            script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
-            script.lua.RegisterFunction("getOwnerLevel", owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
-            script.lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
-            script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
-            script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
-            script.lua.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));
-            script.lua.RegisterFunction("getRange", this, typeof(Spell).GetMethod("getRange"));
-            script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
-            script.lua.RegisterFunction("getCoefficient", this, typeof (Spell).GetMethod("getCoefficient"));
-            script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
-            script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-            script.lua.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
-            script.lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
-            script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
-            script.lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
-            script.lua.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
-
-            /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
-                Buff* b = new Buff(duration);
-                b->setMovementSpeedPercentModifier(amount);
-                u->addBuff(b);
-                u->GetStats().addMovementSpeedPercentageModifier(b->getMovementSpeedPercentModifier());
-               return;
-            });*/
-
-            /*
-            script.lua.set_function("addProjectileCustom", [this](const std::string&name, float projSpeed, float toX, float toY) {
-                Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, RAFFile::getHash(name), projectileFlags ? projectileFlags : flags);
-                owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
-
-                return;
-            });
-
-            script.lua.set_function("addProjectileTargetCustom", [this](const std::string&name, float projSpeed, Target *t) {
-                Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, t, this, projectileSpeed, RAFFile::getHash(name), projectileFlags ? projectileFlags : flags);
-                owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
-
-                return;
-            });
-
-
-             //For spells that don't require SpawnProjectile, but for which we still need to track the projectile server-side
-
-            script.lua.set_function("addServerProjectile", [this](float toX, float toY) {
-                Projectile* p = new Projectile(owner->getMap(), futureProjNetId, owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, 0, projectileFlags ? projectileFlags : flags);
-                owner->getMap()->addObject(p);
-
-                return;
-            });
-
-            script.lua.set_function("spellAnimation", [this](const std::string&animation, Unit* u) {
-                owner->getMap()->getGame()->notifySpellAnimation(u, animation);
-                return;
-            });
-
-            // TODO: Set multiple animations
-            script.lua.set_function("setAnimation", [this](const std::string&animation1, const std::string&animation2, Unit* u) {
-                std::vector < std::pair < std::string, std::string>> animationPairs;
-                animationPairs.push_back(std::make_pair(animation1, animation2));
-
-                owner->getMap()->getGame()->notifySetAnimation(u, animationPairs);
-                return;
-            });
-
-            script.lua.set_function("resetAnimations", [this](Unit * u) {
-                std::vector < std::pair < std::string, std::string>> animationPairs;
-                owner->getMap()->getGame()->notifySetAnimation(u, animationPairs);
-                return;
-            });*/
-
             script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
         }
 

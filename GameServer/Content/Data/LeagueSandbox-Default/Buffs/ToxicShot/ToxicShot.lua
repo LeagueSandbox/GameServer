@@ -1,11 +1,9 @@
-function onAddBuff()
-	printChat("onAddBuff")
-end
+local timePassedTotal = 0
 
-function onUpdate(diff)
-	printChat("onUpdate("..diff..")")
-end
-
-function onBuffEnd()
-	printChat("onBuffEnd")
-end
+buff.UpdateBuff:Add(function(sender,diff)
+    timePassedTotal = timePassedTotal+tonumber(diff)
+	if(timePassedTotal >= 1000000) then
+		timePassedTotal = 0
+		source:dealDamageTo(me, 100, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL);
+	end
+end)

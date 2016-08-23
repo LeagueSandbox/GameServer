@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic;
+using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -19,6 +20,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float moveSpeed;
         protected int projectileId;
         protected int flags;
+
+        public event EventHandler<Unit> Hit;
+        public void OnHit(Unit unit)
+        {
+            if (Hit != null)
+            {
+                try
+                {
+                    Hit(this, unit);
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
 
         public Projectile(Game game, uint id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(game, id, x, y, collisionRadius)
         {
@@ -99,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             continue;
 
                         objectsHit.Add(u);
-                        originSpell.applyEffects(u, this);
+                        OnHit(u);
                     }
                 }
             }
@@ -107,16 +124,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = target as Unit;
                 if (u != null && collide(u))
-                { // Autoguided spell
-                    if (originSpell != null)
-                    {
-                        originSpell.applyEffects(u, this);
-                    }
-                    else
-                    { // auto attack
-                        owner.autoAttackHit(u);
-                        setToRemove();
-                    }
+                { 
+                    OnHit(u);
+                    setToRemove();
                 }
             }
 
@@ -140,12 +150,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void setToRemove()
         {
+
+            if (Hit != null)
+            {
+                foreach (EventHandler<Unit> handler in Hit.GetInvocationList())
+                {
+                    Hit -= handler;
+                }
+            }
+            
             if (target != null && !target.isSimpleTarget())
                 (target as GameObject).decrementAttackerCount();
-
+            _game.PacketNotifier.notifyProjectileDestroy(this);
             owner.decrementAttackerCount();
             base.setToRemove();
-            _game.PacketNotifier.notifyProjectileDestroy(this);
         }
 
         public int getProjectileId()

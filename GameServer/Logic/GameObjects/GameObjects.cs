@@ -8,6 +8,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using NLua.Exceptions;
+
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -34,6 +36,23 @@ namespace LeagueSandbox.GameServer.Logic
         protected bool dashing;
         protected float dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
+
+        public event EventHandler Remove;
+        public void OnRemove()
+        {
+            if (Remove != null)
+            {
+                try
+                {
+                    Remove(this, new EventArgs());
+                }
+                catch (LuaException e)
+                {
+                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+            }
+        }
+
 
         public GameObject(Game game, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
@@ -215,6 +234,8 @@ namespace LeagueSandbox.GameServer.Logic
 
         public virtual void setToRemove()
         {
+            if (Remove != null)
+                Remove(this, new EventArgs());
             toRemove = true;
         }
 

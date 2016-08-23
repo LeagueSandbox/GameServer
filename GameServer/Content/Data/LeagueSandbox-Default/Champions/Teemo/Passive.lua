@@ -1,23 +1,8 @@
-function onUpdate(diff)
-	
-end
+local timePassedTotal = 0
 
-function onDamageTaken(attacker, damage, dmgType, source)
-	
-end
-
-function onAutoAttack(target)
-
-end
-
-function onDealDamage(target, damage, damageType, source)
-	
-end
-
-function onSpellCast(target)
-    
-end
-
-function onDie(killer)
-
-end
+me.Update:Add(function(sender,diff)
+    timePassedTotal = timePassedTotal+tonumber(diff)
+	if(timePassedTotal >= 1000000) then
+	   timePassedTotal = 0
+	end
+end)
