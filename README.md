@@ -23,7 +23,7 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Install DotNet 4.6.1 Framework
 * Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
-* Download the 4.20 version of League client (https://mega.nz/#!M0M2ib7A!1MXKTj9As5DYN6xhSLSv14m-6rW53WF9eNKPPonenos)
+* Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Clone the git repository
 * Copy `GameServer/Settings/Settings.json.template` to `GameServer/Settings/Settings.json`
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
