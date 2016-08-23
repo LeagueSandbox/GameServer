@@ -1185,14 +1185,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public ShowHPAndName(Unit unit, bool show) : base(PacketCmdS2C.PKT_S2C_ShowHPAndName, unit.getNetId())
         {
+            var state = 0xFC; // Disable
             if (show)
             {
-                buffer.Write((byte)0xFD); // 0xFD in packets
+                state = 0xFD; // Enable
             }
-            else
-            {
-                buffer.Write((byte)0xFC); // 0xFC in packets
-            }
+
+            buffer.Write((byte)state);
             buffer.Write((byte)0x00);
         }
     }
