@@ -298,18 +298,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void autoAttackHit(Unit target)
         {
             float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
-            if (nextAutoIsCrit)
-            {
+
                 dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageText.DAMAGE_TEXT_CRITICAL);
-            }
-            else
-            {
-                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                                             DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageText.DAMAGE_TEXT_NORMAL);
-            }
+                                             nextAutoIsCrit);
 
             if (unitScript.isLoaded())
             {
@@ -325,8 +317,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
+        public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
+            DamageText text= DamageText.DAMAGE_TEXT_NORMAL;
+
+            if (isCrit)
+            {
+                text = DamageText.DAMAGE_TEXT_CRITICAL;
+            }
+
             if (unitScript.isLoaded())
             {
                 try
@@ -378,7 +377,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.deathFlag = true;
                 target.die(this);
             }
-            _game.PacketNotifier.notifyDamageDone(this, target, damage, type, damageText);
+            _game.PacketNotifier.notifyDamageDone(this, target, damage, type, text);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)

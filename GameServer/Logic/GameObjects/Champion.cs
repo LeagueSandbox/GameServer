@@ -475,9 +475,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             championHitFlagTimer = time;
         }
 
-        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
+        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            base.dealDamageTo(target, damage, type, source, damageText);
+            base.dealDamageTo(target, damage, type, source, isCrit);
 
             var cTarget = target as Champion;
             if (cTarget == null)

@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
         };
 
-        public SummonersRift(Game game) : base(game, 75 * 1000, 30 * 1000, 75 * 1000, true, 1)
+        public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
             {
@@ -150,7 +150,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
             // Set first minion spawn and gold regen time to be 1:15
-            _firstSpawnTime = 75 * 1000;
+            _firstSpawnTime = 90 * 1000;
             _firstGoldTime = _firstSpawnTime;
 			
             // Announcer events
