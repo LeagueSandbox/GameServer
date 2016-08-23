@@ -93,7 +93,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_SpellAnimation = 0xB0,
         PKT_S2C_EditMessageBoxRight = 0xB1,
         PKT_S2C_SetModelTransparency = 0xB2, // Not sure if it only does that
-        PKT_S2C_SetScreenTint = 0xDB,
         PKT_S2C_BasicTutorialMessageWindow = 0xB3,
         PKT_S2C_RemoveHighlightUnit = 0xB4,
         PKT_S2C_CastSpellAns = 0xB5,
@@ -107,6 +106,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 
         PKT_S2C_LevelPropSpawn = 0xD0,
         PKT_S2C_DominionPoints = 0xD9,
+        PKT_S2C_SetScreenTint = 0xDB,
         PKT_S2C_DebugMessage = 0xF7,
         PKT_S2C_MessagesAvailable = 0xF9,
         PKT_S2C_Extended = 0xFE,
