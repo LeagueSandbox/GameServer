@@ -71,6 +71,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_ShowProjectile = 0x6E,
         PKT_S2C_BuyItemAns = 0x6F,
         PKT_S2C_AddBuff = 0xB7,
+        PKT_S2C_SetCameraPosition = 0x73,
         PKT_S2C_RemoveBuff = 0x7B,
         PKT_S2C_SetCooldown = 0x85,
         PKT_S2C_SpawnParticle = 0x87,
