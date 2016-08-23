@@ -2114,23 +2114,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
 
     }
-    // 93 0D 00 00 40 5F 00 60 00 00 00 00 00 
-
-    public class SetModelTransparencyTest1 : BasePacket
-    {
-        public SetModelTransparencyTest1(Unit u) : base(PacketCmdS2C.PKT_S2C_SetModelTransparencyTest1, u.getNetId())
-        {
-            // Applied to Teemo's mushrooms for example
-            buffer.Write((byte)0x5F);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x60);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-        }
-    }
 
     public class SetScreenTint : BasePacket
     {
