@@ -2,7 +2,7 @@
 [![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=master)](https://codecov.io/github/LeagueSandbox/GameServer?branch=master)
 # The League Sandbox project's game server
 Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
-Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6
+Project chat on Discord: https://discord.gg/0vmmZ6VAwXB05gB6  
 Project board on Waffle: https://waffle.io/LeagueSandbox/leaguesandbox.github.io
 
 # Contributing
