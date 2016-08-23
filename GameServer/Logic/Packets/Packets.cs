@@ -1181,6 +1181,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class ShowHPAndName : BasePacket
+    {
+        public ShowHPAndName(Unit unit, bool show) : base(PacketCmdS2C.PKT_S2C_ShowHPAndName, unit.getNetId())
+        {
+            var state = 0xFC; // Disable
+            if (show)
+            {
+                state = 0xFD; // Enable
+            }
+
+            buffer.Write((byte)state);
+            buffer.Write((byte)0x00);
+        }
+    }
+
     public class ExplodeNexus : BasePacket
     {
         public ExplodeNexus(Nexus nexus) : base(PacketCmdS2C.PKT_S2C_ExplodeNexus, nexus.getNetId())

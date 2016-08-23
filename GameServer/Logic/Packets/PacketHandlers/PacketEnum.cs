@@ -104,6 +104,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_CharStats = 0xC4,
         PKT_S2C_GameEnd = 0xC6,
         PKT_S2C_Surrender = 0xC9,
+        PKT_S2C_ShowHPAndName = 0xCE,
 
         PKT_S2C_LevelPropSpawn = 0xD0,
         PKT_S2C_DominionPoints = 0xD9,
