@@ -9,24 +9,26 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public class LuaScript
     {
-        private bool loaded = false;
-        public Lua lua;
+        private bool _isLoaded;
+        public Lua Lua;
 
         public LuaScript()
         {
-            lua = new Lua();
+            Lua = new Lua();
         }
-        public bool isLoaded()
+
+        public bool IsLoaded()
         {
-            return loaded;
+            return _isLoaded;
         }
-        public void loadScript(string location)
+
+        public void Load(string location)
         {
-            loaded = false;
+            _isLoaded = false;
             try
             {
-                var s = lua.DoFile(location);
-                loaded = true;
+                var s = Lua.DoFile(location);
+                _isLoaded = true;
             }
             catch (Exception e)
             {
@@ -34,35 +36,31 @@ namespace LeagueSandbox.GameServer.Logic
             }
         }
 
-        public LuaTable getTable(string name)
+        private LuaTable getTable(string name)
         {
-            if (!loaded)
+            if (!_isLoaded)
                 return null;
 
-            return lua.GetTable(name);
+            return Lua.GetTable(name);
         }
 
-        public Dictionary<object, object> getTableDictionary(string name)
+        private Dictionary<object, object> getTableDictionary(string name)
         {
-            if (!loaded)
+            if (!_isLoaded)
                 return null;
 
-            return lua.GetTableDict(getTable(name));
+            return Lua.GetTableDict(getTable(name));
         }
 
-        public Dictionary<object, object> getTableDictionary(LuaTable table)
+        private Dictionary<object, object> getTableDictionary(LuaTable table)
         {
-            if (!loaded)
+            if (!_isLoaded)
                 return null;
 
-            return lua.GetTableDict(table);
+            return Lua.GetTableDict(table);
         }
 
         //public void setFunction();
-        public void setLoaded(bool load)
-        {
-            loaded = load;
-        }
 
         /*void addChampion();
         void addUnit();

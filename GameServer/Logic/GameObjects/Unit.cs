@@ -103,17 +103,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             unitScript = new LuaScript();
 
-            unitScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            unitScript.lua.DoString(@"
+            unitScript.Lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            unitScript.Lua.DoString(@"
                 function onAutoAttack(target)
                 end");
-            unitScript.lua.DoString(@"
+            unitScript.Lua.DoString(@"
                 function onUpdate(diff)
                 end");
-            unitScript.lua.DoString(@"
+            unitScript.Lua.DoString(@"
                 function onDealDamage(target, damage, type, source)
                 end");
-            unitScript.lua.DoString(@"
+            unitScript.Lua.DoString(@"
                 function onDie(killer)
                 end");
 
@@ -130,13 +130,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _timerUpdate += diff;
             if (_timerUpdate >= UPDATE_TIME)
             {
-                if (unitScript.isLoaded())
+                if (unitScript.IsLoaded())
                 {
                     try
                     {
-                        unitScript.lua["diff"] = _timerUpdate;
-                        unitScript.lua["me"] = this;
-                        unitScript.lua.DoString("onUpdate(diff)");
+                        unitScript.Lua["diff"] = _timerUpdate;
+                        unitScript.Lua["me"] = this;
+                        unitScript.Lua.DoString("onUpdate(diff)");
                     }
                     catch (LuaScriptException e)
                     {
@@ -278,12 +278,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             base.onCollision(collider);
-            if (unitScript.isLoaded())
+            if (unitScript.IsLoaded())
             {
                 try
                 {
-                    unitScript.lua["object"] = collider;
-                    unitScript.lua.DoString("onCollide(object)");
+                    unitScript.Lua["object"] = collider;
+                    unitScript.Lua.DoString("onCollide(object)");
                 }
                 catch (LuaException e)
                 {
@@ -303,12 +303,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
                                              nextAutoIsCrit);
 
-            if (unitScript.isLoaded())
+            if (unitScript.IsLoaded())
             {
                 try
                 {
-                    unitScript.lua["target"] = target;
-                    unitScript.lua.DoString("onAutoAttack(target)");
+                    unitScript.Lua["target"] = target;
+                    unitScript.Lua.DoString("onAutoAttack(target)");
                 }
                 catch (LuaScriptException e)
                 {
@@ -326,15 +326,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 text = DamageText.DAMAGE_TEXT_CRITICAL;
             }
 
-            if (unitScript.isLoaded())
+            if (unitScript.IsLoaded())
             {
                 try
                 {
-                    unitScript.lua["target"] = target;
-                    unitScript.lua["damage"] = damage;
-                    unitScript.lua["type"] = type;
-                    unitScript.lua["source"] = source;
-                    unitScript.lua.DoString("onDealDamage(target, damage, type, source)");
+                    unitScript.Lua["target"] = target;
+                    unitScript.Lua["damage"] = damage;
+                    unitScript.Lua["type"] = type;
+                    unitScript.Lua["source"] = source;
+                    unitScript.Lua.DoString("onDealDamage(target, damage, type, source)");
                 }
                 catch (LuaScriptException e)
                 {
@@ -404,12 +404,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void die(Unit killer)
         {
-            if (unitScript.isLoaded())
+            if (unitScript.IsLoaded())
             {
                 try
                 {
-                    unitScript.lua["killer"] = killer;
-                    unitScript.lua.DoString("onDie(killer)");
+                    unitScript.Lua["killer"] = killer;
+                    unitScript.Lua.DoString("onDie(killer)");
                 }
                 catch (LuaScriptException e)
                 {

@@ -106,15 +106,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             base.LoadLua();
             var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
-            unitScript.lua["me"] = this;
-            unitScript.lua.DoString(@"
+            unitScript.Lua["me"] = this;
+            unitScript.Lua.DoString(@"
                 function getOwner()
                     return me
                 end");
-            unitScript.lua.DoString(@"
+            unitScript.Lua.DoString(@"
                 function onSpellCast(slot, target)
                 end");
-            unitScript.loadScript(scriptloc);
+            unitScript.Load(scriptloc);
         }
 
         public string getType()
@@ -195,9 +195,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             try
             {
-                unitScript.lua["slot"] = slot;
-                unitScript.lua["target"] = target;
-                unitScript.lua.DoString("onSpellCast(slot, target)");
+                unitScript.Lua["slot"] = slot;
+                unitScript.Lua["target"] = target;
+                unitScript.Lua.DoString("onSpellCast(slot, target)");
             }
             catch (LuaScriptException e)
             {

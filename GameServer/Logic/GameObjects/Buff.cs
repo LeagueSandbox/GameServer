@@ -101,7 +101,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             LoadLua();
             try
             {
-                _buffScript.lua.DoString("onAddBuff()");
+                _buffScript.Lua.DoString("onAddBuff()");
             }
             catch (LuaException e)
             {
@@ -118,26 +118,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
-            _buffScript.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            _buffScript.lua.DoString(@"
+            _buffScript.Lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            _buffScript.Lua.DoString(@"
                 function onAddBuff()
                 end");
-            _buffScript.lua.DoString(@"
+            _buffScript.Lua.DoString(@"
                 function onUpdate(diff)
                 end");
-            _buffScript.lua.DoString(@"
+            _buffScript.Lua.DoString(@"
                 function onBuffEnd()
                 end");
-            _buffScript.lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
-            _buffScript.lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
-            _buffScript.lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.lua.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _buffScript.Lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
+            _buffScript.Lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
+            _buffScript.Lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
+            _buffScript.Lua.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _buffScript.Lua.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _buffScript.Lua.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
         
             ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
 
-            _buffScript.loadScript(scriptLoc);
+            _buffScript.Load(scriptLoc);
         }
 
         public string GetName()
@@ -154,12 +154,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _timeElapsed += (float)diff / 1000.0f;
             
-            if (_buffScript.isLoaded())
+            if (_buffScript.IsLoaded())
             {
                 try
                 {
-                    _buffScript.lua["diff"] = diff;
-                    _buffScript.lua.DoString("onUpdate(diff)");
+                    _buffScript.Lua["diff"] = diff;
+                    _buffScript.Lua.DoString("onUpdate(diff)");
                 }
                 catch (LuaException e)
                 {
@@ -173,7 +173,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     try
                     {
-                        _buffScript.lua.DoString("onBuffEnd()");
+                        _buffScript.Lua.DoString("onBuffEnd()");
                     }
                     catch (LuaException e)
                     {

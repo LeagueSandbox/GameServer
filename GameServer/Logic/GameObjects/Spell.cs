@@ -251,7 +251,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Logger.LogCoreInfo("Spell from slot " + getSlot());
             try
             {
-                _script.lua.DoString("onFinishCasting()");
+                _script.Lua.DoString("onFinishCasting()");
             }
             catch (LuaException e)
             {
@@ -312,56 +312,56 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void applyEffects(Unit u, Projectile p = null)
         {
-            _script.lua["u"] = u;
-            _script.lua.DoString(@"
+            _script.Lua["u"] = u;
+            _script.Lua.DoString(@"
                 function getTarget()
                     return u
                 end");
 
-            _script.lua["p"] = p;
-            _script.lua.DoString(@"
+            _script.Lua["p"] = p;
+            _script.Lua.DoString(@"
                 function destroyProjectile()
                     p:setToRemove()
                 end");
 
-            _script.lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_PHYSICAL;
-            _script.lua["TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
-            _script.lua["TYPE_TRUE"] = DamageType.DAMAGE_TYPE_TRUE;
-            _script.lua["SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
-            _script.lua["SOURCE_SUMMONER_SPELL"] = DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL;
-            _script.lua["SOURCE_ATTACK"] = DamageSource.DAMAGE_SOURCE_ATTACK;
-            _script.lua["SOURCE_PASSIVE"] = DamageSource.DAMAGE_SOURCE_PASSIVE;
-            _script.lua["TEXT_NORMAL"] = DamageText.DAMAGE_TEXT_NORMAL;
-            _script.lua["TEXT_CRITICAL"] = DamageText.DAMAGE_TEXT_CRITICAL;
-            _script.lua["TEXT_MISS"] = DamageText.DAMAGE_TEXT_MISS;
-            _script.lua["TEXT_DODGE"] = DamageText.DAMAGE_TEXT_DODGE;
-            _script.lua["TEXT_INVULNERABLE"] = DamageText.DAMAGE_TEXT_INVULNERABLE;
-            _script.lua["countObjectsHit"] = p.getObjectsHit().Count;
+            _script.Lua["TYPE_PHYSICAL"] = DamageType.DAMAGE_TYPE_PHYSICAL;
+            _script.Lua["TYPE_MAGICAL"] = DamageType.DAMAGE_TYPE_MAGICAL;
+            _script.Lua["TYPE_TRUE"] = DamageType.DAMAGE_TYPE_TRUE;
+            _script.Lua["SOURCE_SPELL"] = DamageSource.DAMAGE_SOURCE_SPELL;
+            _script.Lua["SOURCE_SUMMONER_SPELL"] = DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL;
+            _script.Lua["SOURCE_ATTACK"] = DamageSource.DAMAGE_SOURCE_ATTACK;
+            _script.Lua["SOURCE_PASSIVE"] = DamageSource.DAMAGE_SOURCE_PASSIVE;
+            _script.Lua["TEXT_NORMAL"] = DamageText.DAMAGE_TEXT_NORMAL;
+            _script.Lua["TEXT_CRITICAL"] = DamageText.DAMAGE_TEXT_CRITICAL;
+            _script.Lua["TEXT_MISS"] = DamageText.DAMAGE_TEXT_MISS;
+            _script.Lua["TEXT_DODGE"] = DamageText.DAMAGE_TEXT_DODGE;
+            _script.Lua["TEXT_INVULNERABLE"] = DamageText.DAMAGE_TEXT_INVULNERABLE;
+            _script.Lua["countObjectsHit"] = p.getObjectsHit().Count;
 
 
-            _script.lua.DoString(@"
+            _script.Lua.DoString(@"
                 function dealPhysicalDamage(amount)
                     getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
                 end");
 
-            _script.lua.DoString(@"
+            _script.Lua.DoString(@"
                 function dealMagicalDamage(amount)
                     getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
                 end");
 
-            _script.lua.DoString(@"
+            _script.Lua.DoString(@"
                 function dealTrueDamage(amount)
                     getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, false)
                 end");
 
-            _script.lua.DoString(@"
+            _script.Lua.DoString(@"
                 function getNumberObjectsHit()
                     return countObjectsHit
                 end");
 
             try
             {
-                _script.lua.DoString("applyEffects()");
+                _script.Lua.DoString("applyEffects()");
             }
             catch (LuaException e)
             {
@@ -506,34 +506,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
             }
-            script.lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            script.lua.DoString(@"
+            script.Lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
+            script.Lua.DoString(@"
                 function onFinishCasting()
                 end");
-            script.lua.DoString(@"
+            script.Lua.DoString(@"
                 function applyEffects()
                 end");
             ApiFunctionManager.AddBaseFunctionToLuaScript(script);
-            script.lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
-            script.lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
-            script.lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
-            script.lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
-            script.lua.RegisterFunction("getOwnerLevel", owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
-            script.lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
-            script.lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
-            script.lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
-            script.lua.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));
-            script.lua.RegisterFunction("getRange", this, typeof(Spell).GetMethod("getRange"));
-            script.lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
-            script.lua.RegisterFunction("getCoefficient", this, typeof (Spell).GetMethod("getCoefficient"));
-            script.lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
-            script.lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
-            script.lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-            script.lua.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
-            script.lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
-            script.lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
-            script.lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
-            script.lua.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
+            script.Lua.RegisterFunction("getOwner", this, typeof(Spell).GetMethod("getOwner"));
+            script.Lua.RegisterFunction("getOwnerX", owner, typeof(Champion).GetMethod("getX"));
+            script.Lua.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
+            script.Lua.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
+            script.Lua.RegisterFunction("getOwnerLevel", owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
+            script.Lua.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
+            script.Lua.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
+            script.Lua.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
+            script.Lua.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));
+            script.Lua.RegisterFunction("getRange", this, typeof(Spell).GetMethod("getRange"));
+            script.Lua.RegisterFunction("getProjectileSpeed", this, typeof(Spell).GetMethod("getProjectileSpeed"));
+            script.Lua.RegisterFunction("getCoefficient", this, typeof (Spell).GetMethod("getCoefficient"));
+            script.Lua.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));
+            script.Lua.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("addProjectileTarget", new Type[] { typeof(string), typeof(Target) }));
+            script.Lua.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
+            script.Lua.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
+            script.Lua.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
+            script.Lua.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
+            script.Lua.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
+            script.Lua.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
 
             /*script.lua.set_function("addMovementSpeedBuff", [this](Unit* u, float amount, float duration) { // expose teleport to lua
                 Buff* b = new Buff(duration);
@@ -590,7 +590,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             });*/
 
-            script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
+            script.Load(scriptloc); //todo: abstract class that loads a lua file for any lua
         }
 
         //public void reloadLua();
