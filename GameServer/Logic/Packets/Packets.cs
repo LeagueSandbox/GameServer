@@ -700,7 +700,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SetAnimation(Unit u, List<string> animationPairs) : base(PacketCmdS2C.PKT_S2C_SetAnimation, u.getNetId())
         {
-            buffer.Write((byte)(animationPairs.Count/2));
+            buffer.Write((byte)(animationPairs.Count / 2));
 
             for (int i = 0; i < animationPairs.Count; i++)
             {
@@ -987,7 +987,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Quest : BasePacket
     {
-        public Quest(string questName, string questDescription, byte type, byte remove, uint netid,  byte success = 0) : base(PacketCmdS2C.PKT_S2C_Quest)
+        public Quest(string questName, string questDescription, byte type, byte remove, uint netid, byte success = 0) : base(PacketCmdS2C.PKT_S2C_Quest)
         {
             buffer.Write(Encoding.Default.GetBytes(questName));
             buffer.fill(0, 256 - questName.Length);
@@ -1193,6 +1193,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)state);
             buffer.Write((byte)0x00);
+        }
+    }
+
+    public class SpellEmpower : ExtendedPacket
+    {
+        public SpellEmpower(Unit unit, byte slot, byte empowerLevel) : base(ExtendedPacketCmd.EPKT_S2C_SpellEmpower, unit.getNetId())
+        {
+            buffer.Write((byte)slot);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x06); // Unknown
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)empowerLevel); // 0 - normal, 1 - empowered (for Rengar)
         }
     }
 
@@ -2165,7 +2179,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             if (enable)
                 buffer.Write((byte)0x01);   // enable
             else
-                buffer.Write((byte)0x00);   // disable 
+                buffer.Write((byte)0x00);   // disable
             buffer.Write(duration);         // transition time in seconds
             buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
             buffer.Write((byte)0x00);
