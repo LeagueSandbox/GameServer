@@ -725,14 +725,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Dash : GamePacket
     {
-        public Dash(Unit u, float toX, float toY, float dashSpeed) : base(PacketCmdS2C.PKT_S2C_Dash, 0)
+        public Dash(Unit u, float toX, float toY, float dashSpeed, float leapHeight) : base(PacketCmdS2C.PKT_S2C_Dash, 0)
         {
             buffer.Write((short)1); // nb updates ?
             buffer.Write((byte)5); // unk
             buffer.Write((uint)u.getNetId());
             buffer.Write((byte)0); // unk
             buffer.Write((float)dashSpeed); // Dash speed
-            buffer.Write((int)0); // unk
+            buffer.Write((float)leapHeight); // unk
             buffer.Write((float)u.getX());
             buffer.Write((float)u.getY());
             buffer.Write((int)0); // unk

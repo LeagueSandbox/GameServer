@@ -9,7 +9,7 @@ function finishCasting()
     local range = to * 425
     local trueCoords = current + range
     
-    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1200)
+    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1200, 0)
 end
 
 function applyEffects()

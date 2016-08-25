@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.setModel(model);
         }
 
-        public static void DashTo(Unit unit, float x, float y, float dashSpeed, string animation = null)
+        public static void DashTo(Unit unit, float x, float y, float dashSpeed, float leapHeight, string animation = null)
         {
             if (animation != null)
             {
@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             }
             unit.dashTo(x, y, dashSpeed);
             unit.setTargetUnit(null);
-            _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed);
+            _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);
         }
 
         public static TeamId GetTeam(GameObject gameObject)
@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             scriptEngine.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(string) }));
+            scriptEngine.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(float), typeof(string) }));
             scriptEngine.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             scriptEngine.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));
             scriptEngine.RegisterFunction("sendPacket", null, typeof(ApiFunctionManager).GetMethod("SendPacket", new Type[] { typeof(string) }));
