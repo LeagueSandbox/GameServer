@@ -1,20 +1,18 @@
 ﻿using NLua;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
-namespace LeagueSandbox.GameServer.Logic
+namespace LeagueSandbox.GameServer.Logic.Scripting.Lua
 {
-    public class LuaScript
+    public class LuaScriptEngine : IScriptEngine
     {
         private bool _isLoaded;
-        public Lua Lua;
+        private NLua.Lua _lua;
 
-        public LuaScript()
+        public LuaScriptEngine()
         {
-            Lua = new Lua();
+            _lua = new NLua.Lua();
         }
 
         public bool IsLoaded()
@@ -27,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic
             _isLoaded = false;
             try
             {
-                var s = Lua.DoFile(location);
+                var s = _lua.DoFile(location);
                 _isLoaded = true;
             }
             catch (Exception e)
@@ -36,12 +34,27 @@ namespace LeagueSandbox.GameServer.Logic
             }
         }
 
+        public void RegisterFunction(string path, object target, MethodBase function)
+        {
+            _lua.RegisterFunction(path, target, function);
+        }
+
+        public void Execute(string script)
+        {
+            _lua.DoString(script);
+        }
+
+        public void SetGlobalVariable(string name, object value)
+        {
+            _lua[name] = value;
+        }
+
         private LuaTable getTable(string name)
         {
             if (!_isLoaded)
                 return null;
 
-            return Lua.GetTable(name);
+            return _lua.GetTable(name);
         }
 
         private Dictionary<object, object> getTableDictionary(string name)
@@ -49,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic
             if (!_isLoaded)
                 return null;
 
-            return Lua.GetTableDict(getTable(name));
+            return _lua.GetTableDict(getTable(name));
         }
 
         private Dictionary<object, object> getTableDictionary(LuaTable table)
@@ -57,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic
             if (!_isLoaded)
                 return null;
 
-            return Lua.GetTableDict(table);
+            return _lua.GetTableDict(table);
         }
 
         //public void setFunction();

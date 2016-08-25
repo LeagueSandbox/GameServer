@@ -134,7 +134,7 @@
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
-    <Compile Include="Logic\Lua\LuaScript.cs" />
+    <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUseObject.cs" />
@@ -170,6 +170,7 @@
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
+    <Compile Include="Logic\Scripting\IScriptEngine.cs" />
     <Compile Include="Logic\Settings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -191,6 +192,7 @@
       <Name>InibinSharp</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /s /q "$(TargetDir)Content\"

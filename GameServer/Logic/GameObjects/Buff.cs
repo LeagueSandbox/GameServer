@@ -8,6 +8,8 @@ using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Packets;
 using NLua.Exceptions;
+using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.Scripting.Lua;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -56,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Unit _attachedTo;
         protected Unit _attacker; // who added this buff to the unit it's attached to
         protected BuffType _buffType;
-        protected LuaScript _buffScript = new LuaScript();
+        protected IScriptEngine _scriptEngine = new LuaScriptEngine();
         protected string _name;
         protected int _stacks;
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
@@ -101,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             LoadLua();
             try
             {
-                _buffScript.Lua.DoString("onAddBuff()");
+                _scriptEngine.Execute("onAddBuff()");
             }
             catch (LuaException e)
             {
@@ -118,26 +120,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
-            _buffScript.Lua.DoString("package.path = 'LuaLib/?.lua;' .. package.path");
-            _buffScript.Lua.DoString(@"
+            _scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
+            _scriptEngine.Execute(@"
                 function onAddBuff()
                 end");
-            _buffScript.Lua.DoString(@"
+            _scriptEngine.Execute(@"
                 function onUpdate(diff)
                 end");
-            _buffScript.Lua.DoString(@"
+            _scriptEngine.Execute(@"
                 function onBuffEnd()
                 end");
-            _buffScript.Lua.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
-            _buffScript.Lua.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
-            _buffScript.Lua.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.Lua.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.Lua.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _buffScript.Lua.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _scriptEngine.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
+            _scriptEngine.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
+            _scriptEngine.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
+            _scriptEngine.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _scriptEngine.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
+            _scriptEngine.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
         
-            ApiFunctionManager.AddBaseFunctionToLuaScript(_buffScript);
+            ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
 
-            _buffScript.Load(scriptLoc);
+            _scriptEngine.Load(scriptLoc);
         }
 
         public string GetName()
@@ -154,12 +156,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _timeElapsed += (float)diff / 1000.0f;
             
-            if (_buffScript.IsLoaded())
+            if (_scriptEngine.IsLoaded())
             {
                 try
                 {
-                    _buffScript.Lua["diff"] = diff;
-                    _buffScript.Lua.DoString("onUpdate(diff)");
+                    _scriptEngine.SetGlobalVariable("diff", diff);
+                    _scriptEngine.Execute("onUpdate(diff)");
                 }
                 catch (LuaException e)
                 {
@@ -173,7 +175,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     try
                     {
-                        _buffScript.Lua.DoString("onBuffEnd()");
+                        _scriptEngine.Execute("onBuffEnd()");
                     }
                     catch (LuaException e)
                     {
