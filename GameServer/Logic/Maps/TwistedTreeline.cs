@@ -17,80 +17,100 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             new List<Vector2>
             { // blue top
-              new Vector2(917.0f, 1725.0f),
-              new Vector2(1170.0f, 4041.0f),
-              new Vector2(861.0f, 6459.0f),
-              new Vector2(880.0f, 10180.0f),
-              new Vector2(1268.0f, 11675.0f),
-              new Vector2(2806.0f, 13075.0f),
-              new Vector2(3907.0f, 13243.0f),
-              new Vector2(7550.0f, 13407.0f),
-              new Vector2(10244.0f, 13238.0f),
-              new Vector2(10947.0f, 13135.0f),
-              new Vector2(12511.0f, 12776.0f)
+              new Vector2(2604.6230f, 7930.2227f),
+              new Vector2(2498.1477f, 8539.1855f),
+              new Vector2(2568.0986f, 9195.2891f),
+              new Vector2(3070.7585f, 9779.2383f),
+              new Vector2(3646.2886f, 9844.2227f),
+              new Vector2(4192.0703f, 9804.6406f),
+              new Vector2(4792.7705f, 9456.1240f),
+              new Vector2(5371.9673f, 9104.9346f),
+              new Vector2(6063.7998f, 8676.5762f),
+              new Vector2(6569.7437f, 8453.1191f),
+              new Vector2(7172.5576f, 8296.5186f),
+              new Vector2(7679.0547f, 8227.8047f),
+              new Vector2(8186.9468f, 8295.2314f),
+              new Vector2(8795.4717f, 8445.9424f),
+              new Vector2(9294.2402f, 8676.5762f),
+              new Vector2(9986.0732f, 9104.9346f),
+              new Vector2(10615.4189f, 9491.6660f),
+              new Vector2(11185.9023f, 9803.4199f),
+              new Vector2(11745.2314f, 9845.2314f),
+              new Vector2(12290.2031f, 9776.3154f),
+              new Vector2(12784.3525f, 9165.5205f),
+              new Vector2(12857.7217f, 8509.4170f),
+              new Vector2(12712.4707f, 7900.4546f),
            },
            new List<Vector2>
            { // blue bot
-              new Vector2(1487.0f, 1302.0f),
-              new Vector2(3789.0f, 1346.0f),
-              new Vector2(6430.0f, 1005.0f),
-              new Vector2(10995.0f, 1234.0f),
-              new Vector2(12841.0f, 3051.0f),
-              new Vector2(13148.0f, 4202.0f),
-              new Vector2(13249.0f, 7884.0f),
-              new Vector2(12886.0f, 10356.0f),
-              new Vector2(12511.0f, 12776.0f)
-           },
-           new List<Vector2>
-           { // blue mid
-              new Vector2(1418.0f, 1686.0f),
-              new Vector2(2997.0f, 2781.0f),
-              new Vector2(4472.0f, 4727.0f),
-              new Vector2(8375.0f, 8366.0f),
-              new Vector2(10948.0f, 10821.0f),
-              new Vector2(12511.0f, 12776.0f)
+              new Vector2(2600.9341f, 6633.3608f),
+              new Vector2(2483.4233f, 6144.0415f),
+              new Vector2(2535.1941f, 5536.8584f),
+              new Vector2(2699.3618f, 4963.8223f),
+              new Vector2(3614.5815f, 4588.3721f),
+              new Vector2(4589.3037f, 4604.1772f),
+              new Vector2(5630.8599f, 4814.9775f),
+              new Vector2(7046.8311f, 5119.4941f),
+              new Vector2(8309.6602f, 5119.4941f),
+              new Vector2(9725.6309f, 4814.9775f),
+              new Vector2(10767.1875f, 4604.1768f),
+              new Vector2(11743.8223f, 4586.4595f),
+              new Vector2(12523.4863f, 4984.4067f),
+              new Vector2(12815.0693f, 5506.3154f),
+              new Vector2(12838.4746f, 6113.4985f),
+              new Vector2(12721.6514f, 6602.8179f)
            },
            new List<Vector2>
            { // red top
-              new Vector2(12451.0f, 13217.0f),
-              new Vector2(10947.0f, 13135.0f),
-              new Vector2(10244.0f, 13238.0f),
-              new Vector2(7550.0f, 13407.0f),
-              new Vector2(3907.0f, 13243.0f),
-              new Vector2(2806.0f, 13075.0f),
-              new Vector2(1268.0f, 11675.0f),
-              new Vector2(880.0f, 10180.0f),
-              new Vector2(861.0f, 6459.0f),
-              new Vector2(1170.0f, 4041.0f),
-              new Vector2(1418.0f, 1686.0f)
+              new Vector2(12712.4707f, 7900.4546f),
+              new Vector2(12857.7217f, 8509.4170f),
+              new Vector2(12784.3525f, 9165.5205f),
+              new Vector2(12290.2031f, 9776.3154f),
+              new Vector2(11745.2314f, 9845.2314f),
+              new Vector2(11185.9023f, 9803.4199f),
+              new Vector2(10615.4189f, 9491.6660f),
+              new Vector2(9986.0732f, 9104.9346f),
+              new Vector2(9294.2402f, 8676.5762f),
+              new Vector2(8795.4717f, 8445.9424f),
+              new Vector2(8186.9468f, 8295.2314f),
+              new Vector2(7679.0547f, 8227.8047f),
+              new Vector2(7172.5576f, 8296.5186f),
+              new Vector2(6569.7437f, 8453.1191f),
+              new Vector2(6063.7998f, 8676.5762f),
+              new Vector2(5371.9673f, 9104.9346f),
+              new Vector2(4792.7705f, 9456.1240f),
+              new Vector2(4192.0703f, 9804.6406f),
+              new Vector2(3646.2886f, 9844.2227f),
+              new Vector2(3070.7585f, 9779.2383f),
+              new Vector2(2568.0986f, 9195.2891f),
+              new Vector2(2498.1477f, 8539.1855f),
+              new Vector2(2604.6230f, 7930.2227f),
            },
            new List<Vector2>
            { // red bot
-              new Vector2(13062.0f, 12760.0f),
-              new Vector2(12886.0f, 10356.0f),
-              new Vector2(13249.0f, 7884.0f),
-              new Vector2(13148.0f, 4202.0f),
-              new Vector2(12841.0f, 3051.0f),
-              new Vector2(10995.0f, 1234.0f),
-              new Vector2(6430.0f, 1005.0f),
-              new Vector2(3789.0f, 1346.0f),
-              new Vector2(1418.0f, 1686.0f)
-           },
-           new List<Vector2>
-           { // red mid
-              new Vector2(12511.0f, 12776.0f),
-              new Vector2(10948.0f, 10821.0f),
-              new Vector2(8375.0f, 8366.0f),
-              new Vector2(4472.0f, 4727.0f),
-              new Vector2(2997.0f, 2781.0f),
-              new Vector2(1418.0f, 1686.0f)
+              new Vector2(12721.6514f, 6602.8179f),
+              new Vector2(12838.4746f, 6113.4985f),
+              new Vector2(12815.0693f, 5506.3154f),
+              new Vector2(12523.4863f, 4984.4067f),
+              new Vector2(11743.8223f, 4586.4595f),
+              new Vector2(10767.1875f, 4604.1768f),
+              new Vector2(9725.6309f, 4814.9775f),
+              new Vector2(8309.6602f, 5119.4941f),
+              new Vector2(7046.8311f, 5119.4941f),
+              new Vector2(5630.8599f, 4814.9775f),
+              new Vector2(4589.3037f, 4604.1772f),
+              new Vector2(3614.5815f, 4588.3721f),
+              new Vector2(2699.3618f, 4963.8223f),
+              new Vector2(2535.1941f, 5536.8584f),
+              new Vector2(2483.4233f, 6144.0415f),
+              new Vector2(2600.9341f, 6633.3608f)
            }
         };
 
         private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
         {
-            { TeamId.TEAM_BLUE, new float[] { 1422, 1672, 188 } },
-            { TeamId.TEAM_PURPLE, new float[] { 12500, 12800, 110 } }
+            { TeamId.TEAM_BLUE, new float[] { 2981.0388f, 7283.0103f, 188 } },
+            { TeamId.TEAM_PURPLE, new float[] { 12379.5439f, 7289.9409f, 110 } }
         };
 
         public TwistedTreeline(Game game) : base(game, /*90*/5 * 1000, 30 * 1000, 90 * 1000, true, 1)
@@ -266,17 +286,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             switch (spawnPosition)
             {
                 case MinionSpawnPosition.SPAWN_BLUE_TOP:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(907, 1715));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(2604.6230f, 7930.2227f));
                 case MinionSpawnPosition.SPAWN_BLUE_BOT:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1533, 1321));
-                case MinionSpawnPosition.SPAWN_BLUE_MID:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1443, 1663));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(2600.9341f, 6633.3608f));
                 case MinionSpawnPosition.SPAWN_RED_TOP:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(14455, 13159));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12712.4707f, 7900.4546f));
                 case MinionSpawnPosition.SPAWN_RED_BOT:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12967, 12695));
-                case MinionSpawnPosition.SPAWN_RED_MID:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12433, 12623));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12721.6514f, 6602.8179f));
             }
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
@@ -324,10 +340,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 MinionSpawnPosition.SPAWN_BLUE_TOP,
                 MinionSpawnPosition.SPAWN_BLUE_BOT,
-                MinionSpawnPosition.SPAWN_BLUE_MID,
                 MinionSpawnPosition.SPAWN_RED_TOP,
                 MinionSpawnPosition.SPAWN_RED_BOT,
-                MinionSpawnPosition.SPAWN_RED_MID,
             };
 
             if (_waveNumber < 3)
