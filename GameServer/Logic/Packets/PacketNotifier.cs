@@ -121,14 +121,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var remove = new RemoveBuff(u, buffName);
             _game.PacketHandlerManager.broadcastPacket(remove, Channel.CHL_S2C);
         }
-
         public void notifyTeleport(Unit u, float _x, float _y)
         {
             // Can't teleport to this point of the map
             if (!_game.GetMap().IsWalkable(_x, _y))
             {
-                _x = MovementVector.targetXToNormalFormat(u.getPosition().X);
-                _y = MovementVector.targetYToNormalFormat(u.getPosition().Y);
+                _x = MovementVector.targetXToNormalFormat(u, u.getPosition().X);
+                _y = MovementVector.targetYToNormalFormat(u, u.getPosition().Y);
             }
             else
             {
@@ -137,8 +136,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 //TeleportRequest first(u.getNetId(), u.teleportToX, u.teleportToY, true);
                 //sendPacket(currentPeer, first, Channel.CHL_S2C);
 
-                _x = MovementVector.targetXToNormalFormat(_x);
-                _y = MovementVector.targetYToNormalFormat(_y);
+                _x = MovementVector.targetXToNormalFormat(u, _x);
+                _y = MovementVector.targetYToNormalFormat(u, _y);
             }
 
             var second = new TeleportRequest(u.getNetId(), _x, _y, false);

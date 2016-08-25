@@ -8,8 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class MovementVector
     {
-        const int MAP_WIDTH = 13982 / 2;
-        const int MAP_HEIGHT = 14446 / 2;
         public short x = 0;
         public short y = 0;
 
@@ -23,15 +21,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.y = y;
         }
 
-        public MovementVector(float x, float y)
+        public MovementVector(Unit u, float x, float y)
         {
-            x = FormatCoordinate(x, MAP_WIDTH);
-            y = FormatCoordinate(y, MAP_HEIGHT);
+            x = FormatCoordinate(x, u.GetGame().GetMap().GetHeight() / 2);
+            y = FormatCoordinate(y, u.GetGame().GetMap().GetWidth() / 2);
         }
 
-        public Target toTarget()
+        public Target toTarget(Unit u)
         {
-            return new Target(2.0f * x + MAP_WIDTH, 2.0f * y + MAP_HEIGHT);
+            
+            return new Target(2.0f * x + (u.GetGame().GetMap().GetWidth() /2), 2.0f * y + (u.GetGame().GetMap().GetHeight() / 2));
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -39,14 +38,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return (short)((coordinate - origin) / 2f);
         }
 
-        public static short targetXToNormalFormat(float value)
+        public static short targetXToNormalFormat(Unit u, float value)
         {
-            return FormatCoordinate(value, MAP_WIDTH);
+            return FormatCoordinate(value, (u.GetGame().GetMap().GetWidth() / 2));
         }
 
-        public static short targetYToNormalFormat(float value)
+        public static short targetYToNormalFormat(Unit u, float value)
         {
-            return FormatCoordinate(value, MAP_HEIGHT);
+            return FormatCoordinate(value, (u.GetGame().GetMap().GetHeight() / 2));
         }
     }
 }

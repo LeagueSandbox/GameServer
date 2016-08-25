@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(this);
-              switch(Config.GameConfig.Map)
+            switch(Config.GameConfig.Map)
             {
                 case 1:
                     _map = new SummonersRift(this);
