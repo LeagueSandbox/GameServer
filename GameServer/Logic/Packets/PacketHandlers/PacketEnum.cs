@@ -158,6 +158,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         EPKT_S2C_OnAttack = 0x0F,
         EPKT_S2C_ChampionDeathTimer = 0x17,
         EPKT_S2C_ResourceType = 0x19,
+        EPKT_S2C_SpellEmpower = 0x25,
         EPKT_S2C_NPC_Die = 0x26,
         EPKT_S2C_FloatingText = 0x28
     };
