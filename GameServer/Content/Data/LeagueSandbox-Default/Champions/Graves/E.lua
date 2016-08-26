@@ -1,7 +1,6 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
-function finishCasting()
-    spellAnimation("Spell3", getOwner())
+function onFinishCasting()
     addParticleTarget("Graves_Move_OnBuffActivate.troy", getOwner())
  
     local current = Vector2:new(getOwnerX(), getOwnerY())
@@ -9,7 +8,7 @@ function finishCasting()
     local range = to * 425
     local trueCoords = current + range
     
-    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1200, 0)
+    dashTo(getOwner(), trueCoords.x, trueCoords.y, 1200, 0, "Spell3")
 end
 
 function applyEffects()

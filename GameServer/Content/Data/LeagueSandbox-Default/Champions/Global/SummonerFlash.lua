@@ -13,7 +13,6 @@ function onFinishCasting()
         trueCoords = Vector2:new(getSpellToX(), getSpellToY())
     end
 	addParticle(getOwner(), "global_ss_flash.troy", getOwnerX(), getOwnerY())
-	-- trueCoords.x, trueCoords.y = getClosestTerrainExit(getOwner(), trueCoords.x, trueCoords.y, false) TODO : repair getClosestTerrainExit
     teleportTo(getOwner(), trueCoords.x, trueCoords.y)
 	addParticleTarget(getOwner(), "global_ss_flash_02.troy", getOwner())
 end
