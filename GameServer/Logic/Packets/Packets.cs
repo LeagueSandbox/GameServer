@@ -3069,6 +3069,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class LevelPropAnimation : BasePacket
+    {
+        public LevelPropAnimation(LevelProp lp, string animationName) : base(PacketCmdS2C.PKT_S2C_LevelPropAnimation)
+        {
+            buffer.Write(Encoding.Default.GetBytes(animationName));
+            buffer.fill(0, 64 - animationName.Length);
+
+            buffer.fill(0, 8);
+
+            buffer.Write((uint)lp.getNetId());
+
+            buffer.Write((int)1);
+            buffer.Write((int)1);
+
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+        }
+    }
+
     public class ViewRequest
     {
         public PacketCmdC2S cmd;

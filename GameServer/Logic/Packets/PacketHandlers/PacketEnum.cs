@@ -107,6 +107,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_ShowHPAndName = 0xCE,
 
         PKT_S2C_LevelPropSpawn = 0xD0,
+        PKT_S2C_LevelPropAnimation = 0xD1,
         PKT_S2C_DominionPoints = 0xD9,
         PKT_S2C_SetScreenTint = 0xDB,
         PKT_S2C_DebugMessage = 0xF7,
