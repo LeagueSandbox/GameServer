@@ -400,7 +400,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
         }
 
-        public void notifyDash(Unit u, float _x, float _y, float dashSpeed)
+        public void notifyDash(Unit u, float _x, float _y, float dashSpeed, float leapHeight)
         {
             // TODO: Fix dash: it stays in the current location and doesn't hit a wall if the target location can't be reached
             float _z = u.GetZ();
@@ -420,7 +420,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                u.setPosition(newX, newY);
             }*/
 
-            var dash = new Dash(u, _x, _y, dashSpeed);
+            var dash = new Dash(u, _x, _y, dashSpeed, leapHeight);
             _game.PacketHandlerManager.broadcastPacketVision(u, dash, Channel.CHL_S2C);
         }
     }
