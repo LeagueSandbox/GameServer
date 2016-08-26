@@ -3,9 +3,9 @@ function onUpdate(diff)
 end
 
 function onDamageTaken(attacker, damage, dmgType, source)
-    print("Damage taken is ".. damage)
+    print("Damage taken is " .. damage)
 end
 
-function onAutoAttack(us, target)
+function onAutoAttack(target)
     print("We just auto attacked!")
 end

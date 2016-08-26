@@ -5,6 +5,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using static ENet.Native;
+using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.RAF
 {
@@ -103,22 +106,37 @@ namespace LeagueSandbox.GameServer.Logic.RAF
         {
             return (castRaySqr(a.getPosition(), b.getPosition()) <= (b.getPosition() - a.getPosition()).SqrLength());
         }
-        public Vector2 getClosestTerrainExit(GameObject a, Vector2 location, bool noForward = true)
+        public Vector2 getClosestTerrainExit(Vector2 location, bool limited = false)
         {
-            Vector2 dir = (location - a.getPosition());
             if (isWalkable(location.X, location.Y))
-                return location;
-
-            float distBackwards = castInfiniteRay(location, -dir, true); // Find the first opening firing backwards
-            float dist = -distBackwards;
-
-            if (!noForward)
             {
-                float distForward = castInfiniteRay(location, dir, true); // Fire forward
-                dist = (distBackwards < distForward) ? (-distBackwards) : (distForward);
+                return location;
             }
 
-            return a.getPosition() + (Vector2.Normalize(dir) * dist);
+            var trueX = (double)location.X;
+            var trueY = (double)location.Y;
+            var angle = Math.PI / 180;
+            var rr = (location.X - trueX) * (location.X - trueX) + (location.Y - trueY) * (location.Y - trueY);
+            var r = Math.Sqrt(rr);
+            var limit = limited ? 200 : -1;
+            // x = r * cos(angle)
+            // y = r * sin(angle)
+            // r = distance from origin
+            // Draws spirals until it finds a way out
+            while (true)
+            {
+                if (limit == 0)
+                {
+                    return location;
+                }
+                trueX = location.X + (r * Math.Cos(angle));
+                trueY = location.Y + (r * Math.Sin(angle));
+                if (isWalkable((float)trueX, (float)trueY)) break;
+                angle += Math.PI / 180;
+                r++;
+                limit--;
+            }
+            return new Vector2((float)trueX, (float)trueY);
         }
 
         public float getWidth()

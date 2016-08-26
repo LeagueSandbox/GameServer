@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.API
 {
@@ -31,7 +32,9 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void TeleportTo(Unit unit, float x, float y)
         {
-            _game.PacketNotifier.notifyTeleport(unit, x, y);
+            var coords = new Vector2(x, y);
+            var truePos = unit.GetGame().GetMap().getAIMesh().getClosestTerrainExit(coords);
+            _game.PacketNotifier.notifyTeleport(unit, truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
@@ -87,7 +90,9 @@ namespace LeagueSandbox.GameServer.Logic.API
                 animList.Add(animation);
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
-            unit.dashTo(x, y, dashSpeed);
+
+            var newCoords = unit.GetGame().GetMap().getAIMesh().getClosestTerrainExit(new Vector2(x, y));
+            unit.dashTo(newCoords.X, newCoords.Y, dashSpeed);
             unit.setTargetUnit(null);
             _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);
         }

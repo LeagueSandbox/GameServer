@@ -279,7 +279,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             owner.SetCastingSpell(false);
         }
-
         /**
          * Called every diff milliseconds to update the spell
          */
@@ -333,11 +332,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.SetGlobalVariable("SOURCE_SUMMONER_SPELL", DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL);
             _scriptEngine.SetGlobalVariable("SOURCE_ATTACK", DamageSource.DAMAGE_SOURCE_ATTACK);
             _scriptEngine.SetGlobalVariable("SOURCE_PASSIVE", DamageSource.DAMAGE_SOURCE_PASSIVE);
-            _scriptEngine.SetGlobalVariable("TEXT_NORMAL", DamageText.DAMAGE_TEXT_NORMAL);
-            _scriptEngine.SetGlobalVariable("TEXT_CRITICAL", DamageText.DAMAGE_TEXT_CRITICAL);
-            _scriptEngine.SetGlobalVariable("TEXT_MISS", DamageText.DAMAGE_TEXT_MISS);
-            _scriptEngine.SetGlobalVariable("TEXT_DODGE", DamageText.DAMAGE_TEXT_DODGE);
-            _scriptEngine.SetGlobalVariable("TEXT_INVULNERABLE", DamageText.DAMAGE_TEXT_INVULNERABLE);
             _scriptEngine.SetGlobalVariable("countObjectsHit", p.getObjectsHit().Count);
 
 
