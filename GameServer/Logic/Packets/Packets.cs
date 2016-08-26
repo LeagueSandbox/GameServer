@@ -683,9 +683,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xC4); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
-            buffer.Write((ushort)0); // unk
-            buffer.Write((byte)0x80); // unk
-            buffer.Write((byte)0x3F); // unk
+            buffer.Write((float)1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 buffer.Write(b);
             buffer.Write((byte)0);
@@ -1075,9 +1073,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class FloatingText2 : BasePacket
+    public class FloatingText2 : ExtendedPacket
     {
-        public FloatingText2(Unit u, string text, byte type, int unk) : base(PacketCmdS2C.PKT_S2C_FloatingText, u.getNetId())
+        public FloatingText2(Unit u, string text, byte type, int unk) : base(ExtendedPacketCmd.EPKT_S2C_FloatingText, u.getNetId())
         {
             buffer.fill(0, 10);
             buffer.Write((byte)type); // From 0x00 to 0x1B, 0x1C shows nothing and 0x1D bugsplats
@@ -1431,16 +1429,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public TurretSpawn(Turret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
             buffer.Write((int)t.getNetId());
+            buffer.Write((byte)0x40);
             foreach (var b in Encoding.Default.GetBytes(t.getName()))
                 buffer.Write((byte)b);
             buffer.fill(0, 64 - t.getName().Length);
-            buffer.Write((byte)0x00);
             buffer.Write((byte)0x22);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write((byte)0x00);
         }
 
         /*PacketHeader header;
@@ -2191,16 +2188,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetModelTransparency : BasePacket
     {
-        public SetModelTransparency(Unit u, float transparency) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
+        public SetModelTransparency(Unit u, float transparency, float transitionTime) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
         {
             // Applied to Teemo's mushrooms for example
             buffer.Write((byte)0xDB);
             buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC0);
-            buffer.Write((byte)0x3F);
-            buffer.Write(transparency); // 0.0 : fully transparent, 1.0 : fully visible
+            buffer.Write((float)transitionTime);
+            buffer.Write((float)transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
     }
 
