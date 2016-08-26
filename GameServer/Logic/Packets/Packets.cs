@@ -3033,7 +3033,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f); // Scaling
-            buffer.Write((int)300); // unk
+            buffer.Write((int)lp.getTeam());
             buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
             foreach (var b in Encoding.Default.GetBytes(lp.getName()))
@@ -3045,7 +3045,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
 
         // TODO : remove this once we find a better solution for jungle camp spawning command
-        public LevelPropSpawn(int netId, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
+        public LevelPropSpawn(int netId, TeamId team, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
             buffer.Write(netId);
             buffer.Write((int)0x00000040); // unk
@@ -3062,7 +3062,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(1.0f);
             buffer.Write(1.0f);
             buffer.Write(1.0f); // Scaling
-            buffer.Write((int)300); // unk
+            buffer.Write((int)team);
             buffer.Write((byte)1); // bIsProp -- if is a prop, become unselectable and use direction params
             foreach (var b in Encoding.Default.GetBytes(name))
                 buffer.Write((byte)b);
