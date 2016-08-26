@@ -381,12 +381,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write(p.getNetId());
             buffer.Write(p.getNetId());
+            buffer.Write(p.GetOwner().getNetId());
 
-            buffer.Write((byte)0x20);
-
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x40);
             buffer.Write((byte)0x40);
 
             buffer.Write((float)p.getX()); //x
