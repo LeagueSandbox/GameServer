@@ -3122,15 +3122,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveUnitFoG : BasePacket
     {
-        public RemoveUnitFoG(Unit u) : base(PacketCmdS2C.PKT_S2C_RemoveUnitFoG)
+        public RemoveUnitFoG(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOG)
         {
             buffer.Write((int)u.getNetId());
         }
     }
 
-    public class FreezeUnitAnimation : BasePacket
+    public class FreezeAnimation : BasePacket
     {
-        public FreezeUnitAnimation(Unit u, bool freeze) : base(PacketCmdS2C.PKT_S2C_FreezeUnitAnimation, u.getNetId())
+        public FreezeAnimation(Unit u, bool freeze) : base(PacketCmdS2C.PKT_S2C_FreezeAnimation, u.getNetId())
         {
             byte flag = 0xDE;
             if (freeze)

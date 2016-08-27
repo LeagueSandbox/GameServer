@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_InhibitorState = 0x2B,
         PKT_S2C_ViewAns = 0x2C,
         PKT_S2C_ChampionRespawn = 0x2F,
-        PKT_S2C_RemoveUnitFoG = 0x33,
+        PKT_S2C_AddUnitFOG = 0x33,
         PKT_S2C_StopAutoAttack = 0x34,
         PKT_S2C_DeleteObject = 0x35, // not sure what this is, happens when turret leaves vision
         PKT_S2C_MessageBoxTop = 0x36,
