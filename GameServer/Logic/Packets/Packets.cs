@@ -381,12 +381,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write(p.getNetId());
             buffer.Write(p.getNetId());
+            buffer.Write(p.GetOwner().getNetId());
 
-            buffer.Write((byte)0x20);
-
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x40);
             buffer.Write((byte)0x40);
 
             buffer.Write((float)p.getX()); //x
@@ -687,9 +683,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xC4); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
-            buffer.Write((ushort)0); // unk
-            buffer.Write((byte)0x80); // unk
-            buffer.Write((byte)0x3F); // unk
+            buffer.Write((float)1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 buffer.Write(b);
             buffer.Write((byte)0);
@@ -1079,9 +1073,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class FloatingText2 : BasePacket
+    public class FloatingText2 : ExtendedPacket
     {
-        public FloatingText2(Unit u, string text, byte type, int unk) : base(PacketCmdS2C.PKT_S2C_FloatingText, u.getNetId())
+        public FloatingText2(Unit u, string text, byte type, int unk) : base(ExtendedPacketCmd.EPKT_S2C_FloatingText, u.getNetId())
         {
             buffer.fill(0, 10);
             buffer.Write((byte)type); // From 0x00 to 0x1B, 0x1C shows nothing and 0x1D bugsplats
@@ -1435,16 +1429,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public TurretSpawn(Turret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
             buffer.Write((int)t.getNetId());
+            buffer.Write((byte)0x40);
             foreach (var b in Encoding.Default.GetBytes(t.getName()))
                 buffer.Write((byte)b);
             buffer.fill(0, 64 - t.getName().Length);
-            buffer.Write((byte)0x00);
             buffer.Write((byte)0x22);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write((byte)0x00);
         }
 
         /*PacketHeader header;
@@ -2195,16 +2188,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetModelTransparency : BasePacket
     {
-        public SetModelTransparency(Unit u, float transparency) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
+        public SetModelTransparency(Unit u, float transparency, float transitionTime) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.getNetId())
         {
             // Applied to Teemo's mushrooms for example
             buffer.Write((byte)0xDB);
             buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC0);
-            buffer.Write((byte)0x3F);
-            buffer.Write(transparency); // 0.0 : fully transparent, 1.0 : fully visible
+            buffer.Write((float)transitionTime);
+            buffer.Write((float)transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
     }
 
@@ -3033,7 +3023,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f); // Scaling
-            buffer.Write((int)300); // unk
+            buffer.Write((int)lp.getTeam());
             buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
             foreach (var b in Encoding.Default.GetBytes(lp.getName()))
@@ -3045,7 +3035,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
 
         // TODO : remove this once we find a better solution for jungle camp spawning command
-        public LevelPropSpawn(int netId, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
+        public LevelPropSpawn(int netId, TeamId team, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
             buffer.Write(netId);
             buffer.Write((int)0x00000040); // unk
@@ -3062,7 +3052,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(1.0f);
             buffer.Write(1.0f);
             buffer.Write(1.0f); // Scaling
-            buffer.Write((int)300); // unk
+            buffer.Write((int)team);
             buffer.Write((byte)1); // bIsProp -- if is a prop, become unselectable and use direction params
             foreach (var b in Encoding.Default.GetBytes(name))
                 buffer.Write((byte)b);
@@ -3070,6 +3060,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes(type))
                 buffer.Write(b);
             buffer.fill(0, 64 - type.Length);
+        }
+    }
+
+    public class LevelPropAnimation : BasePacket
+    {
+        public LevelPropAnimation(LevelProp lp, string animationName) : base(PacketCmdS2C.PKT_S2C_LevelPropAnimation)
+        {
+            buffer.Write(Encoding.Default.GetBytes(animationName));
+            buffer.fill(0, 64 - animationName.Length);
+
+            buffer.fill(0, 8);
+
+            buffer.Write((uint)lp.getNetId());
+
+            buffer.Write((int)1);
+            buffer.Write((int)1);
+
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
         }
     }
 

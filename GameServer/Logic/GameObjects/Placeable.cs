@@ -12,9 +12,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string _name;
         private Unit _owner; // We'll probably want to change this in the future
 
-        public Placeable(Game game, uint id, float x, float y, string model, string name) : base(game, id, model, new Stats(), 40, x, y)
+        public Placeable(Game game, Unit owner, uint id, float x, float y, string model, string name) : base(game, id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
+
+            _owner = owner;
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
@@ -80,6 +82,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public string getName()
         {
             return _name;
+        }
+
+        public Unit GetOwner()
+        {
+            return _owner;
         }
 
         public override bool isInDistress()

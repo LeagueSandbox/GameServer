@@ -24,6 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.unk2 = unk2;
             this.name = name;
             this.type = type;
+            this.team = Enet.TeamId.TEAM_NEUTRAL;
         }
 
         public override float GetZ()
