@@ -97,6 +97,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new SpeedCommand("speed", "speed speed", this));
             AddCommand(new TpCommand("tp", "tp x y", this));
             AddCommand(new XpCommand("xp", "xp xp", this));
+            AddCommand(new RainbowCommand("rainbow", "rainbow", this));
         }
 
         public bool AddCommand(ChatCommand command)
