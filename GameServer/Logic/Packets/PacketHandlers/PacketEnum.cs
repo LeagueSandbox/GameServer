@@ -14,13 +14,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 
     public enum PacketCmdS2C : byte
     {
-        PKT_S2C_MoveAns = 0x61, //?
+
         PKT_S2C_KeyCheck = 0x00,
         PKT_S2C_UnpauseGame = 0x0A,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
         PKT_S2C_EditMessageBoxTop = 0x0D,
-        PKT_S2C_UnlockCamera = 0x0E, //?? Well it unlocks camera so...
+        PKT_S2C_UnlockCamera = 0x0E,
         PKT_S2C_AddXP = 0x10,
         PKT_S2C_EndSpawn = 0x11,
         PKT_S2C_GameSpeed = 0x12,
@@ -33,8 +33,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_MoveCamera = 0x25,
         PKT_S2C_EditBuff = 0x1C,
         PKT_S2C_PlayerInfo = 0x2A,
-        PKT_S2C_InhibitorState = 0x2B, //ayyy lmao
-        PKT_S2C_InhibitorDeathAnimation = 0x89,
+        PKT_S2C_InhibitorState = 0x2B,
         PKT_S2C_ViewAns = 0x2C,
         PKT_S2C_ChampionRespawn = 0x2F,
         PKT_S2C_StopAutoAttack = 0x34,
@@ -59,10 +58,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_DestroyProjectile = 0x5A,
         PKT_S2C_StartGame = 0x5C,
         PKT_S2C_ChampionDie = 0x5E,
+        PKT_S2C_MoveAns = 0x61,
         PKT_S2C_StartSpawn = 0x62,
         PKT_S2C_Dash = 0x64,
-        PKT_S2C_DamageDone = 0x65,
-        PKT_S2C_LoadHero = 0x65,
+        PKT_S2C_DamageDone = 0x65, PKT_S2C_LoadHero = 0x65,
         PKT_S2C_LoadName = 0x66,
         PKT_S2C_LoadScreenInfo = 0x67,
         PKT_S2C_ChatBoxMessage = 0x68,
@@ -70,13 +69,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_SetAnimation = 0x6B,
         PKT_S2C_ShowProjectile = 0x6E,
         PKT_S2C_BuyItemAns = 0x6F,
-        PKT_S2C_AddBuff = 0xB7,
         PKT_S2C_SetCameraPosition = 0x73,
         PKT_S2C_RemoveBuff = 0x7B,
         PKT_S2C_SetCooldown = 0x85,
         PKT_S2C_SpawnParticle = 0x87,
         PKT_S2C_QueryStatusAns = 0x88,
-        PKT_S2C_ExplodeNexus = 0x89,
+        PKT_S2C_ExplodeNexus = 0x89, PKT_S2C_InhibitorDeathAnimation = 0x89,
         PKT_S2C_Quest = 0x8C,
         PKT_S2C_World_SendGameNumber = 0x92,
         PKT_S2C_Ping_Load_Info = 0x95,
@@ -93,10 +91,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_SetHealth = 0xAE,
         PKT_S2C_SpellAnimation = 0xB0,
         PKT_S2C_EditMessageBoxRight = 0xB1,
-        PKT_S2C_SetModelTransparency = 0xB2, // Not sure if it only does that
+        PKT_S2C_SetModelTransparency = 0xB2,
         PKT_S2C_BasicTutorialMessageWindow = 0xB3,
         PKT_S2C_RemoveHighlightUnit = 0xB4,
         PKT_S2C_CastSpellAns = 0xB5,
+        PKT_S2C_AddBuff = 0xB7,
         PKT_S2C_AFKWarningWindow = 0xB8,
         PKT_S2C_ObjectSpawn = 0xBA,
         PKT_S2C_HideUi = 0xBC,
@@ -105,7 +104,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_GameEnd = 0xC6,
         PKT_S2C_Surrender = 0xC9,
         PKT_S2C_ShowHPAndName = 0xCE,
-
         PKT_S2C_LevelPropSpawn = 0xD0,
         PKT_S2C_LevelPropAnimation = 0xD1,
         PKT_S2C_DominionPoints = 0xD9,
@@ -118,10 +116,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 
     public enum PacketCmdC2S
     {
-        PKT_C2S_ChatBoxMessage = 0x68,
         PKT_C2S_KeyCheck = 0x00,
-        PKT_C2S_World_SendGameNumber = 0x92,
-
         PKT_C2S_HeartBeat = 0x08,
         PKT_C2S_SellItem = 0x09,
         PKT_C2S_QueryStatusReq = 0x14,
@@ -136,12 +131,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_C2S_Scoreboard = 0x56,
         PKT_C2S_AttentionPing = 0x57,
         PKT_C2S_ClientReady = 0x64,
+        PKT_C2S_ChatBoxMessage = 0x68,
         PKT_C2S_BlueTipClicked = 0x6D,
         PKT_C2S_MoveReq = 0x72,
         PKT_C2S_MoveConfirm = 0x77,
         PKT_C2S_LockCamera = 0x81,
         PKT_C2S_BuyItemReq = 0x82,
         PKT_C2S_Exit = 0x8F,
+        PKT_C2S_World_SendGameNumber = 0x92,
         PKT_C2S_CastSpell = 0x9A,
         PKT_C2S_PauseReq = 0xA1,
         PKT_C2S_Surrender = 0xA4,
