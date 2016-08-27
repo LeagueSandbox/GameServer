@@ -73,6 +73,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 case 10:
                     _map = new TwistedTreeline(this);
                     break;
+                case 12:
+                    _map = new HowlingAbyss(this);
+                    break;
                 default:
                     _map = new SummonersRift(this);
                     break;

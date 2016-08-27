@@ -3004,7 +3004,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
             buffer.Write((int)lp.getNetId());
-            buffer.Write((int)0x00000040); // unk
+            buffer.Write((byte)0x40); // unk
+            buffer.Write((byte)lp.getSkin());
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
             buffer.Write((byte)0); // unk
             buffer.Write((float)lp.getX());
             buffer.Write((float)lp.GetZ());
