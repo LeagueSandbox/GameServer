@@ -2167,13 +2167,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetScreenTint : BasePacket
     {
-        public SetScreenTint(Unit u, bool enable, float fadeTime, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
+        public SetScreenTint(Unit u, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
         {
             byte active = 0x00;
             if (enable)
                 active = 0x01;
             buffer.Write(active);
-            buffer.Write(fadeTime);         // transition time in seconds
+            buffer.Write(transitionTime);         // transition time in seconds
             buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
@@ -3120,9 +3120,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class RemoveUnitFoG : BasePacket
+    public class AddUnitFOG : BasePacket
     {
-        public RemoveUnitFoG(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOG)
+        public AddUnitFOG(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOG)
         {
             buffer.Write((int)u.getNetId());
         }
