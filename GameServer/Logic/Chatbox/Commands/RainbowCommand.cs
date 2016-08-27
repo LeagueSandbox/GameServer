@@ -33,18 +33,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             if(split.Length > 2)
             {
-                speed = float.Parse(split[2]);
+                float.TryParse(split[2], out speed);
                 delay = (int)(speed * 1000);
             }
 
-            if (!run)
+            run = !run;
+            if (run)
             {
-                run = true;
                 Task.Run(() => TaskRainbow());
-            }
-            else
-            {
-                run = false;
             }
         }
 
@@ -56,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 new Random().NextBytes(rainbow);
                 Thread.Sleep(delay);
                 BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
-                BroadcastTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], 1f);
+                BroadcastTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
             }
             Thread.Sleep(delay);
             BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
