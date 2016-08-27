@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         internal int GetYForPlayer(int playerId)
         {
-            return (int)((JArray)_spawns[playerId])[0];
+            return (int)((JArray)_spawns[playerId])[1];
         }
     }
 
