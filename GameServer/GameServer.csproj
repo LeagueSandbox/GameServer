@@ -133,6 +133,7 @@
     <Compile Include="Logic\Content\ItemManager.cs" />
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
+    <Compile Include="Logic\Maps\HowlingAbyss.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
