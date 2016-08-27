@@ -14,31 +14,58 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         private static Champion me;
         private static ChatboxManager owner;
+        private static bool run = false;
+        private static float a = 0.5f;
+        private static float speed = 0.25f;
+        private static int delay = 250;
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            var split = arguments.ToLower().Split(' ');
+
             me = _owner.GetGame().GetPeerInfo(peer).GetChampion();
             owner = _owner;
-            Task.Run(() => RAINBOW());
+
+            if (split.Length > 1)
+            {
+                float.TryParse(split[1], out a);
+            }
+
+            if(split.Length > 2)
+            {
+                speed = float.Parse(split[2]);
+                delay = (int)(speed * 1000);
+            }
+
+            if (!run)
+            {
+                run = true;
+                Task.Run(() => rainbow());
+            }
+            else
+            {
+                run = false;
+                SetScreenTint tintOff = new SetScreenTint(me, false, 0.0f, 0, 0, 0, 1f);
+                owner.GetGame().PacketHandlerManager.broadcastPacket(tintOff, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+            }
         }
 
-        public void RAINBOW()
+        public void rainbow()
         {
-            while (true)
+            while (run)
             {
                 try
                 {
-                    //sending the actual Thread of execution to sleep X milliseconds
-                    float a = 0.5f;
-                    byte[] rainBow = new byte[4];
-                    Random random = new Random();
-                    random.NextBytes(rainBow);
-                    Thread.Sleep(500);
-                    SetScreenTint s1 = new SetScreenTint(me, false, 0.0f, 0, 0, 0, 1f);
-                    owner.GetGame().PacketHandlerManager.broadcastPacket(s1, Core.Logic.PacketHandlers.Channel.CHL_S2C);
-                    SetScreenTint sst = new SetScreenTint(me, true, 0.6f, rainBow[1], rainBow[2], rainBow[3], a);
-                    owner.GetGame().PacketNotifier.notifyDebugMessage("R: " + rainBow[1] + " G: " + rainBow[2] + " B: " + rainBow[3]);
-                    owner.GetGame().PacketHandlerManager.broadcastPacket(sst, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                    byte[] rainbow = new byte[4];
+                    new Random().NextBytes(rainbow);
+                    Thread.Sleep(delay);
+                    SetScreenTint tintOff = new SetScreenTint(me, false, 0.0f, 0, 0, 0, 1f);
+                    owner.GetGame().PacketHandlerManager.broadcastPacket(tintOff, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                    if (run)
+                    {
+                        SetScreenTint tintOn = new SetScreenTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
+                        owner.GetGame().PacketHandlerManager.broadcastPacket(tintOn, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                    }
                 }
                 catch (Exception e)
                 {

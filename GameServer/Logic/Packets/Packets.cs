@@ -3120,9 +3120,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class AddUnitFOG : BasePacket
+    public class AddUnitFOW : BasePacket
     {
-        public AddUnitFOG(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOG)
+        public AddUnitFOW(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOW)
         {
             buffer.Write((int)u.getNetId());
         }
