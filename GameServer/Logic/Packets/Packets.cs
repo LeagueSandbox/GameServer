@@ -2167,13 +2167,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetScreenTint : BasePacket
     {
-        public SetScreenTint(Unit u, bool enable, float duration, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
+        public SetScreenTint(Unit u, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
         {
+            byte active = 0x00;
             if (enable)
-                buffer.Write((byte)0x01);   // enable
-            else
-                buffer.Write((byte)0x00);   // disable
-            buffer.Write(duration);         // transition time in seconds
+                active = 0x01;
+            buffer.Write(active);
+            buffer.Write(transitionTime);         // transition time in seconds
             buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
@@ -3080,6 +3080,62 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x01);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
+        }
+    }
+
+    public class FloatingTextWithValue : BasePacket
+    {
+        public FloatingTextWithValue(Unit u, int value, string text) : base(PacketCmdS2C.PKT_S2C_FloatingTextWithValue)
+        {
+            buffer.Write(u.getNetId());
+            buffer.Write((int)15); // unk
+            buffer.Write(value); // Example -3
+            buffer.Write(Encoding.Default.GetBytes(text));
+            buffer.Write((byte)0x00);
+        }
+    }
+
+    public class ChampionDie2 : BasePacket
+    {
+        public ChampionDie2(Champion die, float deathTimer) : base(PacketCmdS2C.PKT_S2C_ChampionDie, die.getNetId())
+        {
+            // Not sure what the whole purpose of that packet is
+            buffer.Write(deathTimer);
+        }
+    }
+
+    public class ToggleInputLockingFlag : BasePacket
+    {
+
+        public ToggleInputLockingFlag(byte bitField, bool locked) : base(PacketCmdS2C.PKT_S2C_ToggleInputLockingFlag)
+        {
+            byte toggle = 0xFE;
+            if (locked)
+                toggle = 0xFF;
+            buffer.Write((byte)bitField); // 0x01 = centerCamera; 0x02 = movement; 0x04 = spells; etc
+            buffer.Write((byte)00);
+            buffer.Write((byte)00);
+            buffer.Write((byte)00);
+            buffer.Write((byte)toggle); // FE(nabled); FD(isabled);
+        }
+    }
+
+    public class AddUnitFOW : BasePacket
+    {
+        public AddUnitFOW(Unit u) : base(PacketCmdS2C.PKT_S2C_AddUnitFOW)
+        {
+            buffer.Write((int)u.getNetId());
+        }
+    }
+
+    public class FreezeUnitAnimation : BasePacket
+    {
+        public FreezeUnitAnimation(Unit u, bool freeze) : base(PacketCmdS2C.PKT_S2C_FreezeUnitAnimation, u.getNetId())
+        {
+            byte flag = 0xDE;
+            if (freeze)
+                flag = 0xDD;
+            buffer.Write(flag);
         }
     }
 
