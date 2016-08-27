@@ -69,6 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
                 catch (Exception e)
                 {
+                    run = false;
                 }
             }
         }
