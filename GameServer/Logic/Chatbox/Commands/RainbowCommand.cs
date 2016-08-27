@@ -40,38 +40,32 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             if (!run)
             {
                 run = true;
-                Task.Run(() => rainbow());
+                Task.Run(() => TaskRainbow());
             }
             else
             {
                 run = false;
-                SetScreenTint tintOff = new SetScreenTint(me, false, 0.0f, 0, 0, 0, 1f);
-                owner.GetGame().PacketHandlerManager.broadcastPacket(tintOff, Core.Logic.PacketHandlers.Channel.CHL_S2C);
             }
         }
 
-        public void rainbow()
+        public void TaskRainbow()
         {
             while (run)
             {
-                try
-                {
-                    byte[] rainbow = new byte[4];
-                    new Random().NextBytes(rainbow);
-                    Thread.Sleep(delay);
-                    SetScreenTint tintOff = new SetScreenTint(me, false, 0.0f, 0, 0, 0, 1f);
-                    owner.GetGame().PacketHandlerManager.broadcastPacket(tintOff, Core.Logic.PacketHandlers.Channel.CHL_S2C);
-                    if (run)
-                    {
-                        SetScreenTint tintOn = new SetScreenTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
-                        owner.GetGame().PacketHandlerManager.broadcastPacket(tintOn, Core.Logic.PacketHandlers.Channel.CHL_S2C);
-                    }
-                }
-                catch (Exception e)
-                {
-                    run = false;
-                }
+                byte[] rainbow = new byte[4];
+                new Random().NextBytes(rainbow);
+                Thread.Sleep(delay);
+                BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
+                BroadcastTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], 1f);
             }
+            Thread.Sleep(delay);
+            BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
+        }
+
+        public void BroadcastTint(Champion source, bool enable, float speed, byte r, byte g, byte b, float a)
+        {
+            var tint = new SetScreenTint(source, enable, speed, r, g, b, a);
+            owner.GetGame().PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
         }
     }
 }
