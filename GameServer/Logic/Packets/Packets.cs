@@ -3128,9 +3128,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class FreezeAnimation : BasePacket
+    public class FreezeUnitAnimation : BasePacket
     {
-        public FreezeAnimation(Unit u, bool freeze) : base(PacketCmdS2C.PKT_S2C_FreezeAnimation, u.getNetId())
+        public FreezeUnitAnimation(Unit u, bool freeze) : base(PacketCmdS2C.PKT_S2C_FreezeUnitAnimation, u.getNetId())
         {
             byte flag = 0xDE;
             if (freeze)
