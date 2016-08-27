@@ -163,7 +163,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         EPKT_S2C_ResourceType = 0x19,
         EPKT_S2C_SpellEmpower = 0x25,
         EPKT_S2C_NPC_Die = 0x26,
-        EPKT_S2C_FloatingText = 0x28
+        EPKT_S2C_FloatingText = 0x28,
+        EPKT_S2C_ForceTargetSpell = 0x29
     };
 
     public enum MoveType : uint

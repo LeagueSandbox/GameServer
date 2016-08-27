@@ -513,7 +513,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write(Encoding.Default.GetBytes(spell));
-            buffer.Write(0x00);
+            buffer.Write((byte)0x00);
         }
     }
 
@@ -1088,6 +1088,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write(Encoding.Default.GetBytes(text));
             buffer.Write((byte)0x00);
+        }
+    }
+
+    public class ForceTargetSpell : ExtendedPacket
+    {
+        public ForceTargetSpell(Unit u, byte slot, float time) : base(ExtendedPacketCmd.EPKT_S2C_ForceTargetSpell, u.getNetId())
+        {
+            buffer.Write((byte)slot);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((float)time);
         }
     }
 
