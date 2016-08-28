@@ -23,7 +23,7 @@ function onFinishCasting()
     for i=0,units.Count-1 do
 		value = units[i]
         local distance = 700
-        if getOwner():getTeam() ~= value:getTeam() then
+        if getOwner():GetTeam() ~= value:GetTeam() then
             if Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY())) <= distance then
                 target = value
                 distance = Vector2:new(trueCoords.x, trueCoords.y):distance(Vector2:new(value:getX(), value:getY()))

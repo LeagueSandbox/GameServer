@@ -15,6 +15,6 @@ function applyEffects()
     local AP = getOwner():GetStats().AbilityPower.Total*0.9
     local damage = 200+getSpellLevel()*150 + bonusAD + AP
 	dealMagicalDamage(damage * (1 - reduc/10))
-    
+    -- TODO this can be fetched from projectile inibin "HitEffectName"
     addParticleTarget(getOwner(), "Ezreal_TrueShot_tar.troy", getTarget())
 end
