@@ -1,8 +1,5 @@
 function onFinishCasting()
-	local owner = getOwner()
-	local myTeam = owner:getTeam()
-	local units = getChampionsInRange( owner, 850, true )
-	local lowestHealthPercentage = 100
+	local units = getChampionsInRange( getOwner(), 850, true )
 	local mostWoundedAlliedChampion = nil
 	local lowestHealthPercentage = 100
 	for i=0,units.Count-1 do
@@ -16,19 +13,17 @@ function onFinishCasting()
 			end
 		end
 	end
-	
+
 	if mostWoundedAlliedChampion then
 		local newHealth = mostWoundedAlliedChampion:GetStats().CurrentHealth + 75 + getOwner():GetStats():GetLevel()*15
-		local maxHealth = mostWoundedAlliedChampion:GetStats().HealthPoints.Total    
+		local maxHealth = mostWoundedAlliedChampion:GetStats().HealthPoints.Total
 		if newHealth >= maxHealth then
 			mostWoundedAlliedChampion:GetStats().CurrentHealth = maxHealth
 		else
 			mostWoundedAlliedChampion:GetStats().CurrentHealth = newHealth
 		end
 		
-		local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, getOwner())
-		buff:setMovementSpeedPercentModifier(30)
-		addBuff(buff)
+		--addBuff("Haste", 1.0, mostWoundedAlliedChampion, getOwner())
 		
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_02.troy", mostWoundedAlliedChampion )
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_speedboost.troy", mostWoundedAlliedChampion )
@@ -41,7 +36,7 @@ function onFinishCasting()
 		getOwner():GetStats().CurrentHealth = newHealth
 	end
 	
-	addBuff("Haste", 1.0, owner, owner)
+	--addBuff("Haste", 1.0, getOwner(), getOwner())
 	
 	addParticleTarget(getOwner(), "global_ss_heal.troy", getOwner())	
 	addParticleTarget(getOwner(), "global_ss_heal_speedboost.troy", getOwner())

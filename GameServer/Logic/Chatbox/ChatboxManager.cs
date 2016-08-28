@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             var commands = GetGame().Config.ContentManager.GetCommandScriptPath();
             foreach (var command in commands)
             {
-                AddCommand(new LuaChatCommand(command, this));
+                AddCommand(new ScriptedChatCommand(command, this));
             }
         }
 

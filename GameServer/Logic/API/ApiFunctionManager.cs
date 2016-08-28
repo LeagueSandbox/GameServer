@@ -185,7 +185,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("teleportTo", null, typeof(ApiFunctionManager).GetMethod("TeleportTo", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
             scriptEngine.RegisterFunction("addParticle", null, typeof(ApiFunctionManager).GetMethod("AddParticle", new Type[] { typeof(Champion), typeof(string), typeof(float), typeof(float) }));
             scriptEngine.RegisterFunction("addParticleTarget", null, typeof(ApiFunctionManager).GetMethod("AddParticleTarget", new Type[] { typeof(Champion), typeof(string), typeof(Target) }));
-            scriptEngine.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(int), typeof(Unit), typeof(Unit) }));
+            scriptEngine.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(Unit), typeof(Unit) }));
             scriptEngine.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             scriptEngine.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
@@ -193,15 +193,15 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             scriptEngine.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));
             scriptEngine.RegisterFunction("sendPacket", null, typeof(ApiFunctionManager).GetMethod("SendPacket", new Type[] { typeof(string) }));
-            luaScript.lua.RegisterFunction("setGold", null, typeof(ApiFunctionManager).GetMethod("SetGold", new Type[] { typeof(Champion), typeof(float) }));
-            luaScript.lua.RegisterFunction("addGold", null, typeof(ApiFunctionManager).GetMethod("AddGold", new Type[] { typeof(Champion), typeof(float) }));
-            luaScript.lua.RegisterFunction("getStacks", null, typeof(ApiFunctionManager).GetMethod("GetStacks", new Type[] { typeof(string), typeof(Unit) }));
-            luaScript.lua.RegisterFunction("setStacks", null, typeof(ApiFunctionManager).GetMethod("SetStacks", new Type[] { typeof(string), typeof(Unit), typeof(int) }));
-            luaScript.lua.RegisterFunction("addItem", null, typeof(ApiFunctionManager).GetMethod("AddItem", new Type[] { typeof(Champion), typeof(int) }));
-            luaScript.lua.RegisterFunction("getAllChampions", null, typeof(ApiFunctionManager).GetMethod("GetAllChampions"));
-            luaScript.lua.RegisterFunction("getAllPlayers", null, typeof(ApiFunctionManager).GetMethod("GetAllPlayers"));
-            luaScript.lua.RegisterFunction("getPlayer", null, typeof(ApiFunctionManager).GetMethod("GetPlayer", new Type[] {typeof(int)}));
-            luaScript.lua.RegisterFunction("getChampion", null, typeof(ApiFunctionManager).GetMethod("GetChampion", new Type[] {typeof(int)}));
+            scriptEngine.RegisterFunction("setGold", null, typeof(ApiFunctionManager).GetMethod("SetGold", new Type[] { typeof(Champion), typeof(float) }));
+            scriptEngine.RegisterFunction("addGold", null, typeof(ApiFunctionManager).GetMethod("AddGold", new Type[] { typeof(Champion), typeof(float) }));
+            scriptEngine.RegisterFunction("getStacks", null, typeof(ApiFunctionManager).GetMethod("GetStacks", new Type[] { typeof(string), typeof(Unit) }));
+            scriptEngine.RegisterFunction("setStacks", null, typeof(ApiFunctionManager).GetMethod("SetStacks", new Type[] { typeof(string), typeof(Unit), typeof(int) }));
+            scriptEngine.RegisterFunction("addItem", null, typeof(ApiFunctionManager).GetMethod("AddItem", new Type[] { typeof(Champion), typeof(int) }));
+            scriptEngine.RegisterFunction("getAllChampions", null, typeof(ApiFunctionManager).GetMethod("GetAllChampions"));
+            scriptEngine.RegisterFunction("getAllPlayers", null, typeof(ApiFunctionManager).GetMethod("GetAllPlayers"));
+            scriptEngine.RegisterFunction("getPlayer", null, typeof(ApiFunctionManager).GetMethod("GetPlayer", new Type[] {typeof(int)}));
+            scriptEngine.RegisterFunction("getChampion", null, typeof(ApiFunctionManager).GetMethod("GetChampion", new Type[] {typeof(int)}));
         }
     }
 }

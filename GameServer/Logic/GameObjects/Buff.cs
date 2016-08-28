@@ -89,6 +89,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
         }
 
+        public Unit GetUnit()
+        {
+            return AttachedTo;
+        }
+
+        public Unit GetSourceUnit()
+        {
+            return Attacker;
+        }
+
         public void LoadLua()
         {
             var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(Name);
@@ -110,7 +120,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
 
             _scriptEngine.Load(scriptLoc);
-            _buffScript.lua["buff"] = this;
+            _scriptEngine.SetGlobalVariable("buff", this);
         }
         
         public void Update(long diff)
