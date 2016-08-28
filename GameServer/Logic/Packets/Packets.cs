@@ -395,21 +395,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            var name = p.getName();
-            foreach (var b in Encoding.Default.GetBytes(name))
-                buffer.Write(b);
-            buffer.fill(0, 64 - name.Length);
+            buffer.Write(Encoding.Default.GetBytes(p.getName()));
+            buffer.fill(0, 64 - p.getName().Length);
 
-            foreach (var b in Encoding.Default.GetBytes(p.getModel()))
-                buffer.Write(b);
+            buffer.Write(Encoding.Default.GetBytes(p.getModel()));
             buffer.fill(0, 64 - p.getModel().Length);
 
             buffer.Write((byte)0x01);
 
-            buffer.fill(0, 18);
+            buffer.fill(0, 16);
 
-            buffer.Write((byte)0x80);
-            buffer.Write((byte)0x3F);
+            buffer.Write((float)1.0f); // Unk
 
             buffer.fill(0, 13);
 
