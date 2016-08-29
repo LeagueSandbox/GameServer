@@ -1133,6 +1133,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class SetSpellActiveState : ExtendedPacket
+    {
+        public SetSpellActiveState(Unit u, byte slot, byte state) : base(ExtendedPacketCmd.EPKT_S2C_SetSpellActiveState, u.getNetId())
+        {
+            buffer.Write((byte)slot);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)state);
+        }
+    }
+
     public class ForceTargetSpell : ExtendedPacket
     {
         public ForceTargetSpell(Unit u, byte slot, float time) : base(ExtendedPacketCmd.EPKT_S2C_ForceTargetSpell, u.getNetId())
