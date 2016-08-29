@@ -309,13 +309,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write(m.getNetId());
             buffer.Write((short)345);
-            //
             buffer.Write((short)343);
 
-            buffer.Write((byte)99);// 99 for jungle monster, 3 for minion
+            buffer.Write((byte)0x63); // 0x63 (99) for jungle monster, 3 for minion
             buffer.Write(m.getNetId());
             buffer.Write(m.getNetId());
-            buffer.Write((byte)64);
+            buffer.Write((byte)0x40);
             buffer.Write((float)m.getX()); //x
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.getY()); //y
@@ -326,24 +325,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetGame().GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
-            var str = m.getName();
-            foreach (var b in Encoding.Default.GetBytes(str)) // starting with a string -> Dragon6.1.1
-                buffer.Write(b);
-            buffer.fill(0, 64 - str.Length);
+            buffer.Write(Encoding.Default.GetBytes(m.getName()));
+            buffer.fill(0, 64 - m.getName().Length);
 
-            foreach (var b in Encoding.Default.GetBytes(m.getModel())) // starting with a string -> Dragon
-                buffer.Write(b);
+            buffer.Write(Encoding.Default.GetBytes(m.getModel()));
             buffer.fill(0, 64 - m.getModel().Length);
 
-            str = m.getName();
-            foreach (var b in Encoding.Default.GetBytes(str)) // starting with a string -> Dragon6.1.1
-                buffer.Write(b);
-            buffer.fill(0, 64 - str.Length);
+            buffer.Write(Encoding.Default.GetBytes(m.getName()));
+            buffer.fill(0, 64 - m.getName().Length);
 
             buffer.fill(0, 64); // empty
 
-
-            buffer.Write((int)300);
+            buffer.Write((int)m.getTeam());
             buffer.fill(0, 12);
             buffer.Write((int)1); //campId 1
             buffer.Write((int)100);
@@ -352,16 +345,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)115.0066f);
             buffer.Write((byte)0);
 
-            //
-            buffer.fill(0, 13);
-            buffer.Write((sbyte)-128); // always 0x80/-128
-            buffer.Write((byte)63); // always 0x3F/63
+            buffer.fill(0, 11);
+            buffer.Write((float)1.0f); // Unk
             buffer.fill(0, 13);
             buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
             buffer.Write((int)13337);
             buffer.Write((float)m.getX()); //x
-            buffer.Write((float)m.getY());  //y
-            buffer.Write((float)-0.8589599f);  // rotation1 from -1 to 1
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
             buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
         }
     }
@@ -404,21 +395,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            var name = p.getName();
-            foreach (var b in Encoding.Default.GetBytes(name))
-                buffer.Write(b);
-            buffer.fill(0, 64 - name.Length);
+            buffer.Write(Encoding.Default.GetBytes(p.getName()));
+            buffer.fill(0, 64 - p.getName().Length);
 
-            foreach (var b in Encoding.Default.GetBytes(p.getModel()))
-                buffer.Write(b);
+            buffer.Write(Encoding.Default.GetBytes(p.getModel()));
             buffer.fill(0, 64 - p.getModel().Length);
 
             buffer.Write((byte)0x01);
 
-            buffer.fill(0, 18);
+            buffer.fill(0, 16);
 
-            buffer.Write((byte)0x80);
-            buffer.Write((byte)0x3F);
+            buffer.Write((float)1.0f); // Unk
 
             buffer.fill(0, 13);
 
@@ -441,6 +428,61 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xFF); // Probably a float, see SpawnMonster
             buffer.Write((byte)0x7F);
             buffer.Write((byte)0x3F);
+        }
+    }
+
+    public class SpawnCampMonster : BasePacket
+    {
+        public SpawnCampMonster(Monster m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.getNetId())
+        {
+            buffer.Write((byte)0x79);
+            buffer.Write((byte)0x01);
+            buffer.Write((byte)0x77);
+            buffer.Write((byte)0x01);
+
+            buffer.Write((byte)0x63); // 0x63 (99) for jungle monster, 3 for minion
+            buffer.Write(m.getNetId());
+            buffer.Write(m.getNetId());
+            buffer.Write((byte)0x40);
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.GetZ()); //z
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.GetZ()); //z
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.getFacing().X); //facing x
+            buffer.Write((float)m.GetGame().GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
+            buffer.Write((float)m.getFacing().Y); //facing y
+
+            buffer.Write(Encoding.Default.GetBytes(m.getName()));
+            buffer.fill(0, 64 - m.getName().Length);
+
+            buffer.Write(Encoding.Default.GetBytes(m.getModel()));
+            buffer.fill(0, 64 - m.getModel().Length);
+
+            buffer.Write(Encoding.Default.GetBytes(m.getName()));
+            buffer.fill(0, 64 - m.getName().Length);
+
+            buffer.fill(0, 64); // String, not always empty
+
+            buffer.Write((int)m.getTeam());
+            buffer.fill(0, 12);
+            buffer.Write((int)1); // Camp id. Camp needs to exist
+            buffer.Write((int)100);
+            buffer.Write((int)74);
+            buffer.Write((long)1);
+            buffer.Write((float)115.0066f);
+            buffer.Write((byte)0);
+
+            buffer.fill(0, 11);
+            buffer.Write((float)1.0f); // Unk
+            buffer.fill(0, 13);
+            buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
+            buffer.Write((int)13337);
+            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
+            buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
         }
     }
 
