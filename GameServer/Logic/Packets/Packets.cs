@@ -485,6 +485,53 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class SpawnAzirTurret : BasePacket
+    {
+        public SpawnAzirTurret(AzirTurret turret) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, turret.getNetId())
+        {
+            buffer.Write((byte)0xAD);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xAB);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xFE);
+
+            buffer.Write(turret.getNetId());
+            buffer.Write((byte)0x23);
+            buffer.Write((byte)0x01);
+            buffer.Write(turret.getNetId());
+            buffer.Write(turret.GetOwner().getNetId());
+
+            buffer.Write((byte)0x40);
+
+            buffer.Write(Encoding.Default.GetBytes(turret.getName()));
+            buffer.fill(0, 64 - turret.getName().Length);
+
+            buffer.Write(Encoding.Default.GetBytes(turret.getModel()));
+            buffer.fill(0, 64 - turret.getModel().Length);
+
+            buffer.Write((int)0);
+
+            buffer.Write((float)turret.getX());
+            buffer.Write((float)turret.GetZ());
+            buffer.Write((float)turret.getY());
+            buffer.Write((float)4.0f);
+
+            buffer.Write((byte)0xC1);
+            buffer.Write((short)turret.getTeam());
+
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x02);
+
+            buffer.fill(0, 11);
+
+            buffer.Write((float)1.0f); // Unk
+
+            buffer.fill(0, 13);
+        }
+    }
+
     public class SetHealthTest : BasePacket
     {
         public SetHealthTest(uint netId, short unk, float maxhp, float hp) : base(PacketCmdS2C.PKT_S2C_SetHealth, netId)
@@ -750,10 +797,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public FaceDirection(Unit u, float relativeX, float relativeY, float relativeZ) : base(PacketCmdS2C.PKT_S2C_FaceDirection, u.getNetId())
         {
+            buffer.Write((byte)0);
             buffer.Write(relativeX);
             buffer.Write(relativeZ);
             buffer.Write(relativeY);
-            buffer.Write((byte)0);
             buffer.Write((float)0.0833); // Time to turn ?
         }
     };

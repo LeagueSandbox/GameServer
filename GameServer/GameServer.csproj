@@ -122,6 +122,7 @@
     <Compile Include="Logic\GameObjects\Projectile.cs" />
     <Compile Include="Logic\GameObjects\Stat.cs" />
     <Compile Include="Logic\GameObjects\StatModifcator.cs" />
+    <Compile Include="Logic\GameObjects\AzirTurret.cs" />
     <Compile Include="Logic\GameObjects\Turret.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />

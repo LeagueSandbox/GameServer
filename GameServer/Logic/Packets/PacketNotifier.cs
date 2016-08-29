@@ -308,7 +308,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 NotifyPlaceableSpawned(placeable);
             }
 
+            var azirTurret = u as AzirTurret;
+            if (azirTurret != null)
+            {
+                NotifyAzirTurretSpawned(azirTurret);
+            }
+
             notifySetHealth(u);
+        }
+
+        private void NotifyAzirTurretSpawned(AzirTurret azirTurret)
+        {
+            var spawnPacket = new SpawnAzirTurret(azirTurret);
+            _game.PacketHandlerManager.broadcastPacketVision(azirTurret, spawnPacket, Channel.CHL_S2C);
         }
 
         private void NotifyPlaceableSpawned(Placeable placeable)
