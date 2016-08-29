@@ -119,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 buffer.Write((int)summonerSpells[0]);
                 buffer.Write((int)summonerSpells[1]);
                 buffer.Write((byte)0); // bot boolean
-                buffer.Write((int)p.GetTeam());
+                buffer.Write((int)p.GetTeam()); // Probably a short
                 buffer.fill(0, 64); // name is no longer here
                 buffer.fill(0, 64);
                 //buffer.Write(p.getRank());
@@ -336,7 +336,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 64); // empty
 
-            buffer.Write((int)m.getTeam());
+            buffer.Write((int)m.getTeam()); // Probably a short
             buffer.fill(0, 12);
             buffer.Write((int)1); //campId 1
             buffer.Write((int)100);
@@ -382,8 +382,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 8);
 
-            buffer.Write((byte)p.getTeam());
-            buffer.Write((byte)0x00);
+            buffer.Write((short)p.getTeam());
             buffer.Write((byte)0x92);
             buffer.Write((byte)0x00);
 
@@ -465,7 +464,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 64); // String, not always empty
 
-            buffer.Write((int)m.getTeam());
+            buffer.Write((int)m.getTeam()); // Probably a short
             buffer.fill(0, 12);
             buffer.Write((int)1); // Camp id. Camp needs to exist
             buffer.Write((int)100);
@@ -3109,7 +3108,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f); // Scaling
-            buffer.Write((int)lp.getTeam());
+            buffer.Write((int)lp.getTeam()); // Probably a short
             buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
             foreach (var b in Encoding.Default.GetBytes(lp.getName()))
