@@ -17,7 +17,8 @@ namespace GameServerTests
         public void AddCommandTest()
         {
             var game = new TestHelpers.DummyGame();
-            game.Initialize();
+            game.LoadConfig();
+            game.LoadChatboxManager();
 
             var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", game.ChatboxManager);
             var result = game.ChatboxManager.AddCommand(command);
@@ -29,7 +30,8 @@ namespace GameServerTests
         public void RemoveCommandTest()
         {
             var game = new TestHelpers.DummyGame();
-            game.Initialize();
+            game.LoadConfig();
+            game.LoadChatboxManager();
 
             var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", game.ChatboxManager);
             var result = game.ChatboxManager.AddCommand(command);
