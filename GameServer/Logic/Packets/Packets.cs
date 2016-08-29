@@ -3268,6 +3268,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class SetItemStacks : BasePacket
+    {
+        public SetItemStacks(Unit unit, byte slot, byte stack1, byte stack2) : base(PacketCmdS2C.PKT_S2C_SetItemStacks, unit.getNetId())
+        {
+            buffer.Write(slot);
+            buffer.Write((byte)stack1); // Needs more research
+            buffer.Write((byte)stack2); //
+        }
+    }
+
     public class EnableFOW : BasePacket
     {
         public EnableFOW(bool activate) : base(PacketCmdS2C.PKT_S2C_EnableFOW)

@@ -82,6 +82,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_TurretSpawn = 0x9D,
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
+        PKT_S2C_SetItemStacks = 0x9F,
         PKT_S2C_MessageBoxRight = 0xA0,
         PKT_S2C_PauseGame = 0xA1,
         PKT_S2C_RemoveMessageBoxTop = 0xA2,
