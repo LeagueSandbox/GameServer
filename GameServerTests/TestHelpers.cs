@@ -28,7 +28,7 @@ namespace GameServerTests
 
             public void LoadConfig()
             {
-                Config = new Config("Settings/GameInfo.json");
+                Config = new Config("Settings/GameInfo.json.template");
             }
         }
     }
