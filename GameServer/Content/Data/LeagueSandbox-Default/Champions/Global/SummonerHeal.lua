@@ -1,5 +1,5 @@
 function onFinishCasting()
-	local units = getChampionsInRange( getOwner(), 850, true )
+	local units = getChampionsInRange(getOwner(), 850, true)
 	local mostWoundedAlliedChampion = nil
 	local lowestHealthPercentage = 100
 	for i=0,units.Count-1 do

@@ -74,6 +74,10 @@
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
       <Name>GameServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InibinSharp\InibinSharp.csproj">
+      <Project>{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}</Project>
+      <Name>InibinSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

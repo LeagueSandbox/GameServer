@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Packets;
 
 namespace GameServerTests
 {
@@ -14,14 +17,14 @@ namespace GameServerTests
         {
             public DummyGame() : base() { }
 
-            public void LoadItems()
+            public void Initialize()
             {
-                ItemManager = ItemManager.LoadItems(this);
-            }
+                Config = new Config("Settings/GameInfo.json");
 
-            public void LoadChatboxManager()
-            {
-                ChatboxManager = new LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager(this);
+                ItemManager = ItemManager.LoadItems(this);
+                ChatboxManager = new ChatboxManager(this);
+                PacketHandlerManager = new PacketHandlerManager(this);
+                PacketNotifier = new PacketNotifier(this);
             }
         }
     }
