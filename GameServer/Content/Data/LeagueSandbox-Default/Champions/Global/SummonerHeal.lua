@@ -38,7 +38,7 @@ function onFinishCasting()
 		getOwner():GetStats().CurrentHealth = newHealth
 	end
 	
-	addBuff("Haste", 1.0, owner, owner)
+	--addBuff("Haste", 1.0, owner, owner)
 	
 	addParticleTarget(getOwner(), "global_ss_heal.troy", getOwner())	
 	addParticleTarget(getOwner(), "global_ss_heal_speedboost.troy", getOwner())
