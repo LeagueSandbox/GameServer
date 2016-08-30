@@ -280,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             base.onCollision(collider);
-            if (_scriptEngine.IsLoaded())
+            /*if (_scriptEngine.IsLoaded())
             {
                 try
                 {
@@ -291,7 +291,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     Logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
-            }
+            }*/
         }
 
         /**
@@ -635,7 +635,7 @@ in the following order:
                     return 2;
                 else if (target is Minion && target.targetUnit is Minion) // Minion attacking minion
                     return 3;
-                else if (target is Turret && target.targetUnit is Minion) // Turret attacking minion
+                else if (target is LaneTurret && target.targetUnit is Minion) // Turret attacking minion
                     return 4;
                 else if (target is Champion && target.targetUnit is Minion) // Champion attacking minion
                     return 5;

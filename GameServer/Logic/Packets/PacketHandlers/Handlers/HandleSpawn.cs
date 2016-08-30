@@ -50,9 +50,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var objects = game.GetMap().GetObjects();
             foreach (var kv in objects)
             {
-                if (kv.Value is Turret)
+                if (kv.Value is LaneTurret)
                 {
-                    var t = kv.Value as Turret;
+                    var t = kv.Value as LaneTurret;
                     var turretSpawn = new TurretSpawn(t);
                     game.PacketHandlerManager.sendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
