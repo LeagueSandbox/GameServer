@@ -49,57 +49,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         Disarm
     }
 
-    public class Buff
+    public class Buff : IBuff
     {
-        protected float _duration;
-        protected float _movementSpeedPercentModifier;
-        protected float _timeElapsed;
-        protected bool _remove;
-        protected Unit _attachedTo;
-        protected Unit _attacker; // who added this buff to the unit it's attached to
-        protected BuffType _buffType;
+        public float Duration { get; set; }
+        public float TimeElapsed { get; set; }
+        public bool NeedsToRemove { get; set; }
+        public Unit AttachedTo { get; set; }
+        public Unit Attacker { get; set; } // who added this buff to the unit it's attached to
+        public BuffType BuffType { get; set; }
+        public string Name { get; set; }
+        public int Stacks { get; set; }
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
-        protected string _name;
-        protected int _stacks;
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
-        public BuffType GetBuffType()
-        {
-            return _buffType;
-        }
-
-        public Unit GetUnit()
-        {
-            return _attachedTo;
-        }
-
-        public Unit GetSourceUnit()
-        {
-            return _attacker;
-        }
-
-        public void SetName(string name)
-        {
-            _name = name;
-        }
-
-        public bool NeedsToRemove()
-        {
-            return _remove;
-        }
-
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
+        public Buff(Game game, string buffName, float duration, Unit onto, Unit from)
         {
             _game = game;
-            _duration = dur;
-            _stacks = stacks;
-            _name = buffName;
-            _timeElapsed = 0;
-            _remove = false;
-            _attachedTo = onto;
-            _attacker = from;
-            _buffType = BuffType.Aura;
+            Duration = duration;
+            Stacks = 1;
+            Name = buffName;
+            TimeElapsed = 0;
+            NeedsToRemove = false;
+            AttachedTo = onto;
+            Attacker = from;
+            BuffType = BuffType.Aura; //Will be loaded from the files
             LoadLua();
             try
             {
@@ -111,13 +85,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
         
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
 
         public void LoadLua()
         {
-            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
+            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(Name);
             Logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
@@ -132,29 +106,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 end");
             _scriptEngine.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
             _scriptEngine.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
-            _scriptEngine.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
         
             ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
 
             _scriptEngine.Load(scriptLoc);
-        }
-
-        public string GetName()
-        {
-            return _name;
-        }
-
-        public void SetTimeElapsed(float time)
-        {
-            _timeElapsed = time;
+            _buffScript.lua["buff"] = this;
         }
         
         public void Update(long diff)
         {
-            _timeElapsed += (float)diff / 1000.0f;
+            TimeElapsed += diff / 1000.0f;
             
             if (_scriptEngine.IsLoaded())
             {
@@ -169,9 +130,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (_duration != 0.0f)
+            if (Duration != 0.0f)
             {
-                if (_timeElapsed >= _duration)
+                if (TimeElapsed >= Duration)
                 {
                     try
                     {
@@ -181,19 +142,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         Logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
-                    _remove = true;
+                    NeedsToRemove = true;
                 }
             }
         }
 
-        public int GetStacks()
-        {
-            return _stacks;
-        }
-
-        public float GetDuration()
-        {
-            return _duration;
-        }
+        public StatModifcator HealthPoints { get; set; }
+        public StatModifcator HealthRegeneration { get; set; }
+        public StatModifcator AttackDamage { get; set; }
+        public StatModifcator AbilityPower { get; set; }
+        public StatModifcator CriticalChance { get; set; }
+        public StatModifcator Armor { get; set; }
+        public StatModifcator MagicResist { get; set; }
+        public StatModifcator AttackSpeed { get; set; }
+        public StatModifcator ArmorPenetration { get; set; }
+        public StatModifcator MagicPenetration { get; set; }
+        public StatModifcator ManaPoints { get; set; }
+        public StatModifcator ManaRegeneration { get; set; }
+        public StatModifcator LifeSteel { get; set; }
+        public StatModifcator SpellVamp { get; set; }
+        public StatModifcator Tenacity { get; set; }
+        public StatModifcator Size { get; set; }
+        public StatModifcator Range { get; set; }
+        public StatModifcator MoveSpeed { get; set; }
+        public StatModifcator GoldPerSecond { get; set; }
     }
 }

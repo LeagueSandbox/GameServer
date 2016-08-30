@@ -38,9 +38,7 @@ function onFinishCasting()
 		getOwner():GetStats().CurrentHealth = newHealth
 	end
 	
-	local buff2 = Buff.new("Haste", 1.0, getOwner(), getOwner())
-	buff2:setMovementSpeedPercentModifier(30)    
-	addBuff(buff2)
+	addBuff("Haste", 1.0, owner, owner)
 	
 	addParticleTarget(getOwner(), "global_ss_heal.troy", getOwner())	
 	addParticleTarget(getOwner(), "global_ss_heal_speedboost.troy", getOwner())
