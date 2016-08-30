@@ -82,6 +82,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_TurretSpawn = 0x9D,
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
+        PKT_S2C_SetItemStacks = 0x9F,
         PKT_S2C_MessageBoxRight = 0xA0,
         PKT_S2C_PauseGame = 0xA1,
         PKT_S2C_RemoveMessageBoxTop = 0xA2,
@@ -160,10 +161,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         EPKT_S2C_SurrenderState = 0x0E,
         EPKT_S2C_OnAttack = 0x0F,
         EPKT_S2C_ChampionDeathTimer = 0x17,
+        EPKT_S2C_SetSpellActiveState = 0x18,
         EPKT_S2C_ResourceType = 0x19,
         EPKT_S2C_SpellEmpower = 0x25,
         EPKT_S2C_NPC_Die = 0x26,
-        EPKT_S2C_FloatingText = 0x28
+        EPKT_S2C_FloatingText = 0x28,
+        EPKT_S2C_ForceTargetSpell = 0x29,
+        EPKT_S2C_MoveChampionCameraCenter = 0x2B
     };
 
     public enum MoveType : uint

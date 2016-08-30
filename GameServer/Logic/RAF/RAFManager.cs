@@ -139,6 +139,29 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return true;
         }
 
+        public Inibin GetAutoAttackData(string model)
+        {
+            Inibin autoAttack = null;
+            string[] autoAttackPaths = new string[]
+            {
+                string.Format("DATA/Characters/{0}/{0}BasicAttack.inibin", model),
+                string.Format("DATA/Characters/{0}/Spells/{0}BasicAttack.inibin", model),
+                string.Format("DATA/Spells/{0}BasicAttack.inibin", model)
+            };
+            foreach (var path in autoAttackPaths)
+            {
+                if (readInibin(path, out autoAttack))
+                {
+                    break;
+                }
+            }
+            if (autoAttack == null)
+            {
+                Logger.LogCoreError(string.Format("Couldn't find auto-attack data for {0}", model));
+            }
+            return autoAttack;
+        }
+
         internal bool readAIMesh(string path, out LeagueSandbox.GameServer.Logic.RAF.AIMesh aimesh)
         {
             if (Root == null)
