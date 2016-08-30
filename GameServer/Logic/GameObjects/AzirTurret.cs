@@ -2,54 +2,29 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class AzirTurret : Unit
     {
         private const float TURRET_RANGE = 905.0f;
-        private string _name;
-        private Unit _owner;
+        public string Name { get; private set; }
+        public Unit Owner { get; private set; }
         private float _globalGold = 250.0f;
         private float _globalExp = 0.0f;
 
-        public AzirTurret(Game game, Unit owner, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, model, new Stats(), 50, x, y, 1200)
+        public AzirTurret(Game game, Unit owner, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE)
+               : base(game, id, model, new Stats(), 50, x, y, 1200)
         {
-            this._name = name;
-            this._owner = owner;
+            this.Name = name;
+            this.Owner = owner;
 
-            buildTurret();
+            BuildAzirTurret();
 
             setTeam(team);
         }
 
-        public int getEnemyChampionsCount()
-        {
-            var blueTeam = new List<Champion>();
-            var purpTeam = new List<Champion>();
-            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
-            {
-                blueTeam.Add(player);
-            }
-
-            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
-            {
-                purpTeam.Add(player);
-            }
-            if (getTeam() == TeamId.TEAM_BLUE)
-                return purpTeam.Count;
-            else
-                return blueTeam.Count;
-        }
-
-        public void buildTurret()
+        public void BuildAzirTurret()
         {
             Inibin inibin;
             if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
@@ -83,87 +58,74 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            Inibin autoAttack;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/" + model + "BasicAttack.inibin", out autoAttack))
+            Inibin autoAttack = RAFManager.getInstance().GetAutoAttackData(model);
+
+            if (autoAttack != null)
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+                autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
+                autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
+            }
+        }
+
+        public void CheckForTargets()
+        {
+            var objects = _game.GetMap().GetObjects();
+            Unit nextTarget = null;
+            int nextTargetPriority = 10;
+
+            foreach (var it in objects)
+            {
+                var u = it.Value as Unit;
+
+                if (u == null || u.isDead() || u.getTeam() == getTeam() || distanceWith(u) > TURRET_RANGE)
+                    continue;
+
+                // Note: this method means that if there are two champions within turret range,
+                // The player to have been added to the game first will always be targeted before the others
+                if (targetUnit == null)
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+                    var priority = classifyTarget(u);
+                    if (priority < nextTargetPriority)
                     {
-                        Logger.LogCoreError("Couldn't find turret auto-attack data for " + model);
-                        return;
+                        nextTarget = u;
+                        nextTargetPriority = priority;
+                    }
+                }
+                else
+                {
+                    var targetIsChampion = targetUnit as Champion;
+
+                    // Is the current target a champion? If it is, don't do anything
+                    if (targetIsChampion != null)
+                    {
+                        // Find the next champion in range targeting an enemy champion who is also in range
+                        var enemyChamp = u as Champion;
+                        if (enemyChamp != null && enemyChamp.getTargetUnit() != null)
+                        {
+                            var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
+                            if (enemyChampTarget != null && // Enemy Champion is targeting an ally
+                                enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
+                                distanceWith(enemyChampTarget) <= TURRET_RANGE)
+                            {                                     // Enemy within range of this turret
+                                nextTarget = enemyChamp; // No priority required
+                                break;
+                            }
+                        }
                     }
                 }
             }
-
-            autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
-            autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
-        }
-
-        public string getName()
-        {
-            return _name;
-        }
-
-        public Unit GetOwner()
-        {
-            return _owner;
+            if (nextTarget != null)
+            {
+                targetUnit = nextTarget;
+                _game.PacketNotifier.notifySetTarget(this, nextTarget);
+            }
         }
 
         public override void update(long diff)
         {
             if (!isAttacking)
             {
-                var objects = _game.GetMap().GetObjects();
-                Unit nextTarget = null;
-                int nextTargetPriority = 10;
-
-                foreach (var it in objects)
-                {
-                    var u = it.Value as Unit;
-
-                    if (u == null || u.isDead() || u.getTeam() == getTeam() || distanceWith(u) > TURRET_RANGE)
-                        continue;
-
-                    // Note: this method means that if there are two champions within turret range,
-                    // The player to have been added to the game first will always be targeted before the others
-                    if (targetUnit == null)
-                    {
-                        var priority = classifyTarget(u);
-                        if (priority < nextTargetPriority)
-                        {
-                            nextTarget = u;
-                            nextTargetPriority = priority;
-                        }
-                    }
-                    else
-                    {
-                        var targetIsChampion = targetUnit as Champion;
-
-                        // Is the current target a champion? If it is, don't do anything
-                        if (targetIsChampion != null)
-                        {
-                            // Find the next champion in range targeting an enemy champion who is also in range
-                            var enemyChamp = u as Champion;
-                            if (enemyChamp != null && enemyChamp.getTargetUnit() != null)
-                            {
-                                var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
-                                if (enemyChampTarget != null &&                                                          // Enemy Champion is targeting an ally
-                                    enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.GetStats().Range.Total &&     // Enemy within range of ally
-                                    distanceWith(enemyChampTarget) <= TURRET_RANGE)
-                                {                                     // Enemy within range of this turret
-                                    nextTarget = enemyChamp; // No priority required
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (nextTarget != null)
-                {
-                    targetUnit = nextTarget;
-                    _game.PacketNotifier.notifySetTarget(this, nextTarget);
-                }
+                CheckForTargets();
             }
 
             // Lose focus of the unit target if the target is out of range

@@ -499,12 +499,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x23);
             buffer.Write((byte)0x01);
             buffer.Write(turret.getNetId());
-            buffer.Write(turret.GetOwner().getNetId());
+            buffer.Write(turret.Owner.getNetId());
 
             buffer.Write((byte)0x40);
 
-            buffer.Write(Encoding.Default.GetBytes(turret.getName()));
-            buffer.fill(0, 64 - turret.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(turret.Name));
+            buffer.fill(0, 64 - turret.Name.Length);
 
             buffer.Write(Encoding.Default.GetBytes(turret.getModel()));
             buffer.fill(0, 64 - turret.getModel().Length);
@@ -1181,7 +1181,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetSpellActiveState : ExtendedPacket
     {
-        public SetSpellActiveState(Unit u, byte slot, byte state) : base(ExtendedPacketCmd.EPKT_S2C_SetSpellActiveState, u.getNetId())
+        public SetSpellActiveState(Unit u, byte slot, byte state)
+               : base(ExtendedPacketCmd.EPKT_S2C_SetSpellActiveState, u.getNetId())
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);
@@ -1193,7 +1194,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class MoveChampionCameraCenter : ExtendedPacket
     {
-        public MoveChampionCameraCenter(Champion c, bool enable, byte mode, float distance) : base(ExtendedPacketCmd.EPKT_S2C_MoveChampionCameraCenter, c.getNetId())
+        public MoveChampionCameraCenter(Champion c, bool enable, byte mode, float distance)
+               : base(ExtendedPacketCmd.EPKT_S2C_MoveChampionCameraCenter, c.getNetId())
         {
             byte state = 0x00;
             if (enable)
@@ -1213,7 +1215,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class ForceTargetSpell : ExtendedPacket
     {
-        public ForceTargetSpell(Unit u, byte slot, float time) : base(ExtendedPacketCmd.EPKT_S2C_ForceTargetSpell, u.getNetId())
+        public ForceTargetSpell(Unit u, byte slot, float time)
+               : base(ExtendedPacketCmd.EPKT_S2C_ForceTargetSpell, u.getNetId())
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);
@@ -3033,7 +3036,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
-        public SpawnParticle(Champion owner, GameObjects.Target t, string particle, uint netId, float size = 1.0f) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
+        public SpawnParticle(Champion owner, Target t, string particle, uint netId, float size = 1.0f)
+               : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
         {
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)owner.getChampionHash());
@@ -3068,7 +3072,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((float)size); // Particle size
-
         }
     }
 
@@ -3350,7 +3353,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetItemStacks : BasePacket
     {
-        public SetItemStacks(Unit unit, byte slot, byte stack1, byte stack2) : base(PacketCmdS2C.PKT_S2C_SetItemStacks, unit.getNetId())
+        public SetItemStacks(Unit unit, byte slot, byte stack1, byte stack2)
+               : base(PacketCmdS2C.PKT_S2C_SetItemStacks, unit.getNetId())
         {
             buffer.Write(slot);
             buffer.Write((byte)stack1); // Needs more research
