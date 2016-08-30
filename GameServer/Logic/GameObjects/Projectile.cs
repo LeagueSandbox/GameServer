@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (p != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
                             continue;
 
-                        var t = u as Turret;
+                        var t = u as LaneTurret;
                         if (t != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
                             continue;
 

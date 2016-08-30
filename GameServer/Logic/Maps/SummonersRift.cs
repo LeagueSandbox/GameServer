@@ -102,30 +102,30 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             _collisionHandler.init(3); // Needs to be initialised after AIMesh
 
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_R_01_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_R_03_A", 13459.0f, 4284.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_R_02_A", 12920.0f, 8005.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_R_01_A", 13205.0f, 10474.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_05_A", 5448.02f, 6169.10f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_04_A", 4657.66f, 4591.91f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_03_A", 3233.99f, 3447.24f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_01_A", 1341.63f, 2029.98f, TeamId.TEAM_BLUE, TurretType.NexusTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_02_A", 1768.19f, 1589.47f, TeamId.TEAM_BLUE, TurretType.NexusTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_C_05_A", 8548.0f, 8289.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_C_04_A", 9361.0f, 9892.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_C_03_A", 10743.0f, 11010.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_C_01_A", 12662.0f, 12442.0f, TeamId.TEAM_PURPLE, TurretType.NexusTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_C_02_A", 12118.0f, 12876.0f, TeamId.TEAM_PURPLE, TurretType.NexusTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_OrderTurretShrine_A", -236.05f, -53.32f,TeamId.TEAM_BLUE, TurretType.FountainTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_ChaosTurretShrine_A", 14157.0f, 14456.0f, TeamId.TEAM_PURPLE, TurretType.FountainTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_L_03_A", 574.66f, 10220.47f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_L_02_A", 1106.26f, 6485.25f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T1_C_06_A", 802.81f, 4052.36f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_L_03_A", 3911.0f, 13654.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_L_02_A", 7536.0f, 13190.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
-            AddObject(new Turret(game, game.GetNewNetID(), "Turret_T2_L_01_A", 10261.0f, 13465.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_R_01_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_R_03_A", 13459.0f, 4284.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_R_02_A", 12920.0f, 8005.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_R_01_A", 13205.0f, 10474.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_05_A", 5448.02f, 6169.10f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_04_A", 4657.66f, 4591.91f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_03_A", 3233.99f, 3447.24f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_01_A", 1341.63f, 2029.98f, TeamId.TEAM_BLUE, TurretType.NexusTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_02_A", 1768.19f, 1589.47f, TeamId.TEAM_BLUE, TurretType.NexusTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_C_05_A", 8548.0f, 8289.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_C_04_A", 9361.0f, 9892.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_C_03_A", 10743.0f, 11010.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_C_01_A", 12662.0f, 12442.0f, TeamId.TEAM_PURPLE, TurretType.NexusTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_C_02_A", 12118.0f, 12876.0f, TeamId.TEAM_PURPLE, TurretType.NexusTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_OrderTurretShrine_A", -236.05f, -53.32f,TeamId.TEAM_BLUE, TurretType.FountainTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_ChaosTurretShrine_A", 14157.0f, 14456.0f, TeamId.TEAM_PURPLE, TurretType.FountainTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_L_03_A", 574.66f, 10220.47f, TeamId.TEAM_BLUE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_L_02_A", 1106.26f, 6485.25f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T1_C_06_A", 802.81f, 4052.36f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_L_03_A", 3911.0f, 13654.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_L_02_A", 7536.0f, 13190.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
+            AddObject(new LaneTurret(game, game.GetNewNetID(), "Turret_T2_L_01_A", 10261.0f, 13465.0f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret));
 
             AddObject(new LevelProp(game, game.GetNewNetID(), 12465.0f, 14422.257f, 101.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey"));
             AddObject(new LevelProp(game, game.GetNewNetID(), -76.0f, 1769.1589f, 94.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey"));

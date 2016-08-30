@@ -1561,13 +1561,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class TurretSpawn : BasePacket //TODO: check
     {
-        public TurretSpawn(Turret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
+        public TurretSpawn(LaneTurret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
             buffer.Write((int)t.getNetId());
             buffer.Write((byte)0x40);
-            foreach (var b in Encoding.Default.GetBytes(t.getName()))
+            foreach (var b in Encoding.Default.GetBytes(t.Name))
                 buffer.Write((byte)b);
-            buffer.fill(0, 64 - t.getName().Length);
+            buffer.fill(0, 64 - t.Name.Length);
             buffer.Write((byte)0x22);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
