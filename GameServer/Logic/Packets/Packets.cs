@@ -3033,14 +3033,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
-        public SpawnParticle(Champion owner, GameObjects.Target t, string particle, uint netId) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
+        public SpawnParticle(Champion owner, GameObjects.Target t, string particle, uint netId, float size = 1.0f) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.getNetId())
         {
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)owner.getChampionHash());
-            buffer.Write(RAFManager.getInstance().getHash(particle));
+            buffer.Write((uint)RAFManager.getInstance().getHash(particle));
             buffer.Write((int)0x00000020); // flags ?
-            buffer.Write((int)0); // unk
-            buffer.Write((short)0); // unk
+
+            buffer.Write((int)0);   // <-| Ahri's Orb needs something here to be
+            buffer.Write((short)0); // <-| attached to Ahri's hand
+
             buffer.Write((byte)1); // number of targets ?
             buffer.Write((uint)owner.getNetId());
             buffer.Write((uint)netId); // Particle net id ?
@@ -3065,7 +3067,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
-            buffer.Write(BitConverter.GetBytes(1.0f)); // unk
+            buffer.Write((float)size); // Particle size
 
         }
     }
