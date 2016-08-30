@@ -20,7 +20,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int flags;
 
         public Projectile(
-            uint id,
             float x,
             float y,
             int collisionRadius,
@@ -29,8 +28,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spell originSpell,
             float moveSpeed,
             int projectileId,
-            int flags = 0
-        ) : base(id, x, y, collisionRadius)
+            int flags = 0,
+            uint netId = 0
+        ) : base(x, y, collisionRadius, 0, netId)
         {
             this.originSpell = originSpell;
             this.moveSpeed = moveSpeed;
@@ -71,15 +71,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (u == null)
                             continue;
 
-                        if (u.getTeam() == owner.getTeam() 
+                        if (u.getTeam() == owner.getTeam()
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                             continue;
 
-                        if (u.getTeam() == TeamId.TEAM_NEUTRAL 
+                        if (u.getTeam() == TeamId.TEAM_NEUTRAL
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
                             continue;
 
-                        if (u.getTeam() != owner.getTeam() 
+                        if (u.getTeam() != owner.getTeam()
                             && u.getTeam() != TeamId.TEAM_NEUTRAL
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                             continue;

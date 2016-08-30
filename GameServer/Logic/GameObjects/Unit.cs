@@ -88,7 +88,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool nextAutoIsCrit = false;
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
         protected Logger _logger = Program.ResolveDependency<Logger>();
-        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         protected int killDeathCounter = 0;
         private object _buffsLock = new object();
@@ -99,14 +98,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private bool isCastingSpell = false;
 
         public Unit(
-            uint id,
             string model,
             Stats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
-            int visionRadius = 0
-        ) : base(id, x, y, collisionRadius, visionRadius)
+            int visionRadius = 0,
+            uint netId = 0
+        ) : base(x, y, collisionRadius, visionRadius, netId)
+
         {
             this.stats = stats;
             this.model = model;
@@ -190,7 +190,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!isMelee())
                         {
                             Projectile p = new Projectile(
-                                autoAttackProjId,
                                 x,
                                 y,
                                 5,
@@ -198,7 +197,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 autoAttackTarget,
                                 null,
                                 autoAttackProjectileSpeed,
-                                0
+                                0,
+                                0,
+                                autoAttackProjId
                             );
                             _game.GetMap().AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
@@ -259,7 +260,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else if (isAttacking)
             {
                 if (
-                    autoAttackTarget == null 
+                    autoAttackTarget == null
                     || autoAttackTarget.isDead()
                     || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget)
                 )

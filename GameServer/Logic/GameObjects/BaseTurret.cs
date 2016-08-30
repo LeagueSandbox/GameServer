@@ -10,17 +10,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float globalGold = 250.0f;
         protected float globalExp = 0.0f;
 
-    
-        private Game _game = Program.ResolveDependency<Game>();
-
         public BaseTurret(
-            uint id,
             string name,
             string model,
             float x = 0,
             float y = 0,
-            TeamId team = TeamId.TEAM_BLUE
-        ) : base(id, model, new Stats(), 50, x, y, 1200)
+            TeamId team = TeamId.TEAM_BLUE,
+            uint netId = 0
+        ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
             this.Name = name;
 

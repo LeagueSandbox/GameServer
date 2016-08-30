@@ -18,7 +18,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             var sender = playerManager.GetPeerInfo(peer);
             var min = new Monster(
-                networkIdManager.GetNewNetID(),
                 sender.GetChampion().getX(),
                 sender.GetChampion().getY(),
                 sender.GetChampion().getX(),

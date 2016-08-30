@@ -22,14 +22,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string name;
 
         public Monster(
-            uint id,
             float x,
             float y,
             float facingX,
             float facingY,
             string model,
-            string name
-        ) : base(id, model, new Stats(), 40, x, y)
+            string name,
+            uint netId = 0
+        ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 

@@ -13,14 +13,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Nexus : Unit
     {
         public Nexus(
-            uint id,
             string model,
             TeamId team,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
-            int visionRadius = 0
-        ) : base(id, model, new BuildingStats(), collisionRadius, x, y, visionRadius)
+            int visionRadius = 0,
+            uint netId = 0
+        ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
         {
             stats.CurrentHealth = 5500;
             stats.HealthPoints.BaseValue = 5500;

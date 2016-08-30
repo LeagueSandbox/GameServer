@@ -32,10 +32,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var champion = _playerManager.GetPeerInfo(peer).GetChampion();
                 var random = new Random();
 
-                Minion caster = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion cannon = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion melee = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion super = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion cannon = new Minion(MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
 
                 int x = 400;
                 caster.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));

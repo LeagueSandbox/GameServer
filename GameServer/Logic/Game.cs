@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private NetworkIdManager _networkIdManager;
 
         public Game(
-            ItemManager itemManager, 
+            ItemManager itemManager,
             ChatboxManager chatboxManager,
             NetworkIdManager networkIdManager,
             PlayerManager playerManager,
@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _networkIdManager = networkIdManager;
             _playerManager = playerManager;
             _logger = logger;
-        }        
+        }
 
         public bool Initialize(Address address, string baseKey)
         {

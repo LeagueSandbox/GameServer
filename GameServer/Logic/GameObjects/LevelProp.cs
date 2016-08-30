@@ -15,7 +15,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float z, dirX, dirY, dirZ, unk1, unk2;
 
         public LevelProp(
-            uint id,
             float x,
             float y,
             float z,
@@ -25,8 +24,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float unk1,
             float unk2,
             string name,
-            string type
-        ) : base(id, x, y, 0)
+            string type,
+            uint netId = 0
+        ) : base(x, y, 0, 0, netId)
         {
             this.z = z;
             this.dirX = dirX;

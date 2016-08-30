@@ -15,13 +15,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public AzirTurret(
             Unit owner,
-            uint id,
             string name,
             string model,
             float x = 0,
             float y = 0,
-            TeamId team = TeamId.TEAM_BLUE
-        ) : base(id, name, model, x, y)
+            TeamId team = TeamId.TEAM_BLUE,
+            uint netId = 0
+        ) : base(name, model, x, y, team, netId)
         {
             this.Owner = owner;
 
