@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic;
 
 namespace GameServerTests
 {
@@ -21,7 +23,12 @@ namespace GameServerTests
 
             public void LoadChatboxManager()
             {
-                ChatboxManager = new LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager(this);
+                ChatboxManager = new ChatboxManager(this);
+            }
+
+            public void LoadConfig()
+            {
+                Config = new Config("Settings/GameInfo.json.template");
             }
         }
     }

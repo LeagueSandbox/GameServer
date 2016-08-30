@@ -14,7 +14,7 @@ function applyEffects()
     local bonusAD = getOwner():GetStats().AttackDamage.Total - getOwner():GetStats().AttackDamage.BaseValue
     local AP = getOwner():GetStats().AbilityPower.Total*0.9
     local damage = 200+getSpellLevel()*150 + bonusAD + AP
-	dealMagicalDamage(damage * (1 - reduc/10))
-    
+    dealMagicalDamage(damage * (1 - reduc/10))
+
     addParticleTarget(getOwner(), "Ezreal_TrueShot_tar.troy", getTarget())
 end

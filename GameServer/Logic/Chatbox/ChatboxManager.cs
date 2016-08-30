@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
@@ -79,17 +80,18 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new CoordsCommand("coords", "", this));
             AddCommand(new HelpCommand("help", "", this));
             AddCommand(new GoldCommand("gold", "gold goldAmount", this));
-            AddCommand(new HealthCommand("health", "health maxHealth", this));
+            AddCommand(new HealthCommand("health", "health bonusHealth", this));
             AddCommand(new HelpCommand("help", "", this));
             AddCommand(new InhibCommand("inhib", "", this));
             AddCommand(new JunglespawnCommand("junglespawn", "", this));
             AddCommand(new KillCommand("kill", "kill minions", this));
             AddCommand(new LevelCommand("level", "level level", this));
-            AddCommand(new ManaCommand("mana", "mana maxMana", this));
+            AddCommand(new ManaCommand("mana", "mana bonusMana", this));
             AddCommand(new MobsCommand("mobs", "mobs teamNumber", this));
             AddCommand(new ModelCommand("model", "model modelName", this));
             AddCommand(new PacketCommand("packet", "packet XX XX XX...", this));
-            AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
+            AddCommand(new RainbowCommand("rainbow", "rainbow alpha speed", this));
+            AddCommand(new SetCommand("set", "set masterMask fieldMask value", this));
             AddCommand(new SizeCommand("size", "size size", this));
             AddCommand(new SkillpointsCommand("skillpoints", "", this));
             AddCommand(new SpawnCommand("spawn", "spawn minions", this));
@@ -97,7 +99,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new SpeedCommand("speed", "speed speed", this));
             AddCommand(new TpCommand("tp", "tp x y", this));
             AddCommand(new XpCommand("xp", "xp xp", this));
-            AddCommand(new RainbowCommand("rainbow", "rainbow alpha speed", this));
+            if (game.Config.ContentManager != null)
+            {
+                var commands = game.Config.ContentManager.GetCommandScriptPath();
+                foreach (var command in commands)
+                {
+                    AddCommand(new ScriptedChatCommand(command, this));
+                }
+            }
         }
 
         public bool AddCommand(ChatCommand command)

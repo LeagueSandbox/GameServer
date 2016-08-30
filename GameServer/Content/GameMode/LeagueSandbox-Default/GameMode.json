@@ -5,6 +5,7 @@
             "Items": "*",
             "Buffs": "*",
             "Maps": "*",
+            "Commands": "*"
         }
     }
 }

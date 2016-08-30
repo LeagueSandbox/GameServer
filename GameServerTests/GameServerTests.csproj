@@ -74,6 +74,10 @@
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
       <Name>GameServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InibinSharp\InibinSharp.csproj">
+      <Project>{F47AC3D4-6C0F-4F02-9A7F-FBED54CF6E0A}</Project>
+      <Name>InibinSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -100,13 +104,11 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rmdir /s /q "$(TargetDir)Content\"
-rmdir /s /q "$(TargetDir)Settings\"
-xcopy /s /y /q "$(SolutionDir)GameServer\Content" "$(TargetDir)Content\*"
-xcopy /s /y /q "$(SolutionDir)GameServer\Settings" "$(TargetDir)Settings\*"
-xcopy /s /y /q "$(SolutionDir)GameServer\LuaLib" "$(TargetDir)LuaLib\*"
-xcopy /s /y /q "$(SolutionDir)lib" "$(TargetDir)*"
-xcopy /s /y /q "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
+    <PostBuildEvent>xcopy /s /y /q /d "$(SolutionDir)GameServer\Content" "$(TargetDir)Content\*"
+xcopy /s /y /q /d "$(SolutionDir)GameServer\Settings" "$(TargetDir)Settings\*"
+xcopy /s /y /q /d "$(SolutionDir)GameServer\LuaLib" "$(TargetDir)LuaLib\*"
+xcopy /s /y /q /d "$(SolutionDir)lib" "$(TargetDir)*"
+xcopy /s /y /q /d "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
