@@ -23,10 +23,10 @@ function onFinishCasting()
 			mostWoundedAlliedChampion:GetStats().CurrentHealth = newHealth
 		end
 		
-		local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, getOwner())
-		buff:setMovementSpeedPercentModifier(30)
-		addBuff(buff)
-		
+		--local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, getOwner())
+		--buff:setMovementSpeedPercentModifier(30)
+		--addBuff(buff)
+
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_02.troy", mostWoundedAlliedChampion )
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_speedboost.troy", mostWoundedAlliedChampion )
 	end
