@@ -1020,7 +1020,7 @@ namespace InibinSharp
                     // string -> bool
                     if (typeof(T) == typeof(bool))
                     {
-                        return (T)(object)(value == "1");
+                        return (T)(object)((value == "1") || (value == "Yes"));
                     }
 
                     if (typeof(T).IsNumeric())
