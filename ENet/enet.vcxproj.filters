@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{49020c20-dd35-4373-b95c-854c98d92b80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\enet">
+      <UniqueIdentifier>{4da59d91-6c6e-45e3-851f-d7bea88f76e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\enet\callbacks.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\enet.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\list.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\protocol.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\time.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\types.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\utility.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enet\win32.h">
+      <Filter>include\enet</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="callbacks.c" />
+    <ClCompile Include="compress.c" />
+    <ClCompile Include="host.c" />
+    <ClCompile Include="list.c" />
+    <ClCompile Include="packet.c" />
+    <ClCompile Include="peer.c" />
+    <ClCompile Include="protocol.c" />
+    <ClCompile Include="win32.c" />
+  </ItemGroup>
+</Project>
