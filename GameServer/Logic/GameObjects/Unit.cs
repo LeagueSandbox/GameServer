@@ -563,6 +563,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (targetUnit != null) // and we had a target
                     targetUnit.setDistressCall(null); // Unset the distress call
                                                       // TODO: Replace this with a delay?
+
+                isAttacking = false;
             }
             else
             {
