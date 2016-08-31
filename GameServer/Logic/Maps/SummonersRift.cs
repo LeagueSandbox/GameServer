@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,11 +94,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
         };
 
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
-            if (!RAFManager.getInstance().readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
+            if (!_rafManager.readAIMesh("LEVELS/Map1/AIPath.aimesh", out mesh))
             {
-                Logger.LogCoreError("Failed to load SummonersRift data.");
+                _logger.LogCoreError("Failed to load SummonersRift data.");
                 return;
             }
             _collisionHandler.init(3); // Needs to be initialised after AIMesh

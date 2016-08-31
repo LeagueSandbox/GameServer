@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class CollisionHandler
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
         private float width, height;
         private CollisionDivision[] managedDivisions = new CollisionDivision[3 * 3];
         private CollisionDivision unmanagedDivision = new CollisionDivision();
@@ -28,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // We have no divisions yet. Waiting for the AIMesh to initialise.
 
             if (simple)
-                Logger.LogCoreWarning("Using simple collision. This could impact performance with larger amounts of minions.");
+                _logger.LogCoreWarning("Using simple collision. This could impact performance with larger amounts of minions.");
         }
         public void init(int divisionsOverWidth)
         {
@@ -62,14 +64,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (divisionCount == -1) // If we have not initialised..
             {
-                Logger.LogCoreError("Tried to add an object before we initialised the CollisionHandler!");
+                _logger.LogCoreError("Tried to add an object before we initialised the CollisionHandler!");
                 return;
             }
 
             var map = obj.GetGame().GetMap();
             if (map != null && map != chart)
             {
-                Logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + obj.GetGame().GetMap() + " (not " + chart + "). Not adding it.");
+                _logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + obj.GetGame().GetMap() + " (not " + chart + "). Not adding it.");
                 return;
             }
 
@@ -80,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (divX < 0 || divX > divisionCount || divY < 0 || divY > divisionCount)  // We're not inside the map! Add to the unmanaged objects.
             {
-                Logger.LogCoreError("Object spawned outside of map. (" + obj.getPosition().X + ", " + obj.getPosition().Y + ")");
+                _logger.LogCoreError("Object spawned outside of map. (" + obj.getPosition().X + ", " + obj.getPosition().Y + ")");
                 //addUnmanagedObject(object);
             }
             else
@@ -260,7 +262,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     while (o.GetGame().GetMap().GetId() != chart.GetId())
                     {
-                        Logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.GetGame().GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
+                        _logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.GetGame().GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
                         removeObject(o);
                         if (j < curDiv.objects.Count)
                             o = curDiv.objects[j];

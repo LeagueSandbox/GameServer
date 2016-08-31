@@ -9,16 +9,19 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleSpawn : IPacketHandler
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var start = new StatePacket2(PacketCmdS2C.PKT_S2C_StartSpawn);
             game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
-            Logger.LogCoreInfo("Spawning map");
+            _logger.LogCoreInfo("Spawning map");
 
             int playerId = 0;
             foreach (var p in game.GetPlayers())

@@ -1,6 +1,7 @@
 ﻿
 using InibinSharp;
 using InibinSharp.RAF;
+using LeagueSandbox.GameServer.Logic;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,40 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
 {
     class RAFManager
     {
-        private static RAFManager _instance;
-        private RAFMasterFileList Root;
+        private RAFMasterFileList _root;
+        private Logger _logger;
+
+        public RAFManager(Logger _logger)
+        {
+            /* if (!Directory.Exists(rootDirectory))
+                 return false;
+
+             var dirs = Directory.EnumerateDirectories(rootDirectory);
+
+             foreach (var dir in dirs)
+             {
+                 var files = Directory.GetFiles(dir, "*.raf");
+
+                 foreach (var file in files)
+                 {
+                     if (!File.Exists(file))
+                         continue;
+
+                     var raf = RiotArchive.FromFile(file);
+                     Files.Add(raf);
+                 }
+             }*/
+
+            _logger.LogCoreInfo("Loading RAF files in filearchives/.");
+
+            var settings = Settings.Load("Settings/Settings.json");
+
+            _root = new RAFMasterFileList(
+                System.IO.Path.Combine(settings.RadsPath, "filearchives")
+            );
+
+            _logger.LogCoreInfo("Loaded RAF files");
+        }
 
         public string findGameBasePath()
         {
@@ -80,50 +113,24 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             catch { }
 
             p = Path.Combine(p, "RADS", "projects", "lol_game_client");
-            Logger.LogCoreInfo("Found base path in " + p);
+            _logger.LogCoreInfo("Found base path in " + p);
 
             return p;
         }
 
-        public bool init(string rootDirectory)
-        {
-            /* if (!Directory.Exists(rootDirectory))
-                 return false;
-
-             var dirs = Directory.EnumerateDirectories(rootDirectory);
-
-             foreach (var dir in dirs)
-             {
-                 var files = Directory.GetFiles(dir, "*.raf");
-
-                 foreach (var file in files)
-                 {
-                     if (!File.Exists(file))
-                         continue;
-
-                     var raf = RiotArchive.FromFile(file);
-                     Files.Add(raf);
-                 }
-             }*/
-            Root = new RAFMasterFileList(rootDirectory);
-            Logger.LogCoreInfo("Loaded RAF files");
-            return true;
-        }
-
         internal List<RAFFileListEntry> SearchFileEntries(string path)
         {
-            return Root.SearchFileEntries(path);
+            return _root.SearchFileEntries(path);
         }
-
 
         internal bool readInibin(string path, out Inibin iniFile)
         {
-            if (Root == null)
+            if (_root == null)
             {
                 iniFile = null;
                 return false;
             }
-            var entries = Root.SearchFileEntries(path);
+            var entries = _root.SearchFileEntries(path);
 
             if (entries.Count < 1)
             {
@@ -131,7 +138,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
                 return false;
             }
             if (entries.Count > 1)
-                Logger.LogCoreInfo("Found more than one inibin for query " + path);
+                _logger.LogCoreInfo("Found more than one inibin for query " + path);
 
             var entry = entries.First();
             iniFile = new Inibin(entry);
@@ -157,20 +164,20 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             }
             if (autoAttack == null)
             {
-                Logger.LogCoreError(string.Format("Couldn't find auto-attack data for {0}", model));
+                _logger.LogCoreError(string.Format("Couldn't find auto-attack data for {0}", model));
             }
             return autoAttack;
         }
 
         internal bool readAIMesh(string path, out LeagueSandbox.GameServer.Logic.RAF.AIMesh aimesh)
         {
-            if (Root == null)
+            if (_root == null)
             {
                 aimesh = null;
                 return false;
             }
 
-            var entries = Root.SearchFileEntries(path, RAFSearchType.End);
+            var entries = _root.SearchFileEntries(path, RAFSearchType.End);
             if (entries.Count < 1)
             {
                 aimesh = null;
@@ -178,10 +185,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             }
             if (entries.Count > 1)
             {
-                Logger.LogCoreError("Found " + entries.Count + " AIMesh for query " + path);
+                _logger.LogCoreError("Found " + entries.Count + " AIMesh for query " + path);
                 foreach (var e in entries)
                 {
-                    Logger.LogCoreInfo(e.FileName);
+                    _logger.LogCoreInfo(e.FileName);
                 }
             }
 
@@ -202,14 +209,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
                     hash ^= hash & mask ^ ((hash & mask) >> 24);
             }
             return hash;
-        }
-
-        public static RAFManager getInstance()
-        {
-            if (_instance == null)
-                _instance = new RAFManager();
-
-            return _instance;
         }
     }
 }

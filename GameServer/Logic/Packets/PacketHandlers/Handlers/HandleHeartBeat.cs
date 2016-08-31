@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleHeartBeat : IPacketHandler
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var heartbeat = new HeartBeat(data);
@@ -17,7 +20,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             float diff = heartbeat.ackTime - heartbeat.receiveTime;
             if (heartbeat.receiveTime > heartbeat.ackTime)
             {
-                Logger.LogCoreWarning("Player " + game.GetPeerInfo(peer).UserId + " sent an invalid heartbeat - Timestamp error (diff: " + diff);
+                _logger.LogCoreWarning("Player " + game.GetPeerInfo(peer).UserId + " sent an invalid heartbeat - Timestamp error (diff: " + diff);
             }
             else
             {

@@ -16,6 +16,7 @@ using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -1843,6 +1844,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+
         public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
@@ -1850,7 +1853,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
-            buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
+            buffer.Write(_rafManager.getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
             buffer.Write((byte)0xc6);
@@ -1905,10 +1908,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveBuff : BasePacket
     {
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
             buffer.Write((byte)0x01);
-            buffer.Write(RAFManager.getInstance().getHash(name));
+            buffer.Write(_rafManager.getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?
         }
@@ -3033,6 +3038,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SpawnParticle : BasePacket
     {
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
@@ -3041,7 +3048,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)owner.getChampionHash());
-            buffer.Write((uint)RAFManager.getInstance().getHash(particle));
+            buffer.Write((uint)_rafManager.getHash(particle));
             buffer.Write((int)0x00000020); // flags ?
 
             buffer.Write((int)0);   // <-| Ahri's Orb needs something here to be

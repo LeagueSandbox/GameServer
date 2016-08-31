@@ -6,29 +6,32 @@ using System.Threading.Tasks;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleSynch : IPacketHandler
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var version = new SynchVersion(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = game.Config.GameConfig.Map;
-            Logger.LogCoreInfo("Current map: " + mapId);
+            _logger.LogCoreInfo("Current map: " + mapId);
 
             bool versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
             if (version.version != Config.VERSION)
             {
                 versionMatch = false;
-                Logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.VERSION);
+                _logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.VERSION);
             }
             else
             {
-                Logger.LogCoreInfo("Accepted client version (" + version.version + ")");
+                _logger.LogCoreInfo("Accepted client version (" + version.version + ")");
             }
 
             foreach (var player in game.GetPlayers())

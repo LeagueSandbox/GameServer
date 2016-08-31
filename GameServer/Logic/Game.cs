@@ -19,11 +19,14 @@ using System.Threading;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class Game
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         protected Host _server;
         protected BlowFish Blowfish;
         protected uint _dwStart = 0x40000000; //new netid
@@ -47,10 +50,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public ItemManager ItemManager { get; protected set; }
         // Other managers
         public ChatboxManager ChatboxManager { get; protected set; }
+        
 
         public bool Initialize(Address address, string baseKey)
         {
-            Logger.LogCoreInfo("Loading Config.");
+            _logger.LogCoreInfo("Loading Config.");
             Config = new Config("Settings/GameInfo.json");
 
             ItemManager = ItemManager.LoadItems(this);
@@ -194,7 +198,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             if (peerinfo != null)
             {
                 // TODO: Handle disconnect
-                Logger.LogCoreInfo("Player " + peerinfo.UserId + " disconnected");
+                _logger.LogCoreInfo("Player " + peerinfo.UserId + " disconnected");
             }
             return true;
         }

@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
+using Ninject;
 using System;
 using System.Linq;
 
@@ -9,6 +10,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Placeable : Unit
     {
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         private string _name;
         private Unit _owner; // We'll probably want to change this in the future
 
@@ -29,9 +33,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this._name = name;
 
             Inibin inibin;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
             {
-                Logger.LogCoreError("Couldn't find placeable stats for " + model);
+                _logger.LogCoreError("Couldn't find placeable stats for " + model);
                 return;
             }
 
@@ -61,11 +65,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
             Inibin autoAttack;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+            if (!_rafManager.readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+                if (!_rafManager.readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
                 {
-                    Logger.LogCoreError("Couldn't find placeable auto-attack data for " + model);
+                    _logger.LogCoreError("Couldn't find placeable auto-attack data for " + model);
                     return;
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using Ninject;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -10,7 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger.LogCoreInfo(".junglespawn command not implemented");
+            Logger _logger = Program.Kernel.Get<Logger>();
+            _logger.LogCoreInfo(".junglespawn command not implemented");
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
         }
     }

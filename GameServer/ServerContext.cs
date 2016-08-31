@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer
 {
-    class ServerContext
+    public class ServerContext
     {
         private string _executingDirectory;
 

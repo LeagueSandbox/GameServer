@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger.LogCoreInfo("At " + _owner.GetGame().GetPeerInfo(peer).GetChampion().getX() + ";" + _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
+            Logger _logger = Program.Kernel.Get<Logger>();
+            _logger.LogCoreInfo("At " + _owner.GetGame().GetPeerInfo(peer).GetChampion().getX() + ";" + _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
             StringBuilder debugMsg = new StringBuilder();
             debugMsg.Append("At Coords - X: ");
             debugMsg.Append(_owner.GetGame().GetPeerInfo(peer).GetChampion().getX());

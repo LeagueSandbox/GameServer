@@ -11,6 +11,7 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -86,6 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool targetable;
         protected bool nextAutoIsCrit = false;
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
+        protected Logger _logger = Program.Kernel.Get<Logger>();
 
         protected int killDeathCounter = 0;
         private object _buffsLock = new object();
@@ -142,7 +144,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     catch (LuaScriptException e)
                     {
-                        Logger.LogCoreError("LUA ERROR : " + e.Message);
+                        _logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
                 }
                 _timerUpdate = 0;
@@ -314,7 +316,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
         }
@@ -340,7 +342,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("ERROR LUA : " + e.Message);
+                    _logger.LogCoreError("ERROR LUA : " + e.Message);
                 }
             }
 
@@ -415,7 +417,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
 
@@ -456,7 +458,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller.killDeathCounter < 0)
                 {
                     cKiller.setChampionGoldFromMinions(cKiller.getChampionGoldFromMinions() + gold);
-                    Logger.LogCoreInfo("Adding gold form minions to reduce death spree: " + cKiller.getChampionGoldFromMinions());
+                    _logger.LogCoreInfo("Adding gold form minions to reduce death spree: " + cKiller.getChampionGoldFromMinions());
                 }
 
                 if (cKiller.getChampionGoldFromMinions() >= 50 && cKiller.killDeathCounter < 0)

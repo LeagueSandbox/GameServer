@@ -15,6 +15,7 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -112,6 +113,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public static bool NO_MANACOST = true;
 
         private IScriptEngine _scriptEngine;
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+        private Logger _logger = Program.Kernel.Get<Logger>();
 
         public Spell(Champion owner, string spellName, byte slot)
         {
@@ -127,7 +130,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (slot > 3)
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
                 {
                     return;
                 }
@@ -141,13 +144,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
                     {
-                        Logger.LogCoreError("Couldn't find spell stats for " + spellName);
+                        _logger.LogCoreError("Couldn't find spell stats for " + spellName);
                         return;
                     }
                 }
@@ -194,17 +197,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
 
             // This is starting to get ugly. How many more names / paths to go ?
-            if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + "Missile.inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Missile.inibin", out inibin))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
                     {
-                        if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
+                        if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
                         {
-                            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
+                            if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
                             {
-                                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
+                                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
                                 {
                                     return;
                                 }
@@ -250,14 +253,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void finishCasting()
         {
 
-            Logger.LogCoreInfo("Spell from slot " + getSlot());
+            _logger.LogCoreInfo("Spell from slot " + getSlot());
             try
             {
                 _scriptEngine.Execute("onFinishCasting()");
             }
             catch (LuaException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
 
             state = SpellState.STATE_COOLDOWN;
@@ -361,7 +364,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             catch (LuaException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
 
@@ -411,14 +414,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
             owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
             owner.GetGame().GetMap().AddObject(p);
             owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
         }
@@ -452,7 +455,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public int getId()
         {
-            return (int)RAFManager.getInstance().getHash(spellName);
+            return (int)_rafManager.getHash(spellName);
         }
 
         public float getCastTime()

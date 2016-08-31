@@ -10,11 +10,15 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Monster : Unit
     {
+        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         private Vector2 facing;
         private string name;
 
@@ -31,9 +35,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.name = name;
 
             Inibin inibin;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
             {
-                Logger.LogCoreError("couldn't find monster stats for " + model);
+                _logger.LogCoreError("couldn't find monster stats for " + model);
                 return;
             }
 
@@ -63,11 +67,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
             Inibin autoAttack;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+            if (!_rafManager.readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+                if (!_rafManager.readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
                 {
-                    Logger.LogCoreError("Couldn't find monster auto-attack data for " + model);
+                    _logger.LogCoreError("Couldn't find monster auto-attack data for " + model);
                     return;
                 }
             }

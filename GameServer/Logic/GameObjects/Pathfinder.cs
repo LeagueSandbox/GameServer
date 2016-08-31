@@ -1,6 +1,7 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.RAF;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     class Pathfinder
     {
+        private static Logger _logger = Program.Kernel.Get<Logger>();
+
         protected static Map chart;
         private const int GRID_SIZE = 1024;
         protected static int successes = 0, oot = 0, empties = 0;
@@ -29,13 +32,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PathJob job = new PathJob();
 
             if ((System.DateTime.Now - g_Clock).Milliseconds > 4000 && (successes + oot + empties) > 0)
-                Logger.LogCoreInfo("Pathfinding successrate: " + (((float)successes / (float)(successes + oot + empties)) * (100.0f)));
+                _logger.LogCoreInfo("Pathfinding successrate: " + (((float)successes / (float)(successes + oot + empties)) * (100.0f)));
 
             if (debugOutput)
-                Logger.LogCoreInfo("Recording this minion movement.");
+                _logger.LogCoreInfo("Recording this minion movement.");
 
-            if (chart == null) Logger.LogCoreError("Tried to find a path without setting the map.");
-            if (getMesh() == null) Logger.LogCoreError("Can't start pathfinding without initialising the AIMesh");
+            if (chart == null) _logger.LogCoreError("Tried to find a path without setting the map.");
+            if (getMesh() == null) _logger.LogCoreError("Can't start pathfinding without initialising the AIMesh");
 
 
             job.start = job.fromPositionToGrid(from); // Save start in grid info
@@ -43,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (debugOutput)
             {
-                Logger.LogCoreInfo("Going from (" + job.start.X + ", " + job.start.Y + ") to (" + job.destination.X + ", " + job.destination.Y);
+                _logger.LogCoreInfo("Going from (" + job.start.X + ", " + job.start.Y + ") to (" + job.destination.X + ", " + job.destination.Y);
             }
 
             job.insertObstructions(chart, getMesh()); // Ready the map.
@@ -54,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             for (tries = 0; job.openList.Count != 0; tries++) // Go through the open list while it's not empty
             {
                 if (debugOutput)
-                    Logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
+                    _logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
 
 
                 if (tries == MAX_PATHFIND_TRIES)
@@ -80,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             if (debugOutput)
-                Logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
+                _logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
 
             //CORE_WARNING("PATH_ERROR_OPENLIST_EMPTY");
             path.error = PathError.PATH_ERROR_OPENLIST_EMPTY;
@@ -94,7 +97,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (chart.getAIMesh() == null)
             {
-                Logger.LogCoreError("Can't get path because of a missing AIMesh.");
+                _logger.LogCoreError("Can't get path because of a missing AIMesh.");
             }
             return getPath(from, to, PATH_DEFAULT_BOX_SIZE(getMesh().getSize()));
         }
@@ -106,7 +109,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (chart == null)
             {
-                Logger.LogCoreError("The map hasn't been set but the mesh was requested.");
+                _logger.LogCoreError("The map hasn't been set but the mesh was requested.");
                 return null;
             }
             return chart.getAIMesh();
@@ -138,6 +141,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     class PathJob
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
         private static int GRID_SIZE = 1024;
         private static int GRID_WIDTH = GRID_SIZE;
         private static int GRID_HEIGHT = GRID_SIZE;
@@ -161,7 +165,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AIMesh mesh = Pathfinder.getMesh();
             if (mesh == null)
             {
-                Logger.LogCoreError("Tried to get a grid location without an initialised AIMesh!");
+                _logger.LogCoreError("Tried to get a grid location without an initialised AIMesh!");
                 return new Vector2();
             }
 
@@ -173,7 +177,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AIMesh mesh = Pathfinder.getMesh();
             if (mesh == null)
             {
-                Logger.LogCoreError("Tried to get a position without an initialised AIMesh!");
+                _logger.LogCoreError("Tried to get a position without an initialised AIMesh!");
                 return new Vector2();
             }
 

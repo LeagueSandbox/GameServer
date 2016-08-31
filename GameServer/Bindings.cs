@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
 using Ninject.Modules;
@@ -16,8 +17,10 @@ namespace LeagueSandbox.GameServer
         {
             Bind<Server>().To<Server>();
             
+            // Singletons - Only one instance of these objects will ever be created.
             Bind<ServerContext>().To<ServerContext>().InSingletonScope();
-            Bind<RAFManager>().ToMethod(context => RAFManager.getInstance()).InSingletonScope();
+            Bind<Logger>().To<Logger>().InSingletonScope();
+            Bind<RAFManager>().To<RAFManager>().InSingletonScope();
 
             Bind<IScriptEngine>().To<LuaScriptEngine>();
             

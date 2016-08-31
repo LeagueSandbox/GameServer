@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Packets;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleKeyCheck : IPacketHandler
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         public bool HandlePacket(Peer peer, byte[] data, Game game)
         {
             var keyCheck = new KeyCheck(data);
@@ -29,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     if (player.GetPeer() != null)
                     {
-                        Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                        _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
                         return false;
                     }
 

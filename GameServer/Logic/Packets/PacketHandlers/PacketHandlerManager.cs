@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -18,6 +19,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private Game _game;
         private List<TeamId> _teamsEnumerator;
+        private Logger _logger = Program.Kernel.Get<Logger>();
 
         public PacketHandlerManager(Game game)
         {
@@ -216,7 +218,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
             else
             {
-                Logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
+                _logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
                 printPacket(data, "Error: ");
             }
             return false;

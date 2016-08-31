@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {
+        private Logger _logger = Program.Kernel.Get<Logger>();
+
         private static readonly string[] CONTENT_TYPES = new string[]
         {
             "Champions",
@@ -52,7 +55,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             foreach(var content in contents)
             {
-                Logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
+                _logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
                 if(!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
@@ -110,11 +113,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
             if (!File.Exists(path))
             {
-                Logger.LogCoreError("Failed to load content [{0}][{1}]", contentType, fileName);
+                _logger.LogCoreError("Failed to load content [{0}][{1}]", contentType, fileName);
             }
             else
             {
-                Logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
+                _logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
             }
             return path;
         }
