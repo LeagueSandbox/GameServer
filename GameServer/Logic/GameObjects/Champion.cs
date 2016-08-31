@@ -17,8 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Champion : Unit
     {
-        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         public Shop Shop { get; protected set; }
         public InventoryManager Inventory { get; protected set; }
@@ -38,16 +37,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return spells[index];
         }
 
-        public Champion(Game game, string type, uint id, uint playerId) : base(game, id, type, new Stats(), 30, 0, 0, 1200)
+        public Champion(string type, uint id, uint playerId) : base(id, type, new Stats(), 30, 0, 0, 1200)
         {
             this.type = type;
             this.playerId = playerId;
 
-            Inventory = InventoryManager.CreateInventory(game, this);
+            Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = game.GetMap().GetGoldPerSecond();
+            stats.GoldPerSecond.BaseValue = _game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
             Inibin inibin;

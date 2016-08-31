@@ -10,10 +10,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleQueryStatus : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var response = new QueryStatus();
-            return game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_S2C);
+            return _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_S2C);
         }
     }
 }

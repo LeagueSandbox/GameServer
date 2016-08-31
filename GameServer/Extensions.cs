@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic;
+﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System;
@@ -42,6 +43,52 @@ namespace LeagueSandbox
             }
         }
     }
+
+    static class EnumParser
+    {
+        public static SummonerSpellIds ParseSummonerSpell(string spellName)
+        {
+            if (spellName == "FLASH")
+            {
+                return SummonerSpellIds.SPL_Flash;
+            }
+            else if (spellName == "IGNITE")
+            {
+                return SummonerSpellIds.SPL_Ignite;
+            }
+            else if (spellName == "HEAL")
+            {
+                return SummonerSpellIds.SPL_Heal;
+            }
+            else if (spellName == "BARRIER")
+            {
+                return SummonerSpellIds.SPL_Barrier;
+            }
+            else if (spellName == "SMITE")
+            {
+                return SummonerSpellIds.SPL_Smite;
+            }
+            else if (spellName == "GHOST")
+            {
+                return SummonerSpellIds.SPL_Ghost;
+            }
+            else if (spellName == "REVIVE")
+            {
+                return SummonerSpellIds.SPL_Revive;
+            }
+            else if (spellName == "CLEANSE")
+            {
+                return SummonerSpellIds.SPL_Cleanse;
+            }
+            else if (spellName == "TELEPORT")
+            {
+                return SummonerSpellIds.SPL_Teleport;
+            }
+
+            return 0;
+        }
+    }
+
     public class PairList<TKey, TValue> : List<Pair<TKey, TValue>>
     {
         public void Add(TKey key, TValue value)

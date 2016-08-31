@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger _logger = Program.Kernel.Get<Logger>();
+            Logger _logger = Program.ResolveDependency<Logger>();
             _logger.LogCoreInfo(".junglespawn command not implemented");
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
         }

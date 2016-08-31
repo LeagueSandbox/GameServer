@@ -20,25 +20,22 @@ using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using Ninject;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class Game
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
-
         protected Host _server;
-        protected BlowFish Blowfish;
-        protected uint _dwStart = 0x40000000; //new netid
+        protected BlowFish _blowfish;
         protected object _lock = new object();
 
         protected bool _started = false;
         protected int _playersReady = 0;
 
-        protected List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
         private Map _map;
-        public PacketNotifier PacketNotifier { get; protected set; }
-        public PacketHandlerManager PacketHandlerManager { get; protected set; }
+        public PacketNotifier PacketNotifier;
+        public PacketHandlerManager PacketHandlerManager;
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const PacketFlags RELIABLE = PacketFlags.Reliable;
@@ -46,19 +43,32 @@ namespace LeagueSandbox.GameServer.Core.Logic
         protected const double REFRESH_RATE = 16.666; // 60 fps
         protected long _timeElapsed;
 
+        private Logger _logger;
         // Object managers
-        public ItemManager ItemManager { get; protected set; }
+        private ItemManager _itemManager;
         // Other managers
-        public ChatboxManager ChatboxManager { get; protected set; }
-        
+        private ChatboxManager _chatboxManager;
+        private PlayerManager _playerManager;
+        private NetworkIdManager _networkIdManager;
+
+        public Game(
+            ItemManager itemManager, 
+            ChatboxManager chatboxManager,
+            NetworkIdManager networkIdManager,
+            PlayerManager playerManager,
+            Logger logger
+        ) {
+            _itemManager = itemManager;
+            _chatboxManager = chatboxManager;
+            _networkIdManager = networkIdManager;
+            _playerManager = playerManager;
+            _logger = logger;
+        }        
 
         public bool Initialize(Address address, string baseKey)
         {
             _logger.LogCoreInfo("Loading Config.");
             Config = new Config("Settings/GameInfo.json");
-
-            ItemManager = ItemManager.LoadItems(this);
-            ChatboxManager = new ChatboxManager(this);
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
@@ -67,39 +77,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
             if (key.Length <= 0)
                 return false;
 
-            Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(this);
+            _blowfish = new BlowFish(key);
+            PacketHandlerManager = new PacketHandlerManager(_logger, _blowfish, _server, _playerManager);
             _map = new SummonersRift(this);
-            PacketNotifier = new PacketNotifier(this);
+            PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
 
-            var id = 1;
             foreach (var p in Config.Players)
             {
-                var player = new ClientInfo(p.Value.Rank, ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.Ribbon, p.Value.Icon);
-
-                player.SetName(p.Value.Name);
-
-                player.SetSkinNo(p.Value.Skin);
-                player.UserId = id; // same as StartClient.bat
-                id++;
-
-                player.SetSummoners(StrToId(p.Value.Summoner1), StrToId(p.Value.Summoner2));
-
-                var c = new Champion(this, p.Value.Champion, GetNewNetID(), (uint)player.UserId);
-                var pos = c.getRespawnPosition();
-
-                c.setPosition(pos.Item1, pos.Item2);
-                c.setTeam((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
-                c.LevelUp();
-
-                player.SetChampion(c);
-                var pair = new Pair<uint, ClientInfo>();
-                pair.Item2 = player;
-                _players.Add(pair);
+                _playerManager.AddPlayer(p);
             }
             return true;
         }
+
         public void NetLoop()
         {
             var watch = new Stopwatch();
@@ -149,17 +139,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public BlowFish GetBlowfish()
         {
-            return Blowfish;
+            return _blowfish;
         }
 
         public Host GetServer()
         {
             return _server;
-        }
-
-        public List<Pair<uint, ClientInfo>> GetPlayers()
-        {
-            return _players;
         }
 
         public Map GetMap()
@@ -194,72 +179,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         private bool HandleDisconnect(Peer peer)
         {
-            var peerinfo = GetPeerInfo(peer);
+            var peerinfo = _playerManager.GetPeerInfo(peer);
             if (peerinfo != null)
             {
                 // TODO: Handle disconnect
                 _logger.LogCoreInfo("Player " + peerinfo.UserId + " disconnected");
             }
             return true;
-        }
-
-        public ClientInfo GetPeerInfo(Peer peer)
-        {
-            foreach (var player in _players)
-                if (player.Item1 == peer.Address.port)
-                    return player.Item2;
-            return null;
-        }
-
-        private SummonerSpellIds StrToId(string str)
-        {
-            if (str == "FLASH")
-            {
-                return SummonerSpellIds.SPL_Flash;
-            }
-            else if (str == "IGNITE")
-            {
-                return SummonerSpellIds.SPL_Ignite;
-            }
-            else if (str == "HEAL")
-            {
-                return SummonerSpellIds.SPL_Heal;
-            }
-            else if (str == "BARRIER")
-            {
-                return SummonerSpellIds.SPL_Barrier;
-            }
-            else if (str == "SMITE")
-            {
-                return SummonerSpellIds.SPL_Smite;
-            }
-            else if (str == "GHOST")
-            {
-                return SummonerSpellIds.SPL_Ghost;
-            }
-            else if (str == "REVIVE")
-            {
-                return SummonerSpellIds.SPL_Revive;
-            }
-            else if (str == "CLEANSE")
-            {
-                return SummonerSpellIds.SPL_Cleanse;
-            }
-            else if (str == "TELEPORT")
-            {
-                return SummonerSpellIds.SPL_Teleport;
-            }
-
-            return 0;
-        }
-
-        public uint GetNewNetID()
-        {
-            lock (_lock)
-            {
-                _dwStart++;
-                return _dwStart;
-            }
         }
     }
 }

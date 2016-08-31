@@ -10,13 +10,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Placeable : Unit
     {
-        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private string _name;
         private Unit _owner; // We'll probably want to change this in the future
 
-        public Placeable(Game game, Unit owner, uint id, float x, float y, string model, string name) : base(game, id, model, new Stats(), 40, x, y)
+        public Placeable(Unit owner, uint id, float x, float y, string model, string name) : base(id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 

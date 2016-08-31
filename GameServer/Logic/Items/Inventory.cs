@@ -16,12 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private const int EXTRA_INVENTORY_SIZE = 7;
         private Item[] _items;
         private InventoryManager _owner;
-        private Game _game;
         public Item[] Items { get { return _items; } }
 
-        public Inventory(Game game, InventoryManager owner)
+        public Inventory(InventoryManager owner)
         {
-            _game = game;
             _owner = owner;
             _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE];
         }
@@ -42,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         private Item SetItem(byte slot, ItemType item)
         {
-            _items[slot] = Item.CreateFromType(_game, this, item);
+            _items[slot] = Item.CreateFromType(this, item);
             return _items[slot];
         }
 

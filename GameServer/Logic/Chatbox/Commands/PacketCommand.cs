@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using ENet;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -12,6 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             try
             {
                 var s = arguments.Split(' ');
@@ -30,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 {
                     if (s[i] == "netid")
                     {
-                        buffer.Write(_owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId());
+                        buffer.Write(_playerManager.GetPeerInfo(peer).GetChampion().getNetId());
                     }
                     else
                     {
@@ -38,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     }
                 }
 
-                _owner.GetGame().PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);
+                _game.PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);
             }
             catch { }
         }

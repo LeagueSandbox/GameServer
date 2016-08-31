@@ -142,6 +142,8 @@
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
+    <Compile Include="Logic\Packets\NetworkIdManager.cs" />
+    <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />

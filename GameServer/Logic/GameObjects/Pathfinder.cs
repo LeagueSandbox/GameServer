@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     class Pathfinder
     {
-        private static Logger _logger = Program.Kernel.Get<Logger>();
+        private static Logger _logger = Program.ResolveDependency<Logger>();
 
         protected static Map chart;
         private const int GRID_SIZE = 1024;
@@ -141,7 +141,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     class PathJob
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
         private static int GRID_SIZE = 1024;
         private static int GRID_WIDTH = GRID_SIZE;
         private static int GRID_HEIGHT = GRID_SIZE;

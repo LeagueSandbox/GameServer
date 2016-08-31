@@ -25,8 +25,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public TurretType Type { get; private set; }
         private bool _turretHPUpdated = false;
 
-        public LaneTurret(Game game, uint id, string name, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE, TurretType type = TurretType.OuterTurret)
-               : base(game, id, name, "", x, y)
+        public LaneTurret(uint id, string name, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE, TurretType type = TurretType.OuterTurret)
+               : base(id, name, "", x, y)
         {
             this.Type = type;
 
@@ -39,12 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var blueTeam = new List<Champion>();
             var purpTeam = new List<Champion>();
-            foreach (var player in Game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
+            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
             {
                 blueTeam.Add(player);
             }
 
-            foreach (var player in Game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
+            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
             {
                 purpTeam.Add(player);
             }

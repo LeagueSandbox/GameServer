@@ -7,14 +7,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         private const float TURRET_RANGE = 905.0f;
         public string Name { get; private set; }
-        public Game Game { get; private set; }
         protected float globalGold = 250.0f;
         protected float globalExp = 0.0f;
 
-        public BaseTurret(Game game, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE) : base(game, id, model, new Stats(), 50, x, y, 1200)
+    
+        private Game _game = Program.ResolveDependency<Game>();
+
+        public BaseTurret(uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE) : base(id, model, new Stats(), 50, x, y, 1200)
         {
             this.Name = name;
-            this.Game = game;
 
             setTeam(team);
         }
@@ -92,7 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            foreach (var player in Game.GetMap().GetAllChampionsFromTeam(killer.getTeam()))
+            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(killer.getTeam()))
             {
                 var goldEarn = globalGold;
 

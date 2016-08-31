@@ -8,7 +8,7 @@ namespace LeagueSandbox
     {
         // TODO: Require consumers of this inject a ServerContext
         public static string ExecutingDirectory;
-        public static StandardKernel Kernel;
+        private static StandardKernel Kernel;
 
         static void Main(string[] args)
         {
@@ -22,6 +22,12 @@ namespace LeagueSandbox
             server.Start();
 
             Console.ReadLine();
+        }
+
+        [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
+        public static T ResolveDependency<T>()
+        {
+            return Kernel.Get<T>();
         }
     }
 }

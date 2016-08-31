@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Buff
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
         protected float _duration;
         protected float _movementSpeedPercentModifier;
         protected float _timeElapsed;

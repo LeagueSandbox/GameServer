@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -9,6 +11,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
             byte lvl;
             if (split.Length < 2)
@@ -21,8 +26,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 if (lvl < 1 || lvl > 18)
                     return;
 
-                var experienceToLevelUp = _owner.GetGame().GetMap().GetExperienceToLevelUp()[lvl-1];
-                _owner.GetGame().GetPeerInfo(peer).GetChampion().GetStats().Experience = experienceToLevelUp;
+                var experienceToLevelUp = _game.GetMap().GetExperienceToLevelUp()[lvl-1];
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Experience = experienceToLevelUp;
             }
         }
     }

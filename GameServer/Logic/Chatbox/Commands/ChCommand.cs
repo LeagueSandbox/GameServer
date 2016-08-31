@@ -1,5 +1,7 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     class ChCommand : ChatCommand
     {
+
         public ChCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.Split(' ');
             if (split.Length < 2)
             {
@@ -22,13 +28,20 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            var c = new Champion(_owner.GetGame(), split[1], _owner.GetGame().GetPeerInfo(peer).GetChampion().getNetId(), (uint)_owner.GetGame().GetPeerInfo(peer).UserId);
-            c.setPosition(_owner.GetGame().GetPeerInfo(peer).GetChampion().getX(), _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
+            var c = new Champion(
+                split[1],
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                (uint)_playerManager.GetPeerInfo(peer).UserId
+            );
+            c.setPosition(
+                _playerManager.GetPeerInfo(peer).GetChampion().getX(),
+                _playerManager.GetPeerInfo(peer).GetChampion().getY()
+            );
             c.setModel(split[1]); // trigger the "modelUpdate" proc
-            c.setTeam(_owner.GetGame().GetPeerInfo(peer).GetChampion().getTeam());
-            _owner.GetGame().GetMap().RemoveObject(_owner.GetGame().GetPeerInfo(peer).GetChampion());
-            _owner.GetGame().GetMap().AddObject(c);
-            _owner.GetGame().GetPeerInfo(peer).SetChampion(c);
+            c.setTeam(_playerManager.GetPeerInfo(peer).GetChampion().getTeam());
+            _game.GetMap().RemoveObject(_playerManager.GetPeerInfo(peer).GetChampion());
+            _game.GetMap().AddObject(c);
+            _playerManager.GetPeerInfo(peer).SetChampion(c);
         }
     }
 }

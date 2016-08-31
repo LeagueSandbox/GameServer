@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
             float xp;
             if (split.Length < 2)
@@ -23,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
             if (float.TryParse(split[1], out xp))
-                _owner.GetGame().GetPeerInfo(peer).GetChampion().GetStats().Experience = xp;
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Experience = xp;
         }
     }
 }

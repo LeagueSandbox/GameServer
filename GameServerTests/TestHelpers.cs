@@ -10,19 +10,6 @@ namespace GameServerTests
 {
     public class TestHelpers
     {
-        public class DummyGame : Game
-        {
-            public DummyGame() : base() { }
 
-            public void LoadItems()
-            {
-                ItemManager = ItemManager.LoadItems(this);
-            }
-
-            public void LoadChatboxManager()
-            {
-                ChatboxManager = new LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager(this);
-            }
-        }
     }
 }

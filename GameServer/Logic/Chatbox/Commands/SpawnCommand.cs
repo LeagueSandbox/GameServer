@@ -1,5 +1,8 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -13,6 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+            NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
 
             if (split.Length < 2)
@@ -22,14 +29,13 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "minions")
             {
-                var game = _owner.GetGame();
-                var champion = game.GetPeerInfo(peer).GetChampion();
+                var champion = _playerManager.GetPeerInfo(peer).GetChampion();
                 var random = new Random();
 
-                Minion caster = new Minion(game, game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion cannon = new Minion(game, game.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion melee = new Minion(game, game.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_MID);
-                Minion super = new Minion(game, game.GetNewNetID(), MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion caster = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion cannon = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion melee = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_MID);
+                Minion super = new Minion(_networkIdManager.GetNewNetID(), MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
 
                 int x = 400;
                 caster.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));
@@ -52,10 +58,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
                 super.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
 
-                game.GetMap().AddObject(caster);
-                game.GetMap().AddObject(cannon);
-                game.GetMap().AddObject(melee);
-                game.GetMap().AddObject(super);
+                _game.GetMap().AddObject(caster);
+                _game.GetMap().AddObject(cannon);
+                _game.GetMap().AddObject(melee);
+                _game.GetMap().AddObject(super);
             }
         }
     }

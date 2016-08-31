@@ -113,8 +113,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public static bool NO_MANACOST = true;
 
         private IScriptEngine _scriptEngine;
-        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
+        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public Spell(Champion owner, string spellName, byte slot)
         {
@@ -269,15 +271,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (getSlot() < 4)
             {
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
             else if (getSlot() == 4) //Done this because summ-spells are hard-coded
             {                        //Fix these when they are not
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
             }
             else if (getSlot() == 5)
             {
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
             }
 
             owner.SetCastingSpell(false);
@@ -414,21 +416,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(_networkIdManager.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            _game.GetMap().AddObject(p);
+            _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(_networkIdManager.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            _game.GetMap().AddObject(p);
+            _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void spellAnimation(string animName, Unit target)
         {
-            owner.GetGame().PacketNotifier.notifySpellAnimation(target, animName);
+            _game.PacketNotifier.notifySpellAnimation(target, animName);
         }
 
         public void setAnimation(string animation, string animation2, Unit target)
@@ -436,13 +438,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             List<string> animList = new List<string>();
             animList.Add(animation);
             animList.Add(animation2);
-            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.notifySetAnimation(target, animList);
         }
 
         public void resetAnimations(Unit target)
         {
             List<string> animList = new List<string>();
-            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.notifySetAnimation(target, animList);
         }
 
         public int getOtherSpellLevel(int slotId)
@@ -482,19 +484,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
-            var game = owner.GetGame();
-            var p = new Placeable(game, this.owner, game.GetNewNetID(), toX, toY, model, name);
+            var p = new Placeable(this.owner, _networkIdManager.GetNewNetID(), toX, toY, model, name);
             p.setTeam(owner.getTeam());
 
             p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
             p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
-            game.GetMap().AddObject(p);
+            _game.GetMap().AddObject(p);
         }
 
         public void LoadLua(IScriptEngine scriptEngine)
         {
-            var config = owner.GetGame().Config;
+            var config = _game.Config;
             string scriptloc;
 
             if (getSlot() > 3)

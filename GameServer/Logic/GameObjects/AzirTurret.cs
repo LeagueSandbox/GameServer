@@ -8,14 +8,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class AzirTurret : BaseTurret
     {
-        private RAFManager _rafManager = Program.Kernel.Get<RAFManager>();
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private const float TURRET_RANGE = 905.0f;
         public Unit Owner { get; private set; }
 
-        public AzirTurret(Game game, Unit owner, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE)
-               : base(game, id, name, model, x, y)
+        public AzirTurret(Unit owner, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE)
+               : base(id, name, model, x, y)
         {
             this.Owner = owner;
 

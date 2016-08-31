@@ -7,12 +7,17 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleCastSpell : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var spell = new CastSpell(data);
             //Todo spellslot 0-3 qwer, 4-5 d f, 6-11 items
@@ -25,18 +30,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return true;
             }*/
 
-            var futureProjNetId = game.GetNewNetID();
-            var spellNetId = game.GetNewNetID();
-            var targetObj = game.GetMap().GetObjectById(spell.targetNetId);
+            var futureProjNetId = _networkIdManager.GetNewNetID();
+            var spellNetId = _networkIdManager.GetNewNetID();
+            var targetObj = _game.GetMap().GetObjectById(spell.targetNetId);
             var targetUnit = targetObj as Unit;
 
-            var s = game.GetPeerInfo(peer).GetChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);
+            var s = _playerManager.GetPeerInfo(peer).GetChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);
 
             if (s == null)
                 return false;
 
             var response = new CastSpellAns(s, spell.x, spell.y, futureProjNetId, spellNetId);
-            game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }
     }

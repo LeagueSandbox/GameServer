@@ -10,7 +10,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleEmotion : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var emotion = new EmotionPacket(data);
             //for later use -> tracking, etc.
@@ -34,7 +36,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     break;
             }
             var response = new EmotionPacket(emotion.id, emotion.netId);
-            return game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
+            return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }
     }
 }

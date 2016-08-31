@@ -7,19 +7,22 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic;
 using Ninject;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleSynch : IPacketHandler
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var version = new SynchVersion(data);
             //Logging->writeLine("Client version: %s", version->version);
 
-            var mapId = game.Config.GameConfig.Map;
+            var mapId = _game.Config.GameConfig.Map;
             _logger.LogCoreInfo("Current map: " + mapId);
 
             bool versionMatch = true;
@@ -34,7 +37,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 _logger.LogCoreInfo("Accepted client version (" + version.version + ")");
             }
 
-            foreach (var player in game.GetPlayers())
+            foreach (var player in _playerManager.GetPlayers())
             {
                 if (player.Item1 == peer.Address.port)
                 {
@@ -42,9 +45,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     break;
                 }
             }
-            var answer = new SynchVersionAns(game.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
+            var answer = new SynchVersionAns(_playerManager.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
 
-            return game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C);
+            return _game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C);
         }
     }
 }

@@ -12,7 +12,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class CollisionHandler
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
+
         private float width, height;
         private CollisionDivision[] managedDivisions = new CollisionDivision[3 * 3];
         private CollisionDivision unmanagedDivision = new CollisionDivision();
@@ -68,10 +70,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            var map = obj.GetGame().GetMap();
+            var map = _game.GetMap();
             if (map != null && map != chart)
             {
-                _logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + obj.GetGame().GetMap() + " (not " + chart + "). Not adding it.");
+                _logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + _game.GetMap() + " (not " + chart + "). Not adding it.");
                 return;
             }
 
@@ -260,9 +262,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (o != null)
                 //if (o->isMovementUpdated())  // Only check if they moved around.
                 {
-                    while (o.GetGame().GetMap().GetId() != chart.GetId())
+                    while (_game.GetMap().GetId() != chart.GetId())
                     {
-                        _logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + o.GetGame().GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
+                        _logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + _game.GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
                         removeObject(o);
                         if (j < curDiv.objects.Count)
                             o = curDiv.objects[j];

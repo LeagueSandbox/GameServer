@@ -14,10 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private Inventory _inventory;
         private Champion _owner;
 
-        private InventoryManager(Game game, Champion owner)
+        private InventoryManager(Champion owner)
         {
-            _owner = owner;
-            _inventory = new Inventory(game, this);
+            _inventory = new Inventory(this);
         }
 
         public Item AddItem(ItemType item)
@@ -55,10 +54,10 @@ namespace LeagueSandbox.GameServer.Logic.Items
             _inventory.SwapItems(slot1, slot2);
         }
 
-        public List<Item> GetAvailableItems(ItemRecipe recipe)
+        public List<Item> GetAvailableItems(ItemRecipe recipe, ItemManager itemManager)
         {
             var result = new List<Item>();
-            var tmpRecipe = recipe.Items.ToList();
+            var tmpRecipe = recipe.GetItems(itemManager).ToList();
             foreach(var item in _inventory.Items)
             {
                 if (item == null) continue;
@@ -69,9 +68,9 @@ namespace LeagueSandbox.GameServer.Logic.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory(Game game, Champion owner)
+        public static InventoryManager CreateInventory(Champion owner)
         {
-            return new InventoryManager(game, owner);
+            return new InventoryManager(owner);
         }
     }
 }

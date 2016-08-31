@@ -9,6 +9,10 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer
 {
@@ -21,12 +25,14 @@ namespace LeagueSandbox.GameServer
         private Logger _logger;
         private RAFManager _rafManager;
         private ServerContext _serverContext;
+        private Game _game;
 
-        public Server(Logger logger, RAFManager rafManager, ServerContext serverContext)
+        public Server(Logger logger, RAFManager rafManager, ServerContext serverContext, Game game)
         {
             _logger = logger;
             _rafManager = rafManager;
             _serverContext = serverContext;
+            _game = game;
         }
 
         public void Start()
@@ -34,17 +40,16 @@ namespace LeagueSandbox.GameServer
             Console.WriteLine("Yorick " + SERVER_VERSION);
 
             _logger.LogCoreInfo("Game started");
-
-            var game = new Game();
+            
             var address = new Address(SERVER_HOST, SERVER_PORT);
 
-            if (!game.Initialize(address, SERVER_KEY))
+            if (!_game.Initialize(address, SERVER_KEY))
             {
                 _logger.LogCoreError("Couldn't listen on port " + SERVER_PORT + ", or invalid key");
                 throw new ApplicationException();
             }
 
-            game.NetLoop();
+            _game.NetLoop();
         }
 
         public void Dispose()

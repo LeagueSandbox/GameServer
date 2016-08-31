@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -21,9 +23,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
 
-            me = _owner.GetGame().GetPeerInfo(peer).GetChampion();
+            me = _playerManager.GetPeerInfo(peer).GetChampion();
             owner = _owner;
 
             if (split.Length > 1)
@@ -60,8 +64,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void BroadcastTint(Champion source, bool enable, float speed, byte r, byte g, byte b, float a)
         {
+            Game _game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(source, enable, speed, r, g, b, a);
-            owner.GetGame().PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
         }
     }
 }

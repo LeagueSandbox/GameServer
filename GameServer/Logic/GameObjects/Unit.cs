@@ -87,7 +87,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool targetable;
         protected bool nextAutoIsCrit = false;
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
-        protected Logger _logger = Program.Kernel.Get<Logger>();
+        protected Logger _logger = Program.ResolveDependency<Logger>();
+        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         protected int killDeathCounter = 0;
         private object _buffsLock = new object();
@@ -97,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private bool isCastingSpell = false;
 
-        public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
+        public Unit(uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;
@@ -180,7 +181,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         if (!isMelee())
                         {
-                            Projectile p = new Projectile(_game, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
+                            Projectile p = new Projectile(autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
                             _game.GetMap().AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
@@ -201,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         isAttacking = true;
                         autoAttackCurrentDelay = 0;
-                        autoAttackProjId = _game.GetNewNetID();
+                        autoAttackProjId = _networkIdManager.GetNewNetID();
                         autoAttackTarget = targetUnit;
 
                         if (!initialAttackDone)

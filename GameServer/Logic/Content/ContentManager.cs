@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {
-        private Logger _logger = Program.Kernel.Get<Logger>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
 
         private static readonly string[] CONTENT_TYPES = new string[]
         {

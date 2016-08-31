@@ -1,5 +1,7 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -10,6 +12,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
 
             if (split.Length < 2)
@@ -19,12 +24,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "minions")
             {
-                var objects = _owner.GetGame().GetMap().GetObjects();
+                var objects = _game.GetMap().GetObjects();
                 foreach (var o in objects)
                 {
                     if (o.Value is Minion)
                     {
-                        (o.Value as Unit).die(_owner.GetGame().GetPeerInfo(peer).GetChampion()); // :(
+                        (o.Value as Unit).die(_playerManager.GetPeerInfo(peer).GetChampion()); // :(
                     }
                 }
             }

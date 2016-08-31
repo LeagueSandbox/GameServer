@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
             var split = arguments.ToLower().Split(' ');
             float speed;
             if (split.Length < 2)
@@ -21,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
             }
             if (float.TryParse(split[1], out speed))
-                _owner.GetGame().GetPeerInfo(peer).GetChampion().GetStats().MoveSpeed.FlatBonus = speed;
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().MoveSpeed.FlatBonus = speed;
             else
                 _owner.SendDebugMsgFormatted(DebugMsgType.ERROR, "Incorrect parameter");
         }
