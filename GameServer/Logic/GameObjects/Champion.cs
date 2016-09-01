@@ -11,6 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Content;
 using NLua.Exceptions;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -45,46 +48,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.GoldPerSecond.BaseValue = game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
-            Inibin inibin;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
+            var path = game.Config.ContentManager.GetUnitStatPath(type);
+            if (path == null)
             {
-                Logger.LogCoreError("couldn't find champion stats for " + type);
+                Logger.LogCoreError("Couldn't find champion stats for " + type);
                 return;
             }
+            var data = JObject.Parse(File.ReadAllText(path));
+            var champStats = data.SelectToken("Data");
 
-            stats.HealthPoints.BaseValue = inibin.getFloatValue("Data", "BaseHP");
+            stats.HealthPoints.BaseValue = (float)champStats.SelectToken("BaseHP");
             stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = inibin.getFloatValue("Data", "BaseMP");
+            stats.ManaPoints.BaseValue = (float)champStats.SelectToken("BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = inibin.getFloatValue("DATA", "BaseDamage");
-            stats.Range.BaseValue = inibin.getFloatValue("DATA", "AttackRange");
-            stats.MoveSpeed.BaseValue = inibin.getFloatValue("DATA", "MoveSpeed");
-            stats.Armor.BaseValue = inibin.getFloatValue("DATA", "Armor");
-            stats.MagicResist.BaseValue = inibin.getFloatValue("DATA", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f/(1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent"));
+            stats.AttackDamage.BaseValue = (float)champStats.SelectToken("BaseDamage");
+            stats.Range.BaseValue = (float)champStats.SelectToken("AttackRange");
+            stats.MoveSpeed.BaseValue = (float)champStats.SelectToken("MoveSpeed");
+            stats.Armor.BaseValue = (float)champStats.SelectToken("Armor");
+            stats.MagicResist.BaseValue = (float)champStats.SelectToken("SpellBlock");
+            stats.HealthRegeneration.BaseValue = (float)champStats.SelectToken("BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = (float)champStats.SelectToken("BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f/(1 + (float)champStats.SelectToken("AttackDelayOffsetPercent"));
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
-            stats.HealthPerLevel = inibin.getFloatValue("DATA", "HPPerLevel");
-            stats.ManaPerLevel = inibin.getFloatValue("DATA", "MPPerLevel");
-            stats.AdPerLevel = inibin.getFloatValue("DATA", "DamagePerLevel");
-            stats.ArmorPerLevel = inibin.getFloatValue("DATA", "ArmorPerLevel");
-            stats.MagicResistPerLevel = inibin.getFloatValue("DATA", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = inibin.getFloatValue("DATA", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
+            stats.HealthPerLevel = (float)champStats.SelectToken("HPPerLevel");
+            stats.ManaPerLevel = (float)champStats.SelectToken("MPPerLevel");
+            stats.AdPerLevel = (float)champStats.SelectToken("DamagePerLevel");
+            stats.ArmorPerLevel = (float)champStats.SelectToken("ArmorPerLevel");
+            stats.MagicResistPerLevel = (float)champStats.SelectToken("SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = (float)champStats.SelectToken("HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = (float)champStats.SelectToken("MPRegenPerLevel");
+            stats.GrowthAttackSpeed = (float)champStats.SelectToken("AttackSpeedPerLevel");
 
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell1"), 0));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell3"), 2));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell4"), 3));
+            spells.Add(new Spell(this, (string)champStats.SelectToken("Spell1"), 0));
+            spells.Add(new Spell(this, (string)champStats.SelectToken("Spell2"), 1));
+            spells.Add(new Spell(this, (string)champStats.SelectToken("Spell3"), 2));
+            spells.Add(new Spell(this, (string)champStats.SelectToken("Spell4"), 3));
             spells.Add(new Spell(this, "SummonerHeal", 4));
             spells.Add(new Spell(this, "SummonerFlash", 5));
             spells.Add(new Spell(this, "Recall", 13));
 
-            setMelee(inibin.getBoolValue("DATA", "IsMelee"));
-            setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
+            setMelee((string)champStats.SelectToken("IsMelee") == "Yes");
+            setCollisionRadius((int)champStats.SelectToken("PathfindingCollisionRadius"));
 
             Inibin autoAttack;
             if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", out autoAttack))
