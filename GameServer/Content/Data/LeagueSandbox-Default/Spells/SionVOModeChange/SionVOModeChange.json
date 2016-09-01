@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionVOModeChange",
+        "Name": "SionVOModeChange",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionVOModeChange.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "DynamicTooltip": "game_buff_tooltip_SionWPassive",
+            "Sound_VOEventCategory": "OrderConfirmation"
+        },
+        "UNKNOWN_HASHES": {
+            "1954466257": 0,
+            "2656295760": 0,
+            "3358125263": 0,
+            "4059954766": 0,
+            "466816973": 0
+        }
+    }
+}

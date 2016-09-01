@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "ForceofNature",
+        "Name": "ForceofNature",
+        "ResourcePath": "DATA/Spells/ForceofNature.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ForceofNature"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "SionEArmorShred",
+        "Name": "SionEArmorShred",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionEArmorShred.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionEShred"
+        }
+    }
+}

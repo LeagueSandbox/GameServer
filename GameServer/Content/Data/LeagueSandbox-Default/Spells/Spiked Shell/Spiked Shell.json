@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 2,
+        "Id": "Spiked Shell",
+        "Name": "Spiked Shell",
+        "ResourcePath": "DATA/Spells/Spiked Shell.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Spiked_Shell"
+        }
+    }
+}

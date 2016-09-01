@@ -17,8 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             "Items",
             "Buffs",
             "Maps",
-            "Stats"//,
-            //"Spells"
+            "Stats"
         };
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
@@ -153,14 +152,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var fileName = string.Format("{0}.json", unitName);
             return GetContentPath(contentPackages, contentType, fileName);
         }
-
-        /*public string GetSpellDataPath(string spellName)
-        {
-            var contentType = "Spells";
-            var contentPackages = _content[contentType][spellName];
-            var fileName = string.Format("{0}.json", spellName);
-            return GetContentPath(contentPackages, contentType, fileName);
-        }*/
 
         public static ContentManager LoadGameMode(string gameModeName)
         {
