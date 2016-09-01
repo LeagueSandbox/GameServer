@@ -1532,9 +1532,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes(player.GetName()))
                 buffer.Write((byte)b);
             buffer.fill(0, 128 - player.GetName().Length);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().GetType()))
                 buffer.Write((byte)b);
-            buffer.fill(0, 40 - player.GetChampion().getType().Length);
+            buffer.fill(0, 40 - player.GetChampion().GetType().Length);
             buffer.Write((float)0.0f); // deathDurationRemaining
             buffer.Write((float)0.0f); // timeSinceDeath
             buffer.Write((int)0); // UNK (4.18)
@@ -1967,8 +1967,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var player = p.Item2;
             buffer.Write((long)player.UserId);
             buffer.Write((int)player.GetSkinNo());
-            buffer.Write((int)player.GetChampion().getType().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
+            buffer.Write((int)player.GetChampion().GetType().Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().GetType()))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }

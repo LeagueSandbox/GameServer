@@ -502,13 +502,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             lock (_buffsLock)
             {
-                if (!_buffs.ContainsKey(b.GetName()))
+                if (!_buffs.ContainsKey(b.Name))
                 {
-                    _buffs.Add(b.GetName(), b);
+                    _buffs.Add(b.Name, b);
                 }
                 else
                 {
-                    _buffs[b.GetName()].SetTimeElapsed(0); // if buff already exists, just restart its timer
+                    _buffs[b.Name].TimeElapsed = 0; // if buff already exists, just restart its timer
                 }
             }
         }
@@ -516,7 +516,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void RemoveBuff(Buff b)
         {
             //TODO add every stat
-            RemoveBuff(b.GetName());
+            RemoveBuff(b.Name);
         }
 
         public void RemoveBuff(string b)

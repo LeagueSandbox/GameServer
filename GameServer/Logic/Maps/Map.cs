@@ -134,11 +134,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var tempBuffs = u.GetBuffs();
                 foreach (var buff in tempBuffs.Values)
                 {
-                    if (buff.NeedsToRemove())
+                    if (buff.NeedsToRemove)
                     {
-                        if (buff.GetName() != "")
+                        if (buff.Name != "")
                         {
-                            _game.PacketNotifier.notifyRemoveBuff(buff.GetUnit(), buff.GetName());
+                            _game.PacketNotifier.notifyRemoveBuff(buff.AttachedTo, buff.Name);
                         }
                         u.RemoveBuff(buff);
                         continue;
