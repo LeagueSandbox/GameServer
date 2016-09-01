@@ -16,7 +16,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
             "Champions",
             "Items",
             "Buffs",
-            "Maps"
+            "Maps",
+            "Stats"
         };
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
@@ -141,6 +142,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var contentType = "Buffs";
             var contentPackages = _content[contentType][buffName];
             var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
+            return GetContentPath(contentPackages, contentType, fileName);
+        }
+
+        public string GetUnitStatPath(string unitName)
+        {
+            var contentType = "Stats";
+            var contentPackages = _content[contentType][unitName];
+            var fileName = string.Format("{0}.json", unitName);
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
