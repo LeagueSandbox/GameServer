@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer
 {
     public class ServerContext
     {
-        public string ExecutingDirectory { get; private set; };
+        public string ExecutingDirectory { get; private set; }
 
         public ServerContext()
         {
