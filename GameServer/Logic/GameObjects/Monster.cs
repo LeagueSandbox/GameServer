@@ -65,14 +65,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            Inibin autoAttack;
-            if (!_rafManager.readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+            var autoAttack = _rafManager.GetAutoAttackData(model);
+            if (autoAttack == null)
             {
-                if (!_rafManager.readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
-                {
-                    _logger.LogCoreError("Couldn't find monster auto-attack data for " + model);
-                    return;
-                }
+                _logger.LogCoreError("Couldn't find monster auto-attack data for {0}", model);
+                return;
             }
 
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;

@@ -34,7 +34,6 @@ namespace LeagueSandbox.GameServer
 
             // Other bindings
             Bind<IScriptEngine>().To<LuaScriptEngine>();
-            
         }
     }
 }

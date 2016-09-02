@@ -416,14 +416,36 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(_networkIdManager.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(
+                _networkIdManager.GetNewNetID(),
+                owner.getX(),
+                owner.getY(),
+                (int)lineWidth,
+                owner,
+                new Target(toX, toY),
+                this,
+                projectileSpeed,
+                (int)_rafManager.getHash(nameMissile),
+                projectileFlags != 0 ? projectileFlags : flags
+            );
             _game.GetMap().AddObject(p);
             _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(_networkIdManager.GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)_rafManager.getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
+            Projectile p = new Projectile(
+                _networkIdManager.GetNewNetID(),
+                owner.getX(),
+                owner.getY(),
+                (int)lineWidth,
+                owner,
+                target,
+                this,
+                projectileSpeed,
+                (int)_rafManager.getHash(nameMissile),
+                projectileFlags != 0 ? projectileFlags : flags
+            );
             _game.GetMap().AddObject(p);
             _game.PacketNotifier.notifyProjectileSpawn(p);
         }

@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public Logger(ServerContext serverContext)
         {
-            _logWriter = new LogWriter(serverContext.GetExecutingDirectory(), "LeagueSandbox.txt");
+            _logWriter = new LogWriter(serverContext.ExecutingDirectory, "LeagueSandbox.txt");
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
@@ -82,10 +82,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             public void Log(string lines, string type = "LOG")
             {
-                var text = string.Format("({0} {1}) [{2}]: {3}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), type.ToUpper(), lines);
+                var text = string.Format(
+                    "({0} {1}) [{2}]: {3}",
+                    DateTime.Now.ToShortDateString(),
+                    DateTime.Now.ToShortTimeString(),
+                    type.ToUpper(),
+                    lines
+                );
                 lock (_locker)
                 {
-                    File.AppendAllText(Path.Combine(_executingDirectory, "Logs", _logFileName), text + Environment.NewLine);
+                    File.AppendAllText(
+                        Path.Combine(_executingDirectory, "Logs", _logFileName),
+                        text + Environment.NewLine
+                    );
                     Console.WriteLine(text);
                 }
             }

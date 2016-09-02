@@ -32,7 +32,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             PathJob job = new PathJob();
 
             if ((System.DateTime.Now - g_Clock).Milliseconds > 4000 && (successes + oot + empties) > 0)
-                _logger.LogCoreInfo("Pathfinding successrate: " + (((float)successes / (float)(successes + oot + empties)) * (100.0f)));
+                _logger.LogCoreInfo(string.Format(
+                    "Pathfinding successrate: {0}",
+                    (float)successes / (float)(successes + oot + empties) * (100.0f)
+                ));
 
             if (debugOutput)
                 _logger.LogCoreInfo("Recording this minion movement.");
@@ -46,7 +49,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (debugOutput)
             {
-                _logger.LogCoreInfo("Going from (" + job.start.X + ", " + job.start.Y + ") to (" + job.destination.X + ", " + job.destination.Y);
+                _logger.LogCoreInfo(string.Format(
+                    "Going from ({0}, {1}) to ({2}, {3})",
+                    job.start.X,
+                    job.start.Y,
+                    job.destination.X,
+                    job.destination.Y
+                ));
             }
 
             job.insertObstructions(chart, getMesh()); // Ready the map.

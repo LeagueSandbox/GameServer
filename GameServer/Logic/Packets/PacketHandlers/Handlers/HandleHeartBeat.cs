@@ -22,7 +22,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             float diff = heartbeat.ackTime - heartbeat.receiveTime;
             if (heartbeat.receiveTime > heartbeat.ackTime)
             {
-                _logger.LogCoreWarning("Player " + _playerManager.GetPeerInfo(peer).UserId + " sent an invalid heartbeat - Timestamp error (diff: " + diff);
+                _logger.LogCoreWarning(string.Format(
+                    "Player {0} sent an invalid heartbeat - Timestamp error (diff: {1})",
+                    _playerManager.GetPeerInfo(peer).UserId,
+                    diff
+                ));
             }
             else
             {

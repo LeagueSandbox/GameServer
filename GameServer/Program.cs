@@ -7,18 +7,18 @@ namespace LeagueSandbox
     class Program
     {
         // TODO: Require consumers of this inject a ServerContext
-        public static string ExecutingDirectory;
-        private static StandardKernel Kernel;
+        public static string ExecutingDirectory { get; private set; }
+        private static StandardKernel _kernel;
 
         static void Main(string[] args)
         {
-            Kernel = new StandardKernel();
-            Kernel.Load(new Bindings());
+            _kernel = new StandardKernel();
+            _kernel.Load(new Bindings());
 
-            var context = Kernel.Get<ServerContext>();
-            ExecutingDirectory = context.GetExecutingDirectory();
+            var context = _kernel.Get<ServerContext>();
+            ExecutingDirectory = context.ExecutingDirectory;
 
-            var server = Kernel.Get<Server>();
+            var server = _kernel.Get<Server>();
             server.Start();
 
             Console.ReadLine();
@@ -27,7 +27,7 @@ namespace LeagueSandbox
         [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
         public static T ResolveDependency<T>()
         {
-            return Kernel.Get<T>();
+            return _kernel.Get<T>();
         }
     }
 }

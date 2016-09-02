@@ -18,7 +18,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var click = new Click(data);
-            _logger.LogCoreInfo("Object " + _playerManager.GetPeerInfo(peer).GetChampion().getNetId() + " clicked on " + click.targetNetId);
+            _logger.LogCoreInfo(string.Format(
+                "Object {0} clicked on {1}",
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                click.targetNetId
+            ));
 
             return true;
         }

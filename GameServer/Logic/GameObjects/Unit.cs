@@ -98,7 +98,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private bool isCastingSpell = false;
 
-        public Unit(uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(id, x, y, collisionRadius, visionRadius)
+        public Unit(
+            uint id,
+            string model,
+            Stats stats,
+            int collisionRadius = 40,
+            float x = 0,
+            float y = 0,
+            int visionRadius = 0
+        ) : base(id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;
@@ -181,7 +189,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         if (!isMelee())
                         {
-                            Projectile p = new Projectile(autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
+                            Projectile p = new Projectile(
+                                autoAttackProjId,
+                                x,
+                                y,
+                                5,
+                                this,
+                                autoAttackTarget,
+                                null,
+                                autoAttackProjectileSpeed,
+                                0
+                            );
                             _game.GetMap().AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
@@ -208,12 +226,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!initialAttackDone)
                         {
                             initialAttackDone = true;
-                            _game.PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
+                            _game.PacketNotifier.notifyBeginAutoAttack(
+                                this,
+                                targetUnit,
+                                autoAttackProjId,
+                                nextAutoIsCrit
+                            );
                         }
                         else
                         {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
-                            _game.PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
+                            _game.PacketNotifier.notifyNextAutoAttack(
+                                this,
+                                targetUnit,
+                                autoAttackProjId,
+                                nextAutoIsCrit,
+                                nextAttackFlag
+                                );
                         }
 
                         var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
@@ -229,7 +258,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else if (isAttacking)
             {
-                if (autoAttackTarget == null || autoAttackTarget.isDead() || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget))
+                if (
+                    autoAttackTarget == null 
+                    || autoAttackTarget.isDead()
+                    || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget)
+                )
                 {
                     isAttacking = false;
                     initialAttackDone = false;
@@ -418,7 +451,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    _logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError(string.Format("LUA ERROR : {0}", e.Message));
                 }
             }
 
@@ -459,7 +492,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller.killDeathCounter < 0)
                 {
                     cKiller.setChampionGoldFromMinions(cKiller.getChampionGoldFromMinions() + gold);
-                    _logger.LogCoreInfo("Adding gold form minions to reduce death spree: " + cKiller.getChampionGoldFromMinions());
+                    _logger.LogCoreInfo(string.Format(
+                        "Adding gold form minions to reduce death spree: {0}",
+                        cKiller.getChampionGoldFromMinions()
+                    ));
                 }
 
                 if (cKiller.getChampionGoldFromMinions() >= 50 && cKiller.killDeathCounter < 0)

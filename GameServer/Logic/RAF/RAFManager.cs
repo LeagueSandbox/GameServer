@@ -19,25 +19,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
 
         public RAFManager(Logger _logger)
         {
-            /* if (!Directory.Exists(rootDirectory))
-                 return false;
-
-             var dirs = Directory.EnumerateDirectories(rootDirectory);
-
-             foreach (var dir in dirs)
-             {
-                 var files = Directory.GetFiles(dir, "*.raf");
-
-                 foreach (var file in files)
-                 {
-                     if (!File.Exists(file))
-                         continue;
-
-                     var raf = RiotArchive.FromFile(file);
-                     Files.Add(raf);
-                 }
-             }*/
-
             _logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
             var settings = Settings.Load("Settings/Settings.json");

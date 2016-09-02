@@ -9,16 +9,11 @@ namespace LeagueSandbox.GameServer
 {
     public class ServerContext
     {
-        private string _executingDirectory;
+        public string ExecutingDirectory { get; private set; };
 
         public ServerContext()
         {
-            _executingDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        }
-
-        public string GetExecutingDirectory()
-        {
-            return _executingDirectory;
+            ExecutingDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
     }
 }

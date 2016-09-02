@@ -13,7 +13,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var parsedData = new UseObject(data);
-            _logger.LogCoreInfo("Object " + _playerManager.GetPeerInfo(peer).GetChampion().getNetId() + " is trying to use (right clicked) " + parsedData.targetNetId);
+            _logger.LogCoreInfo(string.Format(
+                "Object {0} is trying to use (right clicked) {1}",
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                parsedData.targetNetId
+            ));
 
             return true;
         }

@@ -73,7 +73,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var map = _game.GetMap();
             if (map != null && map != chart)
             {
-                _logger.LogCoreInfo("Map is adding an object that is not healthy. His map pointer is " + _game.GetMap() + " (not " + chart + "). Not adding it.");
+                _logger.LogCoreInfo(string.Format(
+                    "Map is adding an object that is not healthy. His map pointer is {0} (not {1}). Not adding it.",
+                    _game.GetMap(),
+                    chart
+                ));
                 return;
             }
 
@@ -84,7 +88,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (divX < 0 || divX > divisionCount || divY < 0 || divY > divisionCount)  // We're not inside the map! Add to the unmanaged objects.
             {
-                _logger.LogCoreError("Object spawned outside of map. (" + obj.getPosition().X + ", " + obj.getPosition().Y + ")");
+                _logger.LogCoreError(string.Format(
+                    "Object spawned outside of map. ({0}, {1})",
+                    obj.getPosition().X,
+                    obj.getPosition().Y
+                ));
                 //addUnmanagedObject(object);
             }
             else
@@ -264,7 +272,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     while (_game.GetMap().GetId() != chart.GetId())
                     {
-                        _logger.LogCoreWarning("I have found an object that is not healthy. His map pointer is " + _game.GetMap().GetId() + " (not " + chart.GetId() + "). Removing it from the database (" + j + "/" + curDiv.objects.Count + " in div " + pos + ").");
+                        _logger.LogCoreWarning(string.Format(
+                            "I have found an object that is not healthy. " +
+                            "His map pointer is {0} (not {1}). " +
+                            "Removing it from the database ({2}/{3} in div {4}).",
+                            _game.GetMap().GetId(),
+                            chart.GetId(),
+                            j,
+                            curDiv.objects.Count,
+                            pos
+                        ));
                         removeObject(o);
                         if (j < curDiv.objects.Count)
                             o = curDiv.objects[j];

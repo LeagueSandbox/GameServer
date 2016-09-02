@@ -17,18 +17,26 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger _logger = Program.ResolveDependency<Logger>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+            Logger logger = Program.ResolveDependency<Logger>();
+            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
 
-            _logger.LogCoreInfo("At " + _playerManager.GetPeerInfo(peer).GetChampion().getX() + ";" + _playerManager.GetPeerInfo(peer).GetChampion().getY());
-            StringBuilder debugMsg = new StringBuilder();
-            debugMsg.Append("At Coords - X: ");
-            debugMsg.Append(_playerManager.GetPeerInfo(peer).GetChampion().getX());
-            debugMsg.Append(" Y: ");
-            debugMsg.Append(_playerManager.GetPeerInfo(peer).GetChampion().getY());
-            debugMsg.Append(" Z: ");
-            debugMsg.Append(_playerManager.GetPeerInfo(peer).GetChampion().GetZ());
-            _owner.SendDebugMsgFormatted(DebugMsgType.NORMAL, debugMsg.ToString());
+            var champion = playerManager.GetPeerInfo(peer).GetChampion();
+
+            logger.LogCoreInfo(string.Format(
+                "At {0}; {1}",
+                champion.getX(),
+                champion.getY()
+            ));
+
+            _owner.SendDebugMsgFormatted(
+                DebugMsgType.NORMAL,
+                string.Format(
+                    "At Coords - X: {0} Y: {1} Z: {2}",
+                    champion.getX(),
+                    champion.getY(),
+                    champion.GetZ()
+                )
+            );
         }
     }
 }
