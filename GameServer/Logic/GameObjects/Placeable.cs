@@ -15,7 +15,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string _name;
         private Unit _owner; // We'll probably want to change this in the future
 
-        public Placeable(Unit owner, uint id, float x, float y, string model, string name) : base(id, model, new Stats(), 40, x, y)
+        public Placeable(
+            Unit owner,
+            uint id,
+            float x,
+            float y,
+            string model,
+            string name
+        ) : base(id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 

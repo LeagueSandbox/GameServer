@@ -13,8 +13,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         public Unit Owner { get; private set; }
 
-        public AzirTurret(Unit owner, uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE)
-               : base(id, name, model, x, y)
+        public AzirTurret(
+            Unit owner,
+            uint id,
+            string name,
+            string model,
+            float x = 0,
+            float y = 0,
+            TeamId team = TeamId.TEAM_BLUE
+        ) : base(id, name, model, x, y)
         {
             this.Owner = owner;
 
@@ -37,7 +44,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ManaPoints.BaseValue = inibin.getFloatValue("Data", "BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
             stats.AttackDamage.BaseValue = inibin.getFloatValue("DATA", "BaseDamage");
-            stats.Range.BaseValue = TURRET_RANGE;//inibin.getFloatValue("DATA", "AttackRange");
+            stats.Range.BaseValue = TURRET_RANGE;
             stats.MoveSpeed.BaseValue = inibin.getFloatValue("DATA", "MoveSpeed");
             stats.Armor.BaseValue = inibin.getFloatValue("DATA", "Armor");
             stats.MagicResist.BaseValue = inibin.getFloatValue("DATA", "SpellBlock");

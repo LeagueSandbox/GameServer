@@ -16,8 +16,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+            Game game = Program.ResolveDependency<Game>();
+            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
 
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -29,11 +29,24 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             int team;
             if (!int.TryParse(split[1], out team))
                 return;
-            var units = _game.GetMap().GetObjects().Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team)).Where(xx => xx.Value is Minion || xx.Value is Monster);
+            var units = game.GetMap().GetObjects()
+                .Where(xx => xx.Value.getTeam() == CustomConvert.toTeamId(team))
+                .Where(xx => xx.Value is Minion || xx.Value is Monster);
             foreach (var unit in units)
             {
-                var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), new AttentionPing { x = unit.Value.getX(), y = unit.Value.getY(), targetNetId = 0, type = Pings.Ping_Danger });
-                _game.PacketHandlerManager.broadcastPacketTeam(_playerManager.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+                var response = new AttentionPingAns(
+                    playerManager.GetPeerInfo(peer),
+                    new AttentionPing {
+                        x = unit.Value.getX(),
+                        y = unit.Value.getY(),
+                        targetNetId = 0,
+                        type = Pings.Ping_Danger
+                    });
+                game.PacketHandlerManager.broadcastPacketTeam(
+                    playerManager.GetPeerInfo(peer).GetTeam(),
+                    response,
+                    Channel.CHL_S2C
+                );
             }
         }
     }

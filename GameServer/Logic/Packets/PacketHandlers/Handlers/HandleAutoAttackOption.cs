@@ -18,7 +18,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 state = "Activated";
             }
 
-            _chatboxManager.SendDebugMsgFormatted(GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL, "Auto attack: " + state);
+            _chatboxManager.SendDebugMsgFormatted(
+                GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL,
+                "Auto attack: " + state
+            );
             return true;
         }
     }

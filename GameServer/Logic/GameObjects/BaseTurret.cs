@@ -13,7 +13,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     
         private Game _game = Program.ResolveDependency<Game>();
 
-        public BaseTurret(uint id, string name, string model, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE) : base(id, model, new Stats(), 50, x, y, 1200)
+        public BaseTurret(
+            uint id,
+            string name,
+            string model,
+            float x = 0,
+            float y = 0,
+            TeamId team = TeamId.TEAM_BLUE
+        ) : base(id, model, new Stats(), 50, x, y, 1200)
         {
             this.Name = name;
 

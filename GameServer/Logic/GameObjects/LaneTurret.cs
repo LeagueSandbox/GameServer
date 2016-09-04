@@ -25,8 +25,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public TurretType Type { get; private set; }
         private bool _turretHPUpdated = false;
 
-        public LaneTurret(uint id, string name, float x = 0, float y = 0, TeamId team = TeamId.TEAM_BLUE, TurretType type = TurretType.OuterTurret)
-               : base(id, name, "", x, y)
+        public LaneTurret(
+            uint id,
+            string name,
+            float x = 0,
+            float y = 0,
+            TeamId team = TeamId.TEAM_BLUE,
+            TurretType type = TurretType.OuterTurret
+        ) : base(id, name, "", x, y)
         {
             this.Type = type;
 

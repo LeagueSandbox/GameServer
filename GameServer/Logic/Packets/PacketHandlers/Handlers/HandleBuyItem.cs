@@ -25,7 +25,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().GetAvailableItems(itemTemplate.Recipe, _itemManager);
+            var recipeParts = _playerManager.GetPeerInfo(peer).GetChampion()
+                .getInventory()
+                .GetAvailableItems(itemTemplate.Recipe, _itemManager);
             var price = itemTemplate.TotalPrice;
             Item i;
 
@@ -64,7 +66,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
             }
 
-            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold = _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
+            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold =
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
             _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(itemTemplate);
             _game.PacketNotifier.notifyItemBought(_playerManager.GetPeerInfo(peer).GetChampion(), i);
 

@@ -35,7 +35,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var targetObj = _game.GetMap().GetObjectById(spell.targetNetId);
             var targetUnit = targetObj as Unit;
 
-            var s = _playerManager.GetPeerInfo(peer).GetChampion().castSpell(spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId);
+            var s = _playerManager.GetPeerInfo(peer).GetChampion().castSpell(
+                spell.spellSlot, spell.x, spell.y, targetUnit, futureProjNetId, spellNetId
+            );
 
             if (s == null)
                 return false;

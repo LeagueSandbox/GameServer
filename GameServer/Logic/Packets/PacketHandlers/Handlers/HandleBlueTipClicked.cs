@@ -15,10 +15,19 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var blueTipClicked = new BlueTipClicked(data);
-            var removeBlueTip = new BlueTip("", "", _playerManager.GetPeerInfo(peer).GetChampion().getNetId(), blueTipClicked.netid, true);
+            var removeBlueTip = new BlueTip(
+                "",
+                "",
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                blueTipClicked.netid,
+                true
+            );
             _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
 
-            _chatboxManager.SendDebugMsgFormatted(GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL, "Clicked blue tip with netid: " + blueTipClicked.netid.ToString());
+            _chatboxManager.SendDebugMsgFormatted(
+                GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL,
+                string.Format("Clicked blue tip with netid: {0}", blueTipClicked.netid.ToString())
+            );
             return true;
         }
     }

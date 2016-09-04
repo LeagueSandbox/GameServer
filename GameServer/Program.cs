@@ -1,6 +1,7 @@
 using System;
 using Ninject;
 using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox
 {
@@ -16,9 +17,11 @@ namespace LeagueSandbox
             _kernel.Load(new Bindings());
 
             var context = _kernel.Get<ServerContext>();
-            ExecutingDirectory = context.ExecutingDirectory;
-
             var server = _kernel.Get<Server>();
+            var itemManager = _kernel.Get<ItemManager>();
+
+            ExecutingDirectory = context.ExecutingDirectory;
+            itemManager.LoadItems();
             server.Start();
 
             Console.ReadLine();

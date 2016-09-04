@@ -48,44 +48,20 @@ namespace LeagueSandbox
     {
         public static SummonerSpellIds ParseSummonerSpell(string spellName)
         {
-            if (spellName == "FLASH")
+            var summonerMap = new Dictionary<string, SummonerSpellIds>()
             {
-                return SummonerSpellIds.SPL_Flash;
-            }
-            else if (spellName == "IGNITE")
-            {
-                return SummonerSpellIds.SPL_Ignite;
-            }
-            else if (spellName == "HEAL")
-            {
-                return SummonerSpellIds.SPL_Heal;
-            }
-            else if (spellName == "BARRIER")
-            {
-                return SummonerSpellIds.SPL_Barrier;
-            }
-            else if (spellName == "SMITE")
-            {
-                return SummonerSpellIds.SPL_Smite;
-            }
-            else if (spellName == "GHOST")
-            {
-                return SummonerSpellIds.SPL_Ghost;
-            }
-            else if (spellName == "REVIVE")
-            {
-                return SummonerSpellIds.SPL_Revive;
-            }
-            else if (spellName == "CLEANSE")
-            {
-                return SummonerSpellIds.SPL_Cleanse;
-            }
-            else if (spellName == "TELEPORT")
-            {
-                return SummonerSpellIds.SPL_Teleport;
-            }
+                {"FLASH", SummonerSpellIds.SPL_Flash},
+                {"IGNITE", SummonerSpellIds.SPL_Ignite},
+                {"HEAL", SummonerSpellIds.SPL_Heal},
+                {"BARRIER", SummonerSpellIds.SPL_Barrier},
+                {"SMITE", SummonerSpellIds.SPL_Smite},
+                {"GHOST", SummonerSpellIds.SPL_Ghost},
+                {"REVIVE", SummonerSpellIds.SPL_Revive},
+                {"CLEANSE", SummonerSpellIds.SPL_Cleanse},
+                {"TELEPORT", SummonerSpellIds.SPL_Teleport},
+            };
 
-            return 0;
+            return summonerMap[spellName];
         }
     }
 

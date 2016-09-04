@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -19,7 +18,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public ItemManager()
         {
             _itemTypes = new Dictionary<int, ItemType>();
-            LoadItems();
         }
 
         public ItemType GetItemType(int itemId)
@@ -45,7 +43,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public void LoadItems()
         {
-            var itemContentCollection = ItemContentCollection.LoadItemsFrom("Content/Data/LeagueSandbox-Default/Items");
+            var itemContentCollection = ItemContentCollection.LoadItemsFrom(
+                "Content/Data/LeagueSandbox-Default/Items"
+            );
             foreach(var entry in itemContentCollection)
             {
                 var itemType = ItemType.Load(this, entry.Value);

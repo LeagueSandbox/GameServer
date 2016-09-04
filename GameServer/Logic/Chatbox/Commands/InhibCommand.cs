@@ -12,13 +12,21 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-            NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+            Game game = Program.ResolveDependency<Game>();
+            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
+            NetworkIdManager networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
-            var sender = _playerManager.GetPeerInfo(peer);
-            var min = new Monster(_networkIdManager.GetNewNetID(), sender.GetChampion().getX(), sender.GetChampion().getY(), sender.GetChampion().getX(), sender.GetChampion().getY(), "Worm", "Worm");//"AncientGolem", "AncientGolem1.1.1");
-            _game.GetMap().AddObject(min);
+            var sender = playerManager.GetPeerInfo(peer);
+            var min = new Monster(
+                networkIdManager.GetNewNetID(),
+                sender.GetChampion().getX(),
+                sender.GetChampion().getY(),
+                sender.GetChampion().getX(),
+                sender.GetChampion().getY(),
+                "Worm",
+                "Worm"
+                );
+            game.GetMap().AddObject(min);
         }
     }
 }

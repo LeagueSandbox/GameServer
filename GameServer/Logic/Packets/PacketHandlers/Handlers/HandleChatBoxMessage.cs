@@ -30,8 +30,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     if (int.TryParse(split[1], out y))
                     {
-                        var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), new AttentionPing { x = x, y = y, targetNetId = 0, type = 0 });
-                        _game.PacketHandlerManager.broadcastPacketTeam(_playerManager.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+                        var response = new AttentionPingAns(
+                            _playerManager.GetPeerInfo(peer),
+                            new AttentionPing { x = x, y = y, targetNetId = 0, type = 0 }
+                        );
+                        _game.PacketHandlerManager.broadcastPacketTeam(
+                            _playerManager.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C
+                        );
                     }
                 }
             }
@@ -63,7 +68,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 case ChatType.CHAT_ALL:
                     return _game.PacketHandlerManager.broadcastPacket(data, Channel.CHL_COMMUNICATION);
                 case ChatType.CHAT_TEAM:
-                    return _game.PacketHandlerManager.broadcastPacketTeam(_playerManager.GetPeerInfo(peer).GetTeam(), data, Channel.CHL_COMMUNICATION);
+                    return _game.PacketHandlerManager.broadcastPacketTeam(
+                        _playerManager.GetPeerInfo(peer).GetTeam(), data, Channel.CHL_COMMUNICATION
+                    );
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");
                     return _game.PacketHandlerManager.sendPacket(peer, data, Channel.CHL_COMMUNICATION);

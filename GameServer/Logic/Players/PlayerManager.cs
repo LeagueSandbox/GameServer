@@ -24,7 +24,12 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
         {
-            var player = new ClientInfo(p.Value.Rank, ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE), p.Value.Ribbon, p.Value.Icon);
+            var player = new ClientInfo(
+                p.Value.Rank,
+                ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE),
+                p.Value.Ribbon,
+                p.Value.Icon
+            );
 
             player.SetName(p.Value.Name);
 

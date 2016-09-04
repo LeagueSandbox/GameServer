@@ -21,7 +21,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private bool respawnAnnounced = true;
 
         // TODO assists
-        public Inhibitor(uint id, string model, TeamId team, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(id, model, new BuildingStats(), collisionRadius, x, y, visionRadius)
+        public Inhibitor(
+            uint id,
+            string model,
+            TeamId team,
+            int collisionRadius = 40,
+            float x = 0,
+            float y = 0,
+            int visionRadius = 0
+        ) : base(id, model, new BuildingStats(), collisionRadius, x, y, visionRadius)
         {
             stats.CurrentHealth = 4000;
             stats.HealthPoints.BaseValue = 4000;

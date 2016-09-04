@@ -15,7 +15,7 @@ namespace GameServerTests
         public void TestAddAndGetItem()
         {
             var itemManager = new ItemManager();
-            //itemManager.LoadItems();
+            itemManager.LoadItems();
 
             var inventoryManager = InventoryManager.CreateInventory(null);
 
@@ -54,6 +54,7 @@ namespace GameServerTests
         public void TestItemStacking()
         {
             var itemManager = new ItemManager();
+            itemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
@@ -94,6 +95,7 @@ namespace GameServerTests
         public void TestSetExtraItem()
         {
             var itemManager = new ItemManager();
+            itemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
@@ -119,6 +121,7 @@ namespace GameServerTests
         public void TestGetItemSlot()
         {
             var itemManager = new ItemManager();
+            itemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
@@ -150,6 +153,7 @@ namespace GameServerTests
         public void TestRemoveItem()
         {
             var itemManager = new ItemManager();
+            itemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
@@ -175,6 +179,7 @@ namespace GameServerTests
         public void TestSwapItems()
         {
             var itemManager = new ItemManager();
+            itemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 

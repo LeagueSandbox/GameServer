@@ -21,7 +21,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Vector2 facing;
         private string name;
 
-        public Monster(uint id, float x, float y, float facingX, float facingY, string model, string name) : base(id, model, new Stats(), 40, x, y)
+        public Monster(
+            uint id,
+            float x,
+            float y,
+            float facingX,
+            float facingY,
+            string model,
+            string name
+        ) : base(id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 

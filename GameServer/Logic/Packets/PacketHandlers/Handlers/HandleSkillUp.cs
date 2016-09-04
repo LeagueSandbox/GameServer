@@ -24,7 +24,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (s == null)
                 return false;
 
-            var skillUpResponse = new SkillUpPacket(_playerManager.GetPeerInfo(peer).GetChampion().getNetId(), skillUpPacket.skill, (byte)s.getLevel(), (byte)s.getOwner().getSkillPoints());
+            var skillUpResponse = new SkillUpPacket(
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                skillUpPacket.skill,
+                (byte)s.getLevel(),
+                (byte)s.getOwner().getSkillPoints()
+            );
             _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
             _playerManager.GetPeerInfo(peer).GetChampion().GetStats().setSpellEnabled(skillUpPacket.skill, true);
 
