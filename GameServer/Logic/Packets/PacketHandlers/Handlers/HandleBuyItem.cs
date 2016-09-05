@@ -7,31 +7,38 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleBuyItem : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+        private ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new BuyItemReq(data);
 
-            var itemTemplate = game.ItemManager.SafeGetItemType(request.id);
+            var itemTemplate = _itemManager.SafeGetItemType(request.id);
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = game.GetPeerInfo(peer).GetChampion().getInventory().GetAvailableItems(itemTemplate.Recipe);
+            var recipeParts = _playerManager.GetPeerInfo(peer).GetChampion()
+                .getInventory()
+                .GetAvailableItems(itemTemplate.Recipe, _itemManager);
             var price = itemTemplate.TotalPrice;
             Item i;
 
             if (recipeParts.Count == 0)
             {
-                if (game.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
+                if (_playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
                 {
                     return true;
                 }
 
-                i = game.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
+                i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
 
                 if (i == null)
                 { // Slots full
@@ -43,25 +50,26 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                     price -= instance.TotalPrice;
 
-                if (game.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
+                if (_playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
                     return false;
 
 
                 foreach (var instance in recipeParts)
                 {
-                    game.GetPeerInfo(peer).GetChampion().GetStats().RemoveBuff(instance.ItemType);
-                    var champion = game.GetPeerInfo(peer).GetChampion();
+                    _playerManager.GetPeerInfo(peer).GetChampion().GetStats().RemoveBuff(instance.ItemType);
+                    var champion = _playerManager.GetPeerInfo(peer).GetChampion();
                     var inventory = champion.Inventory;
-                    game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    _game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
-                i = game.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
+                i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
             }
 
-            game.GetPeerInfo(peer).GetChampion().GetStats().Gold = game.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
-            game.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(itemTemplate);
-            game.PacketNotifier.notifyItemBought(game.GetPeerInfo(peer).GetChampion(), i);
+            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold =
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
+            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(itemTemplate);
+            _game.PacketNotifier.notifyItemBought(_playerManager.GetPeerInfo(peer).GetChampion(), i);
 
             return true;
         }

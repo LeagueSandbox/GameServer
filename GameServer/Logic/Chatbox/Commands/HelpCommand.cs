@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Packets;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
@@ -11,6 +12,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            ChatboxManager _chatboxManager = Program.ResolveDependency<ChatboxManager>();
+
             string commands = "";
             int count = 0;
             foreach (var command in _owner.GetCommandsStrings())
@@ -18,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 count += 1;
                 commands = commands
                            + "<font color =\"#E175FF\"><b>"
-                           + _owner.GetGame().ChatboxManager.CommandStarterCharacter + command
+                           + _chatboxManager.CommandStarterCharacter + command
                            + "</b><font color =\"#FFB145\">, ";
             }
             _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");

@@ -12,7 +12,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Projectile : GameObject
     {
-
         protected List<GameObject> objectsHit = new List<GameObject>();
         protected Spell originSpell;
         protected Unit owner;
@@ -20,7 +19,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected int projectileId;
         protected int flags;
 
-        public Projectile(Game game, uint id, float x, float y, int collisionRadius, Unit owner, Target target, Spell originSpell, float moveSpeed, int projectileId, int flags = 0) : base(game, id, x, y, collisionRadius)
+        public Projectile(
+            uint id,
+            float x,
+            float y,
+            int collisionRadius,
+            Unit owner,
+            Target target,
+            Spell originSpell,
+            float moveSpeed,
+            int projectileId,
+            int flags = 0
+        ) : base(id, x, y, collisionRadius)
         {
             this.originSpell = originSpell;
             this.moveSpeed = moveSpeed;
@@ -61,13 +71,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (u == null)
                             continue;
 
-                        if (u.getTeam() == owner.getTeam() && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                        if (u.getTeam() == owner.getTeam() 
+                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                             continue;
 
-                        if (u.getTeam() == TeamId.TEAM_NEUTRAL && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                        if (u.getTeam() == TeamId.TEAM_NEUTRAL 
+                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
                             continue;
 
-                        if (u.getTeam() != owner.getTeam() && u.getTeam() != TeamId.TEAM_NEUTRAL && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                        if (u.getTeam() != owner.getTeam() 
+                            && u.getTeam() != TeamId.TEAM_NEUTRAL
+                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                             continue;
 
 

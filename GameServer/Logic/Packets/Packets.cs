@@ -16,11 +16,14 @@ using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
     public class Packet
     {
+        protected Game _game = Program.ResolveDependency<Game>();
+
         private MemoryStream memStream;
         protected BinaryWriter buffer;
         public BinaryWriter getBuffer()
@@ -322,7 +325,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.getY()); //y
             buffer.Write((float)m.getFacing().X); //facing x
-            buffer.Write((float)m.GetGame().GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
+            buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.getName()));
@@ -450,7 +453,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.getY()); //y
             buffer.Write((float)m.getFacing().X); //facing x
-            buffer.Write((float)m.GetGame().GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
+            buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.getName()));
@@ -826,8 +829,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
-            MovementVector from = u.GetGame().GetMap().ToMovementVector(u.getX(), u.getY());
-            MovementVector to = u.GetGame().GetMap().ToMovementVector(toX, toY);
+            MovementVector from = _game.GetMap().ToMovementVector(u.getX(), u.getY());
+            MovementVector to = _game.GetMap().ToMovementVector(toX, toY);
 
             buffer.Write((short)from.x);
             buffer.Write((short)from.y);
@@ -1843,6 +1846,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+
         public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
             buffer.Write(u.getNetId());//target
@@ -1850,7 +1855,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
-            buffer.Write(RAFManager.getInstance().getHash(name)); //Buff id
+            buffer.Write(_rafManager.getHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
             buffer.Write((byte)0xc6);
@@ -1905,10 +1910,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveBuff : BasePacket
     {
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.getNetId())
         {
             buffer.Write((byte)0x01);
-            buffer.Write(RAFManager.getInstance().getHash(name));
+            buffer.Write(_rafManager.getHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.getNetId());//source?
         }
@@ -2386,10 +2393,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class CastSpellAns : GamePacket
     {
+        private Game _game = Program.ResolveDependency<Game>();
 
         public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId) : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().getNetId())
         {
-            var m = s.getOwner().GetGame().GetMap();
+            var m = _game.GetMap();
 
             buffer.Write((byte)0);
             buffer.Write((byte)0x66);
@@ -2963,10 +2971,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SpawnProjectile : BasePacket
     {
+        private Game _game = Program.ResolveDependency<Game>();
 
         public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.getNetId())
         {
-            float targetZ = p.GetGame().GetMap().GetHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
+            float targetZ = _game.GetMap().GetHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
 
             buffer.Write((float)p.getX());
             buffer.Write((float)p.GetZ());
@@ -3033,6 +3042,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SpawnParticle : BasePacket
     {
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
@@ -3041,7 +3052,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)owner.getChampionHash());
-            buffer.Write((uint)RAFManager.getInstance().getHash(particle));
+            buffer.Write((uint)_rafManager.getHash(particle));
             buffer.Write((int)0x00000020); // flags ?
 
             buffer.Write((int)0);   // <-| Ahri's Orb needs something here to be

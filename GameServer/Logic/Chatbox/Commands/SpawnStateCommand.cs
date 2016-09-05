@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -9,6 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
+
             var split = arguments.ToLower().Split(' ');
 
             if (split.Length < 2)
@@ -18,11 +21,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "1")
             {
-                _owner.GetGame().GetMap().SetSpawnState(true);
+                _game.GetMap().SetSpawnState(true);
             }
             else if (split[1] == "0")
             {
-                _owner.GetGame().GetMap().SetSpawnState(false);
+                _game.GetMap().SetSpawnState(false);
             }
             else
             {

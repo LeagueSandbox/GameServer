@@ -10,6 +10,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -51,6 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Buff
     {
+        private Logger _logger = Program.ResolveDependency<Logger>();
         protected float _duration;
         protected float _movementSpeedPercentModifier;
         protected float _timeElapsed;
@@ -107,7 +109,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             catch (LuaException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
         
@@ -118,7 +120,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void LoadLua()
         {
             var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
-            Logger.LogCoreInfo("Loading buff from " + scriptLoc);
+            _logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
             _scriptEngine.Execute(@"
@@ -165,7 +167,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaException e)
                 {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
 
@@ -179,7 +181,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     catch (LuaException e)
                     {
-                        Logger.LogCoreError("LUA ERROR : " + e.Message);
+                        _logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
                     _remove = true;
                 }

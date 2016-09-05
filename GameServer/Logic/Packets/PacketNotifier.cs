@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class PacketNotifier
     {
         private Game _game;
+        private PlayerManager _playerManager;
+        private NetworkIdManager _networkIdManager;
 
-        public PacketNotifier(Game game)
+        public PacketNotifier(Game game, PlayerManager playerManager, NetworkIdManager networkIdManager)
         {
             _game = game;
+            _playerManager = playerManager;
+            _networkIdManager = networkIdManager;
         }
 
         public void notifyMinionSpawned(Minion m, TeamId team)
@@ -39,7 +44,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var losingTeam = nexus.getTeam();
 
-            foreach (var p in _game.GetPlayers())
+            foreach (var p in _playerManager.GetPlayers())
             {
                 var coords = _game.GetMap().GetEndGameCameraPosition(losingTeam);
                 var cam = new MoveCamera(p.Item2.GetChampion(), coords[0], coords[1], coords[2], 2);
@@ -189,7 +194,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyParticleSpawn(Champion source, GameObjects.Target target, string particleName)
         {
-            var sp = new SpawnParticle(source, target, particleName, _game.GetNewNetID());
+            var sp = new SpawnParticle(source, target, particleName, _networkIdManager.GetNewNetID());
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
         }
 

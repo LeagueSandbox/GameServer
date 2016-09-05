@@ -5,15 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
+using Ninject;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleClick : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var click = new Click(data);
-            Logger.LogCoreInfo("Object " + game.GetPeerInfo(peer).GetChampion().getNetId() + " clicked on " + click.targetNetId);
+            _logger.LogCoreInfo(string.Format(
+                "Object {0} clicked on {1}",
+                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                click.targetNetId
+            ));
 
             return true;
         }

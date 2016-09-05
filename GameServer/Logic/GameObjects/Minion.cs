@@ -39,7 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected MinionSpawnType minionType;
         protected bool _AIPaused;
 
-        public Minion(Game game, uint id, MinionSpawnType type, MinionSpawnPosition position, List<Vector2> mainWaypoints) : base(game, id, "", new MinionStats(), 40, 0, 0, 1100)
+        public Minion(
+            uint id,
+            MinionSpawnType type,
+            MinionSpawnPosition position,
+            List<Vector2> mainWaypoints
+        ) : base(id, "", new MinionStats(), 40, 0, 0, 1100)
         {
             this.minionType = type;
             this.spawnPosition = position;
@@ -73,16 +78,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setModel(minionModel);
 
 
-
-            if (mainWaypoints.Count > 0)                                                      // If we have lane path instructions from the map
-                setWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });       // Follow these instructions
+            // If we have lane path instructions from the map
+            if (mainWaypoints.Count > 0)
+            {
+                // Follow these instructions
+                setWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });
+            }
             else
-                setWaypoints(new List<Vector2> { new Vector2(x, y), new Vector2(x, y) });     // Otherwise path to own position. (Stand still)
+            {
+                // Otherwise path to own position. (Stand still)
+                setWaypoints(new List<Vector2> { new Vector2(x, y), new Vector2(x, y) });
+            }
 
             setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
         }
 
-        public Minion(Game game, uint id, MinionSpawnType type, MinionSpawnPosition position) : this(game, id, type, position, new List<Vector2>())
+        public Minion(
+            uint id,
+            MinionSpawnType type,
+            MinionSpawnPosition position
+        ) : this(id, type, position, new List<Vector2>())
         {
 
         }

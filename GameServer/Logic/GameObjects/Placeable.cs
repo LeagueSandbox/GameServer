@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
+using Ninject;
 using System;
 using System.Linq;
 
@@ -9,10 +10,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Placeable : Unit
     {
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+
         private string _name;
         private Unit _owner; // We'll probably want to change this in the future
 
-        public Placeable(Game game, Unit owner, uint id, float x, float y, string model, string name) : base(game, id, model, new Stats(), 40, x, y)
+        public Placeable(
+            Unit owner,
+            uint id,
+            float x,
+            float y,
+            string model,
+            string name
+        ) : base(id, model, new Stats(), 40, x, y)
         {
             setTeam(TeamId.TEAM_NEUTRAL);
 
@@ -29,9 +39,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this._name = name;
 
             Inibin inibin;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
             {
-                Logger.LogCoreError("Couldn't find placeable stats for " + model);
+                _logger.LogCoreError("Couldn't find placeable stats for " + model);
                 return;
             }
 
@@ -60,14 +70,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            Inibin autoAttack;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + model + "/Spells/" + model + "BasicAttack.inibin", out autoAttack))
+            var autoAttack = _rafManager.GetAutoAttackData(model);
+            if (autoAttack == null)
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + model + "BasicAttack.inibin", out autoAttack))
-                {
-                    Logger.LogCoreError("Couldn't find placeable auto-attack data for " + model);
-                    return;
-                }
+                _logger.LogCoreError("Couldn't find monster auto-attack data for {0}", model);
+                return;
             }
 
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;

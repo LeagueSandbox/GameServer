@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
     public abstract class ChatCommand
     {
         internal ChatboxManager _owner;
+
         public string Command { get; set; }
         public string Syntax { get; set; }
         public bool IsHidden { get; set; }

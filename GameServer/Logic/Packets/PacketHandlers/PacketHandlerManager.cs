@@ -9,19 +9,27 @@ using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic;
+using Ninject;
+using BlowFishCS;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class PacketHandlerManager
     {
-        private static PacketHandlerManager _instance;
         private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
-        private Game _game;
         private List<TeamId> _teamsEnumerator;
+        private Logger _logger;
+        private BlowFish _blowfish;
+        private Host _server;
+        private PlayerManager _playerManager;
 
-        public PacketHandlerManager(Game game)
+        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager)
         {
-            _game = game;
+            _logger = logger;
+            _blowfish = blowfish;
+            _server = server;
+            _playerManager = playerManager;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             InitHandlers();
@@ -127,7 +135,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
-                temp = _game.GetBlowfish().Encrypt(source);
+                temp = _blowfish.Encrypt(source);
             else
                 temp = source;
 
@@ -140,13 +148,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
             //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
-                temp = _game.GetBlowfish().Encrypt(data);
+                temp = _blowfish.Encrypt(data);
             else
                 temp = data;
 
             var packet = new Packet();
             packet.Create(temp);
-            _game.GetServer().Broadcast((byte)channelNo, ref packet);
+            _server.Broadcast((byte)channelNo, ref packet);
 
             return true;
         }
@@ -159,7 +167,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var ci in _game.GetPlayers())
+            foreach (var ci in _playerManager.GetPlayers())
                 if (ci.Item2.GetPeer() != null && ci.Item2.GetTeam() == team)
                     sendPacket(ci.Item2.GetPeer(), data, channelNo, flag);
             return true;
@@ -207,7 +215,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             if (handler != null)
             {
-                if (!handler.HandlePacket(peer, data, _game))
+                if (!handler.HandlePacket(peer, data))
                 {
                     Console.WriteLine("Handle failed for " + header.cmd.ToString());
                     return false;
@@ -216,7 +224,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
             else
             {
-                Logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
+                _logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
                 printPacket(data, "Error: ");
             }
             return false;
@@ -228,8 +236,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
             if (data.Length >= 8)
-                if (_game.GetPeerInfo(peer) != null)
-                    data = _game.GetBlowfish().Decrypt(data);
+                if (_playerManager.GetPeerInfo(peer) != null)
+                    data = _blowfish.Decrypt(data);
 
             return handlePacket(peer, data, channelID);
         }

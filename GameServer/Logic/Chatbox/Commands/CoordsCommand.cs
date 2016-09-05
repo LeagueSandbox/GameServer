@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Players;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +17,26 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger.LogCoreInfo("At " + _owner.GetGame().GetPeerInfo(peer).GetChampion().getX() + ";" + _owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
-            StringBuilder debugMsg = new StringBuilder();
-            debugMsg.Append("At Coords - X: ");
-            debugMsg.Append(_owner.GetGame().GetPeerInfo(peer).GetChampion().getX());
-            debugMsg.Append(" Y: ");
-            debugMsg.Append(_owner.GetGame().GetPeerInfo(peer).GetChampion().getY());
-            debugMsg.Append(" Z: ");
-            debugMsg.Append(_owner.GetGame().GetPeerInfo(peer).GetChampion().GetZ());
-            _owner.SendDebugMsgFormatted(DebugMsgType.NORMAL, debugMsg.ToString());
+            Logger logger = Program.ResolveDependency<Logger>();
+            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
+
+            var champion = playerManager.GetPeerInfo(peer).GetChampion();
+
+            logger.LogCoreInfo(string.Format(
+                "At {0}; {1}",
+                champion.getX(),
+                champion.getY()
+            ));
+
+            _owner.SendDebugMsgFormatted(
+                DebugMsgType.NORMAL,
+                string.Format(
+                    "At Coords - X: {0} Y: {1} Z: {2}",
+                    champion.getX(),
+                    champion.getY(),
+                    champion.GetZ()
+                )
+            );
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -9,9 +12,21 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var sender = _owner.GetGame().GetPeerInfo(peer);
-            var min = new Monster(_owner.GetGame(), _owner.GetGame().GetNewNetID(), sender.GetChampion().getX(), sender.GetChampion().getY(), sender.GetChampion().getX(), sender.GetChampion().getY(), "Worm", "Worm");//"AncientGolem", "AncientGolem1.1.1");
-            _owner.GetGame().GetMap().AddObject(min);
+            Game game = Program.ResolveDependency<Game>();
+            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
+            NetworkIdManager networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+
+            var sender = playerManager.GetPeerInfo(peer);
+            var min = new Monster(
+                networkIdManager.GetNewNetID(),
+                sender.GetChampion().getX(),
+                sender.GetChampion().getY(),
+                sender.GetChampion().getX(),
+                sender.GetChampion().getY(),
+                "Worm",
+                "Worm"
+                );
+            game.GetMap().AddObject(min);
         }
     }
 }

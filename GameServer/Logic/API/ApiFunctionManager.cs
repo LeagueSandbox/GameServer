@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = unit.GetGame().GetMap().getAIMesh().getClosestTerrainExit(coords);
+            var truePos = _game.GetMap().getAIMesh().getClosestTerrainExit(coords);
             _game.PacketNotifier.notifyTeleport(unit, truePos.X, truePos.Y);
         }
 
@@ -91,7 +91,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
 
-            var newCoords = unit.GetGame().GetMap().getAIMesh().getClosestTerrainExit(new Vector2(x, y));
+            var newCoords = _game.GetMap().getAIMesh().getClosestTerrainExit(new Vector2(x, y));
             unit.dashTo(newCoords.X, newCoords.Y, dashSpeed);
             unit.setTargetUnit(null);
             _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);

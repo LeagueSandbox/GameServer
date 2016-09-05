@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleNull : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             return true;
         }

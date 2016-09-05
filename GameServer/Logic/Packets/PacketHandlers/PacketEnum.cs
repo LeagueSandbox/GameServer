@@ -212,7 +212,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         SPL_Promote = 0x0410FF72,
         SPL_Clair = 0x09896765,
         SPL_Flash = 0x06496EA8,
-        SPL_Test = 0x0103D94C,
+        SPL_Test = 0x0103D94C
     };
 
     public enum MasterMask : uint

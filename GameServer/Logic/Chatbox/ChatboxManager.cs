@@ -10,7 +10,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public class ChatboxManager
     {
-        private Game _game;
         public string CommandStarterCharacter= ".";
 
         private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
@@ -37,8 +36,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public enum DebugMsgType { ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL };
 
+        // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
         {
+            Game _game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
             int fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
@@ -70,9 +71,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public ChatboxManager(Game game)
+        public ChatboxManager()
         {
-            _game = game;
             AddCommand(new AdCommand("ad", "ad bonusAd", this));
             AddCommand(new ApCommand("ap", "ap bonusAp", this));
             AddCommand(new ChCommand("ch", "ch championName", this));
@@ -159,11 +159,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             {
                 return null;
             }
-        }
-
-        public Game GetGame()
-        {
-            return _game;
         }
     }
 }

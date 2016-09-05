@@ -11,11 +11,14 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Content;
 using NLua.Exceptions;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Champion : Unit
     {
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+
         public Shop Shop { get; protected set; }
         public InventoryManager Inventory { get; protected set; }
 
@@ -33,22 +36,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return spells[index];
         }
-        public Champion(Game game, string type, uint id, uint playerId) : base(game, id, type, new Stats(), 30, 0, 0, 1200)
+
+        public Champion(string type, uint id, uint playerId) : base(id, type, new Stats(), 30, 0, 0, 1200)
         {
             this.type = type;
             this.playerId = playerId;
 
-            Inventory = InventoryManager.CreateInventory(game, this);
+            Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = game.GetMap().GetGoldPerSecond();
+            stats.GoldPerSecond.BaseValue = _game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
             Inibin inibin;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
             {
-                Logger.LogCoreError("couldn't find champion stats for " + type);
+                _logger.LogCoreError("couldn't find champion stats for " + type);
                 return;
             }
 
@@ -87,11 +91,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
             Inibin autoAttack;
-            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", out autoAttack))
+            if (!_rafManager.readInibin("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", out autoAttack))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + type + "BasicAttack.inibin", out autoAttack))
+                if (!_rafManager.readInibin("DATA/Spells/" + type + "BasicAttack.inibin", out autoAttack))
                 {
-                    Logger.LogCoreError("Couldn't find champion auto-attack data for " + type);
+                    _logger.LogCoreError("Couldn't find champion auto-attack data for " + type);
                     return;
                 }
             }
@@ -201,7 +205,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             catch (LuaScriptException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
             Spell s = null;
             foreach (Spell t in spells)
@@ -275,7 +279,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (!stats.IsGeneratingGold() && _game.GetMap().GetGameTime() >= _game.GetMap().GetFirstGoldTime())
             {
                 stats.SetGeneratingGold(true);
-                Logger.LogCoreInfo("Generating Gold!");
+                _logger.LogCoreInfo("Generating Gold!");
             }
 
             if (respawnTimer > 0)
@@ -369,7 +373,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 GetStats().LevelUp();
-                Logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
+                _logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
                 skillPoints++;
             }
             return true;
@@ -390,7 +394,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (cKiller == null && championHitFlagTimer > 0)
             {
                 cKiller = _game.GetMap().GetObjectById(playerHitId) as Champion;
-                Logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
+                _logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
             if (cKiller == null)
@@ -402,7 +406,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             cKiller.setChampionGoldFromMinions(0);
 
             float gold = _game.GetMap().GetGoldFor(this);
-            Logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
+            _logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
 
             if (cKiller.killDeathCounter < 0)
                 cKiller.killDeathCounter = 0;

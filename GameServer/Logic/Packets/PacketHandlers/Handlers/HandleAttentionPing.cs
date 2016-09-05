@@ -1,15 +1,23 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleAttentionPing : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var ping = new AttentionPing(data);
-            var response = new AttentionPingAns(game.GetPeerInfo(peer), ping);
-            return game.PacketHandlerManager.broadcastPacketTeam(game.GetPeerInfo(peer).GetTeam(), response, Channel.CHL_S2C);
+            var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), ping);
+            return _game.PacketHandlerManager.broadcastPacketTeam(
+                _playerManager.GetPeerInfo(peer).GetTeam(),
+                response,
+                Channel.CHL_S2C
+            );
         }
     }
     public enum Pings : byte

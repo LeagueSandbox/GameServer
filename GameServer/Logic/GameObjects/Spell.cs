@@ -15,6 +15,7 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -112,6 +113,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public static bool NO_MANACOST = true;
 
         private IScriptEngine _scriptEngine;
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
+        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public Spell(Champion owner, string spellName, byte slot)
         {
@@ -127,7 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (slot > 3)
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
                 {
                     return;
                 }
@@ -141,13 +146,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
                     {
-                        Logger.LogCoreError("Couldn't find spell stats for " + spellName);
+                        _logger.LogCoreError("Couldn't find spell stats for " + spellName);
                         return;
                     }
                 }
@@ -194,17 +199,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
 
             // This is starting to get ugly. How many more names / paths to go ?
-            if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + "Missile.inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Missile.inibin", out inibin))
             {
-                if (!RAFManager.getInstance().readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
                 {
-                    if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
                     {
-                        if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
+                        if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
                         {
-                            if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
+                            if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
                             {
-                                if (!RAFManager.getInstance().readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
+                                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
                                 {
                                     return;
                                 }
@@ -250,14 +255,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void finishCasting()
         {
 
-            Logger.LogCoreInfo("Spell from slot " + getSlot());
+            _logger.LogCoreInfo("Spell from slot " + getSlot());
             try
             {
                 _scriptEngine.Execute("onFinishCasting()");
             }
             catch (LuaException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
 
             state = SpellState.STATE_COOLDOWN;
@@ -266,15 +271,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (getSlot() < 4)
             {
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), currentCooldown, getCooldown());
             }
             else if (getSlot() == 4) //Done this because summ-spells are hard-coded
             {                        //Fix these when they are not
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), 240, 240);
             }
             else if (getSlot() == 5)
             {
-                owner.GetGame().PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
+                _game.PacketNotifier.notifySetCooldown(owner, getSlot(), 300, 300);
             }
 
             owner.SetCastingSpell(false);
@@ -361,7 +366,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             catch (LuaException e)
             {
-                Logger.LogCoreError("LUA ERROR : " + e.Message);
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
 
@@ -411,21 +416,43 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void addProjectile(string nameMissile, float toX, float toY)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, new Target(toX, toY), this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(
+                _networkIdManager.GetNewNetID(),
+                owner.getX(),
+                owner.getY(),
+                (int)lineWidth,
+                owner,
+                new Target(toX, toY),
+                this,
+                projectileSpeed,
+                (int)_rafManager.getHash(nameMissile),
+                projectileFlags != 0 ? projectileFlags : flags
+            );
+            _game.GetMap().AddObject(p);
+            _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void addProjectileTarget(string nameMissile, Target target)
         {
-            Projectile p = new Projectile(owner.GetGame(), owner.GetGame().GetNewNetID(), owner.getX(), owner.getY(), (int)lineWidth, owner, target, this, projectileSpeed, (int)RAFManager.getInstance().getHash(nameMissile), projectileFlags != 0 ? projectileFlags : flags);
-            owner.GetGame().GetMap().AddObject(p);
-            owner.GetGame().PacketNotifier.notifyProjectileSpawn(p);
+            Projectile p = new Projectile(
+                _networkIdManager.GetNewNetID(),
+                owner.getX(),
+                owner.getY(),
+                (int)lineWidth,
+                owner,
+                target,
+                this,
+                projectileSpeed,
+                (int)_rafManager.getHash(nameMissile),
+                projectileFlags != 0 ? projectileFlags : flags
+            );
+            _game.GetMap().AddObject(p);
+            _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
         public void spellAnimation(string animName, Unit target)
         {
-            owner.GetGame().PacketNotifier.notifySpellAnimation(target, animName);
+            _game.PacketNotifier.notifySpellAnimation(target, animName);
         }
 
         public void setAnimation(string animation, string animation2, Unit target)
@@ -433,13 +460,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             List<string> animList = new List<string>();
             animList.Add(animation);
             animList.Add(animation2);
-            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.notifySetAnimation(target, animList);
         }
 
         public void resetAnimations(Unit target)
         {
             List<string> animList = new List<string>();
-            owner.GetGame().PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.notifySetAnimation(target, animList);
         }
 
         public int getOtherSpellLevel(int slotId)
@@ -452,7 +479,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public int getId()
         {
-            return (int)RAFManager.getInstance().getHash(spellName);
+            return (int)_rafManager.getHash(spellName);
         }
 
         public float getCastTime()
@@ -479,19 +506,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
-            var game = owner.GetGame();
-            var p = new Placeable(game, this.owner, game.GetNewNetID(), toX, toY, model, name);
+            var p = new Placeable(this.owner, _networkIdManager.GetNewNetID(), toX, toY, model, name);
             p.setTeam(owner.getTeam());
 
             p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
             p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
-            game.GetMap().AddObject(p);
+            _game.GetMap().AddObject(p);
         }
 
         public void LoadLua(IScriptEngine scriptEngine)
         {
-            var config = owner.GetGame().Config;
+            var config = _game.Config;
             string scriptloc;
 
             if (getSlot() > 3)

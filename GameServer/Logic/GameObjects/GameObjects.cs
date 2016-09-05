@@ -23,7 +23,6 @@ namespace LeagueSandbox.GameServer.Logic
 
         protected List<Vector2> waypoints = new List<Vector2>();
         protected int curWaypoint;
-        protected Game _game;
         protected TeamId team;
         protected bool movementUpdated;
         protected bool toRemove;
@@ -35,9 +34,10 @@ namespace LeagueSandbox.GameServer.Logic
         protected float dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
 
-        public GameObject(Game game, uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
+        protected Game _game = Program.ResolveDependency<Game>();
+
+        public GameObject(uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
         {
-            _game = game;
             this.id = id;
             this.target = null;
             this.collisionRadius = collisionRadius;
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic
                         var u = this as Unit;
 
                         List<string> animList = new List<string>();
-                        u.GetGame().PacketNotifier.notifySetAnimation(u, animList);
+                        _game.PacketNotifier.notifySetAnimation(u, animList);
                     }
 
                     setTarget(null);
@@ -223,11 +223,6 @@ namespace LeagueSandbox.GameServer.Logic
             return id;
         }
 
-        public Game GetGame()
-        {
-            return _game;
-        }
-
         public override void setPosition(float x, float y)
         {
             this.x = x;
@@ -235,6 +230,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             setTarget(null);
         }
+
         public virtual float GetZ()
         {
             return _game.GetMap().GetHeightAtLocation(x, y);

@@ -13,12 +13,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ItemManager
     {
-        private Game _owner;
         private Dictionary<int, ItemType> _itemTypes;
 
-        private ItemManager(Game owner)
+        public ItemManager()
         {
-            _owner = owner;
             _itemTypes = new Dictionary<int, ItemType>();
         }
 
@@ -37,23 +35,27 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             return SafeGetItemType(itemId, null);
         }
-
-        public static ItemManager LoadItems(Game game)
+        
+        public void ResetItems()
         {
-            var result = new ItemManager(game);
-            var itemContentCollection = ItemContentCollection.LoadItemsFrom("Content/Data/LeagueSandbox-Default/Items");
+            _itemTypes.Clear();
+        }
+
+        public void LoadItems()
+        {
+            var itemContentCollection = ItemContentCollection.LoadItemsFrom(
+                "Content/Data/LeagueSandbox-Default/Items"
+            );
             foreach(var entry in itemContentCollection)
             {
-                var itemType = ItemType.Load(game, result, entry.Value);
-                result._itemTypes.Add(entry.Key, itemType);
+                var itemType = ItemType.Load(this, entry.Value);
+                _itemTypes.Add(entry.Key, itemType);
             }
-            return result;
         }
     }
 
     public class ItemType : IBuff
     {
-        private Game _game;
         private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
 
@@ -98,10 +100,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public ItemRecipe Recipe { get; private set; }
         public int TotalPrice { get { return Recipe.TotalPrice; } }
 
-        private ItemType(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
+        private ItemType(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
-            _game = game;
-            _owner = owner;
             _itemInfo = itemInfo;
 
             HealthPoints = new StatModifcator();
@@ -127,13 +127,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private void CreateRecipe()
         {
-            Recipe = ItemRecipe.FromItemType(_game, this);
+            Recipe = ItemRecipe.FromItemType(this);
         }
 
-        public static ItemType Load(Game game, ItemManager owner, ItemContentCollectionEntry itemInfo)
+        public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
-            var result = new ItemType(game, owner, itemInfo)
+            var result = new ItemType(owner, itemInfo)
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
@@ -183,12 +183,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class ItemRecipe
     {
-        private Game _game;
         private ItemType _owner;
         private ItemType[] _items;
         private int _totalPrice;
-
-        public List<ItemType> Items { get { if (_items == null) FindRecipeItems(); return _items.ToList(); } }
+        
         public int TotalPrice
         {
             get
@@ -199,28 +197,43 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
         }
 
-        private ItemRecipe(Game game, ItemType owner)
+        private ItemRecipe(ItemType owner)
         {
-            _game = game;
             _owner = owner;
             _totalPrice = -1;
         }
 
-        private void FindRecipeItems()
+        public List<ItemType> GetItems(ItemManager itemManager)
         {
+            // TODO: Figure out how to refactor this.
+            if (_items == null)
+                FindRecipeItems(itemManager);
+
+            return _items.ToList();
+        }
+        
+        public List<ItemType> GetItems()
+        {
+            // TODO: Figure out how to refactor this.
+            return _items.ToList();
+        }
+
+        private void FindRecipeItems(ItemManager itemManager)
+        {
+            // TODO: Figure out how to refactor this.
             _items = new ItemType[]
             {
-                _game.ItemManager.SafeGetItemType(_owner.RecipeItem1),
-                _game.ItemManager.SafeGetItemType(_owner.RecipeItem2),
-                _game.ItemManager.SafeGetItemType(_owner.RecipeItem3),
-                _game.ItemManager.SafeGetItemType(_owner.RecipeItem4)
+                itemManager.SafeGetItemType(_owner.RecipeItem1),
+                itemManager.SafeGetItemType(_owner.RecipeItem2),
+                itemManager.SafeGetItemType(_owner.RecipeItem3),
+                itemManager.SafeGetItemType(_owner.RecipeItem4)
             };
         }
 
         private void FindPrice()
         {
             _totalPrice = 0;
-            foreach (var item in Items)
+            foreach (var item in GetItems())
             {
                 if(item != null)
                     _totalPrice += item.TotalPrice;
@@ -228,9 +241,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice += _owner.Price;
         }
 
-        public static ItemRecipe FromItemType(Game game, ItemType type)
+        public static ItemRecipe FromItemType(ItemType type)
         {
-            return new ItemRecipe(game, type);
+            return new ItemRecipe(type);
         }
     }
 
@@ -239,13 +252,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
-
-        private Game _game;
+        
         private Inventory _owner;
 
-        private Item(Game game, Inventory owner, ItemType type)
+        private Item(Inventory owner, ItemType type)
         {
-            _game = game;
             _owner = owner;
             ItemType = type;
             StackSize = 1;
@@ -265,9 +276,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return true;
         }
 
-        public static Item CreateFromType(Game _game, Inventory inventory, ItemType item)
+        public static Item CreateFromType(Inventory inventory, ItemType item)
         {
-            return new Item(_game, inventory, item);
+            return new Item(inventory, item);
         }
     }
 }

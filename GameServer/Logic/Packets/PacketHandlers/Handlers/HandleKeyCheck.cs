@@ -1,6 +1,8 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +14,28 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleKeyCheck : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
+        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var keyCheck = new KeyCheck(data);
-            var userId = game.GetBlowfish().Decrypt(keyCheck.checkId);
+            var userId = _game.GetBlowfish().Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
                 return false;
 
             var playerNo = 0;
 
-            foreach (var p in game.GetPlayers())
+            foreach (var p in _playerManager.GetPlayers())
             {
                 var player = p.Item2;
                 if (player.UserId == userId)
                 {
                     if (player.GetPeer() != null)
                     {
-                        Logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                        _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
                         return false;
                     }
 
@@ -37,8 +43,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     p.Item1 = peer.Address.port;
                     player.SetPeer(peer);
                     var response = new KeyCheck(keyCheck.userId, playerNo);
-                    bool bRet = game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
-                    handleGameNumber(player, peer, game);//Send 0x91 Packet?
+                    bool bRet = _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
+                    handleGameNumber(player, peer, _game);//Send 0x91 Packet?
                     return true;
                 }
                 ++playerNo;
@@ -49,7 +55,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         bool handleGameNumber(ClientInfo client, Peer peer, Game game)
         {
             var world = new WorldSendGameNumber(1, client.GetName());
-            return game.PacketHandlerManager.sendPacket(peer, world, Channel.CHL_S2C);
+            return _game.PacketHandlerManager.sendPacket(peer, world, Channel.CHL_S2C);
         }
     }
 }

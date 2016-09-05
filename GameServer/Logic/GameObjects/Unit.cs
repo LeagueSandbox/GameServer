@@ -11,6 +11,7 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -86,6 +87,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool targetable;
         protected bool nextAutoIsCrit = false;
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
+        protected Logger _logger = Program.ResolveDependency<Logger>();
+        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         protected int killDeathCounter = 0;
         private object _buffsLock = new object();
@@ -95,7 +98,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private bool isCastingSpell = false;
 
-        public Unit(Game game, uint id, string model, Stats stats, int collisionRadius = 40, float x = 0, float y = 0, int visionRadius = 0) : base(game, id, x, y, collisionRadius, visionRadius)
+        public Unit(
+            uint id,
+            string model,
+            Stats stats,
+            int collisionRadius = 40,
+            float x = 0,
+            float y = 0,
+            int visionRadius = 0
+        ) : base(id, x, y, collisionRadius, visionRadius)
         {
             this.stats = stats;
             this.model = model;
@@ -142,7 +153,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     catch (LuaScriptException e)
                     {
-                        Logger.LogCoreError("LUA ERROR : " + e.Message);
+                        _logger.LogCoreError("LUA ERROR : " + e.Message);
                     }
                 }
                 _timerUpdate = 0;
@@ -178,7 +189,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         if (!isMelee())
                         {
-                            Projectile p = new Projectile(_game, autoAttackProjId, x, y, 5, this, autoAttackTarget, null, autoAttackProjectileSpeed, 0);
+                            Projectile p = new Projectile(
+                                autoAttackProjId,
+                                x,
+                                y,
+                                5,
+                                this,
+                                autoAttackTarget,
+                                null,
+                                autoAttackProjectileSpeed,
+                                0
+                            );
                             _game.GetMap().AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
@@ -199,18 +220,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         isAttacking = true;
                         autoAttackCurrentDelay = 0;
-                        autoAttackProjId = _game.GetNewNetID();
+                        autoAttackProjId = _networkIdManager.GetNewNetID();
                         autoAttackTarget = targetUnit;
 
                         if (!initialAttackDone)
                         {
                             initialAttackDone = true;
-                            _game.PacketNotifier.notifyBeginAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit);
+                            _game.PacketNotifier.notifyBeginAutoAttack(
+                                this,
+                                targetUnit,
+                                autoAttackProjId,
+                                nextAutoIsCrit
+                            );
                         }
                         else
                         {
                             nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
-                            _game.PacketNotifier.notifyNextAutoAttack(this, targetUnit, autoAttackProjId, nextAutoIsCrit, nextAttackFlag);
+                            _game.PacketNotifier.notifyNextAutoAttack(
+                                this,
+                                targetUnit,
+                                autoAttackProjId,
+                                nextAutoIsCrit,
+                                nextAttackFlag
+                                );
                         }
 
                         var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
@@ -226,7 +258,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else if (isAttacking)
             {
-                if (autoAttackTarget == null || autoAttackTarget.isDead() || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget))
+                if (
+                    autoAttackTarget == null 
+                    || autoAttackTarget.isDead()
+                    || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget)
+                )
                 {
                     isAttacking = false;
                     initialAttackDone = false;
@@ -314,7 +350,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError("LUA ERROR : " + e.Message);
                 }
             }
         }
@@ -340,7 +376,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("ERROR LUA : " + e.Message);
+                    _logger.LogCoreError("ERROR LUA : " + e.Message);
                 }
             }
 
@@ -415,7 +451,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 catch (LuaScriptException e)
                 {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
+                    _logger.LogCoreError(string.Format("LUA ERROR : {0}", e.Message));
                 }
             }
 
@@ -456,7 +492,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller.killDeathCounter < 0)
                 {
                     cKiller.setChampionGoldFromMinions(cKiller.getChampionGoldFromMinions() + gold);
-                    Logger.LogCoreInfo("Adding gold form minions to reduce death spree: " + cKiller.getChampionGoldFromMinions());
+                    _logger.LogCoreInfo(string.Format(
+                        "Adding gold form minions to reduce death spree: {0}",
+                        cKiller.getChampionGoldFromMinions()
+                    ));
                 }
 
                 if (cKiller.getChampionGoldFromMinions() >= 50 && cKiller.killDeathCounter < 0)

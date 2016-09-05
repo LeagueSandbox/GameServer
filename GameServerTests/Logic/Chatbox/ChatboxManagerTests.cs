@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace GameServerTests
 {
@@ -16,28 +18,26 @@ namespace GameServerTests
         [TestMethod()]
         public void AddCommandTest()
         {
-            var game = new TestHelpers.DummyGame();
-            game.LoadChatboxManager();
+            var chatboxManager = new ChatboxManager();
 
-            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", game.ChatboxManager);
-            var result = game.ChatboxManager.AddCommand(command);
+            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
+            var result = chatboxManager.AddCommand(command);
             Assert.AreEqual(true, result);
-            result = game.ChatboxManager.AddCommand(command);
+            result = chatboxManager.AddCommand(command);
             Assert.AreEqual(false, result);
         }
 
         [TestMethod()]
         public void RemoveCommandTest()
         {
-            var game = new TestHelpers.DummyGame();
-            game.LoadChatboxManager();
+            var chatboxManager = new ChatboxManager();
 
-            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", game.ChatboxManager);
-            var result = game.ChatboxManager.AddCommand(command);
+            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
+            var result = chatboxManager.AddCommand(command);
             Assert.AreEqual(true, result);
 
-            var result2 = game.ChatboxManager.RemoveCommand("ChatboxManagerTestsTestCommand");
-            var commands = game.ChatboxManager.GetCommandsStrings();
+            var result2 = chatboxManager.RemoveCommand("ChatboxManagerTestsTestCommand");
+            var commands = chatboxManager.GetCommandsStrings();
             Assert.AreEqual(true, result2);
             if (commands.Contains("ChatboxManagerTestsTestCommand"))
             {

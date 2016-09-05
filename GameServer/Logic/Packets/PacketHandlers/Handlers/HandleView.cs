@@ -10,7 +10,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleView : IPacketHandler
     {
-        public bool HandlePacket(Peer peer, byte[] data, Game game)
+        private Game _game = Program.ResolveDependency<Game>();
+
+        public bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new ViewRequest(data);
             var answer = new ViewAnswer(request);
@@ -22,7 +24,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 answer.setRequestNo(request.requestNo);
             }
-            game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            _game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
             return true;
         }
     }
