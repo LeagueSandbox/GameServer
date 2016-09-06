@@ -1216,6 +1216,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class SoundSettings : BasePacket
+    {
+        public SoundSettings(byte soundCategory, bool mute) : base(PacketCmdS2C.PKT_S2C_SoundSettings)
+        {
+            byte state = 0x00;
+            if (mute)
+            {
+                state = 0x01;
+            }
+            buffer.Write((byte)soundCategory);
+            buffer.Write((byte)state);
+        }
+    }
+
     public class ForceTargetSpell : ExtendedPacket
     {
         public ForceTargetSpell(Unit u, byte slot, float time)
@@ -1310,6 +1324,86 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)x);
             buffer.Write((float)z); // Doesn't seem to matter
             buffer.Write((float)y);
+        }
+    }
+
+    public class RestrictCameraMovement : BasePacket
+    {
+        public RestrictCameraMovement(float x, float y, float z, float radius, bool enable)
+               : base(PacketCmdS2C.PKT_S2C_RestrictCameraMovement)
+        {
+            byte state = 0x00;
+            if (enable)
+            {
+                state = 0x01;
+            }
+
+            buffer.Write((float)x);
+            buffer.Write((float)z);
+            buffer.Write((float)y);
+            buffer.Write((float)radius);
+            buffer.Write((byte)state);
+        }
+    }
+
+    public class DisconnectedAnnouncement : BasePacket
+    {
+        public DisconnectedAnnouncement(Unit unit) : base(PacketCmdS2C.PKT_S2C_DisconnectedAnnouncement)
+        {
+            buffer.Write(unit.NetId);
+        }
+    }
+
+    public class SetCapturePoint : BasePacket
+    {
+        public SetCapturePoint(Unit unit, byte capturePointId) : base(PacketCmdS2C.PKT_S2C_SetCapturePoint)
+        {
+            buffer.Write((byte)capturePointId);
+            buffer.Write(unit.NetId);
+            buffer.fill(0, 6);
+        }
+    }
+
+    public class SetTeam : BasePacket
+    {
+        public SetTeam(Unit unit, TeamId team) : base(PacketCmdS2C.PKT_S2C_SetTeam)
+        {
+            buffer.Write(unit.NetId);
+            buffer.Write((int)team);
+        }
+    }
+
+    public class PlaySound : BasePacket
+    {
+        public PlaySound(Unit unit, string soundName) : base(PacketCmdS2C.PKT_S2C_SetTeam, unit.NetId)
+        {
+            buffer.Write(Encoding.Default.GetBytes(soundName));
+            buffer.fill(0, 1024 - soundName.Length);
+            buffer.Write(unit.NetId);
+        }
+    }
+
+    public class CloseGame : BasePacket
+    {
+        public CloseGame() : base(PacketCmdS2C.PKT_S2C_CloseGame)
+        {
+        }
+    }
+
+    public class AttachMinimapIcon : BasePacket
+    {
+        public AttachMinimapIcon(Unit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
+               : base(PacketCmdS2C.PKT_S2C_AttachMinimapIcon)
+        {
+            buffer.Write(unit.NetId);
+            buffer.Write((byte)unk1);
+            buffer.Write(Encoding.Default.GetBytes(iconName)); // This is probably the icon name, but sometimes it's empty
+            buffer.fill(0, 64 - iconName.Length);              // Example: "Quest"
+            buffer.Write((byte)unk2);
+            buffer.Write(Encoding.Default.GetBytes(unk3));
+            buffer.fill(0, 64 - unk3.Length); // Example: "Recall"
+            buffer.Write(Encoding.Default.GetBytes(unk4));
+            buffer.fill(0, 64 - unk4.Length); // Example "OdinRecall", "odinrecallimproved"
         }
     }
 
@@ -3210,19 +3304,33 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class LevelPropAnimation : BasePacket
     {
-        public LevelPropAnimation(LevelProp lp, string animationName) : base(PacketCmdS2C.PKT_S2C_LevelPropAnimation)
+        public LevelPropAnimation(LevelProp lp,
+                                  string animationName,
+                                  float unk1 = 0.0f,
+                                  float animationTime = 0.0f,
+                                  int unk2 = 1,
+                                  int unk3 = 1,
+                                  bool deletePropAfterAnimationFinishes = false)
+
+               : base(PacketCmdS2C.PKT_S2C_LevelPropAnimation)
         {
             buffer.Write(Encoding.Default.GetBytes(animationName));
             buffer.fill(0, 64 - animationName.Length);
 
-            buffer.fill(0, 8);
+            buffer.Write((float)unk1);
+            buffer.Write((float)animationTime);
 
             buffer.Write((uint)lp.NetId);
 
-            buffer.Write((int)1);
-            buffer.Write((int)1);
+            buffer.Write((int)unk2);
+            buffer.Write((int)unk3);
 
-            buffer.Write((byte)0x01);
+            byte delete = 0x00;
+            if (deletePropAfterAnimationFinishes)
+            {
+                delete = 0x01;
+            }
+            buffer.Write((byte)delete); // Most likely deletes prop after animation ends when set to 1
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
         }
