@@ -139,14 +139,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 u.setPosition(_x, _y);
 
-                //TeleportRequest first(u.getNetId(), u.teleportToX, u.teleportToY, true);
+                //TeleportRequest first(u.NetId, u.teleportToX, u.teleportToY, true);
                 //sendPacket(currentPeer, first, Channel.CHL_S2C);
 
                 _x = MovementVector.targetXToNormalFormat(_x);
                 _y = MovementVector.targetYToNormalFormat(_y);
             }
 
-            var second = new TeleportRequest(u.getNetId(), _x, _y, false);
+            var second = new TeleportRequest(u.NetId, _x, _y, false);
             _game.PacketHandlerManager.broadcastPacketVision(u, second, Channel.CHL_S2C);
         }
 
@@ -200,7 +200,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyModelUpdate(Unit obj)
         {
-            var mp = new UpdateModel(obj.getNetId(), obj.getModel());
+            var mp = new UpdateModel(obj.NetId, obj.getModel());
             _game.PacketHandlerManager.broadcastPacket(mp, Channel.CHL_S2C);
         }
 
@@ -384,7 +384,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifySetCooldown(Champion c, byte slotId, float currentCd, float totalCd)
         {
-            var cd = new SetCooldown(c.getNetId(), slotId, currentCd, totalCd);
+            var cd = new SetCooldown(c.NetId, slotId, currentCd, totalCd);
             _game.PacketHandlerManager.broadcastPacket(cd, Channel.CHL_S2C);
         }
 

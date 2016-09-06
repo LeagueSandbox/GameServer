@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var click = new Click(data);
             _logger.LogCoreInfo(string.Format(
                 "Object {0} clicked on {1}",
-                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                _playerManager.GetPeerInfo(peer).GetChampion().NetId,
                 click.targetNetId
             ));
 

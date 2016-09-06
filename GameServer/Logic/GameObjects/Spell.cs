@@ -417,7 +417,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addProjectile(string nameMissile, float toX, float toY)
         {
             Projectile p = new Projectile(
-                _networkIdManager.GetNewNetID(),
                 owner.getX(),
                 owner.getY(),
                 (int)lineWidth,
@@ -435,7 +434,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void addProjectileTarget(string nameMissile, Target target)
         {
             Projectile p = new Projectile(
-                _networkIdManager.GetNewNetID(),
                 owner.getX(),
                 owner.getY(),
                 (int)lineWidth,
@@ -506,7 +504,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
-            var p = new Placeable(this.owner, _networkIdManager.GetNewNetID(), toX, toY, model, name);
+            var p = new Placeable(this.owner, toX, toY, model, name);
             p.setTeam(owner.getTeam());
 
             p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
@@ -569,7 +567,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.set_function("addProjectileCustom", [this](const std::string&name, float projSpeed, float toX, float toY) {
                 Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, new Target(toX, toY), this, projectileSpeed, RAFFile::getHash(name), projectileFlags ? projectileFlags : flags);
                 owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
+                owner->getMap()->Game->notifyProjectileSpawn(p);
 
                 return;
             });
@@ -577,7 +575,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             script.lua.set_function("addProjectileTargetCustom", [this](const std::string&name, float projSpeed, Target *t) {
                 Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), lineWidth, owner, t, this, projectileSpeed, RAFFile::getHash(name), projectileFlags ? projectileFlags : flags);
                 owner->getMap()->addObject(p);
-                owner->getMap()->getGame()->notifyProjectileSpawn(p);
+                owner->getMap()->Game->notifyProjectileSpawn(p);
 
                 return;
             });
@@ -593,7 +591,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             });
 
             script.lua.set_function("spellAnimation", [this](const std::string&animation, Unit* u) {
-                owner->getMap()->getGame()->notifySpellAnimation(u, animation);
+                owner->getMap()->Game->notifySpellAnimation(u, animation);
                 return;
             });
 
@@ -602,13 +600,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 std::vector < std::pair < std::string, std::string>> animationPairs;
                 animationPairs.push_back(std::make_pair(animation1, animation2));
 
-                owner->getMap()->getGame()->notifySetAnimation(u, animationPairs);
+                owner->getMap()->Game->notifySetAnimation(u, animationPairs);
                 return;
             });
 
             script.lua.set_function("resetAnimations", [this](Unit * u) {
                 std::vector < std::pair < std::string, std::string>> animationPairs;
-                owner->getMap()->getGame()->notifySetAnimation(u, animationPairs);
+                owner->getMap()->Game->notifySetAnimation(u, animationPairs);
                 return;
             });*/
 

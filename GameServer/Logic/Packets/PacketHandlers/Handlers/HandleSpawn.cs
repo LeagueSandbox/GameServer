@@ -44,9 +44,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
-            var skillUp = new SkillUpPacket(peerInfo.GetChampion().getNetId(), 7, 1, (byte)peerInfo.GetChampion().getSkillPoints());
+            var skillUp = new SkillUpPacket(peerInfo.GetChampion().NetId, 7, 1, (byte)peerInfo.GetChampion().getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
-            skillUp = new SkillUpPacket(peerInfo.GetChampion().getNetId(), 14, 1, (byte)peerInfo.GetChampion().getSkillPoints());
+            skillUp = new SkillUpPacket(peerInfo.GetChampion().NetId, 14, 1, (byte)peerInfo.GetChampion().getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
             peerInfo.GetChampion().GetStats().setSpellEnabled(7, true);
@@ -79,9 +79,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     var inhib = kv.Value as Unit;
 
-                    var ms = new MinionSpawn2(inhib.getNetId());
+                    var ms = new MinionSpawn2(inhib.NetId);
                     _game.PacketHandlerManager.sendPacket(peer, ms, Channel.CHL_S2C);
-                    var sh = new SetHealth(inhib.getNetId());
+                    var sh = new SetHealth(inhib.NetId);
                     _game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
                 }
             }

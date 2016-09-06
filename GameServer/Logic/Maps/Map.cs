@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         continue;
 
                     var visionUnitsTeam = GetVisionUnits(u.getTeam());
-                    if (visionUnitsTeam.ContainsKey(u.getNetId()))
+                    if (visionUnitsTeam.ContainsKey(u.NetId))
                     {
                         if (TeamHasVisionOn(team, u))
                         {
@@ -273,10 +273,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // If it crashes here the problem is most likely somewhere else
             lock (_objectsLock)
             {
-                // (_objects.ContainsKey(o.getNetId()))
-                //    _objects[o.getNetId()] = o;
+                // (_objects.ContainsKey(o.NetId))
+                //    _objects[o.NetId] = o;
                 //else
-                _objects.Add(o.getNetId(), o);
+                _objects.Add(o.NetId, o);
             }
 
             _collisionHandler.addObject(o);
@@ -301,7 +301,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void RemoveObject(GameObject o)
         {
             lock (_objectsLock)
-                _objects.Remove(o.getNetId());
+                _objects.Remove(o.NetId);
 
             //collisionHandler.stackChanged(o);
             _collisionHandler.removeObject(o);
@@ -316,7 +316,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void AddChampion(Champion champion)
         {
             lock (_championsLock)
-                _champions.Add(champion.getNetId(), champion);
+                _champions.Add(champion.NetId, champion);
 
             _game.PacketNotifier.notifyChampionSpawned(champion, champion.getTeam());
         }
@@ -324,7 +324,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void RemoveChampion(Champion champion)
         {
             lock (_championsLock)
-                _champions.Remove(champion.getNetId());
+                _champions.Remove(champion.NetId);
         }
 
         public Dictionary<uint, Unit> GetVisionUnits(TeamId team)
@@ -343,12 +343,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void AddVisionUnit(Unit unit)
         {
             lock (_visionLock)
-                _visionUnits[unit.getTeam()].Add(unit.getNetId(), unit);
+                _visionUnits[unit.getTeam()].Add(unit.NetId, unit);
         }
 
         public void RemoveVisionUnit(Unit unit)
         {
-            RemoveVisionUnit(unit.getTeam(), unit.getNetId());
+            RemoveVisionUnit(unit.getTeam(), unit.NetId);
         }
 
         public void RemoveVisionUnit(TeamId team, uint netId)

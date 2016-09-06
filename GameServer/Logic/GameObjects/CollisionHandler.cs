@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             int divi = (int)divY * divisionCount + (int)divX;
 
             // We're not inside the map! Add to the unmanaged objects.
-            if (divX < 0 || divX > divisionCount || divY < 0 || divY > divisionCount)  
+            if (divX < 0 || divX > divisionCount || divY < 0 || divY > divisionCount)
             {
                 _logger.LogCoreError(string.Format(
                     "Object spawned outside of map. ({0}, {1})",
@@ -106,29 +106,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 bool a = false, b = false;
                 // Are we in the one to the right?
-                if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius()) 
+                if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius())
                     addToDivision(obj, (int)divX + 1, (int)divY); // Add it there too.
 
                 // Maybe on the left?
-                if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.getCollisionRadius()) 
+                if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.getCollisionRadius())
                 {
                     a = true;
                     addToDivision(obj, (int)divX - 1, (int)divY);
                 }
 
                 // Are we touching below us?
-                if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.getCollisionRadius()) 
+                if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.getCollisionRadius())
                     addToDivision(obj, (int)divX, (int)divY + 1);
 
                 // Or above?
-                if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.getCollisionRadius()) 
+                if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.getCollisionRadius())
                 {
                     b = true;
                     addToDivision(obj, (int)divX, (int)divY - 1);
                 }
 
                 // If we are touching all four, add the left-upper one.
-                if (a && b)                                                                  
+                if (a && b)
                 {
                     b = true;
                     addToDivision(obj, (int)divX - 1, (int)divY - 1);
@@ -174,7 +174,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // Below is same principle from addObject.
             bool a = false, b = false;
             var curDiv = managedDivisions[divi];
-            if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius() 
+            if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius()
                 && divX + 1 >= 0 && divX + 1 < divisionCount
             )
             {
@@ -229,7 +229,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     checkForCollisions(i);
                 }
             }
-            else // Slower, but works 
+            else // Slower, but works
             {
                 foreach (var objectRef in chart.GetObjects())
                 {
@@ -247,8 +247,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                             var displ = (o2.getPosition() - o1.getPosition());
                             if (
-                                displ.SqrLength() < 
-                                (o1.getCollisionRadius() + o2.getCollisionRadius()) * 
+                                displ.SqrLength() <
+                                (o1.getCollisionRadius() + o2.getCollisionRadius()) *
                                 (o1.getCollisionRadius() + o2.getCollisionRadius())
                             )
                             {
@@ -315,13 +315,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
 
                     // If they are no longer in this division..
-                    if ((o.getPosition().X - o.getCollisionRadius() > curDiv.max.X 
-                        || o.getPosition().Y - o.getCollisionRadius() > curDiv.max.Y 
+                    if ((o.getPosition().X - o.getCollisionRadius() > curDiv.max.X
+                        || o.getPosition().Y - o.getCollisionRadius() > curDiv.max.Y
                         || o.getPosition().X + o.getCollisionRadius() < curDiv.min.X
                         || o.getPosition().Y + o.getCollisionRadius() < curDiv.min.Y))
                     {
                         removeFromDivision(o, pos); // Remove them from it.
-                        addObject(o); // Reset in what divisions this object is. 
+                        addObject(o); // Reset in what divisions this object is.
                     }
 
                     // If they've entered another division, but not left this one yet..

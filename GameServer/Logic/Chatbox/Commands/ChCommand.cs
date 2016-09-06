@@ -30,7 +30,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             var c = new Champion(
                 split[1],
-                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
                 (uint)_playerManager.GetPeerInfo(peer).UserId
             );
             c.setPosition(

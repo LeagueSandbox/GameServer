@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 {
                     if (s[i] == "netid")
                     {
-                        buffer.Write(_playerManager.GetPeerInfo(peer).GetChampion().getNetId());
+                        buffer.Write(_playerManager.GetPeerInfo(peer).GetChampion().NetId);
                     }
                     else
                     {

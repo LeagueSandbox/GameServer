@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var parsedData = new UseObject(data);
             _logger.LogCoreInfo(string.Format(
                 "Object {0} is trying to use (right clicked) {1}",
-                _playerManager.GetPeerInfo(peer).GetChampion().getNetId(),
+                _playerManager.GetPeerInfo(peer).GetChampion().NetId,
                 parsedData.targetNetId
             ));
 

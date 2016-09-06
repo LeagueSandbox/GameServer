@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return spells[index];
         }
 
-        public Champion(string type, uint id, uint playerId) : base(id, type, new Stats(), 30, 0, 0, 1200)
+        public Champion(string type, uint playerId, uint netId = 0) : base(type, new Stats(), 30, 0, 0, 1200, netId)
         {
             this.type = type;
             this.playerId = playerId;
@@ -488,7 +488,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
 
             cTarget.setChampionHitFlagTimer(15 * 1000); //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            cTarget.playerHitId = id;
+            cTarget.playerHitId = NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

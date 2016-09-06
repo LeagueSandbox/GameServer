@@ -1,19 +1,17 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic
 {
     public class GameObject : Target
     {
-        protected uint id;
+        public uint NetId { get; private set; }
         protected float xvector, yvector;
 
         /**
@@ -33,12 +31,19 @@ namespace LeagueSandbox.GameServer.Logic
         protected bool dashing;
         protected float dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
-
         protected Game _game = Program.ResolveDependency<Game>();
+        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
-        public GameObject(uint id, float x, float y, int collisionRadius, int visionRadius = 0) : base(x, y)
+        public GameObject(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
-            this.id = id;
+            if (netId != 0)
+            {
+                this.NetId = netId; // Custom netId
+            }
+            else
+            {
+                this.NetId = _networkIdManager.GetNewNetID(); // Let the base class (this one) asign a netId
+            }
             this.target = null;
             this.collisionRadius = collisionRadius;
             this.visionRadius = visionRadius;
@@ -216,11 +221,6 @@ namespace LeagueSandbox.GameServer.Logic
         public virtual void setToRemove()
         {
             toRemove = true;
-        }
-
-        public uint getNetId()
-        {
-            return id;
         }
 
         public override void setPosition(float x, float y)
