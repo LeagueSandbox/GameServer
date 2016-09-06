@@ -2393,7 +2393,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class CastSpellAns : GamePacket
     {
-        public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId) : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().NetId)
+        public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId)
+               : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().NetId)
         {
             var m = _game.GetMap();
 
