@@ -37,13 +37,28 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return spells[index];
         }
 
-        public Champion(string type, uint playerId, uint netId = 0) : base(type, new Stats(), 30, 0, 0, 1200, netId)
+        public Champion(string type, uint playerId, uint netId = 0, Dictionary<string, List<int>> runes = null) : base(type, new Stats(), 30, 0, 0, 1200, netId)
         {
             this.type = type;
             this.playerId = playerId;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
+
+            if (runes != null)
+            {
+                ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
+                int runeSlot = 14;
+                foreach (var runeCategory in runes)
+                {
+                    foreach(int runeId in runeCategory.Value)
+                    {
+                        var rune = _itemManager.GetItemType(runeId);
+                        Inventory.SetExtraItem((byte)runeSlot, rune);
+                        runeSlot++;
+                    }
+                }
+            }
 
             stats.Gold = 475.0f;
             stats.GoldPerSecond.BaseValue = _game.GetMap().GetGoldPerSecond();

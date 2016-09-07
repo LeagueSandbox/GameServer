@@ -28,7 +28,8 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 p.Value.Rank,
                 ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE),
                 p.Value.Ribbon,
-                p.Value.Icon
+                p.Value.Icon,
+                p.Value.Runes
             );
 
             player.SetName(p.Value.Name);
@@ -42,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 EnumParser.ParseSummonerSpell(p.Value.Summoner2)
             );
 
-            var c = new Champion(p.Value.Champion, _networkIdManager.GetNewNetID(), (uint)player.UserId);
+            var c = new Champion(p.Value.Champion, _networkIdManager.GetNewNetID(), (uint)player.UserId, p.Value.Runes);
             var pos = c.getRespawnPosition();
 
             c.setPosition(pos.Item1, pos.Item2);
