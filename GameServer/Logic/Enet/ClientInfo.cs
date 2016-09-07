@@ -18,19 +18,17 @@ namespace LeagueSandbox.GameServer.Logic.Enet
         private string Name, Rank;
         private short Ribbon;
         private int Icon;
-        private Dictionary<string, List<int>> Runes;
         private TeamId Team;
 
         private Champion _champion;
         private Peer _peer;
 
-        public ClientInfo(string rank, TeamId team, short ribbon, int icon, Dictionary<string, List<int>> runes)
+        public ClientInfo(string rank, TeamId team, short ribbon, int icon)
         {
             Rank = rank;
             Team = team;
             Ribbon = ribbon;
             Icon = icon;
-            Runes = runes;
         }
 
         public void SetName(string name)
@@ -92,11 +90,6 @@ namespace LeagueSandbox.GameServer.Logic.Enet
         public int GetIcon()
         {
             return Icon;
-        }
-
-        public Dictionary<string, List<int>> GetRunes()
-        {
-            return Runes;
         }
 
         public void SetPeer(Peer peer)

@@ -28,8 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 p.Value.Rank,
                 ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE),
                 p.Value.Ribbon,
-                p.Value.Icon,
-                p.Value.Runes
+                p.Value.Icon
             );
 
             player.SetName(p.Value.Name);

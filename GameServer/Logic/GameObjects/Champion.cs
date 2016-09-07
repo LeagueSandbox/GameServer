@@ -31,6 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected long championHitFlagTimer = 0;
         public uint playerId;
         public uint playerHitId;
+        public Dictionary<string, List<int>> Runes;
 
         public Spell getSpell(int index)
         {
@@ -41,25 +42,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             this.type = type;
             this.playerId = playerId;
+            Runes = runes;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
-
-            if (runes != null)
-            {
-                ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
-                int runeSlot = 14;
-                foreach (var runeCategory in runes)
-                {
-                    foreach(int runeId in runeCategory.Value)
-                    {
-                        var rune = _itemManager.GetItemType(runeId);
-                        Inventory.SetExtraItem((byte)runeSlot, rune);
-                        runeSlot++;
-                    }
-                }
-            }
-
+            
             stats.Gold = 475.0f;
             stats.GoldPerSecond.BaseValue = _game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);

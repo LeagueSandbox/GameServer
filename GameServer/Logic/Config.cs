@@ -128,23 +128,32 @@ namespace LeagueSandbox.GameServer.Logic
         public string Summoner2 { get { return (string)_playerData.SelectToken("summoner2"); } }
         public short Ribbon { get { return (short)_playerData.SelectToken("ribbon"); } }
         public int Icon { get { return (int)_playerData.SelectToken("icon"); } }
-        public Dictionary<string, List<int>> Runes = new Dictionary<string, List<int>>();
+        public Dictionary<string, List<int>> Runes { get { return _runeList; } }
 
         private JToken _playerData;
+        private Dictionary<string, List<int>> _runeList;
 
         public PlayerConfig(JToken playerData)
         {
             _playerData = playerData;
-            var runes = _playerData.SelectToken("runes");
-
-            foreach (JProperty runeCategory in runes)
+            try
             {
-                List<int> runeIds = new List<int>();
-                foreach (JProperty rune in runeCategory.Values())
+                var runes = _playerData.SelectToken("runes");
+                _runeList = new Dictionary<string, List<int>>();
+
+                foreach (JProperty runeCategory in runes)
                 {
-                    runeIds.Add((int)rune.Value);
+                    List<int> runeIds = new List<int>();
+                    foreach (JProperty rune in runeCategory.Values())
+                    {
+                        runeIds.Add((int)rune.Value);
+                    }
+                    _runeList.Add(runeCategory.Name, runeIds);
                 }
-                Runes.Add(runeCategory.Name, runeIds);
+            }
+            catch (Exception)
+            {
+                // no runes set in config
             }
         }
     }
