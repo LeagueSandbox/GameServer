@@ -31,20 +31,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected long championHitFlagTimer = 0;
         public uint playerId;
         public uint playerHitId;
+        public Dictionary<string, List<int>> Runes;
 
         public Spell getSpell(int index)
         {
             return spells[index];
         }
 
-        public Champion(string type, uint playerId, uint netId = 0) : base(type, new Stats(), 30, 0, 0, 1200, netId)
+        public Champion(string type, uint playerId, uint netId = 0, Dictionary<string, List<int>> runes = null) : base(type, new Stats(), 30, 0, 0, 1200, netId)
         {
             this.type = type;
             this.playerId = playerId;
+            Runes = runes;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
-
+            
             stats.Gold = 475.0f;
             stats.GoldPerSecond.BaseValue = _game.GetMap().GetGoldPerSecond();
             stats.SetGeneratingGold(false);

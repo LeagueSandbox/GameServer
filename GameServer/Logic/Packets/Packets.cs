@@ -2529,131 +2529,30 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().NetId)
         {
-            #region wtf
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7D);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x83);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xA9);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xC5);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xD7);
-            buffer.Write((byte)0x14);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-
+            foreach (var runeCategory in player.GetChampion().Runes)
+            {
+                int required = 9;
+                if(runeCategory.Key.ToLower() == "black")
+                {
+                    required = 3;
+                }
+                for(int i = 1; i <= required; i++)
+                {
+                    short runeId = 0;
+                    if (runeCategory.Value.Count() >= i )
+                    {
+                        runeId = (short)runeCategory.Value[i - 1];
+                    }
+                    buffer.Write(runeId);
+                    buffer.Write((short)0x00);
+                }
+            }
+            
             var summonerSpells = player.getSummoners();
             buffer.Write((int)summonerSpells[0]);
             buffer.Write((int)summonerSpells[1]);
+
+            #region masteries
 
             buffer.Write((byte)0x41);
             buffer.Write((byte)0x74);

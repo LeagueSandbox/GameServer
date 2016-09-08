@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public Inventory(InventoryManager owner)
         {
             _owner = owner;
-            _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE];
+            _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + 99];
         }
 
         public Item AddItem(ItemType item)
