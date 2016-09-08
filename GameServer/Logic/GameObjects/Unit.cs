@@ -93,6 +93,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private object _buffsLock = new object();
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
+        private object _talentsLock = new object();
+        public Dictionary<string, Talent> _talents = new Dictionary<string, Talent>();
+
         private long _timerUpdate;
 
         private bool isCastingSpell = false;
@@ -299,19 +302,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Dictionary<string, Buff> GetBuffs()
         {
-            var toReturn = new Dictionary<string, Buff>();
             lock (_buffsLock)
             {
-                foreach (var buff in _buffs)
-                    toReturn.Add(buff.Key, buff.Value);
-
-                return toReturn;
+                return new Dictionary<string, Buff>(_buffs);
             }
         }
 
         public int GetBuffsCount()
         {
             return _buffs.Count;
+        }
+
+        public Dictionary<string, Talent> GetTalents()
+        {
+            lock (_talentsLock)
+            {
+                return new Dictionary<string, Talent>(_talents);
+            }
         }
 
         public override void onCollision(GameObject collider)
@@ -538,6 +545,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             modelUpdated = false;
         }
 
+        public void AddTalent(Talent t)
+        {
+            lock (_talentsLock)
+            {
+                if (!_talents.ContainsKey(t._name))
+                {
+                    _talents.Add(t._name, t);
+                }
+            }
+        }
+
         public void AddBuff(Buff b)
         {
             lock (_buffsLock)
@@ -590,7 +608,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return null;
             }
         }
-
+        public Talent GetTalent(string name)
+        {
+            lock (_talentsLock)
+            {
+                if (_talents.ContainsKey(name))
+                    return _talents[name];
+                return null;
+            }
+        }
         public void setMoveOrder(MoveOrder moveOrder)
         {
             this.moveOrder = moveOrder;

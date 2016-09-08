@@ -42,6 +42,12 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.GetMap().IsWalkable(x, y);
         }
 
+        public static void AddTalent(string talentName, int rank, Unit onto)
+        {
+            var talent = new Talent(_game, talentName, rank, onto);
+            onto.AddTalent(talent);
+        }
+
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
         {
             var buff = new Buff(_game, buffName, duration, stacks, onto, from);

@@ -17,8 +17,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
         private RAFMasterFileList _root;
         private Logger _logger;
 
-        public RAFManager(Logger _logger)
+        public RAFManager(Logger logger)
         {
+            _logger = logger;
             _logger.LogCoreInfo("Loading RAF files in filearchives/.");
 
             var settings = Settings.Load("Settings/Settings.json");
