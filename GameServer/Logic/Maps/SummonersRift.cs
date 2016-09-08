@@ -15,78 +15,120 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     class SummonersRift : Map
     {
-        private List<List<Vector2>> _laneWaypoints = new List<List<Vector2>>
+        private List<Vector2> _blueTopWaypoints = new List<Vector2>
         {
-            new List<Vector2>
-            { // blue top
-              new Vector2(917.0f, 1725.0f),
-              new Vector2(1170.0f, 4041.0f),
-              new Vector2(861.0f, 6459.0f),
-              new Vector2(880.0f, 10180.0f),
-              new Vector2(1268.0f, 11675.0f),
-              new Vector2(2806.0f, 13075.0f),
-              new Vector2(3907.0f, 13243.0f),
-              new Vector2(7550.0f, 13407.0f),
-              new Vector2(10244.0f, 13238.0f),
-              new Vector2(10947.0f, 13135.0f),
-              new Vector2(12511.0f, 12776.0f)
-           },
-           new List<Vector2>
-           { // blue bot
-              new Vector2(1487.0f, 1302.0f),
-              new Vector2(3789.0f, 1346.0f),
-              new Vector2(6430.0f, 1005.0f),
-              new Vector2(10995.0f, 1234.0f),
-              new Vector2(12841.0f, 3051.0f),
-              new Vector2(13148.0f, 4202.0f),
-              new Vector2(13249.0f, 7884.0f),
-              new Vector2(12886.0f, 10356.0f),
-              new Vector2(12511.0f, 12776.0f)
-           },
-           new List<Vector2>
-           { // blue mid
-              new Vector2(1418.0f, 1686.0f),
-              new Vector2(2997.0f, 2781.0f),
-              new Vector2(4472.0f, 4727.0f),
-              new Vector2(8375.0f, 8366.0f),
-              new Vector2(10948.0f, 10821.0f),
-              new Vector2(12511.0f, 12776.0f)
-           },
-           new List<Vector2>
-           { // red top
-              new Vector2(12451.0f, 13217.0f),
-              new Vector2(10947.0f, 13135.0f),
-              new Vector2(10244.0f, 13238.0f),
-              new Vector2(7550.0f, 13407.0f),
-              new Vector2(3907.0f, 13243.0f),
-              new Vector2(2806.0f, 13075.0f),
-              new Vector2(1268.0f, 11675.0f),
-              new Vector2(880.0f, 10180.0f),
-              new Vector2(861.0f, 6459.0f),
-              new Vector2(1170.0f, 4041.0f),
-              new Vector2(1418.0f, 1686.0f)
-           },
-           new List<Vector2>
-           { // red bot
-              new Vector2(13062.0f, 12760.0f),
-              new Vector2(12886.0f, 10356.0f),
-              new Vector2(13249.0f, 7884.0f),
-              new Vector2(13148.0f, 4202.0f),
-              new Vector2(12841.0f, 3051.0f),
-              new Vector2(10995.0f, 1234.0f),
-              new Vector2(6430.0f, 1005.0f),
-              new Vector2(3789.0f, 1346.0f),
-              new Vector2(1418.0f, 1686.0f)
-           },
-           new List<Vector2>
-           { // red mid
-              new Vector2(12511.0f, 12776.0f),
-              new Vector2(10948.0f, 10821.0f),
-              new Vector2(8375.0f, 8366.0f),
-              new Vector2(4472.0f, 4727.0f),
-              new Vector2(2997.0f, 2781.0f),
-              new Vector2(1418.0f, 1686.0f)
-           }
+            new Vector2(917.0f, 1725.0f),
+            new Vector2(1170.0f, 4041.0f),
+            new Vector2(861.0f, 6459.0f),
+            new Vector2(880.0f, 10180.0f),
+            new Vector2(1268.0f, 11675.0f),
+            new Vector2(2806.0f, 13075.0f),
+            new Vector2(3907.0f, 13243.0f),
+            new Vector2(7550.0f, 13407.0f),
+            new Vector2(10244.0f, 13238.0f),
+            new Vector2(10947.0f, 13135.0f),
+            new Vector2(12511.0f, 12776.0f)
+        };
+        private List<Vector2> _blueBotWaypoints = new List<Vector2>
+        {
+            new Vector2(1487.0f, 1302.0f),
+            new Vector2(3789.0f, 1346.0f),
+            new Vector2(6430.0f, 1005.0f),
+            new Vector2(10995.0f, 1234.0f),
+            new Vector2(12841.0f, 3051.0f),
+            new Vector2(13148.0f, 4202.0f),
+            new Vector2(13249.0f, 7884.0f),
+            new Vector2(12886.0f, 10356.0f),
+            new Vector2(12511.0f, 12776.0f)
+        };
+        private List<Vector2> _blueMidWaypoints = new List<Vector2>
+        {
+            new Vector2(1418.0f, 1686.0f),
+            new Vector2(2997.0f, 2781.0f),
+            new Vector2(4472.0f, 4727.0f),
+            new Vector2(8375.0f, 8366.0f),
+            new Vector2(10948.0f, 10821.0f),
+            new Vector2(12511.0f, 12776.0f)
+        };
+        private List<Vector2> _redTopWaypoints = new List<Vector2>
+        {
+            new Vector2(12451.0f, 13217.0f),
+            new Vector2(10947.0f, 13135.0f),
+            new Vector2(10244.0f, 13238.0f),
+            new Vector2(7550.0f, 13407.0f),
+            new Vector2(3907.0f, 13243.0f),
+            new Vector2(2806.0f, 13075.0f),
+            new Vector2(1268.0f, 11675.0f),
+            new Vector2(880.0f, 10180.0f),
+            new Vector2(861.0f, 6459.0f),
+            new Vector2(1170.0f, 4041.0f),
+            new Vector2(1418.0f, 1686.0f)
+        };
+        private List<Vector2> _redBotWaypoints = new List<Vector2>
+        {
+            new Vector2(13062.0f, 12760.0f),
+            new Vector2(12886.0f, 10356.0f),
+            new Vector2(13249.0f, 7884.0f),
+            new Vector2(13148.0f, 4202.0f),
+            new Vector2(12841.0f, 3051.0f),
+            new Vector2(10995.0f, 1234.0f),
+            new Vector2(6430.0f, 1005.0f),
+            new Vector2(3789.0f, 1346.0f),
+            new Vector2(1418.0f, 1686.0f)
+        };
+        private List<Vector2> _redMidWaypoints = new List<Vector2>
+        {
+            new Vector2(12511.0f, 12776.0f),
+            new Vector2(10948.0f, 10821.0f),
+            new Vector2(8375.0f, 8366.0f),
+            new Vector2(4472.0f, 4727.0f),
+            new Vector2(2997.0f, 2781.0f),
+            new Vector2(1418.0f, 1686.0f)
+        };
+
+        private List<string> _regularMinionWave = new List<string>
+        {
+            "MELEE",
+            "MELEE",
+            "MELEE",
+            "CASTER",
+            "CASTER",
+            "CASTER",
+            null,
+            null
+        };
+        private List<string> _cannonMinionWave = new List<string>
+        {
+            "MELEE",
+            "MELEE",
+            "MELEE",
+            "CANNON",
+            "CASTER",
+            "CASTER",
+            "CASTER",
+            null
+        };
+        private List<string> _superMinionWave = new List<string>
+        {
+            "SUPER",
+            "MELEE",
+            "MELEE",
+            "MELEE",
+            "CASTER",
+            "CASTER",
+            "CASTER",
+            null
+        };
+        private List<string> _superCannonMinionWave = new List<string>
+        {
+            "SUPER",
+            "MELEE",
+            "MELEE",
+            "MELEE",
+            "CANNON",
+            "CASTER",
+            "CASTER",
+            "CASTER"
         };
 
         private Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
@@ -98,6 +140,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        private int _cannonMinionCount = 0;
 
         public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
@@ -155,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // Start at xp to reach level 1
             _expToLevelUp = new List<int> { 0, 280, 660, 1140, 1720, 2400, 3180, 4060, 5040, 6120, 7300, 8580, 9960, 11440, 13020, 14700, 16480, 18360 };
 
-            // Set first minion spawn and gold regen time to be 1:15
+            // Set first minion spawn first gold time to be 1:30
             _firstSpawnTime = 90 * 1000;
             _firstGoldTime = _firstSpawnTime;
 
@@ -186,12 +229,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             switch (team)
             {
                 case 0:
-                    return new GameObjects.Target(25.90f, 280);
+                    return new Target(25.90f, 280);
                 case 1:
-                    return new GameObjects.Target(14119, 14063);
+                    return new Target(14119, 14063);
             }
 
-            return new GameObjects.Target(25.90f, 280);
+            return new Target(25.90f, 280);
         }
         public override float GetGoldFor(Unit u)
         {
@@ -333,9 +376,36 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().Armor.BaseValue = 30.0f;
                     minion.GetStats().MagicResist.BaseValue = -30.0f;
                     minion.setMelee(true);
-                    minion.setAutoAttackDelay(5.9f / 30.0f); //Pretty sure this aint the true value
+                    minion.setAutoAttackDelay(15.0f / 30.0f);
                     break;
             }
+        }
+
+        public void SpawnMinion(List<string> list, int minionNo, MinionSpawnPosition pos, List<Vector2> waypoints)
+        {
+            Minion m = null;
+            if (minionNo < 8)
+            {
+                switch (list.ElementAt(minionNo))
+                {
+                    case "MELEE":
+                        m = new Minion(MinionSpawnType.MINION_TYPE_MELEE, pos, waypoints);
+                        break;
+                    case "CASTER":
+                        m = new Minion(MinionSpawnType.MINION_TYPE_CASTER, pos, waypoints);
+                        break;
+                    case "CANNON":
+                        m = new Minion(MinionSpawnType.MINION_TYPE_CANNON, pos, waypoints);
+                        break;
+                    case "SUPER":
+                        m = new Minion(MinionSpawnType.MINION_TYPE_SUPER, pos, waypoints);
+                        break;
+                    case null:
+                        return;
+                }
+            }
+            if (m != null)
+                AddObject(m);
         }
 
         public override bool Spawn()
@@ -349,37 +419,91 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 MinionSpawnPosition.SPAWN_RED_BOT,
                 MinionSpawnPosition.SPAWN_RED_MID,
             };
-
-            if (_waveNumber < 3)
+            foreach (var pos in positions)
             {
-                for (var i = 0; i < positions.Count; ++i)
+                uint inhibitorId = 0;
+                var waypoints = new List<Vector2>();
+                switch (pos)
                 {
-                    Minion m = new Minion(MinionSpawnType.MINION_TYPE_MELEE, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
+                    case MinionSpawnPosition.SPAWN_BLUE_BOT:
+                        waypoints = _blueBotWaypoints;
+                        inhibitorId = 0xff26ac0f;
+                        break;
+                    case MinionSpawnPosition.SPAWN_BLUE_MID:
+                        waypoints = _blueMidWaypoints;
+                        inhibitorId = 0xffff8f1f;
+                        break;
+                    case MinionSpawnPosition.SPAWN_BLUE_TOP:
+                        waypoints = _blueTopWaypoints;
+                        inhibitorId = 0xff6793d0;
+                        break;
+                    case MinionSpawnPosition.SPAWN_RED_BOT:
+                        waypoints = _redBotWaypoints;
+                        inhibitorId = 0xff9303e1;
+                        break;
+                    case MinionSpawnPosition.SPAWN_RED_MID:
+                        waypoints = _redMidWaypoints;
+                        inhibitorId = 0xff4a20f1;
+                        break;
+                    case MinionSpawnPosition.SPAWN_RED_TOP:
+                        waypoints = _redTopWaypoints;
+                        inhibitorId = 0xffd23c3e;
+                        break;
                 }
+                var inhibitorIsDead = (GetInhibitorById(inhibitorId).getState() == InhibitorState.Dead);
+
+                if (_gameTime > 35 * 60 * 1000)
+                {
+                    var list = inhibitorIsDead ? _superCannonMinionWave : _cannonMinionWave;
+                    SpawnMinion(list, _minionNumber, pos, waypoints);
+                }
+                else if (_gameTime > 20 * 60 * 1000)
+                {
+                    var list = inhibitorIsDead ?
+                        (_cannonMinionCount == 1 ? _superCannonMinionWave : _superMinionWave) :
+                        (_cannonMinionCount == 1 ? _cannonMinionWave : _regularMinionWave);
+
+                    SpawnMinion(list, _minionNumber, pos, waypoints);
+                }
+                else
+                {
+                    var list = inhibitorIsDead ?
+                        (_cannonMinionCount == 2 ? _superCannonMinionWave : _superMinionWave) :
+                        (_cannonMinionCount == 2 ? _cannonMinionWave : _regularMinionWave);
+
+                    SpawnMinion(list, _minionNumber, pos, waypoints);
+                }
+            }
+            if (_minionNumber >= 8)
+            {
+                if (_gameTime > 20 * 60 * 1000)
+                {
+                    if (_cannonMinionCount >= 1)
+                    {
+                        _cannonMinionCount = 0; 
+                    }
+                    else
+                    {
+                        _cannonMinionCount++;
+                    }
+                }
+                else
+                {
+                    if (_cannonMinionCount >= 2)
+                    {
+                        _cannonMinionCount = 0;
+                    }
+                    else
+                    {
+                        _cannonMinionCount++;
+                    }
+                }
+                return true;
+            }
+            else
+            {
                 return false;
             }
-
-            if (_waveNumber == 3)
-            {
-                for (var i = 0; i < positions.Count; ++i)
-                {
-                    Minion m = new Minion(MinionSpawnType.MINION_TYPE_CANNON, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
-                }
-                return false;
-            }
-
-            if (_waveNumber < 7)
-            {
-                for (var i = 0; i < positions.Count; ++i)
-                {
-                    Minion m = new Minion(MinionSpawnType.MINION_TYPE_CASTER, positions[i], _laneWaypoints[i]);
-                    AddObject(m);
-                }
-                return false;
-            }
-            return true;
         }
 
         public override int GetMapId()

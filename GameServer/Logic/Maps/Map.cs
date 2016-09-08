@@ -16,14 +16,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     {
         private Dictionary<uint, GameObject> _objects;
         private Dictionary<uint, Champion> _champions;
+        private Dictionary<uint, Inhibitor> _inhibitors;
         private Dictionary<TeamId, Dictionary<uint, Unit>> _visionUnits;
 
         private object _objectsLock = new object();
+        private object _inhibitorsLock = new object();
         private object _championsLock = new object();
         private object _visionLock = new object();
 
         protected List<int> _expToLevelUp;
-        protected int _waveNumber;
+        protected int _minionNumber;
         protected long _firstSpawnTime;
         protected long _spawnInterval;
         protected long _gameTime;
@@ -47,10 +49,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
         {
             _objects = new Dictionary<uint, GameObject>();
+            _inhibitors = new Dictionary<uint, Inhibitor>();
             _champions = new Dictionary<uint, Champion>();
             _visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
             _expToLevelUp = new List<int>();
-            _waveNumber = 0;
+            _minionNumber = 0;
             _firstSpawnTime = firstSpawnTime;
             _firstGoldTime = firstGoldTime;
             _spawnInterval = spawnInterval;
@@ -183,25 +186,25 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             if (_spawnEnabled)
             {
-                if (_waveNumber > 0)
+                if (_minionNumber > 0)
                 {
-                    if (_gameTime >= _nextSpawnTime + _waveNumber * 8 * 100)
+                    if (_gameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
                     { // Spawn new wave every 0.8s
                         if (Spawn())
                         {
-                            _waveNumber = 0;
+                            _minionNumber = 0;
                             _nextSpawnTime += _spawnInterval;
                         }
                         else
                         {
-                            _waveNumber++;
+                            _minionNumber++;
                         }
                     }
                 }
                 else if (_gameTime >= _nextSpawnTime)
                 {
                     Spawn();
-                    _waveNumber++;
+                    _minionNumber++;
                 }
             }
 
@@ -265,6 +268,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _objects[id];
         }
 
+        public Inhibitor GetInhibitorById(uint id)
+        {
+            if (!_inhibitors.ContainsKey(id))
+                return null;
+
+            return _inhibitors[id];
+        }
+
         public void AddObject(GameObject o)
         {
             if (o == null)
@@ -277,6 +288,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 //    _objects[o.NetId] = o;
                 //else
                 _objects.Add(o.NetId, o);
+            }
+
+            if (o is Inhibitor)
+            {
+                var i = o as Inhibitor;
+                lock (_inhibitorsLock)
+                {
+                    _inhibitors.Add(i.NetId, i);
+                }
             }
 
             _collisionHandler.addObject(o);
@@ -303,6 +323,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (_objectsLock)
                 _objects.Remove(o.NetId);
 
+            if (o is Inhibitor)
+            {
+                lock (_inhibitorsLock)
+                {
+                    _inhibitors.Remove(o.NetId);
+                }
+            }
             //collisionHandler.stackChanged(o);
             _collisionHandler.removeObject(o);
 
@@ -402,6 +429,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return ret;
         }
 
+        public Dictionary<uint, Inhibitor> GetInhibitors()
+        {
+            var ret = new Dictionary<uint, Inhibitor>();
+            lock (_inhibitorsLock)
+                foreach (var inhib in _inhibitors)
+                    ret.Add(inhib.Key, inhib.Value);
+
+            return ret;
+        }
+
         public void StopTargeting(Unit target)
         {
             lock (_objectsLock)
@@ -469,7 +506,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 {
                     var u = kv.Value as Unit;
                     if (u != null && t.distanceWith(u) <= range)
-                        if (onlyAlive && !u.isDead() || !onlyAlive)
+                        if ((onlyAlive && !u.isDead()) || !onlyAlive)
                             units.Add(u);
                 }
             }
