@@ -128,10 +128,10 @@ namespace LeagueSandbox.GameServer.Logic
         public string Summoner2 { get { return (string)_playerData.SelectToken("summoner2"); } }
         public short Ribbon { get { return (short)_playerData.SelectToken("ribbon"); } }
         public int Icon { get { return (int)_playerData.SelectToken("icon"); } }
-        public Dictionary<string, List<int>> Runes { get { return _runeList; } }
+        public RuneCollection Runes { get { return _runeList; } }
 
         private JToken _playerData;
-        private Dictionary<string, List<int>> _runeList;
+        private RuneCollection _runeList;
 
         public PlayerConfig(JToken playerData)
         {
@@ -139,16 +139,11 @@ namespace LeagueSandbox.GameServer.Logic
             try
             {
                 var runes = _playerData.SelectToken("runes");
-                _runeList = new Dictionary<string, List<int>>();
+                _runeList = new RuneCollection();
 
                 foreach (JProperty runeCategory in runes)
                 {
-                    List<int> runeIds = new List<int>();
-                    foreach (JProperty rune in runeCategory.Values())
-                    {
-                        runeIds.Add((int)rune.Value);
-                    }
-                    _runeList.Add(runeCategory.Name, runeIds);
+                    _runeList.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
                 }
             }
             catch (Exception)

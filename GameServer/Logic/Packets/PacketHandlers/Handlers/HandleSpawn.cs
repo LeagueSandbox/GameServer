@@ -44,19 +44,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Runes
-            if (peerInfo.GetChampion().Runes != null)
+            byte runeItemSlot = 14;
+            foreach (var rune in peerInfo.GetChampion().Runes.GetRunes())
             {
-                byte runeSlot = 14;
-                foreach (var runeCategory in peerInfo.GetChampion().Runes)
-                {
-                    foreach (int runeId in runeCategory.Value)
-                    {
-                        var rune = _itemManager.GetItemType(runeId);
-                        var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeSlot, rune);
-                        _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(rune);
-                        runeSlot++;
-                    }
-                }
+                var runeItem = _itemManager.GetItemType(rune.Value);
+                var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(runeItem);
+                Console.WriteLine("[" + rune.Key + " to " + runeItemSlot + "] " + rune.Value);
+                runeItemSlot++;
             }
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it

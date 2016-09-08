@@ -2435,25 +2435,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().NetId)
         {
-            foreach (var runeCategory in player.GetChampion().Runes)
+            var runes = player.GetChampion().Runes.GetRunes();
+            int runesRequired = 30;
+
+            foreach (var rune in runes)
             {
-                int required = 9;
-                if(runeCategory.Key.ToLower() == "black")
-                {
-                    required = 3;
-                }
-                for(int i = 1; i <= required; i++)
-                {
-                    short runeId = 0;
-                    if (runeCategory.Value.Count() >= i )
-                    {
-                        runeId = (short)runeCategory.Value[i - 1];
-                    }
-                    buffer.Write(runeId);
-                    buffer.Write((short)0x00);
-                }
+                buffer.Write(rune.Value);
+                buffer.Write((short)0x00);
+                runesRequired--;
             }
-            
+            for (int i = 1; i <= runesRequired; i++)
+            {
+                buffer.Write((short)0);
+                buffer.Write((short)0);
+            }
+
             var summonerSpells = player.getSummoners();
             buffer.Write((int)summonerSpells[0]);
             buffer.Write((int)summonerSpells[1]);

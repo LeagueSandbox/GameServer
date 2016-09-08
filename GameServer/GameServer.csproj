@@ -107,6 +107,7 @@
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
+    <Compile Include="Logic\Content\RuneCollection.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Announce.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Logic\GameObjects\AzirTurret.cs" />
     <Compile Include="Logic\GameObjects\BaseTurret.cs" />
     <Compile Include="Logic\GameObjects\LaneTurret.cs" />
+    <Compile Include="Logic\GameObjects\Talent.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\MovementVector.cs" />
