@@ -38,7 +38,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return spells[index];
         }
 
-        public Champion(string type, uint playerId, RuneCollection runeList, uint netId = 0) : base(type, new Stats(), 30, 0, 0, 1200, netId)
+        public Champion(string type, uint playerId, RuneCollection runeList, uint netId = 0)
+            : base(type, new Stats(), 30, 0, 0, 1200, netId)
         {
             this.type = type;
             this.playerId = playerId;
