@@ -107,6 +107,7 @@
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
+    <Compile Include="Logic\Content\RuneCollection.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Announce.cs" />

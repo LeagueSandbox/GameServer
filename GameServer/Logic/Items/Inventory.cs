@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private const int TRINKET_SLOT = 6;
         private const int BASE_INVENTORY_SIZE = 7; // Includes trinket
         private const int EXTRA_INVENTORY_SIZE = 7;
+        private const int RUNE_INVENTORY_SIZE = 30;
         private Item[] _items;
         private InventoryManager _owner;
         public Item[] Items { get { return _items; } }
@@ -21,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public Inventory(InventoryManager owner)
         {
             _owner = owner;
-            _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE];
+            _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
         }
 
         public Item AddItem(ItemType item)
