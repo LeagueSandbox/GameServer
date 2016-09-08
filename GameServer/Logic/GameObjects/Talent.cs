@@ -16,25 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Logger _logger = Program.ResolveDependency<Logger>();
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
 
-        protected string _name;
-        protected int _rank;
-        protected Game _game;
-        protected Unit _owner;
-
-        public Unit GetOwner()
-        {
-            return _owner;
-        }
-
-        public string GetName()
-        {
-            return _name;
-        }
-
-        public int GetRank()
-        {
-            return _rank;
-        }
+        public string _name { get; set; }
+        public int _rank { get; set; }
+        public Game _game { get; set; }
+        public Unit _owner { get; set; }
 
         public Talent(Game game, string talentName, int rank, Unit owner)
         {

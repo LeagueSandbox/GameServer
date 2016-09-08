@@ -94,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
         private object _talentsLock = new object();
-        private Dictionary<string, Talent> _talents = new Dictionary<string, Talent>();
+        public Dictionary<string, Talent> _talents = new Dictionary<string, Talent>();
 
         private long _timerUpdate;
 
@@ -302,13 +302,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Dictionary<string, Buff> GetBuffs()
         {
-            var toReturn = new Dictionary<string, Buff>();
             lock (_buffsLock)
             {
-                foreach (var buff in _buffs)
-                    toReturn.Add(buff.Key, buff.Value);
-
-                return toReturn;
+                return new Dictionary<string, Buff>(_buffs);
             }
         }
 
@@ -319,19 +315,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Dictionary<string, Talent> GetTalents()
         {
-            var toReturn = new Dictionary<string, Talent>();
             lock (_talentsLock)
             {
-                foreach (var talent in _talents)
-                    toReturn.Add(talent.Key, talent.Value);
-
-                return toReturn;
+                return new Dictionary<string, Talent>(_talents);
             }
-        }
-
-        public int GetTalentsCount()
-        {
-            return _talents.Count;
         }
 
         public override void onCollision(GameObject collider)
@@ -562,9 +549,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             lock (_talentsLock)
             {
-                if (!_talents.ContainsKey(t.GetName()))
+                if (!_talents.ContainsKey(t._name))
                 {
-                    _talents.Add(t.GetName(), t);
+                    _talents.Add(t._name, t);
                 }
             }
         }

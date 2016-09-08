@@ -2435,10 +2435,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().NetId)
         {
-            var runes = player.GetChampion().Runes.GetRunes();
             int runesRequired = 30;
-
-            foreach (var rune in runes)
+            foreach (var rune in player.GetChampion().Runes._runes)
             {
                 buffer.Write(rune.Value);
                 buffer.Write((short)0x00);

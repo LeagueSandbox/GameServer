@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // Runes
             byte runeItemSlot = 14;
-            foreach (var rune in peerInfo.GetChampion().Runes.GetRunes())
+            foreach (var rune in peerInfo.GetChampion().Runes._runes)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);
