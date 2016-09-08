@@ -3072,13 +3072,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.GetZ()-100.0f);
             buffer.Write((float)p.getY());
-            buffer.Write((long)0x000000003f510fe2); // unk
-            buffer.Write((float)0.577f); // unk
-            buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
+            buffer.Write((float)-0.992436f); // unk
+            buffer.Write((int)0); // unk
+            buffer.Write((float)-0.122766f); // unk
+            buffer.Write((float)-1984.871338f); // unk
+            buffer.Write((float)-166.666656f); // unk
+            buffer.Write((float)-245.531418f); // unk
             buffer.Write((float)p.getX());
             buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
@@ -3086,47 +3087,67 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)targetZ);
             buffer.Write((float)p.getTarget().getY());
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.GetZ()-100.0f);
             buffer.Write((float)p.getY());
             buffer.Write((int)0); // unk
             buffer.Write((float)p.getMoveSpeed()); // Projectile speed
-            buffer.Write((long)0x00000000d5002fce); // unk
+            buffer.Write((int)0); // unk
+            buffer.Write((int)0); // unk
             buffer.Write((int)0x7f7fffff); // unk
-            buffer.Write((byte)0);
-            buffer.Write((byte)0x66);
-            buffer.Write((byte)0);
-            buffer.Write((int)p.getProjectileId()); // unk (projectile ID)
+            buffer.Write((byte)0); // unk
+            if (!p.getTarget().isSimpleTarget())
+            {
+                buffer.Write((byte)0x6B); // <-|
+            }                             //   |
+            else                          //   |-> maybe a bit field?, last bit 1 if it's a targeted projectile?
+            {                             //   |
+                buffer.Write((byte)0x66); // <-|
+            }
+            buffer.Write((byte)0); // unk
+            buffer.Write((int)p.getProjectileId()); // projectile ID (hashed name)
             buffer.Write((int)0); // Second net ID
             buffer.Write((byte)0); // unk
-            buffer.Write(1.0f);
+            buffer.Write(1.0f); // unk
             buffer.Write((int)p.getOwner().NetId);
             buffer.Write((int)p.getOwner().NetId);
 
             var c = p.getOwner() as Champion;
             if (c != null)
+            {
                 buffer.Write((int)c.getChampionHash());
+            }
             else
+            {
                 buffer.Write((int)0);
+            }
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.getTarget().getX());
-            buffer.Write((float)targetZ);
+            buffer.Write((float)targetZ-100.0f);
             buffer.Write((float)p.getTarget().getY());
             buffer.Write((float)p.getTarget().getX());
             buffer.Write((float)targetZ);
             buffer.Write((float)p.getTarget().getY());
-            buffer.Write((uint)0x80000000); // unk
-            buffer.Write((int)0x000000bf); // unk
-            buffer.Write((uint)0x80000000); // unk
-            buffer.Write((int)0x2fd5843f); // unk
-            buffer.Write((int)0x00000000); // unk
-            buffer.Write((short)0x0000); // unk
-            buffer.Write((byte)0x2f); // unk
-            buffer.Write((int)0x00000000); // unk
+            if (!p.getTarget().isSimpleTarget())
+            {
+                buffer.Write((byte)0x01); // unk (number of targets?)
+                buffer.Write((p.getTarget() as Unit).NetId);
+            }
+            buffer.Write((byte)0); // unk
+            buffer.Write(1.0f); // unk
+            buffer.Write((int)0); // unk
+            buffer.Write(1.0f); // unk
+            buffer.Write((byte)0x3C); // unk
+            buffer.Write((byte)0xDB); // unk
+            buffer.Write((byte)0x1E); // unk
+            buffer.fill(0, 6); // unk
+            buffer.Write((byte)0x30); // unk
+            buffer.Write((int)0); // unk
             buffer.Write((float)p.getX());
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.GetZ()-100.0f);
             buffer.Write((float)p.getY());
-            buffer.Write((long)0x0000000000000000); // unk
+            buffer.Write((int)0); // unk
+            buffer.Write((int)0); // unk
         }
 
     }
