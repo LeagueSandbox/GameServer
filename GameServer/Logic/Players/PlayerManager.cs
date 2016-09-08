@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 EnumParser.ParseSummonerSpell(p.Value.Summoner2)
             );
 
-            var c = new Champion(p.Value.Champion, _networkIdManager.GetNewNetID(), (uint)player.UserId);
+            var c = new Champion(p.Value.Champion, (uint)player.UserId);
             var pos = c.getRespawnPosition();
 
             c.setPosition(pos.Item1, pos.Item2);

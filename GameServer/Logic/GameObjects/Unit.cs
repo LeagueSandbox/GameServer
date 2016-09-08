@@ -216,7 +216,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 else if (distanceWith(targetUnit) <= stats.Range.Total)
                 {
                     refreshWaypoints();
-                    nextAutoIsCrit = new Random().Next(0, 100) <= stats.CriticalChance.Total * 100;
+                    nextAutoIsCrit = new Random().Next(0, 100) < stats.CriticalChance.Total * 100;
                     if (autoAttackCurrentCooldown <= 0)
                     {
                         isAttacking = true;
