@@ -50,7 +50,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);
                 _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(runeItem);
-                Console.WriteLine("[" + rune.Key + " to " + runeItemSlot + "] " + rune.Value);
                 runeItemSlot++;
             }
 
