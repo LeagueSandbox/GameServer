@@ -1,17 +1,10 @@
 ﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Items;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Content;
 using NLua.Exceptions;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -21,29 +14,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Shop Shop { get; protected set; }
         public InventoryManager Inventory { get; protected set; }
+        public long RespawnTimer { get; private set; }
+        public float ChampionGoldFromMinions { get; set; }
+        public RuneCollection RuneList { get; set; }
+        public List<Spell> Spells { get; private set; }
 
-        protected string type;
-        protected List<Spell> spells = new List<Spell>();
         protected short skillPoints = 0;
         protected int skin;
-        protected long respawnTimer = 0;
-        protected float championGoldFromMinions = 0;
         protected long championHitFlagTimer = 0;
         public uint playerId;
         public uint playerHitId;
-        public RuneCollection runeList;
 
-        public Spell getSpell(int index)
+        public Champion(string model, uint playerId, RuneCollection runeList, uint netId = 0)
+            : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
-            return spells[index];
-        }
-
-        public Champion(string type, uint playerId, RuneCollection runeList, uint netId = 0)
-            : base(type, new Stats(), 30, 0, 0, 1200, netId)
-        {
-            this.type = type;
             this.playerId = playerId;
-            this.runeList = runeList;
+            this.RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
@@ -53,9 +39,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.SetGeneratingGold(false);
 
             Inibin inibin;
-            if (!_rafManager.readInibin("DATA/Characters/" + type + "/" + type + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + Model + "/" + Model + ".inibin", out inibin))
             {
-                _logger.LogCoreError("couldn't find champion stats for " + type);
+                _logger.LogCoreError("couldn't find champion stats for " + Model);
                 return;
             }
 
@@ -82,29 +68,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
             stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell1"), 0));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell3"), 2));
-            spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell4"), 3));
-            spells.Add(new Spell(this, "SummonerHeal", 4));
-            spells.Add(new Spell(this, "SummonerFlash", 5));
-            spells.Add(new Spell(this, "Recall", 13));
+            Spells = new List<Spell>();
+            Spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell1"), 0));
+            Spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell2"), 1));
+            Spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell3"), 2));
+            Spells.Add(new Spell(this, inibin.getStringValue("Data", "Spell4"), 3));
+            Spells.Add(new Spell(this, "SummonerHeal", 4));
+            Spells.Add(new Spell(this, "SummonerFlash", 5));
+            Spells.Add(new Spell(this, "Recall", 13));
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            Inibin autoAttack;
-            if (!_rafManager.readInibin("DATA/Characters/" + type + "/Spells/" + type + "BasicAttack.inibin", out autoAttack))
+            var autoAttack = _rafManager.GetAutoAttackData(Model);
+            if (autoAttack != null)
             {
-                if (!_rafManager.readInibin("DATA/Spells/" + type + "BasicAttack.inibin", out autoAttack))
-                {
-                    _logger.LogCoreError("Couldn't find champion auto-attack data for " + type);
-                    return;
-                }
+                autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
+                autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
             }
-
-            autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
-            autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
 
             LoadLua();
         }
@@ -112,7 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void LoadLua()
         {
             base.LoadLua();
-            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(getType(), "Passive");
+            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(Model, "Passive");
             _scriptEngine.SetGlobalVariable("me", this);
             _scriptEngine.Execute(@"
                 function getOwner()
@@ -122,11 +103,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 function onSpellCast(slot, target)
                 end");
             _scriptEngine.Load(scriptloc);
-        }
-
-        public string getType()
-        {
-            return type;
         }
 
         public int getTeamSize()
@@ -211,7 +187,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
             Spell s = null;
-            foreach (Spell t in spells)
+            foreach (Spell t in Spells)
             {
                 if (t.getSlot() == slot)
                 {
@@ -235,16 +211,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public Spell levelUpSpell(short slot)
         {
-            if (slot >= spells.Count)
+            if (slot >= Spells.Count)
                 return null;
 
             if (skillPoints == 0)
                 return null;
 
-            spells[slot].levelUp();
+            Spells[slot].levelUp();
             --skillPoints;
 
-            return spells[slot];
+            return Spells[slot];
         }
 
         public override void update(long diff)
@@ -285,10 +261,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _logger.LogCoreInfo("Generating Gold!");
             }
 
-            if (respawnTimer > 0)
+            if (RespawnTimer > 0)
             {
-                respawnTimer -= diff;
-                if (respawnTimer <= 0)
+                RespawnTimer -= diff;
+                if (RespawnTimer <= 0)
                 {
                     var spawnPos = getRespawnPosition();
                     float respawnX = spawnPos.Item1;
@@ -308,7 +284,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.notifyUpdatedStats(this, false);
             }
 
-            foreach (var s in spells)
+            foreach (var s in Spells)
                 s.update(diff);
 
             if (championHitFlagTimer > 0)
@@ -343,9 +319,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 hash = Char.ToLower(gobj[i]) + (0x1003F * hash);
             }
-            for (var i = 0; i < type.Length; i++)
+            for (var i = 0; i < Model.Length; i++)
             {
-                hash = Char.ToLower(type[i]) + (0x1003F * hash);
+                hash = Char.ToLower(Model[i]) + (0x1003F * hash);
             }
             for (var i = 0; i < szSkin.Length; i++)
             {
@@ -376,7 +352,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 GetStats().LevelUp();
-                _logger.LogCoreInfo("Champion " + getType() + " leveled up to " + stats.Level);
+                _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
                 skillPoints++;
             }
             return true;
@@ -389,7 +365,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            respawnTimer = 5000 + GetStats().Level * 2500;
+            RespawnTimer = 5000 + GetStats().Level * 2500;
             _game.GetMap().StopTargeting(this);
 
             var cKiller = killer as Champion;
@@ -406,7 +382,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            cKiller.setChampionGoldFromMinions(0);
+            cKiller.ChampionGoldFromMinions = 0;
 
             float gold = _game.GetMap().GetGoldFor(this);
             _logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
@@ -450,10 +426,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.GetMap().StopTargeting(this);
         }
-        public long getRespawnTimer()
-        {
-            return respawnTimer;
-        }
 
         public override void onCollision(GameObject collider)
         {
@@ -466,15 +438,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 //CORE_INFO("I bumped into someone else!");
             }
-        }
-
-        public float getChampionGoldFromMinions()
-        {
-            return championGoldFromMinions;
-        }
-        public void setChampionGoldFromMinions(float gold)
-        {
-            championGoldFromMinions = gold;
         }
 
         public void setChampionHitFlagTimer(long time)

@@ -1,16 +1,9 @@
 ﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -19,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private Vector2 facing;
-        private string name;
+        public string Name { get; private set; }
 
         public Monster(
             float x,
@@ -39,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
             facing = new Vector2(facingX, facingY);
-            this.name = name;
+            this.Name = name;
 
             Inibin inibin;
             if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
@@ -92,11 +85,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(long diff)
         {
             base.update(diff);
-        }
-
-        public string getName()
-        {
-            return name;
         }
 
         public override bool isInDistress()

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
-using Ninject;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
@@ -45,7 +38,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // Runes
             byte runeItemSlot = 14;
-            foreach (var rune in peerInfo.GetChampion().runeList._runes)
+            foreach (var rune in peerInfo.GetChampion().RuneList._runes)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);

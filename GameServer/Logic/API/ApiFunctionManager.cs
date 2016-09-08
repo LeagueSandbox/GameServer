@@ -4,7 +4,6 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
@@ -78,7 +77,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void SetChampionModel(Champion champion, string model)
         {
-            champion.setModel(model);
+            champion.Model = model;
         }
 
         public static void DashTo(Unit unit, float x, float y, float dashSpeed, float leapHeight, string animation = null)
