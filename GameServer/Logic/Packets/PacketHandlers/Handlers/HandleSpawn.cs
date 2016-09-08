@@ -43,6 +43,16 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var buyItem = new BuyItemAns(peerInfo.GetChampion(), itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
+            // Runes
+            byte runeItemSlot = 14;
+            foreach (var rune in peerInfo.GetChampion().runeList._runes)
+            {
+                var runeItem = _itemManager.GetItemType(rune.Value);
+                var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);
+                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(runeItem);
+                runeItemSlot++;
+            }
+
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
             var skillUp = new SkillUpPacket(peerInfo.GetChampion().NetId, 7, 1, (byte)peerInfo.GetChampion().getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
