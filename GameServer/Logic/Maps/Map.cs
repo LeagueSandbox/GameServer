@@ -276,6 +276,18 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _inhibitors[id];
         }
 
+        public bool AllInhibitorsDestroyedFromTeam(TeamId team)
+        {
+            foreach (var inhibitor in _inhibitors.Values)
+            {
+                if (inhibitor.getTeam() == team && inhibitor.getState() == InhibitorState.Alive)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void AddObject(GameObject o)
         {
             if (o == null)
