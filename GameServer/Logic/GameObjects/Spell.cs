@@ -1,21 +1,13 @@
 ﻿using InibinSharp;
-using InibinSharp.RAF;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -148,9 +140,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
             {
-                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + ".inibin", out inibin))
                 {
-                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + ".inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + ".inibin", out inibin))
                     {
                         _logger.LogCoreError("Couldn't find spell stats for " + spellName);
                         return;
@@ -203,13 +195,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
                 {
-                    if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Missile.inibin", out inibin))
+                    if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + "Missile.inibin", out inibin))
                     {
-                        if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Missile.inibin", out inibin))
+                        if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + "Missile.inibin", out inibin))
                         {
-                            if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/Spells/" + spellName + "Mis.inibin", out inibin))
+                            if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + "Mis.inibin", out inibin))
                             {
-                                if (!_rafManager.readInibin("DATA/Characters/" + owner.getType() + "/" + spellName + "Mis.inibin", out inibin))
+                                if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + "Mis.inibin", out inibin))
                                 {
                                     return;
                                 }
@@ -469,7 +461,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public int getOtherSpellLevel(int slotId)
         {
-            return owner.getSpell(slotId).getLevel();
+            return owner.Spells[slotId].getLevel();
+        }
+
+        public string GetChampionModel()
+        {
+            return owner.Model;
         }
 
         /**
@@ -524,7 +521,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else
             {
-                scriptloc = config.ContentManager.GetSpellScriptPath(owner.getType(), getStringForSlot());
+                scriptloc = config.ContentManager.GetSpellScriptPath(owner.Model, getStringForSlot());
             }
             scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
             scriptEngine.Execute(@"
@@ -539,7 +536,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("getOwnerY", owner, typeof(Champion).GetMethod("getY"));
             scriptEngine.RegisterFunction("getSpellLevel", this, typeof(Spell).GetMethod("getLevel"));
             scriptEngine.RegisterFunction("getOwnerLevel", owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
-            scriptEngine.RegisterFunction("getChampionModel", owner, typeof(Champion).GetMethod("getModel"));
+            scriptEngine.RegisterFunction("getChampionModel", owner, typeof(Spell).GetMethod("GetChampionModel"));
             scriptEngine.RegisterFunction("getCastTarget", this, typeof(Spell).GetMethod("getTarget"));
             scriptEngine.RegisterFunction("getSpellToX", this, typeof(Spell).GetMethod("getX"));
             scriptEngine.RegisterFunction("getSpellToY", this, typeof(Spell).GetMethod("getY"));

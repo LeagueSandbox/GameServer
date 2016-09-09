@@ -2,11 +2,6 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -31,13 +26,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             var c = new Champion(
                 split[1],
                 (uint)_playerManager.GetPeerInfo(peer).UserId,
-                _playerManager.GetPeerInfo(peer).GetChampion().runeList
+                _playerManager.GetPeerInfo(peer).GetChampion().RuneList,
+                _playerManager.GetPeerInfo(peer).GetChampion().NetId
             );
             c.setPosition(
                 _playerManager.GetPeerInfo(peer).GetChampion().getX(),
                 _playerManager.GetPeerInfo(peer).GetChampion().getY()
             );
-            c.setModel(split[1]); // trigger the "modelUpdate" proc
+            c.Model = split[1]; // trigger the "modelUpdate" proc
             c.setTeam(_playerManager.GetPeerInfo(peer).GetChampion().getTeam());
             _game.GetMap().RemoveObject(_playerManager.GetPeerInfo(peer).GetChampion());
             _game.GetMap().AddObject(c);

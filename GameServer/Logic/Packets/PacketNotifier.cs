@@ -3,14 +3,8 @@ using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Items;
-using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Players;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -200,7 +194,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyModelUpdate(Unit obj)
         {
-            var mp = new UpdateModel(obj.NetId, obj.getModel());
+            var mp = new UpdateModel(obj.NetId, obj.Model);
             _game.PacketHandlerManager.broadcastPacket(mp, Channel.CHL_S2C);
         }
 

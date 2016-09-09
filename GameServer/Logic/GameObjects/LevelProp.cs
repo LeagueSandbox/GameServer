@@ -1,18 +1,15 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Maps;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class LevelProp : GameObject
     {
-        private string name;
-        private string type;
-        private float z, dirX, dirY, dirZ, unk1, unk2;
+        public string Name { get; private set; }
+        public string Model { get; private set; }
+        public float Z { get; private set; }
+        public float DirX { get; private set; }
+        public float DirY { get; private set; }
+        public float DirZ { get; private set; }
+        public float Unk1 { get; private set; }
+        public float Unk2 { get; private set; }
 
         public LevelProp(
             float x,
@@ -24,64 +21,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float unk1,
             float unk2,
             string name,
-            string type,
+            string model,
             uint netId = 0
         ) : base(x, y, 0, 0, netId)
         {
-            this.z = z;
-            this.dirX = dirX;
-            this.dirY = dirY;
-            this.dirZ = dirZ;
-            this.unk1 = unk1;
-            this.unk2 = unk2;
-            this.name = name;
-            this.type = type;
+            this.Z = z;
+            this.DirX = dirX;
+            this.DirY = dirY;
+            this.DirZ = dirZ;
+            this.Unk1 = unk1;
+            this.Unk2 = unk2;
+            this.Name = name;
+            this.Model = model;
             this.team = Enet.TeamId.TEAM_NEUTRAL;
-        }
-
-        public override float GetZ()
-        {
-            return z;
-        }
-
-        public float getDirectionX()
-        {
-            return dirX;
-        }
-
-        public float getDirectionY()
-        {
-            return dirY;
-        }
-
-        public float getDirectionZ()
-        {
-            return dirZ;
-        }
-
-        public float getUnk1()
-        {
-            return unk1;
-        }
-
-        public float getUnk2()
-        {
-            return unk2;
         }
 
         public override float getMoveSpeed()
         {
             return 0.0f;
         }
-
-        public string getName()
-        {
-            return name;
-        }
-        public string getType()
-        {
-            return type;
-        }
-
     }
 }

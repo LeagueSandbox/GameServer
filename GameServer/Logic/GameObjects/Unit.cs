@@ -1,17 +1,11 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -82,7 +76,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected bool deathFlag = false;
 
-        protected string model;
+        private string _model;
+        public string Model
+        {
+            get { return _model; }
+            set
+            {
+                _model = value;
+                modelUpdated = true;
+            }
+        }
 
         protected bool targetable;
         protected bool nextAutoIsCrit = false;
@@ -109,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         {
             this.stats = stats;
-            this.model = model;
+            this.Model = model;
         }
 
         public virtual void LoadLua()
@@ -492,16 +495,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 if (cKiller.killDeathCounter < 0)
                 {
-                    cKiller.setChampionGoldFromMinions(cKiller.getChampionGoldFromMinions() + gold);
+                    cKiller.ChampionGoldFromMinions += gold;
                     _logger.LogCoreInfo(string.Format(
                         "Adding gold form minions to reduce death spree: {0}",
-                        cKiller.getChampionGoldFromMinions()
+                        cKiller.ChampionGoldFromMinions
                     ));
                 }
 
-                if (cKiller.getChampionGoldFromMinions() >= 50 && cKiller.killDeathCounter < 0)
+                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.killDeathCounter < 0)
                 {
-                    cKiller.setChampionGoldFromMinions(0);
+                    cKiller.ChampionGoldFromMinions = 0;
                     cKiller.killDeathCounter += 1;
                 }
             }
@@ -515,17 +518,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void setAutoAttackProjectileSpeed(float newSpeed)
         {
             autoAttackProjectileSpeed = newSpeed;
-        }
-
-        public void setModel(string newModel)
-        {
-            model = newModel;
-            modelUpdated = true;
-        }
-
-        public string getModel()
-        {
-            return model;
         }
 
         public bool isModelUpdated()

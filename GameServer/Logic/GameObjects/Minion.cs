@@ -1,13 +1,5 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -75,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 minionModel += "MechMelee";
 
             // Set model
-            setModel(minionModel);
+            Model = minionModel;
 
 
             // If we have lane path instructions from the map

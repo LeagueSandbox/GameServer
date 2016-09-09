@@ -2,21 +2,16 @@
 using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox;
 using System.IO;
 using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -328,14 +323,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
-            buffer.Write(Encoding.Default.GetBytes(m.getName()));
-            buffer.fill(0, 64 - m.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Name));
+            buffer.fill(0, 64 - m.Name.Length);
 
-            buffer.Write(Encoding.Default.GetBytes(m.getModel()));
-            buffer.fill(0, 64 - m.getModel().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Model));
+            buffer.fill(0, 64 - m.Model.Length);
 
-            buffer.Write(Encoding.Default.GetBytes(m.getName()));
-            buffer.fill(0, 64 - m.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Name));
+            buffer.fill(0, 64 - m.Name.Length);
 
             buffer.fill(0, 64); // empty
 
@@ -400,8 +395,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(Encoding.Default.GetBytes(p.getName()));
             buffer.fill(0, 64 - p.getName().Length);
 
-            buffer.Write(Encoding.Default.GetBytes(p.getModel()));
-            buffer.fill(0, 64 - p.getModel().Length);
+            buffer.Write(Encoding.Default.GetBytes(p.Model));
+            buffer.fill(0, 64 - p.Model.Length);
 
             buffer.Write((byte)0x01);
 
@@ -456,14 +451,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.getFacing().X, m.getFacing().Y)); //facing z
             buffer.Write((float)m.getFacing().Y); //facing y
 
-            buffer.Write(Encoding.Default.GetBytes(m.getName()));
-            buffer.fill(0, 64 - m.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Name));
+            buffer.fill(0, 64 - m.Name.Length);
 
-            buffer.Write(Encoding.Default.GetBytes(m.getModel()));
-            buffer.fill(0, 64 - m.getModel().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Model));
+            buffer.fill(0, 64 - m.Model.Length);
 
-            buffer.Write(Encoding.Default.GetBytes(m.getName()));
-            buffer.fill(0, 64 - m.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(m.Name));
+            buffer.fill(0, 64 - m.Name.Length);
 
             buffer.fill(0, 64); // String, not always empty
 
@@ -509,8 +504,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(Encoding.Default.GetBytes(turret.Name));
             buffer.fill(0, 64 - turret.Name.Length);
 
-            buffer.Write(Encoding.Default.GetBytes(turret.getModel()));
-            buffer.fill(0, 64 - turret.getModel().Length);
+            buffer.Write(Encoding.Default.GetBytes(turret.Model));
+            buffer.fill(0, 64 - turret.Model.Length);
 
             buffer.Write((int)0);
 
@@ -1629,9 +1624,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes(player.GetName()))
                 buffer.Write((byte)b);
             buffer.fill(0, 128 - player.GetName().Length);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().Model))
                 buffer.Write((byte)b);
-            buffer.fill(0, 40 - player.GetChampion().getType().Length);
+            buffer.fill(0, 40 - player.GetChampion().Model.Length);
             buffer.Write((float)0.0f); // deathDurationRemaining
             buffer.Write((float)0.0f); // timeSinceDeath
             buffer.Write((int)0); // UNK (4.18)
@@ -2068,8 +2063,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var player = p.Item2;
             buffer.Write((long)player.UserId);
             buffer.Write((int)player.GetSkinNo());
-            buffer.Write((int)player.GetChampion().getType().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().getType()))
+            buffer.Write((int)player.GetChampion().Model.Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().Model))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }
@@ -2353,7 +2348,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)0);
             buffer.Write((byte)7);
-            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
+            buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
     }
 
@@ -2362,7 +2357,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public ChampionDeathTimer(Champion die) : base(ExtendedPacketCmd.EPKT_S2C_ChampionDeathTimer, die.NetId)
         {
-            buffer.Write(die.getRespawnTimer() / 1000.0f); // Respawn timer, float
+            buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
     }
 
@@ -2530,7 +2525,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().NetId)
         {
             int runesRequired = 30;
-            foreach (var rune in player.GetChampion().runeList._runes)
+            foreach (var rune in player.GetChampion().RuneList._runes)
             {
                 buffer.Write(rune.Value);
                 buffer.Write((short)0x00);
@@ -3162,15 +3157,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0x00000040); // unk
             buffer.Write((byte)0); // unk
             buffer.Write((float)lp.getX());
-            buffer.Write((float)lp.GetZ());
+            buffer.Write((float)lp.Z);
             buffer.Write((float)lp.getY());
             buffer.Write((float)0.0f); // Rotation Y
 
-            buffer.Write((float)lp.getDirectionX());
-            buffer.Write((float)lp.getDirectionZ());
-            buffer.Write((float)lp.getDirectionY());
-            buffer.Write((float)lp.getUnk1());
-            buffer.Write((float)lp.getUnk2());
+            buffer.Write((float)lp.DirX);
+            buffer.Write((float)lp.DirZ);
+            buffer.Write((float)lp.DirY);
+            buffer.Write((float)lp.Unk1);
+            buffer.Write((float)lp.Unk2);
 
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f);
@@ -3178,12 +3173,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)lp.getTeam()); // Probably a short
             buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
-            foreach (var b in Encoding.Default.GetBytes(lp.getName()))
+            foreach (var b in Encoding.Default.GetBytes(lp.Name))
                 buffer.Write((byte)b);
-            buffer.fill(0, 64 - lp.getName().Length);
-            foreach (var b in Encoding.Default.GetBytes(lp.getType()))
+            buffer.fill(0, 64 - lp.Name.Length);
+            foreach (var b in Encoding.Default.GetBytes(lp.Model))
                 buffer.Write(b);
-            buffer.fill(0, 64 - lp.getType().Length);
+            buffer.fill(0, 64 - lp.Model.Length);
         }
 
         // TODO : remove this once we find a better solution for jungle camp spawning command

@@ -1,8 +1,6 @@
 ﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -33,9 +31,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void BuildAzirTurret()
         {
             Inibin inibin;
-            if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
+            if (!_rafManager.readInibin("DATA/Characters/" + Model + "/" + Model + ".inibin", out inibin))
             {
-                _logger.LogCoreError("couldn't find turret stats for " + model);
+                _logger.LogCoreError("couldn't find turret stats for " + Model);
                 return;
             }
 
@@ -64,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
 
-            Inibin autoAttack = _rafManager.GetAutoAttackData(model);
+            Inibin autoAttack = _rafManager.GetAutoAttackData(Model);
 
             if (autoAttack != null)
             {
