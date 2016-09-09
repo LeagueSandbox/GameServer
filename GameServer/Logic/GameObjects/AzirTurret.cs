@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             BuildAzirTurret();
 
-            setTeam(team);
+            Team = team;
         }
 
         public void BuildAzirTurret()
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
-            setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
+            CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
 
             Inibin autoAttack = _rafManager.GetAutoAttackData(Model);
 

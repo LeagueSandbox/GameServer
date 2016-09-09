@@ -435,7 +435,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var isInhibitorDead = inhibitor.getState() == InhibitorState.Dead && !inhibitor.RespawnAnnounced;
 
                 var oppositeTeam = TeamId.TEAM_BLUE;
-                if (inhibitor.getTeam() == TeamId.TEAM_PURPLE)
+                if (inhibitor.Team == TeamId.TEAM_PURPLE)
                 {
                     oppositeTeam = TeamId.TEAM_PURPLE;
                 }

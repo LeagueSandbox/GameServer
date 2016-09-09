@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 purpTeam.Add(player);
             }
-            if (getTeam() == TeamId.TEAM_BLUE)
+            if (Team == TeamId.TEAM_BLUE)
                 return purpTeam.Count;
             else
                 return blueTeam.Count;

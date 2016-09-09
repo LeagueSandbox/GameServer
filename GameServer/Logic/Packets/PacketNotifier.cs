@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyGameEnd(Nexus nexus)
         {
-            var losingTeam = nexus.getTeam();
+            var losingTeam = nexus.Team;
 
             foreach (var p in _playerManager.GetPlayers())
             {
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             if (!partial)
             {
-                _game.PacketHandlerManager.broadcastPacketTeam(u.getTeam(), us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
+                _game.PacketHandlerManager.broadcastPacketTeam(u.Team, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
             }
             else
             {
@@ -291,11 +291,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
-                notifyMinionSpawned(m, CustomConvert.getEnemyTeam(m.getTeam()));
+                notifyMinionSpawned(m, CustomConvert.getEnemyTeam(m.Team));
 
             var c = u as Champion;
             if (c != null)
-                notifyChampionSpawned(c, CustomConvert.getEnemyTeam(c.getTeam()));
+                notifyChampionSpawned(c, CustomConvert.getEnemyTeam(c.Team));
 
             var monster = u as Monster;
             if (monster != null)

@@ -502,7 +502,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
             var p = new Placeable(this.owner, toX, toY, model, name);
-            p.setTeam(owner.getTeam());
+            p.Team = owner.Team;
 
             p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
             p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);

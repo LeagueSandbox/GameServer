@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static TeamId GetTeam(GameObject gameObject)
         {
-            return gameObject.getTeam();
+            return gameObject.Team;
         }
 
         public static bool IsDead(Unit unit)

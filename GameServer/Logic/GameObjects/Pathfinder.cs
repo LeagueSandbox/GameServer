@@ -1,13 +1,10 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.RAF;
-using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -352,7 +349,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             // TODO: Optimise? This is where the application is residing in 96% of the time during pathfinding.
 
-            // It checks if we've already added this x and y to the openlist. If we did, return it. 
+            // It checks if we've already added this x and y to the openlist. If we did, return it.
             foreach (var i in openList)
             {
                 if (i.x == x && i.y == y)
@@ -392,7 +389,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                     Vector2 gridPos = fromPositionToGrid(i.Value.getPosition()); // get the position in grid size
 
-                    int radius = ((int)Math.Ceiling((float)i.Value.getCollisionRadius() / (float)PATH_DEFAULT_BOX_SIZE(mesh.getSize()))) / 2; // How many boxes does the radius of this object cover?
+                    int radius = ((int)Math.Ceiling((float)i.Value.CollisionRadius / (float)PATH_DEFAULT_BOX_SIZE(mesh.getSize()))) / 2; // How many boxes does the radius of this object cover?
 
                     for (int dx = -radius; dx < radius; dx++) // For the whole radius in the width
                         if (gridPos.X + dx >= 0 && gridPos.X + dx < GRID_WIDTH) // As long as we're in the map (x)
@@ -428,9 +425,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                       {
                           // blue
                           imageFile.put(map[x][y].occupied * 128);
-                          // green 
+                          // green
                           imageFile.put(map[x][y].occupied * 128);
-                          // red 
+                          // red
                           imageFile.put(map[x][y].occupied * 128);
                       }
 

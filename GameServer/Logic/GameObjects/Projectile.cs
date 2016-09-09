@@ -1,11 +1,4 @@
-﻿using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Maps;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -38,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.projectileId = projectileId;
             this.flags = flags;
 
-            setTarget(target);
+            Target = target;
 
             if (!target.isSimpleTarget())
                 ((GameObject)target).incrementAttackerCount();
@@ -48,13 +41,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void update(long diff)
         {
-            if (target == null)
+            if (Target == null)
             {
                 setToRemove();
                 return;
             }
 
-            if (target.isSimpleTarget())
+            if (Target.isSimpleTarget())
             { // Skillshot
                 var objects = _game.GetMap().GetObjects();
                 foreach (var it in objects)
@@ -71,16 +64,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (u == null)
                             continue;
 
-                        if (u.getTeam() == owner.getTeam()
+                        if (u.Team == owner.Team
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                             continue;
 
-                        if (u.getTeam() == TeamId.TEAM_NEUTRAL
+                        if (u.Team == TeamId.TEAM_NEUTRAL
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
                             continue;
 
-                        if (u.getTeam() != owner.getTeam()
-                            && u.getTeam() != TeamId.TEAM_NEUTRAL
+                        if (u.Team != owner.Team
+                            && u.Team != TeamId.TEAM_NEUTRAL
                             && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                             continue;
 
@@ -119,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else
             {
-                var u = target as Unit;
+                var u = Target as Unit;
                 if (u != null && collide(u))
                 { // Autoguided spell
                     if (originSpell != null)
@@ -154,8 +147,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void setToRemove()
         {
-            if (target != null && !target.isSimpleTarget())
-                (target as GameObject).decrementAttackerCount();
+            if (Target != null && !Target.isSimpleTarget())
+                (Target as GameObject).decrementAttackerCount();
 
             owner.decrementAttackerCount();
             base.setToRemove();

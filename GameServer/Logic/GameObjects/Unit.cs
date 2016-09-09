@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (targetUnit != null)
             {
-                if (targetUnit.isDead() || !_game.GetMap().TeamHasVisionOn(getTeam(), targetUnit))
+                if (targetUnit.isDead() || !_game.GetMap().TeamHasVisionOn(Team, targetUnit))
                 {
                     setTargetUnit(null);
                     isAttacking = false;
@@ -265,7 +265,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (
                     autoAttackTarget == null
                     || autoAttackTarget.isDead()
-                    || !_game.GetMap().TeamHasVisionOn(getTeam(), autoAttackTarget)
+                    || !_game.GetMap().TeamHasVisionOn(Team, autoAttackTarget)
                 )
                 {
                     isAttacking = false;
@@ -467,7 +467,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float exp = _game.GetMap().GetExperienceFor(this);
             var champs = _game.GetMap().GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
-            champs.RemoveAll(l => l.getTeam() == getTeam());
+            champs.RemoveAll(l => l.Team == Team);
 
             if (champs.Count > 0)
             {

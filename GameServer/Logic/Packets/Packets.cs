@@ -334,7 +334,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 64); // empty
 
-            buffer.Write((int)m.getTeam()); // Probably a short
+            buffer.Write((int)m.Team); // Probably a short
             buffer.fill(0, 12);
             buffer.Write((int)1); //campId 1
             buffer.Write((int)100);
@@ -380,7 +380,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 8);
 
-            buffer.Write((short)p.getTeam());
+            buffer.Write((short)p.Team);
             buffer.Write((byte)0x92);
             buffer.Write((byte)0x00);
 
@@ -462,7 +462,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.fill(0, 64); // String, not always empty
 
-            buffer.Write((int)m.getTeam()); // Probably a short
+            buffer.Write((int)m.Team); // Probably a short
             buffer.fill(0, 12);
             buffer.Write((int)1); // Camp id. Camp needs to exist
             buffer.Write((int)100);
@@ -515,7 +515,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)4.0f);
 
             buffer.Write((byte)0xC1);
-            buffer.Write((short)turret.getTeam());
+            buffer.Write((short)turret.Team);
 
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
@@ -2953,7 +2953,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.NetId)
         {
-            float targetZ = _game.GetMap().GetHeightAtLocation(p.getTarget().getX(), p.getTarget().getY());
+            float targetZ = _game.GetMap().GetHeightAtLocation(p.Target.getX(), p.Target.getY());
 
             buffer.Write((float)p.getX());
             buffer.Write((float)p.GetZ());
@@ -2970,9 +2970,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)p.getX());
             buffer.Write((float)p.GetZ());
             buffer.Write((float)p.getY());
-            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)p.Target.getX());
             buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
+            buffer.Write((float)p.Target.getY());
             buffer.Write((float)p.getX());
             buffer.Write((float)p.GetZ()-100.0f);
             buffer.Write((float)p.getY());
@@ -2982,7 +2982,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0); // unk
             buffer.Write((int)0x7f7fffff); // unk
             buffer.Write((byte)0); // unk
-            if (!p.getTarget().isSimpleTarget())
+            if (!p.Target.isSimpleTarget())
             {
                 buffer.Write((byte)0x6B); // <-|
             }                             //   |
@@ -3009,16 +3009,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
 
             buffer.Write((int)p.NetId);
-            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)p.Target.getX());
             buffer.Write((float)targetZ-100.0f);
-            buffer.Write((float)p.getTarget().getY());
-            buffer.Write((float)p.getTarget().getX());
+            buffer.Write((float)p.Target.getY());
+            buffer.Write((float)p.Target.getX());
             buffer.Write((float)targetZ);
-            buffer.Write((float)p.getTarget().getY());
-            if (!p.getTarget().isSimpleTarget())
+            buffer.Write((float)p.Target.getY());
+            if (!p.Target.isSimpleTarget())
             {
                 buffer.Write((byte)0x01); // unk (number of targets?)
-                buffer.Write((p.getTarget() as Unit).NetId);
+                buffer.Write((p.Target as Unit).NetId);
             }
             buffer.Write((byte)0); // unk
             buffer.Write(1.0f); // unk
@@ -3170,7 +3170,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f);
             buffer.Write((float)1.0f); // Scaling
-            buffer.Write((int)lp.getTeam()); // Probably a short
+            buffer.Write((int)lp.Team); // Probably a short
             buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
             foreach (var b in Encoding.Default.GetBytes(lp.Name))

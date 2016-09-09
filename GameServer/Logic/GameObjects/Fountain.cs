@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var champions = map.GetChampionsInRange(_x, _y, _fountainSize, true);
             foreach (var champion in champions)
             {
-                if (champion.getTeam() != _team)
+                if (champion.Team != _team)
                     continue;
 
                 var hp = champion.GetStats().CurrentHealth;
