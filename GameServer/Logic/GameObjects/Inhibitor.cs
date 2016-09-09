@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
         private const float GOLD_WORTH = 50.0f;
         private DateTime TimerStartTime;
-        private bool respawnAnnounced = true;
+        public bool RespawnAnnounced { get; private set; } = true;
 
         // TODO assists
         public Inhibitor(
@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             stats.CurrentHealth = 4000;
             stats.HealthPoints.BaseValue = 4000;
-
+            State = InhibitorState.Alive;
             setTeam(team);
         }
 
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             setState(InhibitorState.Dead, killer);
-            respawnAnnounced = false;
+            RespawnAnnounced = false;
 
             base.die(killer);
         }
@@ -88,10 +88,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void update(long diff)
         {
-            if (!respawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
+            if (!RespawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
                 _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
-                respawnAnnounced = true;
+                RespawnAnnounced = true;
             }
 
             base.update(diff);
