@@ -1,12 +1,8 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
-using Ninject;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -106,22 +102,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 bool a = false, b = false;
                 // Are we in the one to the right?
-                if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius())
+                if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.CollisionRadius)
                     addToDivision(obj, (int)divX + 1, (int)divY); // Add it there too.
 
                 // Maybe on the left?
-                if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.getCollisionRadius())
+                if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.CollisionRadius)
                 {
                     a = true;
                     addToDivision(obj, (int)divX - 1, (int)divY);
                 }
 
                 // Are we touching below us?
-                if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.getCollisionRadius())
+                if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.CollisionRadius)
                     addToDivision(obj, (int)divX, (int)divY + 1);
 
                 // Or above?
-                if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.getCollisionRadius())
+                if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.CollisionRadius)
                 {
                     b = true;
                     addToDivision(obj, (int)divX, (int)divY - 1);
@@ -174,14 +170,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // Below is same principle from addObject.
             bool a = false, b = false;
             var curDiv = managedDivisions[divi];
-            if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.getCollisionRadius()
+            if (Math.Abs(obj.getPosition().X - curDiv.max.X) < obj.CollisionRadius
                 && divX + 1 >= 0 && divX + 1 < divisionCount
             )
             {
                 divs[divCount] = managedDivisions[(int)divY * divisionCount + (int)divX + 1];
                 divCount++;
             }
-            else if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.getCollisionRadius()
+            else if (Math.Abs(obj.getPosition().X - curDiv.min.X) < obj.CollisionRadius
                 && divX - 1 >= 0 && divX - 1 < divisionCount
             )
             {
@@ -189,14 +185,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 divCount++;
                 a = true;
             }
-            if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.getCollisionRadius()
+            if (Math.Abs(obj.getPosition().Y - curDiv.max.Y) < obj.CollisionRadius
                 && divY + 1 >= 0 && divY + 1 < divisionCount
             )
             {
                 divs[divCount] = managedDivisions[(int)divY * divisionCount + (int)divX + 1];
                 divCount++;
             }
-            else if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.getCollisionRadius()
+            else if (Math.Abs(obj.getPosition().Y - curDiv.min.Y) < obj.CollisionRadius
                 && divY - 1 >= 0 && divY - 1 < divisionCount
             )
             {
@@ -248,8 +244,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             var displ = (o2.getPosition() - o1.getPosition());
                             if (
                                 displ.SqrLength() <
-                                (o1.getCollisionRadius() + o2.getCollisionRadius()) *
-                                (o1.getCollisionRadius() + o2.getCollisionRadius())
+                                (o1.CollisionRadius + o2.CollisionRadius) *
+                                (o1.CollisionRadius + o2.CollisionRadius)
                             )
                             {
                                 o1.onCollision(o2);
@@ -276,8 +272,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                         var displ = (o2.getPosition() - o1.getPosition());
                         if (displ.SqrLength() <
-                            (o1.getCollisionRadius() + o2.getCollisionRadius()) *
-                            (o1.getCollisionRadius() + o2.getCollisionRadius()))
+                            (o1.CollisionRadius + o2.CollisionRadius) *
+                            (o1.CollisionRadius + o2.CollisionRadius))
                         {
                             o1.onCollision(o2);
                             //o2->onCollision(o1); // Is being done by the second iteration.
@@ -315,20 +311,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
 
                     // If they are no longer in this division..
-                    if ((o.getPosition().X - o.getCollisionRadius() > curDiv.max.X
-                        || o.getPosition().Y - o.getCollisionRadius() > curDiv.max.Y
-                        || o.getPosition().X + o.getCollisionRadius() < curDiv.min.X
-                        || o.getPosition().Y + o.getCollisionRadius() < curDiv.min.Y))
+                    if ((o.getPosition().X - o.CollisionRadius > curDiv.max.X
+                        || o.getPosition().Y - o.CollisionRadius > curDiv.max.Y
+                        || o.getPosition().X + o.CollisionRadius < curDiv.min.X
+                        || o.getPosition().Y + o.CollisionRadius < curDiv.min.Y))
                     {
                         removeFromDivision(o, pos); // Remove them from it.
                         addObject(o); // Reset in what divisions this object is.
                     }
 
                     // If they've entered another division, but not left this one yet..
-                    else if ((o.getPosition().X + o.getCollisionRadius() > curDiv.max.X
-                        || o.getPosition().Y + o.getCollisionRadius() > curDiv.max.Y
-                        || o.getPosition().X - o.getCollisionRadius() < curDiv.min.X
-                        || o.getPosition().Y - o.getCollisionRadius() < curDiv.min.Y))
+                    else if ((o.getPosition().X + o.CollisionRadius > curDiv.max.X
+                        || o.getPosition().Y + o.CollisionRadius > curDiv.max.Y
+                        || o.getPosition().X - o.CollisionRadius < curDiv.min.X
+                        || o.getPosition().Y - o.CollisionRadius < curDiv.min.Y))
                     {
                         addObject(o); // Reset in what divisions this object is.
                     }
@@ -346,10 +342,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 //if (o->isMovementUpdated()) // if they moved
                 {
                     // If they're inside the map.
-                    if ((o.getPosition().X - o.getCollisionRadius() > width
-                        || o.getPosition().Y - o.getCollisionRadius() > height
-                        || o.getPosition().X + o.getCollisionRadius() < 0
-                        || o.getPosition().Y + o.getCollisionRadius() < 0))
+                    if ((o.getPosition().X - o.CollisionRadius > width
+                        || o.getPosition().Y - o.CollisionRadius > height
+                        || o.getPosition().X + o.CollisionRadius < 0
+                        || o.getPosition().Y + o.CollisionRadius < 0))
                     {
                         removeFromDivision(o, -1);
                         //CORE_INFO("Minion moving from unmanaged!");

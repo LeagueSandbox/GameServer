@@ -33,7 +33,7 @@
             this.Unk2 = unk2;
             this.Name = name;
             this.Model = model;
-            this.team = Enet.TeamId.TEAM_NEUTRAL;
+            this.Team = Enet.TeamId.TEAM_NEUTRAL;
         }
 
         public override float getMoveSpeed()

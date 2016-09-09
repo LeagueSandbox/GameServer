@@ -1,14 +1,10 @@
-﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -105,10 +101,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var u = obj as Unit;
                 foreach (var team in _teamsIterator)
                 {
-                    if (u.getTeam() == team || team == TeamId.TEAM_NEUTRAL)
+                    if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
                         continue;
 
-                    var visionUnitsTeam = GetVisionUnits(u.getTeam());
+                    var visionUnitsTeam = GetVisionUnits(u.Team);
                     if (visionUnitsTeam.ContainsKey(u.NetId))
                     {
                         if (TeamHasVisionOn(team, u))
@@ -280,7 +276,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             foreach (var inhibitor in _inhibitors.Values)
             {
-                if (inhibitor.getTeam() == team && inhibitor.getState() == InhibitorState.Alive)
+                if (inhibitor.Team == team && inhibitor.getState() == InhibitorState.Alive)
                 {
                     return false;
                 }
@@ -319,7 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             AddVisionUnit(o as Unit);
 
             if (o is Minion)
-                _game.PacketNotifier.notifyMinionSpawned(o as Minion, o.getTeam());
+                _game.PacketNotifier.notifyMinionSpawned(o as Minion, o.Team);
             else if (o is Monster)
                 _game.PacketNotifier.notifySpawn(o as Monster);
             else if (o is Champion)
@@ -357,7 +353,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             lock (_championsLock)
                 _champions.Add(champion.NetId, champion);
 
-            _game.PacketNotifier.notifyChampionSpawned(champion, champion.getTeam());
+            _game.PacketNotifier.notifyChampionSpawned(champion, champion.Team);
         }
 
         public void RemoveChampion(Champion champion)
@@ -382,12 +378,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void AddVisionUnit(Unit unit)
         {
             lock (_visionLock)
-                _visionUnits[unit.getTeam()].Add(unit.NetId, unit);
+                _visionUnits[unit.Team].Add(unit.NetId, unit);
         }
 
         public void RemoveVisionUnit(Unit unit)
         {
-            RemoveVisionUnit(unit.getTeam(), unit.NetId);
+            RemoveVisionUnit(unit.Team, unit.NetId);
         }
 
         public void RemoveVisionUnit(TeamId team, uint netId)
@@ -477,7 +473,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             foreach (var kv in _champions)
             {
                 Champion c = kv.Value;
-                if (c.getTeam() == team)
+                if (c.Team == team)
                     champs.Add(c);
             }
             return champs;
@@ -568,14 +564,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             if (o == null)
                 return false;
 
-            if (o.getTeam() == team)
+            if (o.Team == team)
                 return true;
 
             lock (_objectsLock)
             {
                 foreach (var kv in _objects)
                 {//TODO: enable mesh as soon as it works again
-                    if (kv.Value.getTeam() == team && kv.Value.distanceWith(o) < kv.Value.getVisionRadius() /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
+                    if (kv.Value.Team == team && kv.Value.distanceWith(o) < kv.Value.VisionRadius /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
                     {
                         var unit = kv.Value as Unit;
                         if (unit != null && unit.isDead())

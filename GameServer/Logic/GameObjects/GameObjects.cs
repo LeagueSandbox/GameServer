@@ -17,19 +17,28 @@ namespace LeagueSandbox.GameServer.Logic
         /**
          * Current target the object running to (can be coordinates or an object)
          */
-        protected Target target;
+        public Target Target { get; set; }
 
         protected List<Vector2> waypoints = new List<Vector2>();
         protected int curWaypoint;
-        protected TeamId team;
+        private TeamId _team;
+        public TeamId Team
+        {
+            get { return _team; }
+            set
+            {
+                this._team = value;
+                visibleByTeam[_team] = true;
+            }
+        }
         protected bool movementUpdated;
         protected bool toRemove;
         protected int attackerCount;
-        protected int collisionRadius;
+        public int CollisionRadius { get; set; }
         protected Vector2 direction;
-        protected int visionRadius;
-        protected bool dashing;
-        protected float dashSpeed;
+        public int VisionRadius { get; private set; }
+        public bool IsDashing { get; private set; }
+        private float _dashSpeed;
         protected Dictionary<TeamId, bool> visibleByTeam;
         protected Game _game = Program.ResolveDependency<Game>();
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
@@ -44,19 +53,25 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 this.NetId = _networkIdManager.GetNewNetID(); // Let the base class (this one) asign a netId
             }
-            this.target = null;
-            this.collisionRadius = collisionRadius;
-            this.visionRadius = visionRadius;
-            this.team = 0;
+            this.Target = null;
+            this.CollisionRadius = collisionRadius;
+            this.VisionRadius = visionRadius;
+
+            this.visibleByTeam = new Dictionary<TeamId, bool>();
+            var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
+            foreach (var team in teams)
+            {
+                visibleByTeam.Add(team, false);
+            }
+
+            this.Team = TeamId.TEAM_NEUTRAL;
             this.movementUpdated = false;
             this.toRemove = false;
             this.attackerCount = 0;
-            this.dashing = false;
-            this.visibleByTeam = new Dictionary<TeamId, bool>();
+            this.IsDashing = false;
 
-            var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
-            foreach (var team in teams)
-                visibleByTeam.Add(team, false);
+
+
         }
 
         public virtual void onCollision(GameObject collider) { }
@@ -67,12 +82,12 @@ namespace LeagueSandbox.GameServer.Logic
         */
         public void Move(long diff)
         {
-            if (target == null)
+            if (Target == null)
             {
                 direction = new Vector2();
                 return;
             }
-            var to = new Vector2(target.getX(), target.getY());
+            var to = new Vector2(Target.getX(), Target.getY());
             var cur = new Vector2(getX(), getY()); //?
 
 
@@ -83,7 +98,12 @@ namespace LeagueSandbox.GameServer.Logic
                 direction = new Vector2(0, 0);
             }
 
-            float moveSpeed = dashing ? dashSpeed : getMoveSpeed();
+            float moveSpeed = getMoveSpeed();
+            if (IsDashing)
+            {
+                moveSpeed = _dashSpeed;
+            }
+
             float deltaMovement = (moveSpeed) * 0.001f * diff;
 
             float xx = direction.X * deltaMovement;
@@ -93,11 +113,11 @@ namespace LeagueSandbox.GameServer.Logic
             y += yy;
 
             /* If the target was a simple point, stop when it is reached */
-            if (target.isSimpleTarget() && distanceWith(target) < deltaMovement * 2) //how can target be null here?????
+            if (Target.isSimpleTarget() && distanceWith(Target) < deltaMovement * 2) //how can target be null here?????
             {
-                if (dashing)
+                if (IsDashing)
                 {
-                    dashing = false;
+                    IsDashing = false;
 
                     if (this is Unit)
                     {
@@ -107,15 +127,15 @@ namespace LeagueSandbox.GameServer.Logic
                         _game.PacketNotifier.notifySetAnimation(u, animList);
                     }
 
-                    setTarget(null);
+                    Target = null;
                 }
                 else if (++curWaypoint >= waypoints.Count)
                 {
-                    setTarget(null);
+                    Target = null;
                 }
                 else
                 {
-                    setTarget(new Target(waypoints[curWaypoint]));
+                    Target = new Target(waypoints[curWaypoint]);
                 }
             }
         }
@@ -137,20 +157,6 @@ namespace LeagueSandbox.GameServer.Logic
             yvector /= toDivide;
         }
 
-        /**
-        * Sets the team of the object
-        * @param team the new team
-        */
-        public void setTeam(TeamId team)
-        {
-            this.team = team;
-            visibleByTeam[team] = true;
-        }
-        public TeamId getTeam()
-        {
-            return team;
-        }
-
         public virtual void update(long diff)
         {
             Move(diff);
@@ -165,18 +171,6 @@ namespace LeagueSandbox.GameServer.Logic
             return false;
         }
 
-        public Target getTarget()
-        {
-            return target;
-        }
-        public void setTarget(Target target)
-        {
-            if (this.target == target)
-                return;
-
-            this.target = target;
-        }
-
         public void setWaypoints(List<Vector2> newWaypoints)
         {
             waypoints = newWaypoints;
@@ -185,11 +179,11 @@ namespace LeagueSandbox.GameServer.Logic
             movementUpdated = true;
             if (waypoints.Count == 1)
             {
-                setTarget(null);
+                Target = null;
                 return;
             }
 
-            setTarget(new Target(waypoints[1]));
+            Target = new Target(waypoints[1]);
             curWaypoint = 1;
         }
 
@@ -228,7 +222,7 @@ namespace LeagueSandbox.GameServer.Logic
             this.x = x;
             this.y = y;
 
-            setTarget(null);
+            Target = null;
         }
 
         public virtual float GetZ()
@@ -236,28 +230,9 @@ namespace LeagueSandbox.GameServer.Logic
             return _game.GetMap().GetHeightAtLocation(x, y);
         }
 
-        public void setCollisionRadius(int collisionRadius)
-        {
-            this.collisionRadius = collisionRadius;
-        }
-
-        public int getCollisionRadius()
-        {
-            return collisionRadius;
-        }
-        public virtual float getLargestRadius()
-        {
-            return collisionRadius;
-        }
-
-        public int getVisionRadius()
-        {
-            return visionRadius;
-        }
-
         public bool collide(GameObject o)
         {
-            return distanceWithSqr(o) < (getCollisionRadius() + o.getCollisionRadius()) * (getCollisionRadius() + o.getCollisionRadius());
+            return distanceWithSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         public int getAttackerCount()
@@ -275,7 +250,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public bool isVisibleByTeam(TeamId team)
         {
-            return (team == getTeam() || visibleByTeam[team]);
+            return (team == Team || visibleByTeam[team]);
         }
 
         public void setVisibleByTeam(TeamId team, bool visible)
@@ -285,14 +260,10 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void dashTo(float x, float y, float dashSpeed)
         {
-            dashing = true;
-            this.dashSpeed = dashSpeed;
-            setTarget(new Target(x, y));
+            IsDashing = true;
+            this._dashSpeed = dashSpeed;
+            Target = new Target(x, y);
             waypoints.Clear();
-        }
-        public bool isDashing()
-        {
-            return dashing;
         }
     }
 }

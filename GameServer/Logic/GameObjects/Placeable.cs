@@ -1,8 +1,6 @@
 ﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
-using Ninject;
 using System;
 using System.Linq;
 
@@ -24,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
-            setTeam(TeamId.TEAM_NEUTRAL);
+            Team = TeamId.TEAM_NEUTRAL;
 
             _owner = owner;
 
@@ -68,7 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
-            setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
+            CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
 
             var autoAttack = _rafManager.GetAutoAttackData(model);
             if (autoAttack == null)

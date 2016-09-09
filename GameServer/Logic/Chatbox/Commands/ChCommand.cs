@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 _playerManager.GetPeerInfo(peer).GetChampion().getY()
             );
             c.Model = split[1]; // trigger the "modelUpdate" proc
-            c.setTeam(_playerManager.GetPeerInfo(peer).GetChampion().getTeam());
+            c.Team = _playerManager.GetPeerInfo(peer).GetChampion().Team;
             _game.GetMap().RemoveObject(_playerManager.GetPeerInfo(peer).GetChampion());
             _game.GetMap().AddObject(c);
             _playerManager.GetPeerInfo(peer).SetChampion(c);

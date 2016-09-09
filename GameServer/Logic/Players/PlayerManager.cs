@@ -2,11 +2,7 @@
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Players
 {
@@ -46,7 +42,16 @@ namespace LeagueSandbox.GameServer.Logic.Players
             var pos = c.getRespawnPosition();
 
             c.setPosition(pos.Item1, pos.Item2);
-            c.setTeam((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE);
+
+            if (p.Value.Team.ToLower() == "blue")
+            {
+                c.Team = TeamId.TEAM_BLUE;
+            }
+            else
+            {
+                c.Team = TeamId.TEAM_PURPLE;
+            }
+
             c.LevelUp();
 
             player.SetChampion(c);

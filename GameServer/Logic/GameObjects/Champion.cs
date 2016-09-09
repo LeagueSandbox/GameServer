@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spells.Add(new Spell(this, "Recall", 13));
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
-            setCollisionRadius(inibin.getIntValue("DATA", "PathfindingCollisionRadius"));
+            CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
 
             var autoAttack = _rafManager.GetAutoAttackData(Model);
             if (autoAttack != null)
@@ -238,7 +238,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     var u = it.Value as Unit;
 
-                    if (u == null || u.isDead() || u.getTeam() == getTeam() || distanceWith(u) > range)
+                    if (u == null || u.isDead() || u.Team == this.Team || distanceWith(u) > range)
                         continue;
 
                     if (distanceWith(u) < distanceToTarget)

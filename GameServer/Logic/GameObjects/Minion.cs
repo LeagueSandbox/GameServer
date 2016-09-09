@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _AIPaused = false;
 
             var spawnSpecifics = _game.GetMap().GetMinionSpawnPosition(spawnPosition);
-            setTeam(spawnSpecifics.Item1);
+            Team = spawnSpecifics.Item1;
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             _game.GetMap().SetMinionStats(this); // Let the map decide how strong this minion has to be.
@@ -114,7 +114,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!isDead())
             {
-                if (dashing)
+                if (IsDashing)
                     return;
                 if (!_AIPaused)
                 {
@@ -159,9 +159,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 // Targets have to be:
                 if (u == null ||                                    // a unit
                      u.isDead() ||                                  // alive
-                     u.getTeam() == getTeam() ||                    // not on our team
+                     u.Team == Team ||                    // not on our team
                      distanceWith(u) > DETECT_RANGE ||              // in range
-                     !_game.GetMap().TeamHasVisionOn(getTeam(), u))       // visible to this minion
+                     !_game.GetMap().TeamHasVisionOn(Team, u))       // visible to this minion
                     continue;                                       // If not, look for something else
 
                 var priority = classifyTarget(u);  // get the priority.

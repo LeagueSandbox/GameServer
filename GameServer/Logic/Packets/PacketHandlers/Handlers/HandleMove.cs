@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Numerics;
@@ -23,7 +19,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo.GetChampion();
-            if (peerInfo == null || champion.isDashing() || champion.isDead() || champion.IsCastingSpell())
+            if (peerInfo == null || champion.IsDashing || champion.isDead() || champion.IsCastingSpell())
                 return true;
 
             var request = new MovementReq(data);

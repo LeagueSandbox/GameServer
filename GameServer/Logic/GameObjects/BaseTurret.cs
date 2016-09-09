@@ -20,8 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
             this.Name = name;
-
-            setTeam(team);
+            this.Team = team;
         }
 
         public void CheckForTargets()
@@ -34,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.isDead() || u.getTeam() == getTeam() || distanceWith(u) > TURRET_RANGE)
+                if (u == null || u.isDead() || u.Team == this.Team || distanceWith(u) > TURRET_RANGE)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
@@ -97,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(killer.getTeam()))
+            foreach (var player in _game.GetMap().GetAllChampionsFromTeam(killer.Team))
             {
                 var goldEarn = globalGold;
 
