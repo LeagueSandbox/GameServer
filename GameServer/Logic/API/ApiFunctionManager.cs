@@ -48,15 +48,15 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.notifyAddBuff(buff);
         }
 
-        public static void AddParticle(Champion champion, string particle, float toX, float toY)
+        public static void AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             Target t = new Target(toX, toY);
-            _game.PacketNotifier.notifyParticleSpawn(champion, t, particle);
+            _game.PacketNotifier.notifyParticleSpawn(new Particle(champion, t, particle, size, bone));
         }
 
-        public static void AddParticleTarget(Champion champion, string particle, Target target)
+        public static void AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            _game.PacketNotifier.notifyParticleSpawn(champion, target, particle);
+            _game.PacketNotifier.notifyParticleSpawn(new Particle(champion, target, particle, size, bone));
         }
 
         public static void PrintChat(string msg)
@@ -118,8 +118,8 @@ namespace LeagueSandbox.GameServer.Logic.API
                 return;
             scriptEngine.RegisterFunction("setChampionModel", null, typeof(ApiFunctionManager).GetMethod("SetChampionModel", new Type[] { typeof(Champion), typeof(string) }));
             scriptEngine.RegisterFunction("teleportTo", null, typeof(ApiFunctionManager).GetMethod("TeleportTo", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
-            scriptEngine.RegisterFunction("addParticle", null, typeof(ApiFunctionManager).GetMethod("AddParticle", new Type[] { typeof(Champion), typeof(string), typeof(float), typeof(float) }));
-            scriptEngine.RegisterFunction("addParticleTarget", null, typeof(ApiFunctionManager).GetMethod("AddParticleTarget", new Type[] { typeof(Champion), typeof(string), typeof(Target) }));
+            scriptEngine.RegisterFunction("addParticle", null, typeof(ApiFunctionManager).GetMethod("AddParticle", new Type[] { typeof(Champion), typeof(string), typeof(float), typeof(float), typeof(float), typeof(string) }));
+            scriptEngine.RegisterFunction("addParticleTarget", null, typeof(ApiFunctionManager).GetMethod("AddParticleTarget", new Type[] { typeof(Champion), typeof(string), typeof(Target), typeof(float), typeof(string) }));
             scriptEngine.RegisterFunction("addBuff", null, typeof(ApiFunctionManager).GetMethod("AddBuff", new Type[] { typeof(string), typeof(float), typeof(int), typeof(Unit), typeof(Unit) }));
             scriptEngine.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             scriptEngine.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));

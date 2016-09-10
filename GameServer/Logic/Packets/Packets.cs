@@ -3046,42 +3046,49 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
-        public SpawnParticle(Champion owner, Target t, string particle, uint netId, float size = 1.0f)
-               : base(PacketCmdS2C.PKT_S2C_SpawnParticle, owner.NetId)
+        public SpawnParticle(Particle particle) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, particle.Owner.NetId)
         {
             buffer.Write((byte)1); // number of particles
-            buffer.Write((uint)owner.getChampionHash());
-            buffer.Write((uint)_rafManager.getHash(particle));
+            buffer.Write((uint)particle.Owner.getChampionHash());
+            buffer.Write((uint)_rafManager.getHash(particle.Name));
             buffer.Write((int)0x00000020); // flags ?
 
-            buffer.Write((int)0);   // <-| Ahri's Orb needs something here to be
-            buffer.Write((short)0); // <-| attached to Ahri's hand
+            buffer.Write((short)0); // Unk
+            buffer.Write((uint)_rafManager.getHash(particle.BoneName));
 
             buffer.Write((byte)1); // number of targets ?
-            buffer.Write((uint)owner.NetId);
-            buffer.Write((uint)netId); // Particle net id ?
-            buffer.Write((uint)owner.NetId);
+            buffer.Write((uint)particle.Owner.NetId);
+            buffer.Write((uint)particle.NetId); // Particle net id ?
+            buffer.Write((uint)particle.Owner.NetId);
 
-            if (t.isSimpleTarget())
+            if (particle.Target.isSimpleTarget())
                 buffer.Write((int)0);
             else
-                buffer.Write((t as GameObject).NetId);
+                buffer.Write((particle.Target as GameObject).NetId);
 
             buffer.Write((int)0); // unk
 
             for (var i = 0; i < 3; ++i)
             {
 
-                buffer.Write((short)((t.getX() - MAP_WIDTH) / 2));
-                buffer.Write(50.0f);
-                buffer.Write((short)((t.getY() - MAP_HEIGHT) / 2));
+                buffer.Write((short)((particle.Target.getX() - MAP_WIDTH) / 2));
+                buffer.Write(_game.GetMap().GetHeightAtLocation(particle.Target.getX(), particle.Target.getY()));
+                buffer.Write((short)((particle.Target.getY() - MAP_HEIGHT) / 2));
             }
 
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
-            buffer.Write((float)size); // Particle size
+            buffer.Write((float)particle.Size); // Particle size
+        }
+    }
+
+    public class DestroyObject : BasePacket
+    {
+        public DestroyObject(Unit destroyer, Unit destroyed) : base(PacketCmdS2C.PKT_S2C_DestroyObject, destroyer.NetId)
+        {
+            buffer.Write((uint)destroyed.NetId);
         }
     }
 
