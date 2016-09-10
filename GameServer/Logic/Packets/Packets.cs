@@ -2527,7 +2527,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             int runesRequired = 30;
             foreach (var rune in player.GetChampion().RuneList._runes)
             {
-                buffer.Write(rune.Value);
+                buffer.Write((short)rune.Value);
                 buffer.Write((short)0x00);
                 runesRequired--;
             }
