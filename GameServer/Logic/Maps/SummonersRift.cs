@@ -161,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             AddObject(new LaneTurret("Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE, TurretType.OuterTurret, 
                 _turretItems[TurretType.OuterTurret]));
             AddObject(new LaneTurret("Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE, TurretType.InnerTurret));
-            AddObject(new LaneTurret("Turret_T1_R_01_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
+            AddObject(new LaneTurret("Turret_T1_C_07_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE, TurretType.InhibitorTurret));
             AddObject(new LaneTurret("Turret_T2_R_03_A", 13459.0f, 4284.0f, TeamId.TEAM_PURPLE, TurretType.OuterTurret,
                 _turretItems[TurretType.OuterTurret]));
             AddObject(new LaneTurret("Turret_T2_R_02_A", 12920.0f, 8005.0f, TeamId.TEAM_PURPLE, TurretType.InnerTurret));
