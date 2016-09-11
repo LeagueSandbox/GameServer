@@ -198,10 +198,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(mp, Channel.CHL_S2C);
         }
 
-        public void notifyItemBought(Champion c, Item i)
+        public void notifyItemBought(Unit u, Item i)
         {
-            var response = new BuyItemAns(c, i);
-            _game.PacketHandlerManager.broadcastPacketVision(c, response, Channel.CHL_S2C);
+            var response = new BuyItemAns(u, i);
+            _game.PacketHandlerManager.broadcastPacketVision(u, response, Channel.CHL_S2C);
+        }
+
+        public void notifyFogUpdate2(Unit u)
+        {
+            var fog = new FogUpdate2(u);
+            _game.PacketHandlerManager.broadcastPacketTeam(u.Team, fog, Channel.CHL_S2C);
         }
 
         public void notifyItemsSwapped(Champion c, byte fromSlot, byte toSlot)

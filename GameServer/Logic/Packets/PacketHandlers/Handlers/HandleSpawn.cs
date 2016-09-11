@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.GetMap().GetBluePillId());
-            var itemInstance = peerInfo.GetChampion().Inventory.SetExtraItem(7, bluePill);
+            var itemInstance = peerInfo.GetChampion().getInventory().SetExtraItem(7, bluePill);
             var buyItem = new BuyItemAns(peerInfo.GetChampion(), itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
@@ -66,9 +66,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var turretSpawn = new TurretSpawn(t);
                     _game.PacketHandlerManager.sendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
+                    // Fog Of War
+                    var fow = new FogUpdate2(t);
+                    _game.PacketHandlerManager.broadcastPacketTeam(t.Team, fow, Channel.CHL_S2C);
+
                     // To suppress game HP-related errors for enemy turrets out of vision
                     var sh = new SetHealth(t);
                     _game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
+                    t.BuildTurretItems();
                     continue;
                 }
                 else if (kv.Value is LevelProp)

@@ -9,13 +9,13 @@ namespace LeagueSandbox.GameServer.Logic.Items
 {
     public class Shop
     {
-        private Champion _owner;
+        private Unit _owner;
         private InventoryManager _inventory;
 
-        private Shop(Champion owner)
+        private Shop(Unit owner)
         {
             _owner = owner;
-            _inventory = _owner.Inventory;
+            _inventory = _owner.getInventory();
         }
 
         //public bool ItemBuyRequest(int itemId)

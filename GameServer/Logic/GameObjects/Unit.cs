@@ -6,6 +6,8 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -53,6 +55,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         internal const long UPDATE_TIME = 500;
 
         protected Stats stats;
+        protected InventoryManager Inventory { get; set; }
+        protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
 
         protected float autoAttackDelay = 0;
         protected float autoAttackProjectileSpeed = 0;
@@ -725,6 +729,11 @@ in the following order:
             //Pet (Tibbers) return 2
 
             return 10;*/
+        }
+
+        public InventoryManager getInventory()
+        {
+            return this.Inventory;
         }
     }
 

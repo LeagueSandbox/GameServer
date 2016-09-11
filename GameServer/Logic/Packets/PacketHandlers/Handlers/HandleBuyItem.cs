@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     _playerManager.GetPeerInfo(peer).GetChampion().GetStats().RemoveBuff(instance.ItemType);
                     var champion = _playerManager.GetPeerInfo(peer).GetChampion();
-                    var inventory = champion.Inventory;
+                    var inventory = champion.getInventory();
                     _game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
