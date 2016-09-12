@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         internal const long UPDATE_TIME = 500;
 
         protected Stats stats;
-        protected InventoryManager Inventory { get; set; }
+        public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
 
         protected float autoAttackDelay = 0;
@@ -731,10 +731,6 @@ in the following order:
             return 10;*/
         }
 
-        public InventoryManager getInventory()
-        {
-            return this.Inventory;
-        }
     }
 
     public enum UnitAnnounces : byte

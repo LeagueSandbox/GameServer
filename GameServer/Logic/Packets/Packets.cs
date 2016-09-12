@@ -1843,7 +1843,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public BuyItemAns(Unit actor, Item item, byte unk = 0x29) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.NetId)
         {
             buffer.Write((int)item.ItemType.ItemId);
-            buffer.Write((byte)actor.getInventory().GetItemSlot(item));
+            buffer.Write((byte)actor.Inventory.GetItemSlot(item));
             buffer.Write((byte)item.StackSize);
             buffer.Write((byte)0); //unk or stacks => short
             buffer.Write((byte)unk); //unk (turret 0x01 and champions 0x29)
