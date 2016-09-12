@@ -12,9 +12,9 @@ namespace LeagueSandbox.GameServer.Logic.Items
     public class InventoryManager
     {
         private Inventory _inventory;
-        private Champion _owner;
+        private Unit _owner;
 
-        private InventoryManager(Champion owner)
+        private InventoryManager(Unit owner)
         {
             _inventory = new Inventory(this);
         }
@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory(Champion owner)
+        public static InventoryManager CreateInventory(Unit owner)
         {
             return new InventoryManager(owner);
         }

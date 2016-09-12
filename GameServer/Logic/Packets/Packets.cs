@@ -1660,7 +1660,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes(t.Name))
                 buffer.Write((byte)b);
             buffer.fill(0, 64 - t.Name.Length);
-            buffer.Write((byte)0x22);
+            buffer.Write((byte)0x0C);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x80);
@@ -1840,13 +1840,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class BuyItemAns : BasePacket
     {
-        public BuyItemAns(Champion actor, Item item) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.NetId)
+        public BuyItemAns(Unit actor, Item item, byte unk = 0x29) : base(PacketCmdS2C.PKT_S2C_BuyItemAns, actor.NetId)
         {
             buffer.Write((int)item.ItemType.ItemId);
-            buffer.Write((byte)actor.Inventory.GetItemSlot(item));
+            buffer.Write((byte)actor.getInventory().GetItemSlot(item));
             buffer.Write((byte)item.StackSize);
             buffer.Write((byte)0); //unk or stacks => short
-            buffer.Write((byte)0x40); //unk
+            buffer.Write((byte)unk); //unk (turret 0x01 and champions 0x29)
         }
     }
 
@@ -3037,6 +3037,33 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0); // unk
         }
 
+    }
+
+    public class FogUpdate2 : BasePacket
+    {
+        private NetworkIdManager _networkManager = Program.ResolveDependency<NetworkIdManager>();
+
+        public FogUpdate2(Unit unit) : base(PacketCmdS2C.PKT_S2C_FogUpdate2, 0)
+        {
+            buffer.Write((int)unit.Team);
+            buffer.Write((byte)0xFE);
+            buffer.Write((byte)0xFF);
+            buffer.Write((byte)0xFF);
+            buffer.Write((byte)0xFF);
+            buffer.Write((int)0);
+            buffer.Write((uint)unit.NetId); // Fog Attached, when unit dead it disappears
+            buffer.Write((uint)_networkManager.GetNewNetID()); //Fog NetID
+            buffer.Write((int)0);
+            buffer.Write((float)unit.getX());
+            buffer.Write((float)unit.getY());
+            buffer.Write((float)2500);  
+            buffer.Write((float)88.4f);
+            buffer.Write((float)130);    
+            buffer.Write((float)1.0f);      
+            buffer.Write((int)0);
+            buffer.Write((byte)199);
+            buffer.Write((float)unit.VisionRadius);
+        }
     }
 
     public class SpawnParticle : BasePacket

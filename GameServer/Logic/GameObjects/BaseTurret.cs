@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -21,6 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             this.Name = name;
             this.Team = team;
+            Inventory = InventoryManager.CreateInventory(this);
         }
 
         public void CheckForTargets()

@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         public Shop Shop { get; protected set; }
-        public InventoryManager Inventory { get; protected set; }
         public long RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
