@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private Shop(Unit owner)
         {
             _owner = owner;
-            _inventory = _owner.getInventory();
+            _inventory = _owner.Inventory;
         }
 
         //public bool ItemBuyRequest(int itemId)
