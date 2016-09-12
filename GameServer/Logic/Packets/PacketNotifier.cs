@@ -186,9 +186,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
         }
 
-        public void notifyParticleSpawn(Champion source, GameObjects.Target target, string particleName)
+        public void notifyParticleSpawn(Particle particle)
         {
-            var sp = new SpawnParticle(source, target, particleName, _networkIdManager.GetNewNetID());
+            var sp = new SpawnParticle(particle);
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
         }
 
