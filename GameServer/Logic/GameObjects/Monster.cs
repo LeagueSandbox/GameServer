@@ -11,8 +11,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
-        private Vector2 facing;
+        public Vector2 Facing { get; private set; }
         public string Name { get; private set; }
+        public string SpawnAnimation { get; private set; }
+        public byte CampId { get; private set; }
+        public byte CampUnk { get; private set; }
+        public float SpawnAnimationTime { get; private set; }
 
         public Monster(
             float x,
@@ -21,6 +25,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float facingY,
             string model,
             string name,
+            string spawnAnimation = "",
+            byte campId = 0x01,
+            byte campUnk = 0x2A,
+            float spawnAnimationTime = 0.0f,
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
@@ -31,8 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 setVisibleByTeam(team, true);
 
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
-            facing = new Vector2(facingX, facingY);
+            this.Facing = new Vector2(facingX, facingY);
             this.Name = name;
+            this.SpawnAnimation = spawnAnimation;
+            this.CampId = campId;
+            this.CampUnk = campUnk;
+            this.SpawnAnimationTime = spawnAnimationTime;
 
             Inibin inibin;
             if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
@@ -60,8 +72,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ArmorPerLevel = inibin.getFloatValue("DATA", "ArmorPerLevel");
             stats.MagicResistPerLevel = inibin.getFloatValue("DATA", "SpellBlockPerLevel");
             stats.HealthRegenerationPerLevel = inibin.getFloatValue("DATA", "HPRegenPerLevel");
-                stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
-                stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
+            stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
             setMelee(inibin.getBoolValue("DATA", "IsMelee"));
             CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
@@ -75,11 +87,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
             autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
-        }
-
-        public Vector2 getFacing()
-        {
-            return facing;
         }
 
         public override void update(long diff)
