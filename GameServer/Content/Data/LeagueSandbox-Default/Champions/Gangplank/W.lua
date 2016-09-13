@@ -1,6 +1,6 @@
 function finishCasting()
-    local owner = getOwner()
-    local newHealth = owner:getStats():getCurrentHealth() + 10 + 70*getSpellLevel() + 1*owner:getStats():getTotalAp()
+    local owner = owner
+    local newHealth = owner:getStats():getCurrentHealth() + 10 + 70*spellLevel + 1*owner:getStats():getTotalAp()
     local maxHealth = owner:getStats():getMaxHealth()
     
     

@@ -5,7 +5,7 @@ function finishCasting()
         setChampionModel("Nidalee_Cougar")
     end	
 
-    addParticleTarget("Nidalee_Base_R_Cas.troy", getOwner())
+    addParticleTarget("Nidalee_Base_R_Cas.troy", owner)
 end
 
 function applyEffects()

@@ -1,8 +1,8 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
 function onFinishCasting()
-    local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = Vector2:new(getSpellToX(), getSpellToY()) - current
+    local current = Vector2:new(owner.X, owner.Y)
+    local to = Vector2:new(spell.X, spell.Y) - current
     local trueCoords
 	
     if to:length() > 425 then
@@ -10,11 +10,11 @@ function onFinishCasting()
         local range = to * 425
         trueCoords = current:copy() + range
     else
-        trueCoords = Vector2:new(getSpellToX(), getSpellToY())
+        trueCoords = Vector2:new(spell.X, spell.Y)
     end
-	addParticle(getOwner(), "global_ss_flash.troy", getOwnerX(), getOwnerY())
-    teleportTo(getOwner(), trueCoords.x, trueCoords.y)
-	addParticleTarget(getOwner(), "global_ss_flash_02.troy", getOwner())
+	addParticle(owner, "global_ss_flash.troy", owner.X, owner.Y)
+    teleportTo(owner, trueCoords.x, trueCoords.y)
+	addParticleTarget(owner, "global_ss_flash_02.troy", owner)
 end
 
 function applyEffects()

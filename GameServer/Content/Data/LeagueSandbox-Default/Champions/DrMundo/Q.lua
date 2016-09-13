@@ -1,8 +1,8 @@
 Vector2 = require 'Vector2' -- include 2d vector lib
 
 function finishCasting()
-    local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
+    local current = Vector2:new(owner.X, owner.Y)
+    local to = (Vector2:new(spell.X, spell.Y) - current):normalize()
     local range = to * 1000
     local trueCoords = current + range
 
@@ -10,9 +10,9 @@ function finishCasting()
 end
 
 function applyEffects()
-    dealPhysicalDamage(max(getEffectValue(0), getCastTarget():getStats():getCurrentHealth()))
-	local buff = Buff.new("", 2.0, BUFFTYPE_TEMPORARY, getCastTarget(), getOwner())
+    dealPhysicalDamage(max(getEffectValue(0), castTarget:getStats():getCurrentHealth()))
+	local buff = Buff.new("", 2.0, BUFFTYPE_TEMPORARY, castTarget, owner)
     buff:setMovementSpeedPercentModifier(40)
-    addBuff(buff, getCastTarget())
+    addBuff(buff, castTarget)
     destroyProjectile()
 end

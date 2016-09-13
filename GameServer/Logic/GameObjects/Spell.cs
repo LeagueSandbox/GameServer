@@ -342,17 +342,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _scriptEngine.Execute(@"
                 function dealPhysicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
+                    owner:dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
                 function dealMagicalDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
+                    owner:dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
                 function dealTrueDamage(amount)
-                    getOwner():dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, false)
+                    owner:dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
@@ -506,8 +506,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("getOwnerLevel", Owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             scriptEngine.RegisterFunction("getChampionModel", Owner, typeof(Spell).GetMethod("GetChampionModel"));
             scriptEngine.SetGlobalVariable("castTarget", Target);
-            scriptEngine.SetGlobalVariable("spellToX", X);
-            scriptEngine.SetGlobalVariable("spellToY", Y);
+            //scriptEngine.SetGlobalVariable("spellToX", X);
+            //scriptEngine.SetGlobalVariable("spellToY", Y);
+            scriptEngine.SetGlobalVariable("spell", this);
             scriptEngine.SetGlobalVariable("projectileSpeed", ProjectileSpeed);
             scriptEngine.SetGlobalVariable("coefficient", Coefficient);
             scriptEngine.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("addProjectile", new Type[] { typeof(string), typeof(float), typeof(float) }));

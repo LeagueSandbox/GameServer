@@ -1,7 +1,7 @@
 function finishCasting()
     print("Speed increase: " .. getEffectValue(0))
 
-    local buff = Buff.new("", getEffectValue(1), BUFFTYPE_TEMPORARY, getOwner())
+    local buff = Buff.new("", getEffectValue(1), BUFFTYPE_TEMPORARY, owner)
 
     buff:setMovementSpeedPercentModifier(getEffectValue(0))
     addBuff(buff)

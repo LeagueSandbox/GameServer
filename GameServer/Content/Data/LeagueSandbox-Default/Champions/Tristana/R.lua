@@ -1,9 +1,9 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
 function finishCasting()
-	local castTarget = getCastTarget()
-	local current = Vector2:new(getOwnerX(), getOwnerY())
-	if current:distance(Vector2:new(castTarget:getX(), castTarget:getY())) <= 543 + (7*getOwner():getStats():getLevel()) then	
+	local castTarget = castTarget
+	local current = Vector2:new(owner.X, owner.Y)
+	if current:distance(Vector2:new(castTarget.X, castTarget.Y)) <= 543 + (7*owner:getStats():getLevel()) then	
 		addProjectileTarget( castTarget )
 	else
 		print("Target is too far away")
@@ -12,10 +12,10 @@ function finishCasting()
 end
 
 function applyEffects()
-	local castTarget = getCastTarget()
+	local castTarget = castTarget
 
     if ( ( not ( castTarget == 0 ) ) and ( not isDead( castTarget ) ) ) then
-		local owner = getOwner();
+		local owner = owner;
 		local damage = getEffectValue(0) + owner:getStats():getTotalAp()
 
 		owner:dealDamageTo( castTarget, damage, DAMAGE_TYPE_MAGICAL, DAMAGE_SOURCE_SPELL );
