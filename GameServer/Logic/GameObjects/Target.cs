@@ -1,65 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Target
     {
-        protected float x;
-        protected float y;
+        public float X { get; protected set; }
+        public float Y { get; protected set; }
 
         public Target(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         public Target(Vector2 vec)
         {
-            this.x = vec.X;
-            this.y = vec.Y;
+            this.X = vec.X;
+            this.Y = vec.Y;
         }
 
         public float distanceWith(Target target)
         {
-            return distanceWith(target.getX(), target.getY());
+            return distanceWith(target.X, target.Y);
         }
         public float distanceWith(float xtarget, float ytarget)
         {
-            return (float)Math.Sqrt((x - xtarget) * (x - xtarget) + (y - ytarget) * (y - ytarget));
+            return (float)Math.Sqrt((X - xtarget) * (X - xtarget) + (Y - ytarget) * (Y - ytarget));
         }
 
         public float distanceWithSqr(Target target)
         {
-            return distanceWithSqr(target.getX(), target.getY());
+            return distanceWithSqr(target.X, target.Y);
         }
 
         public float distanceWithSqr(float xtarget, float ytarget)
         {
-            return ((x - xtarget) * (x - xtarget) + (y - ytarget) * (y - ytarget));
-        }
-
-        public float getX()
-        {
-            return x;
-        }
-        public float getY()
-        {
-            return y;
+            return ((X - xtarget) * (X - xtarget) + (Y - ytarget) * (Y - ytarget));
         }
 
         public virtual void setPosition(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
         public Vector2 getPosition()
         {
-            return new Vector2(x, y);
+            return new Vector2(X, Y);
         }
 
         public virtual bool isSimpleTarget()

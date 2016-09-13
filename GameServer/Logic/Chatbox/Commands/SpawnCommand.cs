@@ -38,20 +38,20 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 Minion super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
 
                 int x = 400;
-                caster.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));
-                cannon.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));
-                melee.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));
-                super.setPosition(champion.getX() + random.Next(-x, x), champion.getY() + random.Next(-x, x));
+                caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+                cannon.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+                melee.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+                super.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
 
                 caster.PauseAI(true);
                 cannon.PauseAI(true);
                 melee.PauseAI(true);
                 super.PauseAI(true);
 
-                caster.setWaypoints(new List<Vector2> { new Vector2(caster.getX(), caster.getY()), new Vector2(caster.getX(), caster.getY()) });
-                cannon.setWaypoints(new List<Vector2> { new Vector2(cannon.getX(), cannon.getY()), new Vector2(cannon.getX(), cannon.getY()) });
-                melee.setWaypoints(new List<Vector2> { new Vector2(melee.getX(), melee.getY()), new Vector2(melee.getX(), melee.getY()) });
-                super.setWaypoints(new List<Vector2> { new Vector2(super.getX(), super.getY()), new Vector2(super.getX(), super.getY()) });
+                caster.setWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
+                cannon.setWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
+                melee.setWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
+                super.setWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
 
                 caster.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
                 cannon.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);

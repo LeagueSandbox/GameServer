@@ -24,16 +24,16 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             logger.LogCoreInfo(string.Format(
                 "At {0}; {1}",
-                champion.getX(),
-                champion.getY()
+                champion.X,
+                champion.Y
             ));
 
             _owner.SendDebugMsgFormatted(
                 DebugMsgType.NORMAL,
                 string.Format(
                     "At Coords - X: {0} Y: {1} Z: {2}",
-                    champion.getX(),
-                    champion.getY(),
+                    champion.X,
+                    champion.Y,
                     champion.GetZ()
                 )
             );

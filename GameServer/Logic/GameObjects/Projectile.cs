@@ -5,12 +5,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Projectile : GameObject
     {
-        protected List<GameObject> objectsHit = new List<GameObject>();
-        protected Spell originSpell;
-        protected Unit owner;
-        protected float moveSpeed;
-        protected int projectileId;
-        protected int flags;
+        public List<GameObject> ObjectsHit { get; private set; }
+        public Unit Owner { get; private set; }
+        public int ProjectileId { get; private set; }
+        private float _moveSpeed;
+        private int _flags;
+        private Spell _originSpell;
 
         public Projectile(
             float x,
@@ -25,11 +25,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(x, y, collisionRadius, 0, netId)
         {
-            this.originSpell = originSpell;
-            this.moveSpeed = moveSpeed;
-            this.owner = owner;
-            this.projectileId = projectileId;
-            this.flags = flags;
+            this._originSpell = originSpell;
+            this._moveSpeed = moveSpeed;
+            this.Owner = owner;
+            this.ProjectileId = projectileId;
+            this._flags = flags;
+            this.ObjectsHit = new List<GameObject>();
 
             Target = target;
 
@@ -57,56 +58,56 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                     if (collide(it.Value))
                     {
-                        if (objectsHit.Contains(it.Value))
+                        if (ObjectsHit.Contains(it.Value))
                             continue;
 
                         var u = it.Value as Unit;
                         if (u == null)
                             continue;
 
-                        if (u.Team == owner.Team
-                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                        if (u.Team == Owner.Team
+                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                             continue;
 
                         if (u.Team == TeamId.TEAM_NEUTRAL
-                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
                             continue;
 
-                        if (u.Team != owner.Team
+                        if (u.Team != Owner.Team
                             && u.Team != TeamId.TEAM_NEUTRAL
-                            && !((flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                             continue;
 
 
-                        if (u.isDead() && !((flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                        if (u.isDead() && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
                             continue;
 
                         var m = u as Minion;
-                        if (m != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
+                        if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
                             continue;
 
                         var p = u as Placeable;
-                        if (p != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
+                        if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
                             continue;
 
                         var t = u as LaneTurret;
-                        if (t != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                        if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
                             continue;
 
                         var i = u as Inhibitor;
-                        if (i != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                        if (i != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                             continue;
 
                         var n = u as Nexus;
-                        if (n != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                        if (n != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                             continue;
 
                         var c = u as Champion;
-                        if (c != null && !((flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
+                        if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
                             continue;
 
-                        objectsHit.Add(u);
-                        originSpell.applyEffects(u, this);
+                        ObjectsHit.Add(u);
+                        _originSpell.applyEffects(u, this);
                     }
                 }
             }
@@ -115,13 +116,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var u = Target as Unit;
                 if (u != null && collide(u))
                 { // Autoguided spell
-                    if (originSpell != null)
+                    if (_originSpell != null)
                     {
-                        originSpell.applyEffects(u, this);
+                        _originSpell.applyEffects(u, this);
                     }
                     else
                     { // auto attack
-                        owner.autoAttackHit(u);
+                        Owner.autoAttackHit(u);
                         setToRemove();
                     }
                 }
@@ -132,17 +133,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override float getMoveSpeed()
         {
-            return moveSpeed;
-        }
-
-        public Unit getOwner()
-        {
-            return owner;
-        }
-
-        public List<GameObject> getObjectsHit()
-        {
-            return objectsHit;
+            return _moveSpeed;
         }
 
         public override void setToRemove()
@@ -150,14 +141,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (Target != null && !Target.isSimpleTarget())
                 (Target as GameObject).decrementAttackerCount();
 
-            owner.decrementAttackerCount();
+            Owner.decrementAttackerCount();
             base.setToRemove();
             _game.PacketNotifier.notifyProjectileDestroy(this);
-        }
-
-        public int getProjectileId()
-        {
-            return projectileId;
         }
     }
 }

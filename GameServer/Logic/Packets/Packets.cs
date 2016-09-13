@@ -313,12 +313,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(m.NetId);
             buffer.Write(m.NetId);
             buffer.Write((byte)0x40);
-            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.X); //x
             buffer.Write((float)m.GetZ()); //z
-            buffer.Write((float)m.getY()); //y
-            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.Y); //y
+            buffer.Write((float)m.X); //x
             buffer.Write((float)m.GetZ()); //z
-            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
             buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
@@ -348,8 +348,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.fill(0, 13);
             buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
             buffer.Write((int)13337);
-            buffer.Write((float)m.getX()); //x
-            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.X); //x
+            buffer.Write((float)m.Y); //y
             buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
             buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
         }
@@ -370,13 +370,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write(p.NetId);
             buffer.Write(p.NetId);
-            buffer.Write(p.GetOwner().NetId);
+            buffer.Write(p.Owner.NetId);
 
             buffer.Write((byte)0x40);
 
-            buffer.Write((float)p.getX()); //x
+            buffer.Write((float)p.X); //x
             buffer.Write((float)p.GetZ()); //z
-            buffer.Write((float)p.getY()); //y
+            buffer.Write((float)p.Y); //y
 
             buffer.fill(0, 8);
 
@@ -392,8 +392,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
 
-            buffer.Write(Encoding.Default.GetBytes(p.getName()));
-            buffer.fill(0, 64 - p.getName().Length);
+            buffer.Write(Encoding.Default.GetBytes(p.Name));
+            buffer.fill(0, 64 - p.Name.Length);
 
             buffer.Write(Encoding.Default.GetBytes(p.Model));
             buffer.fill(0, 64 - p.Model.Length);
@@ -413,8 +413,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x18); //    |
             buffer.Write((byte)0x00); // <--|
 
-            buffer.Write((float)p.getX());
-            buffer.Write((float)p.getY());
+            buffer.Write((float)p.X);
+            buffer.Write((float)p.Y);
 
             buffer.Write((byte)0x00); // 0.0f
             buffer.Write((byte)0x00); // Probably a float, see SpawnMonster
@@ -441,12 +441,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(m.NetId);
             buffer.Write(m.NetId);
             buffer.Write((byte)0x40);
-            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.X); //x
             buffer.Write((float)m.GetZ()); //z
-            buffer.Write((float)m.getY()); //y
-            buffer.Write((float)m.getX()); //x
+            buffer.Write((float)m.Y); //y
+            buffer.Write((float)m.X); //x
             buffer.Write((float)m.GetZ()); //z
-            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
             buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
@@ -480,8 +480,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xFB); //  |-> Unk
             buffer.Write((byte)0x27); //  |
             buffer.Write((byte)0x00); //<-|
-            buffer.Write((float)m.getX()); //x
-            buffer.Write((float)m.getY()); //y
+            buffer.Write((float)m.X); //x
+            buffer.Write((float)m.Y); //y
             buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
             buffer.Write((float)0.5120428f); // rotation2 from -1 to 1
         }
@@ -513,9 +513,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((int)0);
 
-            buffer.Write((float)turret.getX());
+            buffer.Write((float)turret.X);
             buffer.Write((float)turret.GetZ());
-            buffer.Write((float)turret.getY());
+            buffer.Write((float)turret.Y);
             buffer.Write((float)4.0f);
 
             buffer.Write((byte)0xC1);
@@ -697,7 +697,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x03); // SpawnType - 3 = minion
             buffer.Write((uint)m.NetId);
             buffer.Write((uint)m.NetId);
-            buffer.Write((uint)m.getSpawnPosition());
+            buffer.Write((uint)m.SpawnPosition);
             buffer.Write((byte)0xFF); // unk
             buffer.Write((byte)1); // wave number ?
 
@@ -745,8 +745,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write((int)m.NetId);
             buffer.Write((byte)0); // movement mask
-            buffer.Write((short)MovementVector.targetXToNormalFormat(m.getX()));
-            buffer.Write((short)MovementVector.targetYToNormalFormat(m.getY()));
+            buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
+            buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
             for (int i = m.getCurWaypoint(); i < waypoints.Count; ++i)
             {
                 buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].X));
@@ -817,8 +817,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0); // unk
             buffer.Write((float)dashSpeed); // Dash speed
             buffer.Write((float)leapHeight); // unk
-            buffer.Write((float)u.getX());
-            buffer.Write((float)u.getY());
+            buffer.Write((float)u.X);
+            buffer.Write((float)u.Y);
             buffer.Write((int)0); // unk
             buffer.Write((byte)0);
 
@@ -828,7 +828,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
-            MovementVector from = _game.GetMap().ToMovementVector(u.getX(), u.getY());
+            MovementVector from = _game.GetMap().ToMovementVector(u.X, u.Y);
             MovementVector to = _game.GetMap().ToMovementVector(toX, toY);
 
             buffer.Write((short)from.x);
@@ -871,8 +871,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write((int)m.NetId);
             buffer.Write((byte)0); // movement mask
-            buffer.Write((short)MovementVector.targetXToNormalFormat(m.getX()));
-            buffer.Write((short)MovementVector.targetYToNormalFormat(m.getY()));
+            buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
+            buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
             for (int i = m.getCurWaypoint(); i < waypoints.Count; i++)
             {
                 buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].X));
@@ -914,8 +914,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
             buffer.Write(c.NetId);
             buffer.Write((byte)0); // movement mask; 1=KeepMoving?
-            buffer.Write(MovementVector.targetXToNormalFormat(c.getX()));
-            buffer.Write(MovementVector.targetYToNormalFormat(c.getY()));
+            buffer.Write(MovementVector.targetXToNormalFormat(c.X));
+            buffer.Write(MovementVector.targetYToNormalFormat(c.Y));
             for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
             {
                 buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
@@ -1658,8 +1658,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.fill(0, 13);
             buffer.Write((byte)3); // unk
             buffer.Write((uint)1); // unk
-            buffer.Write(p.getX());
-            buffer.Write(p.getY());
+            buffer.Write(p.X);
+            buffer.Write(p.Y);
             buffer.Write((float)0x3F441B7D); // z ?
             buffer.Write((float)0x3F248DBB); // Rotation ?
         }
@@ -2168,16 +2168,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                                           // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write(MovementVector.targetXToNormalFormat(attacked.getX()));
+            buffer.Write(MovementVector.targetXToNormalFormat(attacked.X));
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write(MovementVector.targetYToNormalFormat(attacked.getY()));
+            buffer.Write(MovementVector.targetYToNormalFormat(attacked.Y));
             buffer.Write((byte)0xCC);
             buffer.Write((byte)0x35);
             buffer.Write((byte)0xC4);
             buffer.Write((byte)0xD1);
-            buffer.Write(attacker.getX());
-            buffer.Write(attacker.getY());
+            buffer.Write(attacker.X);
+            buffer.Write(attacker.Y);
         }
     }
 
@@ -2243,9 +2243,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public OnAttack(Unit attacker, Unit attacked, AttackType attackType) : base(ExtendedPacketCmd.EPKT_S2C_OnAttack, attacker.NetId)
         {
             buffer.Write((byte)attackType);
-            buffer.Write(attacked.getX());
+            buffer.Write(attacked.X);
             buffer.Write(attacked.GetZ());
-            buffer.Write(attacked.getY());
+            buffer.Write(attacked.Y);
             buffer.Write(attacked.NetId);
         }
     }
@@ -2402,8 +2402,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public ChampionRespawn(Champion c) : base(PacketCmdS2C.PKT_S2C_ChampionRespawn, c.NetId)
         {
-            buffer.Write(c.getX());
-            buffer.Write(c.getY());
+            buffer.Write(c.X);
+            buffer.Write(c.Y);
             buffer.Write(c.GetZ());
         }
     }
@@ -2411,7 +2411,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class ShowProjectile : BasePacket
     {
 
-        public ShowProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_ShowProjectile, p.getOwner().NetId)
+        public ShowProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_ShowProjectile, p.Owner.NetId)
         {
             buffer.Write(p.NetId);
         }
@@ -2520,7 +2520,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class CastSpellAns : GamePacket
     {
         public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId)
-               : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.getOwner().NetId)
+               : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.Owner.NetId)
         {
             var m = _game.GetMap();
 
@@ -2531,9 +2531,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)spellNetId); // Spell net ID
             buffer.Write((byte)1); // unk
             buffer.Write((float)1.0f); // unk
-            buffer.Write((int)s.getOwner().NetId);
-            buffer.Write((int)s.getOwner().NetId);
-            buffer.Write((int)s.getOwner().getChampionHash());
+            buffer.Write((int)s.Owner.NetId);
+            buffer.Write((int)s.Owner.NetId);
+            buffer.Write((int)s.Owner.getChampionHash());
             buffer.Write((int)futureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)x);
             buffer.Write((float)m.GetHeightAtLocation(x, y));
@@ -2542,17 +2542,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
             buffer.Write((byte)0); // unk
-            buffer.Write(s.getCastTime());
+            buffer.Write(s.CastTime);
             buffer.Write((float)0.0f); // unk
             buffer.Write((float)1.0f); // unk
             buffer.Write(s.getCooldown());
             buffer.Write((float)0.0f); // unk
             buffer.Write((byte)0); // unk
-            buffer.Write((byte)s.getSlot());
+            buffer.Write((byte)s.Slot);
             buffer.Write((float)s.getCost());
-            buffer.Write((float)s.getOwner().getX());
-            buffer.Write((float)s.getOwner().GetZ());
-            buffer.Write((float)s.getOwner().getY());
+            buffer.Write((float)s.Owner.X);
+            buffer.Write((float)s.Owner.GetZ());
+            buffer.Write((float)s.Owner.Y);
             buffer.Write((long)1); // unk
         }
     }
@@ -2990,29 +2990,29 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.NetId)
         {
-            float targetZ = _game.GetMap().GetHeightAtLocation(p.Target.getX(), p.Target.getY());
+            float targetZ = _game.GetMap().GetHeightAtLocation(p.Target.X, p.Target.Y);
 
-            buffer.Write((float)p.getX());
+            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((float)p.getX());
+            buffer.Write((float)p.Y);
+            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ()-100.0f);
-            buffer.Write((float)p.getY());
+            buffer.Write((float)p.Y);
             buffer.Write((float)-0.992436f); // unk
             buffer.Write((int)0); // unk
             buffer.Write((float)-0.122766f); // unk
             buffer.Write((float)-1984.871338f); // unk
             buffer.Write((float)-166.666656f); // unk
             buffer.Write((float)-245.531418f); // unk
-            buffer.Write((float)p.getX());
+            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
-            buffer.Write((float)p.getY());
-            buffer.Write((float)p.Target.getX());
+            buffer.Write((float)p.Y);
+            buffer.Write((float)p.Target.X);
             buffer.Write((float)targetZ);
-            buffer.Write((float)p.Target.getY());
-            buffer.Write((float)p.getX());
+            buffer.Write((float)p.Target.Y);
+            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ()-100.0f);
-            buffer.Write((float)p.getY());
+            buffer.Write((float)p.Y);
             buffer.Write((int)0); // unk
             buffer.Write((float)p.getMoveSpeed()); // Projectile speed
             buffer.Write((int)0); // unk
@@ -3028,14 +3028,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 buffer.Write((byte)0x66); // <-|
             }
             buffer.Write((byte)0); // unk
-            buffer.Write((int)p.getProjectileId()); // projectile ID (hashed name)
+            buffer.Write((int)p.ProjectileId); // projectile ID (hashed name)
             buffer.Write((int)0); // Second net ID
             buffer.Write((byte)0); // unk
             buffer.Write(1.0f); // unk
-            buffer.Write((int)p.getOwner().NetId);
-            buffer.Write((int)p.getOwner().NetId);
+            buffer.Write((int)p.Owner.NetId);
+            buffer.Write((int)p.Owner.NetId);
 
-            var c = p.getOwner() as Champion;
+            var c = p.Owner as Champion;
             if (c != null)
             {
                 buffer.Write((int)c.getChampionHash());
@@ -3046,12 +3046,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
 
             buffer.Write((int)p.NetId);
-            buffer.Write((float)p.Target.getX());
+            buffer.Write((float)p.Target.X);
             buffer.Write((float)targetZ-100.0f);
-            buffer.Write((float)p.Target.getY());
-            buffer.Write((float)p.Target.getX());
+            buffer.Write((float)p.Target.Y);
+            buffer.Write((float)p.Target.X);
             buffer.Write((float)targetZ);
-            buffer.Write((float)p.Target.getY());
+            buffer.Write((float)p.Target.Y);
             if (!p.Target.isSimpleTarget())
             {
                 buffer.Write((byte)0x01); // unk (number of targets?)
@@ -3067,9 +3067,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.fill(0, 6); // unk
             buffer.Write((byte)0x30); // unk
             buffer.Write((int)0); // unk
-            buffer.Write((float)p.getX());
+            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ()-100.0f);
-            buffer.Write((float)p.getY());
+            buffer.Write((float)p.Y);
             buffer.Write((int)0); // unk
             buffer.Write((int)0); // unk
         }
@@ -3091,8 +3091,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((uint)unit.NetId); // Fog Attached, when unit dead it disappears
             buffer.Write((uint)_networkManager.GetNewNetID()); //Fog NetID
             buffer.Write((int)0);
-            buffer.Write((float)unit.getX());
-            buffer.Write((float)unit.getY());
+            buffer.Write((float)unit.X);
+            buffer.Write((float)unit.Y);
             buffer.Write((float)2500);
             buffer.Write((float)88.4f);
             buffer.Write((float)130);
@@ -3135,9 +3135,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             for (var i = 0; i < 3; ++i)
             {
 
-                buffer.Write((short)((particle.Target.getX() - MAP_WIDTH) / 2));
-                buffer.Write(_game.GetMap().GetHeightAtLocation(particle.Target.getX(), particle.Target.getY()));
-                buffer.Write((short)((particle.Target.getY() - MAP_HEIGHT) / 2));
+                buffer.Write((short)((particle.Target.X - MAP_WIDTH) / 2));
+                buffer.Write(_game.GetMap().GetHeightAtLocation(particle.Target.X, particle.Target.Y));
+                buffer.Write((short)((particle.Target.Y - MAP_HEIGHT) / 2));
             }
 
             buffer.Write((uint)0); // unk
@@ -3227,9 +3227,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)lp.NetId);
             buffer.Write((int)0x00000040); // unk
             buffer.Write((byte)0); // unk
-            buffer.Write((float)lp.getX());
+            buffer.Write((float)lp.X);
             buffer.Write((float)lp.Z);
-            buffer.Write((float)lp.getY());
+            buffer.Write((float)lp.Y);
             buffer.Write((float)0.0f); // Rotation Y
 
             buffer.Write((float)lp.DirX);

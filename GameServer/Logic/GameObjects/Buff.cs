@@ -53,38 +53,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Buff
     {
         private Logger _logger = Program.ResolveDependency<Logger>();
-        protected float _duration;
+        public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
-        protected float _timeElapsed;
+        public float TimeElapsed { get; set; }
         protected bool _remove;
-        protected Unit _attachedTo;
-        protected Unit _attacker; // who added this buff to the unit it's attached to
-        protected BuffType _buffType;
+        public Unit TargetUnit { get; private set; }
+        public Unit SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public BuffType BuffType { get; private set; }
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
-        protected string _name;
-        protected int _stacks;
+        public string Name { get; private set; }
+        public int Stacks { get; private set; }
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
-
-        public BuffType GetBuffType()
-        {
-            return _buffType;
-        }
-
-        public Unit GetUnit()
-        {
-            return _attachedTo;
-        }
-
-        public Unit GetSourceUnit()
-        {
-            return _attacker;
-        }
-
-        public void SetName(string name)
-        {
-            _name = name;
-        }
 
         public bool NeedsToRemove()
         {
@@ -94,14 +74,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
         {
             _game = game;
-            _duration = dur;
-            _stacks = stacks;
-            _name = buffName;
-            _timeElapsed = 0;
+            this.Duration = dur;
+            this.Stacks = stacks;
+            this.Name = buffName;
+            this.TimeElapsed = 0;
             _remove = false;
-            _attachedTo = onto;
-            _attacker = from;
-            _buffType = BuffType.Aura;
+            this.TargetUnit = onto;
+            this.SourceUnit = from;
+            this.BuffType = BuffType.Aura;
             LoadLua();
             try
             {
@@ -112,14 +92,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _logger.LogCoreError("LUA ERROR : " + e.Message);
             }
         }
-        
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto) : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+
+        public Buff(Game game, string buffName, float dur, int stacks, Unit onto)
+               : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
 
         public void LoadLua()
         {
-            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(_name);
+            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(Name);
             _logger.LogCoreInfo("Loading buff from " + scriptLoc);
 
             _scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
@@ -138,26 +119,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
             _scriptEngine.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
             _scriptEngine.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
-        
+
             ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
 
             _scriptEngine.Load(scriptLoc);
         }
 
-        public string GetName()
-        {
-            return _name;
-        }
-
-        public void SetTimeElapsed(float time)
-        {
-            _timeElapsed = time;
-        }
-        
         public void Update(long diff)
         {
-            _timeElapsed += (float)diff / 1000.0f;
-            
+            TimeElapsed += (float)diff / 1000.0f;
+
             if (_scriptEngine.IsLoaded())
             {
                 try
@@ -171,9 +142,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (_duration != 0.0f)
+            if (Duration != 0.0f)
             {
-                if (_timeElapsed >= _duration)
+                if (TimeElapsed >= Duration)
                 {
                     try
                     {
@@ -186,16 +157,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _remove = true;
                 }
             }
-        }
-
-        public int GetStacks()
-        {
-            return _stacks;
-        }
-
-        public float GetDuration()
-        {
-            return _duration;
         }
     }
 }

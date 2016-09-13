@@ -87,8 +87,8 @@ namespace LeagueSandbox.GameServer.Logic
                 direction = new Vector2();
                 return;
             }
-            var to = new Vector2(Target.getX(), Target.getY());
-            var cur = new Vector2(getX(), getY()); //?
+            var to = new Vector2(Target.X, Target.Y);
+            var cur = new Vector2(X, Y); //?
 
 
             var goingTo = (to - cur);
@@ -109,8 +109,8 @@ namespace LeagueSandbox.GameServer.Logic
             float xx = direction.X * deltaMovement;
             float yy = direction.Y * deltaMovement;
 
-            x += xx;
-            y += yy;
+            X += xx;
+            Y += yy;
 
             /* If the target was a simple point, stop when it is reached */
             if (Target.isSimpleTarget() && distanceWith(Target) < deltaMovement * 2) //how can target be null here?????
@@ -146,8 +146,8 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void calculateVector(float xtarget, float ytarget)
         {
-            xvector = xtarget - getX();
-            yvector = ytarget - getY();
+            xvector = xtarget - X;
+            yvector = ytarget - Y;
 
             if (xvector == 0 && yvector == 0)
                 return;
@@ -219,15 +219,15 @@ namespace LeagueSandbox.GameServer.Logic
 
         public override void setPosition(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
 
             Target = null;
         }
 
         public virtual float GetZ()
         {
-            return _game.GetMap().GetHeightAtLocation(x, y);
+            return _game.GetMap().GetHeightAtLocation(X, Y);
         }
 
         public bool collide(GameObject o)

@@ -197,8 +197,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!isMelee())
                         {
                             Projectile p = new Projectile(
-                                x,
-                                y,
+                                X,
+                                Y,
                                 5,
                                 this,
                                 autoAttackTarget,
@@ -538,13 +538,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             lock (_buffsLock)
             {
-                if (!_buffs.ContainsKey(b.GetName()))
+                if (!_buffs.ContainsKey(b.Name))
                 {
-                    _buffs.Add(b.GetName(), b);
+                    _buffs.Add(b.Name, b);
                 }
                 else
                 {
-                    _buffs[b.GetName()].SetTimeElapsed(0); // if buff already exists, just restart its timer
+                    _buffs[b.Name].TimeElapsed = 0; // if buff already exists, just restart its timer
                 }
             }
         }
@@ -552,7 +552,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void RemoveBuff(Buff b)
         {
             //TODO add every stat
-            RemoveBuff(b.GetName());
+            RemoveBuff(b.Name);
         }
 
         public void RemoveBuff(string b)
@@ -628,14 +628,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (distanceWith(targetUnit) <= stats.Range.Total - 2.0f)
             {
-                setWaypoints(new List<Vector2> { new Vector2(x, y) });
+                setWaypoints(new List<Vector2> { new Vector2(X, Y) });
             }
             else
             {
                 Target t = new Target(waypoints[waypoints.Count - 1]);
                 if (t.distanceWith(targetUnit) >= 25.0f)
                 {
-                    setWaypoints(new List<Vector2> { new Vector2(x, y), new Vector2(targetUnit.getX(), targetUnit.getY()) });
+                    setWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(targetUnit.X, targetUnit.Y) });
                 }
             }
         }
