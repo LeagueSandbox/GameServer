@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
-            var champion = peerInfo.GetChampion();
+            var champion = peerInfo.Champion;
             if (peerInfo == null || champion.IsDashing || champion.isDead() || champion.IsCastingSpell())
                 return true;
 
@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 case MoveType.STOP:
                     //TODO anticheat, currently it trusts client 100%
 
-                    peerInfo.GetChampion().setPosition(request.x, request.y);
+                    peerInfo.Champion.setPosition(request.x, request.y);
                     float x = ((request.x) - _game.GetMap().GetWidth()) / 2;
                     float y = ((request.y) - _game.GetMap().GetHeight()) / 2;
 
@@ -45,24 +45,24 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    peerInfo.GetChampion().setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+                    peerInfo.Champion.setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     break;
                 case MoveType.MOVE:
-                    peerInfo.GetChampion().setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    peerInfo.Champion.setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
                     break;
             }
 
-            vMoves[0] = new Vector2(peerInfo.GetChampion().getX(), peerInfo.GetChampion().getY());
-            peerInfo.GetChampion().setWaypoints(vMoves);
+            vMoves[0] = new Vector2(peerInfo.Champion.getX(), peerInfo.Champion.getY());
+            peerInfo.Champion.setWaypoints(vMoves);
 
             var u = _game.GetMap().GetObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
-                peerInfo.GetChampion().setTargetUnit(null);
+                peerInfo.Champion.setTargetUnit(null);
                 return true;
             }
 
-            peerInfo.GetChampion().setTargetUnit(u);
+            peerInfo.Champion.setTargetUnit(u);
 
             return true;
         }

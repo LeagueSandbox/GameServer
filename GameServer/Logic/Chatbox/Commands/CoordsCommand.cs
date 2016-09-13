@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             Logger logger = Program.ResolveDependency<Logger>();
             PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
 
-            var champion = playerManager.GetPeerInfo(peer).GetChampion();
+            var champion = playerManager.GetPeerInfo(peer).Champion;
 
             logger.LogCoreInfo(string.Format(
                 "At {0}; {1}",

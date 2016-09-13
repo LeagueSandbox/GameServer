@@ -21,8 +21,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out hp))
             {
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().HealthPoints.FlatBonus = hp;
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().CurrentHealth = hp;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().HealthPoints.FlatBonus = hp;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().CurrentHealth = hp;
             }
         }
     }

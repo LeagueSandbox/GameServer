@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -20,23 +21,22 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
         {
+            SummonerSpellIds[] summonerSkills = new SummonerSpellIds[]
+            {
+                EnumParser.ParseSummonerSpell(p.Value.Summoner1),
+                EnumParser.ParseSummonerSpell(p.Value.Summoner2)
+            };
             var player = new ClientInfo(
                 p.Value.Rank,
                 ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE),
                 p.Value.Ribbon,
-                p.Value.Icon
+                p.Value.Icon,
+                p.Value.Skin,
+                p.Value.Name,
+                summonerSkills,
+                currentId // same as StartClient.bat
             );
-
-            player.SetName(p.Value.Name);
-
-            player.SetSkinNo(p.Value.Skin);
-            player.UserId = currentId; // same as StartClient.bat
             currentId++;
-
-            player.SetSummoners(
-                EnumParser.ParseSummonerSpell(p.Value.Summoner1),
-                EnumParser.ParseSummonerSpell(p.Value.Summoner2)
-            );
 
             var c = new Champion(p.Value.Champion, (uint)player.UserId, p.Value.Runes);
             var pos = c.getRespawnPosition();
@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
             c.LevelUp();
 
-            player.SetChampion(c);
+            player.Champion = c;
             var pair = new Pair<uint, ClientInfo>();
             pair.Item2 = player;
             _players.Add(pair);

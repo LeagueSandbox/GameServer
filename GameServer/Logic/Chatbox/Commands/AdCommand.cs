@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
             }
             else if (float.TryParse(split[1], out ad))
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AttackDamage.FlatBonus = ad;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().AttackDamage.FlatBonus = ad;
         }
     }
 }

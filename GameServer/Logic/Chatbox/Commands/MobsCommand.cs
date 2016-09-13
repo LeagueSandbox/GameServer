@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                         type = Pings.Ping_Danger
                     });
                 game.PacketHandlerManager.broadcastPacketTeam(
-                    playerManager.GetPeerInfo(peer).GetTeam(),
+                    playerManager.GetPeerInfo(peer).Team,
                     response,
                     Channel.CHL_S2C
                 );

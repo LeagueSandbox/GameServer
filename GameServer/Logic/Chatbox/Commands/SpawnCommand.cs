@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "minions")
             {
-                var champion = _playerManager.GetPeerInfo(peer).GetChampion();
+                var champion = _playerManager.GetPeerInfo(peer).Champion;
                 var random = new Random();
 
                 Minion caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);

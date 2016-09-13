@@ -26,18 +26,18 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             var c = new Champion(
                 split[1],
                 (uint)_playerManager.GetPeerInfo(peer).UserId,
-                _playerManager.GetPeerInfo(peer).GetChampion().RuneList,
-                _playerManager.GetPeerInfo(peer).GetChampion().NetId
+                _playerManager.GetPeerInfo(peer).Champion.RuneList,
+                _playerManager.GetPeerInfo(peer).Champion.NetId
             );
             c.setPosition(
-                _playerManager.GetPeerInfo(peer).GetChampion().getX(),
-                _playerManager.GetPeerInfo(peer).GetChampion().getY()
+                _playerManager.GetPeerInfo(peer).Champion.getX(),
+                _playerManager.GetPeerInfo(peer).Champion.getY()
             );
             c.Model = split[1]; // trigger the "modelUpdate" proc
-            c.Team = _playerManager.GetPeerInfo(peer).GetChampion().Team;
-            _game.GetMap().RemoveObject(_playerManager.GetPeerInfo(peer).GetChampion());
+            c.Team = _playerManager.GetPeerInfo(peer).Champion.Team;
+            _game.GetMap().RemoveObject(_playerManager.GetPeerInfo(peer).Champion);
             _game.GetMap().AddObject(c);
-            _playerManager.GetPeerInfo(peer).SetChampion(c);
+            _playerManager.GetPeerInfo(peer).Champion = c;
         }
     }
 }

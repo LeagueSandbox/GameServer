@@ -32,30 +32,30 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.GetMap().GetBluePillId());
-            var itemInstance = peerInfo.GetChampion().getInventory().SetExtraItem(7, bluePill);
-            var buyItem = new BuyItemAns(peerInfo.GetChampion(), itemInstance);
+            var itemInstance = peerInfo.Champion.getInventory().SetExtraItem(7, bluePill);
+            var buyItem = new BuyItemAns(peerInfo.Champion, itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Runes
             byte runeItemSlot = 14;
-            foreach (var rune in peerInfo.GetChampion().RuneList._runes)
+            foreach (var rune in peerInfo.Champion.RuneList._runes)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
-                var newRune = peerInfo.GetChampion().getInventory().SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(runeItem);
+                var newRune = peerInfo.Champion.getInventory().SetExtraItem(runeItemSlot, runeItem);
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().AddBuff(runeItem);
                 runeItemSlot++;
             }
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
-            var skillUp = new SkillUpPacket(peerInfo.GetChampion().NetId, 7, 1, (byte)peerInfo.GetChampion().getSkillPoints());
+            var skillUp = new SkillUpPacket(peerInfo.Champion.NetId, 7, 1, (byte)peerInfo.Champion.getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
-            skillUp = new SkillUpPacket(peerInfo.GetChampion().NetId, 14, 1, (byte)peerInfo.GetChampion().getSkillPoints());
+            skillUp = new SkillUpPacket(peerInfo.Champion.NetId, 14, 1, (byte)peerInfo.Champion.getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
-            peerInfo.GetChampion().GetStats().setSpellEnabled(7, true);
-            peerInfo.GetChampion().GetStats().setSpellEnabled(14, true);
-            peerInfo.GetChampion().GetStats().setSummonerSpellEnabled(0, true);
-            peerInfo.GetChampion().GetStats().setSummonerSpellEnabled(1, true);
+            peerInfo.Champion.GetStats().setSpellEnabled(7, true);
+            peerInfo.Champion.GetStats().setSpellEnabled(14, true);
+            peerInfo.Champion.GetStats().setSummonerSpellEnabled(0, true);
+            peerInfo.Champion.GetStats().setSummonerSpellEnabled(1, true);
 
             var objects = _game.GetMap().GetObjects();
             foreach (var kv in objects)
@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            if (peerInfo != null && peerInfo.GetTeam() == TeamId.TEAM_BLUE)
+            if (peerInfo != null && peerInfo.Team == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
                 var ms1 = new MinionSpawn2(0xff10c6db);
@@ -104,7 +104,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var sh1 = new SetHealth(0xff10c6db);
                 _game.PacketHandlerManager.sendPacket(peer, sh1, Channel.CHL_S2C);
             }
-            else if (peerInfo != null && peerInfo.GetTeam() == TeamId.TEAM_PURPLE)
+            else if (peerInfo != null && peerInfo.Team == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var ms1 = new MinionSpawn2(0xffa6170e);

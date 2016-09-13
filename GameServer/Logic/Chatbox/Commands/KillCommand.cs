@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 {
                     if (o.Value is Minion)
                     {
-                        (o.Value as Unit).die(_playerManager.GetPeerInfo(peer).GetChampion()); // :(
+                        (o.Value as Unit).die(_playerManager.GetPeerInfo(peer).Champion); // :(
                     }
                 }
             }

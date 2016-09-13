@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var player = p.Item2;
                 if (player.UserId == userId)
                 {
-                    if (player.GetPeer() != null)
+                    if (player.Peer != null)
                     {
                         _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
                         return false;
@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                     //TODO: add at least port or smth
                     p.Item1 = peer.Address.port;
-                    player.SetPeer(peer);
+                    player.Peer = peer;
                     var response = new KeyCheck(keyCheck.userId, playerNo);
                     bool bRet = _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
                     handleGameNumber(player, peer, _game);//Send 0x91 Packet?
@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
         bool handleGameNumber(ClientInfo client, Peer peer, Game game)
         {
-            var world = new WorldSendGameNumber(1, client.GetName());
+            var world = new WorldSendGameNumber(1, client.Name);
             return _game.PacketHandlerManager.sendPacket(peer, world, Channel.CHL_S2C);
         }
     }

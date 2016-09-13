@@ -168,8 +168,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var ci in _playerManager.GetPlayers())
-                if (ci.Item2.GetPeer() != null && ci.Item2.GetTeam() == team)
-                    sendPacket(ci.Item2.GetPeer(), data, channelNo, flag);
+                if (ci.Item2.Peer != null && ci.Item2.Team == team)
+                    sendPacket(ci.Item2.Peer, data, channelNo, flag);
             return true;
         }
 

@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 if (int.TryParse(split[2], out fieldNo))
                     if (float.TryParse(split[3], out value))
                     {
-                        //game.GetPeerInfo(peer).GetChampion().GetStats().setStat((MasterMask)blockNo, (FieldMask)fieldNo, value);
+                        //game.GetPeerInfo(peer).Champion.GetStats().setStat((MasterMask)blockNo, (FieldMask)fieldNo, value);
                     }
         }
     }

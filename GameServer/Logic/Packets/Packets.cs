@@ -111,21 +111,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var player in players)
             {
                 var p = player.Item2;
-                var summonerSpells = p.getSummoners();
+                var summonerSpells = p.SummonerSkills;
                 buffer.Write((long)p.UserId);
                 buffer.Write((short)0x1E); // unk
                 buffer.Write((int)summonerSpells[0]);
                 buffer.Write((int)summonerSpells[1]);
                 buffer.Write((byte)0); // bot boolean
-                buffer.Write((int)p.GetTeam()); // Probably a short
+                buffer.Write((int)p.Team); // Probably a short
                 buffer.fill(0, 64); // name is no longer here
                 buffer.fill(0, 64);
                 //buffer.Write(p.getRank());
-                foreach (var b in Encoding.Default.GetBytes(p.GetRank()))
+                foreach (var b in Encoding.Default.GetBytes(p.Rank))
                     buffer.Write((byte)b);
-                buffer.fill(0, 24 - p.GetRank().Length);
-                buffer.Write((int)p.GetIcon());
-                buffer.Write((short)p.GetRibbon());
+                buffer.fill(0, 24 - p.Rank.Length);
+                buffer.Write((int)p.Icon);
+                buffer.Write((short)p.Ribbon);
             }
 
             for (var i = 0; i < 12 - players.Count; ++i)
@@ -210,7 +210,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var p in players)
             {
                 var player = p.Item2;
-                if (player.GetTeam() == TeamId.TEAM_BLUE)
+                if (player.Team == TeamId.TEAM_BLUE)
                 {
                     buffer.Write((ulong)player.UserId);
                     currentBlue++;
@@ -226,7 +226,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var p in players)
             {
                 var player = p.Item2;
-                if (player.GetTeam() == TeamId.TEAM_PURPLE)
+                if (player.Team == TeamId.TEAM_PURPLE)
                 {
                     buffer.Write((ulong)player.UserId);
                     currentPurple++;
@@ -1619,11 +1619,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public HeroSpawn(ClientInfo player, int playerId) : base(PacketCmdS2C.PKT_S2C_HeroSpawn)
         {
             buffer.Write((int)0); // ???
-            buffer.Write((int)player.GetChampion().NetId);
+            buffer.Write((int)player.Champion.NetId);
             buffer.Write((int)playerId); // player Id
             buffer.Write((byte)40); // netNodeID ?
             buffer.Write((byte)0); // botSkillLevel Beginner=0 Intermediate=1
-            if (player.GetTeam() == TeamId.TEAM_BLUE)
+            if (player.Team == TeamId.TEAM_BLUE)
             {
                 buffer.Write((byte)1); // teamNumber BotTeam=2,3 Blue=Order=1 Purple=Chaos=0
             }
@@ -1634,13 +1634,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0); // isBot
                                    //buffer.Write((short)0; // botRank (deprecated as of 4.18)
             buffer.Write((byte)0); // spawnPosIndex
-            buffer.Write((int)player.GetSkinNo());
-            foreach (var b in Encoding.Default.GetBytes(player.GetName()))
+            buffer.Write((int)player.SkinNo);
+            foreach (var b in Encoding.Default.GetBytes(player.Name))
                 buffer.Write((byte)b);
-            buffer.fill(0, 128 - player.GetName().Length);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().Model))
+            buffer.fill(0, 128 - player.Name.Length);
+            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
                 buffer.Write((byte)b);
-            buffer.fill(0, 40 - player.GetChampion().Model.Length);
+            buffer.fill(0, 40 - player.Champion.Model.Length);
             buffer.Write((float)0.0f); // deathDurationRemaining
             buffer.Write((float)0.0f); // timeSinceDeath
             buffer.Write((int)0); // UNK (4.18)
@@ -2056,8 +2056,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write((long)player.Item2.UserId);
             buffer.Write((int)0);
-            buffer.Write((int)player.Item2.GetName().Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.GetName()))
+            buffer.Write((int)player.Item2.Name.Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Item2.Name))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }
@@ -2076,9 +2076,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var player = p.Item2;
             buffer.Write((long)player.UserId);
-            buffer.Write((int)player.GetSkinNo());
-            buffer.Write((int)player.GetChampion().Model.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.GetChampion().Model))
+            buffer.Write((int)player.SkinNo);
+            buffer.Write((int)player.Champion.Model.Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
                 buffer.Write(b);
             buffer.Write((byte)0);
         }
@@ -2122,7 +2122,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)ping.x);
             buffer.Write((float)ping.y);
             buffer.Write((int)ping.targetNetId);
-            buffer.Write((int)player.GetChampion().NetId);
+            buffer.Write((int)player.Champion.NetId);
             buffer.Write((byte)ping.type);
             buffer.Write((byte)0xFB); // 4.18
                                       /*
@@ -2559,10 +2559,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class PlayerInfo : BasePacket
     {
-        public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.GetChampion().NetId)
+        public PlayerInfo(ClientInfo player) : base(PacketCmdS2C.PKT_S2C_PlayerInfo, player.Champion.NetId)
         {
             int runesRequired = 30;
-            foreach (var rune in player.GetChampion().RuneList._runes)
+            foreach (var rune in player.Champion.RuneList._runes)
             {
                 buffer.Write((short)rune.Value);
                 buffer.Write((short)0x00);
@@ -2574,7 +2574,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 buffer.Write((short)0);
             }
 
-            var summonerSpells = player.getSummoners();
+            var summonerSpells = player.SummonerSkills;
             buffer.Write((int)summonerSpells[0]);
             buffer.Write((int)summonerSpells[1]);
 

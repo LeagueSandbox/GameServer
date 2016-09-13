@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             {
                 if (player.Item1 == peer.Address.port)
                 {
-                    player.Item2.SetVersionMatch(versionMatch);
+                    player.Item2.IsMatchingVersion = versionMatch;
                     break;
                 }
             }

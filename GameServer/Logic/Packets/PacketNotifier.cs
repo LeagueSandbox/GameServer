@@ -41,9 +41,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var p in _playerManager.GetPlayers())
             {
                 var coords = _game.GetMap().GetEndGameCameraPosition(losingTeam);
-                var cam = new MoveCamera(p.Item2.GetChampion(), coords[0], coords[1], coords[2], 2);
-                _game.PacketHandlerManager.sendPacket(p.Item2.GetPeer(), cam, Channel.CHL_S2C);
-                _game.PacketHandlerManager.sendPacket(p.Item2.GetPeer(), new HideUi(), Channel.CHL_S2C);
+                var cam = new MoveCamera(p.Item2.Champion, coords[0], coords[1], coords[2], 2);
+                _game.PacketHandlerManager.sendPacket(p.Item2.Peer, cam, Channel.CHL_S2C);
+                _game.PacketHandlerManager.sendPacket(p.Item2.Peer, new HideUi(), Channel.CHL_S2C);
             }
             _game.PacketHandlerManager.broadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
 
