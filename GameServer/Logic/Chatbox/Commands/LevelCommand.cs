@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     return;
 
                 var experienceToLevelUp = _game.GetMap().GetExperienceToLevelUp()[lvl-1];
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Experience = experienceToLevelUp;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().Experience = experienceToLevelUp;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             var split = arguments.Split(' ');
             if (split.Length >= 2)
-                _playerManager.GetPeerInfo(peer).GetChampion().Model = split[1];
+                _playerManager.GetPeerInfo(peer).Champion.Model = split[1];
             else
             {
                 _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);

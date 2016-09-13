@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (itemTemplate == null)
                 return false;
 
-            var recipeParts = _playerManager.GetPeerInfo(peer).GetChampion()
+            var recipeParts = _playerManager.GetPeerInfo(peer).Champion
                 .getInventory()
                 .GetAvailableItems(itemTemplate.Recipe, _itemManager);
             var price = itemTemplate.TotalPrice;
@@ -33,12 +33,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             if (recipeParts.Count == 0)
             {
-                if (_playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
+                if (_playerManager.GetPeerInfo(peer).Champion.GetStats().Gold < price)
                 {
                     return true;
                 }
 
-                i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
+                i = _playerManager.GetPeerInfo(peer).Champion.getInventory().AddItem(itemTemplate);
 
                 if (i == null)
                 { // Slots full
@@ -50,26 +50,26 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 foreach (var instance in recipeParts)
                     price -= instance.TotalPrice;
 
-                if (_playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold < price)
+                if (_playerManager.GetPeerInfo(peer).Champion.GetStats().Gold < price)
                     return false;
 
 
                 foreach (var instance in recipeParts)
                 {
-                    _playerManager.GetPeerInfo(peer).GetChampion().GetStats().RemoveBuff(instance.ItemType);
-                    var champion = _playerManager.GetPeerInfo(peer).GetChampion();
+                    _playerManager.GetPeerInfo(peer).Champion.GetStats().RemoveBuff(instance.ItemType);
+                    var champion = _playerManager.GetPeerInfo(peer).Champion;
                     var inventory = champion.getInventory();
                     _game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
-                i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().AddItem(itemTemplate);
+                i = _playerManager.GetPeerInfo(peer).Champion.getInventory().AddItem(itemTemplate);
             }
 
-            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold =
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().Gold - price;
-            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().AddBuff(itemTemplate);
-            _game.PacketNotifier.notifyItemBought(_playerManager.GetPeerInfo(peer).GetChampion(), i);
+            _playerManager.GetPeerInfo(peer).Champion.GetStats().Gold =
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().Gold - price;
+            _playerManager.GetPeerInfo(peer).Champion.GetStats().AddBuff(itemTemplate);
+            _game.PacketNotifier.notifyItemBought(_playerManager.GetPeerInfo(peer).Champion, i);
 
             return true;
         }

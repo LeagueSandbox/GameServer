@@ -19,19 +19,19 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var skillUpPacket = new SkillUpPacket(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).GetChampion().levelUpSpell(skillUpPacket.skill);
+            var s = _playerManager.GetPeerInfo(peer).Champion.levelUpSpell(skillUpPacket.skill);
 
             if (s == null)
                 return false;
 
             var skillUpResponse = new SkillUpPacket(
-                _playerManager.GetPeerInfo(peer).GetChampion().NetId,
+                _playerManager.GetPeerInfo(peer).Champion.NetId,
                 skillUpPacket.skill,
                 (byte)s.getLevel(),
                 (byte)s.getOwner().getSkillPoints()
             );
             _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).GetChampion().GetStats().setSpellEnabled(skillUpPacket.skill, true);
+            _playerManager.GetPeerInfo(peer).Champion.GetStats().setSpellEnabled(skillUpPacket.skill, true);
 
             return true;
         }

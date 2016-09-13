@@ -20,29 +20,29 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var sell = new SellItem(data);
             var client = _playerManager.GetPeerInfo(peer);
 
-            var i = _playerManager.GetPeerInfo(peer).GetChampion().getInventory().GetItem(sell.slotId);
+            var i = _playerManager.GetPeerInfo(peer).Champion.getInventory().GetItem(sell.slotId);
             if (i == null)
                 return false;
 
             float sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
-            client.GetChampion().GetStats().Gold += sellPrice;
+            client.Champion.GetStats().Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                _game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, i.StackSize);
+                _game.PacketNotifier.notifyRemoveItem(client.Champion, sell.slotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
-                    client.GetChampion().getInventory().RemoveItem(sell.slotId);
+                    client.Champion.getInventory().RemoveItem(sell.slotId);
                 }
             }
             else
             {
-                _game.PacketNotifier.notifyRemoveItem(client.GetChampion(), sell.slotId, 0);
-                client.GetChampion().getInventory().RemoveItem(sell.slotId);
+                _game.PacketNotifier.notifyRemoveItem(client.Champion, sell.slotId, 0);
+                client.Champion.getInventory().RemoveItem(sell.slotId);
             }
 
-            client.GetChampion().GetStats().RemoveBuff(i.ItemType);
+            client.Champion.GetStats().RemoveBuff(i.ItemType);
 
             return true;
         }

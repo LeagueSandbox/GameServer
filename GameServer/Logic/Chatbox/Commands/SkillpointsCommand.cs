@@ -19,8 +19,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             Game _game = Program.ResolveDependency<Game>();
             PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
-            _playerManager.GetPeerInfo(peer).GetChampion().setSkillPoints(17);
-            var skillUpResponse = new SkillUpPacket(_playerManager.GetPeerInfo(peer).GetChampion().NetId, 0, 0, 17);
+            _playerManager.GetPeerInfo(peer).Champion.setSkillPoints(17);
+            var skillUpResponse = new SkillUpPacket(_playerManager.GetPeerInfo(peer).Champion.NetId, 0, 0, 17);
             _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
         }
     }

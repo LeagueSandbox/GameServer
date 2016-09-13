@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var ping = new AttentionPing(data);
             var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), ping);
             return _game.PacketHandlerManager.broadcastPacketTeam(
-                _playerManager.GetPeerInfo(peer).GetTeam(),
+                _playerManager.GetPeerInfo(peer).Team,
                 response,
                 Channel.CHL_S2C
             );

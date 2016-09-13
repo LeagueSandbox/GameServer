@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
-            var world = new WorldSendGameNumber(1, _playerManager.GetPeerInfo(peer).GetName());
+            var world = new WorldSendGameNumber(1, _playerManager.GetPeerInfo(peer).Name);
             return _game.PacketHandlerManager.sendPacket(peer, world, Channel.CHL_S2C);
         }
     }

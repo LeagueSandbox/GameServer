@@ -23,8 +23,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out mp))
             {
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().ManaPoints.FlatBonus = mp;
-                _playerManager.GetPeerInfo(peer).GetChampion().GetStats().CurrentMana = mp;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().ManaPoints.FlatBonus = mp;
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().CurrentMana = mp;
             }
         }
     }

@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             if (float.TryParse(split[1], out x))
                 if (float.TryParse(split[2], out y))
-                    _game.PacketNotifier.notifyTeleport(_playerManager.GetPeerInfo(peer).GetChampion(), x, y);
+                    _game.PacketNotifier.notifyTeleport(_playerManager.GetPeerInfo(peer).Champion, x, y);
         }
     }
 }
