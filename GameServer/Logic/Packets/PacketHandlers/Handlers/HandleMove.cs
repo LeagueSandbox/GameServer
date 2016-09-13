@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     break;
             }
 
-            vMoves[0] = new Vector2(peerInfo.Champion.getX(), peerInfo.Champion.getY());
+            vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.setWaypoints(vMoves);
 
             var u = _game.GetMap().GetObjectById(request.targetNetId) as Unit;

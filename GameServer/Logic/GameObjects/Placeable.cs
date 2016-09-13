@@ -10,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
-        private string _name;
-        private Unit _owner; // We'll probably want to change this in the future
+        public string Name { get; private set; }
+        public Unit Owner { get; private set; } // We'll probably want to change this in the future
 
         public Placeable(
             Unit owner,
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Team = TeamId.TEAM_NEUTRAL;
 
-            _owner = owner;
+            this.Owner = owner;
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
 
-            this._name = name;
+            this.Name = name;
 
             Inibin inibin;
             if (!_rafManager.readInibin("DATA/Characters/" + model + "/" + model + ".inibin", out inibin))
@@ -82,16 +82,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(long diff)
         {
             base.update(diff);
-        }
-
-        public string getName()
-        {
-            return _name;
-        }
-
-        public Unit GetOwner()
-        {
-            return _owner;
         }
 
         public override bool isInDistress()

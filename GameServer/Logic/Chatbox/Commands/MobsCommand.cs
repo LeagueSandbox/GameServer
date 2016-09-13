@@ -37,8 +37,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var response = new AttentionPingAns(
                     playerManager.GetPeerInfo(peer),
                     new AttentionPing {
-                        x = unit.Value.getX(),
-                        y = unit.Value.getY(),
+                        x = unit.Value.X,
+                        y = unit.Value.Y,
                         targetNetId = 0,
                         type = Pings.Ping_Danger
                     });

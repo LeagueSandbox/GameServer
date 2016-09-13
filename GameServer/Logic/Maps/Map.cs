@@ -135,9 +135,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 {
                     if (buff.NeedsToRemove())
                     {
-                        if (buff.GetName() != "")
+                        if (buff.Name != "")
                         {
-                            _game.PacketNotifier.notifyRemoveBuff(buff.GetUnit(), buff.GetName());
+                            _game.PacketNotifier.notifyRemoveBuff(buff.TargetUnit, buff.Name);
                         }
                         u.RemoveBuff(buff);
                         continue;
@@ -166,8 +166,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _collisionHandler.update(diff);
 
             foreach (var announce in _announcerEvents)
-                if (!announce.IsAnnounced())
-                    if (_gameTime >= announce.GetEventTime())
+                if (!announce.IsAnnounced)
+                    if (_gameTime >= announce.EventTime)
                         announce.Execute();
 
             _gameTime += diff;

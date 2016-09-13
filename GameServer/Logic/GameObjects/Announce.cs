@@ -1,44 +1,28 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Announce
     {
-        private bool _announced;
-        private long _eventTime;
+        public bool IsAnnounced { get; private set; }
+        public long EventTime { get; private set; }
         private Announces _messageId;
         private bool _isMapSpecific;
         private Game _game;
 
         public Announce(Game game, long eventTime, Announces id, bool isMapSpecific)
         {
-            _announced = false;
-            _eventTime = eventTime;
+            this.IsAnnounced = false;
+            this.EventTime = eventTime;
             _messageId = id;
             _isMapSpecific = isMapSpecific;
             _game = game;
         }
 
-        public bool IsAnnounced()
-        {
-            return _announced;
-        }
-
-        public long GetEventTime()
-        {
-            return _eventTime;
-        }
-
         public void Execute()
         {
             _game.PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
-            _announced = true;
+            this.IsAnnounced = true;
         }
     }
 

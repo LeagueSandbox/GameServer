@@ -18,16 +18,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public RuneCollection RuneList { get; set; }
         public List<Spell> Spells { get; private set; }
 
-        protected short skillPoints = 0;
-        protected int skin;
-        protected long championHitFlagTimer = 0;
-        public uint playerId;
-        public uint playerHitId;
+        private short _skillPoints;
+        public int Skin { get; set; }
+        private long _championHitFlagTimer;
+        private uint _playerId;
+        private uint _playerHitId;
 
         public Champion(string model, uint playerId, RuneCollection runeList, uint netId = 0)
             : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
-            this.playerId = playerId;
+            this._playerId = playerId;
             this.RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(this);
@@ -104,6 +104,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.Load(scriptloc);
         }
 
+        private string GetPlayerIndex()
+        {
+            return string.Format("player{0}", _playerId);
+        }
+
         public int getTeamSize()
         {
             int blueTeamSize = 0;
@@ -124,7 +129,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            var playerIndex = "player" + playerId;
+            var playerIndex = GetPlayerIndex();
             if (_game.Config.Players.ContainsKey(playerIndex))
             {
                 switch (_game.Config.Players[playerIndex].Team.ToLower())
@@ -143,7 +148,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var config = _game.Config;
             var mapId = config.GameConfig.Map;
-            var playerIndex = "player" + playerId;
+            var playerIndex = GetPlayerIndex();
             var playerTeam = "";
             var teamSize = getTeamSize();
 
@@ -188,7 +193,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spell s = null;
             foreach (Spell t in Spells)
             {
-                if (t.getSlot() == slot)
+                if (t.Slot == slot)
                 {
                     s = t;
                 }
@@ -199,7 +204,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return null;
             }
 
-            s.setSlot(slot);//temporary hack until we redo spells to be almost fully lua-based
+            s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
 
             if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.getState() != SpellState.STATE_READY)
                 return null;
@@ -213,11 +218,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (slot >= Spells.Count)
                 return null;
 
-            if (skillPoints == 0)
+            if (_skillPoints == 0)
                 return null;
 
             Spells[slot].levelUp();
-            --skillPoints;
+            _skillPoints--;
 
             return Spells[slot];
         }
@@ -286,31 +291,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             foreach (var s in Spells)
                 s.update(diff);
 
-            if (championHitFlagTimer > 0)
+            if (_championHitFlagTimer > 0)
             {
-                championHitFlagTimer -= diff;
-                if (championHitFlagTimer <= 0)
-                    championHitFlagTimer = 0;
+                _championHitFlagTimer -= diff;
+                if (_championHitFlagTimer <= 0)
+                {
+                    _championHitFlagTimer = 0;
+                }
             }
         }
 
         public void setSkillPoints(int _skillPoints)
         {
-            skillPoints = (short)_skillPoints;
+            _skillPoints = (short)_skillPoints;
         }
 
-        public void setSkin(int skin)
-        {
-            this.skin = skin;
-        }
         public int getChampionHash()
         {
             var szSkin = "";
 
-            if (skin < 10)
-                szSkin = "0" + skin;
+            if (Skin < 10)
+                szSkin = "0" + Skin;
             else
-                szSkin = skin.ToString();
+                szSkin = Skin.ToString();
 
             int hash = 0;
             var gobj = "[Character]";
@@ -336,7 +339,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public short getSkillPoints()
         {
-            return skillPoints;
+            return _skillPoints;
         }
 
         public bool LevelUp()
@@ -352,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 GetStats().LevelUp();
                 _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
-                skillPoints++;
+                _skillPoints++;
             }
             return true;
         }
@@ -369,9 +372,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             var cKiller = killer as Champion;
 
-            if (cKiller == null && championHitFlagTimer > 0)
+            if (cKiller == null && _championHitFlagTimer > 0)
             {
-                cKiller = _game.GetMap().GetObjectById(playerHitId) as Champion;
+                cKiller = _game.GetMap().GetObjectById(_playerHitId) as Champion;
                 _logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
@@ -439,11 +442,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public void setChampionHitFlagTimer(long time)
-        {
-            championHitFlagTimer = time;
-        }
-
         public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             base.dealDamageTo(target, damage, type, source, isCrit);
@@ -452,8 +450,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (cTarget == null)
                 return;
 
-            cTarget.setChampionHitFlagTimer(15 * 1000); //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            cTarget.playerHitId = NetId;
+            cTarget._championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
+            cTarget._playerHitId = NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

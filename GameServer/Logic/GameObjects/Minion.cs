@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
  */
         protected List<Vector2> mainWaypoints;
         protected int curMainWaypoint = 0;
-        protected MinionSpawnPosition spawnPosition;
+        public MinionSpawnPosition SpawnPosition { get; private set; }
         protected MinionSpawnType minionType;
         protected bool _AIPaused;
 
@@ -39,12 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base("", new MinionStats(), 40, 0, 0, 1100, netId)
         {
             this.minionType = type;
-            this.spawnPosition = position;
+            this.SpawnPosition = position;
             this.mainWaypoints = mainWaypoints;
             this.curMainWaypoint = 0;
             _AIPaused = false;
 
-            var spawnSpecifics = _game.GetMap().GetMinionSpawnPosition(spawnPosition);
+            var spawnSpecifics = _game.GetMap().GetMinionSpawnPosition(SpawnPosition);
             Team = spawnSpecifics.Item1;
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
             {
                 // Otherwise path to own position. (Stand still)
-                setWaypoints(new List<Vector2> { new Vector2(x, y), new Vector2(x, y) });
+                setWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(X, Y) });
             }
 
             setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
@@ -92,10 +92,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : this(type, position, new List<Vector2>(), netId)
         {
 
-        }
-        public MinionSpawnPosition getSpawnPosition()
-        {
-            return spawnPosition;
         }
 
         public MinionSpawnType getType()
@@ -187,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if ((waypoints.Count == 1) || (curWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    List<Vector2> newWaypoints = new List<Vector2> { new Vector2(x, y), mainWaypoints[curMainWaypoint] };
+                    List<Vector2> newWaypoints = new List<Vector2> { new Vector2(X, Y), mainWaypoints[curMainWaypoint] };
                     setWaypoints(newWaypoints);
                 }
             }

@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             set
             {
                 this._champion = value;
-                _champion.setSkin(SkinNo);
+                _champion.Skin = SkinNo;
             }
         }
 

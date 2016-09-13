@@ -1,8 +1,8 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
 function onFinishCasting()
-    local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
+    local current = Vector2:new(owner.X, owner.Y)
+    local to = (Vector2:new(spell.X, spell.Y) - current):normalize()
     local range = to * 1150
     local trueCoords = current + range
 
@@ -10,13 +10,13 @@ function onFinishCasting()
 end
 
 function applyEffects()
-    local AD = getOwner():GetStats().AttackDamage.Total*1.1
-    local AP = getOwner():GetStats().AbilityPower.Total*0.4
+    local AD = owner:GetStats().AttackDamage.Total*1.1
+    local AP = owner:GetStats().AbilityPower.Total*0.4
     local damage = getEffectValue(0) + AD + AP
     dealPhysicalDamage(damage)
 	
 	-- TODO this can be fetched from projectile inibin "HitEffectName"
-    addParticleTarget(getOwner(), "Ezreal_mysticshot_tar.troy", getTarget())
+    addParticleTarget(owner, "Ezreal_mysticshot_tar.troy", getTarget())
 
     destroyProjectile()
 end

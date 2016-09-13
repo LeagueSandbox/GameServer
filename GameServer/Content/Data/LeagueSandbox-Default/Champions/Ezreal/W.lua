@@ -1,8 +1,8 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
 function onFinishCasting()
-    local current = Vector2:new(getOwnerX(), getOwnerY())
-    local to = (Vector2:new(getSpellToX(), getSpellToY()) - current):normalize()
+    local current = Vector2:new(owner.X, owner.Y)
+    local to = (Vector2:new(spell.X, spell.Y) - current):normalize()
     local range = to * 1000
     local trueCoords = current + range
 	
@@ -10,8 +10,8 @@ function onFinishCasting()
 end
 
 function applyEffects()
-    if getOwner():getTeam() ~= getTarget():getTeam() then
-        dealMagicalDamage(25+getSpellLevel()*45+getOwner():GetStats().AbilityPower.Total*0.8)
-	    addParticleTarget(getOwner(), "Ezreal_essenceflux_tar.troy", getTarget())
+    if owner.Team ~= getTarget().Team then
+        dealMagicalDamage(25+spellLevel*45+owner:GetStats().AbilityPower.Total*0.8)
+	    addParticleTarget(owner, "Ezreal_essenceflux_tar.troy", getTarget())
     end
 end

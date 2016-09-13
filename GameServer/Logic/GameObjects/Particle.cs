@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float Size { get; private set; }
 
         public Particle(Champion owner, Target t, string particleName, float size = 1.0f, string boneName = "", uint netId = 0)
-               : base(t.getX(), t.getY(), 0, 0, netId)
+               : base(t.X, t.Y, 0, 0, netId)
         {
             this.Owner = owner;
             this.Target = t;
