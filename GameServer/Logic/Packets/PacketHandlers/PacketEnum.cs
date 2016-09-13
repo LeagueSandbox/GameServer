@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
+﻿namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 {
     public enum GameCmd : uint
     {
@@ -14,7 +8,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 
     public enum PacketCmdS2C : byte
     {
-
         PKT_S2C_KeyCheck = 0x00,
         PKT_S2C_RestrictCameraMovement = 0x06,
         PKT_S2C_UnpauseGame = 0x0A,
@@ -64,7 +57,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_MoveAns = 0x61,
         PKT_S2C_StartSpawn = 0x62,
         PKT_S2C_Dash = 0x64,
-        PKT_S2C_DamageDone = 0x65, PKT_S2C_LoadHero = 0x65,
+        PKT_S2C_DamageDone = 0x65,
+        PKT_S2C_LoadHero = 0x65,
         PKT_S2C_LoadName = 0x66,
         PKT_S2C_LoadScreenInfo = 0x67,
         PKT_S2C_ChatBoxMessage = 0x68,
@@ -79,7 +73,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_SetCooldown = 0x85,
         PKT_S2C_SpawnParticle = 0x87,
         PKT_S2C_QueryStatusAns = 0x88,
-        PKT_S2C_ExplodeNexus = 0x89, PKT_S2C_InhibitorDeathAnimation = 0x89,
+        PKT_S2C_ExplodeNexus = 0x89,
+        PKT_S2C_InhibitorDeathAnimation = 0x89,
         PKT_S2C_Quest = 0x8C,
         PKT_S2C_World_SendGameNumber = 0x92,
         PKT_S2C_Ping_Load_Info = 0x95,
@@ -125,6 +120,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         PKT_S2C_CloseGame = 0xE5,
         PKT_S2C_DebugMessage = 0xF7,
         PKT_S2C_MessagesAvailable = 0xF9,
+        PKT_S2C_SetItemStacks2 = 0xFD,
         PKT_S2C_Extended = 0xFE,
         PKT_S2C_Batch = 0xFF
     };
@@ -172,6 +168,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
         EPKT_S2C_ChampionDeathTimer = 0x17,
         EPKT_S2C_SetSpellActiveState = 0x18,
         EPKT_S2C_ResourceType = 0x19,
+        EPKT_S2C_ReplaceStoreItem = 0x1C,
+        EPKT_S2C_CreateMonsterCamp = 0x22,
         EPKT_S2C_SpellEmpower = 0x25,
         EPKT_S2C_NPC_Die = 0x26,
         EPKT_S2C_FloatingText = 0x28,
