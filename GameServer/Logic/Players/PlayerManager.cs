@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
         private NetworkIdManager _networkIdManager;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
-        private int currentId = 1;
+        private int _currentId = 1;
 
         public PlayerManager(NetworkIdManager networkIdManager)
         {
@@ -34,9 +34,9 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 p.Value.Skin,
                 p.Value.Name,
                 summonerSkills,
-                currentId // same as StartClient.bat
+                _currentId // same as StartClient.bat
             );
-            currentId++;
+            _currentId++;
 
             var c = new Champion(p.Value.Champion, (uint)player.UserId, p.Value.Runes);
             var pos = c.getRespawnPosition();

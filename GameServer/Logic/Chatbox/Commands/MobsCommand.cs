@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             int team;
             if (!int.TryParse(split[1], out team))
                 return;
-            var units = game.GetMap().GetObjects()
+            var units = game.Map.GetObjects()
                 .Where(xx => xx.Value.Team == CustomConvert.toTeamId(team))
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
             foreach (var unit in units)

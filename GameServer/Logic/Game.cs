@@ -26,22 +26,22 @@ namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class Game
     {
-        protected Host _server;
-        protected BlowFish _blowfish;
+        private Host _server;
+        public BlowFish Blowfish { get; private set; }
         protected object _lock = new object();
 
-        protected bool _started = false;
-        protected int _playersReady = 0;
+        public bool IsRunning { get; private set; }
+        public int PlayersReady { get; private set; }
 
-        private Map _map;
-        public PacketNotifier PacketNotifier;
-        public PacketHandlerManager PacketHandlerManager;
+        public Map Map { get; private set; }
+        public PacketNotifier PacketNotifier { get; private set; }
+        public PacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const PacketFlags RELIABLE = PacketFlags.Reliable;
         protected const PacketFlags UNRELIABLE = PacketFlags.None;
         protected const double REFRESH_RATE = 16.666; // 60 fps
-        protected long _timeElapsed;
+        private long _timeElapsed;
 
         private Logger _logger;
         // Object managers
@@ -77,11 +77,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
             if (key.Length <= 0)
                 return false;
 
-            _blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(_logger, _blowfish, _server, _playerManager);
-            _map = new SummonersRift(this);
+            Blowfish = new BlowFish(key);
+            PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
+            Map = new SummonersRift(this);
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
+            IsRunning = false;
 
             foreach (var p in Config.Players)
             {
@@ -123,8 +124,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
                     }
                 }
-                if (_started)
-                    _map.Update(_timeElapsed);
+                if (IsRunning)
+                    Map.Update(_timeElapsed);
                 watch.Stop();
                 _timeElapsed = watch.ElapsedMilliseconds;
                 watch.Restart();
@@ -137,44 +138,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
         }
 
-        public BlowFish GetBlowfish()
-        {
-            return _blowfish;
-        }
-
-        public Host GetServer()
-        {
-            return _server;
-        }
-
-        public Map GetMap()
-        {
-            return _map;
-        }
-
         public void IncrementReadyPlayers()
         {
-            _playersReady++;
+            PlayersReady++;
         }
 
-        public int GetReadyPlayers()
+        public void Start()
         {
-            return _playersReady;
+            IsRunning = true;
         }
 
-        public bool IsStarted()
+        public void Stop()
         {
-            return _started;
-        }
-
-        public void SetStarted(bool b)
-        {
-            _started = b;
-        }
-
-        public void StopGame()
-        {
-            _started = false;
+            IsRunning = false;
         }
 
         private bool HandleDisconnect(Peer peer)

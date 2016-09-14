@@ -58,10 +58,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
                 super.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
 
-                _game.GetMap().AddObject(caster);
-                _game.GetMap().AddObject(cannon);
-                _game.GetMap().AddObject(melee);
-                _game.GetMap().AddObject(super);
+                _game.Map.AddObject(caster);
+                _game.Map.AddObject(cannon);
+                _game.Map.AddObject(melee);
+                _game.Map.AddObject(super);
             }
         }
     }

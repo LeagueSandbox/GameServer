@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var keyCheck = new KeyCheck(data);
-            var userId = _game.GetBlowfish().Decrypt(keyCheck.checkId);
+            var userId = _game.Blowfish.Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
                 return false;

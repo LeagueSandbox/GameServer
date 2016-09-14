@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            _game.StopGame();
+            _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(this);
         }
 

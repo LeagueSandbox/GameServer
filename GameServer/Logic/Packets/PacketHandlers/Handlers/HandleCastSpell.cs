@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var futureProjNetId = _networkIdManager.GetNewNetID();
             var spellNetId = _networkIdManager.GetNewNetID();
-            var targetObj = _game.GetMap().GetObjectById(spell.targetNetId);
+            var targetObj = _game.Map.GetObjectById(spell.targetNetId);
             var targetUnit = targetObj as Unit;
 
             var s = _playerManager.GetPeerInfo(peer).Champion.castSpell(

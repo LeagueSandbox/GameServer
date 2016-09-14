@@ -392,7 +392,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 (int)_rafManager.getHash(nameMissile),
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
-            _game.GetMap().AddObject(p);
+            _game.Map.AddObject(p);
             _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
@@ -409,7 +409,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 (int)_rafManager.getHash(nameMissile),
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
-            _game.GetMap().AddObject(p);
+            _game.Map.AddObject(p);
             _game.PacketNotifier.notifyProjectileSpawn(p);
         }
 
@@ -475,7 +475,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
             p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
-            _game.GetMap().AddObject(p);
+            _game.Map.AddObject(p);
         }
 
         public void LoadLua(IScriptEngine scriptEngine)

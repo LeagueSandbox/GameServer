@@ -101,7 +101,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public static Path getPath(Vector2 from, Vector2 to)// { if (!chart->getAIMesh()) CORE_FATAL("Can't get path because of a missing AIMesh."); return getPath(from, to, PATH_DEFAULT_BOX_SIZE(mesh->getSize())); }
         {
-            if (chart.getAIMesh() == null)
+            if (chart.AIMesh == null)
             {
                 _logger.LogCoreError("Can't get path because of a missing AIMesh.");
             }
@@ -118,7 +118,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _logger.LogCoreError("The map hasn't been set but the mesh was requested.");
                 return null;
             }
-            return chart.getAIMesh();
+            return chart.AIMesh;
         }
         private static float PATH_DEFAULT_BOX_SIZE(float map_size)
         {

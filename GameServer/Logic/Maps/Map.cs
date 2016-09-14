@@ -20,22 +20,22 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         private object _championsLock = new object();
         private object _visionLock = new object();
 
-        protected List<int> _expToLevelUp;
+        public List<int> ExpToLevelUp { get; protected set; }
         protected int _minionNumber;
         protected long _firstSpawnTime;
         protected long _spawnInterval;
-        protected long _gameTime;
+        public long GameTime { get; private set; }
         protected long _nextSpawnTime;
-        protected long _firstGoldTime; // Time that gold should begin to generate
+        public long FirstGoldTime { get; protected set; } // Time that gold should begin to generate
         protected long _nextSyncTime;
         protected List<GameObjects.Announce> _announcerEvents;
         protected Game _game;
-        protected bool _firstBlood;
-        protected bool _killReduction;
+        public bool HasFirstBloodHappened { get; set; }
+        public bool IsKillGoldRewardReductionActive { get; set; }
         protected bool _hasFountainHeal;
         protected bool _spawnEnabled;
-        protected RAF.AIMesh mesh;
-        protected int _id;
+        public RAF.AIMesh AIMesh { get; protected set; }
+        public int Id { get; private set; }
 
         protected CollisionHandler _collisionHandler;
         protected Dictionary<TeamId, Fountain> _fountains;
@@ -48,25 +48,25 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _inhibitors = new Dictionary<uint, Inhibitor>();
             _champions = new Dictionary<uint, Champion>();
             _visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
-            _expToLevelUp = new List<int>();
+            ExpToLevelUp = new List<int>();
             _minionNumber = 0;
             _firstSpawnTime = firstSpawnTime;
-            _firstGoldTime = firstGoldTime;
+            FirstGoldTime = firstGoldTime;
             _spawnInterval = spawnInterval;
-            _gameTime = 0;
+            GameTime = 0;
             _nextSpawnTime = firstSpawnTime;
             _nextSyncTime = 10 * 1000;
             _announcerEvents = new List<GameObjects.Announce>();
             _game = game;
-            _firstBlood = true;
-            _killReduction = true;
+            HasFirstBloodHappened = false;
+            IsKillGoldRewardReductionActive = true;
             _spawnEnabled = false;
             _hasFountainHeal = hasFountainHeal;
             _collisionHandler = new CollisionHandler(this);
             _fountains = new Dictionary<TeamId, Fountain>();
             _fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
             _fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
-            _id = id;
+            Id = id;
 
             _teamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
@@ -167,10 +167,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             foreach (var announce in _announcerEvents)
                 if (!announce.IsAnnounced)
-                    if (_gameTime >= announce.EventTime)
+                    if (GameTime >= announce.EventTime)
                         announce.Execute();
 
-            _gameTime += diff;
+            GameTime += diff;
             _nextSyncTime += diff;
 
             // By default, synchronize the game time every 10 seconds
@@ -184,7 +184,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 if (_minionNumber > 0)
                 {
-                    if (_gameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
+                    if (GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
                     { // Spawn new wave every 0.8s
                         if (Spawn())
                         {
@@ -197,7 +197,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
                 }
-                else if (_gameTime >= _nextSpawnTime)
+                else if (GameTime >= _nextSpawnTime)
                 {
                     Spawn();
                     _minionNumber++;
@@ -238,12 +238,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public virtual float GetWidth()
         {
-            return mesh.getWidth();
+            return AIMesh.getWidth();
         }
 
         public virtual float GetHeight()
         {
-            return mesh.getHeight();
+            return AIMesh.getHeight();
         }
 
         public virtual Vector2 GetSize()
@@ -392,26 +392,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _visionUnits[team].Remove(netId);
         }
 
-        public List<int> GetExperienceToLevelUp()
-        {
-            return _expToLevelUp;
-        }
-
-        public long GetGameTime()
-        {
-            return _gameTime;
-        }
-
-        public int GetId()
-        {
-            return _id;
-        }
-
-        public long GetFirstGoldTime()
-        {
-            return _firstGoldTime;
-        }
-
         public virtual Target GetRespawnLocation(int team)
         {
             return null;
@@ -521,42 +501,18 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return units;
         }
 
-        public bool GetFirstBlood()
-        {
-            return _firstBlood;
-        }
-
-        public void SetFirstBlood(bool state)
-        {
-            _firstBlood = state;
-        }
-
-        public RAF.AIMesh getAIMesh()
-        {
-            return mesh;
-        }
-
         public float GetHeightAtLocation(float x, float y)
         {
-            return mesh.getY(x, y);
+            return AIMesh.getY(x, y);
         }
         public bool IsWalkable(float x, float y)
         {
-            return mesh.isWalkable(x, y);
-        }
-
-        public bool GetKillReduction()
-        {
-            return _killReduction;
-        }
-        public void SetKillReduction(bool state)
-        {
-            _killReduction = state;
+            return AIMesh.isWalkable(x, y);
         }
 
         public MovementVector ToMovementVector(float x, float y)
         {
-            return new MovementVector((short)((x - mesh.getWidth() / 2) / 2), (short)((y - mesh.getHeight() / 2) / 2));
+            return new MovementVector((short)((x - AIMesh.getWidth() / 2) / 2), (short)((y - AIMesh.getHeight() / 2) / 2));
         }
 
         public bool TeamHasVisionOn(TeamId team, GameObject o)
