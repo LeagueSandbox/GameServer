@@ -91,8 +91,8 @@ namespace LeagueSandbox.GameServer.Logic.API
             }
 
             var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(x, y));
-            unit.dashTo(newCoords.X, newCoords.Y, dashSpeed);
-            unit.setTargetUnit(null);
+            unit.DashTo(newCoords.X, newCoords.Y, dashSpeed);
+            unit.TargetUnit = null;
             _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);
         }
 
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static bool IsDead(Unit unit)
         {
-            return unit.isDead();
+            return unit.IsDead;
         }
 
         public static void SendPacket(string packetString)

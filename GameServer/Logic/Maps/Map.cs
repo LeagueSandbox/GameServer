@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 if (obj.isToRemove())
                 {
-                    if (obj.getAttackerCount() == 0)
+                    if (obj.AttackerCount == 0)
                         RemoveObject(obj);
                     continue;
                 }
@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     {
                         if (TeamHasVisionOn(team, u))
                         {
-                            u.setVisibleByTeam(team, true);
+                            u.SetVisibleByTeam(team, true);
                             _game.PacketNotifier.notifySpawn(u);
                             RemoveVisionUnit(u);
                             _game.PacketNotifier.notifyUpdatedStats(u, false);
@@ -117,16 +117,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
 
-                    if (!u.isVisibleByTeam(team) && TeamHasVisionOn(team, u))
+                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
                     {
                         _game.PacketNotifier.notifyEnterVision(u, team);
-                        u.setVisibleByTeam(team, true);
+                        u.SetVisibleByTeam(team, true);
                         _game.PacketNotifier.notifyUpdatedStats(u, false);
                     }
-                    else if (u.isVisibleByTeam(team) && !TeamHasVisionOn(team, u))
+                    else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u))
                     {
                         _game.PacketNotifier.notifyLeaveVision(u, team);
-                        u.setVisibleByTeam(team, false);
+                        u.SetVisibleByTeam(team, false);
                     }
                 }
 
@@ -156,10 +156,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     _game.PacketNotifier.notifySetHealth(u);
                 }
 
-                if (u.isModelUpdated())
+                if (u.IsModelUpdated)
                 {
                     _game.PacketNotifier.notifyModelUpdate(u);
-                    u.clearModelUpdated();
+                    u.IsModelUpdated = false;
                 }
             }
 
@@ -437,10 +437,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     if (u == null)
                         continue;
 
-                    if (u.getTargetUnit() == target)
+                    if (u.TargetUnit == target)
                     {
-                        u.setTargetUnit(null);
-                        u.setAutoAttackTarget(null);
+                        u.TargetUnit = null;
+                        u.AutoAttackTarget = null;
                         _game.PacketNotifier.notifySetTarget(u, null);
                     }
                 }
@@ -472,8 +472,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 foreach (var kv in _champions)
                 {
                     var c = kv.Value;
-                    if (t.distanceWith(c) <= range)
-                        if (onlyAlive && !c.isDead() || !onlyAlive)
+                    if (t.GetDistanceTo(c) <= range)
+                        if (onlyAlive && !c.IsDead || !onlyAlive)
                             champs.Add(c);
                 }
             }
@@ -493,8 +493,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 foreach (var kv in _objects)
                 {
                     var u = kv.Value as Unit;
-                    if (u != null && t.distanceWith(u) <= range)
-                        if ((onlyAlive && !u.isDead()) || !onlyAlive)
+                    if (u != null && t.GetDistanceTo(u) <= range)
+                        if ((onlyAlive && !u.IsDead) || !onlyAlive)
                             units.Add(u);
                 }
             }
@@ -527,10 +527,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 foreach (var kv in _objects)
                 {//TODO: enable mesh as soon as it works again
-                    if (kv.Value.Team == team && kv.Value.distanceWith(o) < kv.Value.VisionRadius /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
+                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
                     {
                         var unit = kv.Value as Unit;
-                        if (unit != null && unit.isDead())
+                        if (unit != null && unit.IsDead)
                             continue;
                         return true;
                     }

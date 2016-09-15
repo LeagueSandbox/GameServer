@@ -19,27 +19,25 @@ namespace LeagueSandbox.GameServer.Logic
          */
         public Target Target { get; set; }
 
-        protected List<Vector2> waypoints = new List<Vector2>();
-        protected int curWaypoint;
-        private TeamId _team;
-        public TeamId Team
+        public List<Vector2> Waypoints { get; private set; }
+        public int CurWaypoint { get; private set; }
+        public TeamId Team { get; private set; }
+        public void SetTeam(TeamId team)
         {
-            get { return _team; }
-            set
-            {
-                this._team = value;
-                visibleByTeam[_team] = true;
-            }
+            _visibleByTeam[Team] = false;
+            Team = team;
+            _visibleByTeam[Team] = true;
         }
+
         protected bool movementUpdated;
         protected bool toRemove;
-        protected int attackerCount;
+        public int AttackerCount { get; private set; }
         public int CollisionRadius { get; set; }
-        protected Vector2 direction;
+        private Vector2 _direction;
         public int VisionRadius { get; private set; }
         public bool IsDashing { get; private set; }
         private float _dashSpeed;
-        protected Dictionary<TeamId, bool> visibleByTeam;
+        private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game = Program.ResolveDependency<Game>();
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
@@ -56,18 +54,19 @@ namespace LeagueSandbox.GameServer.Logic
             this.Target = null;
             this.CollisionRadius = collisionRadius;
             this.VisionRadius = visionRadius;
+            Waypoints = new List<Vector2>();
 
-            this.visibleByTeam = new Dictionary<TeamId, bool>();
+            this._visibleByTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
             {
-                visibleByTeam.Add(team, false);
+                _visibleByTeam.Add(team, false);
             }
 
             this.Team = TeamId.TEAM_NEUTRAL;
             this.movementUpdated = false;
             this.toRemove = false;
-            this.attackerCount = 0;
+            this.AttackerCount = 0;
             this.IsDashing = false;
 
 
@@ -84,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic
         {
             if (Target == null)
             {
-                direction = new Vector2();
+                _direction = new Vector2();
                 return;
             }
             var to = new Vector2(Target.X, Target.Y);
@@ -92,10 +91,10 @@ namespace LeagueSandbox.GameServer.Logic
 
 
             var goingTo = (to - cur);
-            direction = Vector2.Normalize(goingTo);
-            if (float.IsNaN(direction.X) || float.IsNaN(direction.Y))
+            _direction = Vector2.Normalize(goingTo);
+            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
             {
-                direction = new Vector2(0, 0);
+                _direction = new Vector2(0, 0);
             }
 
             float moveSpeed = getMoveSpeed();
@@ -106,14 +105,14 @@ namespace LeagueSandbox.GameServer.Logic
 
             float deltaMovement = (moveSpeed) * 0.001f * diff;
 
-            float xx = direction.X * deltaMovement;
-            float yy = direction.Y * deltaMovement;
+            float xx = _direction.X * deltaMovement;
+            float yy = _direction.Y * deltaMovement;
 
             X += xx;
             Y += yy;
 
             /* If the target was a simple point, stop when it is reached */
-            if (Target.isSimpleTarget() && distanceWith(Target) < deltaMovement * 2) //how can target be null here?????
+            if (Target.isSimpleTarget() && GetDistanceTo(Target) < deltaMovement * 2) //how can target be null here?????
             {
                 if (IsDashing)
                 {
@@ -129,22 +128,18 @@ namespace LeagueSandbox.GameServer.Logic
 
                     Target = null;
                 }
-                else if (++curWaypoint >= waypoints.Count)
+                else if (++CurWaypoint >= Waypoints.Count)
                 {
                     Target = null;
                 }
                 else
                 {
-                    Target = new Target(waypoints[curWaypoint]);
+                    Target = new Target(Waypoints[CurWaypoint]);
                 }
             }
         }
-        public Vector2 getDirection()
-        {
-            return direction;
-        }
 
-        public void calculateVector(float xtarget, float ytarget)
+        public void CalculateVector(float xtarget, float ytarget)
         {
             xvector = xtarget - X;
             yvector = ytarget - Y;
@@ -171,30 +166,20 @@ namespace LeagueSandbox.GameServer.Logic
             return false;
         }
 
-        public void setWaypoints(List<Vector2> newWaypoints)
+        public void SetWaypoints(List<Vector2> newWaypoints)
         {
-            waypoints = newWaypoints;
+            Waypoints = newWaypoints;
 
-            setPosition(waypoints[0].X, waypoints[0].Y);
+            setPosition(Waypoints[0].X, Waypoints[0].Y);
             movementUpdated = true;
-            if (waypoints.Count == 1)
+            if (Waypoints.Count == 1)
             {
                 Target = null;
                 return;
             }
 
-            Target = new Target(waypoints[1]);
-            curWaypoint = 1;
-        }
-
-        public List<Vector2> getWaypoints()
-        {
-            return waypoints;
-        }
-
-        public int getCurWaypoint()
-        {
-            return curWaypoint;
+            Target = new Target(Waypoints[1]);
+            CurWaypoint = 1;
         }
 
         public bool isMovementUpdated()
@@ -230,40 +215,36 @@ namespace LeagueSandbox.GameServer.Logic
             return _game.Map.GetHeightAtLocation(X, Y);
         }
 
-        public bool collide(GameObject o)
+        public bool Collide(GameObject o)
         {
-            return distanceWithSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return GetDistanceToSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
-        public int getAttackerCount()
-        {
-            return attackerCount;
-        }
         public void incrementAttackerCount()
         {
-            ++attackerCount;
+            ++AttackerCount;
         }
         public void decrementAttackerCount()
         {
-            --attackerCount;
+            --AttackerCount;
         }
 
-        public bool isVisibleByTeam(TeamId team)
+        public bool IsVisibleByTeam(TeamId team)
         {
-            return (team == Team || visibleByTeam[team]);
+            return (team == Team || _visibleByTeam[team]);
         }
 
-        public void setVisibleByTeam(TeamId team, bool visible)
+        public void SetVisibleByTeam(TeamId team, bool visible)
         {
-            visibleByTeam[team] = visible;
+            _visibleByTeam[team] = visible;
         }
 
-        public void dashTo(float x, float y, float dashSpeed)
+        public void DashTo(float x, float y, float dashSpeed)
         {
             IsDashing = true;
             this._dashSpeed = dashSpeed;
             Target = new Target(x, y);
-            waypoints.Clear();
+            Waypoints.Clear();
         }
     }
 }

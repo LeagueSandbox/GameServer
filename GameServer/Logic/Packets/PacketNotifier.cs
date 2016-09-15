@@ -126,8 +126,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             // Can't teleport to this point of the map
             if (!_game.Map.IsWalkable(_x, _y))
             {
-                _x = MovementVector.targetXToNormalFormat(u.getPosition().X);
-                _y = MovementVector.targetYToNormalFormat(u.getPosition().Y);
+                _x = MovementVector.targetXToNormalFormat(u.X);
+                _y = MovementVector.targetYToNormalFormat(u.Y);
             }
             else
             {
@@ -423,16 +423,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             float _z = u.GetZ();
 
             /*if (!map.isWalkable(_x, _y)) {
-               _x = u.getPosition().X;
-               _y = u.getPosition().Y;
+               _x = u.X;
+               _y = u.Y;
             }
             else {
                // Relative coordinates to dash towards
                float newX = _x;
                float newY = _y;
                _z -= map.getHeightAtLocation(_x, _y);
-               _x = u.getPosition().X - _x;
-               _y = u.getPosition().Y - _y;
+               _x = u.X - _x;
+               _y = u.Y - _y;
 
                u.setPosition(newX, newY);
             }*/

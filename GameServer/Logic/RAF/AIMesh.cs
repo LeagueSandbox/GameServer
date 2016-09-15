@@ -104,7 +104,7 @@ namespace LeagueSandbox.GameServer.Logic.RAF
         }
         public bool isAnythingBetween(GameObject a, GameObject b)
         {
-            return (castRaySqr(a.getPosition(), b.getPosition()) <= (b.getPosition() - a.getPosition()).SqrLength());
+            return (castRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength());
         }
         public Vector2 getClosestTerrainExit(Vector2 location, bool limited = false)
         {

@@ -277,27 +277,27 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     return 0.0f;
 
                 float gold = 300.0f; //normal gold for a kill
-                if (c.getKillDeathCounter() < 5 && c.getKillDeathCounter() >= 0)
+                if (c.KillDeathCounter < 5 && c.KillDeathCounter >= 0)
                 {
-                    if (c.getKillDeathCounter() == 0)
+                    if (c.KillDeathCounter == 0)
                         return gold;
-                    for (int i = c.getKillDeathCounter(); i > 1; --i)
+                    for (int i = c.KillDeathCounter; i > 1; --i)
                         gold += gold * 0.165f;
 
                     return gold;
                 }
 
-                if (c.getKillDeathCounter() >= 5)
+                if (c.KillDeathCounter >= 5)
                     return 500.0f;
 
-                if (c.getKillDeathCounter() < 0)
+                if (c.KillDeathCounter < 0)
                 {
                     float firstDeathGold = gold - gold * 0.085f;
 
-                    if (c.getKillDeathCounter() == -1)
+                    if (c.KillDeathCounter == -1)
                         return firstDeathGold;
 
-                    for (int i = c.getKillDeathCounter(); i < -1; ++i)
+                    for (int i = c.KillDeathCounter; i < -1; ++i)
                         firstDeathGold -= firstDeathGold * 0.2f;
 
                     if (firstDeathGold < 50)
@@ -377,8 +377,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(GameTime / (float)(180 * 1000));
                     minion.GetStats().Range.BaseValue = 180.0f;
                     minion.GetStats().AttackSpeedFlat = 1.250f;
-                    minion.setAutoAttackDelay(11.8f / 30.0f);
-                    minion.setMelee(true);
+                    minion.AutoAttackDelay = 11.8f / 30.0f;
+                    minion.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
                     minion.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(GameTime / (float)(90 * 1000));
@@ -386,8 +386,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(GameTime / (float)(90 * 1000));
                     minion.GetStats().Range.BaseValue = 600.0f;
                     minion.GetStats().AttackSpeedFlat = 0.670f;
-                    minion.setAutoAttackDelay(14.1f / 30.0f);
-                    minion.setAutoAttackProjectileSpeed(650.0f);
+                    minion.AutoAttackDelay = 14.1f / 30.0f;
+                    minion.AutoAttackProjectileSpeed = 650.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
                     minion.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(GameTime / (float)(180 * 1000));
@@ -395,8 +395,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(GameTime / (float)(180 * 1000));
                     minion.GetStats().Range.BaseValue = 450.0f;
                     minion.GetStats().AttackSpeedFlat = 1.0f;
-                    minion.setAutoAttackDelay(9.0f / 30.0f);
-                    minion.setAutoAttackProjectileSpeed(1200.0f);
+                    minion.AutoAttackDelay = 9.0f / 30.0f;
+                    minion.AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
                     minion.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(GameTime / (float)(180 * 1000));
@@ -406,8 +406,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     minion.GetStats().AttackSpeedFlat = 0.694f;
                     minion.GetStats().Armor.BaseValue = 30.0f;
                     minion.GetStats().MagicResist.BaseValue = -30.0f;
-                    minion.setMelee(true);
-                    minion.setAutoAttackDelay(15.0f / 30.0f);
+                    minion.IsMelee = true;
+                    minion.AutoAttackDelay = 15.0f / 30.0f;
                     break;
             }
         }

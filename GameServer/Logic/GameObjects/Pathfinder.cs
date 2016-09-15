@@ -387,7 +387,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (!(i.Value is Minion) && !(i.Value is Champion))
                         continue;
 
-                    Vector2 gridPos = fromPositionToGrid(i.Value.getPosition()); // get the position in grid size
+                    Vector2 gridPos = fromPositionToGrid(i.Value.GetPosition()); // get the position in grid size
 
                     int radius = ((int)Math.Ceiling((float)i.Value.CollisionRadius / (float)PATH_DEFAULT_BOX_SIZE(mesh.getSize()))) / 2; // How many boxes does the radius of this object cover?
 

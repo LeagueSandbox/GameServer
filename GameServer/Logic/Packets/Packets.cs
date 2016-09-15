@@ -740,14 +740,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((short)0x0200); // unk
             buffer.Write((int)Environment.TickCount); // unk
 
-            List<Vector2> waypoints = m.getWaypoints();
+            List<Vector2> waypoints = m.Waypoints;
 
-            buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             buffer.Write((int)m.NetId);
             buffer.Write((byte)0); // movement mask
             buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
             buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
-            for (int i = m.getCurWaypoint(); i < waypoints.Count; ++i)
+            for (int i = m.CurWaypoint; i < waypoints.Count; ++i)
             {
                 buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].X));
                 buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].Y));
@@ -866,14 +866,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x02);
             buffer.Write((int)Environment.TickCount); // unk
 
-            var waypoints = m.getWaypoints();
+            var waypoints = m.Waypoints;
 
-            buffer.Write((byte)((waypoints.Count - m.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             buffer.Write((int)m.NetId);
             buffer.Write((byte)0); // movement mask
             buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
             buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
-            for (int i = m.getCurWaypoint(); i < waypoints.Count; i++)
+            for (int i = m.CurWaypoint; i < waypoints.Count; i++)
             {
                 buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].X));
                 buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].Y));
@@ -909,14 +909,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)2); // Type of data: Waypoints=2
             buffer.Write((int)Environment.TickCount); // unk
 
-            List<Vector2> waypoints = c.getWaypoints();
+            List<Vector2> waypoints = c.Waypoints;
 
-            buffer.Write((byte)((waypoints.Count - c.getCurWaypoint() + 1) * 2)); // coordCount
+            buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
             buffer.Write(c.NetId);
             buffer.Write((byte)0); // movement mask; 1=KeepMoving?
             buffer.Write(MovementVector.targetXToNormalFormat(c.X));
             buffer.Write(MovementVector.targetYToNormalFormat(c.Y));
-            for (int i = c.getCurWaypoint(); i < waypoints.Count; ++i)
+            for (int i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
                 buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
                 buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
@@ -985,7 +985,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var actor in actors)
             {
                 var mapSize = map.GetSize();
-                var waypoints = actor.getWaypoints();
+                var waypoints = actor.Waypoints;
                 var numCoords = waypoints.Count * 2;
                 buffer.Write((byte)numCoords);
                 buffer.Write((int)actor.NetId);

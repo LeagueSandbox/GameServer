@@ -89,8 +89,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.MagicResist.BaseValue = 100.0f;
                     stats.AttackDamage.BaseValue = 170.0f;
 
-                    autoAttackDelay = 4.95f / 30.0f;
-                    autoAttackProjectileSpeed = 1200.0f;
+                    AutoAttackDelay = 4.95f / 30.0f;
+                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.OuterTurret:
                     globalGold = 125;
@@ -104,8 +104,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.MagicResist.BaseValue = 100.0f;
                     stats.AttackDamage.BaseValue = 152.0f;
 
-                    autoAttackDelay = 4.95f / 30.0f;
-                    autoAttackProjectileSpeed = 1200.0f;
+                    AutoAttackDelay = 4.95f / 30.0f;
+                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.InhibitorTurret:
                     globalGold = 150;
@@ -121,8 +121,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.MagicResist.BaseValue = 100.0f;
                     stats.AttackDamage.BaseValue = 190.0f;
 
-                    autoAttackDelay = 4.95f / 30.0f;
-                    autoAttackProjectileSpeed = 1200.0f;
+                    AutoAttackDelay = 4.95f / 30.0f;
+                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.NexusTurret:
                     globalGold = 50;
@@ -137,8 +137,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.MagicResist.BaseValue = 100.0f;
                     stats.AttackDamage.BaseValue = 180.0f;
 
-                    autoAttackDelay = 4.95f / 30.0f;
-                    autoAttackProjectileSpeed = 1200.0f;
+                    AutoAttackDelay = 4.95f / 30.0f;
+                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.FountainTurret:
                     stats.AttackSpeedFlat = 1.6f;
@@ -149,8 +149,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.AttackDamage.BaseValue = 999.0f;
                     globalGold = 100.0f;
                     stats.Range.BaseValue = 1250.0f;
-                    autoAttackProjectileSpeed = 1250.0f;
-                    autoAttackDelay = (1.0f / 30.0f); //Pretty sure this aint the true value
+                    AutoAttackProjectileSpeed = 1250.0f;
+                    AutoAttackDelay = (1.0f / 30.0f); //Pretty sure this aint the true value
                     break;
                 default:
 
@@ -162,8 +162,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.Armor.PercentBonus = 0.5f;
                     stats.MagicResist.PercentBonus = 0.5f;
 
-                    autoAttackDelay = 4.95f / 30.0f;
-                    autoAttackProjectileSpeed = 1200.0f;
+                    AutoAttackDelay = 4.95f / 30.0f;
+                    AutoAttackProjectileSpeed = 1200.0f;
 
                     break;
             }

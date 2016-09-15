@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (isToRemove())
                         return;
 
-                    if (collide(it.Value))
+                    if (Collide(it.Value))
                     {
                         if (ObjectsHit.Contains(it.Value))
                             continue;
@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             continue;
 
 
-                        if (u.isDead() && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                        if (u.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
                             continue;
 
                         var m = u as Minion;
@@ -114,7 +114,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
             {
                 var u = Target as Unit;
-                if (u != null && collide(u))
+                if (u != null && Collide(u))
                 { // Autoguided spell
                     if (_originSpell != null)
                     {

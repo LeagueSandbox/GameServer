@@ -190,7 +190,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 if (team == TeamId.TEAM_NEUTRAL)
                     continue;
 
-                if (o.isVisibleByTeam(team))
+                if (o.IsVisibleByTeam(team))
                     broadcastPacketTeam(team, data, channelNo, flag);
             }
             return true;
