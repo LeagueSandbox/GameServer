@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "KalistaWSpawnCounter",
         "Name": "KalistaWSpawnCounter",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaWSpawnCounter.inibin"

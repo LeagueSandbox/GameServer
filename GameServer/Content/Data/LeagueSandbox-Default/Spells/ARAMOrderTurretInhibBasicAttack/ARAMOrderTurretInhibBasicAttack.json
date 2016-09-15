@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ARAMOrderTurretInhibBasicAttack",
         "Name": "ARAMOrderTurretInhibBasicAttack",
         "ResourcePath": "DATA/Spells/ARAMOrderTurretInhibBasicAttack.inibin"

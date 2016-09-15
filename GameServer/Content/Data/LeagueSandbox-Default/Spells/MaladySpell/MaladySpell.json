@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "MaladySpell",
         "Name": "MaladySpell",
         "ResourcePath": "DATA/Spells/MaladySpell.inibin"

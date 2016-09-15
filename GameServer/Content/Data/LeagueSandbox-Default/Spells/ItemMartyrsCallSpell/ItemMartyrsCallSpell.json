@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ItemMartyrsCallSpell",
         "Name": "ItemMartyrsCallSpell",
         "ResourcePath": "DATA/Spells/ItemMartyrsCallSpell.inibin"

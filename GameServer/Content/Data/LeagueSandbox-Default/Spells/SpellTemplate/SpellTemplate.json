@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SpellTemplate",
         "Name": "SpellTemplate",
         "ResourcePath": "DATA/Characters/Azir/Spells/SpellTemplate.inibin"

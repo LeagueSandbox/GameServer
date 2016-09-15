@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "S5Test_DragonSlayerBuff",
         "Name": "S5Test_DragonSlayerBuff",
         "ResourcePath": "DATA/Spells/S5Test_DragonSlayerBuff.inibin"

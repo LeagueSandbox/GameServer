@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CounterStrike",
         "Name": "CounterStrike",
         "ResourcePath": "DATA/Spells/CounterStrike.inibin"
@@ -26,8 +26,8 @@
             "Coefficient": 0.6,
             "Cooldown": 4.5,
             "DeathRecapPriority": 45,
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_CounterStrike",
             "DisplayName": "game_spell_displayname_CounterStrike",
             "DynamicExtended": "game_spell_levelup_CounterStrike",

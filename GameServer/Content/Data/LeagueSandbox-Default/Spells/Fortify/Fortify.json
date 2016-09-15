@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Fortify",
         "Name": "Fortify",
         "ResourcePath": "DATA/Spells/Fortify.inibin"

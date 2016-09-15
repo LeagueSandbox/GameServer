@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TT_SpiderbossAttackDebuff",
         "Name": "TT_SpiderbossAttackDebuff",
         "ResourcePath": "DATA/Spells/TT_SpiderbossAttackDebuff.inibin"

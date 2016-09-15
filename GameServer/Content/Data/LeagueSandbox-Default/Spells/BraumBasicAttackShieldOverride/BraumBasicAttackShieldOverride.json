@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "BraumBasicAttackShieldOverride",
         "Name": "BraumBasicAttackShieldOverride",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumBasicAttackShieldOverride.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "MonkeyKingDoubleAttackDebuff",
         "Name": "MonkeyKingDoubleAttackDebuff",
         "ResourcePath": "DATA/Spells/MonkeyKingDoubleAttackDebuff.inibin"

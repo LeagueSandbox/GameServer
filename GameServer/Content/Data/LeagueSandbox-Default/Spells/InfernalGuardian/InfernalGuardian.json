@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "InfernalGuardian",
         "Name": "InfernalGuardian",
         "ResourcePath": "DATA/Characters/Annie/Spells/InfernalGuardian.inibin"
@@ -30,8 +30,8 @@
             "Coefficient2": 0.2,
             "Cooldown": "120.0000",
             "DeathRecapPriority": "0",
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_InfernalGuardian",
             "DisplayName": "game_spell_displayname_InfernalGuardian",
             "DynamicExtended": "game_spell_levelup_InfernalGuardian",

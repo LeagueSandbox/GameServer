@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "JaycePassiveMeleeAttack",
         "Name": "JaycePassiveMeleeAttack",
         "ResourcePath": "DATA/Characters/Jayce/Spells/JaycePassiveMeleeAttack.inibin"

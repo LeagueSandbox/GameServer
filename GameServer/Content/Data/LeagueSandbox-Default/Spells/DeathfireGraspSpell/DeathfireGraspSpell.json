@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "DeathfireGraspSpell",
         "Name": "DeathfireGraspSpell",
         "ResourcePath": "DATA/Spells/DeathfireGraspSpell.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RivenTriCleaveBuff",
         "Name": "RivenTriCleaveBuff",
         "ResourcePath": "DATA/Characters/Riven/Spells/RivenTriCleaveBuff.inibin"

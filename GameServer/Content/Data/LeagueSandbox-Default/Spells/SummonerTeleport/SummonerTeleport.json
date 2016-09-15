@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SummonerTeleport",
         "Name": "SummonerTeleport",
         "ResourcePath": "DATA/Spells/SummonerTeleport.inibin"

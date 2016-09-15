@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "HA_AP_OrderTurretBasicAttack",
         "Name": "HA_AP_OrderTurretBasicAttack",
         "ResourcePath": "DATA/Characters/HA_AP_OrderTurret/Spells/HA_AP_OrderTurretBasicAttack.inibin"

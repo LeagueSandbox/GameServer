@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ItemSpiritWraith",
         "Name": "ItemSpiritWraith",
         "ResourcePath": "DATA/Spells/ItemSpiritWraith.inibin"

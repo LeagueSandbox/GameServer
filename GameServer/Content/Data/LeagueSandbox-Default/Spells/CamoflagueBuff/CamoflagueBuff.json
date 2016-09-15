@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CamoflagueBuff",
         "Name": "CamoflagueBuff",
         "ResourcePath": "DATA/Spells/CamoflagueBuff.inibin"

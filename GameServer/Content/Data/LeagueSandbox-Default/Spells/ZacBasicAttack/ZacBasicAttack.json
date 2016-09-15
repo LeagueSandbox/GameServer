@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ZacBasicAttack",
         "Name": "ZacBasicAttack",
         "ResourcePath": "DATA/Characters/Zac/Spells/ZacBasicAttack.inibin"

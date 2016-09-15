@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "WormAttackInitial",
         "Name": "WormAttackInitial",
         "ResourcePath": "DATA/Spells/WormAttackInitial.inibin"

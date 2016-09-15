@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SwainBeamDamage",
         "Name": "SwainBeamDamage",
         "ResourcePath": "DATA/Spells/SwainBeamDamage.inibin"

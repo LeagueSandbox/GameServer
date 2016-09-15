@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ViPassiveBuff",
         "Name": "ViPassiveBuff",
         "ResourcePath": "DATA/Characters/Vi/Spells/ViPassiveBuff.inibin"

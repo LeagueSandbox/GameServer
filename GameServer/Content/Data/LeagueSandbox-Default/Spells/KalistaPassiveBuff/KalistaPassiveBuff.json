@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "KalistaPassiveBuff",
         "Name": "KalistaPassiveBuff",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaPassiveBuff.inibin"

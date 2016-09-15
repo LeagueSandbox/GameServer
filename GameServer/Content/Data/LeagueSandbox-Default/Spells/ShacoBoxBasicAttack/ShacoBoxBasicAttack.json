@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ShacoBoxBasicAttack",
         "Name": "ShacoBoxBasicAttack",
         "ResourcePath": "DATA/Spells/ShacoBoxBasicAttack.inibin"

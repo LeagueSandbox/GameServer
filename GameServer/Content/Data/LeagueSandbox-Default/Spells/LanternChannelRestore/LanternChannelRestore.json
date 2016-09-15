@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LanternChannelRestore",
         "Name": "LanternChannelRestore",
         "ResourcePath": "DATA/Spells/LanternChannelRestore.inibin"

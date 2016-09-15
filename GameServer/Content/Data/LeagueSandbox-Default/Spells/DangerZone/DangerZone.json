@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "DangerZone",
         "Name": "DangerZone",
         "ResourcePath": "DATA/Spells/DangerZone.inibin"
@@ -24,8 +24,8 @@
             "CastType": "0",
             "Coefficient": 0.2,
             "Cooldown": "14.0000",
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "DisplayName": "game_spell_displayname_TormentedSoil",
             "DynamicExtended": "game_spell_levelup_TormentedSoil",
             "DynamicTooltip": "game_spell_tooltip_TormentedSoil",

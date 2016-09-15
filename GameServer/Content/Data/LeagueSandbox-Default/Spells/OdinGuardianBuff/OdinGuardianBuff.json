@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "OdinGuardianBuff",
         "Name": "OdinGuardianBuff",
         "ResourcePath": "DATA/Spells/OdinGuardianBuff.inibin"

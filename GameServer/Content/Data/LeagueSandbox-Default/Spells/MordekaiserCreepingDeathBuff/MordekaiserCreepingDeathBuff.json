@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "MordekaiserCreepingDeathBuff",
         "Name": "MordekaiserCreepingDeathBuff",
         "ResourcePath": "DATA/Spells/MordekaiserCreepingDeathBuff.inibin"

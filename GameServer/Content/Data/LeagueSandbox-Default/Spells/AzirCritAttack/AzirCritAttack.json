@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "AzirCritAttack",
         "Name": "AzirCritAttack",
         "ResourcePath": "DATA/Characters/Azir/Spells/AzirCritAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ItemSmiteShield",
         "Name": "ItemSmiteShield",
         "ResourcePath": "DATA/Spells/ItemSmiteShield.inibin"

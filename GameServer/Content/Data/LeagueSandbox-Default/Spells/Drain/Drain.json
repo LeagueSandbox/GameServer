@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Drain",
         "Name": "Drain",
         "ResourcePath": "DATA/Spells/Drain.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CardMasterStackParticle",
         "Name": "CardMasterStackParticle",
         "ResourcePath": "DATA/Spells/CardMasterStackParticle.inibin"

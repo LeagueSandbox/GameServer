@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RengarBasicAttack",
         "Name": "RengarBasicAttack",
         "ResourcePath": "DATA/Characters/Rengar/Spells/RengarBasicAttack.inibin"

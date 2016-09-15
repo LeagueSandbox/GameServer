@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "DariusExecuteMulticast",
         "Name": "DariusExecuteMulticast",
         "ResourcePath": "DATA/Characters/Darius/Spells/DariusExecuteMulticast.inibin"

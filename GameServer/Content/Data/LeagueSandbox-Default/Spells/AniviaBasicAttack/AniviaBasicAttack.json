@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "AniviaBasicAttack",
         "Name": "AniviaBasicAttack",
         "ResourcePath": "DATA/Spells/AniviaBasicAttack.inibin"

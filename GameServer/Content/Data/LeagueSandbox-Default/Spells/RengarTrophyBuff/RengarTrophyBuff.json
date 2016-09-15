@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RengarTrophyBuff",
         "Name": "RengarTrophyBuff",
         "ResourcePath": "DATA/Spells/RengarTrophyBuff.inibin"

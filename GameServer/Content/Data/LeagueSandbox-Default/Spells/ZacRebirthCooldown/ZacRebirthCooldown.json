@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ZacRebirthCooldown",
         "Name": "ZacRebirthCooldown",
         "ResourcePath": "DATA/Characters/Zac/Spells/ZacRebirthCooldown.inibin"

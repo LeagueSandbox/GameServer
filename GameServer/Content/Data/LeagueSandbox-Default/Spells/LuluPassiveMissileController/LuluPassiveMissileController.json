@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LuluPassiveMissileController",
         "Name": "LuluPassiveMissileController",
         "ResourcePath": "DATA/Spells/LuluPassiveMissileController.inibin"

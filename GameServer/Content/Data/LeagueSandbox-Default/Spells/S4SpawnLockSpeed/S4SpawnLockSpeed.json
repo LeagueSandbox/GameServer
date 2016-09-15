@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "S4SpawnLockSpeed",
         "Name": "S4SpawnLockSpeed",
         "ResourcePath": "DATA/Spells/S4SpawnLockSpeed.inibin"

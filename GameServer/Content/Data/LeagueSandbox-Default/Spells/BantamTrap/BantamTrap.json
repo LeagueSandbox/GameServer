@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "BantamTrap",
         "Name": "BantamTrap",
         "ResourcePath": "DATA/Spells/BantamTrap.inibin"
@@ -26,8 +26,8 @@
             "Coefficient": 0.5,
             "Cooldown": 1,
             "DeathRecapPriority": 45,
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_BantamTrap",
             "DisplayName": "game_spell_displayname_BantamTrap",
             "DynamicExtended": "game_spell_levelup_BantamTrap",

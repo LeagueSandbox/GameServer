@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "VarusPassiveBuff",
         "Name": "VarusPassiveBuff",
         "ResourcePath": "DATA/Spells/VarusPassiveBuff.inibin"

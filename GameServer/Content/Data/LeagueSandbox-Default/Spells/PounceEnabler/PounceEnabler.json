@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "PounceEnabler",
         "Name": "PounceEnabler",
         "ResourcePath": "DATA/Characters/Nidalee/Spells/PounceEnabler.inibin"

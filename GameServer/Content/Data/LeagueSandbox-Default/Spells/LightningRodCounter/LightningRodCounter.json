@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LightningRodCounter",
         "Name": "LightningRodCounter",
         "ResourcePath": "DATA/Spells/LightningRodCounter.inibin"

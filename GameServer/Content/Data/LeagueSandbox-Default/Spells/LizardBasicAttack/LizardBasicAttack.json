@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LizardBasicAttack",
         "Name": "LizardBasicAttack",
         "ResourcePath": "DATA/Spells/LizardBasicAttack.inibin"

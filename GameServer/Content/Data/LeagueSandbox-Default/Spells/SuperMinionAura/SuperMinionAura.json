@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SuperMinionAura",
         "Name": "SuperMinionAura",
         "ResourcePath": "DATA/Spells/SuperMinionAura.inibin"

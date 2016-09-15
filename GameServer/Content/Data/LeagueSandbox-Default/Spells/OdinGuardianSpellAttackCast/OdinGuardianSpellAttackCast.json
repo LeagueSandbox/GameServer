@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "OdinGuardianSpellAttackCast",
         "Name": "OdinGuardianSpellAttackCast",
         "ResourcePath": "DATA/Spells/OdinGuardianSpellAttackCast.inibin"

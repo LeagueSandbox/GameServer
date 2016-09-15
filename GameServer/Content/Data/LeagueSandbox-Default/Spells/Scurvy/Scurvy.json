@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Scurvy",
         "Name": "Scurvy",
         "ResourcePath": "DATA/Characters/Gangplank/Spells/Scurvy.inibin"
@@ -32,8 +32,8 @@
             "Coefficient": 0.1,
             "Cooldown": "15.0000",
             "DeathRecapPriority": "0",
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_Scurvy",
             "DisplayName": "game_spell_displayname_Scurvy",
             "DynamicExtended": "game_spell_levelup_Scurvy",

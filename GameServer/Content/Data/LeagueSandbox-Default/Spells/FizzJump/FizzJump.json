@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "FizzJump",
         "Name": "FizzJump",
         "ResourcePath": "DATA/Spells/FizzJump.inibin"

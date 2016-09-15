@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Swipe",
         "Name": "Swipe",
         "ResourcePath": "DATA/Characters/Nidalee/Spells/Swipe.inibin"
@@ -36,8 +36,8 @@
             "Coefficient2": 0.45,
             "Cooldown": "5.000",
             "DeathRecapPriority": "0",
-            "DelayCastOffsetPercent": "-.5000",
-            "DelayTotalTimePercent": "-.5000",
+            "DelayCastOffsetPercent": "-0.5000",
+            "DelayTotalTimePercent": "-0.5000",
             "Description": "game_spell_description_Swipe",
             "DisplayName": "game_spell_displayname_Swipe",
             "DynamicExtended": "game_spell_levelup_Swipe",

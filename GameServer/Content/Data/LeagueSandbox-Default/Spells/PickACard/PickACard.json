@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "PickACard",
         "Name": "PickACard",
         "ResourcePath": "DATA/Spells/PickACard.inibin"

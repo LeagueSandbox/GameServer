@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "KarmaCritAttack",
         "Name": "KarmaCritAttack",
         "ResourcePath": "DATA/Characters/Karma/Spells/KarmaCritAttack.inibin"

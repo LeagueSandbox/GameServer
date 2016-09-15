@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ItemFeralFlareCounter",
         "Name": "ItemFeralFlareCounter",
         "ResourcePath": "DATA/Spells/ItemFeralFlareCounter.inibin"
