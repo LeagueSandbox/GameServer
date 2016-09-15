@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemHurricaneAttack",
         "Name": "ItemHurricaneAttack",
         "ResourcePath": "DATA/Spells/ItemHurricaneAttack.inibin"

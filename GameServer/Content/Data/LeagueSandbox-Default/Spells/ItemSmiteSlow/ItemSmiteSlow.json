@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemSmiteSlow",
         "Name": "ItemSmiteSlow",
         "ResourcePath": "DATA/Spells/ItemSmiteSlow.inibin"

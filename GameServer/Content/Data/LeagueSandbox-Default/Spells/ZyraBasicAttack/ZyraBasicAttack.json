@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZyraBasicAttack",
         "Name": "ZyraBasicAttack",
         "ResourcePath": "DATA/Spells/ZyraBasicAttack.inibin"

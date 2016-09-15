@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "PowerFistAttack",
         "Name": "PowerFistAttack",
         "ResourcePath": "DATA/Spells/PowerFistAttack.inibin"

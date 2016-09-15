@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ViE",
         "Name": "ViE",
         "ResourcePath": "DATA/Characters/Vi/Spells/ViE.inibin"
@@ -24,13 +24,13 @@
             "CantCancelWhileWindingUp": 1,
             "CastConeAngle": "45.0000",
             "CastConeDistance": "100.0000",
-            "CastFrame": ".5",
+            "CastFrame": "0.5",
             "CastRadius": "350.0000",
             "CastRange": "400.0000",
             "CastRangeDisplayOverride": 0,
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".7000",
+            "Coefficient": "0.7000",
             "Cooldown": "1.000",
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

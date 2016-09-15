@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "NamiQDebuff",
         "Name": "NamiQDebuff",
         "ResourcePath": "DATA/Characters/Nami/Spells/NamiQDebuff.inibin"

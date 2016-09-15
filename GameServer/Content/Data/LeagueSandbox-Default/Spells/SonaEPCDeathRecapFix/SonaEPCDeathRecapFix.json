@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SonaEPCDeathRecapFix",
         "Name": "SonaEPCDeathRecapFix",
         "ResourcePath": "DATA/Characters/Sona/Spells/SonaEPCDeathRecapFix.inibin"

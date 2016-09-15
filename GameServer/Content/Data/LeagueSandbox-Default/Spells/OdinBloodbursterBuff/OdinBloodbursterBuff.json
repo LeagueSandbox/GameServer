@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OdinBloodbursterBuff",
         "Name": "OdinBloodbursterBuff",
         "ResourcePath": "DATA/Spells/OdinBloodbursterBuff.inibin"

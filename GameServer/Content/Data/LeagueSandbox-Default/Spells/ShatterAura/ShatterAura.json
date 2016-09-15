@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ShatterAura",
         "Name": "ShatterAura",
         "ResourcePath": "DATA/Spells/ShatterAura.inibin"

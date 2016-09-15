@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Teleport Target",
         "Name": "Teleport Target",
         "ResourcePath": "DATA/Spells/Teleport Target.inibin"

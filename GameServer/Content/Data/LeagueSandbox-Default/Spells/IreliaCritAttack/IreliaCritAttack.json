@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "IreliaCritAttack",
         "Name": "IreliaCritAttack",
         "ResourcePath": "DATA/Spells/IreliaCritAttack.inibin"

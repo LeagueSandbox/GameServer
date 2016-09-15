@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BloodthirsterDummySpell",
         "Name": "BloodthirsterDummySpell",
         "ResourcePath": "DATA/Spells/BloodthirsterDummySpell.inibin"

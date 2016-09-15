@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SRUAP_Turret_Order3_TestBasicAttack",
         "Name": "SRUAP_Turret_Order3_TestBasicAttack",
         "ResourcePath": "DATA/Characters/SRUAP_Turret_Order3_Test/Spells/SRUAP_Turret_Order3_TestBasicAttack.inibin"

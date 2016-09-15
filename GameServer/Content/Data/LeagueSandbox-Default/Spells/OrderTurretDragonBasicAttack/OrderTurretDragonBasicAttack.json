@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OrderTurretDragonBasicAttack",
         "Name": "OrderTurretDragonBasicAttack",
         "ResourcePath": "DATA/Spells/OrderTurretDragonBasicAttack.inibin"

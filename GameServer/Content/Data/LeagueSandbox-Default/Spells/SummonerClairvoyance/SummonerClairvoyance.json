@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SummonerClairvoyance",
         "Name": "SummonerClairvoyance",
         "ResourcePath": "DATA/Spells/SummonerClairvoyance.inibin"

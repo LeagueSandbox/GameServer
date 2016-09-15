@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GravesChargeShot",
         "Name": "GravesChargeShot",
         "ResourcePath": "DATA/Spells/GravesChargeShot.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarQMissileReturn",
         "Name": "GnarQMissileReturn",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarQMissileReturn.inibin"

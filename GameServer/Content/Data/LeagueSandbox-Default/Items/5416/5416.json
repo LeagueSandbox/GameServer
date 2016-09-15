@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 5416,
         "Name": "Lesser Quintessence of Hybrid Penetration",
         "ResourcePath": "DATA/Items/5416.inibin"
@@ -46,7 +46,7 @@
             "rFlatHPModPerLevel": "0",
             "rFlatHPRegenModPerLevel": "0",
             "rFlatMagicDamageModPerLevel": "0",
-            "rFlatMagicPenetrationMod": ".78",
+            "rFlatMagicPenetrationMod": "0.78",
             "rFlatMagicPenetrationModPerLevel": "0",
             "rFlatMovementSpeedModPerLevel": "0",
             "rFlatPhysicalDamageModPerLevel": "0",

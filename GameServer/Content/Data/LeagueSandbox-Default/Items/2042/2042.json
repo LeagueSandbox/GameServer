@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2042,
         "Name": "Oracle's Elixir",
         "ResourcePath": "DATA/Items/2042.inibin"
@@ -44,7 +44,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "400",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "OracleElixirSight",
             "UsableInStore": "0"
         },

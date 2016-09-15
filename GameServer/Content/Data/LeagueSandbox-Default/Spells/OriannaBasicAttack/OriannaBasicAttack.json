@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OriannaBasicAttack",
         "Name": "OriannaBasicAttack",
         "ResourcePath": "DATA/Spells/OriannaBasicAttack.inibin"

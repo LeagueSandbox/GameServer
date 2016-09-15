@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3134,
         "Name": "The Brutalizer",
         "ResourcePath": "DATA/Items/3134.inibin"
@@ -48,7 +48,7 @@
             "RecipeItem2": 1036,
             "RecipeItem3": "0",
             "RecipeItem4": "0",
-            "SellBackModifier": ".7"
+            "SellBackModifier": "0.7"
         },
         "UNKNOWN_HASHES": {
             "1113666618": 1,

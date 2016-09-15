@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OdinPlayerBuff",
         "Name": "OdinPlayerBuff",
         "ResourcePath": "DATA/Spells/OdinPlayerBuff.inibin"

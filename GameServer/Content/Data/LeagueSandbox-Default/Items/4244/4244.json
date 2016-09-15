@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 4244,
         "Name": "4244",
         "ResourcePath": "DATA/Items/4244.inibin"
@@ -27,7 +27,7 @@
             "PercentEXPBonus": "0",
             "PercentHPPoolMod": "0",
             "PercentHPRegenMod": "0",
-            "PercentLifeStealMod": ".01",
+            "PercentLifeStealMod": "0.01",
             "PercentMagicDamageMod": "0",
             "PercentMovementSpeedMod": "0",
             "PercentMPPoolMod": "0",

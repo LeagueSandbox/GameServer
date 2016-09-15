@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TalonBleedDebuff",
         "Name": "TalonBleedDebuff",
         "ResourcePath": "DATA/Spells/TalonBleedDebuff.inibin"

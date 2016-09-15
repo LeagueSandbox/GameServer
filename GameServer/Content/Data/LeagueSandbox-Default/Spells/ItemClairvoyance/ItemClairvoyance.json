@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemClairvoyance",
         "Name": "ItemClairvoyance",
         "ResourcePath": "DATA/Spells/ItemClairvoyance.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemSunfireCapeAura",
         "Name": "ItemSunfireCapeAura",
         "ResourcePath": "DATA/Spells/ItemSunfireCapeAura.inibin"

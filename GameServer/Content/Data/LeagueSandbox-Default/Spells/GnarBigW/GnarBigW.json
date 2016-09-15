@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarBigW",
         "Name": "GnarBigW",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarBigW.inibin"
@@ -84,7 +84,7 @@
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": 0,
             "MissileTargetHeightAugment": "0",
-            "OverrideCastTime": ".6",
+            "OverrideCastTime": "0.6",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "none",

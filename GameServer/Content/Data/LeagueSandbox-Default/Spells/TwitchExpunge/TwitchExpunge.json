@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TwitchExpunge",
         "Name": "TwitchExpunge",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchExpunge.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KalistaExpungeWrapper",
         "Name": "KalistaExpungeWrapper",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaExpungeWrapper.inibin"

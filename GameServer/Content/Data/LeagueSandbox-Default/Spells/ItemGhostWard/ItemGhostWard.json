@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemGhostWard",
         "Name": "ItemGhostWard",
         "ResourcePath": "DATA/Spells/ItemGhostWard.inibin"

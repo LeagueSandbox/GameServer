@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemAngelHandBuff",
         "Name": "ItemAngelHandBuff",
         "ResourcePath": "DATA/Spells/ItemAngelHandBuff.inibin"

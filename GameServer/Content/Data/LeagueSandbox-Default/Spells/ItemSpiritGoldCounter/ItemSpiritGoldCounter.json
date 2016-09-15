@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemSpiritGoldCounter",
         "Name": "ItemSpiritGoldCounter",
         "ResourcePath": "DATA/Spells/ItemSpiritGoldCounter.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3176,
         "Name": "Arcane Helix",
         "ResourcePath": "DATA/Items/3176.inibin"
@@ -46,7 +46,7 @@
             "RecipeItem2": 1028,
             "RecipeItem3": "0",
             "RecipeItem4": "0",
-            "SellBackModifier": ".7"
+            "SellBackModifier": "0.7"
         },
         "UNKNOWN_HASHES": {
             "1416335451": "0",

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "MockingShout",
         "Name": "MockingShout",
         "ResourcePath": "DATA/Characters/Tryndamere/Spells/MockingShout.inibin"

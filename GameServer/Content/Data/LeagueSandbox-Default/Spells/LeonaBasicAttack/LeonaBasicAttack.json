@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LeonaBasicAttack",
         "Name": "LeonaBasicAttack",
         "ResourcePath": "DATA/Spells/LeonaBasicAttack.inibin"

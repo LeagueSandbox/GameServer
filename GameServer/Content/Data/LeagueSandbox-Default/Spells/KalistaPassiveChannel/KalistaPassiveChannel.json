@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KalistaPassiveChannel",
         "Name": "KalistaPassiveChannel",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaPassiveChannel.inibin"

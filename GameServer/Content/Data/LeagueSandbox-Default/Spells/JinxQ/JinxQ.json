@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxQ",
         "Name": "JinxQ",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxQ.inibin"
@@ -52,7 +52,7 @@
             "MissileBoneName": "",
             "MissileEffect": "",
             "MissileSpeed": "2000.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "PointEffectName": "",
             "SelectionPreference": "none",
             "StartCooldown": 0,

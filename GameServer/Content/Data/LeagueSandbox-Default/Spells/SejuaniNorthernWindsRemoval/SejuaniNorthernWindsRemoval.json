@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SejuaniNorthernWindsRemoval",
         "Name": "SejuaniNorthernWindsRemoval",
         "ResourcePath": "DATA/Characters/Sejuani/Spells/SejuaniNorthernWindsRemoval.inibin"
@@ -42,7 +42,7 @@
             "CircleMissileRadialVelocity": 0,
             "Coefficient": 0.6,
             "Coefficient2": 0.3,
-            "Cooldown": ".0000",
+            "Cooldown": "0.0000",
             "DeathRecapPriority": 6,
             "DelayCastOffsetPercent": -0.5,
             "DelayTotalTimePercent": -0.5,

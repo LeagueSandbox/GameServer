@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ViktorBasicAttack",
         "Name": "ViktorBasicAttack",
         "ResourcePath": "DATA/Characters/Viktor/Spells/ViktorBasicAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KogMawBasicAttack",
         "Name": "KogMawBasicAttack",
         "ResourcePath": "DATA/Characters/KogMaw/Spells/KogMawBasicAttack.inibin"

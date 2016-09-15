@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GravesPassive",
         "Name": "GravesPassive",
         "ResourcePath": "DATA/Spells/GravesPassive.inibin"

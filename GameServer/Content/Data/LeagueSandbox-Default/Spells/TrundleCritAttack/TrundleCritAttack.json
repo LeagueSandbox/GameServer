@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TrundleCritAttack",
         "Name": "TrundleCritAttack",
         "ResourcePath": "DATA/Characters/Trundle/Spells/TrundleCritAttack.inibin"

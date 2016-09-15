@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BaronAttack",
         "Name": "BaronAttack",
         "ResourcePath": "DATA/Characters/SRU_Baron/Spells/BaronAttack.inibin"

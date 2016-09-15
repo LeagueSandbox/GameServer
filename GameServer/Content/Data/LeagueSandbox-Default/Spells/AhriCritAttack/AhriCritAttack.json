@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AhriCritAttack",
         "Name": "AhriCritAttack",
         "ResourcePath": "DATA/Characters/Ahri/Spells/AhriCritAttack.inibin"

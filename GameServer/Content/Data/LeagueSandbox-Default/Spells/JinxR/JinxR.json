@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxR",
         "Name": "JinxR",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxR.inibin"
@@ -37,7 +37,7 @@
             "ChannelDuration": 0,
             "CircleMissileAngularVelocity": 0,
             "CircleMissileRadialVelocity": 0,
-            "Coefficient": ".5",
+            "Coefficient": "0.5",
             "Coefficient2": 1,
             "DeathRecapPriority": "90",
             "DelayCastOffsetPercent": -0.5,
@@ -82,7 +82,7 @@
             "MissilePerceptionBubbleRadius": "1000.0000",
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": "1700.0000",
-            "OverrideCastTime": ".6",
+            "OverrideCastTime": "0.6",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "none",

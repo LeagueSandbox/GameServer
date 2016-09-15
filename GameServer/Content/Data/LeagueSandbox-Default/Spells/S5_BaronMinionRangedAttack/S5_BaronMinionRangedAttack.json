@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "S5_BaronMinionRangedAttack",
         "Name": "S5_BaronMinionRangedAttack",
         "ResourcePath": "DATA/Spells/S5_BaronMinionRangedAttack.inibin"

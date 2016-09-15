@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZiggsPassiveBuff",
         "Name": "ZiggsPassiveBuff",
         "ResourcePath": "DATA/Spells/ZiggsPassiveBuff.inibin"

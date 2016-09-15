@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "WraithBasicAttack",
         "Name": "WraithBasicAttack",
         "ResourcePath": "DATA/Spells/WraithBasicAttack.inibin"

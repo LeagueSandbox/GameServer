@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "NasusQAttack",
         "Name": "NasusQAttack",
         "ResourcePath": "DATA/Characters/Nasus/Spells/NasusQAttack.inibin"

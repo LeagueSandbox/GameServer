@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KhazixBasicAttack",
         "Name": "KhazixBasicAttack",
         "ResourcePath": "DATA/Characters/Khazix/Spells/KhazixBasicAttack.inibin"

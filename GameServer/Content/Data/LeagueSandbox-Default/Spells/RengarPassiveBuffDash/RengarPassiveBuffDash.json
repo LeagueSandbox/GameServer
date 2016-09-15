@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RengarPassiveBuffDash",
         "Name": "RengarPassiveBuffDash",
         "ResourcePath": "DATA/Characters/Rengar/Spells/RengarPassiveBuffDash.inibin"

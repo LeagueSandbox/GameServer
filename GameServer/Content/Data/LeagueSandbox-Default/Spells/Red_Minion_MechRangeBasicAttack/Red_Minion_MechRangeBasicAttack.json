@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Red_Minion_MechRangeBasicAttack",
         "Name": "Red_Minion_MechRangeBasicAttack",
         "ResourcePath": "DATA/Spells/Red_Minion_MechRangeBasicAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OrderTurretNormal2BasicAttack",
         "Name": "OrderTurretNormal2BasicAttack",
         "ResourcePath": "DATA/Spells/OrderTurretNormal2BasicAttack.inibin"

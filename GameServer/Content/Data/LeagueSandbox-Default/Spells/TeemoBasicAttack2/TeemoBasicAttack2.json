@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TeemoBasicAttack2",
         "Name": "TeemoBasicAttack2",
         "ResourcePath": "DATA/Spells/TeemoBasicAttack2.inibin"

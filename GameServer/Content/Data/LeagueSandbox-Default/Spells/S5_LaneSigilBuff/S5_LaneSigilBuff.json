@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "S5_LaneSigilBuff",
         "Name": "S5_LaneSigilBuff",
         "ResourcePath": "DATA/Spells/S5_LaneSigilBuff.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RelicMinorSpotter",
         "Name": "RelicMinorSpotter",
         "ResourcePath": "DATA/Spells/RelicMinorSpotter.inibin"

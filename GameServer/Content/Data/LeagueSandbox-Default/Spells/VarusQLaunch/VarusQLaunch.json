@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VarusQLaunch",
         "Name": "VarusQLaunch",
         "ResourcePath": "DATA/Spells/VarusQLaunch.inibin"

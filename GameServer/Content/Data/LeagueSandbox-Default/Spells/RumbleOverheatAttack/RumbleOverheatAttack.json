@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RumbleOverheatAttack",
         "Name": "RumbleOverheatAttack",
         "ResourcePath": "DATA/Characters/Rumble/Spells/RumbleOverheatAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemSmiteWeakness",
         "Name": "ItemSmiteWeakness",
         "ResourcePath": "DATA/Spells/ItemSmiteWeakness.inibin"

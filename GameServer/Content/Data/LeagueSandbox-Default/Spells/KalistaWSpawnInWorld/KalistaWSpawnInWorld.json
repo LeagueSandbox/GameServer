@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KalistaWSpawnInWorld",
         "Name": "KalistaWSpawnInWorld",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaWSpawnInWorld.inibin"

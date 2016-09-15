@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Poisoned",
         "Name": "Poisoned",
         "ResourcePath": "DATA/Spells/Poisoned.inibin"

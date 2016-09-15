@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 4106,
         "Name": "4106",
         "ResourcePath": "DATA/Items/4106.inibin"
@@ -28,7 +28,7 @@
             "IsRecipe": 1,
             "MaxStack": 1,
             "PercentArmorMod": "0",
-            "PercentAttackSpeedMod": ".01",
+            "PercentAttackSpeedMod": "0.01",
             "PercentCritDamageMod": "0",
             "PercentEXPBonus": "0",
             "PercentHPPoolMod": "0",

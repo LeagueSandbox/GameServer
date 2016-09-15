@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "PotionOfElusiveness",
         "Name": "PotionOfElusiveness",
         "ResourcePath": "DATA/Spells/PotionOfElusiveness.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Carnivore",
         "Name": "Carnivore",
         "ResourcePath": "DATA/Spells/Carnivore.inibin"

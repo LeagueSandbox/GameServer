@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "FizzBasicAttack",
         "Name": "FizzBasicAttack",
         "ResourcePath": "DATA/Spells/FizzBasicAttack.inibin"

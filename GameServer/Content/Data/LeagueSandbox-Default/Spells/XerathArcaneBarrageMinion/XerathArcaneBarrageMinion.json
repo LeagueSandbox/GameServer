@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "XerathArcaneBarrageMinion",
         "Name": "XerathArcaneBarrageMinion",
         "ResourcePath": "DATA/Spells/XerathArcaneBarrageMinion.inibin"
@@ -116,7 +116,7 @@
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": "1400.0000",
             "MissileTargetHeightAugment": "100.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "foe",

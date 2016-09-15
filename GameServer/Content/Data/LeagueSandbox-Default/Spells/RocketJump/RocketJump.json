@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RocketJump",
         "Name": "RocketJump",
         "ResourcePath": "DATA/Characters/Tristana/Spells/RocketJump.inibin"

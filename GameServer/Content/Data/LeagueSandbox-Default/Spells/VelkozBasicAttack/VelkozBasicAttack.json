@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VelkozBasicAttack",
         "Name": "VelkozBasicAttack",
         "ResourcePath": "DATA/Characters/Velkoz/Spells/VelkozBasicAttack.inibin"

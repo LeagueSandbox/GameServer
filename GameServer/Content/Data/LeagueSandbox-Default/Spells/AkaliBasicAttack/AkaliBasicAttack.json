@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AkaliBasicAttack",
         "Name": "AkaliBasicAttack",
         "ResourcePath": "DATA/Spells/AkaliBasicAttack.inibin"

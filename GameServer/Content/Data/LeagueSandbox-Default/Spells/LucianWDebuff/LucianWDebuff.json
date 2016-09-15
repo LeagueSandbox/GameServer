@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LucianWDebuff",
         "Name": "LucianWDebuff",
         "ResourcePath": "DATA/Characters/Lucian/Spells/LucianWDebuff.inibin"

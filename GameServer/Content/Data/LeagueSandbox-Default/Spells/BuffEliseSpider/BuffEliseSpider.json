@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BuffEliseSpider",
         "Name": "BuffEliseSpider",
         "ResourcePath": "DATA/Characters/Elise/Spells/BuffEliseSpider.inibin"

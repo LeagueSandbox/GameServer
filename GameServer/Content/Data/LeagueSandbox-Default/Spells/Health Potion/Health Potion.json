@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Health Potion",
         "Name": "Health Potion",
         "ResourcePath": "DATA/Spells/Health Potion.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BraumCameraFacingRecallBuff",
         "Name": "BraumCameraFacingRecallBuff",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumCameraFacingRecallBuff.inibin"

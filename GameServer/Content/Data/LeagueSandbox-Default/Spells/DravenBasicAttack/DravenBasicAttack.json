@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DravenBasicAttack",
         "Name": "DravenBasicAttack",
         "ResourcePath": "DATA/Characters/Draven/Spells/DravenBasicAttack.inibin"

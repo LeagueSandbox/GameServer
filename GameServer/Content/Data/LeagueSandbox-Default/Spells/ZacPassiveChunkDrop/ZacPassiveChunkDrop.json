@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZacPassiveChunkDrop",
         "Name": "ZacPassiveChunkDrop",
         "ResourcePath": "DATA/Characters/Zac/Spells/ZacPassiveChunkDrop.inibin"

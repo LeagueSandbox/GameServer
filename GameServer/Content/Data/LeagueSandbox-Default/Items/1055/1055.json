@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 1055,
         "Name": "Doran's Blade",
         "ResourcePath": "DATA/Items/1055.inibin"
@@ -43,7 +43,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "440",
-            "SellBackModifier": ".4"
+            "SellBackModifier": "0.4"
         },
         "UNKNOWN_HASHES": {
             "1416335451": "0",

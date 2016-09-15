@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RenektonExecuteAttack",
         "Name": "RenektonExecuteAttack",
         "ResourcePath": "DATA/Characters/Renekton/Spells/RenektonExecuteAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VladimirHemoplagueDebuff",
         "Name": "VladimirHemoplagueDebuff",
         "ResourcePath": "DATA/Spells/VladimirHemoplagueDebuff.inibin"

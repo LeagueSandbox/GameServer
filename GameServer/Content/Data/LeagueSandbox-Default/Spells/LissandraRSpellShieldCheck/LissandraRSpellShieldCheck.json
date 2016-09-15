@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LissandraRSpellShieldCheck",
         "Name": "LissandraRSpellShieldCheck",
         "ResourcePath": "DATA/Characters/Lissandra/Spells/LissandraRSpellShieldCheck.inibin"

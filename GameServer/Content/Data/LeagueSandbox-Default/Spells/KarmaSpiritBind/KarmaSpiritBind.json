@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KarmaSpiritBind",
         "Name": "KarmaSpiritBind",
         "ResourcePath": "DATA/Characters/Karma/Spells/KarmaSpiritBind.inibin"
@@ -36,8 +36,8 @@
             "CastRangeUseBoundingBoxes": "0",
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".600",
-            "Coefficient2": ".01",
+            "Coefficient": "0.600",
+            "Coefficient2": "0.01",
             "Cooldown": "16.0000",
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

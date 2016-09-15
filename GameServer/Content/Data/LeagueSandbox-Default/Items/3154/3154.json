@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3154,
         "Name": "Wriggle's Lantern",
         "ResourcePath": "DATA/Items/3154.inibin"
@@ -51,7 +51,7 @@
             "RecipeItem2": 1036,
             "RecipeItem3": 1042,
             "RecipeItem4": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "wrigglelantern"
         },
         "UNKNOWN_HASHES": {

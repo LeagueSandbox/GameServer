@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ViBasicAttack",
         "Name": "ViBasicAttack",
         "ResourcePath": "DATA/Characters/Vi/Spells/ViBasicAttack.inibin"

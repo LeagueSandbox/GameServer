@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxWMissile",
         "Name": "JinxWMissile",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxWMissile.inibin"
@@ -79,7 +79,7 @@
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": "3300.0000",
             "MissileTargetHeightAugment": "100.0000",
-            "OverrideCastTime": ".6",
+            "OverrideCastTime": "0.6",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "friend",

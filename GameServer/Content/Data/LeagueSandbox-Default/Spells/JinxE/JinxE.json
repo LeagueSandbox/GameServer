@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxE",
         "Name": "JinxE",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxE.inibin"
@@ -68,7 +68,7 @@
             "MissileAccel": 0,
             "MissileBoneName": "R_hand",
             "MissileEffect": "DarkWind_mis.troy",
-            "MissileFixedTravelTime": ".000",
+            "MissileFixedTravelTime": "0.000",
             "MissileGravity": 0,
             "MissileMaxSpeed": "1750.0000",
             "MissileMinSpeed": "1750.0000",
@@ -76,7 +76,7 @@
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": "1750.0000",
             "MissileTargetHeightAugment": "100.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "foe",

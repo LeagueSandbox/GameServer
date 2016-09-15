@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 1001,
         "Name": "Boots of Speed",
         "ResourcePath": "DATA/Items/1001.inibin"
@@ -43,7 +43,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": 325,
-            "SellBackModifier": ".7"
+            "SellBackModifier": "0.7"
         },
         "UNKNOWN_HASHES": {
             "1416335451": "0",

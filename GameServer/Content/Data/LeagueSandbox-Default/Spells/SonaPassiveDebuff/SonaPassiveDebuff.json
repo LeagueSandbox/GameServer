@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SonaPassiveDebuff",
         "Name": "SonaPassiveDebuff",
         "ResourcePath": "DATA/Characters/Sona/Spells/SonaPassiveDebuff.inibin"

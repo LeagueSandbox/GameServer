@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SivirPassiveSpeed",
         "Name": "SivirPassiveSpeed",
         "ResourcePath": "DATA/Characters/Sivir/Spells/SivirPassiveSpeed.inibin"

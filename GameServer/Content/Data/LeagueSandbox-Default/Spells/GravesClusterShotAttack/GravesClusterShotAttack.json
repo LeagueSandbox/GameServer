@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GravesClusterShotAttack",
         "Name": "GravesClusterShotAttack",
         "ResourcePath": "DATA/Spells/GravesClusterShotAttack.inibin"

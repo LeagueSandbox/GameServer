@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RivenPassive",
         "Name": "RivenPassive",
         "ResourcePath": "DATA/Characters/Riven/Spells/RivenPassive.inibin"

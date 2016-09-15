@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarTransform",
         "Name": "GnarTransform",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarTransform.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GoldCardAttack",
         "Name": "GoldCardAttack",
         "ResourcePath": "DATA/Spells/GoldCardAttack.inibin"

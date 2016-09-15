@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GarenBasicAttack",
         "Name": "GarenBasicAttack",
         "ResourcePath": "DATA/Characters/Garen/Spells/GarenBasicAttack.inibin"

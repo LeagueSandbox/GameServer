@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LuluDummySpell",
         "Name": "LuluDummySpell",
         "ResourcePath": "DATA/Spells/LuluDummySpell.inibin"

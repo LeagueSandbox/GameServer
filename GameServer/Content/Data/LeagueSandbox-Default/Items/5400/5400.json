@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 5400,
         "Name": "Lesser Mark of Hybrid Penetration",
         "ResourcePath": "DATA/Items/5400.inibin"
@@ -34,7 +34,7 @@
             "PercentSpellBlockMod": "0",
             "platformEnabled": "TRUE",
             "rFlatArmorModPerLevel": "0",
-            "rFlatArmorPenetrationMod": ".5",
+            "rFlatArmorPenetrationMod": "0.5",
             "rFlatArmorPenetrationModPerLevel": "0",
             "rFlatCritChanceModPerLevel": "0",
             "rFlatCritDamageModPerLevel": "0",

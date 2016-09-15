@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LissandraQShards",
         "Name": "LissandraQShards",
         "ResourcePath": "DATA/Characters/Lissandra/Spells/LissandraQShards.inibin"

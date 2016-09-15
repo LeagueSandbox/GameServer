@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3132,
         "Name": "Heart of Gold",
         "ResourcePath": "DATA/Items/3132.inibin"
@@ -47,7 +47,7 @@
             "RecipeItem2": "0",
             "RecipeItem3": "0",
             "RecipeItem4": "0",
-            "SellBackModifier": ".5"
+            "SellBackModifier": "0.5"
         },
         "UNKNOWN_HASHES": {
             "1416335451": "0",

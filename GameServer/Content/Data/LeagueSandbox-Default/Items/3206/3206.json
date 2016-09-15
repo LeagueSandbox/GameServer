@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3206,
         "Name": "Spirit of the Spectral Wraith",
         "ResourcePath": "DATA/Items/3206.inibin"
@@ -49,7 +49,7 @@
             "RecipeItem2": 3108,
             "RecipeItem3": "0",
             "RecipeItem4": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "AtmasImpalerDummySpell"
         },
         "UNKNOWN_HASHES": {

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ShenBasicAttack",
         "Name": "ShenBasicAttack",
         "ResourcePath": "DATA/Spells/ShenBasicAttack.inibin"

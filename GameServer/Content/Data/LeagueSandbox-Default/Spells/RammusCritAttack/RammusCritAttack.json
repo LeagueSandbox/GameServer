@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RammusCritAttack",
         "Name": "RammusCritAttack",
         "ResourcePath": "DATA/Spells/RammusCritAttack.inibin"

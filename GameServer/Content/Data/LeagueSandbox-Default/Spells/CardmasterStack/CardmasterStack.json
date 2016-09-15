@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "CardmasterStack",
         "Name": "CardmasterStack",
         "ResourcePath": "DATA/Spells/CardmasterStack.inibin"

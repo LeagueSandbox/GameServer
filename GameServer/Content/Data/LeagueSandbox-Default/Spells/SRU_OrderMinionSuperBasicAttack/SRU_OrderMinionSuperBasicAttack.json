@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SRU_OrderMinionSuperBasicAttack",
         "Name": "SRU_OrderMinionSuperBasicAttack",
         "ResourcePath": "DATA/Characters/SRU_OrderMinionSuper/Spells/SRU_OrderMinionSuperBasicAttack.inibin"

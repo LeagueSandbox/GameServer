@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemSmiteChallenge",
         "Name": "ItemSmiteChallenge",
         "ResourcePath": "DATA/Spells/ItemSmiteChallenge.inibin"

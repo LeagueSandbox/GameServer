@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "InfectedCleaverDebuff",
         "Name": "InfectedCleaverDebuff",
         "ResourcePath": "DATA/Spells/InfectedCleaverDebuff.inibin"

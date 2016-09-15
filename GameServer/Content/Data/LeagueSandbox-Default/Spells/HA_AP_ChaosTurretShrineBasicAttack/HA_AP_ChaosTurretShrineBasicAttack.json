@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "HA_AP_ChaosTurretShrineBasicAttack",
         "Name": "HA_AP_ChaosTurretShrineBasicAttack",
         "ResourcePath": "DATA/Characters/HA_AP_ChaosTurretShrine/Spells/HA_AP_ChaosTurretShrineBasicAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JaxCritAttack",
         "Name": "JaxCritAttack",
         "ResourcePath": "DATA/Spells/JaxCritAttack.inibin"

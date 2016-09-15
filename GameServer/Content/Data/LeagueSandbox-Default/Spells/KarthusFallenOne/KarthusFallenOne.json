@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KarthusFallenOne",
         "Name": "KarthusFallenOne",
         "ResourcePath": "DATA/Characters/Karthus/Spells/KarthusFallenOne.inibin"
@@ -69,7 +69,7 @@
             "MissilePerceptionBubbleRadius": 0,
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": 0,
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "friend",

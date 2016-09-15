@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "PromoteMeBuff",
         "Name": "PromoteMeBuff",
         "ResourcePath": "DATA/Spells/PromoteMeBuff.inibin"

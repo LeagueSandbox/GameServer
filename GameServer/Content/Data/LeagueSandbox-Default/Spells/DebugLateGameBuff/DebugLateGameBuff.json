@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DebugLateGameBuff",
         "Name": "DebugLateGameBuff",
         "ResourcePath": "DATA/Spells/DebugLateGameBuff.inibin"

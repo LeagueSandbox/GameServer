@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "StaticField",
         "Name": "StaticField",
         "ResourcePath": "DATA/Spells/StaticField.inibin"

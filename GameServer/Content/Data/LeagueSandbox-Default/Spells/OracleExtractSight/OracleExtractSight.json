@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OracleExtractSight",
         "Name": "OracleExtractSight",
         "ResourcePath": "DATA/Spells/OracleExtractSight.inibin"

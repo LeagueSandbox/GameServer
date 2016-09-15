@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "UdyrPhoenixStance",
         "Name": "UdyrPhoenixStance",
         "ResourcePath": "DATA/Characters/Udyr/Spells/UdyrPhoenixStance.inibin"
@@ -31,7 +31,7 @@
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
             "Coefficient": 0.45,
-            "Coefficient2": ".2500",
+            "Coefficient2": "0.2500",
             "Cooldown": "6.0000",
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

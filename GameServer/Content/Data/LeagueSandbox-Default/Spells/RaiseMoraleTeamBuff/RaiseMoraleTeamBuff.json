@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RaiseMoraleTeamBuff",
         "Name": "RaiseMoraleTeamBuff",
         "ResourcePath": "DATA/Characters/Gangplank/Spells/RaiseMoraleTeamBuff.inibin"

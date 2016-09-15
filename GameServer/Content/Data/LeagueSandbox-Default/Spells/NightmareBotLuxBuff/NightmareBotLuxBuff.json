@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "NightmareBotLuxBuff",
         "Name": "NightmareBotLuxBuff",
         "ResourcePath": "DATA/Spells/NightmareBotLuxBuff.inibin"
