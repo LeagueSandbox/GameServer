@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var recipeParts = _playerManager.GetPeerInfo(peer).Champion
                 .getInventory()
-                .GetAvailableItems(itemTemplate.Recipe, _itemManager);
+                .GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
 
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             else
             {
                 foreach (var instance in recipeParts)
-                    price -= instance.TotalPrice;
+                    price -= instance.ItemType.TotalPrice;
 
                 if (_playerManager.GetPeerInfo(peer).Champion.GetStats().Gold < price)
                     return false;

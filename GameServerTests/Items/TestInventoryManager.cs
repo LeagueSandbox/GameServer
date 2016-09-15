@@ -241,25 +241,25 @@ namespace GameServerTests
 
             // Get zephyr and make sure we have no items available to it's recipe
             var zephyr = itemManager.GetItemType(zephyrId);
-            var availableItems = manager.GetAvailableItems(zephyr.Recipe, itemManager);
+            var availableItems = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(0, availableItems.Count);
 
             // Add a component and make sure we get it from the available items function
             var component1 = manager.AddItem(itemManager.GetItemType(componentId1));
-            var available = manager.GetAvailableItems(zephyr.Recipe, itemManager);
+            var available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component1, available[0]);
 
             // Add another component and make sure we get that as well
             var component2 = manager.AddItem(itemManager.GetItemType(componentId2));
-            available = manager.GetAvailableItems(zephyr.Recipe, itemManager);
+            available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(2, available.Count);
             Assert.AreEqual(component1, available[0]);
             Assert.AreEqual(component2, available[1]);
 
             // Remove the first component and make sure we still have everything correctly
             manager.RemoveItem(manager.GetItemSlot(component1));
-            available = manager.GetAvailableItems(zephyr.Recipe, itemManager);
+            available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component2, available[0]);
 
@@ -271,7 +271,7 @@ namespace GameServerTests
             Assert.IsNotNull(manager.GetItem(manager.GetItemSlot(unrelated)));
 
             // Make sure we have no available items, even though there are some in the inventory
-            available = manager.GetAvailableItems(zephyr.Recipe, itemManager);
+            available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(0, available.Count);
         }
     }

@@ -54,10 +54,10 @@ namespace LeagueSandbox.GameServer.Logic.Items
             _inventory.SwapItems(slot1, slot2);
         }
 
-        public List<Item> GetAvailableItems(ItemRecipe recipe, ItemManager itemManager)
+        public List<Item> GetAvailableItems(ItemRecipe recipe)
         {
             var result = new List<Item>();
-            var tmpRecipe = recipe.GetItems(itemManager).ToList();
+            var tmpRecipe = recipe.GetItems().ToList();
             foreach(var item in _inventory.Items)
             {
                 if (item == null) continue;
