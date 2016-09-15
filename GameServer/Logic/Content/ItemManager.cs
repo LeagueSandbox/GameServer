@@ -186,7 +186,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ItemType _owner;
         private ItemType[] _items;
         private int _totalPrice;
-        
+        private ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
+
         public int TotalPrice
         {
             get
@@ -203,18 +204,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice = -1;
         }
 
-        public List<ItemType> GetItems(ItemManager itemManager)
-        {
-            // TODO: Figure out how to refactor this.
-            if (_items == null)
-                FindRecipeItems(itemManager);
-
-            return _items.ToList();
-        }
-        
         public List<ItemType> GetItems()
         {
-            // TODO: Figure out how to refactor this.
+            if (_items == null)
+                FindRecipeItems(_itemManager);
             return _items.ToList();
         }
 

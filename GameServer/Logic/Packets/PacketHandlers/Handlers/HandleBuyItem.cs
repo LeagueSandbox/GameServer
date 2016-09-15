@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             var recipeParts = _playerManager.GetPeerInfo(peer).Champion
                 .getInventory()
-                .GetAvailableItems(itemTemplate.Recipe, _itemManager);
+                .GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
 
