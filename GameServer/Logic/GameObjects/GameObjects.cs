@@ -227,7 +227,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public virtual float GetZ()
         {
-            return _game.GetMap().GetHeightAtLocation(X, Y);
+            return _game.Map.GetHeightAtLocation(X, Y);
         }
 
         public bool collide(GameObject o)

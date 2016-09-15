@@ -320,7 +320,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)_game.Map.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));
@@ -448,7 +448,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)_game.GetMap().GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)_game.Map.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));
@@ -828,8 +828,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
 
-            MovementVector from = _game.GetMap().ToMovementVector(u.X, u.Y);
-            MovementVector to = _game.GetMap().ToMovementVector(toX, toY);
+            MovementVector from = _game.Map.ToMovementVector(u.X, u.Y);
+            MovementVector to = _game.Map.ToMovementVector(toX, toY);
 
             buffer.Write((short)from.x);
             buffer.Write((short)from.y);
@@ -2522,7 +2522,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId)
                : base(PacketCmdS2C.PKT_S2C_CastSpellAns, s.Owner.NetId)
         {
-            var m = _game.GetMap();
+            var m = _game.Map;
 
             buffer.Write((byte)0);
             buffer.Write((byte)0x66);
@@ -2990,7 +2990,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpawnProjectile(Projectile p) : base(PacketCmdS2C.PKT_S2C_SpawnProjectile, p.NetId)
         {
-            float targetZ = _game.GetMap().GetHeightAtLocation(p.Target.X, p.Target.Y);
+            float targetZ = _game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
@@ -3136,7 +3136,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
 
                 buffer.Write((short)((particle.Target.X - MAP_WIDTH) / 2));
-                buffer.Write(_game.GetMap().GetHeightAtLocation(particle.Target.X, particle.Target.Y));
+                buffer.Write(_game.Map.GetHeightAtLocation(particle.Target.X, particle.Target.Y));
                 buffer.Write((short)((particle.Target.Y - MAP_HEIGHT) / 2));
             }
 

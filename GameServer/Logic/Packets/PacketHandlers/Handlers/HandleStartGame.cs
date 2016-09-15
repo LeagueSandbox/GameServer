@@ -16,11 +16,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
-            if (_game.IsStarted())
+            if (_game.IsRunning)
                 return true;
 
             _game.IncrementReadyPlayers();
-            if (_game.GetReadyPlayers() == _playerManager.GetPlayers().Count)
+            if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
                 var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);
                 _game.PacketHandlerManager.broadcastPacket(start, Channel.CHL_S2C);
@@ -35,18 +35,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     _game.PacketNotifier.notifyUpdatedStats(player.Item2.Champion, false);
                 }
 
-                _game.SetStarted(true);
+                _game.Start();
             }
 
-            if (_game.IsStarted())
+            if (_game.IsRunning)
             {
                 foreach (var p in _playerManager.GetPlayers())
                 {
-                    var map = _game.GetMap();
+                    var map = _game.Map;
                     map.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    float gameTime = map.GetGameTime() / 1000.0f;
+                    float gameTime = map.GameTime / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
                     _game.PacketHandlerManager.sendPacket(p.Item2.Peer, timer, Channel.CHL_S2C);

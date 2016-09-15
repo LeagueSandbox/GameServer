@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             foreach (var p in _playerManager.GetPlayers())
             {
-                var coords = _game.GetMap().GetEndGameCameraPosition(losingTeam);
+                var coords = _game.Map.GetEndGameCameraPosition(losingTeam);
                 var cam = new MoveCamera(p.Item2.Champion, coords[0], coords[1], coords[2], 2);
                 _game.PacketHandlerManager.sendPacket(p.Item2.Peer, cam, Channel.CHL_S2C);
                 _game.PacketHandlerManager.sendPacket(p.Item2.Peer, new HideUi(), Channel.CHL_S2C);
@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void notifyTeleport(Unit u, float _x, float _y)
         {
             // Can't teleport to this point of the map
-            if (!_game.GetMap().IsWalkable(_x, _y))
+            if (!_game.Map.IsWalkable(_x, _y))
             {
                 _x = MovementVector.targetXToNormalFormat(u.getPosition().X);
                 _y = MovementVector.targetYToNormalFormat(u.getPosition().Y);
@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyMovement(GameObject o)
         {
-            var answer = new MovementAns(o, _game.GetMap());
+            var answer = new MovementAns(o, _game.Map);
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
@@ -390,7 +390,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyGameTimer()
         {
-            var gameTimer = new GameTimer(_game.GetMap().GetGameTime() / 1000.0f);
+            var gameTimer = new GameTimer(_game.Map.GameTime / 1000.0f);
             _game.PacketHandlerManager.broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
         public void notifyUnitAnnounceEvent(UnitAnnounces messageId, Unit target, GameObject killer = null, List<Champion> assists = null)
@@ -401,7 +401,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
         public void notifyAnnounceEvent(Announces messageId, bool isMapSpecific)
         {
-            var announce = new Announce(messageId, isMapSpecific ? _game.GetMap().GetMapId() : 0);
+            var announce = new Announce(messageId, isMapSpecific ? _game.Map.GetMapId() : 0);
             _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
         }
 

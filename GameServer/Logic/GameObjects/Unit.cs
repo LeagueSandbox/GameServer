@@ -181,7 +181,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (targetUnit != null)
             {
-                if (targetUnit.isDead() || !_game.GetMap().TeamHasVisionOn(Team, targetUnit))
+                if (targetUnit.isDead() || !_game.Map.TeamHasVisionOn(Team, targetUnit))
                 {
                     setTargetUnit(null);
                     isAttacking = false;
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 0,
                                 autoAttackProjId
                             );
-                            _game.GetMap().AddObject(p);
+                            _game.Map.AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
                         else
@@ -269,7 +269,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (
                     autoAttackTarget == null
                     || autoAttackTarget.isDead()
-                    || !_game.GetMap().TeamHasVisionOn(Team, autoAttackTarget)
+                    || !_game.Map.TeamHasVisionOn(Team, autoAttackTarget)
                 )
                 {
                     isAttacking = false;
@@ -464,12 +464,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             setToRemove();
-            _game.GetMap().StopTargeting(this);
+            _game.Map.StopTargeting(this);
 
             _game.PacketNotifier.notifyNpcDie(this, killer);
 
-            float exp = _game.GetMap().GetExperienceFor(this);
-            var champs = _game.GetMap().GetChampionsInRange(this, EXP_RANGE, true);
+            float exp = _game.Map.GetExperienceFor(this);
+            var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
 
@@ -490,7 +490,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                float gold = _game.GetMap().GetGoldFor(this);
+                float gold = _game.Map.GetGoldFor(this);
                 if (gold <= 0)
                     return;
 

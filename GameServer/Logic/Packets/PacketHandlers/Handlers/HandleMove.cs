@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 return true;
 
             var request = new MovementReq(data);
-            var vMoves = readWaypoints(request.moveData, request.coordCount, _game.GetMap());
+            var vMoves = readWaypoints(request.moveData, request.coordCount, _game.Map);
 
             switch (request.type)
             {
@@ -31,8 +31,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.setPosition(request.x, request.y);
-                    float x = ((request.x) - _game.GetMap().GetWidth()) / 2;
-                    float y = ((request.y) - _game.GetMap().GetHeight()) / 2;
+                    float x = ((request.x) - _game.Map.GetWidth()) / 2;
+                    float y = ((request.y) - _game.Map.GetHeight()) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.setWaypoints(vMoves);
 
-            var u = _game.GetMap().GetObjectById(request.targetNetId) as Unit;
+            var u = _game.Map.GetObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
                 peerInfo.Champion.setTargetUnit(null);

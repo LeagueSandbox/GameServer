@@ -32,13 +32,13 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = _game.GetMap().getAIMesh().getClosestTerrainExit(coords);
+            var truePos = _game.Map.AIMesh.getClosestTerrainExit(coords);
             _game.PacketNotifier.notifyTeleport(unit, truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
         {
-            return _game.GetMap().IsWalkable(x, y);
+            return _game.Map.IsWalkable(x, y);
         }
 
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
@@ -67,12 +67,12 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static List<Unit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
-            return _game.GetMap().GetUnitsInRange(target, range, isAlive);
+            return _game.Map.GetUnitsInRange(target, range, isAlive);
         }
 
         public static List<Champion> GetChampionsInRange(Target target, float range, bool isAlive)
         {
-            return _game.GetMap().GetChampionsInRange(target, range, isAlive);
+            return _game.Map.GetChampionsInRange(target, range, isAlive);
         }
 
         public static void SetChampionModel(Champion champion, string model)
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
 
-            var newCoords = _game.GetMap().getAIMesh().getClosestTerrainExit(new Vector2(x, y));
+            var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(x, y));
             unit.dashTo(newCoords.X, newCoords.Y, dashSpeed);
             unit.setTargetUnit(null);
             _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);

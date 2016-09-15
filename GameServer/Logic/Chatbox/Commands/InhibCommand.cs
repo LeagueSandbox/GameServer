@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 "Worm",
                 "Worm"
                 );
-            game.GetMap().AddObject(min);
+            game.Map.AddObject(min);
         }
     }
 }
