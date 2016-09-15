@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.CurrentHealth = 5500;
             stats.HealthPoints.BaseValue = 5500;
 
-            Team = team;
+            SetTeam(team);
         }
 
         public override void die(Unit killer)

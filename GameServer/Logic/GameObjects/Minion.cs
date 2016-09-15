@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _AIPaused = false;
 
             var spawnSpecifics = _game.Map.GetMinionSpawnPosition(SpawnPosition);
-            Team = spawnSpecifics.Item1;
+            SetTeam(spawnSpecifics.Item1);
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             _game.Map.SetMinionStats(this); // Let the map decide how strong this minion has to be.
@@ -74,15 +74,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (mainWaypoints.Count > 0)
             {
                 // Follow these instructions
-                setWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });
+                SetWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });
             }
             else
             {
                 // Otherwise path to own position. (Stand still)
-                setWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(X, Y) });
+                SetWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(X, Y) });
             }
 
-            setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+            MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
         }
 
         public Minion(
@@ -108,7 +108,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             base.update(diff);
 
-            if (!isDead())
+            if (!IsDead)
             {
                 if (IsDashing)
                     return;
@@ -124,21 +124,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void onCollision(GameObject a_Collider)
         {
-            if (a_Collider == targetUnit) // If we're colliding with the target, don't do anything.
+            if (a_Collider == TargetUnit) // If we're colliding with the target, don't do anything.
                 return;
 
-            if (targetUnit != null)
+            if (TargetUnit != null)
             {
                 // Thread this?
-                //Path newPath = Pathfinder::getPath(getPosition(), targetUnit->getPosition());
+                //Path newPath = Pathfinder::getPath(getPosition(), TargetUnit->getPosition());
                 //if (newPath.error == PATH_ERROR_NONE)
-                //setWaypoints(newPath.getWaypoints());
+                //SetWaypoints(newPath.getWaypoints());
             }
         }
 
         public override bool isInDistress()
         {
-            return distressCause != null;
+            return DistressCause != null;
         }
 
         // AI tasks
@@ -154,13 +154,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 // Targets have to be:
                 if (u == null ||                                    // a unit
-                     u.isDead() ||                                  // alive
+                     u.IsDead ||                                  // alive
                      u.Team == Team ||                    // not on our team
-                     distanceWith(u) > DETECT_RANGE ||              // in range
+                     GetDistanceTo(u) > DETECT_RANGE ||              // in range
                      !_game.Map.TeamHasVisionOn(Team, u))       // visible to this minion
                     continue;                                       // If not, look for something else
 
-                var priority = classifyTarget(u);  // get the priority.
+                var priority = ClassifyTarget(u);  // get the priority.
                 if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously
                 {
                     nextTarget = u;                // make him a potential target.
@@ -170,7 +170,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (nextTarget != null) // If we have a target
             {
-                setTargetUnit(nextTarget); // Set the new target and refresh waypoints
+                TargetUnit = nextTarget; // Set the new target and refresh waypoints
                 _game.PacketNotifier.notifySetTarget(this, nextTarget);
                 return true;
             }
@@ -180,21 +180,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (mainWaypoints.Count > curMainWaypoint + 1)
             {
-                if ((waypoints.Count == 1) || (curWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
+                if ((Waypoints.Count == 1) || (CurWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
                     List<Vector2> newWaypoints = new List<Vector2> { new Vector2(X, Y), mainWaypoints[curMainWaypoint] };
-                    setWaypoints(newWaypoints);
+                    SetWaypoints(newWaypoints);
                 }
             }
         }
         protected void keepFocussingTarget()
         {
-            if (isAttacking && (targetUnit == null || distanceWith(targetUnit) > stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.notifyStopAutoAttack(this);
-                isAttacking = false;
+                IsAttacking = false;
             }
         }
     }

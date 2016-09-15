@@ -282,7 +282,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.notifySetCooldown(Owner, Slot, 300, 300);
             }
 
-            Owner.SetCastingSpell(false);
+            Owner.IsCastingSpell = false;
         }
         /**
          * Called every diff milliseconds to update the spell
@@ -294,7 +294,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 case SpellState.STATE_READY:
                     return;
                 case SpellState.STATE_CASTING:
-                    Owner.SetCastingSpell(true);
+                    Owner.IsCastingSpell = true;
                     _currentCastTime -= diff / 1000.0f;
                     if (_currentCastTime <= 0)
                     {
@@ -470,10 +470,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
             var p = new Placeable(this.Owner, toX, toY, model, name);
-            p.Team = Owner.Team;
+            p.SetTeam(Owner.Team);
 
-            p.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-            p.setVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
+            p.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+            p.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
             _game.Map.AddObject(p);
         }

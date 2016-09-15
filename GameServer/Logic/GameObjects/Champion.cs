@@ -76,14 +76,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spells.Add(new Spell(this, "SummonerFlash", 5));
             Spells.Add(new Spell(this, "Recall", 13));
 
-            setMelee(inibin.getBoolValue("DATA", "IsMelee"));
+            IsMelee = inibin.getBoolValue("DATA", "IsMelee");
             CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
 
             var autoAttack = _rafManager.GetAutoAttackData(Model);
             if (autoAttack != null)
             {
-                autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
-                autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
+                AutoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
+                AutoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
             }
 
             LoadLua();
@@ -231,7 +231,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             base.update(diff);
 
-            if (!isDead() && moveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && targetUnit != null)
+            if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 Dictionary<uint, GameObject> objects = _game.Map.GetObjects();
                 float distanceToTarget = 9000000.0f;
@@ -242,19 +242,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     var u = it.Value as Unit;
 
-                    if (u == null || u.isDead() || u.Team == this.Team || distanceWith(u) > range)
+                    if (u == null || u.IsDead || u.Team == this.Team || GetDistanceTo(u) > range)
                         continue;
 
-                    if (distanceWith(u) < distanceToTarget)
+                    if (GetDistanceTo(u) < distanceToTarget)
                     {
-                        distanceToTarget = distanceWith(u);
+                        distanceToTarget = GetDistanceTo(u);
                         nextTarget = u;
                     }
                 }
 
                 if (nextTarget != null)
                 {
-                    setTargetUnit(nextTarget);
+                    TargetUnit = nextTarget;
                     _game.PacketNotifier.notifySetTarget(this, nextTarget);
                 }
             }
@@ -277,7 +277,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _game.PacketNotifier.notifyChampionRespawn(this);
                     GetStats().CurrentHealth = GetStats().HealthPoints.Total;
                     GetStats().CurrentMana = GetStats().HealthPoints.Total;
-                    deathFlag = false;
+                    IsDead = false;
                 }
             }
 
@@ -334,7 +334,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override bool isInDistress()
         {
-            return distressCause != null;
+            return DistressCause != null;
         }
 
         public short getSkillPoints()
@@ -387,19 +387,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             cKiller.ChampionGoldFromMinions = 0;
 
             float gold = _game.Map.GetGoldFor(this);
-            _logger.LogCoreInfo("Before: getGoldFromChamp: " + gold + " Killer:" + cKiller.killDeathCounter + "Victim: " + killDeathCounter);
+            _logger.LogCoreInfo(
+                "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
+                gold,
+                cKiller.KillDeathCounter,
+                KillDeathCounter
+            );
 
-            if (cKiller.killDeathCounter < 0)
-                cKiller.killDeathCounter = 0;
+            if (cKiller.KillDeathCounter < 0)
+                cKiller.KillDeathCounter = 0;
 
-            if (cKiller.killDeathCounter >= 0)
-                cKiller.killDeathCounter += 1;
+            if (cKiller.KillDeathCounter >= 0)
+                cKiller.KillDeathCounter += 1;
 
-            if (killDeathCounter > 0)
-                killDeathCounter = 0;
+            if (KillDeathCounter > 0)
+                KillDeathCounter = 0;
 
-            if (killDeathCounter <= 0)
-                killDeathCounter -= 1;
+            if (KillDeathCounter <= 0)
+                KillDeathCounter -= 1;
 
             if (gold > 0)
             {

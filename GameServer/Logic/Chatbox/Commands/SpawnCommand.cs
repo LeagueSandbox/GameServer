@@ -48,15 +48,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.PauseAI(true);
                 super.PauseAI(true);
 
-                caster.setWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
-                cannon.setWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
-                melee.setWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
-                super.setWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
+                caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
+                cannon.SetWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
+                melee.SetWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
+                super.SetWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
 
-                caster.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                cannon.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                melee.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                super.setVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+                caster.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+                cannon.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+                melee.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+                super.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
 
                 _game.Map.AddObject(caster);
                 _game.Map.AddObject(cannon);

@@ -58,27 +58,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
 
-        protected float autoAttackDelay = 0;
-        protected float autoAttackProjectileSpeed = 0;
-        protected float autoAttackCurrentCooldown = 0;
-        protected float autoAttackCurrentDelay = 0;
-        protected bool isAttacking = false;
-        protected bool modelUpdated = false;
-        protected bool melee = false;
-        protected bool initialAttackDone = false;
-        protected bool nextAttackFlag = false;
-        protected Unit distressCause;
-        protected long statUpdateTimer = 0;
-        protected uint autoAttackProjId;
-        protected MoveOrder moveOrder = MoveOrder.MOVE_ORDER_MOVE;
+        public float AutoAttackDelay { get; set; }
+        public float AutoAttackProjectileSpeed { get; set; }
+        private float _autoAttackCurrentCooldown;
+        private float _autoAttackCurrentDelay;
+        public bool IsAttacking { get; protected set; }
+        public bool IsModelUpdated { get; set; }
+        public bool IsMelee { get; set; }
+        private bool _hasMadeInitialAttack;
+        private bool _nextAttackFlag;
+        public Unit DistressCause { get; protected set; }
+        private long _statUpdateTimer;
+        private uint _autoAttackProjId;
+        public MoveOrder MoveOrder { get; set; }
 
         /**
          * Unit we want to attack as soon as in range
          */
-        protected Unit targetUnit;
-        protected Unit autoAttackTarget;
+        public Unit TargetUnit { get; set; }
+        public Unit AutoAttackTarget { get; set; }
 
-        protected bool deathFlag = false;
+        public bool IsDead { get; protected set; }
 
         private string _model;
         public string Model
@@ -87,22 +87,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             set
             {
                 _model = value;
-                modelUpdated = true;
+                IsModelUpdated = true;
             }
         }
 
-        protected bool targetable;
-        protected bool nextAutoIsCrit = false;
+        private bool _isNextAutoCrit;
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
         protected Logger _logger = Program.ResolveDependency<Logger>();
 
-        protected int killDeathCounter = 0;
+        public int KillDeathCounter { get; protected set; }
         private object _buffsLock = new object();
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
         private long _timerUpdate;
 
-        private bool isCastingSpell = false;
+        public bool IsCastingSpell { get; set; }
 
         public Unit(
             string model,
@@ -166,95 +165,95 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _timerUpdate = 0;
             }
 
-            if (isDead())
+            if (IsDead)
             {
-                if (targetUnit != null)
+                if (TargetUnit != null)
                 {
-                    setTargetUnit(null);
-                    autoAttackTarget = null;
-                    isAttacking = false;
+                    SetTargetUnit(null);
+                    AutoAttackTarget = null;
+                    IsAttacking = false;
                     _game.PacketNotifier.notifySetTarget(this, null);
-                    initialAttackDone = false;
+                    _hasMadeInitialAttack = false;
                 }
                 return;
             }
 
-            if (targetUnit != null)
+            if (TargetUnit != null)
             {
-                if (targetUnit.isDead() || !_game.Map.TeamHasVisionOn(Team, targetUnit))
+                if (TargetUnit.IsDead || !_game.Map.TeamHasVisionOn(Team, TargetUnit))
                 {
-                    setTargetUnit(null);
-                    isAttacking = false;
+                    SetTargetUnit(null);
+                    IsAttacking = false;
                     _game.PacketNotifier.notifySetTarget(this, null);
-                    initialAttackDone = false;
+                    _hasMadeInitialAttack = false;
 
                 }
-                else if (isAttacking && autoAttackTarget != null)
+                else if (IsAttacking && AutoAttackTarget != null)
                 {
-                    autoAttackCurrentDelay += diff / 1000.0f;
-                    if (autoAttackCurrentDelay >= autoAttackDelay / stats.AttackSpeedMultiplier.Total)
+                    _autoAttackCurrentDelay += diff / 1000.0f;
+                    if (_autoAttackCurrentDelay >= AutoAttackDelay / stats.AttackSpeedMultiplier.Total)
                     {
-                        if (!isMelee())
+                        if (!IsMelee)
                         {
                             Projectile p = new Projectile(
                                 X,
                                 Y,
                                 5,
                                 this,
-                                autoAttackTarget,
+                                AutoAttackTarget,
                                 null,
-                                autoAttackProjectileSpeed,
+                                AutoAttackProjectileSpeed,
                                 0,
                                 0,
-                                autoAttackProjId
+                                _autoAttackProjId
                             );
                             _game.Map.AddObject(p);
                             _game.PacketNotifier.notifyShowProjectile(p);
                         }
                         else
                         {
-                            autoAttackHit(autoAttackTarget);
+                            autoAttackHit(AutoAttackTarget);
                         }
-                        autoAttackCurrentCooldown = 1.0f / (stats.GetTotalAttackSpeed());
-                        isAttacking = false;
+                        _autoAttackCurrentCooldown = 1.0f / (stats.GetTotalAttackSpeed());
+                        IsAttacking = false;
                     }
 
                 }
-                else if (distanceWith(targetUnit) <= stats.Range.Total)
+                else if (GetDistanceTo(TargetUnit) <= stats.Range.Total)
                 {
                     refreshWaypoints();
-                    nextAutoIsCrit = new Random().Next(0, 100) < stats.CriticalChance.Total * 100;
-                    if (autoAttackCurrentCooldown <= 0)
+                    _isNextAutoCrit = new Random().Next(0, 100) < stats.CriticalChance.Total * 100;
+                    if (_autoAttackCurrentCooldown <= 0)
                     {
-                        isAttacking = true;
-                        autoAttackCurrentDelay = 0;
-                        autoAttackProjId = _networkIdManager.GetNewNetID();
-                        autoAttackTarget = targetUnit;
+                        IsAttacking = true;
+                        _autoAttackCurrentDelay = 0;
+                        _autoAttackProjId = _networkIdManager.GetNewNetID();
+                        AutoAttackTarget = TargetUnit;
 
-                        if (!initialAttackDone)
+                        if (!_hasMadeInitialAttack)
                         {
-                            initialAttackDone = true;
+                            _hasMadeInitialAttack = true;
                             _game.PacketNotifier.notifyBeginAutoAttack(
                                 this,
-                                targetUnit,
-                                autoAttackProjId,
-                                nextAutoIsCrit
+                                TargetUnit,
+                                _autoAttackProjId,
+                                _isNextAutoCrit
                             );
                         }
                         else
                         {
-                            nextAttackFlag = !nextAttackFlag; // The first auto attack frame has occurred
+                            _nextAttackFlag = !_nextAttackFlag; // The first auto attack frame has occurred
                             _game.PacketNotifier.notifyNextAutoAttack(
                                 this,
-                                targetUnit,
-                                autoAttackProjId,
-                                nextAutoIsCrit,
-                                nextAttackFlag
+                                TargetUnit,
+                                _autoAttackProjId,
+                                _isNextAutoCrit,
+                                _nextAttackFlag
                                 );
                         }
 
-                        var attackType = isMelee() ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        _game.PacketNotifier.notifyOnAttack(this, targetUnit, attackType);
+                        var attackType = IsMelee ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
+                        _game.PacketNotifier.notifyOnAttack(this, TargetUnit, attackType);
                     }
 
                 }
@@ -264,32 +263,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
 
             }
-            else if (isAttacking)
+            else if (IsAttacking)
             {
                 if (
-                    autoAttackTarget == null
-                    || autoAttackTarget.isDead()
-                    || !_game.Map.TeamHasVisionOn(Team, autoAttackTarget)
+                    AutoAttackTarget == null
+                    || AutoAttackTarget.IsDead
+                    || !_game.Map.TeamHasVisionOn(Team, AutoAttackTarget)
                 )
                 {
-                    isAttacking = false;
-                    initialAttackDone = false;
-                    autoAttackTarget = null;
+                    IsAttacking = false;
+                    _hasMadeInitialAttack = false;
+                    AutoAttackTarget = null;
                 }
             }
 
             base.update(diff);
 
-            if (autoAttackCurrentCooldown > 0)
+            if (_autoAttackCurrentCooldown > 0)
             {
-                autoAttackCurrentCooldown -= diff / 1000.0f;
+                _autoAttackCurrentCooldown -= diff / 1000.0f;
             }
 
-            statUpdateTimer += diff;
-            if (statUpdateTimer >= 500)
+            _statUpdateTimer += diff;
+            if (_statUpdateTimer >= 500)
             { // update stats (hpregen, manaregen) every 0.5 seconds
-                stats.update(statUpdateTimer);
-                statUpdateTimer = 0;
+                stats.update(_statUpdateTimer);
+                _statUpdateTimer = 0;
             }
         }
 
@@ -297,12 +296,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return stats.MoveSpeed.Total;
         }
-
-        public int getKillDeathCounter()
-        {
-            return killDeathCounter;
-        }
-
 
         public Dictionary<string, Buff> GetBuffs()
         {
@@ -343,11 +336,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         */
         public virtual void autoAttackHit(Unit target)
         {
-            float damage = (nextAutoIsCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
+            float damage = (_isNextAutoCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
 
                 dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             nextAutoIsCrit);
+                                             _isNextAutoCrit);
 
             if (_scriptEngine.IsLoaded())
             {
@@ -418,9 +411,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
-            if (!target.deathFlag && target.GetStats().CurrentHealth <= 0)
+            if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
             {
-                target.deathFlag = true;
+                target.IsDead = true;
                 target.die(this);
             }
             _game.PacketNotifier.notifyDamageDone(this, target, damage, type, text);
@@ -431,21 +424,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.notifyUpdatedStats(this);
             }
-        }
-
-        public bool isDead()
-        {
-            return deathFlag;
-        }
-
-        public bool IsCastingSpell()
-        {
-            return isCastingSpell;
-        }
-
-        public void SetCastingSpell(bool newState)
-        {
-            isCastingSpell = newState;
         }
 
         public virtual void die(Unit killer)
@@ -497,7 +475,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 cKiller.GetStats().Gold += gold;
                 _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
 
-                if (cKiller.killDeathCounter < 0)
+                if (cKiller.KillDeathCounter < 0)
                 {
                     cKiller.ChampionGoldFromMinions += gold;
                     _logger.LogCoreInfo(string.Format(
@@ -506,32 +484,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     ));
                 }
 
-                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.killDeathCounter < 0)
+                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
                 {
                     cKiller.ChampionGoldFromMinions = 0;
-                    cKiller.killDeathCounter += 1;
+                    cKiller.KillDeathCounter += 1;
                 }
             }
-        }
-
-        public void setAutoAttackDelay(float newDelay)
-        {
-            autoAttackDelay = newDelay;
-        }
-
-        public void setAutoAttackProjectileSpeed(float newSpeed)
-        {
-            autoAttackProjectileSpeed = newSpeed;
-        }
-
-        public bool isModelUpdated()
-        {
-            return modelUpdated;
-        }
-
-        public void clearModelUpdated()
-        {
-            modelUpdated = false;
         }
 
         public void AddBuff(Buff b)
@@ -561,19 +519,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _buffs.Remove(b);
         }
 
-        public void setDistressCall(Unit distress)
-        {
-            distressCause = distress;
-        }
-
-        public Unit getDistressCall()
-        {
-            return distressCause;
-        }
-
         public virtual bool isInDistress()
         {
-            return false; /*return distressCause;*/
+            return false; /*return DistressCause;*/
         }
 
         //todo: use statmods
@@ -587,67 +535,45 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public void setMoveOrder(MoveOrder moveOrder)
-        {
-            this.moveOrder = moveOrder;
-        }
-
-        public void setTargetUnit(Unit target)
+        public void SetTargetUnit(Unit target)
         {
             if (target == null) // If we are unsetting the target (moving around)
             {
-                if (targetUnit != null) // and we had a target
-                    targetUnit.setDistressCall(null); // Unset the distress call
+                if (TargetUnit != null) // and we had a target
+                    TargetUnit.DistressCause = null; // Unset the distress call
                                                       // TODO: Replace this with a delay?
 
-                isAttacking = false;
+                IsAttacking = false;
             }
             else
             {
-                target.setDistressCall(this); // Otherwise set the distress call
+                target.DistressCause = this; // Otherwise set the distress call
             }
 
-            targetUnit = target;
+            TargetUnit = target;
             refreshWaypoints();
-        }
-
-        public void setAutoAttackTarget(Unit target)
-        {
-            autoAttackTarget = target;
-        }
-
-        public Unit getTargetUnit()
-        {
-            return targetUnit;
         }
 
         public virtual void refreshWaypoints()
         {
-            if (targetUnit == null || (distanceWith(targetUnit) <= stats.Range.Total && waypoints.Count == 1))
+            if (TargetUnit == null || (GetDistanceTo(TargetUnit) <= stats.Range.Total && Waypoints.Count == 1))
                 return;
 
-            if (distanceWith(targetUnit) <= stats.Range.Total - 2.0f)
+            if (GetDistanceTo(TargetUnit) <= stats.Range.Total - 2.0f)
             {
-                setWaypoints(new List<Vector2> { new Vector2(X, Y) });
+                SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
             }
             else
             {
-                Target t = new Target(waypoints[waypoints.Count - 1]);
-                if (t.distanceWith(targetUnit) >= 25.0f)
+                Target t = new Target(Waypoints[Waypoints.Count - 1]);
+                if (t.GetDistanceTo(TargetUnit) >= 25.0f)
                 {
-                    setWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(targetUnit.X, targetUnit.Y) });
+                    SetWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(TargetUnit.X, TargetUnit.Y) });
                 }
             }
         }
-        public bool isMelee()
-        {
-            return melee;
-        }
-        public void setMelee(bool melee)
-        {
-            this.melee = melee;
-        }
-        public int classifyTarget(Unit target)
+
+        public int ClassifyTarget(Unit target)
         {
             /*
 Under normal circumstances, a minion痴 behavior is simple. Minions follow their attack route until they reach an enemy to engage.
@@ -665,17 +591,17 @@ in the following order:
     7. The closest enemy champion.
 */
 
-            if (target.targetUnit != null && target.targetUnit.isInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target.TargetUnit != null && target.TargetUnit.isInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
             {
-                if (target is Champion && target.targetUnit is Champion) // If it's a champion attacking a friendly champion
+                if (target is Champion && target.TargetUnit is Champion) // If it's a champion attacking a friendly champion
                     return 1;
-                else if (target is Minion && target.targetUnit is Champion) // If it's a minion attacking a friendly champion.
+                else if (target is Minion && target.TargetUnit is Champion) // If it's a minion attacking a friendly champion.
                     return 2;
-                else if (target is Minion && target.targetUnit is Minion) // Minion attacking minion
+                else if (target is Minion && target.TargetUnit is Minion) // Minion attacking minion
                     return 3;
-                else if (target is LaneTurret && target.targetUnit is Minion) // Turret attacking minion
+                else if (target is LaneTurret && target.TargetUnit is Minion) // Turret attacking minion
                     return 4;
-                else if (target is Champion && target.targetUnit is Minion) // Champion attacking minion
+                else if (target is Champion && target.TargetUnit is Minion) // Champion attacking minion
                     return 5;
             }
 

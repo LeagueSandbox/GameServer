@@ -20,21 +20,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.Y = vec.Y;
         }
 
-        public float distanceWith(Target target)
+        public float GetDistanceTo(Target target)
         {
-            return distanceWith(target.X, target.Y);
+            return GetDistanceTo(target.X, target.Y);
         }
-        public float distanceWith(float xtarget, float ytarget)
+        public float GetDistanceTo(float xtarget, float ytarget)
         {
-            return (float)Math.Sqrt((X - xtarget) * (X - xtarget) + (Y - ytarget) * (Y - ytarget));
-        }
-
-        public float distanceWithSqr(Target target)
-        {
-            return distanceWithSqr(target.X, target.Y);
+            return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));
         }
 
-        public float distanceWithSqr(float xtarget, float ytarget)
+        public float GetDistanceToSqr(Target target)
+        {
+            return GetDistanceToSqr(target.X, target.Y);
+        }
+
+        public float GetDistanceToSqr(float xtarget, float ytarget)
         {
             return ((X - xtarget) * (X - xtarget) + (Y - ytarget) * (Y - ytarget));
         }
@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.X = x;
             this.Y = y;
         }
-        public Vector2 getPosition()
+        public Vector2 GetPosition()
         {
             return new Vector2(X, Y);
         }

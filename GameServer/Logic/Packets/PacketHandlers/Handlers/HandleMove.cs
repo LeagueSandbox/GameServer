@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo.Champion;
-            if (peerInfo == null || champion.IsDashing || champion.isDead() || champion.IsCastingSpell())
+            if (peerInfo == null || champion.IsDashing || champion.IsDead || champion.IsCastingSpell)
                 return true;
 
             var request = new MovementReq(data);
@@ -45,24 +45,24 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    peerInfo.Champion.setMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+                    peerInfo.Champion.MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
                     break;
                 case MoveType.MOVE:
-                    peerInfo.Champion.setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    peerInfo.Champion.MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
                     break;
             }
 
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
-            peerInfo.Champion.setWaypoints(vMoves);
+            peerInfo.Champion.SetWaypoints(vMoves);
 
             var u = _game.Map.GetObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
-                peerInfo.Champion.setTargetUnit(null);
+                peerInfo.Champion.TargetUnit = null;
                 return true;
             }
 
-            peerInfo.Champion.setTargetUnit(u);
+            peerInfo.Champion.TargetUnit = u;
 
             return true;
         }

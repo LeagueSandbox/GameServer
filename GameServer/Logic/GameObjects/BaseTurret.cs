@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
             this.Name = name;
-            this.Team = team;
+            SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
         }
 
@@ -35,14 +35,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.isDead() || u.Team == this.Team || distanceWith(u) > TURRET_RANGE)
+                if (u == null || u.IsDead || u.Team == this.Team || GetDistanceTo(u) > TURRET_RANGE)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
-                if (targetUnit == null)
+                if (TargetUnit == null)
                 {
-                    var priority = classifyTarget(u);
+                    var priority = ClassifyTarget(u);
                     if (priority < nextTargetPriority)
                     {
                         nextTarget = u;
@@ -51,19 +51,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 else
                 {
-                    var targetIsChampion = targetUnit as Champion;
+                    var targetIsChampion = TargetUnit as Champion;
 
                     // Is the current target a champion? If it is, don't do anything
                     if (targetIsChampion != null)
                     {
                         // Find the next champion in range targeting an enemy champion who is also in range
                         var enemyChamp = u as Champion;
-                        if (enemyChamp != null && enemyChamp.getTargetUnit() != null)
+                        if (enemyChamp != null && enemyChamp.TargetUnit != null)
                         {
-                            var enemyChampTarget = enemyChamp.getTargetUnit() as Champion;
+                            var enemyChampTarget = enemyChamp.TargetUnit as Champion;
                             if (enemyChampTarget != null && // Enemy Champion is targeting an ally
-                                enemyChamp.distanceWith(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
-                                distanceWith(enemyChampTarget) <= TURRET_RANGE)
+                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
+                                GetDistanceTo(enemyChampTarget) <= TURRET_RANGE)
                             {                                     // Enemy within range of this turret
                                 nextTarget = enemyChamp; // No priority required
                                 break;
@@ -74,22 +74,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (nextTarget != null)
             {
-                targetUnit = nextTarget;
+                TargetUnit = nextTarget;
                 _game.PacketNotifier.notifySetTarget(this, nextTarget);
             }
         }
 
         public override void update(long diff)
         {
-            if (!isAttacking)
+            if (!IsAttacking)
             {
                 CheckForTargets();
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (targetUnit != null && distanceWith(targetUnit) > TURRET_RANGE)
+            if (TargetUnit != null && GetDistanceTo(TargetUnit) > TURRET_RANGE)
             {
-                setTargetUnit(null);
+                TargetUnit = null;
                 _game.PacketNotifier.notifySetTarget(this, null);
             }
 
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var goldEarn = globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
-                if (player.distanceWith(this) <= (TURRET_RANGE * 1.5f) && !player.isDead())
+                if (player.GetDistanceTo(this) <= (TURRET_RANGE * 1.5f) && !player.IsDead)
                 {
                     goldEarn = globalGold * 2.5f;
                     if(globalExp > 0)

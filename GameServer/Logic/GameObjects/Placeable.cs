@@ -22,17 +22,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
-            Team = TeamId.TEAM_NEUTRAL;
+            SetTeam(TeamId.TEAM_NEUTRAL);
 
             this.Owner = owner;
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
             {
-                setVisibleByTeam(team, true);
+                SetVisibleByTeam(team, true);
             }
 
-            setMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+            MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
 
             this.Name = name;
 
@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
             stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
 
-            setMelee(inibin.getBoolValue("DATA", "IsMelee"));
+            IsMelee = inibin.getBoolValue("DATA", "IsMelee");
             CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
 
             var autoAttack = _rafManager.GetAutoAttackData(model);
@@ -75,8 +75,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            autoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
-            autoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
+            AutoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
+            AutoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
         }
 
         public override void update(long diff)
@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override bool isInDistress()
         {
-            return distressCause != null;
+            return DistressCause != null;
         }
     }
 }
