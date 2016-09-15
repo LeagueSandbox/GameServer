@@ -125,9 +125,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             GoldPerSecond = new StatModifcator();
         }
 
-        private void CreateRecipe()
+        private void CreateRecipe(ItemManager manager)
         {
-            Recipe = ItemRecipe.FromItemType(this);
+            Recipe = ItemRecipe.FromItemType(this, manager);
         }
 
         public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             result.AttackDamage.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentPhysicalDamageMod");
             result.MagicResist.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentSpellBlockMod");
 
-            result.CreateRecipe();
+            result.CreateRecipe(owner);
             return result;
         }
 
@@ -186,7 +186,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ItemType _owner;
         private ItemType[] _items;
         private int _totalPrice;
-        private ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
+        private ItemManager _itemManager;
 
         public int TotalPrice
         {
@@ -198,10 +198,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
         }
 
-        private ItemRecipe(ItemType owner)
+        private ItemRecipe(ItemType owner, ItemManager manager)
         {
             _owner = owner;
             _totalPrice = -1;
+            _itemManager = manager;
         }
 
         public List<ItemType> GetItems()
@@ -234,9 +235,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice += _owner.Price;
         }
 
-        public static ItemRecipe FromItemType(ItemType type)
+        public static ItemRecipe FromItemType(ItemType type, ItemManager manager)
         {
-            return new ItemRecipe(type);
+            return new ItemRecipe(type, manager);
         }
     }
 

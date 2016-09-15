@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             else
             {
                 foreach (var instance in recipeParts)
-                    price -= instance.TotalPrice;
+                    price -= instance.ItemType.TotalPrice;
 
                 if (_playerManager.GetPeerInfo(peer).Champion.GetStats().Gold < price)
                     return false;
