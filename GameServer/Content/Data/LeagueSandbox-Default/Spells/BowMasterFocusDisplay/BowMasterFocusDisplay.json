@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "BowMasterFocusDisplay",
         "Name": "BowMasterFocusDisplay",
         "ResourcePath": "DATA/Spells/BowMasterFocusDisplay.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CatalystHeal",
         "Name": "CatalystHeal",
         "ResourcePath": "DATA/Spells/CatalystHeal.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "InfectedCleaverMissileCast",
         "Name": "InfectedCleaverMissileCast",
         "ResourcePath": "DATA/Spells/InfectedCleaverMissileCast.inibin"

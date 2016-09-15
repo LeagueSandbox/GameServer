@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SummonerMana",
         "Name": "SummonerMana",
         "ResourcePath": "DATA/Spells/SummonerMana.inibin"

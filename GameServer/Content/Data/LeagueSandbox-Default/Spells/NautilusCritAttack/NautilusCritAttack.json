@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "NautilusCritAttack",
         "Name": "NautilusCritAttack",
         "ResourcePath": "DATA/Spells/NautilusCritAttack.inibin"

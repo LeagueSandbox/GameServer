@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "MissileBarrageCheck",
         "Name": "MissileBarrageCheck",
         "ResourcePath": "DATA/Spells/MissileBarrageCheck.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SRU_ChaosMinionMeleeBasicAttack",
         "Name": "SRU_ChaosMinionMeleeBasicAttack",
         "ResourcePath": "DATA/Characters/SRU_ChaosMinionMelee/Spells/SRU_ChaosMinionMeleeBasicAttack.inibin"

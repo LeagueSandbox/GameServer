@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TwitchAmbushBuff",
         "Name": "TwitchAmbushBuff",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchAmbushBuff.inibin"

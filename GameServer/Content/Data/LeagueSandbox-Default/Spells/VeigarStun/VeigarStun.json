@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "VeigarStun",
         "Name": "VeigarStun",
         "ResourcePath": "DATA/Characters/Veigar/Spells/VeigarStun.inibin"

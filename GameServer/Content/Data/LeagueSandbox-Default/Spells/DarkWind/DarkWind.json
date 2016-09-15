@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "DarkWind",
         "Name": "DarkWind",
         "ResourcePath": "DATA/Spells/DarkWind.inibin"
@@ -25,8 +25,8 @@
             "Coefficient": 0.35,
             "Cooldown": "13.0000",
             "DeathRecapPriority": 22,
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_DarkWind",
             "DisplayName": "game_spell_displayname_DarkWind",
             "DynamicExtended": "game_spell_levelup_DarkWind",

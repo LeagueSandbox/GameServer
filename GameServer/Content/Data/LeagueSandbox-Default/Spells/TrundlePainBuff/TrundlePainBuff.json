@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TrundlePainBuff",
         "Name": "TrundlePainBuff",
         "ResourcePath": "DATA/Characters/Trundle/Spells/TrundlePainBuff.inibin"

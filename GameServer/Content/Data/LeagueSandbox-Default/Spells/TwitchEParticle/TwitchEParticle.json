@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TwitchEParticle",
         "Name": "TwitchEParticle",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchEParticle.inibin"

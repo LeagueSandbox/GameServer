@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TwitchUlt",
         "Name": "TwitchUlt",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchUlt.inibin"

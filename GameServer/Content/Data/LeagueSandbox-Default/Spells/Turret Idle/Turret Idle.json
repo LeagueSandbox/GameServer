@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Turret Idle",
         "Name": "Turret Idle",
         "ResourcePath": "DATA/Spells/Turret Idle.inibin"

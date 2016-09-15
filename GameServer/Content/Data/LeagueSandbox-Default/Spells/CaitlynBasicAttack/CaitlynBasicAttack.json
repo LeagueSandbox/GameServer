@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CaitlynBasicAttack",
         "Name": "CaitlynBasicAttack",
         "ResourcePath": "DATA/Characters/Caitlyn/Spells/CaitlynBasicAttack.inibin"

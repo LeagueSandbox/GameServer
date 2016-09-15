@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ItemBTOverhealTimer",
         "Name": "ItemBTOverhealTimer",
         "ResourcePath": "DATA/Spells/ItemBTOverhealTimer.inibin"

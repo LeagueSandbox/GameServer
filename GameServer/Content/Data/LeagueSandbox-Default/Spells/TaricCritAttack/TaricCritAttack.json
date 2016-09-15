@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TaricCritAttack",
         "Name": "TaricCritAttack",
         "ResourcePath": "DATA/Spells/TaricCritAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "GoldCardLock",
         "Name": "GoldCardLock",
         "ResourcePath": "DATA/Spells/GoldCardLock.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SkarnerBasicAttack",
         "Name": "SkarnerBasicAttack",
         "ResourcePath": "DATA/Characters/Skarner/Spells/SkarnerBasicAttack.inibin"

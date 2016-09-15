@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "NautilusPassiveCheck",
         "Name": "NautilusPassiveCheck",
         "ResourcePath": "DATA/Spells/NautilusPassiveCheck.inibin"

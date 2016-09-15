@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LandslideDebuff",
         "Name": "LandslideDebuff",
         "ResourcePath": "DATA/Spells/LandslideDebuff.inibin"

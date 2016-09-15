@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ShyvanaFlameBreathDebuff",
         "Name": "ShyvanaFlameBreathDebuff",
         "ResourcePath": "DATA/Spells/ShyvanaFlameBreathDebuff.inibin"

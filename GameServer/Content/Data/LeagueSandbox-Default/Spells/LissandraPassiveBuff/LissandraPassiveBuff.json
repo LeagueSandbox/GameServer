@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LissandraPassiveBuff",
         "Name": "LissandraPassiveBuff",
         "ResourcePath": "DATA/Characters/Lissandra/Spells/LissandraPassiveBuff.inibin"

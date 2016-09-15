@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RammusBasicAttack",
         "Name": "RammusBasicAttack",
         "ResourcePath": "DATA/Spells/RammusBasicAttack.inibin"

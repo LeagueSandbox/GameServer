@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "AzirDummySpell",
         "Name": "AzirDummySpell",
         "ResourcePath": "DATA/Characters/Azir/Spells/AzirDummySpell.inibin"

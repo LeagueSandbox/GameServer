@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "CassiopeiaPoisonTickerLockout",
         "Name": "CassiopeiaPoisonTickerLockout",
         "ResourcePath": "DATA/Characters/Cassiopeia/Spells/CassiopeiaPoisonTickerLockout.inibin"

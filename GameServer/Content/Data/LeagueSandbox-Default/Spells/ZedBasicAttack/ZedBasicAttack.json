@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ZedBasicAttack",
         "Name": "ZedBasicAttack",
         "ResourcePath": "DATA/Characters/Zed/Spells/ZedBasicAttack.inibin"

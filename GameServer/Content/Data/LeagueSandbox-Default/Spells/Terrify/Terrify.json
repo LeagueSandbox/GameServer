@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Terrify",
         "Name": "Terrify",
         "ResourcePath": "DATA/Spells/Terrify.inibin"
@@ -25,8 +25,8 @@
             "CastType": "0",
             "Coefficient": "1.0000",
             "DeathRecapPriority": 135,
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_Terrify",
             "DisplayName": "game_spell_displayname_Terrify",
             "DynamicExtended": "game_spell_levelup_Terrify",

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SeismicShardBuff",
         "Name": "SeismicShardBuff",
         "ResourcePath": "DATA/Spells/SeismicShardBuff.inibin"

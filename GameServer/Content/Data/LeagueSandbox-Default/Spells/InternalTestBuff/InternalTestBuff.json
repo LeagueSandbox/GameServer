@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "InternalTestBuff",
         "Name": "InternalTestBuff",
         "ResourcePath": "DATA/Spells/InternalTestBuff.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "ZedWPassiveBuff",
         "Name": "ZedWPassiveBuff",
         "ResourcePath": "DATA/Characters/Zed/Spells/ZedWPassiveBuff.inibin"

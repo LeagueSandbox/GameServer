@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "S5Test_BaseBuff",
         "Name": "S5Test_BaseBuff",
         "ResourcePath": "DATA/Spells/S5Test_BaseBuff.inibin"

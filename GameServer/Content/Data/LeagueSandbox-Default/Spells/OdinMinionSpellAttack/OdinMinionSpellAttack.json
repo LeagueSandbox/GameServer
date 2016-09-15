@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "OdinMinionSpellAttack",
         "Name": "OdinMinionSpellAttack",
         "ResourcePath": "DATA/Spells/OdinMinionSpellAttack.inibin"

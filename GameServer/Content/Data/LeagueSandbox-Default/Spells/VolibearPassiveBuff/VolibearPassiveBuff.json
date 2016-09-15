@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "VolibearPassiveBuff",
         "Name": "VolibearPassiveBuff",
         "ResourcePath": "DATA/Spells/VolibearPassiveBuff.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "Mana Regeneration",
         "Name": "Mana Regeneration",
         "ResourcePath": "DATA/Spells/Mana Regeneration.inibin"

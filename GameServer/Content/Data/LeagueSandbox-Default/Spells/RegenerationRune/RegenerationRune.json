@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RegenerationRune",
         "Name": "RegenerationRune",
         "ResourcePath": "DATA/Spells/RegenerationRune.inibin"

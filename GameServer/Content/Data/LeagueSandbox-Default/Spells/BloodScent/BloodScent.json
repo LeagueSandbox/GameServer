@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "BloodScent",
         "Name": "BloodScent",
         "ResourcePath": "DATA/Spells/BloodScent.inibin"
@@ -30,8 +30,8 @@
             "Coefficient": "1.0000",
             "Cooldown": 0.5,
             "DeathRecapPriority": "0",
-            "DelayCastOffsetPercent": "-.5",
-            "DelayTotalTimePercent": "-.5",
+            "DelayCastOffsetPercent": "-0.5",
+            "DelayTotalTimePercent": "-0.5",
             "Description": "game_spell_description_BloodScent",
             "DisplayName": "game_spell_displayname_BloodScent",
             "DynamicExtended": "game_spell_levelup_BloodScent",

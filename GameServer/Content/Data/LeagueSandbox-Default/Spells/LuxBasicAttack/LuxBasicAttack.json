@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "LuxBasicAttack",
         "Name": "LuxBasicAttack",
         "ResourcePath": "DATA/Spells/LuxBasicAttack.inibin"

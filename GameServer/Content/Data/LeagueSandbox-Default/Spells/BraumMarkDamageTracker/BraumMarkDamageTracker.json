@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "BraumMarkDamageTracker",
         "Name": "BraumMarkDamageTracker",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumMarkDamageTracker.inibin"

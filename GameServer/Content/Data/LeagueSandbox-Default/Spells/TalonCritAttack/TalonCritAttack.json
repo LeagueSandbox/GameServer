@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TalonCritAttack",
         "Name": "TalonCritAttack",
         "ResourcePath": "DATA/Spells/TalonCritAttack.inibin"

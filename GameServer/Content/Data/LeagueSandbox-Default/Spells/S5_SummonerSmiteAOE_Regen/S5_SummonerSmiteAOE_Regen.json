@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "S5_SummonerSmiteAOE_Regen",
         "Name": "S5_SummonerSmiteAOE_Regen",
         "ResourcePath": "DATA/Spells/S5_SummonerSmiteAOE_Regen.inibin"

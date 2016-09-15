@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TimeWarp",
         "Name": "TimeWarp",
         "ResourcePath": "DATA/Spells/TimeWarp.inibin"

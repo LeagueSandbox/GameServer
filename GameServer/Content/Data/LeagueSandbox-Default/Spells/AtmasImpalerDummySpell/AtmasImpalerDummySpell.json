@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "AtmasImpalerDummySpell",
         "Name": "AtmasImpalerDummySpell",
         "ResourcePath": "DATA/Spells/AtmasImpalerDummySpell.inibin"

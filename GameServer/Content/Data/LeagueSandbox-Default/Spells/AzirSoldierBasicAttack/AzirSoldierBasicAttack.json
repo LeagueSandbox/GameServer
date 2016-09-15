@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "AzirSoldierBasicAttack",
         "Name": "AzirSoldierBasicAttack",
         "ResourcePath": "DATA/Characters/AzirSoldier/Spells/AzirSoldierBasicAttack.inibin"

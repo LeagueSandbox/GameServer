@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RengarPassive",
         "Name": "RengarPassive",
         "ResourcePath": "DATA/Characters/Rengar/Spells/RengarPassive.inibin"

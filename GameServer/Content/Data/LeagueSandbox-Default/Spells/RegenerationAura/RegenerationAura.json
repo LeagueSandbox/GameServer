@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "RegenerationAura",
         "Name": "RegenerationAura",
         "ResourcePath": "DATA/Spells/RegenerationAura.inibin"

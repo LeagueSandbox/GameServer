@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "SummonerBoost",
         "Name": "SummonerBoost",
         "ResourcePath": "DATA/Spells/SummonerBoost.inibin"

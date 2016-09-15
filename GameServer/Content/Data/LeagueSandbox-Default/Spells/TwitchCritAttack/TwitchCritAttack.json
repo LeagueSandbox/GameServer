@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TwitchCritAttack",
         "Name": "TwitchCritAttack",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchCritAttack.inibin"

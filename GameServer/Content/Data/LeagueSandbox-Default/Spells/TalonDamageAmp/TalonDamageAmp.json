@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "TalonDamageAmp",
         "Name": "TalonDamageAmp",
         "ResourcePath": "DATA/Spells/TalonDamageAmp.inibin"

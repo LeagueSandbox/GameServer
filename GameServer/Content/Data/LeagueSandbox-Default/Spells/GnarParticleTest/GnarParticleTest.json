@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 3,
+        "ContentFormatVersion": 4,
         "Id": "GnarParticleTest",
         "Name": "GnarParticleTest",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarParticleTest.inibin"
