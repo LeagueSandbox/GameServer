@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZyraPassiveDeathManager",
         "Name": "ZyraPassiveDeathManager",
         "ResourcePath": "DATA/Spells/ZyraPassiveDeathManager.inibin"

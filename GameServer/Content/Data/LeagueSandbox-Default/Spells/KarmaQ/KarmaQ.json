@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KarmaQ",
         "Name": "KarmaQ",
         "ResourcePath": "DATA/Characters/Karma/Spells/KarmaQ.inibin"
@@ -41,7 +41,7 @@
             "CircleMissileAngularVelocity": 0,
             "CircleMissileRadialVelocity": 0,
             "Coefficient": 0.6,
-            "Coefficient2": ".30000",
+            "Coefficient2": "0.30000",
             "Cooldown": "10.0000",
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

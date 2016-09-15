@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "UdyrPassiveBuff",
         "Name": "UdyrPassiveBuff",
         "ResourcePath": "DATA/Characters/Udyr/Spells/UdyrPassiveBuff.inibin"

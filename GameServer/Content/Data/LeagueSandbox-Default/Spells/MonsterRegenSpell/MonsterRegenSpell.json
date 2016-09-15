@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "MonsterRegenSpell",
         "Name": "MonsterRegenSpell",
         "ResourcePath": "DATA/Spells/MonsterRegenSpell.inibin"

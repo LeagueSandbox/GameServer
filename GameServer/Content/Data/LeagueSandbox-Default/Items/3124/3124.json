@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3124,
         "Name": "Guinsoo's Rageblade",
         "ResourcePath": "DATA/Items/3124.inibin"
@@ -14,9 +14,9 @@
             "DynamicTooltip": "game_item_tooltip_3124",
             "Effect1Amount": 0.04,
             "Effect2Amount": 4,
-            "Effect3Amount": ".1",
-            "Effect4Amount": ".2",
-            "Effect5Amount": ".1",
+            "Effect3Amount": "0.1",
+            "Effect4Amount": "0.2",
+            "Effect5Amount": "0.1",
             "Epicness": 2,
             "FlatArmorMod": "0",
             "FlatCritChanceMod": "0",

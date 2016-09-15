@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemHorn",
         "Name": "ItemHorn",
         "ResourcePath": "DATA/Spells/ItemHorn.inibin"

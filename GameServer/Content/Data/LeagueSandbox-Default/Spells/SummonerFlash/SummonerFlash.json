@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SummonerFlash",
         "Name": "SummonerFlash",
         "ResourcePath": "DATA/Spells/SummonerFlash.inibin"

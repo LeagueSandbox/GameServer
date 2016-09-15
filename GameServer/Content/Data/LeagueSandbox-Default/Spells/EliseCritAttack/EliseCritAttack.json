@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "EliseCritAttack",
         "Name": "EliseCritAttack",
         "ResourcePath": "DATA/Characters/Elise/Spells/EliseCritAttack.inibin"

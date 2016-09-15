@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DragonFireball2",
         "Name": "DragonFireball2",
         "ResourcePath": "DATA/Characters/SRU_Dragon/Spells/DragonFireball2.inibin"
@@ -84,7 +84,7 @@
             "MissileBoneName": "buffbone_Cstm_fireStart",
             "MissileEffect": "SRU_Dragon_BA2_Projectile.troy",
             "MissileEffectPlayer": "",
-            "MissileFixedTravelTime": ".3400",
+            "MissileFixedTravelTime": "0.3400",
             "MissileFollowsTerrainHeight": "0",
             "MissileGravity": "1.0000",
             "MissileLifetime": 0,

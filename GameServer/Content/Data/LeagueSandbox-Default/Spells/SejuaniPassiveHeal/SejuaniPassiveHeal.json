@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SejuaniPassiveHeal",
         "Name": "SejuaniPassiveHeal",
         "ResourcePath": "DATA/Characters/Sejuani/Spells/SejuaniPassiveHeal.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 4249,
         "Name": "4249",
         "ResourcePath": "DATA/Items/4249.inibin"
@@ -12,7 +12,7 @@
             "FlatArmorMod": "0",
             "FlatCritChanceMod": "0",
             "FlatCritDamageMod": "0",
-            "FlatDodgeMod": ".01",
+            "FlatDodgeMod": "0.01",
             "FlatHPPoolMod": "0",
             "FlatHPRegenMod": "0",
             "FlatMagicDamageMod": "0",

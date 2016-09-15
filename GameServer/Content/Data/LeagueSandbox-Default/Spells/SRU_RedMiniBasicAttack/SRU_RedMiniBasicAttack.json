@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SRU_RedMiniBasicAttack",
         "Name": "SRU_RedMiniBasicAttack",
         "ResourcePath": "DATA/Characters/SRU_RedMini/Spells/SRU_RedMiniBasicAttack.inibin"

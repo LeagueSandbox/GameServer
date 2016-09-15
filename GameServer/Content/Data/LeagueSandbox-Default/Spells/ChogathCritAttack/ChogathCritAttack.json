@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ChogathCritAttack",
         "Name": "ChogathCritAttack",
         "ResourcePath": "DATA/Spells/ChogathCritAttack.inibin"

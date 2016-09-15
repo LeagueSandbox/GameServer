@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SyndraWDebuff",
         "Name": "SyndraWDebuff",
         "ResourcePath": "DATA/Spells/SyndraWDebuff.inibin"

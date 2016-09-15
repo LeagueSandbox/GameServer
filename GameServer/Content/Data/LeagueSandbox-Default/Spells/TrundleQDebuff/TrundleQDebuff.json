@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TrundleQDebuff",
         "Name": "TrundleQDebuff",
         "ResourcePath": "DATA/Characters/Trundle/Spells/TrundleQDebuff.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SealFateMissile",
         "Name": "SealFateMissile",
         "ResourcePath": "DATA/Spells/SealFateMissile.inibin"

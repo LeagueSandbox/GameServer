@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ShyvanaBasicAttack",
         "Name": "ShyvanaBasicAttack",
         "ResourcePath": "DATA/Spells/ShyvanaBasicAttack.inibin"

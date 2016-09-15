@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "FlashFrostSpell",
         "Name": "FlashFrostSpell",
         "ResourcePath": "DATA/Spells/FlashFrostSpell.inibin"

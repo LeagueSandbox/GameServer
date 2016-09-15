@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BaronAcidBall",
         "Name": "BaronAcidBall",
         "ResourcePath": "DATA/Characters/SRU_Baron/Spells/BaronAcidBall.inibin"
@@ -84,7 +84,7 @@
             "MissileBoneName": "JawBot",
             "MissileEffect": "SRU_Baron_AcidBall.troy",
             "MissileEffectPlayer": "",
-            "MissileFixedTravelTime": ".300",
+            "MissileFixedTravelTime": "0.300",
             "MissileFollowsTerrainHeight": "0",
             "MissileGravity": "15.0000",
             "MissileLifetime": 0,

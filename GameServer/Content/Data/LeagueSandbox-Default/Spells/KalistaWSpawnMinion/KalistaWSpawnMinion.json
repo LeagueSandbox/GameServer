@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KalistaWSpawnMinion",
         "Name": "KalistaWSpawnMinion",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaWSpawnMinion.inibin"

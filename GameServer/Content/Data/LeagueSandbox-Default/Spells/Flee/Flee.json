@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Flee",
         "Name": "Flee",
         "ResourcePath": "DATA/Spells/Flee.inibin"

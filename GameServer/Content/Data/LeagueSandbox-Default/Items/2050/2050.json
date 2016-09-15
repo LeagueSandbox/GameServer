@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2050,
         "Name": "Explorer's Ward",
         "ResourcePath": "DATA/Items/2050.inibin"
@@ -43,7 +43,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemMiniWard"
         },
         "UNKNOWN_HASHES": {

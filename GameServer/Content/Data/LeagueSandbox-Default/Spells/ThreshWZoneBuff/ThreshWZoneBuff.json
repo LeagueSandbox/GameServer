@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ThreshWZoneBuff",
         "Name": "ThreshWZoneBuff",
         "ResourcePath": "DATA/Characters/Thresh/Spells/ThreshWZoneBuff.inibin"

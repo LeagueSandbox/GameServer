@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Charging",
         "Name": "Charging",
         "ResourcePath": "DATA/Spells/Charging.inibin"

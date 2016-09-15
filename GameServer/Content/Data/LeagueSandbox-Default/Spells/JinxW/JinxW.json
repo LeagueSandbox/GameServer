@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxW",
         "Name": "JinxW",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxW.inibin"
@@ -59,7 +59,7 @@
             "MissileEffect": "DarkBinding_mis.troy",
             "MissileGravity": 0,
             "MissileSpeed": "1200.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "friend",

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GarenPassiveHeal",
         "Name": "GarenPassiveHeal",
         "ResourcePath": "DATA/Characters/Garen/Spells/GarenPassiveHeal.inibin"

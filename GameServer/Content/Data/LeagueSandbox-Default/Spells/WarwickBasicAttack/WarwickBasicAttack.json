@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "WarwickBasicAttack",
         "Name": "WarwickBasicAttack",
         "ResourcePath": "DATA/Spells/WarwickBasicAttack.inibin"

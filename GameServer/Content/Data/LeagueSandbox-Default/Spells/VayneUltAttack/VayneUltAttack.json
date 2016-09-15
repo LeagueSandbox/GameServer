@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VayneUltAttack",
         "Name": "VayneUltAttack",
         "ResourcePath": "DATA/Spells/VayneUltAttack.inibin"

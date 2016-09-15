@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BaronRegen",
         "Name": "BaronRegen",
         "ResourcePath": "DATA/Spells/BaronRegen.inibin"

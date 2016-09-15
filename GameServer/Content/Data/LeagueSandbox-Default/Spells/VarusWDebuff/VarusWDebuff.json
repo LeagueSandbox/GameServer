@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VarusWDebuff",
         "Name": "VarusWDebuff",
         "ResourcePath": "DATA/Spells/VarusWDebuff.inibin"

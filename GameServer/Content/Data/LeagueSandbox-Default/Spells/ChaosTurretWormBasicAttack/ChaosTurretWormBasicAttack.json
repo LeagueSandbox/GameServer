@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ChaosTurretWormBasicAttack",
         "Name": "ChaosTurretWormBasicAttack",
         "ResourcePath": "DATA/Spells/ChaosTurretWormBasicAttack.inibin"

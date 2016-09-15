@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OdinCaptureChannelCooldownBuff",
         "Name": "OdinCaptureChannelCooldownBuff",
         "ResourcePath": "DATA/Spells/OdinCaptureChannelCooldownBuff.inibin"

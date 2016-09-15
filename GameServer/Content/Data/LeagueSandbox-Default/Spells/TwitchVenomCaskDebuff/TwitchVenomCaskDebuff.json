@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TwitchVenomCaskDebuff",
         "Name": "TwitchVenomCaskDebuff",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchVenomCaskDebuff.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "HecarimCritAttack",
         "Name": "HecarimCritAttack",
         "ResourcePath": "DATA/Spells/HecarimCritAttack.inibin"

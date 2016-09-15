@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SionBasicAttack",
         "Name": "SionBasicAttack",
         "ResourcePath": "DATA/Characters/Sion/Spells/SionBasicAttack.inibin"

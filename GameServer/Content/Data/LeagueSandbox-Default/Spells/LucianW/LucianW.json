@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LucianW",
         "Name": "LucianW",
         "ResourcePath": "DATA/Characters/Lucian/Spells/LucianW.inibin"
@@ -14,7 +14,7 @@
             "CastRange": "25000",
             "CastRangeDisplayOverride": "1000.0",
             "CastType": "0",
-            "Coefficient": ".9",
+            "Coefficient": "0.9",
             "Coefficient2": "0",
             "Cooldown": 14,
             "Description": "game_spell_description_LucianW",

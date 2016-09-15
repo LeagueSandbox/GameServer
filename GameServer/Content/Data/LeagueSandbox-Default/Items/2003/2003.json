@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2003,
         "Name": "Health Potion",
         "ResourcePath": "DATA/Items/2003.inibin"

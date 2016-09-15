@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VarusBasicAttack",
         "Name": "VarusBasicAttack",
         "ResourcePath": "DATA/Spells/VarusBasicAttack.inibin"

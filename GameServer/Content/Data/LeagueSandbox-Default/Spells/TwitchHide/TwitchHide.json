@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TwitchHide",
         "Name": "TwitchHide",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchHide.inibin"

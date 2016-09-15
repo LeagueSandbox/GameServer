@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "S5_SummonerSmiteQuick",
         "Name": "S5_SummonerSmiteQuick",
         "ResourcePath": "DATA/Spells/S5_SummonerSmiteQuick.inibin"

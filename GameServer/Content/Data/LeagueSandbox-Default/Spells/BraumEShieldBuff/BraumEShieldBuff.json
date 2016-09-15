@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BraumEShieldBuff",
         "Name": "BraumEShieldBuff",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumEShieldBuff.inibin"

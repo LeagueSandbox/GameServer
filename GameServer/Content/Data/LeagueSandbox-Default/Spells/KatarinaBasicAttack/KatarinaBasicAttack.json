@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KatarinaBasicAttack",
         "Name": "KatarinaBasicAttack",
         "ResourcePath": "DATA/Spells/KatarinaBasicAttack.inibin"

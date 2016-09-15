@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarR",
         "Name": "GnarR",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarR.inibin"
@@ -26,8 +26,8 @@
             "CastRangeDisplayOverride": "590.0000",
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".2",
-            "Coefficient2": ".5",
+            "Coefficient": "0.2",
+            "Coefficient2": "0.5",
             "Cooldown": 0,
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,
@@ -61,7 +61,7 @@
             "MissileEffect": "",
             "MissileGravity": 0,
             "MissileSpeed": "1200.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "friend",

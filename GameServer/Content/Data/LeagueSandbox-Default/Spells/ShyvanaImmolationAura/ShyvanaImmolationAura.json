@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ShyvanaImmolationAura",
         "Name": "ShyvanaImmolationAura",
         "ResourcePath": "DATA/Spells/ShyvanaImmolationAura.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AlistarCritAttack",
         "Name": "AlistarCritAttack",
         "ResourcePath": "DATA/Spells/AlistarCritAttack.inibin"

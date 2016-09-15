@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RengarBushSpeedBonus",
         "Name": "RengarBushSpeedBonus",
         "ResourcePath": "DATA/Characters/Rengar/Spells/RengarBushSpeedBonus.inibin"

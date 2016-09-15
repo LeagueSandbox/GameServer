@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "NightmareBotStatBuffManager",
         "Name": "NightmareBotStatBuffManager",
         "ResourcePath": "DATA/Spells/NightmareBotStatBuffManager.inibin"

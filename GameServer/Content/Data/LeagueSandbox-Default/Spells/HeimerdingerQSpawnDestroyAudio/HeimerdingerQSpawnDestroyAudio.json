@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "HeimerdingerQSpawnDestroyAudio",
         "Name": "HeimerdingerQSpawnDestroyAudio",
         "ResourcePath": "DATA/Characters/Heimerdinger/Spells/HeimerdingerQSpawnDestroyAudio.inibin"

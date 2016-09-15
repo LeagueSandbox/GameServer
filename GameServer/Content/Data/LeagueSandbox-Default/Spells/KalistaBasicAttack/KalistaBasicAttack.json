@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KalistaBasicAttack",
         "Name": "KalistaBasicAttack",
         "ResourcePath": "DATA/Characters/Kalista/Spells/KalistaBasicAttack.inibin"

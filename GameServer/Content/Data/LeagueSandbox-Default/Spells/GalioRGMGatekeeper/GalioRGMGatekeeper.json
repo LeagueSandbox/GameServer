@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GalioRGMGatekeeper",
         "Name": "GalioRGMGatekeeper",
         "ResourcePath": "DATA/Spells/GalioRGMGatekeeper.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SuperMinionBuff_Red",
         "Name": "SuperMinionBuff_Red",
         "ResourcePath": "DATA/Spells/SuperMinionBuff_Red.inibin"

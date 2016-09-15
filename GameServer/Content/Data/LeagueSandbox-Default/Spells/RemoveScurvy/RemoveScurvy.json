@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RemoveScurvy",
         "Name": "RemoveScurvy",
         "ResourcePath": "DATA/Characters/Gangplank/Spells/RemoveScurvy.inibin"

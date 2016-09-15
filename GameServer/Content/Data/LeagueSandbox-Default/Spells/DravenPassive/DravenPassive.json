@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DravenPassive",
         "Name": "DravenPassive",
         "ResourcePath": "DATA/Characters/Draven/Spells/DravenPassive.inibin"

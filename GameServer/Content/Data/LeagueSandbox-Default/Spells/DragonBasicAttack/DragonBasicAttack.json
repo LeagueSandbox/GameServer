@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DragonBasicAttack",
         "Name": "DragonBasicAttack",
         "ResourcePath": "DATA/Spells/DragonBasicAttack.inibin"

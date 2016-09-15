@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "MasterySpellWeaving",
         "Name": "MasterySpellWeaving",
         "ResourcePath": "DATA/Spells/MasterySpellWeaving.inibin"

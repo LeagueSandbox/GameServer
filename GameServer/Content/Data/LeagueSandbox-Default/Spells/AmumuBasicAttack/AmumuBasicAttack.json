@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AmumuBasicAttack",
         "Name": "AmumuBasicAttack",
         "ResourcePath": "DATA/Spells/AmumuBasicAttack.inibin"

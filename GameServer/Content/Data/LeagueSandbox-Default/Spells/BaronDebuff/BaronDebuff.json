@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BaronDebuff",
         "Name": "BaronDebuff",
         "ResourcePath": "DATA/Characters/SRU_Baron/Spells/BaronDebuff.inibin"

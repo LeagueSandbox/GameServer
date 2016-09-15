@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "NautilusAnchorDrag",
         "Name": "NautilusAnchorDrag",
         "ResourcePath": "DATA/Spells/NautilusAnchorDrag.inibin"

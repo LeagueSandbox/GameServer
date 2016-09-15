@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DeceiveCritBonus",
         "Name": "DeceiveCritBonus",
         "ResourcePath": "DATA/Characters/Shaco/Spells/DeceiveCritBonus.inibin"

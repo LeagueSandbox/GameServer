@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LuxLightBindingDummy",
         "Name": "LuxLightBindingDummy",
         "ResourcePath": "DATA/Spells/LuxLightBindingDummy.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SorakaBasicAttack",
         "Name": "SorakaBasicAttack",
         "ResourcePath": "DATA/Characters/Soraka/Spells/SorakaBasicAttack.inibin"

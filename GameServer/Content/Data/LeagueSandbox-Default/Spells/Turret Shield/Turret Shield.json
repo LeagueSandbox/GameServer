@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Turret Shield",
         "Name": "Turret Shield",
         "ResourcePath": "DATA/Spells/Turret Shield.inibin"

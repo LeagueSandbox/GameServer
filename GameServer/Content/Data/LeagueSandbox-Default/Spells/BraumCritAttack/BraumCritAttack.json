@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BraumCritAttack",
         "Name": "BraumCritAttack",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumCritAttack.inibin"

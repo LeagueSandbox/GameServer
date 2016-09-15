@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZiggsPassiveAttack",
         "Name": "ZiggsPassiveAttack",
         "ResourcePath": "DATA/Spells/ZiggsPassiveAttack.inibin"

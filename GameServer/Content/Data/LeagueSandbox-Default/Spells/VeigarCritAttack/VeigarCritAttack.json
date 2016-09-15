@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VeigarCritAttack",
         "Name": "VeigarCritAttack",
         "ResourcePath": "DATA/Characters/Veigar/Spells/VeigarCritAttack.inibin"

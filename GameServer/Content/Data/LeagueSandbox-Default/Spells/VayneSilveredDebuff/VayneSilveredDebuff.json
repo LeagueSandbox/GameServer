@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VayneSilveredDebuff",
         "Name": "VayneSilveredDebuff",
         "ResourcePath": "DATA/Spells/VayneSilveredDebuff.inibin"

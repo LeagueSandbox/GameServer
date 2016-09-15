@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3209,
         "Name": "Spirit of the Elder Lizard",
         "ResourcePath": "DATA/Items/3209.inibin"
@@ -49,7 +49,7 @@
             "RecipeItem2": 1036,
             "RecipeItem3": 1036,
             "RecipeItem4": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemSpiritStoneLizardDummy"
         },
         "UNKNOWN_HASHES": {

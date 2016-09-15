@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "DetonatingShot",
         "Name": "DetonatingShot",
         "ResourcePath": "DATA/Characters/Tristana/Spells/DetonatingShot.inibin"

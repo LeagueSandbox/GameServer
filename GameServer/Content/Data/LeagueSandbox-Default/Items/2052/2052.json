@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2052,
         "Name": "Poro-Snax",
         "ResourcePath": "DATA/Items/2052.inibin"
@@ -45,7 +45,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemPoroSnack"
         },
         "UNKNOWN_HASHES": {

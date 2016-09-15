@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VolibearPassiveHeal",
         "Name": "VolibearPassiveHeal",
         "ResourcePath": "DATA/Spells/VolibearPassiveHeal.inibin"

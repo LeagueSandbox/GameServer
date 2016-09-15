@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RengarRBuff",
         "Name": "RengarRBuff",
         "ResourcePath": "DATA/Characters/Rengar/Spells/RengarRBuff.inibin"

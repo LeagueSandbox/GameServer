@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RespawnClassic",
         "Name": "RespawnClassic",
         "ResourcePath": "DATA/Spells/RespawnClassic.inibin"

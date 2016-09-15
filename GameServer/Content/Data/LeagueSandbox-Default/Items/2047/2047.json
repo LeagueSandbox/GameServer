@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2047,
         "Name": "Oracle's Extract",
         "ResourcePath": "DATA/Items/2047.inibin"
@@ -44,7 +44,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "250",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "OracleExtractSight",
             "UsableInStore": 1
         },

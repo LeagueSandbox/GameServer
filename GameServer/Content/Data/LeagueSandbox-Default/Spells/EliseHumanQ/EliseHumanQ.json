@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "EliseHumanQ",
         "Name": "EliseHumanQ",
         "ResourcePath": "DATA/Characters/Elise/Spells/EliseHumanQ.inibin"
@@ -84,7 +84,7 @@
             "TargettingType": 1,
             "UseAnimatorFramerate": 1,
             "X1": "2.0000",
-            "X2": ".5000",
+            "X2": "0.5000",
             "X3": 0,
             "X4": 0,
             "X5": 0

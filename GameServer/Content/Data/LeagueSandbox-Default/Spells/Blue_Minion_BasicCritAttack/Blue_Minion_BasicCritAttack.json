@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Blue_Minion_BasicCritAttack",
         "Name": "Blue_Minion_BasicCritAttack",
         "ResourcePath": "DATA/Spells/Blue_Minion_BasicCritAttack.inibin"

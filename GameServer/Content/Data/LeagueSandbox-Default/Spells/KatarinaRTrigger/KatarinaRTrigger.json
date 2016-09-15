@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KatarinaRTrigger",
         "Name": "KatarinaRTrigger",
         "ResourcePath": "DATA/Spells/KatarinaRTrigger.inibin"

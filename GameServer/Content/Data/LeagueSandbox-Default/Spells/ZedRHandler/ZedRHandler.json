@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZedRHandler",
         "Name": "ZedRHandler",
         "ResourcePath": "DATA/Characters/Zed/Spells/ZedRHandler.inibin"

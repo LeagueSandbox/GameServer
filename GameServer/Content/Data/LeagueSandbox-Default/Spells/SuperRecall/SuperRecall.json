@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SuperRecall",
         "Name": "SuperRecall",
         "ResourcePath": "DATA/Spells/SuperRecall.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RadianceAura",
         "Name": "RadianceAura",
         "ResourcePath": "DATA/Spells/RadianceAura.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarWBuff",
         "Name": "GnarWBuff",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarWBuff.inibin"

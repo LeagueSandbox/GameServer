@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SRU_OrderMinionSiegeBasicAttack",
         "Name": "SRU_OrderMinionSiegeBasicAttack",
         "ResourcePath": "DATA/Characters/SRU_OrderMinionSiege/Spells/SRU_OrderMinionSiegeBasicAttack.inibin"

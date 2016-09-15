@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LeblancPassiveCooldown",
         "Name": "LeblancPassiveCooldown",
         "ResourcePath": "DATA/Characters/Leblanc/Spells/LeblancPassiveCooldown.inibin"

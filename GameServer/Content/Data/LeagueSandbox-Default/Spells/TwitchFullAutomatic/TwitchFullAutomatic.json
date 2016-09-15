@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TwitchFullAutomatic",
         "Name": "TwitchFullAutomatic",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchFullAutomatic.inibin"

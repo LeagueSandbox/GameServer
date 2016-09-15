@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2045,
         "Name": "Ruby Sightstone",
         "ResourcePath": "DATA/Items/2045.inibin"
@@ -47,7 +47,7 @@
             "Price": "400",
             "RecipeItem1": 2049,
             "RecipeItem2": 1028,
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemGhostWard"
         },
         "UNKNOWN_HASHES": {

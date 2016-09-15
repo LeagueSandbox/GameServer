@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RivenBasicAttack",
         "Name": "RivenBasicAttack",
         "ResourcePath": "DATA/Characters/Riven/Spells/RivenBasicAttack.inibin"

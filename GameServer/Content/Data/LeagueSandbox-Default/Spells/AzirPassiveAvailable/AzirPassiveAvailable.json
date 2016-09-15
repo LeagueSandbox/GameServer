@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AzirPassiveAvailable",
         "Name": "AzirPassiveAvailable",
         "ResourcePath": "DATA/Characters/Azir/Spells/AzirPassiveAvailable.inibin"

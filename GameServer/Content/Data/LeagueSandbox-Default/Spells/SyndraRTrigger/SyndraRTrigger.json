@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SyndraRTrigger",
         "Name": "SyndraRTrigger",
         "ResourcePath": "DATA/Spells/SyndraRTrigger.inibin"

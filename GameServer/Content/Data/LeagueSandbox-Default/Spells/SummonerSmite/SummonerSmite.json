@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SummonerSmite",
         "Name": "SummonerSmite",
         "ResourcePath": "DATA/Spells/SummonerSmite.inibin"

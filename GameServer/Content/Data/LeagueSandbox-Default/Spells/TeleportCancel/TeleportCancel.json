@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TeleportCancel",
         "Name": "TeleportCancel",
         "ResourcePath": "DATA/Spells/TeleportCancel.inibin"

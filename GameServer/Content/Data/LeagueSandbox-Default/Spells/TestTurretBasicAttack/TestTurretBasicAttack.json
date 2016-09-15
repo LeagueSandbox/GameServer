@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TestTurretBasicAttack",
         "Name": "TestTurretBasicAttack",
         "ResourcePath": "DATA/Spells/TestTurretBasicAttack.inibin"

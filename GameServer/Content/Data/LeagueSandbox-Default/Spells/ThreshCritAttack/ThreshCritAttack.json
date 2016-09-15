@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ThreshCritAttack",
         "Name": "ThreshCritAttack",
         "ResourcePath": "DATA/Characters/Thresh/Spells/ThreshCritAttack.inibin"

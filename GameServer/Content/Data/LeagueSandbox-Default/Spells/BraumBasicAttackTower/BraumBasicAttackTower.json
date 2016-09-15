@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "BraumBasicAttackTower",
         "Name": "BraumBasicAttackTower",
         "ResourcePath": "DATA/Characters/Braum/Spells/BraumBasicAttackTower.inibin"

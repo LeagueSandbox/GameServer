@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemBlackfireTorchSpell",
         "Name": "ItemBlackfireTorchSpell",
         "ResourcePath": "DATA/Spells/ItemBlackfireTorchSpell.inibin"

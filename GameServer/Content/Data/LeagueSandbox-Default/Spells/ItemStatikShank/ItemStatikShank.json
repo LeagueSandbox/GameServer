@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemStatikShank",
         "Name": "ItemStatikShank",
         "ResourcePath": "DATA/Spells/ItemStatikShank.inibin"

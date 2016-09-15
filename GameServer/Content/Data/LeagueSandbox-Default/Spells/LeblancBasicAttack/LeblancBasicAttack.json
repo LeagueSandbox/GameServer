@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "LeblancBasicAttack",
         "Name": "LeblancBasicAttack",
         "ResourcePath": "DATA/Characters/Leblanc/Spells/LeblancBasicAttack.inibin"

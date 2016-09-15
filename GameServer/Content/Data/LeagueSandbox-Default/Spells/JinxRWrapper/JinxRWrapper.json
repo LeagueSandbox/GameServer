@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "JinxRWrapper",
         "Name": "JinxRWrapper",
         "ResourcePath": "DATA/Characters/Jinx/Spells/JinxRWrapper.inibin"
@@ -25,7 +25,7 @@
             "CastRange": "25000.0000",
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".5",
+            "Coefficient": "0.5",
             "Coefficient2": 1,
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

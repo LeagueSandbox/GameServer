@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZedPBAOE",
         "Name": "ZedPBAOE",
         "ResourcePath": "DATA/Characters/Zed/Spells/ZedPBAOE.inibin"
@@ -26,7 +26,7 @@
             "CastRangeDisplayOverride": 0,
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".7",
+            "Coefficient": "0.7",
             "Cooldown": "7.0000",
             "DeathRecapPriority": "0",
             "DelayCastOffsetPercent": -0.5,

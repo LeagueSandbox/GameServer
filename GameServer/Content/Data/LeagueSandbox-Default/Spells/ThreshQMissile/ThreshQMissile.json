@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ThreshQMissile",
         "Name": "ThreshQMissile",
         "ResourcePath": "DATA/Characters/Thresh/Spells/ThreshQMissile.inibin"

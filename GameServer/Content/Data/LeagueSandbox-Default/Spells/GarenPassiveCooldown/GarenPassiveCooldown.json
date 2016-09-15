@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GarenPassiveCooldown",
         "Name": "GarenPassiveCooldown",
         "ResourcePath": "DATA/Characters/Garen/Spells/GarenPassiveCooldown.inibin"

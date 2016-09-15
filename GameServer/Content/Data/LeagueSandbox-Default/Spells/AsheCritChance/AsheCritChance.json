@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "AsheCritChance",
         "Name": "AsheCritChance",
         "ResourcePath": "DATA/Characters/Ashe/Spells/AsheCritChance.inibin"

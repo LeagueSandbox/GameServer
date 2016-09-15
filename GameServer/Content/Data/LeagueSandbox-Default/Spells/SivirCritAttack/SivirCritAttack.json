@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SivirCritAttack",
         "Name": "SivirCritAttack",
         "ResourcePath": "DATA/Characters/Sivir/Spells/SivirCritAttack.inibin"

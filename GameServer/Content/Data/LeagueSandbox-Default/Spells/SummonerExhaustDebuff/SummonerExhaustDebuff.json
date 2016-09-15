@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SummonerExhaustDebuff",
         "Name": "SummonerExhaustDebuff",
         "ResourcePath": "DATA/Spells/SummonerExhaustDebuff.inibin"

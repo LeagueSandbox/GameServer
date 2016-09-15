@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ShyvanaTransformLeap",
         "Name": "ShyvanaTransformLeap",
         "ResourcePath": "DATA/Spells/ShyvanaTransformLeap.inibin"

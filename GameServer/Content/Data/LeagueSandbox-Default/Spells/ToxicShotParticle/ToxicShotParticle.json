@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ToxicShotParticle",
         "Name": "ToxicShotParticle",
         "ResourcePath": "DATA/Spells/ToxicShotParticle.inibin"

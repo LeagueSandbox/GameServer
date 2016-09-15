@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "TwitchHideInShadows",
         "Name": "TwitchHideInShadows",
         "ResourcePath": "DATA/Characters/Twitch/Spells/TwitchHideInShadows.inibin"

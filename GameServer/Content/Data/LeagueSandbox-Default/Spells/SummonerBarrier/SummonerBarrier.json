@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SummonerBarrier",
         "Name": "SummonerBarrier",
         "ResourcePath": "DATA/Spells/SummonerBarrier.inibin"

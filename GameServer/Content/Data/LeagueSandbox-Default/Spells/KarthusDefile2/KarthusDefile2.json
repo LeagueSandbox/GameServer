@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KarthusDefile2",
         "Name": "KarthusDefile2",
         "ResourcePath": "DATA/Characters/Karthus/Spells/KarthusDefile2.inibin"
@@ -67,7 +67,7 @@
             "MissilePerceptionBubbleRadius": 0,
             "MissilePerceptionBubbleRevealsStealth": "0",
             "MissileSpeed": "1000.0000",
-            "OverrideCastTime": ".25",
+            "OverrideCastTime": "0.25",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
             "SelectionPreference": "friend",

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ZyraThornPlantMissileOnSpawn",
         "Name": "ZyraThornPlantMissileOnSpawn",
         "ResourcePath": "DATA/Spells/ZyraThornPlantMissileOnSpawn.inibin"

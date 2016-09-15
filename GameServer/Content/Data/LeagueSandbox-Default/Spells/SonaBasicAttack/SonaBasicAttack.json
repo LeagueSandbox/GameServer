@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SonaBasicAttack",
         "Name": "SonaBasicAttack",
         "ResourcePath": "DATA/Characters/Sona/Spells/SonaBasicAttack.inibin"

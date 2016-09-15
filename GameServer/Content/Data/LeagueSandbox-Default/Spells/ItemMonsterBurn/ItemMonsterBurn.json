@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemMonsterBurn",
         "Name": "ItemMonsterBurn",
         "ResourcePath": "DATA/Spells/ItemMonsterBurn.inibin"

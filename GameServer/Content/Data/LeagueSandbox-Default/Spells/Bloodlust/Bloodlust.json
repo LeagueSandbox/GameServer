@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Bloodlust",
         "Name": "Bloodlust",
         "ResourcePath": "DATA/Characters/Tryndamere/Spells/Bloodlust.inibin"
@@ -60,7 +60,7 @@
         "UNKNOWN_HASHES": {
             "1090971346": 0.35,
             "1307804625": "2.0000",
-            "1469470033": ".95",
+            "1469470033": "0.95",
             "1631135441": "50.0000",
             "1792800849": 0.3,
             "1829373218": "Instacast | AffectFriends | AffectHeroes | AlwaysSelf",

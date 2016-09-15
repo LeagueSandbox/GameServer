@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemDisable",
         "Name": "ItemDisable",
         "ResourcePath": "DATA/Spells/ItemDisable.inibin"

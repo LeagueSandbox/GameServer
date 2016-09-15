@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemGlacialSpikeCast",
         "Name": "ItemGlacialSpikeCast",
         "ResourcePath": "DATA/Spells/ItemGlacialSpikeCast.inibin"

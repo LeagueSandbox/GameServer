@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SRU_GrompBasicAttack",
         "Name": "SRU_GrompBasicAttack",
         "ResourcePath": "DATA/Characters/SRU_Gromp/Spells/SRU_GrompBasicAttack.inibin"

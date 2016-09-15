@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "OrianaRedactCommand",
         "Name": "OrianaRedactCommand",
         "ResourcePath": "DATA/Spells/OrianaRedactCommand.inibin"

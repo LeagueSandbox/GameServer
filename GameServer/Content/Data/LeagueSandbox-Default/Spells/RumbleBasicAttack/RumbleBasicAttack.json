@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RumbleBasicAttack",
         "Name": "RumbleBasicAttack",
         "ResourcePath": "DATA/Characters/Rumble/Spells/RumbleBasicAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "KennenCritAttack",
         "Name": "KennenCritAttack",
         "ResourcePath": "DATA/Spells/KennenCritAttack.inibin"

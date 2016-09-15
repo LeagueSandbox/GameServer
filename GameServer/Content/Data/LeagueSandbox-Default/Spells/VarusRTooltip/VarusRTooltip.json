@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "VarusRTooltip",
         "Name": "VarusRTooltip",
         "ResourcePath": "DATA/Spells/VarusRTooltip.inibin"

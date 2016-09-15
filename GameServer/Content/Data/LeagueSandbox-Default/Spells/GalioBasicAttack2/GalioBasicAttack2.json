@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GalioBasicAttack2",
         "Name": "GalioBasicAttack2",
         "ResourcePath": "DATA/Spells/GalioBasicAttack2.inibin"

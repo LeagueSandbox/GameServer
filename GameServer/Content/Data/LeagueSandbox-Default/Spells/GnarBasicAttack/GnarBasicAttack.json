@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "GnarBasicAttack",
         "Name": "GnarBasicAttack",
         "ResourcePath": "DATA/Characters/Gnar/Spells/GnarBasicAttack.inibin"

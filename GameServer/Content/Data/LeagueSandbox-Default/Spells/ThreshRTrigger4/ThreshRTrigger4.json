@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ThreshRTrigger4",
         "Name": "ThreshRTrigger4",
         "ResourcePath": "DATA/Characters/Thresh/Spells/ThreshRTrigger4.inibin"

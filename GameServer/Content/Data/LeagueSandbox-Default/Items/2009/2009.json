@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2009,
         "Name": "Total Biscuit of Rejuvenation",
         "ResourcePath": "DATA/Items/2009.inibin"
@@ -43,7 +43,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemMiniRegenPotion"
         },
         "UNKNOWN_HASHES": {

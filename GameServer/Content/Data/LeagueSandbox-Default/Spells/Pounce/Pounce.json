@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "Pounce",
         "Name": "Pounce",
         "ResourcePath": "DATA/Characters/Nidalee/Spells/Pounce.inibin"
@@ -27,7 +27,7 @@
             "CastRangeDisplayOverride": "400.0000",
             "CastTargetAdditionalUnitsRadius": 0,
             "CastType": "0",
-            "Coefficient": ".3000",
+            "Coefficient": "0.3000",
             "Coefficient2": 0.02,
             "Cooldown": "5.000",
             "DeathRecapPriority": "0",

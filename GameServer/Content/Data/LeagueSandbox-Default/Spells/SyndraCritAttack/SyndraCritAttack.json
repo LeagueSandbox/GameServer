@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "SyndraCritAttack",
         "Name": "SyndraCritAttack",
         "ResourcePath": "DATA/Spells/SyndraCritAttack.inibin"

@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 3160,
         "Name": "Feral Flare",
         "ResourcePath": "DATA/Items/3160.inibin"
@@ -51,7 +51,7 @@
             "RecipeItem2": "0",
             "RecipeItem3": "0",
             "RecipeItem4": "0",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "ItemFeralFlare"
         },
         "UNKNOWN_HASHES": {

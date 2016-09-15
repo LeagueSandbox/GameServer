@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "ItemDisableShacoBox",
         "Name": "ItemDisableShacoBox",
         "ResourcePath": "DATA/Spells/ItemDisableShacoBox.inibin"

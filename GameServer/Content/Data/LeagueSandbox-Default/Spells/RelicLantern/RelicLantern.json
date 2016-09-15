@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": "RelicLantern",
         "Name": "RelicLantern",
         "ResourcePath": "DATA/Spells/RelicLantern.inibin"

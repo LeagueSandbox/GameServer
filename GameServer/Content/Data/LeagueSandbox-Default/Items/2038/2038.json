@@ -1,6 +1,6 @@
 {
     "MetaData": {
-        "ContentFormatVersion": 2,
+        "ContentFormatVersion": 3,
         "Id": 2038,
         "Name": "Elixir of Agility",
         "ResourcePath": "DATA/Items/2038.inibin"
@@ -43,7 +43,7 @@
             "PercentPhysicalDamageMod": "0",
             "PercentSpellBlockMod": "0",
             "Price": "250",
-            "SellBackModifier": ".4",
+            "SellBackModifier": "0.4",
             "SpellName": "PotionOfElusiveness",
             "UsableInStore": "0"
         },
