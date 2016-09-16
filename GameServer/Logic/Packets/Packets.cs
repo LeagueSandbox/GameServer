@@ -807,7 +807,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     };
 
-    public class Dash : GamePacket
+    /*public class Dash : GamePacket
     {
         public Dash(Unit u, float toX, float toY, float dashSpeed, float leapHeight) : base(PacketCmdS2C.PKT_S2C_Dash, 0)
         {
@@ -830,6 +830,51 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             MovementVector from = _game.Map.ToMovementVector(u.X, u.Y);
             MovementVector to = _game.Map.ToMovementVector(toX, toY);
+
+            buffer.Write((short)from.x);
+            buffer.Write((short)from.y);
+            buffer.Write((short)to.x);
+            buffer.Write((short)to.y);
+        }
+    }*/
+
+    public class Dash : GamePacket
+    {
+        public Dash(Unit u,
+                    Target t,
+                    float dashSpeed,
+                    bool keepFacingLastDirection,
+                    float leapHeight = 0.0f,
+                    float followTargetMaxDistance = 0.0f,
+                    float backDistance = 0.0f,
+                    float travelTime = 0.0f
+        ) : base(PacketCmdS2C.PKT_S2C_Dash)
+        {
+            buffer.Write((short)1); // Number of dashes
+            buffer.Write((byte)4); // Waypoints size * 2
+            buffer.Write((uint)u.NetId);
+            buffer.Write((float)dashSpeed);
+            buffer.Write((float)leapHeight);
+            buffer.Write((float)u.X);
+            buffer.Write((float)u.Y);
+            buffer.Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
+            if (t.isSimpleTarget())
+            {
+                buffer.Write((uint)0);
+            }
+            else
+            {
+                buffer.Write((uint)(t as GameObject).NetId);
+            }
+
+            buffer.Write((float)followTargetMaxDistance);
+            buffer.Write((float)backDistance);
+            buffer.Write((float)travelTime);
+
+            buffer.Write((byte)0x00); // Vector bitmask on whether they're int16 or byte
+
+            MovementVector from = _game.Map.ToMovementVector(u.X, u.Y);
+            MovementVector to = _game.Map.ToMovementVector(t.X, t.Y);
 
             buffer.Write((short)from.x);
             buffer.Write((short)from.y);

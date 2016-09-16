@@ -7,6 +7,7 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using Ninject;
 using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {

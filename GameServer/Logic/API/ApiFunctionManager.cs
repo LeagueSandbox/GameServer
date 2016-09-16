@@ -80,7 +80,16 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.Model = model;
         }
 
-        public static void DashTo(Unit unit, float x, float y, float dashSpeed, float leapHeight, string animation = null)
+        public static void DashToUnit(Unit unit,
+                                  Target target,
+                                  float dashSpeed,
+                                  bool keepFacingLastDirection,
+                                  string animation = null,
+                                  float leapHeight = 0.0f,
+                                  float followTargetMaxDistance = 0.0f,
+                                  float backDistance = 0.0f,
+                                  float travelTime = 0.0f
+                                  )
         {
             if (animation != null)
             {
@@ -90,10 +99,42 @@ namespace LeagueSandbox.GameServer.Logic.API
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
 
-            var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(x, y));
-            unit.DashTo(newCoords.X, newCoords.Y, dashSpeed);
+            if (target.isSimpleTarget())
+            {
+                var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newTarget = new Target(newCoords);
+                unit.DashTo(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
+                _game.PacketNotifier.notifyDash(unit, newTarget, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance, backDistance, travelTime);
+            }
+            else
+            {
+                unit.DashTo(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
+                _game.PacketNotifier.notifyDash(unit, target, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance, backDistance, travelTime);
+            }
             unit.TargetUnit = null;
-            _game.PacketNotifier.notifyDash(unit, x, y, dashSpeed, leapHeight);
+        }
+
+        public static void DashTo(Unit unit,
+                                 float x,
+                                 float y,
+                                 float dashSpeed,
+                                 bool keepFacingLastDirection,
+                                 string animation = null,
+                                 float leapHeight = 0.0f,
+                                 float followTargetMaxDistance = 0.0f,
+                                 float backDistance = 0.0f,
+                                 float travelTime = 0.0f
+                                 )
+        {
+            DashToUnit(unit,
+                   new Target(x, y),
+                   dashSpeed,
+                   keepFacingLastDirection,
+                   animation,
+                   leapHeight,
+                   followTargetMaxDistance,
+                   backDistance,
+                   travelTime);
         }
 
         public static TeamId GetTeam(GameObject gameObject)
@@ -124,7 +165,8 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             scriptEngine.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(float), typeof(string) }));
+            scriptEngine.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(bool), typeof(string), typeof(float), typeof(float), typeof(float), typeof(float) }));
+            scriptEngine.RegisterFunction("dashToUnit", null, typeof(ApiFunctionManager).GetMethod("DashToUnit", new Type[] { typeof(Unit), typeof(Target), typeof(float), typeof(bool), typeof(string), typeof(float), typeof(float), typeof(float), typeof(float) }));
             scriptEngine.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             scriptEngine.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));
             scriptEngine.RegisterFunction("sendPacket", null, typeof(ApiFunctionManager).GetMethod("SendPacket", new Type[] { typeof(string) }));
