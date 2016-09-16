@@ -6,7 +6,7 @@ function onFinishCasting()
     local range = to * 600
     local trueCoords = current + range
     
-    dashTo(owner, trueCoords.x, trueCoords.y, 809, 50, "SPELL3")
+    dashTo(owner, trueCoords.x, trueCoords.y, 809, false, "SPELL3", 40)
 end
  
 function applyEffects()
