@@ -141,7 +141,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         private static readonly Dictionary<TurretType, int[]> _turretItems = new Dictionary<TurretType, int[]>
         {
-            { TurretType.OuterTurret, new int[] { 1500, 1501, 1502 } }
+            { TurretType.OuterTurret, new int[] { 1500, 1501, 1502, 1503 } },
+            { TurretType.InnerTurret, new int[] { 1500, 1501, 1502, 1503, 1504 } },
+            { TurretType.InhibitorTurret, new int[] { 1501, 1502, 1503, 1505 } },
+            { TurretType.NexusTurret, new int[] { 1501, 1502, 1503, 1505 } }
         };
 
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();

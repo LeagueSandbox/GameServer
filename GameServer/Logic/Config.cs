@@ -18,6 +18,9 @@ namespace LeagueSandbox.GameServer.Logic
         public ContentManager ContentManager { get; private set; }
         public const string VERSION = "Version 4.20.0.315 [PUBLIC]";
 
+        public bool CooldownsDisabled { get; protected set; }
+        public bool ManaCostsDisabled { get; protected set; }
+
         public Config(string path)
         {
             LoadConfig(path);
@@ -36,6 +39,11 @@ namespace LeagueSandbox.GameServer.Logic
                 var playerConfig = new PlayerConfig(player);
                 Players.Add(string.Format("player{0}", Players.Count + 1), playerConfig);
             }
+
+            //Read cost/cd info
+            var spellInfo = data.SelectToken("spellInfo");
+            CooldownsDisabled = (bool)spellInfo.SelectToken("NO_COOLDOWN");
+            ManaCostsDisabled = (bool)spellInfo.SelectToken("NO_MANACOST");
 
             // Read the game configuration
             var game = data.SelectToken("game");

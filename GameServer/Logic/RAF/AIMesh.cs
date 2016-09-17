@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.Logic.RAF
         {
             return (castRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength());
         }
-        public Vector2 getClosestTerrainExit(Vector2 location, bool limited = false)
+        public Vector2 getClosestTerrainExit(Vector2 location)
         {
             if (isWalkable(location.X, location.Y))
             {
@@ -118,23 +118,16 @@ namespace LeagueSandbox.GameServer.Logic.RAF
             var angle = Math.PI / 180;
             var rr = (location.X - trueX) * (location.X - trueX) + (location.Y - trueY) * (location.Y - trueY);
             var r = Math.Sqrt(rr);
-            var limit = limited ? 200 : -1;
             // x = r * cos(angle)
             // y = r * sin(angle)
-            // r = distance from origin
+            // r = distance from center
             // Draws spirals until it finds a way out
-            while (true)
+            while (!isWalkable((float)trueX, (float)trueY))
             {
-                if (limit == 0)
-                {
-                    return location;
-                }
-                trueX = location.X + (r * Math.Cos(angle));
-                trueY = location.Y + (r * Math.Sin(angle));
-                if (isWalkable((float)trueX, (float)trueY)) break;
+                trueX = location.X + r * Math.Cos(angle);
+                trueY = location.Y + r * Math.Sin(angle);
                 angle += Math.PI / 180;
-                r++;
-                limit--;
+                r += 0.1f;
             }
             return new Vector2((float)trueX, (float)trueY);
         }

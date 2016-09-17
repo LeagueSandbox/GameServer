@@ -1,4 +1,7 @@
-Vector2 = require 'Vector2' -- include 2d vector lib 
+Vector2 = require 'Vector2' -- include 2d vector lib
+
+function onStartCasting()
+end
 
 function onFinishCasting()
     local current = Vector2:new(owner.X, owner.Y)
@@ -18,4 +21,7 @@ function onFinishCasting()
 end
 
 function applyEffects()
+end
+
+function onUpdate(diff)
 end

@@ -2,7 +2,7 @@ function onUpdate(diff)
 	
 end
 
-function onDamageTaken(attacker, damage, dmgType, source)
+function onDamageTaken(attacker, damage, type, source)
 	
 end
 
@@ -14,6 +14,10 @@ function onDealDamage(target, damage, damageType, source)
 	
 end
 
-function onSpellCast(target)
+function onSpellCast(x, y, slot, target)
     
+end
+
+function onDie(killer)
+
 end

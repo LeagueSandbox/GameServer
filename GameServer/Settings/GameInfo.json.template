@@ -11,6 +11,7 @@
             "ribbon": 2,
             "icon": 0,
             "runes": {
+              //DO NOT CHANGE THESE IF YOU DONT KNOW WHAT YOU ARE DOING.
               "1": 5245,
               "2": 5245,
               "3": 5245,
@@ -25,7 +26,7 @@
               "12": 5317,
               "13": 5317,
               "14": 5317,
-              "15": 5317,                                            
+              "15": 5317,
               "16": 5317,
               "17": 5317,
               "18": 5317,
@@ -47,5 +48,11 @@
     "game": {
         "map": 1,
         "gameMode": "LeagueSandbox-Default"
+    },
+    "spellInfo": {
+      // True = sandbox mode
+      // False = normal game
+      "NO_MANACOST": true,
+      "NO_COOLDOWN": true
     }
 }

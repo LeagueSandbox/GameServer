@@ -1,3 +1,6 @@
+function onStartCasting()
+end
+
 function onFinishCasting()
 	local units = getChampionsInRange(owner, 850, true)
 	local mostWoundedAlliedChampion = nil
@@ -23,9 +26,9 @@ function onFinishCasting()
 			mostWoundedAlliedChampion:GetStats().CurrentHealth = newHealth
 		end
 		
-		local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, owner)
-		buff:setMovementSpeedPercentModifier(30)
-		addBuff(buff)
+		--local buff = Buff.new("Haste", 1.0, mostWoundedAlliedChampion, owner)
+		--buff:setMovementSpeedPercentModifier(30)
+		--addBuff(buff)
 		
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_02.troy", mostWoundedAlliedChampion )
 		addParticleTarget(mostWoundedAlliedChampion, "global_ss_heal_speedboost.troy", mostWoundedAlliedChampion )
@@ -38,13 +41,16 @@ function onFinishCasting()
 		owner:GetStats().CurrentHealth = newHealth
 	end
 	
-	local buff2 = Buff.new("Haste", 1.0, owner, owner)
-	buff2:setMovementSpeedPercentModifier(30)    
-	addBuff(buff2)
+	--local buff2 = Buff.new("Haste", 1.0, owner, owner)
+	--buff2:setMovementSpeedPercentModifier(30)    
+	--addBuff(buff2)
 	
 	addParticleTarget(owner, "global_ss_heal.troy", owner)	
 	addParticleTarget(owner, "global_ss_heal_speedboost.troy", owner)
 end
 
 function applyEffects()
+end
+
+function onUpdate(diff)
 end

@@ -1,4 +1,7 @@
 Vector2 = require 'Vector2' -- include 2d vector lib
+
+function onStartCasting()
+end
  
 function onFinishCasting()
     local current = Vector2:new(owner.X, owner.Y)
@@ -30,13 +33,15 @@ function onFinishCasting()
             end
         end
     end
-    if target then
+    if (target) and (not unitIsTurret(target)) then
         addProjectileTarget("EzrealArcaneShiftMissile", target)
     end
 end
  
 function applyEffects()
     dealMagicalDamage(25+spellLevel*50+owner:GetStats().AbilityPower.Total*0.75)
-    addParticleTarget(owner, "Ezreal_arcaneshift_tar.troy", getTarget())
     destroyProjectile()
+end
+
+function onUpdate(diff)
 end
