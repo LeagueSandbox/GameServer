@@ -103,18 +103,36 @@ namespace LeagueSandbox.GameServer.Logic.API
             {
                 var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
-                unit.DashTo(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.notifyDash(unit, newTarget, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance, backDistance, travelTime);
+                unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
+                _game.PacketNotifier.notifyDash(
+                    unit,
+                    newTarget,
+                    dashSpeed,
+                    keepFacingLastDirection,
+                    leapHeight,
+                    followTargetMaxDistance,
+                    backDistance,
+                    travelTime
+                );
             }
             else
             {
-                unit.DashTo(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.notifyDash(unit, target, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance, backDistance, travelTime);
+                unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
+                _game.PacketNotifier.notifyDash(
+                    unit,
+                    target,
+                    dashSpeed,
+                    keepFacingLastDirection,
+                    leapHeight,
+                    followTargetMaxDistance,
+                    backDistance,
+                    travelTime
+                );
             }
             unit.TargetUnit = null;
         }
 
-        public static void DashTo(Unit unit,
+        public static void DashToLocation(Unit unit,
                                  float x,
                                  float y,
                                  float dashSpeed,
@@ -126,15 +144,17 @@ namespace LeagueSandbox.GameServer.Logic.API
                                  float travelTime = 0.0f
                                  )
         {
-            DashToUnit(unit,
-                   new Target(x, y),
-                   dashSpeed,
-                   keepFacingLastDirection,
-                   animation,
-                   leapHeight,
-                   followTargetMaxDistance,
-                   backDistance,
-                   travelTime);
+            DashToUnit(
+                unit,
+                new Target(x, y),
+                dashSpeed,
+                keepFacingLastDirection,
+                animation,
+                leapHeight,
+                followTargetMaxDistance,
+                backDistance,
+                travelTime
+            );
         }
 
         public static TeamId GetTeam(GameObject gameObject)
@@ -165,7 +185,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("printChat", null, typeof(ApiFunctionManager).GetMethod("PrintChat", new Type[] { typeof(string) }));
             scriptEngine.RegisterFunction("getUnitsInRange", null, typeof(ApiFunctionManager).GetMethod("GetUnitsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("getChampionsInRange", null, typeof(ApiFunctionManager).GetMethod("GetChampionsInRange", new Type[] { typeof(Target), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("dashTo", null, typeof(ApiFunctionManager).GetMethod("DashTo", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(bool), typeof(string), typeof(float), typeof(float), typeof(float), typeof(float) }));
+            scriptEngine.RegisterFunction("dashToLocation", null, typeof(ApiFunctionManager).GetMethod("DashToLocation", new Type[] { typeof(Unit), typeof(float), typeof(float), typeof(float), typeof(bool), typeof(string), typeof(float), typeof(float), typeof(float), typeof(float) }));
             scriptEngine.RegisterFunction("dashToUnit", null, typeof(ApiFunctionManager).GetMethod("DashToUnit", new Type[] { typeof(Unit), typeof(Target), typeof(float), typeof(bool), typeof(string), typeof(float), typeof(float), typeof(float), typeof(float) }));
             scriptEngine.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             scriptEngine.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));

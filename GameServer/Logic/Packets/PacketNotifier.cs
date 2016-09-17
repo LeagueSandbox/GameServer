@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyMovement(GameObject o)
         {
-            var answer = new MovementAns(o, _game.Map);
+            var answer = new MovementAns(o);
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
@@ -426,7 +426,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                                float backDistance,
                                float travelTime)
         {
-            var dash = new Dash(u, t, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance, backDistance, travelTime);
+            var dash = new Dash(u,
+                                t,
+                                dashSpeed,
+                                keepFacingLastDirection,
+                                leapHeight,
+                                followTargetMaxDistance,
+                                backDistance,
+                                travelTime);
             _game.PacketHandlerManager.broadcastPacketVision(u, dash, Channel.CHL_S2C);
         }
     }
