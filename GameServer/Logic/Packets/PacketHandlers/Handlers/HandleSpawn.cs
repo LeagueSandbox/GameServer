@@ -73,7 +73,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     // To suppress game HP-related errors for enemy turrets out of vision
                     var sh = new SetHealth(t);
                     _game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
-                    t.BuildTurretItems();
+
+                    foreach (var item in t.Items)
+                    {
+                        _game.PacketNotifier.notifyItemBought(t, item);
+                    }
+
                     continue;
                 }
                 else if (kv.Value is LevelProp)
