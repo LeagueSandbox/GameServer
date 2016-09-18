@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                     stats.CurrentHealth = 1300;
                     stats.HealthPoints.BaseValue = 1300;
-                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.Range.BaseValue = 905.0f;
                     stats.AttackSpeedFlat = 0.83f;
                     stats.Armor.BaseValue = 60.0f;
                     stats.MagicResist.BaseValue = 100.0f;
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.CurrentHealth = 1300;
                     stats.HealthPoints.BaseValue = 1300;
                     stats.AttackDamage.BaseValue = 100;
-                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.Range.BaseValue = 905.0f;
                     stats.AttackSpeedFlat = 0.83f;
                     stats.Armor.BaseValue = 60.0f;
                     stats.MagicResist.BaseValue = 100.0f;
@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.HealthPoints.BaseValue = 1300;
                     stats.HealthRegeneration.BaseValue = 5;
                     stats.ArmorPenetration.PercentBonus = 0.825f;
-                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.Range.BaseValue = 905.0f;
                     stats.AttackSpeedFlat = 0.83f;
                     stats.Armor.BaseValue = 67.0f;
                     stats.MagicResist.BaseValue = 100.0f;
@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.HealthPoints.BaseValue = 1300;
                     stats.HealthRegeneration.BaseValue = 5;
                     stats.ArmorPenetration.PercentBonus = 0.825f;
-                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.Range.BaseValue = 905.0f;
                     stats.AttackSpeedFlat = 0.83f;
                     stats.Armor.BaseValue = 65.0f;
                     stats.MagicResist.BaseValue = 100.0f;
@@ -149,15 +149,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.AttackDamage.BaseValue = 999.0f;
                     globalGold = 100.0f;
                     stats.Range.BaseValue = 1250.0f;
-                    AutoAttackProjectileSpeed = 1250.0f;
-                    AutoAttackDelay = (1.0f / 30.0f); //Pretty sure this aint the true value
+                    IsMelee = true;
+                    AutoAttackDelay = (1.0f / 30.0f);
                     break;
                 default:
 
                     stats.CurrentHealth = 2000;
                     stats.HealthPoints.BaseValue = 2000;
                     stats.AttackDamage.BaseValue = 100;
-                    stats.Range.BaseValue = TURRET_RANGE;
+                    stats.Range.BaseValue = 905.0f;
                     stats.AttackSpeedFlat = 0.83f;
                     stats.Armor.PercentBonus = 0.5f;
                     stats.MagicResist.PercentBonus = 0.5f;
@@ -293,6 +293,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override float getMoveSpeed()
         {
             return 0;
+        }
+
+        public override void autoAttackHit(Unit target)
+        {
+            if (Type == TurretType.FountainTurret)
+            {
+                dealDamageTo(target, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            }
+            else
+            {
+                base.autoAttackHit(target);
+            }
         }
     }
 }

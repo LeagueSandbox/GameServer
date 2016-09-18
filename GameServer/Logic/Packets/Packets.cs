@@ -1667,7 +1667,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class TurretSpawn : BasePacket //TODO: check
     {
-        public TurretSpawn(LaneTurret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
+        public TurretSpawn(BaseTurret t) : base(PacketCmdS2C.PKT_S2C_TurretSpawn)
         {
             buffer.Write((int)t.NetId);
             buffer.Write((byte)0x40);
@@ -3008,7 +3008,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)targetZ);
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ()-100.0f);
@@ -3047,10 +3047,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)targetZ-100.0f);
+            buffer.Write((float)p.GetZ()-100.0f);
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)targetZ);
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Target.Y);
             if (!p.Target.isSimpleTarget())
             {
@@ -3441,8 +3441,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(slotId);
             buffer.Write((byte)0xF8); // 4.18
-            buffer.Write(totalCd);
             buffer.Write(currentCd);
+            buffer.Write(totalCd);
         }
     }
 

@@ -25,12 +25,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(x, y, collisionRadius, 0, netId)
         {
-            this._originSpell = originSpell;
-            this._moveSpeed = moveSpeed;
-            this.Owner = owner;
-            this.ProjectileId = projectileId;
-            this._flags = flags;
-            this.ObjectsHit = new List<GameObject>();
+            _originSpell = originSpell;
+            _moveSpeed = moveSpeed;
+            Owner = owner;
+            ProjectileId = projectileId;
+            _flags = flags;
+            ObjectsHit = new List<GameObject>();
 
             Target = target;
 
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
                             continue;
 
-                        var t = u as LaneTurret;
+                        var t = u as BaseTurret;
                         if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
                             continue;
 

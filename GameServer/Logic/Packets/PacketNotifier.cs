@@ -64,9 +64,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             //if (u is Monster)
             //    return;
             var us = new UpdateStats(u, partial);
-            var t = u as LaneTurret;
 
-            if (t != null)
+            if (u is BaseTurret)
             {
                 _game.PacketHandlerManager.broadcastPacket(us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
                 return;

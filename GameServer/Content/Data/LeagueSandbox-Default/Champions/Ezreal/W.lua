@@ -1,4 +1,8 @@
-Vector2 = require 'Vector2' -- include 2d vector lib 
+Vector2 = require 'Vector2' -- include 2d vector lib
+
+function onStartCasting()
+    addParticleTarget(owner, "ezreal_bow_yellow.troy", owner, 1, "L_HAND")
+end
 
 function onFinishCasting()
     local current = Vector2:new(owner.X, owner.Y)
@@ -12,6 +16,8 @@ end
 function applyEffects()
     if owner.Team ~= getTarget().Team then
         dealMagicalDamage(25+spellLevel*45+owner:GetStats().AbilityPower.Total*0.8)
-	    addParticleTarget(owner, "Ezreal_essenceflux_tar.troy", getTarget())
     end
+end
+
+function onUpdate(diff)
 end

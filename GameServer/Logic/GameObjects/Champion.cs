@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return me
                 end");
             _scriptEngine.Execute(@"
-                function onSpellCast(slot, target)
+                function onSpellCast(x, y, slot, target)
                 end");
             _scriptEngine.Load(scriptloc);
         }
@@ -180,16 +180,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
-            try
-            {
-                _scriptEngine.SetGlobalVariable("slot", slot);
-                _scriptEngine.SetGlobalVariable("target", target);
-                _scriptEngine.Execute("onSpellCast(slot, target)");
-            }
-            catch (LuaScriptException e)
-            {
-                _logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
             Spell s = null;
             foreach (Spell t in Spells)
             {
@@ -206,20 +196,72 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
 
-            if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.getState() != SpellState.STATE_READY)
+            if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
                 return null;
 
-            s.cast(x, y, target, futureProjNetId, spellNetId);
-            stats.CurrentMana = stats.CurrentMana - (s.getCost() * (1 - stats.getSpellCostReduction()));
-            return s;
+            if (s.cast(x, y, target, futureProjNetId, spellNetId))
+            {
+                stats.CurrentMana = stats.CurrentMana - s.getCost() * (1 - stats.getSpellCostReduction());
+                try
+                {
+                    _scriptEngine.SetGlobalVariable("x", x);
+                    _scriptEngine.SetGlobalVariable("y", y);
+                    _scriptEngine.SetGlobalVariable("slot", slot);
+                    _scriptEngine.SetGlobalVariable("target", target);
+                    _scriptEngine.Execute("onSpellCast(x, y, slot, target)");
+                }
+                catch (LuaScriptException e)
+                {
+                    _logger.LogCoreError("LUA ERROR : " + e.Message);
+                }
+                return s;
+            }
+            return null;
         }
+
         public Spell levelUpSpell(short slot)
         {
+            var _udyrModels = new List<string>
+            {
+                "Udyr",
+                "UdyrPhoenix",
+                "UdyrPhoenixUlt",
+                "UdyrTiger",
+                "UdyrTigerUlt",
+                "UdyrTurtle",
+                "UdyrTurtleUlt",
+                "UdyrUlt"
+            };
+
+            var _specificModels = new List<string>
+            {
+                "Elise",
+                "EliseSpider",
+                "Karma",
+                "Nidalee",
+                "NidaleeCougar"
+            };
             if (slot >= Spells.Count)
                 return null;
 
             if (_skillPoints == 0)
                 return null;
+
+            if ((!_udyrModels.Contains(Model) && slot != 3) || _udyrModels.Contains(Model))
+            {
+                if (Spells[slot].Level >= Math.Ceiling((decimal)GetStats().Level))
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                if ((!_specificModels.Contains(Model) && GetStats().Level < 1 + Spells[slot].Level * 5) || 
+                    (_specificModels.Contains(Model) && GetStats().Level < 1 + (Spells[slot].Level - 1) * 5))
+                {
+                    return null;
+                }
+            }
 
             Spells[slot].levelUp();
             _skillPoints--;

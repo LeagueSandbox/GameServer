@@ -135,6 +135,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.Execute(@"
                 function onDie(killer)
                 end");
+            _scriptEngine.Execute(@"
+                function onDamageTaken(attacker, damage, type, source)
+                end");
 
             ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
         }
@@ -381,7 +384,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-
             float defense = 0;
             float regain = 0;
             switch (type)
@@ -409,6 +411,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
+            if (target._scriptEngine.IsLoaded())
+            {
+                try
+                {
+                    target._scriptEngine.SetGlobalVariable("attacker", this);
+                    target._scriptEngine.SetGlobalVariable("damage", damage);
+                    target._scriptEngine.SetGlobalVariable("type", type);
+                    target._scriptEngine.SetGlobalVariable("source", source);
+                    target._scriptEngine.Execute(@"
+                        function modifyIncomingDamage(value)
+                            damage = value
+                        end");
+                    target._scriptEngine.Execute("onDamageTaken(attacker, damage, type, source)");
+                }
+                catch (LuaScriptException e)
+                {
+                    _logger.LogCoreError("LUA ERROR : " + e);
+                }
+            }
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
             if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
@@ -521,7 +542,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual bool isInDistress()
         {
-            return false; /*return DistressCause;*/
+            return false; //return DistressCause;
         }
 
         //todo: use statmods
@@ -599,11 +620,14 @@ in the following order:
                     return 2;
                 else if (target is Minion && target.TargetUnit is Minion) // Minion attacking minion
                     return 3;
-                else if (target is LaneTurret && target.TargetUnit is Minion) // Turret attacking minion
+                else if (target is BaseTurret && target.TargetUnit is Minion) // Turret attacking minion
                     return 4;
                 else if (target is Champion && target.TargetUnit is Minion) // Champion attacking minion
                     return 5;
             }
+
+            if (target is Placeable)
+                return 6;
 
             var m = target as Minion;
             if (m != null)
@@ -611,19 +635,19 @@ in the following order:
                 switch (m.getType())
                 {
                     case MinionSpawnType.MINION_TYPE_MELEE:
-                        return 6;
-                    case MinionSpawnType.MINION_TYPE_CASTER:
                         return 7;
+                    case MinionSpawnType.MINION_TYPE_CASTER:
+                        return 8;
                     case MinionSpawnType.MINION_TYPE_CANNON:
                     case MinionSpawnType.MINION_TYPE_SUPER:
-                        return 8;
+                        return 9;
                 }
             }
 
             if (target is Champion)
-                return 9;
+                return 10;
 
-            return 10;
+            return 11;
 
             /*Turret* t = dynamic_cast<Turret*>(target);
 

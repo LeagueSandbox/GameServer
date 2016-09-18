@@ -84,9 +84,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             if (animation != null)
             {
-                List<string> animList = new List<string>();
-                animList.Add("RUN");
-                animList.Add(animation);
+                var animList = new List<string> {"RUN", animation};
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
 
@@ -112,6 +110,41 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketHandlerManager.broadcastPacket(packet, Channel.CHL_S2C);
         }
 
+        public static bool UnitIsChampion(GameObject unit)
+        {
+            return unit is Champion;
+        }
+
+        public static bool UnitIsMinion(GameObject unit)
+        {
+            return unit is Minion;
+        }
+
+        public static bool UnitIsTurret(GameObject unit)
+        {
+            return unit is BaseTurret;
+        }
+
+        public static bool UnitIsInhibitor(GameObject unit)
+        {
+            return unit is Inhibitor;
+        }
+
+        public static bool UnitIsNexus(GameObject unit)
+        {
+            return unit is Nexus;
+        }
+
+        public static bool UnitIsPlaceable(GameObject unit)
+        {
+            return unit is Placeable;
+        }
+
+        public static bool UnitIsMonster(GameObject unit)
+        {
+            return unit is Monster;
+        }
+
         public static void AddBaseFunctionToLuaScript(IScriptEngine scriptEngine)
         {
             if (scriptEngine == null)
@@ -128,6 +161,13 @@ namespace LeagueSandbox.GameServer.Logic.API
             scriptEngine.RegisterFunction("getTeam", null, typeof(ApiFunctionManager).GetMethod("GetTeam", new Type[] { typeof(GameObject) }));
             scriptEngine.RegisterFunction("isDead", null, typeof(ApiFunctionManager).GetMethod("IsDead", new Type[] { typeof(Unit) }));
             scriptEngine.RegisterFunction("sendPacket", null, typeof(ApiFunctionManager).GetMethod("SendPacket", new Type[] { typeof(string) }));
+            scriptEngine.RegisterFunction("unitIsChampion", null, typeof(ApiFunctionManager).GetMethod("UnitIsChampion", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsMinion", null, typeof(ApiFunctionManager).GetMethod("UnitIsMinion", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsTurret", null, typeof(ApiFunctionManager).GetMethod("UnitIsTurret", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsInhibitor", null, typeof(ApiFunctionManager).GetMethod("UnitIsInhibitor", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsNexus", null, typeof(ApiFunctionManager).GetMethod("UnitIsNexus", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsPlaceable", null, typeof(ApiFunctionManager).GetMethod("UnitIsPlaceable", new Type[] { typeof(GameObject) }));
+            scriptEngine.RegisterFunction("unitIsMonster", null, typeof(ApiFunctionManager).GetMethod("UnitIsMonster", new Type[] { typeof(GameObject) }));
         }
     }
 }
