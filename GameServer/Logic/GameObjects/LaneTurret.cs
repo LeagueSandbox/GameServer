@@ -25,7 +25,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         public TurretType Type { get; private set; }
         private bool _turretHPUpdated = false;
-        public List<Item> Items = new List<Item>();
 
         public LaneTurret(
             string name,
@@ -47,7 +46,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         continue;
                     var i = Inventory.AddItem(itemTemplate);
                     GetStats().AddBuff(itemTemplate);
-                    Items.Add(i);
                 }
             }
 

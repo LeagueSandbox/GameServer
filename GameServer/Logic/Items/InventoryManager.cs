@@ -48,6 +48,11 @@ namespace LeagueSandbox.GameServer.Logic.Items
         {
             return (byte)_inventory.GetItemSlot(item);
         }
+        
+        public List<Item> GetAllItems()
+        {
+            return _inventory.Items.ToList();
+        }
 
         public void SwapItems(int slot1, int slot2)
         {

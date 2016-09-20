@@ -74,8 +74,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     var sh = new SetHealth(t);
                     _game.PacketHandlerManager.sendPacket(peer, sh, Channel.CHL_S2C);
 
-                    foreach (var item in t.Items)
+                    foreach (var item in t.Inventory.GetAllItems())
                     {
+                        if (item == null) continue;
                         _game.PacketNotifier.notifyItemBought(t, item);
                     }
 
