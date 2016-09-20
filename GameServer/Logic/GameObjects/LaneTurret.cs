@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -24,7 +25,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private const float TURRET_RANGE = 905.0f;
         public TurretType Type { get; private set; }
         private bool _turretHPUpdated = false;
-        private int[] _items = new int[5];
 
         public LaneTurret(
             string name,
@@ -37,8 +37,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(name, "", x, y, team, netId)
         {
             this.Type = type;
-            if(items != null)
-                this._items = items;
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    var itemTemplate = _itemManager.SafeGetItemType(item);
+                    if (itemTemplate == null)
+                        continue;
+                    var i = Inventory.AddItem(itemTemplate);
+                    GetStats().AddBuff(itemTemplate);
+                }
+            }
+
             BuildTurret(type);
         }
 
@@ -59,19 +69,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return purpTeam.Count;
             else
                 return blueTeam.Count;
-        }
-
-        public void BuildTurretItems()
-        {
-            foreach (var item in _items)
-            {
-                var itemTemplate = _itemManager.SafeGetItemType(item);
-                if (itemTemplate == null)
-                    continue;
-                var i = Inventory.AddItem(itemTemplate);
-                GetStats().AddBuff(itemTemplate);
-                _game.PacketNotifier.notifyItemBought(this, i);
-            }
         }
 
         public void BuildTurret(TurretType type)

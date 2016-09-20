@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -71,6 +72,11 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public static InventoryManager CreateInventory(Unit owner)
         {
             return new InventoryManager(owner);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return _inventory.Items.GetEnumerator();
         }
     }
 }
