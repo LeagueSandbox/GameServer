@@ -27,6 +27,11 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[Team] = false;
             Team = team;
             _visibleByTeam[Team] = true;
+            if (_game.IsRunning)
+            {
+                var p = new SetTeam((this as Unit), team);
+                _game.PacketHandlerManager.broadcastPacket(p, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+            }
         }
 
         protected bool movementUpdated;

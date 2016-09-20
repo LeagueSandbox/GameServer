@@ -158,6 +158,7 @@
         PKT_C2S_SynchVersion = 0xBD,
         PKT_C2S_CharLoaded = 0xBE,
         PKT_C2S_QuestClicked = 0xCD,
+        PKT_C2S_CursorPositionOnWorld = 0xE6,
         PKT_C2S_Batch = 0xFF
     }
 

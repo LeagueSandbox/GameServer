@@ -868,13 +868,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class FaceDirection : BasePacket
     {
-        public FaceDirection(Unit u, float relativeX, float relativeY, float relativeZ) : base(PacketCmdS2C.PKT_S2C_FaceDirection, u.NetId)
+        public FaceDirection(Unit u,
+                             float relativeX,
+                             float relativeY,
+                             float relativeZ,
+                             bool instantTurn = true,
+                             float turnTime = 0.0833f)
+        : base(PacketCmdS2C.PKT_S2C_FaceDirection, u.NetId)
         {
-            buffer.Write((byte)0);
+            buffer.Write((byte)(instantTurn ? 0x00 : 0x01));
             buffer.Write(relativeX);
             buffer.Write(relativeZ);
             buffer.Write(relativeY);
-            buffer.Write((float)0.0833); // Time to turn ?
+            buffer.Write((float)turnTime);
         }
     };
 
@@ -2157,6 +2163,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class CursorPositionOnWorld
+    {
+        public byte Cmd;
+        public uint NetId;
+        public short Unk1; // Maybe 2 bytes instead of 1 short?
+        public float X;
+        public float Z;
+        public float Y;
+        public CursorPositionOnWorld(byte[] data)
+        {
+            var reader = new BinaryReader(new MemoryStream(data));
+            Cmd = reader.ReadByte();
+            NetId = reader.ReadUInt32();
+            Unk1 = reader.ReadInt16();
+            X = reader.ReadSingle();
+            Z = reader.ReadSingle();
+            Y = reader.ReadSingle();
+        }
+    }
+
     public class AttentionPingAns : Packet
     {
         public AttentionPingAns(ClientInfo player, AttentionPing ping) : base(PacketCmdS2C.PKT_S2C_AttentionPing)
@@ -2295,14 +2321,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Surrender : BasePacket
     {
-        public Surrender() : base(PacketCmdS2C.PKT_S2C_Surrender)
+        public Surrender(Unit starter, byte unk, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut)
+        : base(PacketCmdS2C.PKT_S2C_Surrender)
         {
-            buffer.Write((byte)0); //unk
-            buffer.Write(0); //surrendererNetworkId
-            buffer.Write((byte)0); //yesVotes
-            buffer.Write((byte)0); //noVotes
-            buffer.Write((byte)4); //maxVotes
-            buffer.Write((byte)TeamId.TEAM_BLUE); //team
+            buffer.Write((byte)unk); // Bit field?
+            buffer.Write((uint)starter.NetId);
+            buffer.Write((byte)yesVotes);
+            buffer.Write((byte)noVotes);
+            buffer.Write((byte)maxVotes);
+            buffer.Write((int)team);
+            buffer.Write((float)timeOut);
         }
     }
 
@@ -2368,7 +2396,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(BitConverter.GetBytes(early)); //surrendererNetworkId
             buffer.Write((byte)yes); //yesVotes
             buffer.Write((byte)no); //noVotes
-            buffer.Write((byte)team); //team
+            buffer.Write((int)team); //team
         }
     }
 
@@ -2478,21 +2506,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetScreenTint : BasePacket
     {
-        public SetScreenTint(Unit u, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
+        public SetScreenTint(TeamId team, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha) : base(PacketCmdS2C.PKT_S2C_SetScreenTint)
         {
             byte active = 0x00;
             if (enable)
                 active = 0x01;
             buffer.Write(active);
-            buffer.Write(transitionTime);         // transition time in seconds
-            buffer.Write((byte)0x64);       // unk | Rengar sends here 0xC8, but that breaks it
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            buffer.Write(transitionTime); // Transition time in seconds
+            buffer.Write((int)team);
             buffer.Write(blue);
             buffer.Write(green);
             buffer.Write(red);
-            buffer.Write((byte)0xFF);
+            buffer.Write((byte)0xFF); // Unk
             buffer.Write(alpha);
         }
     }
@@ -2502,8 +2527,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public SetModelTransparency(Unit u, float transparency, float transitionTime) : base(PacketCmdS2C.PKT_S2C_SetModelTransparency, u.NetId)
         {
             // Applied to Teemo's mushrooms for example
-            buffer.Write((byte)0xDB);
-            buffer.Write((byte)0x00);
+            buffer.Write((byte)0xDB); // Unk
+            buffer.Write((byte)0x00); // Unk
             buffer.Write((float)transitionTime);
             buffer.Write((float)transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
@@ -2515,8 +2540,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public TeleportRequest(uint netId, float x, float y, bool first) : base(PacketCmdS2C.PKT_S2C_MoveAns)
         {
             buffer.Write((int)Environment.TickCount);//not 100% sure
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x01); // Unk
+            buffer.Write((byte)0x00); // Unk
             if (first == true) //seems to be id, 02 = before teleporting, 03 = do teleport
                 buffer.Write((byte)0x02);
             else
@@ -2539,10 +2564,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public int netId;
         public byte spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
         public byte spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
-        public float x;
-        public float y;
-        public float x2;
-        public float y2;
+        public float x; // Initial point
+        public float y; // (e.g. Viktor E laser starting point)
+        public float x2; // Final point
+        public float y2; // (e.g. Viktor E laser final point)
         public uint targetNetId; // If 0, use coordinates, else use target net id
 
         public CastSpell(byte[] data)
@@ -2568,35 +2593,35 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var m = _game.Map;
 
             buffer.Write((byte)0);
-            buffer.Write((byte)0x66);
-            buffer.Write((byte)0x00); // unk
+            buffer.Write((byte)0x66); // <-| Flag
+            buffer.Write((byte)0x00); // <-|
             buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
-            buffer.Write((int)spellNetId); // Spell net ID
-            buffer.Write((byte)1); // unk
-            buffer.Write((float)1.0f); // unk
-            buffer.Write((int)s.Owner.NetId);
-            buffer.Write((int)s.Owner.NetId);
+            buffer.Write((uint)spellNetId); // Spell net ID
+            buffer.Write((byte)1); // Unk
+            buffer.Write((float)1.0f); // Unk
+            buffer.Write((uint)s.Owner.NetId);
+            buffer.Write((uint)s.Owner.NetId);
             buffer.Write((int)s.Owner.getChampionHash());
-            buffer.Write((int)futureProjNetId); // The projectile ID that will be spawned
+            buffer.Write((uint)futureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)x);
             buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
             buffer.Write((float)x);
             buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
-            buffer.Write((byte)0); // unk
+            buffer.Write((byte)0); // Unk
             buffer.Write(s.CastTime);
-            buffer.Write((float)0.0f); // unk
-            buffer.Write((float)1.0f); // unk
+            buffer.Write((float)0.0f); // Delay betwen spell and animation/sound
+            buffer.Write((float)1.0f); // 0 : invisible, More than 0 : visible
             buffer.Write(s.getCooldown());
-            buffer.Write((float)0.0f); // unk
-            buffer.Write((byte)0); // unk
+            buffer.Write((float)0.0f); // Unk
+            buffer.Write((byte)0); // Unk
             buffer.Write((byte)s.Slot);
             buffer.Write((float)s.getCost());
             buffer.Write((float)s.Owner.X);
             buffer.Write((float)s.Owner.GetZ());
             buffer.Write((float)s.Owner.Y);
-            buffer.Write((long)1); // unk
+            buffer.Write((long)1); // Unk
         }
     }
 
@@ -3036,32 +3061,32 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             float targetZ = _game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.GetZ()+100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ()-100.0f);
-            buffer.Write((float)p.Y);
-            buffer.Write((float)-0.992436f); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((float)-0.122766f); // unk
-            buffer.Write((float)-1984.871338f); // unk
-            buffer.Write((float)-166.666656f); // unk
-            buffer.Write((float)-245.531418f); // unk
-            buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.Y);
+            buffer.Write((float)-0.992436f); // Rotation X
+            buffer.Write((int)0); // Rotation Z
+            buffer.Write((float)-0.122766f); // Rotation Y
+            buffer.Write((float)-1984.871338f); // Unk
+            buffer.Write((float)-166.666656f); // Unk
+            buffer.Write((float)-245.531418f); // Unk
+            buffer.Write((float)p.X);
+            buffer.Write((float)p.GetZ()+100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ()-100.0f);
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Y);
-            buffer.Write((int)0); // unk
+            buffer.Write((int)0); // Unk ((float)castDelay ?)
             buffer.Write((float)p.getMoveSpeed()); // Projectile speed
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0x7f7fffff); // unk
-            buffer.Write((byte)0); // unk
+            buffer.Write((int)0); // Unk
+            buffer.Write((int)0); // Unk
+            buffer.Write((int)0x7f7fffff); // Unk
+            buffer.Write((byte)0); // Unk
             if (!p.Target.isSimpleTarget())
             {
                 buffer.Write((byte)0x6B); // <-|
@@ -3070,11 +3095,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {                             //   |
                 buffer.Write((byte)0x66); // <-|
             }
-            buffer.Write((byte)0); // unk
+            buffer.Write((byte)0); // Part of the above bit field?
             buffer.Write((int)p.ProjectileId); // projectile ID (hashed name)
             buffer.Write((int)0); // Second net ID
-            buffer.Write((byte)0); // unk
-            buffer.Write(1.0f); // unk
+            buffer.Write((byte)0); // Unk
+            buffer.Write(1.0f); // Unk
             buffer.Write((int)p.Owner.NetId);
             buffer.Write((int)p.Owner.NetId);
 
@@ -3090,31 +3115,31 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)p.GetZ()-100.0f);
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)p.GetZ()+100.0f);
             buffer.Write((float)p.Target.Y);
             if (!p.Target.isSimpleTarget())
             {
-                buffer.Write((byte)0x01); // unk (number of targets?)
+                buffer.Write((byte)0x01); // Unk (number of targets?)
                 buffer.Write((p.Target as Unit).NetId);
             }
-            buffer.Write((byte)0); // unk
-            buffer.Write(1.0f); // unk
-            buffer.Write((int)0); // unk
-            buffer.Write(1.0f); // unk
-            buffer.Write((byte)0x3C); // unk
-            buffer.Write((byte)0xDB); // unk
-            buffer.Write((byte)0x1E); // unk
-            buffer.fill(0, 6); // unk
-            buffer.Write((byte)0x30); // unk
-            buffer.Write((int)0); // unk
+            buffer.Write((byte)0); // Unk
+            buffer.Write((float)1.0f); // Unk ((float)castTime ?)
+            buffer.Write((int)0); // Unk ((float) Delay betwen spell and animation/sound?)
+            buffer.Write((float)1.0f); // (0 : Invisible, More than 0 : Visible?)
+            buffer.Write((byte)0x3C); // Unk
+            buffer.Write((byte)0xDB); // Unk
+            buffer.Write((byte)0x1E); // Unk
+            buffer.fill(0, 6); // Unk
+            buffer.Write((byte)0x30); // Unk
+            buffer.Write((int)0); // Unk
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ()-100.0f);
+            buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Y);
-            buffer.Write((int)0); // unk
-            buffer.Write((int)0); // unk
+            buffer.Write((int)0); // Unk
+            buffer.Write((int)0); // Unk
         }
 
     }
@@ -3268,8 +3293,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
             buffer.Write((int)lp.NetId);
-            buffer.Write((int)0x00000040); // unk
-            buffer.Write((byte)0); // unk
+            buffer.Write((int)0x00000040); // Unk
+            buffer.Write((byte)0); // Unk
             buffer.Write((float)lp.X);
             buffer.Write((float)lp.Z);
             buffer.Write((float)lp.Y);
@@ -3293,34 +3318,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             foreach (var b in Encoding.Default.GetBytes(lp.Model))
                 buffer.Write(b);
             buffer.fill(0, 64 - lp.Model.Length);
-        }
-
-        // TODO : remove this once we find a better solution for jungle camp spawning command
-        public LevelPropSpawn(int netId, TeamId team, string name, string type, float x, float y, float z, float dirX, float dirY, float dirZ, float unk1, float unk2) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
-        {
-            buffer.Write(netId);
-            buffer.Write((int)0x00000040); // unk
-            buffer.Write((byte)0); // unk
-            buffer.Write(x);
-            buffer.Write(z);
-            buffer.Write(y);
-            buffer.Write(0.0f); // Rotation Y
-            buffer.Write(dirX);
-            buffer.Write(dirZ);
-            buffer.Write(dirY); // Direction
-            buffer.Write(unk1);
-            buffer.Write(unk2);
-            buffer.Write(1.0f);
-            buffer.Write(1.0f);
-            buffer.Write(1.0f); // Scaling
-            buffer.Write((int)team);
-            buffer.Write((byte)1); // bIsProp -- if is a prop, become unselectable and use direction params
-            foreach (var b in Encoding.Default.GetBytes(name))
-                buffer.Write((byte)b);
-            buffer.fill(0, 64 - name.Length);
-            foreach (var b in Encoding.Default.GetBytes(type))
-                buffer.Write(b);
-            buffer.fill(0, 64 - type.Length);
         }
     }
 
@@ -3363,7 +3360,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public FloatingTextWithValue(Unit u, int value, string text) : base(PacketCmdS2C.PKT_S2C_FloatingTextWithValue)
         {
             buffer.Write(u.NetId);
-            buffer.Write((int)15); // unk
+            buffer.Write((int)15); // Unk
             buffer.Write(value); // Example -3
             buffer.Write(Encoding.Default.GetBytes(text));
             buffer.Write((byte)0x00);

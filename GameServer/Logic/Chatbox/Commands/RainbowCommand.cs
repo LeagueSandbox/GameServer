@@ -7,6 +7,7 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -55,17 +56,17 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 byte[] rainbow = new byte[4];
                 new Random().NextBytes(rainbow);
                 Thread.Sleep(delay);
-                BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
-                BroadcastTint(me, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
+                BroadcastTint(me.Team, false, 0.0f, 0, 0, 0, 1f);
+                BroadcastTint(me.Team, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
             }
             Thread.Sleep(delay);
-            BroadcastTint(me, false, 0.0f, 0, 0, 0, 1f);
+            BroadcastTint(me.Team, false, 0.0f, 0, 0, 0, 1f);
         }
 
-        public void BroadcastTint(Champion source, bool enable, float speed, byte r, byte g, byte b, float a)
+        public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
             Game _game = Program.ResolveDependency<Game>();
-            var tint = new SetScreenTint(source, enable, speed, r, g, b, a);
+            var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
             _game.PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
         }
     }
