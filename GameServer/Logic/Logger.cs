@@ -7,13 +7,15 @@ namespace LeagueSandbox.GameServer.Core.Logic
     public class Logger
     {
         private LogWriter _logWriter;
+        private const string _logName = "LeagueSandbox.txt";
 
         public Logger(ServerContext serverContext)
         {
-            _logWriter = new LogWriter(serverContext.ExecutingDirectory, "LeagueSandbox.txt");
+            var directory = serverContext.ExecutingDirectory;
+            _logWriter = new LogWriter(directory, _logName);
 
-            AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomain_FirstChanceException;
-            AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
         public void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
@@ -70,14 +72,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         private class LogWriter
         {
-            public string _executingDirectory;
             public string _logFileName;
             private object _locker = new object();
 
             public LogWriter(string executingDirectory, string logFileName)
             {
-                _executingDirectory = executingDirectory;
-                _logFileName = logFileName;
+                CreateLogFile(executingDirectory, logFileName);
             }
 
             public void Log(string lines, string type = "LOG")
@@ -92,30 +92,38 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 lock (_locker)
                 {
                     File.AppendAllText(
-                        Path.Combine(_executingDirectory, "Logs", _logFileName),
+                        _logFileName,
                         text + Environment.NewLine
                     );
                     Console.WriteLine(text);
                 }
             }
 
-            public void CreateLogFile()
+            public void CreateLogFile(string directory, string name)
             {
-                //Generate A Unique file to use as a log file
-                if (!Directory.Exists(Path.Combine(_executingDirectory, "Logs")))
-                    Directory.CreateDirectory(Path.Combine(_executingDirectory, "Logs"));
+                if (!string.IsNullOrEmpty(_logFileName))
+                {
+                    return;
+                }
 
-                _logFileName = string.Format("{0}T{1}{2}",
-                    DateTime.Now.ToShortDateString().Replace("/", "_"),
-                    DateTime.Now.ToShortTimeString().Replace(" ", "").Replace(":", "-"), "_" + _logFileName
+                var path = Path.Combine(directory, "Logs");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                var logName = string.Format(
+                    "{0}-{1}-{2}",
+                    DateTime.Now.ToShortDateString().Replace(".", ""),
+                    DateTime.Now.ToShortTimeString().Replace(" ", "").Replace(":", ""),
+                    name
                 );
+                _logFileName = Path.Combine(path, logName);
 
-                var file = File.Create(Path.Combine(_executingDirectory, "Logs", _logFileName));
+                var file = File.Create(_logFileName);
 
                 file.Close();
             }
         }
     }
-
-    
 }
