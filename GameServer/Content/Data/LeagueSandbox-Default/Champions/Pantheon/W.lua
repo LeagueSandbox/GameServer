@@ -1,13 +1,12 @@
 Vector2 = require 'Vector2' -- include 2d vector lib 
 
 function finishCasting()
-    local castTarget = castTarget
     local current = Vector2:new(owner.X, owner.Y)
 	local to = (Vector2:new(castTarget.X, castTarget.Y) - current):normalize()
 	local range = to * 625
 	local trueCoords = current + range
     if current:distance(Vector2:new(castTarget.X, castTarget.Y)) <= 625 then
-	dashTo(owner, trueCoords.x, trueCoords.y, 625)
+	dashToUnit(owner, castTarget, 625, false)
     else
         print("You're not even a baker")
 		

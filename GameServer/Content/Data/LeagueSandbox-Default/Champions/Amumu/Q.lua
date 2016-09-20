@@ -24,7 +24,7 @@ function applyEffects()
     	local range = to * 50
 	    local trueCoords = current + range
 
-    	dashTo( target, trueCoords.x, trueCoords.y, speed )
+    	dashToLocation( target, trueCoords.x, trueCoords.y, speed, false)
     end
 
     destroyProjectile()

@@ -6,7 +6,7 @@ function finishCasting()
     local to = (Vector2:new(spell.X, spell.Y) - current):normalize()
     local range = to * 450
     local trueCoords = current + range    
-    dashTo(owner, trueCoords.x, trueCoords.y, 1200)
+    dashToLocation(owner, trueCoords.x, trueCoords.y, 1200, false)
 end
 
 function applyEffects()
