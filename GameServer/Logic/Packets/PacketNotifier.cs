@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void notifyMovement(GameObject o)
         {
-            var answer = new MovementAns(o, _game.Map);
+            var answer = new MovementAns(o);
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
@@ -416,27 +416,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
         }
 
-        public void notifyDash(Unit u, float _x, float _y, float dashSpeed, float leapHeight)
+        public void notifyDash(Unit u,
+                               Target t,
+                               float dashSpeed,
+                               bool keepFacingLastDirection,
+                               float leapHeight,
+                               float followTargetMaxDistance,
+                               float backDistance,
+                               float travelTime)
         {
-            // TODO: Fix dash: it stays in the current location and doesn't hit a wall if the target location can't be reached
-            float _z = u.GetZ();
-
-            /*if (!map.isWalkable(_x, _y)) {
-               _x = u.X;
-               _y = u.Y;
-            }
-            else {
-               // Relative coordinates to dash towards
-               float newX = _x;
-               float newY = _y;
-               _z -= map.getHeightAtLocation(_x, _y);
-               _x = u.X - _x;
-               _y = u.Y - _y;
-
-               u.setPosition(newX, newY);
-            }*/
-
-            var dash = new Dash(u, _x, _y, dashSpeed, leapHeight);
+            var dash = new Dash(u,
+                                t,
+                                dashSpeed,
+                                keepFacingLastDirection,
+                                leapHeight,
+                                followTargetMaxDistance,
+                                backDistance,
+                                travelTime);
             _game.PacketHandlerManager.broadcastPacketVision(u, dash, Channel.CHL_S2C);
         }
     }

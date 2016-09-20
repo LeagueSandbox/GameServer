@@ -6,7 +6,7 @@ function onFinishCasting()
     local range = to * 425
     local trueCoords = current + range
     
-    dashTo(owner, trueCoords.x, trueCoords.y, 1200, 0, "Spell3")
+    dashToLocation(owner, trueCoords.x, trueCoords.y, 1200, false, "Spell3")
     addParticleTarget(owner, "Graves_Move_OnBuffActivate.troy", owner)
 end
 

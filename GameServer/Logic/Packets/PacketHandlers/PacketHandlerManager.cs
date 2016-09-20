@@ -185,13 +185,16 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
+            var game = Program.ResolveDependency<Game>();
             foreach (var team in _teamsEnumerator)
             {
                 if (team == TeamId.TEAM_NEUTRAL)
                     continue;
 
-                if (o.IsVisibleByTeam(team))
+                if (game.Map.TeamHasVisionOn(team, o))
+                {
                     broadcastPacketTeam(team, data, channelNo, flag);
+                }
             }
             return true;
         }

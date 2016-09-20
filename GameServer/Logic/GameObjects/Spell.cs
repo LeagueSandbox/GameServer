@@ -248,6 +248,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Target = u;
             this.futureProjNetId = futureProjNetId;
             this.spellNetId = spellNetId;
+            _scriptEngine.SetGlobalVariable("castTarget", Target);
 
             if (_targetType == 1 && Target != null && Target.GetDistanceTo(Owner) > _castRange[Level - 1])
             {
@@ -588,7 +589,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.SetGlobalVariable("spellLevel", Level);
             scriptEngine.RegisterFunction("getOwnerLevel", Owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             scriptEngine.RegisterFunction("getChampionModel", Owner, typeof(Spell).GetMethod("GetChampionModel"));
-            scriptEngine.SetGlobalVariable("castTarget", Target);
+            //scriptEngine.SetGlobalVariable("castTarget", Target);
             //scriptEngine.SetGlobalVariable("spellToX", X);
             //scriptEngine.SetGlobalVariable("spellToY", Y);
             scriptEngine.SetGlobalVariable("spell", this);

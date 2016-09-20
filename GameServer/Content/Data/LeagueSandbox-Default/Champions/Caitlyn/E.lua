@@ -16,7 +16,7 @@ function onFinishCasting()
     range = current * 400
     trueCoords = original + range
 
-    dashTo(owner, trueCoords.x, trueCoords.y, 1000, "SPELL3B")
+    dashToLocation(owner, trueCoords.x, trueCoords.y, 1000, true, "SPELL3B")
 end
 
 function applyEffects()

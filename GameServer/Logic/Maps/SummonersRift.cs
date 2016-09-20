@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
         private int _cannonMinionCount = 0;
 
-        public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
+        public SummonersRift(Game game) : base(game, 15 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             RAF.AIMesh aiMesh = null;
             if (!_rafManager.readAIMesh("LEVELS/Map1/AIPath.aimesh", out aiMesh))

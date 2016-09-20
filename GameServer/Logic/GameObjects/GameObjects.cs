@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic
             Y += yy;
 
             /* If the target was a simple point, stop when it is reached */
-            if (Target.isSimpleTarget() && GetDistanceTo(Target) < deltaMovement * 2) //how can target be null here?????
+            if (GetDistanceTo(Target) < deltaMovement * 2) //how can target be null here?????
             {
                 if (IsDashing)
                 {
@@ -239,11 +239,12 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[team] = visible;
         }
 
-        public void DashTo(float x, float y, float dashSpeed)
+        public void DashToTarget(Target t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
         {
+            // TODO: Take into account the rest of the arguments
             IsDashing = true;
             this._dashSpeed = dashSpeed;
-            Target = new Target(x, y);
+            Target = t;
             Waypoints.Clear();
         }
     }
