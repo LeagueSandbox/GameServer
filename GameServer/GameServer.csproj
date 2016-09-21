@@ -80,6 +80,7 @@
     <Compile Include="Logic\Chatbox\ChatboxManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\KillCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\ChangeTeamCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\RainbowCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ReloadLuaCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\SpawnStateCommand.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />

@@ -113,9 +113,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 }
 
                 var logName = string.Format(
-                    "{0}-{1}-{2}",
-                    DateTime.Now.ToShortDateString().Replace(".", ""),
-                    DateTime.Now.ToShortTimeString().Replace(" ", "").Replace(":", ""),
+                    "{0}-{1}",
+                    DateTime.Now.ToString("yyyyMMdd-HHMM"),
                     name
                 );
                 _logFileName = Path.Combine(path, logName);

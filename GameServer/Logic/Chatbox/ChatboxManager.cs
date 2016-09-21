@@ -76,6 +76,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new AdCommand("ad", "ad bonusAd", this));
             AddCommand(new ApCommand("ap", "ap bonusAp", this));
             AddCommand(new ChCommand("ch", "ch championName", this));
+            AddCommand(new ChangeTeamCommand("changeteam", "changeteam teamNumber", this));
             AddCommand(new CoordsCommand("coords", "", this));
             AddCommand(new HelpCommand("help", "", this));
             AddCommand(new GoldCommand("gold", "gold goldAmount", this));

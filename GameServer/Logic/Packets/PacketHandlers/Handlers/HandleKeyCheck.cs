@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     player.Peer = peer;
                     var response = new KeyCheck(keyCheck.userId, playerNo);
                     bool bRet = _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
-                    handleGameNumber(player, peer, _game);//Send 0x91 Packet?
+                    //handleGameNumber(player, peer, _game);//Send 0x91 Packet?
                     return true;
                 }
                 ++playerNo;
