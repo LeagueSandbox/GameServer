@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return (T)Convert.ChangeType(Values[section][name], typeof(T));
             }
-            catch (Exception)
+            catch
             {
                 return defaultValue;
             }

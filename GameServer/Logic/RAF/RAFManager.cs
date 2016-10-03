@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
 
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 data = new JObject();
                 return false;

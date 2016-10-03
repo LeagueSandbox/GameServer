@@ -22,9 +22,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class LaneTurret : BaseTurret
     {
-        private const float TURRET_RANGE = 905.0f;
         public TurretType Type { get; private set; }
-        private bool _turretHPUpdated = false;
+        private bool _turretHPUpdated;
 
         public LaneTurret(
             string name,
@@ -36,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(name, "", x, y, team, netId)
         {
-            this.Type = type;
+            Type = type;
             if (items != null)
             {
                 foreach (var item in items)
@@ -67,8 +66,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (Team == TeamId.TEAM_BLUE)
                 return purpTeam.Count;
-            else
-                return blueTeam.Count;
+
+            return blueTeam.Count;
         }
 
         public void BuildTurret(TurretType type)
@@ -146,8 +145,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     stats.AttackDamage.BaseValue = 999.0f;
                     globalGold = 100.0f;
                     stats.Range.BaseValue = 1250.0f;
-                    IsMelee = true;
-                    AutoAttackDelay = (1.0f / 30.0f);
+                    AutoAttackDelay = 1.0f / 30.0f;
+                    AutoAttackProjectileSpeed = 2000.0f;
                     break;
                 default:
 

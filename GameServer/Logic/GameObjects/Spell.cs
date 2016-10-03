@@ -110,19 +110,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell(Champion owner, string spellName, byte slot)
         {
-            this.Owner = owner;
-            this._spellName = spellName;
-            this.Slot = slot;
-            this.Level = 0;
-            this.Flags = 0;
-            this.ProjectileFlags = 0;
-            this.CastTime = 0.0f;
-            this.ProjectileSpeed = 2000.0f;
-            this._currentCastTime = 0.0f;
+            Owner = owner;
+            _spellName = spellName;
+            Slot = slot;
+            Level = 0;
+            Flags = 0;
+            ProjectileFlags = 0;
+            CastTime = 0.0f;
+            ProjectileSpeed = 2000.0f;
+            _currentCastTime = 0.0f;
             NoCooldown = _game.Config.CooldownsDisabled;
             NoManacost = _game.Config.ManaCostsDisabled;
 
             _scriptEngine = new LuaScriptEngine();
+            LoadLua(_scriptEngine);
 
             JObject data;
 
@@ -205,15 +206,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 (float)Math.Floor(RAFManager.GetFloatValue(data, "Values", "SpellData", "TargettingType") + 0.5f);
 
             JObject missileData;
-            if (!RAFManager.ReadMissileData(spellName + "Missile", out missileData))
+            if (!RAFManager.ReadMissileData(spellName, out missileData))
             {
+                hitEffectName = RAFManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
+                ProjectileSpeed = RAFManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
+                ProjectileFlags = RAFManager.GetIntValue(data, "Values", "SpellData", "Flags");
                 return;
             }
 
             hitEffectName = RAFManager.GetStringValue(missileData, "Values", "SpellData", "HitEffectName");
             ProjectileSpeed = RAFManager.GetFloatValue(missileData, "Values", "SpellData", "MissileSpeed");
             ProjectileFlags = RAFManager.GetIntValue(missileData, "Values", "SpellData", "Flags");
-            LoadLua(_scriptEngine);
+            ReloadLua();
         }
 
         /**

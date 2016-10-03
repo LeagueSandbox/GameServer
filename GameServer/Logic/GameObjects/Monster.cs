@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            AutoAttackDelay = RAFManager.GetFloatValue(data, "SpellData", "castFrame") / 30.0f;
+            AutoAttackDelay = RAFManager.GetFloatValue(data, "SpellData", "CastFrame") / 30.0f;
             AutoAttackProjectileSpeed = RAFManager.GetFloatValue(data, "SpellData", "MissileSpeed");
         }
 

@@ -339,7 +339,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         */
         public virtual void autoAttackHit(Unit target)
         {
-            float damage = (_isNextAutoCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
+            float damage = _isNextAutoCrit ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
 
                 dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
@@ -361,7 +361,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            DamageText text= DamageText.DAMAGE_TEXT_NORMAL;
+            var text= DamageText.DAMAGE_TEXT_NORMAL;
 
             if (isCrit)
             {

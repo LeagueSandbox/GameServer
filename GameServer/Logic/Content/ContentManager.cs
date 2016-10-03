@@ -166,7 +166,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var fileName = string.Format("{0}/{1}.json", spellName, spellName);
                 return GetContentPath(contentPackages, contentType, fileName);
             }
-            catch (Exception)
+            catch
             {
                 return "";
             }
