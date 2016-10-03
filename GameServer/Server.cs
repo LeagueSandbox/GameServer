@@ -7,7 +7,6 @@ using System.Reflection;
 using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
@@ -23,14 +22,12 @@ namespace LeagueSandbox.GameServer
         private string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private string SERVER_VERSION = "0.2.0";
         private Logger _logger;
-        private RAFManager _rafManager;
         private ServerContext _serverContext;
         private Game _game;
 
-        public Server(Logger logger, RAFManager rafManager, ServerContext serverContext, Game game)
+        public Server(Logger logger, ServerContext serverContext, Game game)
         {
             _logger = logger;
-            _rafManager = rafManager;
             _serverContext = serverContext;
             _game = game;
         }

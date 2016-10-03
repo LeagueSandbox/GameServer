@@ -19,15 +19,17 @@ namespace LeagueSandbox.GameServer.Logic.Content
             "Champions",
             "Items",
             "Buffs",
-            "Maps"
+            "Maps",
+            "Spells",
+            "Stats"
         };
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
-        private string _gameModeName;
+        public string GameModeName { get; }
 
         private ContentManager(string gameModeName)
         {
-            _gameModeName = gameModeName;
+            GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
             foreach(var contentType in CONTENT_TYPES)
@@ -92,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             if(packageName == "Self")
             {
-                return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), _gameModeName, contentType);
+                return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), GameModeName, contentType);
             }
             return string.Format("{0}/{1}", GetPackagePath(packageName), contentType);
         }
@@ -145,6 +147,29 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var contentPackages = _content[contentType][buffName];
             var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
             return GetContentPath(contentPackages, contentType, fileName);
+        }
+
+        public string GetUnitStatPath(string model)
+        {
+            var contentType = "Stats";
+            var contentPackages = _content[contentType][model];
+            var fileName = string.Format("{0}/{1}.json", model, model);
+            return GetContentPath(contentPackages, contentType, fileName);
+        }
+
+        public string GetSpellDataPath(string spellName)
+        {
+            try
+            {
+                var contentType = "Spells";
+                var contentPackages = _content[contentType][spellName];
+                var fileName = string.Format("{0}/{1}.json", spellName, spellName);
+                return GetContentPath(contentPackages, contentType, fileName);
+            }
+            catch (Exception)
+            {
+                return "";
+            }
         }
 
         public static ContentManager LoadGameMode(string gameModeName)

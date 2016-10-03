@@ -1,5 +1,4 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -7,11 +6,6 @@ using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
 using Ninject.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer
 {
@@ -24,7 +18,6 @@ namespace LeagueSandbox.GameServer
 
             Bind<Logger>().To<Logger>().InSingletonScope();
             Bind<ServerContext>().To<ServerContext>().InSingletonScope();
-            Bind<RAFManager>().To<RAFManager>().InSingletonScope();
             Bind<Game>().To<Game>().InSingletonScope();
 
             Bind<ItemManager>().To<ItemManager>().InSingletonScope();

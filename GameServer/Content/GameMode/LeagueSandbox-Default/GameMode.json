@@ -5,6 +5,8 @@
             "Items": "*",
             "Buffs": "*",
             "Maps": "*",
+            "Stats": "*",
+            "Spells": "*"
         }
     }
 }
