@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GlobalCannotClickObjects",
+        "Name": "GlobalCannotClickObjects",
+        "ResourcePath": "DATA/Shared/Spells/GlobalCannotClickObjects.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RumbleDangerZone"
+        }
+    }
+}

@@ -1,0 +1,63 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "XerathRMissileWrapper",
+        "Name": "XerathRMissileWrapper",
+        "ResourcePath": "DATA/Characters/Xerath/Spells/XerathRMissileWrapper.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "XerathLocusOfPower2",
+            "AnimationName": "Attack1",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": "0",
+            "CastRadius1": 175,
+            "CastRadius2": "200",
+            "CastRadius3": 225,
+            "CastRange": "25000",
+            "CastType": "0",
+            "Coefficient": 0.43,
+            "Cooldown": 0.6,
+            "Description": "game_spell_description_XerathLocusOfPower",
+            "DisplayName": "game_spell_displayname_XerathLocusOfPower",
+            "DoesntBreakChannels": 1,
+            "DynamicExtended": "game_spell_levelup_XerathLocusOfPower",
+            "DynamicTooltip": "game_spell_tooltip_XerathLocusOfPower",
+            "Effect1Level0Amount": "10",
+            "Effect1Level1Amount": "10",
+            "Effect1Level2Amount": "10",
+            "Effect1Level3Amount": "10",
+            "Effect2Level0Amount": 3,
+            "Effect2Level1Amount": 3,
+            "Effect2Level2Amount": 3,
+            "Effect2Level3Amount": 3,
+            "Effect3Level0Amount": "190",
+            "Effect3Level1Amount": "190",
+            "Effect3Level2Amount": 245,
+            "Effect3Level3Amount": "300",
+            "Effect4Level0Amount": "190",
+            "Effect4Level1Amount": "190",
+            "Effect4Level2Amount": "190",
+            "Effect4Level3Amount": "190",
+            "Effect5Level0Amount": "3200",
+            "Effect5Level1Amount": "3200",
+            "Effect5Level2Amount": "4400",
+            "Effect5Level3Amount": "5600",
+            "Flags": 115748,
+            "InventoryIcon": "Xerath_R1.dds",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "NumSpellTargeters": 1,
+            "OverrideCastTime": "0",
+            "TargettingType": 2,
+            "UseAnimatorFramerate": "0",
+            "UseMinimapTargeting": 1
+        },
+        "SpellTargeter1": {
+            "DrawableType": "AOE"
+        }
+    }
+}

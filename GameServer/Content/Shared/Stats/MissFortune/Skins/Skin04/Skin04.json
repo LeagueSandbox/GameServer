@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMissFortune.blnd",
+            "ChampionSkinID": 21004,
+            "ChampionSkinName": "CandyCaneMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "missfortune_candycane.skn",
+            "Skeleton": "missfortune_candycane.skl",
+            "SkinScale": 1.2,
+            "Texture": "missfortune_candycane_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

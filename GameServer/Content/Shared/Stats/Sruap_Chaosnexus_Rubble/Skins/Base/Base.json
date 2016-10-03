@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sruap_Chaosnexus_Rubble/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sruap_Chaosnexus_Rubble.blnd",
+            "ChampionSkinName": "SruapChaosnexusRubble",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sruap_Chaosnexus_Rubble.skn",
+            "Skeleton": "Sruap_Chaosnexus_Rubble.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sruap_Chaosnexus_Rubble_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

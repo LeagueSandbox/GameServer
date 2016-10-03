@@ -1,0 +1,68 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SpellBook1",
+        "Name": "SpellBook1",
+        "ResourcePath": "DATA/Characters/SpellBook1/SpellBook1.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 2,
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.0595,
+            "AttackDelayOffsetPercent": -0.375,
+            "AttackRange": "100",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "21.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "540",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": "1.0",
+            "Description": "game_character_description_SpellBook1",
+            "ExpGivenOnDeath": "77.0",
+            "GoldGivenOnDeath": "22.0",
+            "HPPerLevel": "10",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SpellBook1",
+            "NeverRender": 1,
+            "PathfindingCollisionRadius": 35.36,
+            "SelectionHeight": 68,
+            "SelectionRadius": 52,
+            "Significance": 0,
+            "SoulGivenOnDeath": 0
+        },
+        "Info": {
+            "IconSquare": "SkeletonMelee_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "SpellBook1Base.blnd",
+            "ChampionSkinName": "SpellBook1Base",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Cube.skn",
+            "Skeleton": "Cube.skl",
+            "SkinScale": 1.26,
+            "Texture": "Skeleton_Minion_Melee.dds"
+        },
+        "Sounds": {
+            "Death": "Skeleton_Minion_Archer_Death.wav"
+        },
+        "UNKNOWN_HASHES": {
+            "122525173": "Skeletonminionmelee_cas.troy root",
+            "2818610673": "60.0",
+            "2979245175": 1,
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

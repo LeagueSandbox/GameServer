@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Nidalee/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee.blnd",
+            "ChampionSkinID": 76002,
+            "ChampionSkinName": "LeopardNidalee",
+            "ExtraCharacterPreloads": "Nidalee_Cougar,Nidalee_Spear",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "nidalee2012.skn",
+            "Skeleton": "nidalee2012.skl",
+            "SkinScale": 1.35,
+            "Texture": "nidalee_Leopard_2012_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,83 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LucianR",
+        "Name": "LucianR",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianR.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LucianR",
+            "ShowInTrackerUI": 1
+        },
+        "SpellData": {
+            "AnimationName": "Spell4",
+            "CanMoveWhileChanneling": 1,
+            "CantCancelWhileChanneling": 1,
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": "0",
+            "CastRange": "10000.0000",
+            "CastRangeDisplayOverride": "1400.0000",
+            "CastType": "0",
+            "Coefficient": 0.1,
+            "Coefficient2": 0.25,
+            "Cooldown1": "110",
+            "Cooldown2": "100",
+            "Cooldown3": "90",
+            "Description": "game_spell_description_LucianR",
+            "DisplayName": "game_spell_displayname_LucianR",
+            "DoNotNeedToFaceTarget": 1,
+            "DynamicExtended": "game_spell_levelup_LucianR",
+            "DynamicTooltip": "game_spell_tooltip_LucianR",
+            "Effect1Level0Amount": 3,
+            "Effect1Level1Amount": 3,
+            "Effect1Level2Amount": 3,
+            "Effect1Level3Amount": 3,
+            "Effect2Level0Amount": "40",
+            "Effect2Level1Amount": "40",
+            "Effect2Level2Amount": "50",
+            "Effect2Level3Amount": "60",
+            "Effect3Level0Amount": 2.5,
+            "Effect3Level1Amount": 2.5,
+            "Effect3Level2Amount": 3,
+            "Effect3Level3Amount": 3.5,
+            "Effect4Level0Amount": 2.5,
+            "Effect4Level1Amount": 2.5,
+            "Effect4Level2Amount": 2.5,
+            "Effect4Level3Amount": 2.5,
+            "Flags": 329728,
+            "FloatVarsDecimals1": "0",
+            "FloatVarsDecimals2": "0",
+            "FloatVarsDecimals3": "0",
+            "FloatVarsDecimals4": "0",
+            "InventoryIcon": "Lucian_R.dds",
+            "IsToggleSpell": 1,
+            "LineWidth": "60.0000",
+            "ManaCost1": "100",
+            "ManaCost2": "100",
+            "ManaCost3": "100",
+            "NumSpellTargeters": 2,
+            "OverrideCastTime": 0.01,
+            "SpellRevealsChampion": "1.0000",
+            "TargettingType": 7,
+            "TextFlags": "Instacast | AffectFriends | AffectHeroes | AlwaysSelf",
+            "UseAnimatorFramerate": "0"
+        },
+        "SpellTargeter1": {
+            "DrawableType": "Line",
+            "End_BasePosition": "MousePos",
+            "End_DistanceOffset": "100",
+            "End_OrientationType": "MouseDir",
+            "LineWidth": "110",
+            "OverrideBaseRange": "1400",
+            "Start_BasePosition": "Owner",
+            "TextureBaseOverride": "Reticle_Gradient_Base_Q_01.dds",
+            "TextureTargetOverride": "Reticle_Gradient_Base_Q_02.dds"
+        },
+        "SpellTargeter2": {
+            "Center": "Owner",
+            "DrawableType": "Range",
+            "HideWithLineIndicator": 1
+        }
+    }
+}

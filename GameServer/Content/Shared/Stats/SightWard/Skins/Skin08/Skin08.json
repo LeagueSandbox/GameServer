@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardLantern.blnd",
+            "ChampionSkinName": "SightWardLantern",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lantern.skn",
+            "Skeleton": "SightWard_Lantern.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sightWard_lantern_TX_CM.dds"
+        }
+    }
+}

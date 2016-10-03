@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "BraumMarkDamageTracker",
+        "Name": "BraumMarkDamageTracker",
+        "ResourcePath": "DATA/Characters/Braum/Spells/BraumMarkDamageTracker.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_BraumMarkDamageTracker",
+            "FloatVarsDecimals1": 1,
+            "FloatVarsDecimals2": 2,
+            "FloatVarsDecimals3": "0",
+            "FloatVarsDecimals5": "0"
+        }
+    }
+}

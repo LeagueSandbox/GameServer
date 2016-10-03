@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_Cutaway/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_Cutaway.blnd",
+            "CastShadows": "0",
+            "ChampionSkinName": "HA_AP_Cutaway",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_Cutaway.skn",
+            "Skeleton": "HA_AP_Cutaway.skl",
+            "SkinScale": "1000.0",
+            "Texture": "HA_AP_Cutaway.dds"
+        }
+    }
+}

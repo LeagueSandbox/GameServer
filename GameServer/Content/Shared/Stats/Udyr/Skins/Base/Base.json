@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Udyr/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseUdyr.blnd",
+            "ChampionSkinID": "77000",
+            "ChampionSkinName": "BaseUdyr",
+            "ExtraCharacterPreloads": "UdyrPhoenix,UdyrTiger,UdyrTurtle",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Udyr.skn",
+            "Skeleton": "Udyr.skl",
+            "SkinScale": 1.1,
+            "Texture": "Udyr.dds"
+        }
+    }
+}

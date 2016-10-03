@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Janna/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseJanna.blnd",
+            "ChampionSkinID": 40006,
+            "ChampionSkinName": "JannaSkin06",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "Janna_Skin06.skn",
+            "Skeleton": "Janna_Skin06.skl",
+            "SkinScale": 1.31,
+            "Texture": "Janna_Skin06_TX_CM.dds"
+        }
+    }
+}

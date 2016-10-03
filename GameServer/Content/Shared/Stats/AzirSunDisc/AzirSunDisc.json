@@ -1,0 +1,68 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AzirSunDisc",
+        "Name": "AzirSunDisc",
+        "ResourcePath": "DATA/Characters/AzirSunDisc/AzirSunDisc.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "60",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.25,
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "150.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1300",
+            "BaseMP": "120",
+            "BaseStaticHPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_AzirSunDisc",
+            "DisableContinuousTargetFacing": 1,
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": "0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "0",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_AzirSunDisc",
+            "OccludedUnitSelectableDistance": "0",
+            "PathfindingCollisionRadius": "0",
+            "SelectionHeight": "400.0000",
+            "SelectionRadius": "280.0000",
+            "ShouldFaceTarget": "0",
+            "SpellBlock": "100",
+            "UnitTags": "Structure | Structure_Turret"
+        },
+        "HealthBar": {
+            "UnitBarKey": "Turret",
+            "WorldOffset": "0 0,08 0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy Piece10",
+            "ChampTargetingParticle": "yikes-champ.troy Piece10",
+            "TowerTargetingParticle": "Yikes-Tower.troy Piece10"
+        },
+        "Info": {
+            "IconCircle": "AzirSunDisc_Circle_0.dds",
+            "IconSquare": "AzirSunDisc_Square_0.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Azir"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/KalistaSpawn/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KalistaSpawn.blnd",
+            "ChampionSkinName": "KalistaSpawn",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KalistaSpawn.skn",
+            "Skeleton": "KalistaSpawn.skl",
+            "SkinScale": 1,
+            "Texture": "KalistaSpawn_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Alert"
+        }
+    }
+}

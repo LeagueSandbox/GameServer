@@ -1,0 +1,16 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SionPassiveZombie",
+        "Name": "SionPassiveZombie",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionPassiveZombie.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "AlternateName": "SionPassiveZombie",
+            "DisplayName": "SionPassiveZombie",
+            "DynamicTooltip": "game_buff_tooltip_SionPassiveZombie",
+            "Sound_VOEventCategory": "OrderConfirmation"
+        }
+    }
+}

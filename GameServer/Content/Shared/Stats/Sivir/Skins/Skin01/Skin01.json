@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "WarriorSivir.blnd",
+            "ChampionSkinID": 15001,
+            "ChampionSkinName": "WarriorSivir",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_warriorprincess.skn",
+            "Skeleton": "Sivir_warriorprincess.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "Sivir_warriorprincess_TX_CM.dds",
+            "YOffset": "-0.2"
+        }
+    }
+}

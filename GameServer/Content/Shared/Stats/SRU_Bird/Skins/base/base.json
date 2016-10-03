@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Bird/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Bird.blnd",
+            "ChampionSkinName": "SRU_Bird",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Bird.skn",
+            "Skeleton": "SRU_Bird.skl",
+            "SkinScale": 1.17,
+            "Texture": "SRU_Bird.dds"
+        }
+    }
+}

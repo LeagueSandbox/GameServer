@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "AboriginalSivir.blnd",
+            "ChampionSkinID": 15003,
+            "ChampionSkinName": "AboriginalSivir",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_aboriginal.skn",
+            "Skeleton": "Sivir_aboriginal.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "Sivir_aboriginal_TX_CM.dds",
+            "YOffset": "-0.2"
+        }
+    }
+}

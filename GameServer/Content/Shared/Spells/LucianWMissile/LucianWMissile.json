@@ -1,0 +1,52 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LucianWMissile",
+        "Name": "LucianWMissile",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianWMissile.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "LucianW",
+            "AnimationName": "",
+            "CastFrame": 7.53,
+            "CastRange": "1000.0000",
+            "CastType": 3,
+            "Coefficient": 1.2,
+            "Cooldown": 0,
+            "Cooldown1": 0,
+            "Cooldown2": 0,
+            "Cooldown3": 0,
+            "Cooldown4": 0,
+            "Cooldown5": 0,
+            "Description": "game_spell_description_LucianW",
+            "DisplayName": "game_spell_displayname_LucianW",
+            "DynamicExtended": "game_spell_levelup_LucianW",
+            "DynamicTooltip": "game_spell_tooltip_LucianW",
+            "Effect1Level1Amount": "90.0000",
+            "Effect1Level2Amount": "150.0000",
+            "Effect1Level3Amount": "245.0000",
+            "Effect1Level4Amount": "315.0000",
+            "Effect1Level5Amount": "440.0000",
+            "Effect2Level1Amount": 2.5,
+            "Effect2Level2Amount": 2.75,
+            "Effect2Level3Amount": "3.0000",
+            "Effect2Level4Amount": 3.25,
+            "Effect2Level5Amount": 3.5,
+            "Flags": 115712,
+            "InventoryIcon": "Lucian_W.dds",
+            "LineWidth": "55.0000",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileBoneName": "buffbone_cstm_Darkgun",
+            "MissileEffect": "Lucian_W_mis.troy",
+            "MissilePerceptionBubbleRadius": "100",
+            "MissileSpeed": "1600",
+            "TargettingType": 7,
+            "Version": 1
+        }
+    }
+}

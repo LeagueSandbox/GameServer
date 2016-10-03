@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin14",
+        "Name": "Skin14",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin14/Skin14.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardSeason3.blnd",
+            "ChampionSkinName": "SightWardSeason3",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Season3.skn",
+            "Skeleton": "SightWard_Season3.skl",
+            "SkinScale": 1.2,
+            "Texture": "sightWard_Season3_TX_CM.dds"
+        }
+    }
+}

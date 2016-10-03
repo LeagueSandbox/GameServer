@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotSpiritGarenSource",
+        "Name": "NightmareBotSpiritGarenSource",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritGarenSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotSpiritGarenSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotSpiritGaren",
+            "DisplayName": "game_spell_displayname_NightmareBotSpiritGaren",
+            "Flags": 329748,
+            "InventoryIcon": "NightmareBotSpiritGaren.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

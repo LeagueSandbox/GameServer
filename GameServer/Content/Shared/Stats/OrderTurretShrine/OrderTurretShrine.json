@@ -1,0 +1,69 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OrderTurretShrine",
+        "Name": "OrderTurretShrine",
+        "ResourcePath": "DATA/Characters/OrderTurretShrine/OrderTurretShrine.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "1250",
+            "Armor": 0,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.1,
+            "AttackDelayOffsetPercent": 65535,
+            "AttackRange": "1250",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "999.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 9999,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_OrderTurretShrine",
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "400.000",
+            "GlobalGoldGivenOnDeath": "100.000",
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_OrderTurretShrine",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200",
+            "SelectionRadius": "130.0000",
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Shrine"
+        },
+        "IdleParticles": {
+            "BeamParticle": "Order_Spawn_turret_beam.troy joint3",
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconSquare": "OrderLaneTower_Icon_C.dds"
+        },
+        "MeshSkin": {
+            "Animations": "OrderTurretShrineBase.blnd",
+            "ChampionSkinName": "OrderTurretShrineBase",
+            "SelfIllumination": "0.65",
+            "SimpleSkin": "BlueLaneTower.skn",
+            "Skeleton": "BlueLaneTower.skl",
+            "SkinScale": "1.0",
+            "Texture": "BlueLaneTower_diff.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": 16,
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

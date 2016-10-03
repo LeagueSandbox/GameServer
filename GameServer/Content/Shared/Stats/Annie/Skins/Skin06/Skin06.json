@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1006,
+            "ChampionSkinName": "AnnieReverse",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "annie_reverse.skn",
+            "Skeleton": "annie_reverse.skl",
+            "SkinScale": 1,
+            "Texture": "annie_reverse_TX_CM.dds"
+        }
+    }
+}

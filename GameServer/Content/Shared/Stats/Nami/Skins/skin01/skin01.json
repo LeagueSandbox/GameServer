@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Nami/skins/skin01/Skin01.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Nami_Koi_Weapon_Idle.troy Buffbone_Cstm_Weapon_1"
+        },
+        "MeshSkin": {
+            "Animations": "NamiKoi.blnd",
+            "ChampionSkinID": 267001,
+            "ChampionSkinName": "NamiKoi",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nami_Koi.skn",
+            "Skeleton": "Nami_Koi.skl",
+            "SkinScale": 1.05,
+            "Texture": "nami_koi_TX_CM.dds",
+            "YOffset": -0.3
+        }
+    }
+}

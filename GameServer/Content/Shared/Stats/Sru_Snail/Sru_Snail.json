@@ -1,0 +1,63 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Sru_Snail",
+        "Name": "Sru_Snail",
+        "ResourcePath": "DATA/Characters/Sru_Snail/Sru_Snail.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 6,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.072,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 25,
+            "BaseDamage": "8.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1000",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "1000",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 1.5,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Poro",
+            "EnemyTooltip": "game_character_enemyTooltip_Poro",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "10.0",
+            "GameplayCollisionRadius": "0",
+            "GoldGivenOnDeath": "4.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Poro",
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100",
+            "SelectionRadius": 115,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "WeaponMaterial": "WolfBasicAttack"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

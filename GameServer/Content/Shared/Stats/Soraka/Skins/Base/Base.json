@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Soraka/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "basesoraka.blnd",
+            "ChampionSkinID": "16000",
+            "ChampionSkinName": "BaseSoraka",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Soraka.skn",
+            "Skeleton": "Soraka.skl",
+            "SkinScale": 1.27,
+            "Texture": "Soraka_base_TX_CM.dds"
+        }
+    }
+}

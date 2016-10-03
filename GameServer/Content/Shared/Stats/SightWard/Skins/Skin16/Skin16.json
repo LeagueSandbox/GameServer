@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin16",
+        "Name": "Skin16",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin16/Skin16.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardbanner.blnd",
+            "ChampionSkinName": "SightWardHorseBanner",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Banner.skn",
+            "Skeleton": "SightWard_Banner.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "SightWard_HorseBanner_TX_CM.dds"
+        }
+    }
+}

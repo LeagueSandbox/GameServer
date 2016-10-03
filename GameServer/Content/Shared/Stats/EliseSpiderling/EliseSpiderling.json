@@ -1,0 +1,74 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "EliseSpiderling",
+        "Name": "EliseSpiderling",
+        "ResourcePath": "DATA/Characters/EliseSpiderling/EliseSpiderling.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "400",
+            "Armor": "30",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": 0,
+            "AttackDelayOffsetPercent": -0.06,
+            "AttackRange": 175,
+            "AttackSpeed": "10",
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": "1.0",
+            "BaseCritChance": "0",
+            "BaseDamage": 0,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "80",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "ChasingAttackRangePercent": 0.5,
+            "CritDamageBonus": 1,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_EliseSpiderling",
+            "ExpGivenOnDeath": "0",
+            "ExtraAttack1_Probability": 0,
+            "ExtraAttack2_Probability": 0,
+            "ExtraSpell1": "EliseSpiderWAttack",
+            "GameplayCollisionRadius": "1.0",
+            "GoldGivenOnDeath": 5,
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": 345,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_EliseSpiderling",
+            "PathfindingCollisionRadius": "1.0",
+            "PostAttackMoveDelay": 0.8,
+            "SelectionHeight": 28,
+            "SelectionRadius": 35,
+            "Significance": 0.3,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "50",
+            "UseChampionVisibility": 1
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": "EliseSpiderlingSquare.DDS"
+        },
+        "Package": {
+            "FallbackPackage": "Elise"
+        },
+        "UNKNOWN_HASHES": {
+            "2179197562": "false",
+            "2818610673": 0,
+            "2888588042": "EliseSpiderlingBasicAttack",
+            "386495002": 0,
+            "3983263047": "1.0"
+        }
+    }
+}

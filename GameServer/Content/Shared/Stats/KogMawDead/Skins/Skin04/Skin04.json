@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/KogMawDead/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMawDead.blnd",
+            "ChampionSkinID": 96004,
+            "ChampionSkinName": "ReindeerKogMaw",
+            "SelfIllumination": 0.3,
+            "SimpleSkin": "KogMaw_Dead.skn",
+            "Skeleton": "KogMaw_Dead.skl",
+            "SkinScale": "0.7",
+            "Texture": "kogmaw_rudolph_death.dds"
+        }
+    }
+}

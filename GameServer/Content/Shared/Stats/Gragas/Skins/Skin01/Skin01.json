@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Gragas.blnd",
+            "ChampionSkinID": 79001,
+            "ChampionSkinName": "ScubaGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "gragas_scuba.skn",
+            "Skeleton": "gragas_scuba.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_scuba.dds"
+        }
+    }
+}

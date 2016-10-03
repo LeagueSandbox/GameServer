@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SionQSoundBeforeHalfHit",
+        "Name": "SionQSoundBeforeHalfHit",
+        "ResourcePath": "DATA/Characters/Sion/Spells/SionQSoundBeforeHalfHit.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "ApplyMaterialOnHitSound": 1,
+            "DynamicTooltip": "game_buff_tooltip_SionWPassive",
+            "Effect1Level1Amount": 0,
+            "Effect1Level2Amount": 0,
+            "Effect1Level3Amount": 0,
+            "Effect1Level4Amount": 0,
+            "Effect1Level5Amount": 0,
+            "Sound_VOEventCategory": "OrderConfirmation"
+        }
+    }
+}

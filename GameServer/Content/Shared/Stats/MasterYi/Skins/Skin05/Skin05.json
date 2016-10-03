@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/MasterYi/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TribalMasterYi.blnd",
+            "ChampionSkinID": 11005,
+            "ChampionSkinName": "TribalMasterYi",
+            "GlossTexture": "masteryi_tribal_GM.dds",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "masteryi_tribal_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.3,
+            "ReflectionOpacityGlancing": 0.3,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "masteryi_tribal.skn",
+            "Skeleton": "masteryi_tribal.skl",
+            "SkinScale": 1.55,
+            "Texture": "masteryi_tribal_TX_CM.dds"
+        }
+    }
+}

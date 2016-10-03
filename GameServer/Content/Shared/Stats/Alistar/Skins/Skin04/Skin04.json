@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Alistar/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Alistar.blnd",
+            "ChampionSkinID": 12004,
+            "ChampionSkinName": "CowboyMinotaur",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Alistar_cowboy.skn",
+            "Skeleton": "Alistar_cowboy.skl",
+            "SkinScale": 1.4,
+            "Texture": "alistar_cowboy_TX_CM.dds"
+        }
+    }
+}

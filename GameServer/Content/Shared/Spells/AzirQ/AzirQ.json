@@ -1,0 +1,63 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AzirQ",
+        "Name": "AzirQ",
+        "ResourcePath": "DATA/Characters/Azir/Spells/AzirQ.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AnimationName": "Spell1",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": 7.5,
+            "CastRange": "800",
+            "CastRangeDisplayOverride": "800",
+            "CastType": "0",
+            "Coefficient": 0.5,
+            "Cooldown": "10",
+            "Cooldown1": "10",
+            "Cooldown2": 9,
+            "Cooldown3": 8,
+            "Cooldown4": 7,
+            "Cooldown5": 6,
+            "Description": "game_spell_description_AzirQ",
+            "DisplayName": "game_spell_displayname_AzirQ",
+            "DynamicExtended": "game_spell_levelup_AzirQ",
+            "DynamicTooltip": "game_spell_tooltip_AzirQ",
+            "Effect1Level0Amount": 75,
+            "Effect1Level1Amount": 75,
+            "Effect1Level2Amount": 105,
+            "Effect1Level3Amount": 135,
+            "Effect1Level4Amount": 165,
+            "Effect1Level5Amount": 195,
+            "Effect2Level0Amount": -0.25,
+            "Effect2Level1Amount": -0.25,
+            "Effect2Level2Amount": -0.25,
+            "Effect2Level3Amount": -0.25,
+            "Effect2Level4Amount": -0.25,
+            "Effect2Level5Amount": -0.25,
+            "Flags": 115712,
+            "InventoryIcon": "Azir_Q.dds",
+            "ManaCost1": "70",
+            "ManaCost2": "70",
+            "ManaCost3": "70",
+            "ManaCost4": "70",
+            "ManaCost5": "70",
+            "NumSpellTargeters": 2,
+            "OverrideCastTime": 0.25,
+            "TargettingType": "10",
+            "UseAnimatorFramerate": "0"
+        },
+        "SpellTargeter1": {
+            "DrawableType": "Line",
+            "LineStopsAtEndPosition": 1,
+            "LineWidth": "60",
+            "MinimumDisplayedRange": 1,
+            "OverrideBaseRange": "2550",
+            "Start_BasePosition": "OffsetObject"
+        },
+        "SpellTargeter2": {
+            "DrawableType": "Range"
+        }
+    }
+}

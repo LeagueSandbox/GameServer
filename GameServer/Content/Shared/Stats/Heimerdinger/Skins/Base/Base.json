@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerdingerBase.blnd",
+            "ChampionSkinID": "74000",
+            "ChampionSkinName": "HeimerdingerBase",
+            "ExtraCharacterPreloads": "HeimerTYellow,HeimerTBlue",
+            "OverrideBoundingBox": "100 200 100",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Heimerdinger.skn",
+            "Skeleton": "Heimerdinger.skl",
+            "SkinScale": 1,
+            "Texture": "heimerdinger_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Heimerdinger_Grab_Hand, Heimerdinger_Antenna"
+        }
+    }
+}

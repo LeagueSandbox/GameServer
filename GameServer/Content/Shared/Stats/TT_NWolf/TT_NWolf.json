@@ -1,0 +1,80 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_NWolf",
+        "Name": "TT_NWolf",
+        "ResourcePath": "DATA/Characters/TT_NWolf/TT_NWolf.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 9,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.08417,
+            "AttackDelayOffsetPercent": -0.08,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.33,
+            "BaseCritChance": "25.0",
+            "BaseDamage": 28,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "650",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 3,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_GiantWolf",
+            "EnemyTooltip": "game_character_enemyTooltip_GiantWolf",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "144.0",
+            "ExtraAttack1_Probability": 0.33,
+            "ExtraAttack2_Probability": 0.34,
+            "GameplayCollisionRadius": "65.0",
+            "GoldGivenOnDeath": "28.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_GiantWolf",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "120",
+            "SelectionRadius": "120",
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "WeaponMaterial": "GiantWolfBasicAttack"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Wraith_Glow.troy Chest"
+        },
+        "Info": {
+            "IconCircle": "Giantwolf_Circle.dds",
+            "IconSquare": "Giantwolf_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_NWolf.blnd",
+            "ChampionSkinName": "TT_NWolf",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_NWolf.skn",
+            "Skeleton": "TT_NWolf.skl",
+            "SkinScale": 1.6,
+            "Texture": "TT_NWolf_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

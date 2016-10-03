@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Khazix/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KhazixDroid.blnd",
+            "ChampionSkinID": 121001,
+            "ChampionSkinName": "KhazixDroid",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "khazix_droid.skn",
+            "Skeleton": "khazix_droid.skl",
+            "SkinScale": 1,
+            "Texture": "khazix_droid_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

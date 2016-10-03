@@ -1,0 +1,80 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Buffplat_L",
+        "Name": "TT_Buffplat_L",
+        "ResourcePath": "DATA/Characters/TT_Buffplat_L/TT_Buffplat_L.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "0",
+            "AlwaysVisible": "0",
+            "Armor": 10.5,
+            "ArmorPerLevel": 4,
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "0",
+            "AttackSpeedPerLevel": 1.68,
+            "BaseCritChance": "0",
+            "BaseDamage": "110",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "0",
+            "BaseMP": "60000",
+            "BaseStaticHPRegen": "5000",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3.2,
+            "Description": "game_character_description_TTLantern",
+            "EnemyTooltip": "game_character_enemyTooltip_TTLantern",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_enemyTooltip_TTLantern",
+            "GameplayCollisionRadius": 0,
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": 0,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": 0,
+            "Name": "game_character_displayname_TTLantern",
+            "NeverRender": "0",
+            "NoAutoAttack": 1,
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": 0,
+            "PerceptionBubbleRadius": "0",
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "ShouldFaceTarget": "0",
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "rune_light_shards_left.troy"
+        },
+        "Info": {
+            "IconCircle": "TT_Buffplat_L.dds",
+            "IconSquare": "TT_Buffplat_L.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TreelineLanternLeftBase.blnd",
+            "ChampionSkinName": "TreelineLanternLeftBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Buffplat.skn",
+            "Skeleton": "TT_Buffplat.skl",
+            "SkinScale": 1,
+            "Texture": "structure_buffplat_fence_01.dds"
+        },
+        "Minion": {
+            "AlwaysUpdatePAR": 1
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 6,
+            "3983263047": "0"
+        }
+    }
+}

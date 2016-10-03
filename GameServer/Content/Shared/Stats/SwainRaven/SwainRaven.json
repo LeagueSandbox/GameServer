@@ -1,0 +1,133 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SwainRaven",
+        "Name": "SwainRaven",
+        "ResourcePath": "DATA/Characters/SwainRaven/SwainRaven.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AbilityPowerIncPerLevel": "0",
+            "AcquisitionRange": "500",
+            "Armor": 16,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 4,
+            "AttackDelayCastOffsetPercent": "-0.0822222222",
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "500",
+            "AttackSpeedPerLevel": 2.11,
+            "BaseAbilityPower": "0",
+            "BaseAttack_Probability": "1.0",
+            "BaseCritChance": "0",
+            "BaseDamage": 49,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 385,
+            "BaseMP": "240",
+            "BaseStaticHPRegen": 1.35,
+            "BaseStaticMPRegen": 1.36,
+            "championId": "50",
+            "CritAttack": "Swain_RavenBasicAttack",
+            "CritAttack_AttackDelayCastOffsetPercent": "-0.0822222222",
+            "CritAttack_AttackDelayOffsetPercent": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3,
+            "Description": "game_character_description_Swain",
+            "ExtraAttack1": "Swain_RavenBasicAttack",
+            "ExtraAttack1_Probability": 0,
+            "ExtraSpell1": "SwainMetaNuke",
+            "ExtraSpell2": "SwainMetaHeal",
+            "ExtraSpell3": "SwainMetaHealTorment",
+            "HPPerLevel": 78,
+            "HPRegenPerLevel": 0.13,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "Lore1": "game_character_lore_Swain",
+            "MoveSpeed": 335,
+            "MPPerLevel": "50",
+            "MPRegenPerLevel": 0.13,
+            "Name": "game_character_displayname_Swain",
+            "Passive1Icon": "SwainCarrionRenewal.dds",
+            "Passive1LuaName": "SwainTacticalSupremacy",
+            "Passive1Name": "game_character_passiveName_Swain",
+            "PassLev1Desc1": "game_character_passiveDescription_Swain",
+            "PathfindingCollisionRadius": 35,
+            "SelectionHeight": "140.0000",
+            "SelectionRadius": "160.0000",
+            "Significance": 0.3,
+            "Spell1": "SwainDecrepify",
+            "Spell2": "SwainShadowGrasp",
+            "Spell3": "SwainTorment",
+            "Spell4": "SwainMetamorphism",
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0",
+            "Tips1": "game_character_tips_Swain",
+            "Tips2": "game_character_opposing_tips_Swain"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": -0.4
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconCircle": "Swain_Circle_0.dds",
+            "IconSquare": "Swain_Square_0.dds"
+        },
+        "MeshSkin": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": "50000",
+            "ChampionSkinName": "BaseSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Raven.skn",
+            "Skeleton": "Swain_Raven.skl",
+            "SkinScale": "0.9",
+            "Texture": "swain_demon_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": 50001,
+            "ChampionSkinName": "NorthernSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Raven.skn",
+            "Skeleton": "Swain_Raven.skl",
+            "SkinScale": "0.9",
+            "Texture": "swain_demon_north_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": 50002,
+            "ChampionSkinName": "BilgewaterSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Raven.skn",
+            "Skeleton": "Swain_Raven.skl",
+            "SkinScale": "0.9",
+            "Texture": "swain_demon_bilgewater_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "GrandAdmiralSwain.blnd",
+            "ChampionSkinID": 50003,
+            "ChampionSkinName": "GrandAdmiralSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_demon_emperor.skn",
+            "Skeleton": "Swain_demon_emperor.skl",
+            "SkinScale": "0.9",
+            "Texture": "swain_demon_emperor_TX_CM.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Swain"
+        },
+        "UNKNOWN_HASHES": {
+            "1040761625": 9,
+            "105898023": "10",
+            "122525173": "cryopheonix_idle.troy root",
+            "2786390348": 5,
+            "4146314945": "mage,support,root,ranged,nuke,pusher",
+            "767627316": 2
+        }
+    }
+}

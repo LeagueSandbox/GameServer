@@ -1,0 +1,29 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Twitch/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Twitch_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "TwitchBase.blnd",
+            "ChampionSkinID": "29000",
+            "ChampionSkinName": "TwitchBase",
+            "MaterialOverride0Submesh": "Twitch_cheese_Mat",
+            "MaterialOverride0Texture": "twitch_cheese_TX_CM.dds",
+            "OverrideBoundingBox": "140 160 140",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Twitch.skn",
+            "Skeleton": "Twitch.skl",
+            "SkinScale": "1.0",
+            "Texture": "twitch_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Twitch_Cheese_Mat"
+        }
+    }
+}

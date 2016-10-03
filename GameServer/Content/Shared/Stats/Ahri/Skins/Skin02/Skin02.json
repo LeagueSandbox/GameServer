@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Ahri/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Ahri.blnd",
+            "ChampionSkinID": 103002,
+            "ChampionSkinName": "AhriShadowfox",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ahri_shadowfox.skn",
+            "Skeleton": "Ahri_shadowfox.skl",
+            "SkinScale": 1.26,
+            "Texture": "Ahri_shadowfox_TX_CM.dds"
+        }
+    }
+}

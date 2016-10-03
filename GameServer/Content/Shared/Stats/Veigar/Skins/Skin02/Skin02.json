@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": 45002,
+            "ChampionSkinName": "CurlingVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "Veigar_curling.skn",
+            "Skeleton": "Veigar_curling.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "Veigar_curling.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

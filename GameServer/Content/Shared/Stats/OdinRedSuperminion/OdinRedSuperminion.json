@@ -1,0 +1,66 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinRedSuperminion",
+        "Name": "OdinRedSuperminion",
+        "ResourcePath": "DATA/Characters/OdinRedSuperminion/OdinRedSuperminion.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": "15.0",
+            "ArmorMaterial": "Metal",
+            "AttackDelayCastOffsetPercent": 0.0889,
+            "AttackDelayOffsetPercent": "-0.1",
+            "AttackRange": "210",
+            "BaseAttack_Probability": 0.8,
+            "BaseCritChance": "0",
+            "BaseDamage": "22.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "890",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "Description": "game_character_description_OdinRedSuperminion",
+            "EnemyTooltip": "<titleLeft>Super Minion</titleLeft><subtitleLeft>Enemy Minion</subtitleLeft> <mainText>A very powerful enemy minion with high health and damage.</mainText>",
+            "ExpGivenOnDeath": "500.0",
+            "ExtraAttack1": "OdinRedSuperminionBasicAttack2",
+            "ExtraAttack1_Probability": 0.2,
+            "FriendlyTooltip": "<titleLeft>Super Minion</titleLeft><subtitleLeft>Ally Minion</subtitleLeft> <mainText>A very powerful allied minion with high health and damage.</mainText>",
+            "GameplayCollisionRadius": "55.0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "0",
+            "GoldGivenOnDeath": "150.0",
+            "IsMelee": "false",
+            "Metadata": "class:minion",
+            "MoveSpeed": "350",
+            "Name": "game_character_displayname_OdinRedSuperminion",
+            "PathfindingCollisionRadius": 45.5208,
+            "SelectionHeight": "120.0000",
+            "SelectionRadius": "85.0000",
+            "Significance": 0.5,
+            "SpellBlock": "-30",
+            "UnitTags": "Minion | Minion_Lane",
+            "WeaponMaterial": "OdinRedSuperminionBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "OdinRedSuperminion_Circle.dds",
+            "IconSquare": "OdinRedSuperminion_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "OdinRedSuperminionBase.blnd",
+            "ChampionSkinName": "OdinRedSuperminionBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OdinRedSuperminion.skn",
+            "Skeleton": "OdinRedSuperminion.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "OdinRedSuperminion_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3983263047": "0"
+        }
+    }
+}

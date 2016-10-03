@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Poppy/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BasePoppy.blnd",
+            "ChampionSkinID": 78004,
+            "ChampionSkinName": "RaggedyPoppy",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Poppy_raggedy.skn",
+            "Skeleton": "Poppy_raggedy.skl",
+            "SkinScale": 1,
+            "Texture": "poppy_raggedy_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

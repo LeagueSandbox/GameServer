@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/KalistaAltar/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KalistaAltar.blnd",
+            "ChampionSkinName": "KalistaAltar",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "KalistaAltar.skn",
+            "Skeleton": "KalistaAltar.skl",
+            "SkinScale": "1.0",
+            "Texture": "KalistaAltar_Base_TX_CM.dds"
+        }
+    }
+}

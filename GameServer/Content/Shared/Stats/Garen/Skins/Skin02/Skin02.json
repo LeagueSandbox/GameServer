@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "DesertGaren.blnd",
+            "ChampionSkinID": 86002,
+            "ChampionSkinName": "DesertGaren",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Garen_Desert.skn",
+            "Skeleton": "Garen_Desert.skl",
+            "SkinScale": "1.00",
+            "Texture": "Garen_DTrooper_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Karma/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KarmaSkin04.blnd",
+            "ChampionSkinID": 43004,
+            "ChampionSkinName": "KarmaSkin04",
+            "OverrideBoundingBox": "90 200 90",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karma_Skin04.skn",
+            "Skeleton": "Karma_Skin04.skl",
+            "SkinScale": 1.2,
+            "Texture": "karma_Skin04_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Fans"
+        }
+    }
+}

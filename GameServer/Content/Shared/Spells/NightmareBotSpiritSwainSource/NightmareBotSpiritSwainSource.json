@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotSpiritSwainSource",
+        "Name": "NightmareBotSpiritSwainSource",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritSwainSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotSpiritSwainSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotSpiritSwain",
+            "DisplayName": "game_spell_displayname_NightmareBotSpiritSwain",
+            "Flags": 329748,
+            "InventoryIcon": "SwainRavenousFlock.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

@@ -1,0 +1,81 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_Blue_Minion_caster",
+        "Name": "Odin_Blue_Minion_caster",
+        "ResourcePath": "DATA/Characters/Odin_Blue_Minion_Caster/Odin_Blue_Minion_caster.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": "0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.0087,
+            "AttackDelayOffsetPercent": -0.067,
+            "AttackRange": "420",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": 0,
+            "BaseDamage": "25.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": 0,
+            "BaseHP": "290",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": 0,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Blue_Minion_Wizard",
+            "EnemyTooltip": "",
+            "ExpGivenOnDeath": "51.0",
+            "ExtraAttack1": "Odin_Blue_Minion_CasterBasicAttack2",
+            "ExtraAttack1_Probability": 0.5,
+            "FriendlyTooltip": "",
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": "10.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Blue_Minion_Wizard",
+            "PathfindingCollisionRadius": 35.7437,
+            "PerceptionBubbleRadius": "1200",
+            "SelectionHeight": "75.0000",
+            "SelectionRadius": "115.0000",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Minion | Minion_Lane"
+        },
+        "Info": {
+            "IconCircle": "BlueRange_Circle.dds",
+            "IconSquare": "BlueRange_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Blue_Minion_WizardBase.blnd",
+            "ChampionSkinName": "Blue_Minion_WizardBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Blue_Minion_Wizard.skn",
+            "Skeleton": "Blue_Minion_Wizard.skl",
+            "SkinScale": "0.9",
+            "Texture": "Blue_Minion_Wizard.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Blue_Minion_Wizard"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

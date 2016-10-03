@@ -1,0 +1,82 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_ChaosTurret2",
+        "Name": "TT_ChaosTurret2",
+        "ResourcePath": "DATA/Characters/TT_ChaosTurret2/TT_ChaosTurret2.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": 67,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.161,
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "190.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1300",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_ChaosTurretWorm",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "70.000",
+            "GlobalGoldGivenOnDeath": "150.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_ChaosTurretWorm",
+            "OccludedUnitSelectableDistance": "500",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200.0000",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": "100",
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Inhib"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "NumberOfParticles": 1,
+            "Particle1": "Chaos_Turret_Crystal.troy joint2",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconCircle": "ChaosGateTower_Icon.dds",
+            "IconSquare": "ChaosGateTower_Icon.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_ChaosTurret2Base.blnd",
+            "ChampionSkinName": "TT_ChaosTurret2Base",
+            "EmissiveTexture": "RedGateTower_diffuse_Cmask.dds",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "RedGateTower.skn",
+            "Skeleton": "RedGateTower.skl",
+            "SkinScale": 1.1,
+            "Texture": "RedGateTower_diff.dds"
+        },
+        "Package": {
+            "FallbackPackage": "ChaosTurretGiant"
+        },
+        "UNKNOWN_HASHES": {
+            "2628302185": "ChaosTurretGiant"
+        }
+    }
+}

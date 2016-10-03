@@ -1,0 +1,61 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_ChaosMinionSuper",
+        "Name": "SRU_ChaosMinionSuper",
+        "ResourcePath": "DATA/Characters/SRU_ChaosMinionSuper/SRU_ChaosMinionSuper.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30.0",
+            "ArmorMaterial": "Metal",
+            "AttackCastTime": 0.5,
+            "AttackRange": "170",
+            "AttackTotalTime": 1.44,
+            "BaseCritChance": "0",
+            "BaseDamage": "180.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1500",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "10",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "Description": "game_character_description_Red_Minion_MechMelee",
+            "EnemyTooltip": "game_character_enemyTooltip_Red_Minion_MechMelee",
+            "ExpGivenOnDeath": "500.0",
+            "FriendlyTooltip": "game_character_friendlyTooltip_Red_Minion_MechMelee",
+            "GameplayCollisionRadius": "65.0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "0",
+            "GoldGivenOnDeath": "150.0",
+            "IsMelee": "true",
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "Name": "game_character_displayname_Red_Minion_MechMelee",
+            "PathfindingCollisionRadius": 55.5208,
+            "SelectionHeight": "110.0000",
+            "SelectionRadius": "145.0000",
+            "SequentialAutoAttacks": 1,
+            "Significance": 0.5,
+            "SpellBlock": "-30",
+            "TowerTargetingPriorityBoost": 5,
+            "UnitTags": "Minion | Minion_Lane | Minion_Lane_Super"
+        },
+        "HealthBar": {
+            "Scale": 1.4
+        },
+        "Info": {
+            "IconCircle": "Redmechmelee_Circle.dds",
+            "IconSquare": "Redmechmelee_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "SRU_OrderMinionSuper"
+        },
+        "UNKNOWN_HASHES": {
+            "3983263047": "0"
+        }
+    }
+}

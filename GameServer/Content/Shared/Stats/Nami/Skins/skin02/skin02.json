@@ -1,0 +1,40 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Nami/skins/skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "namiskin02.blnd",
+            "ChampionSkinID": 267002,
+            "ChampionSkinName": "NamiSkin02",
+            "GlossTexture": "nami_skin02_TX_GM.dds",
+            "MaterialOverride0Submesh": "nami_skin02_recallGeo_MAT",
+            "MaterialOverride0Texture": "nami_skin02_recall_TX_CM.dds",
+            "ReflectionFresnel": 0.3,
+            "ReflectionFresnelBlue": 0.3,
+            "ReflectionFresnelGreen": 0.3,
+            "ReflectionFresnelRed": 0.3,
+            "ReflectionMap": "nami_skin02_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nami_Skin02.skn",
+            "Skeleton": "Nami_Skin02.skl",
+            "SkinScale": 1.05,
+            "Texture": "Nami_Skin02_CM_TX.dds",
+            "YOffset": -0.3
+        },
+        "UNKNOWN_HASHES": {
+            "212624590": "nami_skin02_recall_TX_GM.dds",
+            "2625724482": "true",
+            "3400833179": 0.1,
+            "343518805": 0.3,
+            "3966094422": 0.3,
+            "455913160": 0.3,
+            "708066840": "nami_skin02_recallGeo_MAT"
+        }
+    }
+}

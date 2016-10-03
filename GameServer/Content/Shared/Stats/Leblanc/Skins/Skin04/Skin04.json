@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Leblanc/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "LeblancSkin04.blnd",
+            "ChampionSkinID": 7004,
+            "ChampionSkinName": "LeblancSkin04",
+            "OverrideBoundingBox": "130 210 130",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Leblanc_Skin04.skn",
+            "Skeleton": "Leblanc_Skin04.skl",
+            "SkinScale": 0.95,
+            "Texture": "leblanc_Skin04_TX_CM.dds"
+        }
+    }
+}

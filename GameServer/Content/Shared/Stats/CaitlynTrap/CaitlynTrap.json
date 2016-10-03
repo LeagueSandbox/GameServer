@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "CaitlynTrap",
+        "Name": "CaitlynTrap",
+        "ResourcePath": "DATA/Characters/CaitlynTrap/CaitlynTrap.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Significance": 0.2
+        }
+    }
+}

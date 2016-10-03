@@ -1,0 +1,48 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "YasuoWMovingWallMisL",
+        "Name": "YasuoWMovingWallMisL",
+        "ResourcePath": "DATA/Characters/Yasuo/Spells/YasuoWMovingWallMisL.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "VolleyAttack",
+            "BounceRadius": "450.0000",
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": 15.075,
+            "CastRadius": 299.3,
+            "CastRange": "1800.0000",
+            "CastType": 3,
+            "Cooldown": 0,
+            "DelayCastOffsetPercent": 0,
+            "DelayTotalTimePercent": 0,
+            "Description": "game_spell_description_VolleyAttack",
+            "DisplayName": "game_spell_displayname_VolleyAttack",
+            "Flags": 115712,
+            "LineMissileDelayDestroyAtEndSeconds": 0,
+            "LineMissileEndsAtTargetPoint": "0",
+            "LineMissileTimePulseBetweenCollisionSpellHits": 0,
+            "LineWidth": "1.0000",
+            "MissileAccel": "-1200.000",
+            "MissileBoneName": "Bow_01",
+            "MissileEffect": "Zyra_Dummy_Controller.troy",
+            "MissileGravity": 0,
+            "MissileLifetime": 3.75,
+            "MissileMaxSpeed": "850.0000",
+            "MissileMinSpeed": "10.0000",
+            "MissilePerceptionBubbleRadius": 0,
+            "MissilePerceptionBubbleRevealsStealth": "0",
+            "MissileSpeed": "850.0000",
+            "MissileUnblockable": 1,
+            "SpellRevealsChampion": "1.0000",
+            "TargettingType": 6,
+            "TextFlags": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "3251122316": 0
+        }
+    }
+}

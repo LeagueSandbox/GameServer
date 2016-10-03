@@ -1,0 +1,46 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AzirSoldierMissile",
+        "Name": "AzirSoldierMissile",
+        "ResourcePath": "DATA/Characters/Azir/Spells/AzirSoldierMissile.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "AzirQ",
+            "AnimationName": "",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": "0",
+            "CastRange": "25000",
+            "CastType": 3,
+            "Cooldown": 0,
+            "Cooldown1": 0,
+            "Cooldown2": 0,
+            "Cooldown3": 0,
+            "Cooldown4": 0,
+            "Cooldown5": 0,
+            "Description": "game_spell_description_",
+            "DisplayName": "game_spell_displayname_",
+            "DynamicExtended": "game_spell_levelup_",
+            "DynamicTooltip": "game_spell_tooltip_",
+            "Flags": 115716,
+            "HitBoneName": "C_BUFFBONE_GLB_CHEST_LOC",
+            "HitEffectName": "Azir_base_Q_Tar.troy",
+            "InventoryIcon": "",
+            "LineMissileEndsAtTargetPoint": 1,
+            "LineMissileFollowsTerrainHeight": 1,
+            "LineWidth": "70.0000",
+            "LuaOnMissileUpdateDistanceInterval": 51,
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileEffect": "Azir_base_Q_Soldiers_Mis_White.troy",
+            "MissileSpeed": "1000",
+            "OverrideCastTime": "0",
+            "TargettingType": 2,
+            "UseAnimatorFramerate": "0"
+        }
+    }
+}

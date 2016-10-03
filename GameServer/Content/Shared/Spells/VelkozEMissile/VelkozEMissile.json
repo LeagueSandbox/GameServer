@@ -1,0 +1,33 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "VelkozEMissile",
+        "Name": "VelkozEMissile",
+        "ResourcePath": "DATA/Characters/Velkoz/Spells/VelkozEMissile.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "CastFrame": 7.975,
+            "CastRadiusSecondary": 0,
+            "CastRange": "1100.0000",
+            "CastType": 1,
+            "ClientOnlyMissileTargetBoneName": "Buffbone_Glb_Ground_Loc",
+            "Flags": 34816,
+            "HaveHitBone": 1,
+            "LineMissileFollowsTerrainHeight": 1,
+            "LineWidth": "120.0000",
+            "MissileAccel": 0,
+            "MissileBoneName": "Buffbone_Glb_Ground_Loc",
+            "MissileEffect": "Velkoz_base_E_terraform_mis.troy",
+            "MissileFixedTravelTime": 0.55,
+            "MissileMaxSpeed": "1500.0000",
+            "MissileMinSpeed": "1500.0000",
+            "MissileSpeed": "1500.0000",
+            "MissileTargetHeightAugment": "60.0000",
+            "SpellRevealsChampion": 1,
+            "TargettingType": 1,
+            "TextFlags": "AffectFriendly | AffectMinions",
+            "UseAnimatorFramerate": "0"
+        }
+    }
+}

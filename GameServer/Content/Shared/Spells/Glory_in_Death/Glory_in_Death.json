@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Glory_in_Death",
+        "Name": "Glory_in_Death",
+        "ResourcePath": "DATA/Characters/Sion/Spells/Glory_in_Death.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_SionPassiveZombie",
+            "Sound_VOEventCategory": "OrderConfirmation"
+        },
+        "SpellData": {
+            "AlternateName": "SionPassiveZombie",
+            "DisplayName": "game_character_passiveName_Sion",
+            "Version": 1
+        },
+        "UNKNOWN_HASHES": {
+            "2592744643": "true"
+        }
+    }
+}

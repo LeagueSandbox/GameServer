@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Karma/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SungoddessKarma.blnd",
+            "ChampionSkinID": 43001,
+            "ChampionSkinName": "SungoddessKarma",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karma_sungoddess.skn",
+            "Skeleton": "Karma_sungoddess.skl",
+            "SkinScale": 1.2,
+            "Texture": "karma_Sungodess_2012_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Karma_SunGoddes_Fans_Mat"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "DragonBlindMonk.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 64003,
+            "ChampionSkinName": "DragonBlindMonk",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "LeeSin_dragon.skn",
+            "Skeleton": "LeeSin_dragon.skl",
+            "SkinScale": 1.82,
+            "Texture": "LeeSin_dragon_TX_CM.DDS"
+        }
+    }
+}

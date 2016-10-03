@@ -1,0 +1,57 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_SpeedShrine",
+        "Name": "TT_SpeedShrine",
+        "ResourcePath": "DATA/Characters/TT_SpeedShrine/TT_SpeedShrine.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 2,
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.0595,
+            "AttackDelayOffsetPercent": -0.375,
+            "AttackRange": "100",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": 0.1,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "540",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_OdinSpeedShrine",
+            "ExpGivenOnDeath": "0",
+            "GoldGivenOnDeath": "0",
+            "HPPerLevel": "10",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_OdinSpeedShrine",
+            "NeverRender": 1,
+            "PathfindingCollisionRadius": 1,
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "SoulGivenOnDeath": "0"
+        },
+        "MeshSkin": {
+            "Animations": "TT_SpeedShrineBase.blnd",
+            "ChampionSkinName": "TT_SpeedShrineBase",
+            "SimpleSkin": "Cube.skn",
+            "Skeleton": "Cube.skl",
+            "Texture": "OdinSpeedShrineLoadScreen.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

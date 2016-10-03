@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardSpider.blnd",
+            "ChampionSkinName": "SightWardSpider",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_spider.skn",
+            "Skeleton": "sightWard_spider.skl",
+            "SkinScale": 0.8,
+            "Texture": "sightWard_spider_TX_CM.dds",
+            "YOffset": 65532
+        }
+    }
+}

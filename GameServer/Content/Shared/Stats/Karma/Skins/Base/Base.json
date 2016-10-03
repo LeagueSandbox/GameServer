@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Karma/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Karma.blnd",
+            "ChampionSkinID": "43000",
+            "ChampionSkinName": "Karma",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karma_2012.skn",
+            "Skeleton": "Karma_2012.skl",
+            "SkinScale": 1.2,
+            "Texture": "karma_Base_2012_CM.dds"
+        }
+    }
+}

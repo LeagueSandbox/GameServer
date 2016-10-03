@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Alistar/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BlueAlistar.blnd",
+            "ChampionSkinID": 12005,
+            "ChampionSkinName": "BlueAlistar",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Alistar_blue.skn",
+            "Skeleton": "Alistar_blue.skl",
+            "SkinScale": 1.4,
+            "Texture": "alistar_blue_TX_CM.dds"
+        }
+    }
+}

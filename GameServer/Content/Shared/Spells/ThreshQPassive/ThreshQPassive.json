@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ThreshQPassive",
+        "Name": "ThreshQPassive",
+        "ResourcePath": "DATA/Characters/Thresh/Spells/ThreshQPassive.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ThreshQPassive"
+        },
+        "SpellData": {
+            "AlternateName": "ThreshQPassive",
+            "Description": "game_spell_description_ThreshQPassive",
+            "DisplayName": "game_spell_displayname_ThreshQPassive",
+            "DynamicExtended": "game_spell_levelup_ThreshQPassive",
+            "DynamicTooltip": "game_spell_tooltip_ThreshQPassive",
+            "FloatStaticsDecimals1": "0",
+            "FloatVarsDecimals1": "0",
+            "InventoryIcon": "Thresh_Q.dds",
+            "Version": 1
+        }
+    }
+}

@@ -1,0 +1,125 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SwainBeam",
+        "Name": "SwainBeam",
+        "ResourcePath": "DATA/Characters/SwainBeam/SwainBeam.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AbilityPowerIncPerLevel": "0",
+            "AcquisitionRange": "450",
+            "Armor": 16,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 4,
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "500",
+            "AttackSpeedPerLevel": 2.11,
+            "BaseAbilityPower": "0",
+            "BaseAttack_Probability": 0.6,
+            "BaseCritChance": "0",
+            "BaseDamage": 46.3,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 385,
+            "BaseMP": "260",
+            "BaseStaticHPRegen": 1.35,
+            "BaseStaticMPRegen": 0.86,
+            "championId": "50",
+            "CritAttack_AttackDelayCastOffsetPercent": "-0.0917",
+            "CritAttack_AttackDelayOffsetPercent": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 2.825,
+            "Description": "game_character_description_Swain",
+            "ExtraAttack1_Probability": 0.4,
+            "HPPerLevel": 78,
+            "HPRegenPerLevel": 0.13,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "Lore1": "game_character_lore_Cryophoenix",
+            "MoveSpeed": "320",
+            "MPPerLevel": "60",
+            "MPRegenPerLevel": 0.08,
+            "Name": "game_character_displayname_Swain",
+            "Passive1Icon": "SwainTacticalSupremacy.dds",
+            "Passive1LuaName": "SwainTacticalSupremacy",
+            "Passive1Name": "game_character_passiveName_Swain",
+            "PassLev1Desc1": "game_character_passiveDescription_Swain",
+            "PathfindingCollisionRadius": 40.8,
+            "SelectionHeight": "140.0000",
+            "SelectionRadius": "140.0000",
+            "Significance": 0,
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0",
+            "Tips1": "game_character_tips_Cryophoenix",
+            "Tips2": "game_character_opposing_tips_Cryophoenix"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": -0.4
+        },
+        "Info": {
+            "IconCircle": "Swain_Circle_0.dds",
+            "IconSquare": "Swain_Square_0.dds"
+        },
+        "MeshSkin": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": "50000",
+            "ChampionSkinName": "BaseSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Beatrice.skn",
+            "Skeleton": "Swain_Beatrice.skl",
+            "SkinScale": 1.4,
+            "Texture": "swain_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": 50001,
+            "ChampionSkinName": "NorthernSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Beatrice_north.skn",
+            "Skeleton": "Swain_Beatrice_north.skl",
+            "SkinScale": 1.4,
+            "Texture": "swain_north_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "BaseSwain.blnd",
+            "ChampionSkinID": 50002,
+            "ChampionSkinName": "BilgewaterSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Beatrice_Bilgewater.skn",
+            "Skeleton": "Swain_Beatrice_Bilgewater.skl",
+            "SkinScale": 1.4,
+            "Texture": "swain_bilgewater_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "EmperorSwain.blnd",
+            "ChampionSkinID": 50003,
+            "ChampionSkinName": "EmperorSwain",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Swain_Beatrice_emperor.skn",
+            "Skeleton": "Swain_Beatrice_emperor.skl",
+            "SkinScale": 1.4,
+            "Texture": "swain_grandadmiral_TX_CM.dds"
+        },
+        "RecItems": {
+            "RecItem1": 1056,
+            "RecItem2": "3020",
+            "RecItem3": 3116,
+            "RecItem4": 3128,
+            "RecItem5": 3135,
+            "RecItem6": 3089
+        },
+        "UNKNOWN_HASHES": {
+            "1040761625": 9,
+            "105898023": 8,
+            "2786390348": 5,
+            "4146314945": "mage,support,root,ranged,nuke,pusher",
+            "767627316": 2
+        }
+    }
+}

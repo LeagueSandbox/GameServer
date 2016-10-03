@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Chains_Order_Periph",
+        "Name": "TT_Chains_Order_Periph",
+        "ResourcePath": "DATA/Characters/TT_Chains_Order_Periph/TT_Chains_Order_Periph.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Chains_Order_Periph.blnd",
+            "ChampionSkinID": 988125,
+            "ChampionSkinName": "TT_Chains_Order_Periph",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Chains_Order_Periph.skn",
+            "Skeleton": "TT_Chains_Order_Periph.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Chains.dds"
+        }
+    }
+}

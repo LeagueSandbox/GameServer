@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinTestCubeRender",
+        "Name": "OdinTestCubeRender",
+        "ResourcePath": "DATA/Characters/OdinTestCubeRender/OdinTestCubeRender.inibin"
+    },
+    "Values": {
+        "Data": {
+            "NeverRender": 1,
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "0",
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "ServerOnly": "0"
+        },
+        "MeshSkin": {
+            "Animations": "OdinTestCubeRenderBase.blnd",
+            "ChampionSkinName": "OdinTestCubeRenderBase",
+            "SimpleSkin": "Cube.skn",
+            "Skeleton": "Cube.skl",
+            "Texture": "lichLoadScreen.dds"
+        }
+    }
+}

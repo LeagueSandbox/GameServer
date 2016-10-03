@@ -1,0 +1,29 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_Hermit_Robot/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_Hermit_Robot.blnd",
+            "ChampionSkinName": "HA_AP_Hermit_Robot",
+            "ReflectionFresnel": 0.900000036,
+            "ReflectionFresnelBlue": 0.5,
+            "ReflectionFresnelGreen": 0.8,
+            "ReflectionFresnelRed": 0.900000036,
+            "ReflectionMap": "HA_AP_Hermit_Robot_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.5,
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_Hermit_Robot.skn",
+            "Skeleton": "HA_AP_Hermit_Robot.skl",
+            "SkinScale": 1.2,
+            "Texture": "HA_AP_Hermit_Robot_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4118570059": 1
+        }
+    }
+}

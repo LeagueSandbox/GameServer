@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTYellowSnowman.blnd",
+            "ChampionSkinName": "HeimerTYellowSnowman",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret_Snow.skn",
+            "Skeleton": "HeimerdingerTurret_Snow.skl",
+            "SkinScale": 1.1,
+            "Texture": "heimerdinger_turret_snow_PET_yellow_TX_CM.dds"
+        }
+    }
+}

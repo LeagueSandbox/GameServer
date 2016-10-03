@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_Chains",
+        "Name": "HA_AP_Chains",
+        "ResourcePath": "DATA/Characters/HA_AP_Chains/HA_AP_Chains.inibin"
+    },
+    "Values": {
+        "Data": {
+            "SelectionHeight": "4000",
+            "SelectionRadius": "4000"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        }
+    }
+}

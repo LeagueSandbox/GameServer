@@ -1,0 +1,86 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AzirTowerClicker",
+        "Name": "AzirTowerClicker",
+        "ResourcePath": "DATA/Characters/AzirTowerClicker/AzirTowerClicker.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "50",
+            "Armor": "0",
+            "ArmorPerLevel": "0",
+            "AssetCategory": "obj",
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "0",
+            "AttackSpeedPerLevel": "0",
+            "BaseCritChance": "0",
+            "BaseDamage": "0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 1,
+            "BaseMP": "600",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CastShadows": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_ThreshLantern",
+            "EnemyTooltip": "game_character_enemyTooltip_ThreshLantern",
+            "ExpGivenOnDeath": "0.0F",
+            "FriendlyTooltip": "game_character_enemyTooltip_ThreshLantern",
+            "GoldGivenOnDeath": 0,
+            "HoverIndicatorRadius": "300",
+            "HoverIndicatorTextureName": "DirectionalCircle.dds",
+            "HoverLineIndicatorBaseTextureName": "LocalLineMissileBase.dds",
+            "HoverLineIndicatorTargetTextureName": "LocalLineMissileTarget.dds",
+            "HoverLineIndicatorWidth": "50",
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": 0,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": 0,
+            "Name": "game_character_displayname_ThreshLantern",
+            "NoAutoAttack": 1,
+            "PARType": "Shield",
+            "Passive1Level1": 1,
+            "Passive1Level2": 4,
+            "Passive1Level3": 7,
+            "Passive1Level4": "10",
+            "Passive1Level5": 13,
+            "Passive1Level6": 16,
+            "PathfindingCollisionRadius": 0,
+            "PerceptionBubbleRadius": 0,
+            "SelectionHeight": "80",
+            "SelectionRadius": "80",
+            "ShouldFaceTarget": "0",
+            "Significance": 0.2,
+            "SpellBlock": "0",
+            "SpellBlockPerLevel": "0"
+        },
+        "Minion": {
+            "AlwaysVisible": "0",
+            "IsTower": "0"
+        },
+        "Package": {
+            "FallbackPackage": "Azir"
+        },
+        "UNKNOWN_HASHES": {
+            "2142769881": 1,
+            "386495002": 6,
+            "3983263047": "0"
+        },
+        "Useable": {
+            "AllyCanUse": 1,
+            "CooldownSpellSlot": 65535,
+            "HeroUseSpell": "AzirTowerClick",
+            "IsUseable": 1,
+            "MinionUseable": "0"
+        }
+    }
+}

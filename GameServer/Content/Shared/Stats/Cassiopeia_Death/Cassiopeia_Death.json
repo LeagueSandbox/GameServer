@@ -1,0 +1,154 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Cassiopeia_Death",
+        "Name": "Cassiopeia_Death",
+        "ResourcePath": "DATA/Characters/Cassiopeia_Death/Cassiopeia_Death.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "550",
+            "Armor": 11.5,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 4,
+            "AttackDelayCastOffsetPercent": "-0.108",
+            "AttackDelayOffsetPercent": -0.034,
+            "AttackRange": "550",
+            "AttackSpeedPerLevel": 1.68,
+            "BaseAttack_Probability": 0.6,
+            "BaseCritChance": "0",
+            "BaseDamage": 47,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "380",
+            "BaseMP": "250",
+            "BaseStaticHPRegen": 0.97,
+            "BaseStaticMPRegen": 0.92,
+            "championId": 69,
+            "CritAttack": "CassiopeiaCritAttack",
+            "CritAttack_AttackDelayCastOffsetPercent": "-0.108",
+            "CritAttack_AttackDelayOffsetPercent": "-0.034",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3.2,
+            "Description": "game_character_description_Cassiopeia",
+            "ExtraAttack1": "CassiopeiaBasicAttack2",
+            "ExtraAttack1_Probability": 0.4,
+            "HPPerLevel": 75,
+            "HPRegenPerLevel": 0.1,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "Lore1": "game_character_lore_Cassiopeia",
+            "MoveSpeed": 335,
+            "MPPerLevel": "50",
+            "MPRegenPerLevel": 0.11,
+            "Name": "game_character_displayname_Cassiopeia",
+            "Passive1Icon": "Cassiopeia_DeadlyCadence.dds",
+            "Passive1LuaName": "Rebirth Marker",
+            "Passive1Name": "game_character_passiveName_Cassiopeia",
+            "PassLev1Desc1": "game_character_passiveDescription_Cassiopeia",
+            "PathfindingCollisionRadius": 40.8,
+            "PlatformEnabled": "false",
+            "SelectionHeight": "120.0000",
+            "SelectionRadius": "120.0000",
+            "Spell1": "CassiopeiaNoxiousBlast",
+            "Spell2": "CassiopeiaMiasma",
+            "Spell3": "CassiopeiaTwinFang",
+            "Spell4": "CassiopeiaPetrifyingGaze",
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0",
+            "Tips1": "game_character_tips_Cassiopeia",
+            "Tips2": "game_character_opposing_tips_Cassiopeia"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": -0.4
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconCircle": "Cassiopeia_Circle_0.dds",
+            "IconSquare": "Cassiopeia_Square_0.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": "69000",
+            "ChampionSkinName": "Cassiopeia_Death",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death.skn",
+            "Skeleton": "Cassiopeia_Death.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_stoned_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": 69001,
+            "ChampionSkinName": "RattlesnakeCassiopeia_Death",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death.skn",
+            "Skeleton": "Cassiopeia_Death.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_stoned_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": 69002,
+            "ChampionSkinName": "SeasnakeCassiopeia_Death",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death.skn",
+            "Skeleton": "Cassiopeia_Death.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_stoned_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": 69003,
+            "ChampionSkinName": "GreekCassiopeia_Death",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death.skn",
+            "Skeleton": "Cassiopeia_Death.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_stoned_TX_CM.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": 69004,
+            "ChampionSkinName": "Cassiopeia_Death_LunarRevel",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death_LunarRevel.skn",
+            "Skeleton": "Cassiopeia_Death_LunarRevel.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_death_lunar_TX_CM.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Cassiopeia"
+        },
+        "RecItems": {
+            "RecItem1": 1056,
+            "RecItem2": "3020",
+            "RecItem3": 3136,
+            "RecItem4": 3116,
+            "RecItem5": 3027,
+            "RecItem6": 3089
+        },
+        "UNKNOWN_HASHES": {
+            "1040761625": 9,
+            "105898023": "10",
+            "11266465": "Glacial Storm",
+            "122525173": "cryopheonix_idle.troy root",
+            "1639648700": "Anivia shoots a freezing bolt that deals double damage to anyone chilled.",
+            "2779212989": "Anivia calls forth a gale of snow and ice that damages and chills units in a large area.  The storm may be called forth and cancelled at will.",
+            "2786390348": 5,
+            "3646501220": "Flash Frost",
+            "3655487418": "Anivia fires a shard of ice that chills anyone it touches.  She may then explode the shard to do additional damage and stun.",
+            "3866412067": "Crystalize",
+            "4086322914": "Frostbite",
+            "4146314945": "mage,support,slow,ranged,nuke,stun",
+            "500084411": "Anivia summons a wall of ice that blocks all movement for 5 seconds.",
+            "767627316": 2
+        }
+    }
+}

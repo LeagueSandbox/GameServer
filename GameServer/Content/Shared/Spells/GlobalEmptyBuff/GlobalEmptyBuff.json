@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GlobalEmptyBuff",
+        "Name": "GlobalEmptyBuff",
+        "ResourcePath": "DATA/Shared/Spells/GlobalEmptyBuff.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_RumbleDangerZone"
+        }
+    }
+}

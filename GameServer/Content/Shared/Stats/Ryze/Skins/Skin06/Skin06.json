@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Ryze/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "RyzeBase.blnd",
+            "ChampionSkinID": 13006,
+            "ChampionSkinName": "ZombieRyze",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ryze_zombie.skn",
+            "Skeleton": "Ryze_zombie.skl",
+            "SkinScale": 1.67,
+            "Texture": "ryze_zombie_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

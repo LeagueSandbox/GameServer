@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/EliseSpider/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "EliseSkin02.blnd",
+            "ChampionSkinID": 60002,
+            "ChampionSkinName": "EliseSkin02",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "EliseSpider_Skin02.skn",
+            "Skeleton": "EliseSpider_Skin02.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "EliseSpider_Skin02_TX_CM.dds"
+        }
+    }
+}

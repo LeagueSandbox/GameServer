@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Trundle/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "JunkyardTrundle.blnd",
+            "ChampionSkinID": 48002,
+            "ChampionSkinName": "JunkyardTrundle",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Trundle_junkyard.skn",
+            "Skeleton": "Trundle_junkyard.skl",
+            "SkinScale": "1.00",
+            "Texture": "trundle_junkyard_TX_CM.dds"
+        }
+    }
+}

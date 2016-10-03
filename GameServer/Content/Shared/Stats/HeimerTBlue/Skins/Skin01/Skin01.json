@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/HeimerTBlue/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTBlueBase.blnd",
+            "ChampionSkinName": "HeimerTBlueAlien",
+            "MaterialOverride0Submesh": "Alieninvader_Mega_Alien_Mega_Glass",
+            "MaterialOverride0Texture": "Heimerdinger_Invader_Turret_Mega_glass.dds",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret_alien.skn",
+            "Skeleton": "HeimerdingerTurret_alien.skl",
+            "SkinScale": 1.1,
+            "Texture": "heimerdinger_Turret_Alien_Mega.dds"
+        }
+    }
+}

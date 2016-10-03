@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotAnnieFlamingBuildingsSource",
+        "Name": "NightmareBotAnnieFlamingBuildingsSource",
+        "ResourcePath": "DATA/Characters/Annie/Spells/NightmareBotAnnieFlamingBuildingsSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotAnnieFlamingBuildingsSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotAnnieFlamingBuildings",
+            "DisplayName": "game_spell_displayname_NightmareBotAnnieFlamingBuildings",
+            "Flags": 329748,
+            "InventoryIcon": "Annie_Passive.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

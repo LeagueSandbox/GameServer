@@ -1,0 +1,46 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "BaseSpell",
+        "Name": "BaseSpell",
+        "ResourcePath": "DATA/Spells/BaseSpell.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AfterEffectName": "AnnieBasicAttack_mis.troy",
+            "AnimationName": "Attack1",
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": "10.0000",
+            "CastRadius": "100.0000",
+            "CastRange": "200.0000",
+            "CastType": "0",
+            "Cooldown": "-100.0000",
+            "Description": "game_spell_description_BaseSpell",
+            "DisplayName": "game_spell_displayname_BaseSpell",
+            "Flags": 3072,
+            "HaveAfterEffect": "0",
+            "HaveHitEffect": "0",
+            "HitEffectName": "AnnieBasicAttack_mis.troy",
+            "InventoryIcon": "",
+            "Level1Desc": "NONE",
+            "Level2Desc": "NONE",
+            "Level3Desc": "NONE",
+            "Level4Desc": "NONE",
+            "Level5Desc": "NONE",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileBoneName": "R_hand",
+            "MissileEffect": "AnnieBasicAttack_mis.troy",
+            "MissileSpeed": 0,
+            "Sound_CastName": "none.wav",
+            "Sound_HitName": "none.wav",
+            "TargettingType": "0",
+            "UseAnimatorFramerate": "0",
+            "Version": 1
+        }
+    }
+}

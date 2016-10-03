@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/HA_AP_PeriphBridge/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_PeriphBridge.blnd",
+            "CastShadows": "0",
+            "ChampionSkinName": "HA_AP_PeriphBridge_Idle1",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_PeriphBridge_Idle1.skn",
+            "Skeleton": "HA_AP_PeriphBridge_Idle1.skl",
+            "SkinScale": "10000.0",
+            "Texture": "HA_AP_PeriphBridge.dds"
+        }
+    }
+}

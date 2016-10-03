@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynBase.blnd",
+            "ChampionSkinID": 51004,
+            "ChampionSkinName": "NorthernCaitlyn",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Caitlyn_NorthernFront.skn",
+            "Skeleton": "Caitlyn_NorthernFront.skl",
+            "SkinScale": 1.6,
+            "Texture": "caitlyn_NorthernFront_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "DapperVeigar.blnd",
+            "ChampionSkinID": 45006,
+            "ChampionSkinName": "DapperVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_dapper.skn",
+            "Skeleton": "veigar_dapper.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "veigar_dapper_TX_CM.dds"
+        }
+    }
+}

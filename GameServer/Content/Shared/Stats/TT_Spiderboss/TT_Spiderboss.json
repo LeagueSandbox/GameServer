@@ -1,0 +1,90 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Spiderboss",
+        "Name": "TT_Spiderboss",
+        "ResourcePath": "DATA/Characters/TT_Spiderboss/TT_Spiderboss.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "1200",
+            "Armor": 75,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "0.314035088",
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "1200",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "100.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "3200",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_TTSpiderboss",
+            "DisableAggroIndicator": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_TTSpiderboss",
+            "ExperienceRadius": "2000.0",
+            "ExpGivenOnDeath": "400.0",
+            "GameplayCollisionRadius": "200.0",
+            "GlobalExpGivenOnDeath": 0,
+            "GlobalGoldGivenOnDeath": "190.000",
+            "GoldGivenOnDeath": "25.0",
+            "HPPerLevel": "0",
+            "IsEpic": "true",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_TTSpiderboss",
+            "PathfindingCollisionRadius": "200",
+            "SelectionHeight": "150",
+            "SelectionRadius": 155,
+            "ShouldFaceTarget": "0",
+            "Significance": 1,
+            "SkipDrawOutline": 1,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "TT_SpiderbossVortex",
+            "Spell2": "TT_SpiderbossAttack3",
+            "Spell3": "TT_SpiderbossAttack2",
+            "Spell4": "TT_SpiderbossAttack",
+            "SpellBlock": 45,
+            "UnitTags": "Monster | Monster_Epic"
+        },
+        "DefaultAnimations": {
+            "Animation1": "buffbone_anim",
+            "NumberOfAnimations": 1
+        },
+        "HealthBar": {
+            "HPPerTick": "1000",
+            "Scale": "2.0",
+            "WorldOffset": "0 -0,65 0"
+        },
+        "Info": {
+            "IconCircle": "TT_Spider_Circle.dds",
+            "IconSquare": "TT_Spider_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "tt_spiderboss.blnd",
+            "ChampionSkinName": "TT_Spiderboss",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Spiderboss.skn",
+            "Skeleton": "TT_Spiderboss.skl",
+            "SkinScale": 0.8,
+            "Texture": "TT_Spiderboss_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0,
+            "593637254": "true"
+        }
+    }
+}

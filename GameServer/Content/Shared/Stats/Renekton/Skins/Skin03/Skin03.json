@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Renekton/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Renekton_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "RenektonBase.blnd",
+            "ChampionSkinID": 58003,
+            "ChampionSkinName": "Renekton_brutal",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Renekton_brutal.skn",
+            "Skeleton": "Renekton_brutal.skl",
+            "SkinScale": 1.56,
+            "Texture": "renekton_brutal_TX_CM.dds",
+            "YOffset": 0.5
+        }
+    }
+}

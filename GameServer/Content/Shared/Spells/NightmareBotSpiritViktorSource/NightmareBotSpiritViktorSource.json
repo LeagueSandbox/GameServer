@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotSpiritViktorSource",
+        "Name": "NightmareBotSpiritViktorSource",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritViktorSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotSpiritViktorSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotSpiritViktor",
+            "DisplayName": "game_spell_displayname_NightmareBotSpiritViktor",
+            "Flags": 329748,
+            "InventoryIcon": "NightmareBotSpiritViktor.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

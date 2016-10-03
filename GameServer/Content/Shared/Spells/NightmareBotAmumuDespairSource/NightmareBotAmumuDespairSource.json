@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotAmumuDespairSource",
+        "Name": "NightmareBotAmumuDespairSource",
+        "ResourcePath": "DATA/Spells/NightmareBotAmumuDespairSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotAmumuDespairSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotAmumuDespair",
+            "DisplayName": "game_spell_displayname_NightmareBotAmumuDespair",
+            "Flags": 329748,
+            "InventoryIcon": "SadMummy_AuraofDespair.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

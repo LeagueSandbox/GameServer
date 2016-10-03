@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": 45005,
+            "ChampionSkinName": "BaronVonVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_baron.skn",
+            "Skeleton": "veigar_baron.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "veigar_baron_TX_CM.dds"
+        }
+    }
+}

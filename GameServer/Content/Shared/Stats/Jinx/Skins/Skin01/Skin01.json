@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Jinx/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "JinxSkin01.blnd",
+            "ChampionSkinID": 222001,
+            "ChampionSkinName": "JinxSkin01",
+            "ExtraCharacterPreloads": "JinxMine",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Jinx_Skin01.skn",
+            "Skeleton": "Jinx_Skin01.skl",
+            "SkinScale": 1.03,
+            "Texture": "Jinx_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "708066840": "Jinx_Skin01_Gramophone_Mat, Jinx_Skin01_Bottle_Mat"
+        }
+    }
+}

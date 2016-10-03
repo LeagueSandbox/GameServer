@@ -1,0 +1,31 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/QuinnValor/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "HealthBar": {
+            "ParallaxOffset": 5,
+            "XOffset": "0",
+            "YOffset": 2
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 4,
+            "Particle1": "QuinnValor_skin01_idle_flame.troy R_FeatherPrime4",
+            "Particle2": "QuinnValor_skin01_idle_flame.troy L_FeatherPrime4",
+            "Particle3": "QuinnValor_skin01_idle_flame.troy R_FeatherPrime8",
+            "Particle4": "QuinnValor_skin01_idle_flame.troy L_FeatherPrime8"
+        },
+        "MeshSkin": {
+            "Animations": "QuinnValor.blnd",
+            "ChampionSkinName": "QuinnValor_Phoenix",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "phoenix.skn",
+            "Skeleton": "phoenix.skl",
+            "SkinScale": "2.0",
+            "Texture": "QuinnValor_phoenix_TX_CM.dds"
+        }
+    }
+}

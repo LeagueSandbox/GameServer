@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MuayThaiBlindMonk.blnd",
+            "ChampionSkinID": 64004,
+            "ChampionSkinName": "MuayThaiBlindMonk",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "LeeSin_muaythai.skn",
+            "Skeleton": "LeeSin_muayThai.skl",
+            "SkinScale": 1.82,
+            "Texture": "LeeSin_muayThai_TX_CM.DDS"
+        }
+    }
+}

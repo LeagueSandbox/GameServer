@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "MalphiteShield",
+        "Name": "MalphiteShield",
+        "ResourcePath": "DATA/Spells/MalphiteShield.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MalphiteShield",
+            "FloatStaticsDecimals1": 2,
+            "FloatStaticsDecimals2": 2,
+            "FloatStaticsDecimals3": 2,
+            "FloatStaticsDecimals4": 2,
+            "FloatStaticsDecimals5": 2,
+            "FloatVarsDecimals1": 2,
+            "FloatVarsDecimals2": 2,
+            "FloatVarsDecimals3": 2,
+            "FloatVarsDecimals4": 2,
+            "FloatVarsDecimals5": 2
+        },
+        "UNKNOWN_HASHES": {
+            "199385560": 2,
+            "2890766333": 2
+        }
+    }
+}

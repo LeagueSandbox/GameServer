@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Ryze/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "WinnerRyze.blnd",
+            "ChampionSkinID": 13004,
+            "ChampionSkinName": "WinnerRyze",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ryze_trophy.skn",
+            "Skeleton": "Ryze_trophy.skl",
+            "SkinScale": 1.67,
+            "Texture": "ryze_trophy_TX_CM.dds"
+        }
+    }
+}

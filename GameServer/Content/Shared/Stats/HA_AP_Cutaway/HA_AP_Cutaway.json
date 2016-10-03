@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_Cutaway",
+        "Name": "HA_AP_Cutaway",
+        "ResourcePath": "DATA/Characters/HA_AP_Cutaway/HA_AP_Cutaway.inibin"
+    },
+    "Values": {
+        "Data": {
+            "SelectionHeight": "600",
+            "SelectionRadius": "600"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        }
+    }
+}

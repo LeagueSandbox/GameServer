@@ -1,0 +1,44 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "XerathLocusPulse",
+        "Name": "XerathLocusPulse",
+        "ResourcePath": "DATA/Characters/Xerath/Spells/XerathLocusPulse.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": 0.01,
+            "CastRange": "25000",
+            "CastType": 1,
+            "Cooldown": 0,
+            "Cooldown1": 0,
+            "Cooldown2": 0,
+            "Cooldown3": 0,
+            "Cooldown4": 0,
+            "Cooldown5": 0,
+            "Description": "game_spell_description_XerathLocusOfPower",
+            "DisplayName": "game_spell_displayname_XerathLocusOfPower",
+            "DoesntBreakChannels": 1,
+            "DynamicExtended": "game_spell_levelup_XerathLocusOfPower",
+            "DynamicTooltip": "game_spell_tooltip_XerathLocusOfPower",
+            "Flags": 115712,
+            "HaveHitBone": 1,
+            "InventoryIcon": "Xerath_R1.dds",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileBoneName": "C_BUFFBONE_GLB_CENTER_LOC",
+            "MissileEffect": "Xerath_Base_R_mis.troy",
+            "MissileFixedTravelTime": 0.6,
+            "MissileGravity": "140.0000",
+            "MissileMinTravelTime": 0.6,
+            "MissileUnblockable": 1,
+            "OverrideCastTime": 0.01,
+            "TargettingType": 2,
+            "UseAnimatorFramerate": 1
+        }
+    }
+}

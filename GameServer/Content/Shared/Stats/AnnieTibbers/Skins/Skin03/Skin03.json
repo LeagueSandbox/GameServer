@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/AnnieTibbers/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AnnieTibbers.blnd",
+            "ChampionSkinID": 1003,
+            "ChampionSkinName": "AnnieTibbersWonderland",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "AnnieTibbers_Wonderland.skn",
+            "Skeleton": "AnnieTibbers_Wonderland.skl",
+            "SkinScale": 1.2,
+            "Texture": "AnnieTibbers_Wonderland_TX_CM.dds"
+        }
+    }
+}

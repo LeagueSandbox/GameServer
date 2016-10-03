@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Janna/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Warhero.blnd",
+            "ChampionSkinID": 40004,
+            "ChampionSkinName": "Warhero",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Janna_Warhero.skn",
+            "Skeleton": "Janna_Warhero.skl",
+            "SkinScale": 1.31,
+            "Texture": "janna_Warhero_TX_CM.dds"
+        }
+    }
+}

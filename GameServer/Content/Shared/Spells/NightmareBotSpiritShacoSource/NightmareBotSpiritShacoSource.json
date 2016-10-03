@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotSpiritShacoSource",
+        "Name": "NightmareBotSpiritShacoSource",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritShacoSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotSpiritShacoSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotSpiritShaco",
+            "DisplayName": "game_spell_displayname_NightmareBotSpiritShaco",
+            "Flags": 329748,
+            "InventoryIcon": "NightmareBotSpiritShaco_HallucinogenBomb.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

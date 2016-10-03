@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Karma/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "GeishaKarma.blnd",
+            "ChampionSkinID": 43002,
+            "ChampionSkinName": "GeishaKarma",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karma_geisha.skn",
+            "Skeleton": "Karma_geisha.skl",
+            "SkinScale": 1.2,
+            "Texture": "Karma_sakura_2012_cm.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "karma_sakura_fans_mat"
+        }
+    }
+}

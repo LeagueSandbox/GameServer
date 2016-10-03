@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/MaokaiSproutling/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MaokaiSproutlingBase.blnd",
+            "ChampionSkinName": "MeshSkin3",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sapling_christmas.skn",
+            "Skeleton": "Sapling_christmas.skl",
+            "SkinScale": 1.2,
+            "Texture": "Maokai_Skin03_TX_CM.dds"
+        }
+    }
+}

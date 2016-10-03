@@ -1,0 +1,36 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerdingerSkin05.blnd",
+            "ChampionSkinID": 74005,
+            "ChampionSkinName": "HeimerdingerSkin05",
+            "ExtraCharacterPreloads": "HeimerTYellow,HeimerTBlue",
+            "GlossTexture": "Heimerdinger_Skin05_TX_GM.dds",
+            "MaterialOverride0Submesh": "Heimerdinger_Recall",
+            "MaterialOverride0Texture": "Heimerdinger_Skin05_Recall_TX_CM.dds",
+            "OverrideBoundingBox": "100 200 100",
+            "ReflectionFresnel": 0.900000036,
+            "ReflectionFresnelBlue": 1.5,
+            "ReflectionFresnelGreen": 1.9,
+            "ReflectionFresnelRed": 1.9,
+            "ReflectionMap": "Heimerdinger_Skin05_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.7,
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Heimerdinger_Skin05.skn",
+            "Skeleton": "Heimerdinger_Skin05.skl",
+            "SkinScale": 1,
+            "Texture": "Heimerdinger_Skin05_TX_CM.dds",
+            "YOffset": 65535
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Heimerdinger_Grab_Hand, Heimerdinger_Antenna, Heimerdinger_Recall"
+        }
+    }
+}

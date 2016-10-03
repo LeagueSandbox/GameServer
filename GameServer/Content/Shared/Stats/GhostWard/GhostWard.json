@@ -1,0 +1,50 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GhostWard",
+        "Name": "GhostWard",
+        "ResourcePath": "DATA/Characters/GhostWard/GhostWard.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 3,
+            "BaseMP": "180",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": "0",
+            "Classification": "Arcane",
+            "Description": "game_character_description_SightWard",
+            "EnemyTooltip": "game_character_enemyTooltip_SightWard",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_friendlyTooltip_SightWard",
+            "GameplayCollisionRadius": 1,
+            "GoldGivenOnDeath": "8.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "MoveSpeed": "0",
+            "Name": "game_character_displayname_SightWard",
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": 5,
+            "RecordAsWard": 1,
+            "Significance": 0.3,
+            "UnitTags": "Ward"
+        },
+        "HealthBar": {
+            "HPPerTick": 1
+        },
+        "MeshSkin": {
+            "Animations": "GhostWardBase.blnd",
+            "ChampionSkinName": "GhostWardBase",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "GhostWard.skn",
+            "Skeleton": "GhostWard.skl",
+            "SkinScale": 1.5,
+            "Texture": "GhostWard.dds"
+        },
+        "Minimap": {
+            "MinimapIconOverride": "Ward"
+        }
+    }
+}

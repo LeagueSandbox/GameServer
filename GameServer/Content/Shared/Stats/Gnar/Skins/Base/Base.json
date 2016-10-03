@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Gnar/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Gnar_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "gnar.blnd",
+            "ChampionSkinID": "150000",
+            "ChampionSkinName": "Gnar",
+            "MaterialOverride0Submesh": "Gnar_Boomerang",
+            "MaterialOverride0Texture": "Gnar_Base_Boomerang_TX_CM.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gnar.skn",
+            "Skeleton": "Gnar.skl",
+            "SkinScale": "0.9",
+            "Texture": "Gnar_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Gnar_Boomerang"
+        }
+    }
+}

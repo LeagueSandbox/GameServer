@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "BrushPassive",
+        "Name": "BrushPassive",
+        "ResourcePath": "DATA/Characters/Nidalee/Spells/BrushPassive.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_BrushPassive",
+            "InventoryIcon": "Nidalee_Passive.dds"
+        }
+    }
+}

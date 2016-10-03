@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMissFortune.blnd",
+            "ChampionSkinID": 21001,
+            "ChampionSkinName": "CowgirlMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "missfortune_cowgirl.skn",
+            "Skeleton": "missfortune_cowgirl.skl",
+            "SkinScale": 1.2,
+            "Texture": "missfortune_cowgirl_TX_CM.dds"
+        }
+    }
+}

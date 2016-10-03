@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTYellowBase.blnd",
+            "ChampionSkinName": "HeimerTYellowAlien",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret_alien.skn",
+            "Skeleton": "HeimerdingerTurret_alien.skl",
+            "SkinScale": 1.1,
+            "Texture": "heimerdinger_turret_TX_CM_yellow.dds"
+        }
+    }
+}

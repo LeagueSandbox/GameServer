@@ -1,0 +1,15 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SonaQProcAttacker",
+        "Name": "SonaQProcAttacker",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaQProcAttacker.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "AlternateName": "SonaQ",
+            "DynamicTooltip": "game_buff_tooltip_SonaQProcAttacker",
+            "ShowInTrackerUI": 1
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "PaxSivir.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 15005,
+            "ChampionSkinName": "PaxSivir",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_pax.skn",
+            "Skeleton": "Sivir_pax.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "sivir_pax_TX_CM.dds",
+            "YOffset": "-0.2"
+        }
+    }
+}

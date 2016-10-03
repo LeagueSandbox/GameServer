@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Ashe/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "QueenBowmaster.blnd",
+            "ChampionSkinID": 22004,
+            "ChampionSkinName": "QueenBowmaster",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ashe_queen.skn",
+            "Skeleton": "Ashe_queen.skl",
+            "SkinScale": 1.1,
+            "Texture": "ashe_queen_2012_TX_CM.dds"
+        }
+    }
+}

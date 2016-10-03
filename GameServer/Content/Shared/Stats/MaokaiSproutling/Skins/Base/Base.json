@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/MaokaiSproutling/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MaokaiSproutlingBase.blnd",
+            "ChampionSkinName": "MaokaiSproutlingBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sapling.skn",
+            "Skeleton": "Sapling.skl",
+            "SkinScale": 1.2,
+            "Texture": "Maokai_Base_2014_TX_CM.dds"
+        }
+    }
+}

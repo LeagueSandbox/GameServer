@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotSpiritFireSource",
+        "Name": "NightmareBotSpiritFireSource",
+        "ResourcePath": "DATA/Spells/NightmareBotSpiritFireSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotSpiritFireSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotSpiritFire",
+            "DisplayName": "game_spell_displayname_NightmareBotSpiritFire",
+            "Flags": 329748,
+            "InventoryIcon": "ShyvanaScorchedEarth.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

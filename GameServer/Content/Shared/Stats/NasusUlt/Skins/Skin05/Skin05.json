@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/NasusUlt/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Skin05NasusUlt.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 75005,
+            "ChampionSkinName": "Skin05NasusUlt",
+            "MaterialOverride0Submesh": "Nasus_kicker",
+            "MaterialOverride0Texture": "Nasus_Skin06_Boombox.dds",
+            "OverrideBoundingBox": "120 240 120",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "NasusUlt_Skin05.skn",
+            "Skeleton": "NasusUlt_Skin05.skl",
+            "SkinScale": 1.22,
+            "Texture": "nasus_Skin05_ultimate_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "708066840": "Nasus_Cerberus_Weapon2, Nasus_Cerberus_Bone, nasus_kicker"
+        }
+    }
+}

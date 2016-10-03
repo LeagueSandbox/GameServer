@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ZephyrsLamentBurn",
+        "Name": "ZephyrsLamentBurn",
+        "ResourcePath": "DATA/Spells/ZephyrsLamentBurn.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_ZephyrsLamentBurn"
+        }
+    }
+}

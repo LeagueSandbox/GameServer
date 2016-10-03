@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/ThreshLantern/skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ThreshLantern.blnd",
+            "ChampionSkinName": "ThreshUndersea",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "ThreshLanternUndersea.skn",
+            "Skeleton": "ThreshLanternUndersea.skl",
+            "SkinScale": "1.0",
+            "Texture": "ThreshLantern_Undersea_TX_CM.DDS"
+        }
+    }
+}

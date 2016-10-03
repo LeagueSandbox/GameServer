@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin12",
+        "Name": "Skin12",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin12/Skin12.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardLux.blnd",
+            "ChampionSkinName": "SightWardLux",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lux.skn",
+            "Skeleton": "SightWard_Lux.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "sightWard_Lux_TX_CM.dds"
+        }
+    }
+}

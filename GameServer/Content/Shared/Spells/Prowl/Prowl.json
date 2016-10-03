@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Prowl",
+        "Name": "Prowl",
+        "ResourcePath": "DATA/Characters/Nidalee/Spells/Prowl.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Prowl"
+        }
+    }
+}

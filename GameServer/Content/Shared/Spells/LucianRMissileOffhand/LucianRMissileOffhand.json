@@ -1,0 +1,46 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LucianRMissileOffhand",
+        "Name": "LucianRMissileOffhand",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianRMissileOffhand.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "LucianR",
+            "AlwaysSnapFacing": "0",
+            "AnimationName": "",
+            "CastFrame": "0",
+            "CastRange": "1400.0000",
+            "CastType": 3,
+            "Cooldown": 0,
+            "Cooldown1": 0,
+            "Cooldown2": 0,
+            "Cooldown3": 0,
+            "Cooldown4": 0,
+            "Cooldown5": 0,
+            "Description": "game_spell_description_LucianR",
+            "DisplayName": "game_spell_displayname_LucianR",
+            "DoNotNeedToFaceTarget": 1,
+            "DynamicExtended": "game_spell_levelup_LucianR",
+            "DynamicTooltip": "game_spell_tooltip_LucianR",
+            "Flags": 115716,
+            "InventoryIcon": "Lucian_R.dds",
+            "LineMissileTargetHeightAugment": "-50",
+            "LineWidth": "110.0000",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileBoneName": "L_Pinky2",
+            "MissileEffect": "Lucian_R_mis.troy",
+            "MissileSpeed": "2800.0000",
+            "OverrideCastTime": "0",
+            "SpellRevealsChampion": "1.0000",
+            "TargettingType": 7,
+            "UseAnimatorFramerate": "0",
+            "Version": 1
+        }
+    }
+}

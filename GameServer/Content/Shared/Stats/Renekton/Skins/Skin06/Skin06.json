@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Renekton/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Renekton_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "renektonskin06.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 58006,
+            "ChampionSkinName": "RenektonSkin06",
+            "OverrideBoundingBox": "125 200 125",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Renekton_Skin06.skn",
+            "Skeleton": "Renekton_Skin06.skl",
+            "SkinScale": 1.56,
+            "Texture": "renekton_Skin06_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Renekton_Skin06_Tower Renekton_Anim_Whistle"
+        }
+    }
+}

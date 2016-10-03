@@ -1,0 +1,81 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "VelkozE",
+        "Name": "VelkozE",
+        "ResourcePath": "DATA/Characters/Velkoz/Spells/VelkozE.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AnimationName": "Spell3",
+            "AnimationWinddownName": "Tentacles",
+            "CantCancelWhileWindingUp": 1,
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": "10",
+            "CastRadius": 225,
+            "CastRange": "800",
+            "CastRangeDisplayOverride": "850",
+            "CastType": "0",
+            "Coefficient": 0.5,
+            "Cooldown": "12.0000",
+            "Cooldown1": 16,
+            "Cooldown2": 15,
+            "Cooldown3": 14,
+            "Cooldown4": 13,
+            "Cooldown5": 12,
+            "Description": "game_spell_description_VelkozE",
+            "DisplayName": "game_spell_displayname_VelkozE",
+            "DynamicExtended": "game_spell_levelup_VelkozE",
+            "DynamicTooltip": "game_spell_tooltip_VelkozE",
+            "Effect1Level1Amount": "70",
+            "Effect1Level2Amount": "100",
+            "Effect1Level3Amount": "130",
+            "Effect1Level4Amount": "160",
+            "Effect1Level5Amount": "190",
+            "Effect2Level1Amount": 0.75,
+            "Effect2Level2Amount": 0.75,
+            "Effect2Level3Amount": 0.75,
+            "Effect2Level4Amount": 0.75,
+            "Effect2Level5Amount": 0.75,
+            "Effect4Level1Amount": 225,
+            "Effect4Level2Amount": 225,
+            "Effect4Level3Amount": 225,
+            "Effect4Level4Amount": 225,
+            "Effect4Level5Amount": 225,
+            "Flags": 115712,
+            "HaveHitEffect": 1,
+            "InventoryIcon": "Velkoz_E.dds",
+            "IsToggleSpell": 1,
+            "ManaCost1": "50",
+            "ManaCost2": 55,
+            "ManaCost3": "60",
+            "ManaCost4": 65,
+            "ManaCost5": "70",
+            "NumSpellTargeters": 2,
+            "OverrideCastTime": 0.25,
+            "Sound_CastName": "Sion_Cryptic_Gaze.wav",
+            "Sound_HitName": "none.wav",
+            "TargettingType": 2,
+            "TextFlags": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "UseAnimatorFramerate": "0",
+            "Version": 1
+        },
+        "SpellTargeter1": {
+            "DrawableType": "Range"
+        },
+        "SpellTargeter2": {
+            "DrawableType": "AOE",
+            "TextureOrientation": "MouseDir",
+            "TextureOverride": "AOE.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1446962774": 2,
+            "2148792277": 2,
+            "3636441561": 2,
+            "43303768": 2,
+            "589239366": "MousePos",
+            "745133271": 2
+        }
+    }
+}

@@ -1,0 +1,80 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_BlueMini2",
+        "Name": "SRU_BlueMini2",
+        "ResourcePath": "DATA/Characters/SRU_BlueMini2/SRU_BlueMini2.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 8,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.466,
+            "AttackRange": "450",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "AttackTotalTime": 1.6,
+            "BaseCritChance": 0,
+            "BaseDamage": 12,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "400",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUBlueMini",
+            "EnemyTooltip": "game_character_enemyTooltip_SRUBlueMini",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "50.0",
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "22.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUBlueMini",
+            "PathfindingCollisionRadius": "20",
+            "SelectionHeight": "100",
+            "SelectionRadius": "100",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "0",
+            "UnitTags": "Monster"
+        },
+        "DefaultAnimations": {
+            "Animation1": "lookat",
+            "NumberOfAnimations": 1
+        },
+        "HealthBar": {
+            "Scale": 0.8,
+            "WorldOffset": "0 .1 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "SRU_Bluebuff_Sub_idle.troy Buffbone_Glb_Weapon_1"
+        },
+        "Info": {
+            "IconCircle": "Sentry_Circle.dds",
+            "IconSquare": "Sentry_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "SRU_BlueMini"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

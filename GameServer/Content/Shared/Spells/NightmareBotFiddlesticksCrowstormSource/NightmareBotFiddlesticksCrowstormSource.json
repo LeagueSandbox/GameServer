@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "NightmareBotFiddlesticksCrowstormSource",
+        "Name": "NightmareBotFiddlesticksCrowstormSource",
+        "ResourcePath": "DATA/Spells/NightmareBotFiddlesticksCrowstormSource.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "NightmareBotFiddlesticksCrowstormSource",
+            "CastType": "0",
+            "Description": "game_spell_description_NightmareBotFiddlesticksCrowstorm",
+            "DisplayName": "game_spell_displayname_NightmareBotFiddlesticksCrowstorm",
+            "Flags": 329748,
+            "InventoryIcon": "Fiddlesticks_CrowstormSurprise.dds",
+            "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
+            "Version": 1
+        }
+    }
+}

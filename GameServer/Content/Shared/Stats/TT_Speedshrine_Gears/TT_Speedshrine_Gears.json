@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Speedshrine_Gears",
+        "Name": "TT_Speedshrine_Gears",
+        "ResourcePath": "DATA/Characters/TT_Speedshrine_Gears/TT_Speedshrine_Gears.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Speedshrine_Gears.blnd",
+            "CastShadows": "0",
+            "ChampionSkinID": 987126,
+            "ChampionSkinName": "TT_Speedshrine_Gears",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Speedshrine_Gears.skn",
+            "Skeleton": "TT_Speedshrine_Gears.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Speedshrine_Gears.dds"
+        }
+    }
+}

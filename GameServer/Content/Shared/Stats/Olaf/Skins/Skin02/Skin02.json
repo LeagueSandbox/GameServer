@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Olaf/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseOlaf.blnd",
+            "ChampionSkinID": 2002,
+            "ChampionSkinName": "NiflheimOlaf",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Olaf.skn",
+            "Skeleton": "Olaf.skl",
+            "SkinScale": 1.1,
+            "Texture": "Olaf_FrostGiant_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_SOG_Order_Crystal",
+        "Name": "Odin_SOG_Order_Crystal",
+        "ResourcePath": "DATA/Characters/Odin_SOG_Order_Crystal/Odin_SOG_Order_Crystal.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_SOG_Order_CrystalBase.blnd",
+            "ChampionSkinName": "Odin_SOG_Order_CrystalBase",
+            "SimpleSkin": "Odin_SoG_Order_Crystal.skn",
+            "Skeleton": "Odin_SoG_Order_Crystal.skl",
+            "Texture": "Odin_SoG_Order_TX_CM.dds"
+        }
+    }
+}

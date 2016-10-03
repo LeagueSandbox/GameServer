@@ -1,0 +1,52 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SonaQProc",
+        "Name": "SonaQProc",
+        "ResourcePath": "DATA/Characters/Sona/Spells/SonaQProc.inibin"
+    },
+    "Values": {
+        "SpellData": {
+            "AlternateName": "SonaQ",
+            "BounceRadius": "450.0000",
+            "CantCancelWhileWindingUp": 1,
+            "CastConeAngle": "45.0000",
+            "CastConeDistance": "100.0000",
+            "CastFrame": 0,
+            "CastRadius": "710.0000",
+            "CastRange": "25000.0000",
+            "CastRangeDisplayOverride": 0,
+            "CastTargetAdditionalUnitsRadius": 0,
+            "CastType": 1,
+            "Coefficient": 0.6,
+            "Cooldown": 0,
+            "DeathRecapPriority": 6,
+            "DelayCastOffsetPercent": -0.15,
+            "DelayTotalTimePercent": -0.6,
+            "Flags": 115716,
+            "HaveAfterEffect": 1,
+            "HaveHitBone": "0",
+            "HaveHitEffect": 1,
+            "HavePointEffect": "0",
+            "HitBoneName": "",
+            "HitEffectName": "globalhit_mana.troy",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
+            "MissileBoneName": "WEAPON",
+            "MissileEffect": "SoulShackle_beam_green.troy",
+            "MissileSpeed": "2300.0000",
+            "PointEffectName": "",
+            "RangeIndicatorTextureName": "DefaultRangeIndicator.dds",
+            "SelectionPreference": "foe",
+            "SpellRevealsChampion": "1.0000",
+            "SubjectToGlobalCooldown": 1,
+            "TargettingType": 1,
+            "TextFlags": "Instacast | AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "TriggersGlobalCooldown": 1,
+            "Version": 1
+        }
+    }
+}

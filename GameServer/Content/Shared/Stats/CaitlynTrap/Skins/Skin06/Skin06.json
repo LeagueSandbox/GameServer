@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/CaitlynTrap/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynTrapBase.blnd",
+            "ChampionSkinName": "CaitlynTrapSkin06",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "CaitlynTrap_Skin06.skn",
+            "Skeleton": "CaitlynTrap_Skin06.skl",
+            "SkinScale": 2,
+            "Texture": "Caitlyn_Skin06_Trap_01.dds"
+        }
+    }
+}

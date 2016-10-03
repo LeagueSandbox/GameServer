@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Ashe/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "asheskin06.blnd",
+            "ChampionSkinID": 22006,
+            "ChampionSkinName": "AsheSkin06",
+            "OverrideBoundingBox": "110 220 110",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ashe_skin06.skn",
+            "Skeleton": "Ashe_skin06.skl",
+            "SkinScale": 1.1,
+            "Texture": "ashe_skin06_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Ashe_Chair, Ashe_Bow_Scale, Ashe_Flower"
+        }
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LucianRDisable",
+        "Name": "LucianRDisable",
+        "ResourcePath": "DATA/Characters/Lucian/Spells/LucianRDisable.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_LucianR"
+        },
+        "SpellData": {
+            "AlternateName": "LucianR",
+            "CantCancelWhileChanneling": "0",
+            "CantCancelWhileWindingUp": 1,
+            "CastFrame": 9.425,
+            "CastRange": "10000.0000",
+            "CastRangeDisplayOverride": "1200.0000",
+            "CastType": "0",
+            "Coefficient": 0.1,
+            "Coefficient2": 0.25,
+            "Cooldown1": "0",
+            "Cooldown2": "0",
+            "Cooldown3": "0",
+            "Description": "game_spell_description_LucianR",
+            "DisplayName": "game_spell_displayname_LucianR",
+            "DynamicExtended": "game_spell_levelup_LucianR",
+            "DynamicTooltip": "game_spell_tooltip_LucianR",
+            "Effect1Level0Amount": 3,
+            "Effect1Level1Amount": 3,
+            "Effect1Level2Amount": 3,
+            "Effect1Level3Amount": 3,
+            "Effect2Level0Amount": "40",
+            "Effect2Level1Amount": "40",
+            "Effect2Level2Amount": "50",
+            "Effect2Level3Amount": "60",
+            "Effect3Level0Amount": 2.5,
+            "Effect3Level1Amount": 2.5,
+            "Effect3Level2Amount": 3,
+            "Effect3Level3Amount": 3.5,
+            "Flags": 329732,
+            "FloatVarsDecimals1": "0",
+            "FloatVarsDecimals2": "0",
+            "FloatVarsDecimals3": "0",
+            "FloatVarsDecimals4": "0",
+            "InventoryIcon": "Lucian_R.dds",
+            "IsToggleSpell": 1,
+            "LineWidth": "60.0000",
+            "ManaCost1": "0",
+            "ManaCost2": "0",
+            "ManaCost3": "0",
+            "TargettingType": "0",
+            "TextFlags": "AffectFriends | AffectHeroes | AlwaysSelf | Instacast"
+        }
+    }
+}

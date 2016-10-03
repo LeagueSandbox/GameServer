@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Flytrap_A",
+        "Name": "TT_Flytrap_A",
+        "ResourcePath": "DATA/Characters/TT_Flytrap_A/TT_Flytrap_A.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "TT_Flytrap_ABase.blnd",
+            "ChampionSkinName": "TT_Flytrap_ABase",
+            "SimpleSkin": "TT_Flytrap_A.skn",
+            "Skeleton": "TT_Flytrap_A.skl",
+            "SkinScale": 1,
+            "Texture": "magic_mushrooms_blue.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Nidalee_Cougar/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_CougarBase.blnd",
+            "ChampionSkinID": 76001,
+            "ChampionSkinName": "SnowBunnyNidaleeCougar",
+            "SelfIllumination": 0.55,
+            "SimpleSkin": "Nidalee_Cougar_snowbunny.skn",
+            "Skeleton": "Nidalee_Cougar_snowbunny.skl",
+            "SkinScale": "1.0",
+            "Texture": "Nidalee_Cougar_snowbunny_2012.dds"
+        }
+    }
+}

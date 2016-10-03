@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Nidalee/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee.blnd",
+            "ChampionSkinID": 76001,
+            "ChampionSkinName": "SnowBunnyNidalee",
+            "ExtraCharacterPreloads": "Nidalee_Cougar,Nidalee_Spear",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee2012.skn",
+            "Skeleton": "Nidalee2012.skl",
+            "SkinScale": 1.35,
+            "Texture": "nidalee_snowbunny_2012.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

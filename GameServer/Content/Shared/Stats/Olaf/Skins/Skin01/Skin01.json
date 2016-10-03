@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Olaf/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseOlaf.blnd",
+            "ChampionSkinID": 2001,
+            "ChampionSkinName": "ValhallanOlaf",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Olaf.skn",
+            "Skeleton": "Olaf.skl",
+            "SkinScale": 1.1,
+            "Texture": "Olaf_Black_TX_CM.dds"
+        }
+    }
+}
