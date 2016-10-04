@@ -205,18 +205,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _targetType =
                 (float)Math.Floor(RAFManager.GetFloatValue(data, "Values", "SpellData", "TargettingType") + 0.5f);
 
-            JObject missileData;
-            if (!RAFManager.ReadMissileData(spellName, out missileData))
+            if (!RAFManager.ReadSpellData(spellName + "Missile", out data))
             {
-                hitEffectName = RAFManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
-                ProjectileSpeed = RAFManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
-                ProjectileFlags = RAFManager.GetIntValue(data, "Values", "SpellData", "Flags");
-                return;
+                if (!RAFManager.ReadSpellData(spellName + "Mis", out data))
+                {
+                    return;
+                }
             }
 
-            hitEffectName = RAFManager.GetStringValue(missileData, "Values", "SpellData", "HitEffectName");
-            ProjectileSpeed = RAFManager.GetFloatValue(missileData, "Values", "SpellData", "MissileSpeed");
-            ProjectileFlags = RAFManager.GetIntValue(missileData, "Values", "SpellData", "Flags");
+            hitEffectName = RAFManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
+            ProjectileSpeed = RAFManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
+            ProjectileFlags = RAFManager.GetIntValue(data, "Values", "SpellData", "Flags");
             ReloadLua();
         }
 

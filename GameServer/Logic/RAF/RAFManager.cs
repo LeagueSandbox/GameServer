@@ -25,28 +25,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
 
         public static bool ReadSpellData(string spellName, out JObject data)
         {
-            try
+            data = new JObject();
+            var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
+            if (path == "")
             {
-                var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
-                data = JObject.Parse(File.ReadAllText(path));
-
-                return true;
-            }
-            catch
-            {
-                data = new JObject();
                 return false;
             }
-        }
 
-        public static bool ReadMissileData(string spellName, out JObject data)
-        {
-            if (!ReadSpellData(spellName + "Missile", out data))
-            {
-                return ReadSpellData(spellName + "Mis", out data);
-            }
-
-            return ReadSpellData(spellName + "Missile", out data);
+            data = JObject.Parse(File.ReadAllText(path));
+            return true;
         }
 
         public static bool ReadAutoAttackData(string unitName, out JObject data)
