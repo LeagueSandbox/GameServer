@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return (T)Convert.ChangeType(Values[section][name], typeof(T));
             }
-            catch
+            catch (FormatException)
             {
                 return defaultValue;
             }
@@ -33,9 +33,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public T SafeGetValue<T>(string section, string name, T defaultValue)
         {
-            if (!Values.ContainsKey(section)) return defaultValue;
-            if (!Values[section].ContainsKey(name)) return defaultValue;
-            return GetValue<T>(section, name, defaultValue);
+            if (!Values.ContainsKey(section) || !Values[section].ContainsKey(name))
+            {
+                return defaultValue;
+            }
+
+            return GetValue(section, name, defaultValue);
         }
 
         public float SafeGetFloat(string section, string name, float defaultValue = 0f)
@@ -45,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public int SafeGetInt(string section, string name, int defaultValue = 0)
         {
-            return int.Parse(SafeGetValue(section, name, defaultValue).ToString());
+            return SafeGetValue(section, name, defaultValue);
         }
 
         public string SafeGetString(string section, string name, string defaultValue = "")
@@ -55,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool SafeGetBool(string section, string name, bool defaultValue = false)
         {
-            return bool.Parse(SafeGetValue(section, name, defaultValue).ToString());
+            return SafeGetValue(section, name, defaultValue);
         }
     }
 

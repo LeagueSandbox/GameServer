@@ -153,8 +153,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public SummonersRift(Game game) : base(game, 15 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
-            var path = System.IO.Path.Combine(Program.ExecutingDirectory, "Content", "Data",
-                _game.Config.ContentManager.GameModeName, "AIMesh", "Map" + GetMapId(), "AIPath.aimesh");
+            var path = System.IO.Path.Combine(
+                Program.ExecutingDirectory,
+                "Content",
+                "Data",
+                _game.Config.ContentManager.GameModeName,
+                "AIMesh",
+                "Map" + GetMapId(),
+                "AIPath.aimesh"
+            );
 
             try
             {

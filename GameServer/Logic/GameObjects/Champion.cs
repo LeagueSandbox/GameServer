@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public List<Spell> Spells { get; private set; }
+        public List<string> ExtraSpells { get; private set; }
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -36,57 +37,73 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.SetGeneratingGold(false);
 
             JObject data;
-            if (!RAFManager.ReadUnitStats(model, out data))
+            if (!_rafManager.ReadUnitStats(model, out data))
             {
                 _logger.LogCoreError("Couldn't find champion stats for " + Model);
                 return;
             }
 
-            stats.HealthPoints.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "BaseHP");
+            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseHP");
             stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "BaseMP");
+            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "BaseDamage");
-            stats.Range.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "AttackRange");
-            stats.MoveSpeed.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "MoveSpeed");
-            stats.Armor.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "Armor");
-            stats.MagicResist.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = RAFManager.GetFloatValue(data, "Values", "Data", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + RAFManager.GetFloatValue(data, "Values", "Data", "AttackDelayOffsetPercent"));
+            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseDamage");
+            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "AttackRange");
+            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "MoveSpeed");
+            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "Armor");
+            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Values", "Data", "AttackDelayOffsetPercent"));
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
-            stats.HealthPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "HPPerLevel");
-            stats.ManaPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "MPPerLevel");
-            stats.AdPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "DamagePerLevel");
-            stats.ArmorPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "ArmorPerLevel");
-            stats.MagicResistPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = RAFManager.GetFloatValue(data, "Values", "Data", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = RAFManager.GetFloatValue(data, "Values", "Data", "AttackSpeedPerLevel");
+            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPPerLevel");
+            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPPerLevel");
+            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "DamagePerLevel");
+            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "ArmorPerLevel");
+            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Values", "Data", "AttackSpeedPerLevel");
 
             Spells = new List<Spell>
             {
-                new Spell(this, RAFManager.GetStringValue(data, "Values", "Data", "Spell1"), 0),
-                new Spell(this, RAFManager.GetStringValue(data, "Values", "Data", "Spell2"), 1),
-                new Spell(this, RAFManager.GetStringValue(data, "Values", "Data", "Spell3"), 2),
-                new Spell(this, RAFManager.GetStringValue(data, "Values", "Data", "Spell4"), 3),
+                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell1"), 0),
+                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell2"), 1),
+                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell3"), 2),
+                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell4"), 3),
                 new Spell(this, "SummonerHeal", 4),
                 new Spell(this, "SummonerFlash", 5),
                 new Spell(this, "Recall", 13)
             };
 
-            IsMelee = RAFManager.GetBoolValue(data, "Values", "Data", "IsMelee");
-            CollisionRadius = RAFManager.GetIntValue(data, "Values", "Data", "PathfindingCollisionRadius");
+            ExtraSpells = new List<string>();
+
+            for (var i = 1; true; i++)
+            {
+                if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Values", "Data", "ExtraSpell" + i)))
+                {
+                    break;
+                }
+
+                ExtraSpells.Add(_rafManager.GetStringValue(data, "Values", "Data", "ExtraSpell" + i));
+            }
+
+            IsMelee = _rafManager.GetBoolValue(data, "Values", "Data", "IsMelee");
+            CollisionRadius = _rafManager.GetIntValue(data, "Values", "Data", "PathfindingCollisionRadius");
 
             JObject autoAttack;
-            if (RAFManager.ReadAutoAttackData(model, out autoAttack))
+            if (_rafManager.ReadAutoAttackData(model, out autoAttack))
             {
-                AutoAttackDelay = RAFManager.GetFloatValue(autoAttack, "Values", "SpellData", "CastFrame") / 30.0f;
-                AutoAttackProjectileSpeed = RAFManager.GetFloatValue(autoAttack, "Values", "SpellData", "MissileSpeed");
+                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "Values", "SpellData", "CastFrame") / 30.0f;
+                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "Values", "SpellData", "MissileSpeed");
             }
 
             LoadLua();
+            foreach (var spell in Spells)
+            {
+                spell.LoadExtraSpells(this);
+            }
         }
 
         public override void LoadLua()

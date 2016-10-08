@@ -4,10 +4,10 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Core.Logic.RAF
 {
-    static class RAFManager
+    public class RAFManager
     {
         private static Game _game = Program.ResolveDependency<Game>();
-        public static uint GetHash(string path)
+        public uint GetHash(string path)
         {
             uint hash = 0;
             var mask = 0xF0000000;
@@ -23,40 +23,35 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return hash;
         }
 
-        public static bool ReadSpellData(string spellName, out JObject data)
+        public bool ReadSpellData(string spellName, out JObject data)
         {
-            data = new JObject();
             var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
-            if (path == "")
-            {
-                return false;
-            }
 
             data = JObject.Parse(File.ReadAllText(path));
             return true;
         }
 
-        public static bool ReadAutoAttackData(string unitName, out JObject data)
+        public bool ReadAutoAttackData(string unitName, out JObject data)
         {
             return ReadSpellData(unitName + "BasicAttack", out data);
         }
 
-        public static bool ReadUnitStats(string unitName, out JObject data)
+        public bool ReadUnitStats(string unitName, out JObject data)
         {
             var path = _game.Config.ContentManager.GetUnitStatPath(unitName);
-            data = JObject.Parse(File.ReadAllText(path));
 
+            data = JObject.Parse(File.ReadAllText(path));
             return true;
         }
 
-        public static JToken GetValue(JObject from, string first, string second = "", string third = "")
+        public JToken GetValue(JObject from, string first, string second = "", string third = "")
         {
             var toReturn = from.SelectToken(first);
-            if (second != "")
+            if (!string.IsNullOrEmpty(second) && toReturn != null)
             {
                 toReturn = toReturn.SelectToken(second);
             }
-            if (third != "")
+            if (!string.IsNullOrEmpty(third) && toReturn != null)
             {
                 toReturn = toReturn.SelectToken(third);
             }
@@ -64,25 +59,25 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return toReturn;
         }
 
-        public static float GetFloatValue(JObject from, string first, string second = "", string third = "")
+        public float GetFloatValue(JObject from, string first, string second = "", string third = "")
         {
             var x = GetValue(from, first, second, third);
-            return x == null ? 0.0f : (float)x;
+            return x == null || string.IsNullOrEmpty((string)x) ? 0.0f : (float)x;
         }
 
-        public static int GetIntValue(JObject from, string first, string second = "", string third = "")
+        public int GetIntValue(JObject from, string first, string second = "", string third = "")
         {
             var x = GetValue(from, first, second, third);
-            return x == null ? 0 : (int)x;
+            return x == null || string.IsNullOrEmpty((string)x) ? 0 : (int)x;
         }
 
-        public static string GetStringValue(JObject from, string first, string second = "", string third = "")
+        public string GetStringValue(JObject from, string first, string second = "", string third = "")
         {
             var x = GetValue(from, first, second, third);
-            return x == null ? "" : (string)x;
+            return x == null || string.IsNullOrEmpty((string)x) ? "" : (string)x;
         }
 
-        public static bool GetBoolValue(JObject from, string first, string second = "", string third = "")
+        public bool GetBoolValue(JObject from, string first, string second = "", string third = "")
         {
             var x = GetValue(from, first, second, third);
             if (x == null)

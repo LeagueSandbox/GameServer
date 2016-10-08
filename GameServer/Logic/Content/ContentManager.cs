@@ -115,12 +115,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
             if (!File.Exists(path))
             {
-                _logger.LogCoreError("Failed to load content [{0}][{1}]", contentType, fileName);
+                throw new ContentNotFoundException("Failed to load content [" + contentType + "][" + fileName + "]");
             }
-            else
-            {
-                _logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
-            }
+            _logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
             return path;
         }
 
@@ -128,6 +125,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var mapName = string.Format("Map{0}", mapId);
             var contentType = "Maps";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
+            {
+                throw new ContentNotFoundException();
+            }
+
             var contentPackages = _content[contentType][mapName];
             var fileName = string.Format("{0}/{0}.json", mapName);
             return GetContentPath(contentPackages, contentType, fileName);
@@ -136,6 +139,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string GetSpellScriptPath(string championName, string spellSlot)
         {
             var contentType = "Champions";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(championName))
+            {
+                throw new ContentNotFoundException();
+            }
+
             var contentPackages = _content[contentType][championName];
             var fileName = string.Format("{0}/{1}.lua", championName, spellSlot);
             return GetContentPath(contentPackages, contentType, fileName);
@@ -144,6 +153,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string GetBuffScriptPath(string buffName)
         {
             var contentType = "Buffs";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(buffName))
+            {
+                throw new ContentNotFoundException();
+            }
+
             var contentPackages = _content[contentType][buffName];
             var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
             return GetContentPath(contentPackages, contentType, fileName);
@@ -152,6 +167,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string GetUnitStatPath(string model)
         {
             var contentType = "Stats";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(model))
+            {
+                throw new ContentNotFoundException();
+            }
+
             var contentPackages = _content[contentType][model];
             var fileName = string.Format("{0}/{1}.json", model, model);
             return GetContentPath(contentPackages, contentType, fileName);
@@ -159,17 +180,17 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public string GetSpellDataPath(string spellName)
         {
-            try
+            var contentType = "Spells";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(spellName))
             {
-                var contentType = "Spells";
-                var contentPackages = _content[contentType][spellName];
-                var fileName = string.Format("{0}/{1}.json", spellName, spellName);
-                return GetContentPath(contentPackages, contentType, fileName);
+                throw new ContentNotFoundException();
             }
-            catch
-            {
-                return "";
-            }
+
+            var contentPackages = _content[contentType][spellName];
+            var fileName = string.Format("{0}/{1}.json", spellName, spellName);
+
+            return GetContentPath(contentPackages, contentType, fileName);
         }
 
         public static ContentManager LoadGameMode(string gameModeName)
