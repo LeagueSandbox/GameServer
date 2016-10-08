@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Draven/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Draven_Gladiator.blnd",
+            "ChampionSkinID": 119002,
+            "ChampionSkinName": "Draven_Gladiator",
+            "OverrideBoundingBox": "140 240 140",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Draven_Gladiator.skn",
+            "Skeleton": "Draven_Gladiator.skl",
+            "SkinScale": 1.1,
+            "Texture": "Draven_Gladiator_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

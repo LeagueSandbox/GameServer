@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin13",
+        "Name": "Skin13",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin13/Skin13.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardS3Champ.blnd",
+            "ChampionSkinName": "SightWardS3Champ",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Champion_S3.skn",
+            "Skeleton": "SightWard_Champion_S3.skl",
+            "SkinScale": 0.8,
+            "Texture": "sightWard_championshipS3_TX_CM.dds"
+        }
+    }
+}

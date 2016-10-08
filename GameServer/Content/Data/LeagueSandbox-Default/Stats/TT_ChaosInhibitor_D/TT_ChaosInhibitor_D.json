@@ -1,0 +1,31 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_ChaosInhibitor_D",
+        "Name": "TT_ChaosInhibitor_D",
+        "ResourcePath": "DATA/Characters/TT_ChaosInhibitor_D/TT_ChaosInhibitor_D.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_ChaosInhibitor_D"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "DestroyedBuilding_idle.troy root"
+        },
+        "Info": {
+            "IconCircle": "ChaosLaneTower_Icon_C.dds",
+            "IconSquare": "Inhibitor_square_purple.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_ChaosInhibitor_DBase.blnd",
+            "ChampionSkinName": "TT_ChaosInhibitor_DBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Inhibitor.skn",
+            "Skeleton": "Inhibitor.skl",
+            "SkinScale": 1,
+            "Texture": "ChaosInhibitor_D.dds"
+        }
+    }
+}

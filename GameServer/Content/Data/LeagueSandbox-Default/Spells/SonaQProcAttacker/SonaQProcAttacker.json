@@ -7,11 +7,9 @@
     },
     "Values": {
         "BuffData": {
+            "AlternateName": "SonaQ",
             "DynamicTooltip": "game_buff_tooltip_SonaQProcAttacker",
             "ShowInTrackerUI": 1
-        },
-        "UNKNOWN_HASHES": {
-            "1378003864": "SonaQ"
         }
     }
 }

@@ -1,0 +1,69 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_BaronSpawn",
+        "Name": "SRU_BaronSpawn",
+        "ResourcePath": "DATA/Characters/SRU_BaronSpawn/SRU_BaronSpawn.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "0",
+            "Armor": "120.0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.1626736,
+            "AttackDelayOffsetPercent": "2.0",
+            "AttackRange": "900",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "460.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "8800",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 15,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Worm",
+            "EnemyTooltip": "game_character_enemyTooltip_Worm",
+            "ExperienceRadius": "2000.0",
+            "ExpGivenOnDeath": "0",
+            "GameplayCollisionRadius": 1,
+            "GlobalExpGivenOnDeath": 0,
+            "GlobalGoldGivenOnDeath": 0,
+            "GoldGivenOnDeath": "0",
+            "HPPerLevel": "0",
+            "IsEpic": "true",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Worm",
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": "0",
+            "SelectionHeight": 0,
+            "SelectionRadius": 0,
+            "Significance": 1,
+            "SkipDrawOutline": 1,
+            "Spell1": "SweepingBlow",
+            "Spell2": "Propel",
+            "Spell3": "WrathoftheAncients",
+            "Spell4": "WormAttack",
+            "SpellBlock": "70",
+            "WeaponMaterial": "WormBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "ChaosTurretWorm_Circle.dds",
+            "IconSquare": "ChaosTurretWorm_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": 16,
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

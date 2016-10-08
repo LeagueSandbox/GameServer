@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Urgot/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BattlecastUrgot.blnd",
+            "ChampionSkinID": 6003,
+            "ChampionSkinName": "BattlecastUrgot",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "urgot_battlecast.skn",
+            "Skeleton": "urgot_battlecast.skl",
+            "SkinScale": 1.4,
+            "Texture": "urgot_battlecast_TX_CM.dds"
+        }
+    }
+}

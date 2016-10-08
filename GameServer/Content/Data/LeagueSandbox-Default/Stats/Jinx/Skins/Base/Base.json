@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Jinx/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Jinx.blnd",
+            "ChampionSkinID": "222000",
+            "ChampionSkinName": "Jinx",
+            "ExtraCharacterPreloads": "JinxMine",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Jinx.skn",
+            "Skeleton": "Jinx.skl",
+            "SkinScale": 1.03,
+            "Texture": "Jinx_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.4
+        }
+    }
+}

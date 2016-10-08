@@ -1,0 +1,34 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Skarner/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Skarner_Skin03.cac"
+        },
+        "MeshSkin": {
+            "Animations": "SkarnerSkin03.blnd",
+            "ChampionSkinID": 72003,
+            "ChampionSkinName": "SkarnerSkin03",
+            "MaterialOverride0Submesh": "CHAINSAW",
+            "MaterialOverride0Texture": "Skarner_Skin03_Chainsaw_TX_CM.dds",
+            "OverrideBoundingBox": "230 190 230",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Skarner_Skin03.skn",
+            "Skeleton": "Skarner_Skin03.skl",
+            "SkinScale": "0.93",
+            "Texture": "Skarner_Skin03_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Skarner_Skin03_Treads_TX_CM.dds",
+            "212471238": "Metal",
+            "2141601294": "R_TREADS",
+            "2625724482": "true",
+            "3700722767": "L_TREADS",
+            "384495548": "Skarner_Skin03_Treads_TX_CM.dds"
+        }
+    }
+}

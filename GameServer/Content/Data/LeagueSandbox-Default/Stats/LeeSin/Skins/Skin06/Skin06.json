@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseBlindMonk.blnd",
+            "ChampionSkinID": 64006,
+            "ChampionSkinName": "leesinSkin06",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "leesin_Skin06.skn",
+            "Skeleton": "leesin_Skin06.skl",
+            "SkinScale": 1.82,
+            "Texture": "leesin_Skin06_TX_CM.dds"
+        }
+    }
+}

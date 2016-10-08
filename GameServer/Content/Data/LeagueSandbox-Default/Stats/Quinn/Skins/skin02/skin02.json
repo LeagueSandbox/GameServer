@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Quinn/Skins/skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "QuinnSkin02.blnd",
+            "ChampionSkinID": 133002,
+            "ChampionSkinName": "QuinnSkin02",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "skin02.skn",
+            "Skeleton": "skin02.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "quinn_skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "false",
+            "708066840": "Arrow"
+        }
+    }
+}

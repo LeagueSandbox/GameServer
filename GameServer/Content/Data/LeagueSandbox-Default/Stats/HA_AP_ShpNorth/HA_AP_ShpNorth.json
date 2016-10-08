@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_ShpNorth",
+        "Name": "HA_AP_ShpNorth",
+        "ResourcePath": "DATA/Characters/HA_AP_ShpNorth/HA_AP_ShpNorth.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": "env_Lantern_glow.troy Buffbone_Cstm_Lantern"
+        }
+    }
+}

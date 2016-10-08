@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Soraka/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SorakaSkin04.blnd",
+            "ChampionSkinID": 16004,
+            "ChampionSkinName": "SorakaSkin04",
+            "OverrideBoundingBox": "125 200 125",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "skin04_Soraka.skn",
+            "Skeleton": "skin04_Soraka.skl",
+            "SkinScale": 1.27,
+            "Texture": "soraka_skin04_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

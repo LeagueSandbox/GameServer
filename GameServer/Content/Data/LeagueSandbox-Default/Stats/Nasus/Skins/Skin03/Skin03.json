@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Nasus/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Nasus_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseNasus.blnd",
+            "ChampionSkinID": 75003,
+            "ChampionSkinName": "DreadKnightNasus",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nasus_dreadknight.skn",
+            "Skeleton": "Nasus_dreadknight.skl",
+            "SkinScale": 1.18,
+            "Texture": "nasus_dreadknight_TX_CM.dds"
+        }
+    }
+}

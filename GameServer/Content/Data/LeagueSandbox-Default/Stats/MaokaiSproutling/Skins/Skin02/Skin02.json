@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/MaokaiSproutling/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MaokaiSproutlingBase.blnd",
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sapling_totem.skn",
+            "Skeleton": "Sapling_totem.skl",
+            "SkinScale": 1.2,
+            "Texture": "maokai_totem_TX_CM.dds"
+        }
+    }
+}

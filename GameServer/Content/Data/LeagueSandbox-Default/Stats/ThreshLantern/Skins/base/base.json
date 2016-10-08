@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/ThreshLantern/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ThreshLantern.blnd",
+            "ChampionSkinName": "ThreshLantern",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "ThreshLantern.skn",
+            "Skeleton": "ThreshLantern.skl",
+            "SkinScale": "1.0",
+            "Texture": "Thresh_Base_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,65 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GreatWraith",
+        "Name": "GreatWraith",
+        "ResourcePath": "DATA/Characters/GreatWraith/GreatWraith.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 15,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.12,
+            "AttackDelayOffsetPercent": -0.02,
+            "AttackRange": "550",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": 75,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1400",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Wight",
+            "EnemyTooltip": "game_character_enemyTooltip_Wight",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "150.0",
+            "GameplayCollisionRadius": "80.0",
+            "GoldGivenOnDeath": "65.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Wight",
+            "PathfindingCollisionRadius": "40",
+            "SelectionHeight": "120",
+            "SelectionRadius": 155,
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Monster | Monster_Large",
+            "WeaponMaterial": "GreatWraithBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "wraith_Circle.dds",
+            "IconSquare": "wraith_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

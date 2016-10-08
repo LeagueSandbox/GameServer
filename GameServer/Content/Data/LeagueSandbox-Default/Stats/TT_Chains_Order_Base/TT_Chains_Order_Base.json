@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Chains_Order_Base",
+        "Name": "TT_Chains_Order_Base",
+        "ResourcePath": "DATA/Characters/TT_Chains_Order_Base/TT_Chains_Order_Base.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Chains_Order_Base.blnd",
+            "ChampionSkinID": 988124,
+            "ChampionSkinName": "TT_Chains_Order_Base",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Chains_Order_Base.skn",
+            "Skeleton": "TT_Chains_Order_Base.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Chains.dds"
+        }
+    }
+}

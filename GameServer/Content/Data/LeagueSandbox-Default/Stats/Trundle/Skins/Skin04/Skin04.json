@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Trundle/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseTrundle.blnd",
+            "ChampionSkinID": 48004,
+            "ChampionSkinName": "Trundle_Skin04",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Trundle_Skin04.skn",
+            "Skeleton": "Trundle_Skin04.skl",
+            "SkinScale": "1.00",
+            "Texture": "Trundle_Skin04_TX_CM.dds"
+        }
+    }
+}

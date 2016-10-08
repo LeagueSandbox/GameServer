@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ChaosInhibitor_D",
+        "Name": "ChaosInhibitor_D",
+        "ResourcePath": "DATA/Characters/ChaosInhibitor_D/ChaosInhibitor_D.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_ChaosInhibitor_D"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "DestroyedBuilding_idle.troy root"
+        }
+    }
+}

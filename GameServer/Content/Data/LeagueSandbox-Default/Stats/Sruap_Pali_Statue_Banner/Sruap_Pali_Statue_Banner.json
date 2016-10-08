@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Sruap_Pali_Statue_Banner",
+        "Name": "Sruap_Pali_Statue_Banner",
+        "ResourcePath": "DATA/Characters/Sruap_Pali_Statue_Banner/Sruap_Pali_Statue_Banner.inibin"
+    },
+    "Values": {
+        "Data": {
+            "SelectionHeight": "2000",
+            "SelectionRadius": "2000"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        }
+    }
+}

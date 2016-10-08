@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ButterflyKogMaw.blnd",
+            "ChampionSkinID": 96003,
+            "ChampionSkinName": "ButterflyKogMaw",
+            "OverrideBoundingBox": "283 303 283",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_butterfly.skn",
+            "Skeleton": "KogMaw_butterfly.skl",
+            "SkinScale": 0.65,
+            "Texture": "kogmaw_butterfly_TX_CM.dds"
+        }
+    }
+}

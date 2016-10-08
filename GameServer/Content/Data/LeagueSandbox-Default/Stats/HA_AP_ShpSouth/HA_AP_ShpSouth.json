@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_ShpSouth",
+        "Name": "HA_AP_ShpSouth",
+        "ResourcePath": "DATA/Characters/HA_AP_ShpSouth/HA_AP_ShpSouth.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        }
+    }
+}

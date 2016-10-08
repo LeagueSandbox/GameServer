@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Ahri/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AhriFireFox.blnd",
+            "ChampionSkinID": 103003,
+            "ChampionSkinName": "AhriFireFox",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ahri_fire.skn",
+            "Skeleton": "Ahri_fire.skl",
+            "SkinScale": 1.26,
+            "Texture": "Ahri_fire_TX_CM.dds"
+        }
+    }
+}

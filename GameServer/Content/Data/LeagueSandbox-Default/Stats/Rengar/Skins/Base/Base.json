@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Rengar/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "rengar.blnd",
+            "ChampionSkinID": "107000",
+            "ChampionSkinName": "Rengar",
+            "OverrideBoundingBox": "180 250 180",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Rengar_Base.skn",
+            "Skeleton": "Rengar_Base.skl",
+            "SkinScale": "0.95",
+            "Texture": "Rengar_base_TX_CM.dds"
+        }
+    }
+}

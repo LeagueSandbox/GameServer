@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_Windmill_Gears",
+        "Name": "Odin_Windmill_Gears",
+        "ResourcePath": "DATA/Characters/Odin_Windmill_Gears/Odin_Windmill_Gears.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_Windmill_GearsBase.blnd",
+            "ChampionSkinName": "Odin_Windmill_GearsBase",
+            "SimpleSkin": "Odin_Windmill_Gears.skn",
+            "Skeleton": "Odin_Windmill_Gears.skl",
+            "Texture": "Windmill_Gears_D.dds"
+        }
+    }
+}

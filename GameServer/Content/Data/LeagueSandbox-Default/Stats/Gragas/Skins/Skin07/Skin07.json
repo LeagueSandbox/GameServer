@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "gragas.blnd",
+            "ChampionSkinID": 79007,
+            "ChampionSkinName": "GragasSkin07",
+            "GlossTexture": "gragas_skin07_TX_GM.dds",
+            "ReflectionMap": "gragas_skin07_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_Skin07.skn",
+            "Skeleton": "Gragas_Skin07.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_skin07_TX_CM.dds"
+        }
+    }
+}

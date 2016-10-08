@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Yasuo/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Yasuo.blnd",
+            "ChampionSkinID": "157000",
+            "ChampionSkinName": "Yasuo",
+            "OverrideBoundingBox": "230 180 230",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Yasuo.skn",
+            "Skeleton": "Yasuo.skl",
+            "SkinScale": 0.93,
+            "Texture": "Yasuo_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Yasuo_Weapon_Trail_TX_CM.dds",
+            "2212039952": 0.5,
+            "3700722767": "Weapon_Trail",
+            "708066840": "Yasuo_Instrument_Mat, Weapon_Trail"
+        }
+    }
+}

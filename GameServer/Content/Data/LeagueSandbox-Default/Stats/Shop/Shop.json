@@ -1,0 +1,30 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Shop",
+        "Name": "Shop",
+        "ResourcePath": "DATA/Characters/Shop/Shop.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": "Shop_Backwall.troy joint10",
+            "Particle2": "Shop_Shield.troy joint10",
+            "Particle3": "Shop_PurplePotion.troy joint13",
+            "Particle4": "Shop_Dagger.troy joint10",
+            "Particle5": "Shop_Treasure.troy joint15",
+            "Particle6": "Shop_Axe.troy joint10",
+            "Particle7": "Shop_OrangePotion.troy joint17",
+            "Particle8": "Shop_Sword.troy joint10"
+        },
+        "MeshSkin": {
+            "Animations": "ShopBase.blnd",
+            "ChampionSkinName": "ShopBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Shop.skn",
+            "Skeleton": "Shop.skl",
+            "SkinScale": "2.0",
+            "Texture": "shop_trol_prop.dds"
+        }
+    }
+}

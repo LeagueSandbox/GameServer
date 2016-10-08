@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Blind",
+        "Name": "Blind",
+        "ResourcePath": "DATA/Shared/Spells/Blind.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Blind"
+        }
+    }
+}

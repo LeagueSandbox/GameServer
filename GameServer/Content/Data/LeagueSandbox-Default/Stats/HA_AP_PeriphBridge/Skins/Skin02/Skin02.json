@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/HA_AP_PeriphBridge/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_PeriphBridge.blnd",
+            "CastShadows": "0",
+            "ChampionSkinName": "HA_AP_PeriphBridge_destroyed",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_PeriphBridge_destroyed.skn",
+            "Skeleton": "HA_AP_PeriphBridge_destroyed.skl",
+            "SkinScale": "10000.0",
+            "Texture": "HA_AP_PeriphBridge.dds"
+        }
+    }
+}

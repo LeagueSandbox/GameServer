@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Nidalee_Spear/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_SpearBase.blnd",
+            "ChampionSkinName": "Nidalee_SpearBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_Spear.skn",
+            "Skeleton": "Nidalee_Spear.skl",
+            "SkinScale": 1.7,
+            "Texture": "Nidalee_Spear.dds"
+        }
+    }
+}

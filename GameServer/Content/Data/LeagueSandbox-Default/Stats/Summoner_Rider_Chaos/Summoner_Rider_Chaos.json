@@ -1,0 +1,68 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Summoner_Rider_Chaos",
+        "Name": "Summoner_Rider_Chaos",
+        "ResourcePath": "DATA/Characters/Summoner_Rider_Chaos/Summoner_Rider_Chaos.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "40",
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.121,
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "210",
+            "AttackSpeed": "2.0",
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "32.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "800",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Summoner_Rider_Chaos",
+            "ExpGivenOnDeath": "50.0",
+            "GameplayCollisionRadius": "65.0",
+            "GoldGivenOnDeath": "50.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": "350",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Summoner_Rider_Chaos",
+            "SelectionHeight": "90",
+            "SelectionRadius": "120",
+            "SoulGivenOnDeath": 0,
+            "SpellBlock": "0",
+            "WeaponMaterial": "Summoner_Rider_OrderBasicAttack"
+        },
+        "Info": {
+            "IconSquare": "SkeletonRider_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Summoner_Rider_ChaosBase.blnd",
+            "ChampionSkinName": "Summoner_Rider_ChaosBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Summoner_Rider_Chaos.skn",
+            "Skeleton": "Summoner_Rider_Chaos.skl",
+            "SkinScale": 2.60000014,
+            "Texture": "Summoner_Rider_Chaos.dds"
+        },
+        "Sounds": {
+            "Death": "Skeleton_Minion_Rider_Death.wav"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "30.0",
+            "386495002": "0",
+            "3983263047": "0"
+        }
+    }
+}

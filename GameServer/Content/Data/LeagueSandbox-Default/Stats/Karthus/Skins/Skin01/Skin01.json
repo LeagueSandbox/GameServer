@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Karthus/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseLich.blnd",
+            "ChampionSkinID": 30001,
+            "ChampionSkinName": "PhantomLich",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karthus_Phantom.skn",
+            "Skeleton": "Karthus_Phantom.skl",
+            "SkinScale": 1.35,
+            "Texture": "Karthus_Phantom_TX_CM.dds"
+        }
+    }
+}

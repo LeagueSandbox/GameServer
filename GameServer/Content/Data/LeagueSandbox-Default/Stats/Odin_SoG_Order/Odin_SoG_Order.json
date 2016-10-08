@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_SoG_Order",
+        "Name": "Odin_SoG_Order",
+        "ResourcePath": "DATA/Characters/Odin_SoG_Order/Odin_SoG_Order.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_SoG_OrderBase.blnd",
+            "ChampionSkinName": "Odin_SoG_OrderBase",
+            "SimpleSkin": "Odin_SoG_Order.skn",
+            "Skeleton": "Odin_SoG_Order.skl",
+            "Texture": "Odin_SoG_Order.dds"
+        }
+    }
+}

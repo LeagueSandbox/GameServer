@@ -38,10 +38,10 @@
             "MissileUnblockable": 1,
             "SpellRevealsChampion": "1.0000",
             "TargettingType": 6,
+            "TextFlags": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
             "Version": 1
         },
         "UNKNOWN_HASHES": {
-            "1829373218": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
             "3251122316": 0
         }
     }

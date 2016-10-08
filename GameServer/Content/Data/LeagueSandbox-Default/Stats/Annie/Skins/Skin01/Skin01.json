@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1001,
+            "ChampionSkinName": "AnnieGoth",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Annie_Goth.skn",
+            "Skeleton": "Annie_Goth.skl",
+            "SkinScale": 1,
+            "Texture": "annie_goth_TX_CM.dds"
+        }
+    }
+}

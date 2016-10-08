@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Quinn/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseQuinn.blnd",
+            "ChampionSkinID": "133000",
+            "ChampionSkinName": "BaseQuinn",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Quinn.skn",
+            "Skeleton": "Quinn.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "Quinn_base_TX_CM.dds"
+        }
+    }
+}

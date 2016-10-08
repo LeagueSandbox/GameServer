@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin27",
+        "Name": "Skin27",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin27/Skin27.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardShurima.blnd",
+            "ChampionSkinName": "SightWardShurima",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_Shurima.skn",
+            "Skeleton": "SightWard_Shurima.skl",
+            "SkinScale": 1,
+            "Texture": "SightWard_Shurima_TX_CM.dds",
+            "YOffset": -1.2
+        }
+    }
+}

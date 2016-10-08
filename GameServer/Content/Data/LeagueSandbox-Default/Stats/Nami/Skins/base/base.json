@@ -1,0 +1,35 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Nami/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nami.blnd",
+            "ChampionSkinID": "267000",
+            "ChampionSkinName": "Nami",
+            "GlossTexture": "nami_base_TX_GM.dds",
+            "ReflectionFresnel": 0.3,
+            "ReflectionFresnelBlue": 0.7,
+            "ReflectionFresnelGreen": 0.7,
+            "ReflectionFresnelRed": 0.7,
+            "ReflectionMap": "nami_base_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nami.skn",
+            "Skeleton": "Nami.skl",
+            "SkinScale": 1.05,
+            "Texture": "Nami_base_TX_CM.dds",
+            "YOffset": -0.3
+        },
+        "UNKNOWN_HASHES": {
+            "3400833179": 0.1,
+            "343518805": 0.3,
+            "3966094422": 0.3,
+            "455913160": 0.3
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin30",
+        "Name": "Skin30",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin30/Skin30.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Ward_Season2014_02_Idle.troy Orb"
+        },
+        "MeshSkin": {
+            "Animations": "S4TriumphantWard.blnd",
+            "ChampionSkinName": "S4TriumphantWard",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_S4TriumphantWard.skn",
+            "Skeleton": "SightWard_S4TriumphantWard.skl",
+            "SkinScale": 1,
+            "Texture": "Ward_NewSkins_TX_CM.dds",
+            "YOffset": -1.2
+        }
+    }
+}

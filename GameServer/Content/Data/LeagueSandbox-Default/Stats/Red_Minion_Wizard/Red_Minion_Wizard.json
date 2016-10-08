@@ -1,0 +1,96 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Red_Minion_Wizard",
+        "Name": "Red_Minion_Wizard",
+        "ResourcePath": "DATA/Characters/Red_Minion_Wizard/Red_Minion_Wizard.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": "0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.0087,
+            "AttackDelayOffsetPercent": -0.067,
+            "AttackRange": "550",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": 0,
+            "BaseDamage": "23.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": 0,
+            "BaseHP": "290",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": 0,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "DeathTime": 2.5,
+            "Description": "game_character_description_Red_Minion_Wizard",
+            "EnemyTooltip": "game_character_enemyTooltip_Red_Minion_Wizard",
+            "ExpGivenOnDeath": "51.0",
+            "ExtraAttack1_Probability": 0.5,
+            "FriendlyTooltip": "game_character_friendlyTooltip_Red_Minion_Wizard",
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": "10.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Red_Minion_Wizard",
+            "PathfindingCollisionRadius": 35.7437,
+            "PerceptionBubbleRadius": "1200",
+            "SelectionHeight": "75.0000",
+            "SelectionRadius": "115.0000",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Minion | Minion_Lane"
+        },
+        "Info": {
+            "IconCircle": "RedRange_Circle.dds",
+            "IconSquare": "RedRange_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Red_Minion_WizardBase.blnd",
+            "ChampionSkinName": "Red_Minion_WizardBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_Wizard.skn",
+            "Skeleton": "Red_Minion_Wizard.skl",
+            "SkinScale": "0.9",
+            "Texture": "Red_minion_Wizard.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "Red_Minion_WizardBase.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_Wizard_Harrowing.skn",
+            "Skeleton": "Red_Minion_Wizard_Harrowing.skl",
+            "SkinScale": "0.9",
+            "Texture": "redminion_wizard_pumpkinhead_minions_TX_CM_v01.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "Red_Minion_WizardBase.blnd",
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_Wizard_Snowdown.skn",
+            "Skeleton": "Red_Minion_Wizard_Snowdown.skl",
+            "SkinScale": "0.9",
+            "Texture": "redminion_wizard_elf_TX_CM_v01.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

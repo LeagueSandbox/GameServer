@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1007,
+            "ChampionSkinName": "AnnieFrankenstein",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "annie_frankenstein.skn",
+            "Skeleton": "annie_frankenstein.skl",
+            "SkinScale": 1,
+            "Texture": "annie_frankenstein_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

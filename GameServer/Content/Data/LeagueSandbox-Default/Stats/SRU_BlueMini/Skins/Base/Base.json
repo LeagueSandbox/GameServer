@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_BlueMini/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_BlueMini.blnd",
+            "ChampionSkinName": "SRU_BlueMini",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_BlueMini.skn",
+            "Skeleton": "SRU_BlueMini.skl",
+            "SkinScale": 1.5,
+            "Texture": "SRU_BlueMini.dds"
+        }
+    }
+}

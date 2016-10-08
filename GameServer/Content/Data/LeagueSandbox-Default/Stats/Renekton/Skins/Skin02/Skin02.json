@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Renekton/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Renekton_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "RenektonBase.blnd",
+            "ChampionSkinID": 58002,
+            "ChampionSkinName": "Renekton_outback",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Renekton_downunder.skn",
+            "Skeleton": "Renekton_downunder.skl",
+            "SkinScale": 1.56,
+            "Texture": "renekton_downunder_TX_CM.dds"
+        }
+    }
+}

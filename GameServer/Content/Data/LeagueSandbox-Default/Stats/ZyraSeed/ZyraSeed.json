@@ -1,0 +1,108 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ZyraSeed",
+        "Name": "ZyraSeed",
+        "ResourcePath": "DATA/Characters/ZyraSeed/ZyraSeed.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "0",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "600",
+            "AttackSpeedPerLevel": "0",
+            "BaseCritChance": "0",
+            "BaseDamage": "0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 1,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_ZyraSeed",
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "Lore1": "game_character_lore_ZyraSeed",
+            "Lore2": "As time passed, she became the cause of much trouble in Jugo. People became afraid of Annie because of the sudden fires that erupted when the little girl was in a bad mood. Several years later, she threw a temper tantrum over a dropped teddy bear, and completely incinerated her parents and her home. She has since drifted aimlessly from town to town, sometimes becoming angry over a trivial matter at which point great fire storms erupt leaving only a crying orphan girl in their wake. When the darkness inside of her felt the first call of Chaos, it discovered befitting and truly sinister use for the Dark Child.",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": "0",
+            "Name": "game_character_displayname_ZyraSeed",
+            "NoAutoAttack": 1,
+            "NoHealthBar": 1,
+            "Passive1Desc": "Annie's psychic powers allow her to generate mana quickly.",
+            "Passive1Icon": "Cryophoenix_Rebirth.dds",
+            "Passive1Level1": 1,
+            "Passive1Level2": 4,
+            "Passive1Level3": 7,
+            "Passive1Level4": "10",
+            "Passive1Level5": 13,
+            "Passive1Level6": 16,
+            "Passive1Name": "game_character_passiveName_ZyraSeed",
+            "PassLev1Desc1": "game_character_passiveDescription_ZyraSeed",
+            "PassLev1Desc2": "+40% Mana Point regeneration.",
+            "PassLev1Desc3": "+60% Mana Point regeneration.",
+            "PassLev1Desc4": "+80% Mana Point regeneration.",
+            "PathfindingCollisionRadius": 54.4,
+            "PerceptionBubbleRadius": "800.0",
+            "SelectionHeight": "20",
+            "SelectionRadius": "40",
+            "Significance": 0.3,
+            "SpellBlock": "0",
+            "SpellBlockPerLevel": "0",
+            "Tips1": "game_character_tips_ZyraSeed",
+            "Tips2": "game_character_opposing_tips_ZyraSeed",
+            "Tips3": "In general, Caster characters should not buy items that have +Damage, +Attack Rate, or +Critical Rate.",
+            "UnitTags": "Minion | Minion_Summon"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": -0.1,
+            "YOffset": -0.4
+        },
+        "Info": {
+            "IconSquare": "ZyraW_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "ZyraSeedBase.blnd",
+            "ChampionSkinName": "ZyraSeedBase",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "Zyra_Plant_Ball.skn",
+            "Skeleton": "Zyra_Plant_Ball.skl",
+            "SkinScale": 1.2,
+            "Texture": "Zyra_Plants_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "ZyraSeedBase.blnd",
+            "ChampionSkinName": "ZyraSeedHellvine",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "Zyra_Hellvine_Plant_Ball.skn",
+            "Skeleton": "Zyra_Hellvine_Plant_Ball.skl",
+            "SkinScale": "1.0",
+            "Texture": "Zyra_Plants_hellvine_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "ZyraSeedSkin02.blnd",
+            "BrushAlphaOverride": 0.6,
+            "ChampionSkinName": "ZyraSeedSkin02",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "Zyra_Skin02_Plant_Ball.skn",
+            "Skeleton": "Zyra_Skin02_Plant_Ball.skl",
+            "SkinScale": "1.0",
+            "Texture": "Zyra_Plants_Graveyard_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 6,
+            "3983263047": "0"
+        }
+    }
+}

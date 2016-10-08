@@ -1,0 +1,122 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AniviaIceBlock",
+        "Name": "AniviaIceBlock",
+        "ResourcePath": "DATA/Characters/AniviaIceblock/AniviaIceBlock.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "10",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": 0.0958,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "100",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": "0",
+            "BaseDamage": "40.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "150",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 1,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_IceBlock",
+            "ExpGivenOnDeath": "0",
+            "GoldGivenOnDeath": "0",
+            "HPPerLevel": "150",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_IceBlock",
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": "100",
+            "SelectionHeight": "100",
+            "SelectionRadius": "130",
+            "Significance": 0.1,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell"
+        },
+        "Info": {
+            "IconCircle": "bear_Circle.dds",
+            "IconSquare": "bear_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "AniviaIceBlockBase.blnd",
+            "ChampionSkinName": "AniviaIceBlockBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "IceBlock.skn",
+            "Skeleton": "IceBlock.skl",
+            "SkinScale": "0.25",
+            "Texture": "IceBlock.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "AniviaIceBlockUSA.blnd",
+            "ChampionSkinName": "AniviaIceBlockUSA",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "IceBlock.skn",
+            "Skeleton": "IceBlock.skl",
+            "SkinScale": "0.25",
+            "Texture": "IceBlock.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "AniviaIceBlockBirdOfPrey.blnd",
+            "ChampionSkinName": "AniviaIceBlockBirdOfPrey",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "IceBlock.skn",
+            "Skeleton": "IceBlock.skl",
+            "SkinScale": "0.25",
+            "Texture": "IceBlock.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "AniviaIceBlockBattleArmor.blnd",
+            "ChampionSkinName": "AniviaIceBlockBattleArmor",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "IceBlock.skn",
+            "Skeleton": "IceBlock.skl",
+            "SkinScale": "0.25",
+            "Texture": "IceBlock.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "AniviaIceBlockHextech.blnd",
+            "ChampionSkinName": "AniviaIceBlockHextech",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "IceBlock.skn",
+            "Skeleton": "IceBlock.skl",
+            "SkinScale": "0.25",
+            "Texture": "IceBlock.dds"
+        },
+        "MeshSkin5": {
+            "Animations": "AniviaIceBlockBlackIce.blnd",
+            "ChampionSkinName": "AniviaIceBlockBlackIce",
+            "ReflectionFresnel": "1.0",
+            "ReflectionFresnelBlue": 1,
+            "ReflectionFresnelGreen": 0.5,
+            "ReflectionFresnelRed": 0.5,
+            "ReflectionMap": "AniviaIceBlock_BlackIce_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.2,
+            "ReflectionOpacityGlancing": 0.3,
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "AniviaIceBlock_BlackIce.skn",
+            "Skeleton": "AniviaIceBlock_BlackIce.skl",
+            "SkinScale": 1,
+            "Texture": "AniviaIceBlock_BlackIce_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "122525173": "cryo_Crystalize.troy",
+            "2818610673": 0,
+            "2979245175": 1,
+            "386495002": 0,
+            "3983263047": "1.0"
+        }
+    }
+}

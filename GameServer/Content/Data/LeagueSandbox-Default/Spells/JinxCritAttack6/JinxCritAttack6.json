@@ -49,6 +49,11 @@
             "InventoryIcon": "",
             "IsDisabledWhileDead": 1,
             "IsToggleSpell": "0",
+            "Level1Desc": "NONE",
+            "Level2Desc": "NONE",
+            "Level3Desc": "NONE",
+            "Level4Desc": "NONE",
+            "Level5Desc": "NONE",
             "LineMissileBounces": "0",
             "LineWidth": 0,
             "LockConeToPlayer": "0",
@@ -57,20 +62,13 @@
             "MissileSpeed": "2750.0000",
             "ParticleStartOffset": "0.0000 0.0000 0.0000",
             "PointEffectName": "",
+            "RangeIndicatorTextureName": "DefaultRangeIndicator.dds",
             "SelectionPreference": "none",
             "StartCooldown": 0,
-            "TargettingType": 1
-        },
-        "UNKNOWN_HASHES": {
-            "1829373218": "AffectEnemies | AffectFriends | AffectMinions | AffectHeroes | AffectTurrets",
-            "1832732728": "NONE",
-            "278926620": "DefaultRangeIndicator.dds",
-            "2972297017": "NONE",
-            "3848571446": "NONE",
-            "4111861306": "NONE",
-            "536890465": 1,
-            "57583389": 1,
-            "693168439": "NONE"
+            "SubjectToGlobalCooldown": 1,
+            "TargettingType": 1,
+            "TextFlags": "AffectEnemies | AffectFriends | AffectMinions | AffectHeroes | AffectTurrets",
+            "TriggersGlobalCooldown": 1
         }
     }
 }

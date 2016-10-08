@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "yonkey",
+        "Name": "yonkey",
+        "ResourcePath": "DATA/Characters/Yonkey/yonkey.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "YonkeyBase.blnd",
+            "ChampionSkinName": "YonkeyBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "yonkey.skn",
+            "Skeleton": "yonkey.skl",
+            "SkinScale": 6,
+            "Texture": "yonkey_base_TX_CM.dds"
+        }
+    }
+}

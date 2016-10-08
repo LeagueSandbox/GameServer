@@ -1,0 +1,36 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Azir/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Azir_Base.cac"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 5,
+            "Particle1": "Azir_Skin01_Z_RightShoulderGlow.troy R_Shoulder_Pad",
+            "Particle2": "Azir_Skin01_Z_LeftShoulderGlow.troy L_Shoulder_Pad",
+            "Particle3": "Azir_Skin01_Z_CollarGlow.troy M_Collar",
+            "Particle4": "Azir_Skin01_Z_Weapon_Glow.troy L_Weapon_Head",
+            "Particle5": "Azir_Skin01_Z_Weapon_Glow.troy R_Weapon_Head"
+        },
+        "MeshSkin": {
+            "Animations": "AzirSkin01.blnd",
+            "ChampionSkinID": 268001,
+            "ChampionSkinName": "AzirSkin01",
+            "ExtraCharacterPreloads": "AzirSunDisc,AzirSoldier,AzirUltSoldier,AzirTowerClicker",
+            "OverrideBoundingBox": "180 270 180",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Azir_Skin01.skn",
+            "Skeleton": "Azir_Skin01.skl",
+            "SkinScale": "0.85",
+            "Texture": "Azir_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.4
+        }
+    }
+}

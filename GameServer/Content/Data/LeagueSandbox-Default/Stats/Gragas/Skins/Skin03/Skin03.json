@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SantaGragas.blnd",
+            "ChampionSkinID": 79003,
+            "ChampionSkinName": "SantaGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_santa.skn",
+            "Skeleton": "Gragas_santa.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_santa_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

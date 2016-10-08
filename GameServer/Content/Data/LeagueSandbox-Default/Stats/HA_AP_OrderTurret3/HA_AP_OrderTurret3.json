@@ -1,0 +1,65 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_OrderTurret3",
+        "Name": "HA_AP_OrderTurret3",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderTurret3/HA_AP_OrderTurret3.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "50",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "-0.161",
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "130",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1400",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_OrderTurretAngel",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "120.000",
+            "GlobalGoldGivenOnDeath": "150.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_OrderTurretAngel",
+            "OccludedUnitSelectableDistance": "700",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200.0000",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": 75,
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Nexus"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconSquare": "OrderLaneTower_Icon.dds"
+        },
+        "Package": {
+            "FallbackPackage": "HA_AP_OrderTurret"
+        }
+    }
+}

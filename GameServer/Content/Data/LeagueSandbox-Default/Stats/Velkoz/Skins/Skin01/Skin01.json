@@ -1,0 +1,37 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Velkoz/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Velkoz_Skin01.blnd",
+            "ChampionSkinID": 161001,
+            "ChampionSkinName": "VelkozSkin01",
+            "GlossTexture": "velkoz_Skin01_TX_GM.dds",
+            "OverrideBoundingBox": "300 300 300",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "velkoz_Skin01_TX_RM.dds",
+            "ReflectionOpacityDirect": 1.2,
+            "ReflectionOpacityGlancing": 0.6,
+            "SelfIllumination": "0.7",
+            "SimpleSkin": "Velkoz_Skin01.skn",
+            "Skeleton": "Velkoz_Skin01.skl",
+            "SkinScale": "0.75",
+            "Texture": "Velkoz_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "3400833179": 0.22,
+            "343518805": 0.3,
+            "3966094422": 0.1,
+            "4118570059": 1,
+            "455913160": 0.1
+        }
+    }
+}

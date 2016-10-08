@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 2,
+            "Particle1": "Garen_SteelLegion_Electric_Sword.troy buffbone_cstm_weapon_4",
+            "Particle2": "Garen_SteelLegion_Electric_Sword.troy buffbone_cstm_weapon_6"
+        },
+        "MeshSkin": {
+            "Animations": "SteellegionGaren.blnd",
+            "ChampionSkinID": 86006,
+            "ChampionSkinName": "SteellegionGaren",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Garen_Steellegion.skn",
+            "Skeleton": "Garen_Steellegion.skl",
+            "SkinScale": 1.09,
+            "Texture": "garen_steelLegion_TX_CM.dds"
+        }
+    }
+}

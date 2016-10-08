@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Xerath/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Xerath_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseXerath.blnd",
+            "ChampionSkinID": "101000",
+            "ChampionSkinName": "BaseXerath",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Xerath.skn",
+            "Skeleton": "Xerath.skl",
+            "SkinScale": 1.7,
+            "Texture": "Xerath_base_TX_CM.dds"
+        }
+    }
+}

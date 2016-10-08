@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Sruap_Chaosinhibitor_Rubble",
+        "Name": "Sruap_Chaosinhibitor_Rubble",
+        "ResourcePath": "DATA/Characters/sruap_chaosinhibitor_rubble/Sruap_Chaosinhibitor_Rubble.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_ChaosInhibitor_D"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "DestroyedBuilding_idle.troy root"
+        }
+    }
+}

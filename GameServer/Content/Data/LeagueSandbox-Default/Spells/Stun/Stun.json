@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Stun",
+        "Name": "Stun",
+        "ResourcePath": "DATA/Shared/Spells/Stun.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Stun"
+        }
+    }
+}

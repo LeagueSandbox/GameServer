@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Ahri/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Ahri.blnd",
+            "ChampionSkinID": "103000",
+            "ChampionSkinName": "Ahri",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ahri.skn",
+            "Skeleton": "Ahri.skl",
+            "SkinScale": 1.26,
+            "Texture": "Ahri_base_TX_CM.dds"
+        }
+    }
+}

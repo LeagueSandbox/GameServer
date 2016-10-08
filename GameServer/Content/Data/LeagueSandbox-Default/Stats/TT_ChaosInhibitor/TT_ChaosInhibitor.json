@@ -1,0 +1,44 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_ChaosInhibitor",
+        "Name": "TT_ChaosInhibitor",
+        "ResourcePath": "DATA/Characters/TT_ChaosInhibitor/TT_ChaosInhibitor.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_ChaosInhibitor"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 8,
+            "Particle1": "Chaos_Inhibit_Gem.troy root",
+            "Particle2": "Chaos_Inhibit_Crystal_Glow.troy gem1",
+            "Particle3": "Chaos_Inhibit_Crystal_Glow.troy gem2",
+            "Particle4": "Chaos_Inhibit_Crystal_Glow.troy gem3",
+            "Particle5": "Chaos_Inhibit_Crystal_Glow.troy gem4",
+            "Particle6": "Chaos_Inhibit_Base_Glow.troy base2",
+            "Particle7": "Chaos_Inhibit_Base_Glow.troy base3",
+            "Particle8": "Chaos_Inhibit_Base_Glow.troy base4"
+        },
+        "Info": {
+            "IconCircle": "ChaosLaneTower_Icon_C.dds",
+            "IconSquare": "Inhibitor_square_purple.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_ChaosInhibitorBase.blnd",
+            "ChampionSkinName": "TT_ChaosInhibitorBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Inhibitor.skn",
+            "Skeleton": "Inhibitor.skl",
+            "SkinScale": 1,
+            "Texture": "Chaos_Inhibitor_diff.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "122525178": "Chaos_Inhibit_Base_Glow.troy base1"
+        }
+    }
+}

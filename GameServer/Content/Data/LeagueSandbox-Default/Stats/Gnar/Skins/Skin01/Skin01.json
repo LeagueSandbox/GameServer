@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Gnar/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Gnar_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "GnarSkin01.blnd",
+            "ChampionSkinID": 150001,
+            "ChampionSkinName": "GnarSkin01",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gnar_Skin01.skn",
+            "Skeleton": "Gnar_Skin01.skl",
+            "SkinScale": "1.0",
+            "Texture": "Gnar_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Gnar_skin01_angry_TX_CMM.dds",
+            "3700722767": "Dino_Gnar_Angry_Mat"
+        }
+    }
+}

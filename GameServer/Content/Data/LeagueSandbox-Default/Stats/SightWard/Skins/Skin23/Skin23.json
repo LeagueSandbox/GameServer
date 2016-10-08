@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin23",
+        "Name": "Skin23",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin23/Skin23.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardfutbol.blnd",
+            "ChampionSkinName": "SightWardFutbol",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Futbol.skn",
+            "Skeleton": "SightWard_Futbol.skl",
+            "SkinScale": "0.85",
+            "Texture": "Sightward_Futbol_TX_CM.dds",
+            "YOffset": 65534
+        }
+    }
+}

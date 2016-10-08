@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_HeroTower",
+        "Name": "HA_AP_HeroTower",
+        "ResourcePath": "DATA/Characters/HA_AP_HeroTower/HA_AP_HeroTower.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0",
+            "MaterialOverride0Submesh": "internalSubmesh",
+            "MaterialOverride0Texture": "HA_Fracture_Faces.dds"
+        }
+    }
+}

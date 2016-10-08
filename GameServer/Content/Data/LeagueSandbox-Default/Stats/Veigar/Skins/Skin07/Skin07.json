@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BadSantaVeigar.blnd",
+            "ChampionSkinID": 45007,
+            "ChampionSkinName": "BadSantaVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_badSanta.skn",
+            "Skeleton": "veigar_badSanta.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "Veigar_badSanta_TX_CM.dds"
+        }
+    }
+}

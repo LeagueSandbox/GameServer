@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Elise/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "EliseSkin02.blnd",
+            "ChampionSkinID": 60002,
+            "ChampionSkinName": "EliseSkin02",
+            "ExtraCharacterPreloads": "EliseSpider,EliseSpiderling",
+            "MaterialOverride0Submesh": "Elise_Skin02_spiders_MAT",
+            "MaterialOverride0Texture": "EliseSpider_Skin02_TX_CM.dds",
+            "OverrideBoundingBox": "110 200 110",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Elise_Skin02.skn",
+            "Skeleton": "Elise_Skin02.skl",
+            "SkinScale": 1.25,
+            "Texture": "Elise_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Elise_Skin02_spiders_MAT"
+        }
+    }
+}

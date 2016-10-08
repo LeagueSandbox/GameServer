@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_PeriphBridge",
+        "Name": "HA_AP_PeriphBridge",
+        "ResourcePath": "DATA/Characters/HA_AP_PeriphBridge/HA_AP_PeriphBridge.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        }
+    }
+}

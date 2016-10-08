@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerdingerBase.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 74003,
+            "ChampionSkinName": "HeimerdingerSkin03",
+            "ExtraCharacterPreloads": "HeimerTYellow,HeimerTBlue",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Heimerdinger_Mechanic.skn",
+            "Skeleton": "Heimerdinger_Mechanic.skl",
+            "SkinScale": 1,
+            "Texture": "heimerdinger_mechanic_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Heimerdinger_Grab_Hand, Heimerdinger_Antenna"
+        }
+    }
+}

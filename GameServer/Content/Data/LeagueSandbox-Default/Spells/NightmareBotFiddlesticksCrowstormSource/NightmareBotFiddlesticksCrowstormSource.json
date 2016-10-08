@@ -14,10 +14,8 @@
             "Flags": 329748,
             "InventoryIcon": "Fiddlesticks_CrowstormSurprise.dds",
             "TargettingType": 4,
+            "TextFlags": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf",
             "Version": 1
-        },
-        "UNKNOWN_HASHES": {
-            "1829373218": "Instacast | NonDispellable | AffectFriends | AffectHeroes | AlwaysSelf"
         }
     }
 }

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinCrane",
+        "Name": "OdinCrane",
+        "ResourcePath": "DATA/Characters/OdinCrane/OdinCrane.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "OdinCraneBase.blnd",
+            "ChampionSkinName": "OdinCraneBase",
+            "SelfIllumination": 0.05,
+            "SimpleSkin": "OdinCrane.skn",
+            "Skeleton": "OdinCrane.skl",
+            "SkinScale": "1.0",
+            "Texture": "mining_props_mechanical_machinery_TX_DM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "363996279": 1
+        }
+    }
+}

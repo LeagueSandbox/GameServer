@@ -1,0 +1,67 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "KalistaSpawn",
+        "Name": "KalistaSpawn",
+        "ResourcePath": "DATA/Characters/KalistaSpawn/KalistaSpawn.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.072,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": "0",
+            "BaseDamage": 0,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 2,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_KalistaSpawn",
+            "EnemyTooltip": "game_character_enemyTooltip_Wolf",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 0,
+            "GoldGivenOnDeath": "10.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "560",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_KalistaSpawn",
+            "PathfindingCollisionRadius": "10",
+            "PerceptionBubbleRadius": 0,
+            "SelectionHeight": "100",
+            "SelectionRadius": "100",
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Ward",
+            "WeaponMaterial": "WolfBasicAttack"
+        },
+        "HealthBar": {
+            "HPPerTick": 1
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": "KalistaSpawn_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,74 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Tutorial_Blue_Minion_Basic",
+        "Name": "Tutorial_Blue_Minion_Basic",
+        "ResourcePath": "DATA/Characters/Tutorial_Blue_Minion_Basic/Tutorial_Blue_Minion_Basic.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.1167,
+            "AttackDelayOffsetPercent": -0.5,
+            "AttackRange": "110",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "2.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 175,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Order_Minion_Melee",
+            "EnemyTooltip": "game_character_enemyTooltip_Order_Minion_Melee",
+            "ExpGivenOnDeath": "50.0",
+            "FriendlyTooltip": "game_character_friendlyTooltip_Order_Minion_Melee",
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": "11.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": 315,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Order_Minion_Melee",
+            "PathfindingCollisionRadius": 35.7437,
+            "PerceptionBubbleRadius": "1200",
+            "SelectionHeight": "75.0000",
+            "SelectionRadius": "115.0000",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Minion | Minion_Lane",
+            "WeaponMaterial": "Order_Minion_MeleeBasicAttack"
+        },
+        "Info": {
+            "IconSquare": "BlueMelee_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Tutorial_Blue_Minion_BasicBase.blnd",
+            "ChampionSkinName": "Tutorial_Blue_Minion_BasicBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Tutorial_Blue_Minion_Basic.skn",
+            "Skeleton": "Tutorial_Blue_Minion_Basic.skl",
+            "SkinScale": "0.9",
+            "Texture": "Tutorial_Blue_Minion_Basic.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

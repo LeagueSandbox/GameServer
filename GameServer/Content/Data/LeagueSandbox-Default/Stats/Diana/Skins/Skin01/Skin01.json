@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Diana/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "DianaDarkValkyrie.blnd",
+            "ChampionSkinID": 131001,
+            "ChampionSkinName": "DianaDarkValkyrie",
+            "SelfIllumination": 0.85,
+            "SimpleSkin": "Diana_Dark_Valkyrie.skn",
+            "Skeleton": "Diana_Dark_Valkyrie.skl",
+            "SkinScale": 1.2,
+            "Texture": "Diana_dark_valkyrie_TX_CM.dds"
+        }
+    }
+}

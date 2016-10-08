@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Poppy/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BasePoppy.blnd",
+            "ChampionSkinID": 78003,
+            "ChampionSkinName": "BlacksmithPoppy",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "poppy_blacksmith.skn",
+            "Skeleton": "poppy_blacksmith.skl",
+            "SkinScale": 1,
+            "Texture": "poppy_blacksmith_TX_CM.dds"
+        }
+    }
+}

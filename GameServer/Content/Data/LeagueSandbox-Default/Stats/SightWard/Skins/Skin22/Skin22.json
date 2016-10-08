@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin22",
+        "Name": "Skin22",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin22/Skin22.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardallstars.blnd",
+            "ChampionSkinName": "SightWardAllStars",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_AllStars.skn",
+            "Skeleton": "SightWard_AllStars.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_Allstar_TX_CM.dds"
+        }
+    }
+}

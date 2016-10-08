@@ -8,14 +8,12 @@
     "Values": {
         "SpellData": {
             "DynamicTooltip": "game_buff_tooltip_SionWPassive",
+            "Effect1Level1Amount": 0,
+            "Effect1Level2Amount": 0,
+            "Effect1Level3Amount": 0,
+            "Effect1Level4Amount": 0,
+            "Effect1Level5Amount": 0,
             "Sound_VOEventCategory": "OrderConfirmation"
-        },
-        "UNKNOWN_HASHES": {
-            "1954466257": 0,
-            "2656295760": 0,
-            "3358125263": 0,
-            "4059954766": 0,
-            "466816973": 0
         }
     }
 }

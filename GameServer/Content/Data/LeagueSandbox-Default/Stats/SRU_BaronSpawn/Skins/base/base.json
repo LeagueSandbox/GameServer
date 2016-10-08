@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_BaronSpawn/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_BaronSpawn.blnd",
+            "ChampionSkinName": "SRU_BaronSpawn",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_BaronSpawn.skn",
+            "Skeleton": "SRU_BaronSpawn.skl",
+            "SkinScale": 1,
+            "Texture": "SRU_BaronSpawn_TX_CM.dds"
+        }
+    }
+}

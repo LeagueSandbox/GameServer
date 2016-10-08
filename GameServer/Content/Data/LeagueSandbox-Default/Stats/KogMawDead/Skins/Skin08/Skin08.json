@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/KogMawDead/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMawDead.blnd",
+            "ChampionSkinID": 96008,
+            "ChampionSkinName": "KogMawSkin08",
+            "SelfIllumination": 0.3,
+            "SimpleSkin": "KogMaw_Skin08_Dead.skn",
+            "Skeleton": "KogMaw_Skin08_Dead.skl",
+            "SkinScale": "0.7",
+            "Texture": "KogMaw_skin08_death_TX_CM.dds"
+        }
+    }
+}

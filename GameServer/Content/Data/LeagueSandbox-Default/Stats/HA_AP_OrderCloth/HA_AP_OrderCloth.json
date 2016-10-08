@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_OrderCloth",
+        "Name": "HA_AP_OrderCloth",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderCloth/HA_AP_OrderCloth.inibin"
+    },
+    "Values": {
+        "Package": {
+            "FallbackPackage": "HA_AP_OrderTurret"
+        }
+    }
+}

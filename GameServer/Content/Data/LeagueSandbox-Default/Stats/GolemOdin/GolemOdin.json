@@ -1,0 +1,78 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GolemOdin",
+        "Name": "GolemOdin",
+        "ResourcePath": "DATA/Characters/GolemODIN/GolemOdin.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600.0",
+            "Armor": 12,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.11,
+            "AttackDelayOffsetPercent": 0.02,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "65.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "800",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Golem",
+            "EnemyTooltip": "game_character_enemyTooltip_Golem",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": "80.0",
+            "GoldGivenOnDeath": "30.0",
+            "HPPerLevel": "150",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Golem",
+            "PathfindingCollisionRadius": 24.5747,
+            "SelectionHeight": "120",
+            "SelectionRadius": 155,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "OdinDisintegrate",
+            "Spell2": "OdinDisintegrate",
+            "Spell3": "OdinDisintegrate",
+            "Spell4": "OdinDisintegrate",
+            "SpellBlock": "-20",
+            "UnitTags": "Monster | Monster_Large",
+            "WeaponMaterial": "GolemBasicAttack"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": "Golem_idle.troy spine_b"
+        },
+        "Info": {
+            "IconCircle": "GolemOdin_Circle.dds",
+            "IconSquare": "GolemOdin_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "GolemODINBase.blnd",
+            "ChampionSkinName": "GolemODINBase",
+            "EmissiveTexture": "GolemOdin_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "GolemOdin.skn",
+            "Skeleton": "GolemOdin.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "GolemOdin.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

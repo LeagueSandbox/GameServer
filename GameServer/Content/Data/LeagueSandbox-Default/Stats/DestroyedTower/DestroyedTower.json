@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "DestroyedTower",
+        "Name": "DestroyedTower",
+        "ResourcePath": "DATA/Characters/DestroyedTower/DestroyedTower.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "GameplayCollisionRadius": 88.4,
+            "NumberOfParticles": 1,
+            "Particle1": "DestroyedBuilding_idle.troy root"
+        },
+        "MeshSkin": {
+            "Animations": "DestroyedTowerBase.blnd",
+            "ChampionSkinName": "DestroyedTowerBase",
+            "SelfIllumination": 0.5,
+            "Skeleton": "DestroyedTower.skl",
+            "SkinScale": "0.87",
+            "Texture": "tower_destroyed_diff.dds"
+        }
+    }
+}

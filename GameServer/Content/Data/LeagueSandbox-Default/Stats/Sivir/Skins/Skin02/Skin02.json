@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseSivir.blnd",
+            "ChampionSkinID": 15002,
+            "ChampionSkinName": "RedSivir",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_spectacular.skn",
+            "Skeleton": "Sivir_spectacular.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "Sivir_spectacular_TX_CM.dds",
+            "YOffset": "-0.2"
+        }
+    }
+}

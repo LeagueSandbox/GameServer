@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_ShpNorth/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_ShpNorth.blnd",
+            "ChampionSkinName": "HA_AP_ShpNorth",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_ShpNorth.skn",
+            "Skeleton": "HA_AP_ShpNorth.skl",
+            "SkinScale": "1.0",
+            "Texture": "HA_AP_ShpNorth.dds"
+        }
+    }
+}

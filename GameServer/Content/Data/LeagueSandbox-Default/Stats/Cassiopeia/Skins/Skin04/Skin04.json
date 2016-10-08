@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Cassiopeia/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Cassiopeia_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "LunarRevelCassiopeia.blnd",
+            "ChampionSkinID": 69004,
+            "ChampionSkinName": "LunarRevelCassiopeia",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_LunarRevel.skn",
+            "Skeleton": "Cassiopeia_LunarRevel.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_lunarrevel_TX_CM.dds"
+        }
+    }
+}

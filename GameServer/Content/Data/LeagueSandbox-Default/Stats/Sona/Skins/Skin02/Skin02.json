@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Sona/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseSona.blnd",
+            "ChampionSkinID": 37002,
+            "ChampionSkinName": "MetalSona",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sona_metal.skn",
+            "Skeleton": "Sona_metal.skl",
+            "SkinScale": 1.1,
+            "Texture": "sona_metal_TX_CM.dds"
+        }
+    }
+}

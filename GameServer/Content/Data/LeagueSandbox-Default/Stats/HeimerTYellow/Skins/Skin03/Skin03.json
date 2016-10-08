@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTYellowBase.blnd",
+            "ChampionSkinName": "HeimerTYellowMechanic",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret_mechanic.skn",
+            "Skeleton": "HeimerdingerTurret_mechanic.skl",
+            "SkinScale": 1.1,
+            "Texture": "heimerdinger_turret_mechanic_PET_yellow_TX_CM.dds"
+        }
+    }
+}

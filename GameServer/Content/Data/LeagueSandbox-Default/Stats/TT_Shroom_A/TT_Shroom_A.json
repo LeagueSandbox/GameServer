@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Shroom_A",
+        "Name": "TT_Shroom_A",
+        "ResourcePath": "DATA/Characters/TT_Shroom_A/TT_Shroom_A.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "TT_Shroom_ABase.blnd",
+            "ChampionSkinName": "TT_Shroom_ABase",
+            "SelfIllumination": "0.5",
+            "SimpleSkin": "TT_Shroom_A.skn",
+            "Skeleton": "TT_Shroom_A.skl",
+            "SkinScale": 1,
+            "Texture": "magic_mushrooms_blue.dds"
+        }
+    }
+}

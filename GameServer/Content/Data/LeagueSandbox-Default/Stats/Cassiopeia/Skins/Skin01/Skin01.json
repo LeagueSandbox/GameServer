@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Cassiopeia/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Cassiopeia_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "Cassiopeia.blnd",
+            "ChampionSkinID": 69001,
+            "ChampionSkinName": "RattlesnakeCassiopeia",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_rattlesnake.skn",
+            "Skeleton": "Cassiopeia_rattlesnake.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_rattlesnake_TX_CM.dds"
+        }
+    }
+}

@@ -14,6 +14,11 @@
             "CastRange": "1400.0000",
             "CastType": 3,
             "Cooldown": 0,
+            "Cooldown1": 0,
+            "Cooldown2": 0,
+            "Cooldown3": 0,
+            "Cooldown4": 0,
+            "Cooldown5": 0,
             "Description": "game_spell_description_LucianR",
             "DisplayName": "game_spell_displayname_LucianR",
             "DoNotNeedToFaceTarget": 1,
@@ -23,6 +28,11 @@
             "InventoryIcon": "Lucian_R.dds",
             "LineMissileTargetHeightAugment": "-50",
             "LineWidth": "110.0000",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
             "MissileBoneName": "R_Pinky2",
             "MissileEffect": "Lucian_R_mis.troy",
             "MissileSpeed": "2800.0000",
@@ -31,18 +41,6 @@
             "TargettingType": 7,
             "UseAnimatorFramerate": "0",
             "Version": 1
-        },
-        "UNKNOWN_HASHES": {
-            "2629301966": 0,
-            "2629301967": 0,
-            "2629301968": 0,
-            "2629301969": 0,
-            "2629301970": 0,
-            "3771724453": 0,
-            "3771724454": 0,
-            "3771724455": 0,
-            "3771724456": 0,
-            "3771724457": 0
         }
     }
 }

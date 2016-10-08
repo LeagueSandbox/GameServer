@@ -1,0 +1,114 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SyndraOrbs",
+        "Name": "SyndraOrbs",
+        "ResourcePath": "DATA/Characters/SyndraOrbs/SyndraOrbs.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": 575,
+            "Armor": 20.712,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 3.4,
+            "AttackDelayCastOffsetPercent": -0.1125,
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "550",
+            "AttackSpeed": "10",
+            "AttackSpeedPerLevel": 2,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": 53.872,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 511.04,
+            "BaseMP": "334.0",
+            "BaseStaticHPRegen": 1.3016,
+            "BaseStaticMPRegen": 1.5816,
+            "championId": "134000",
+            "CritAttack": "SyndraCritAttack",
+            "CritAttack_AttackDelayCastOffsetPercent": "0",
+            "CritAttack_AttackDelayOffsetPercent": -0.1125,
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 2.9,
+            "Description": "game_character_description_Syndra",
+            "ExtraAttack1": "SyndraBasicAttack2",
+            "ExtraAttack1_Probability": 0.5,
+            "ExtraSpell1": "SyndraQSpell",
+            "ExtraSpell2": "SyndraEMissile",
+            "ExtraSpell3": "SyndraEMissile2",
+            "ExtraSpell4": "SyndraRSpell",
+            "ExtraSpell5": "SyndraRBounce",
+            "ExtraSpell6": "SyndraE5Missile",
+            "ExtraSpell7": "SyndraRTrigger",
+            "HPPerLevel": 78,
+            "HPRegenPerLevel": 0.12,
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "310",
+            "MPPerLevel": "50",
+            "MPRegenPerLevel": 0.12,
+            "Name": "game_character_displayname_Syndra",
+            "PathfindingCollisionRadius": "0",
+            "PlatformEnabled": "false",
+            "SelectionHeight": "0",
+            "SelectionRadius": "130",
+            "Spell1": "SyndraQ",
+            "Spell2": "SyndraW",
+            "Spell3": "SyndraE",
+            "Spell4": "SyndraR",
+            "SpellBlock": "30.0",
+            "SpellBlockPerLevel": "0"
+        },
+        "DefaultAnimations": {
+            "Animation1": "Orbs",
+            "Animation2": "Backup_Idle",
+            "NumberOfAnimations": 2,
+            "Significance": 0.3
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": 64537
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "MeshSkin": {
+            "Animations": "SyndraOrbs.blnd",
+            "ChampionSkinID": "134000",
+            "ChampionSkinName": "SyndraOrbs",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SyndraEmpty.skn",
+            "Skeleton": "Syndra.skl",
+            "SkinScale": 1.31
+        },
+        "MeshSkin1": {
+            "Animations": "SyndraOrbs.blnd",
+            "ChampionSkinID": 134001,
+            "ChampionSkinName": "SyndraJusticar",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SyndraEmpty.skn",
+            "Skeleton": "Syndra_justicar.skl",
+            "SkinScale": 1.31
+        },
+        "MeshSkin2": {
+            "Animations": "SyndraSkin02.blnd",
+            "ChampionSkinID": 134002,
+            "ChampionSkinName": "SyndraSkin02",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SyndraEmpty.skn",
+            "Skeleton": "Syndra_Skin02.skl",
+            "SkinScale": 1.31
+        },
+        "Package": {
+            "FallbackPackage": "Syndra"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": "3.0",
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/UdyrPhoenix/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SpiritUdyr.blnd",
+            "ChampionSkinID": 77003,
+            "ChampionSkinName": "SpiritUdyr",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Udyr_spirit.skn",
+            "Skeleton": "Udyr_spirit.skl",
+            "SkinScale": 1.1,
+            "Texture": "udyr_spiritSummoner_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.5,
+            "2625724482": "true",
+            "3294654406": "Udyr_Spirit_Champ_Death_Phoenix.troy",
+            "669070277": "UdyrPhoenix",
+            "895532722": "Udyr_SpiritSummoner_Square.dds"
+        }
+    }
+}

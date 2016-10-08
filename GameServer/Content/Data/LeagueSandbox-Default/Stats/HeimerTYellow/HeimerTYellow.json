@@ -1,0 +1,68 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HeimerTYellow",
+        "Name": "HeimerTYellow",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/HeimerTYellow.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "450",
+            "Armor": "10",
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.01198,
+            "AttackDelayOffsetPercent": -0.5,
+            "AttackRange": "530",
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": 0,
+            "BaseDamage": 0.001,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "10000",
+            "BaseMP": "50",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 1,
+            "CritPerLevel": 0,
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_HeimerdingerQ",
+            "EnemyTooltip": "",
+            "ExpGivenOnDeath": 0,
+            "ExtraAttack1": "HeimerTYellowBasicAttack2",
+            "ExtraAttack1_Probability": 0.5,
+            "FriendlyTooltip": "",
+            "GameplayCollisionRadius": "35.0",
+            "GoldGivenOnDeath": "5.0",
+            "HPPerLevel": "0",
+            "IsImportantBotTarget": "true",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_HeimerdingerQ",
+            "PARType": "MANA",
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "650",
+            "SelectionHeight": "60.0",
+            "SelectionRadius": "60.0000",
+            "Spell1": "HeimerdingerTurretEnergyBlast",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": 25,
+            "Tips2": "game_character_opposing_tips_Heimerdinger",
+            "TowerTargetingPriorityBoost": "10"
+        },
+        "Info": {
+            "IconCircle": "Turret_Circle.dds",
+            "IconSquare": "Turret_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

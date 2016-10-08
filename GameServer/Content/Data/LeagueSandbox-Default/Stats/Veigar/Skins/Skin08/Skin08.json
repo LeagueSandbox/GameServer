@@ -1,0 +1,31 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Veigar_Skin08.cac"
+        },
+        "MeshSkin": {
+            "Animations": "VeigarSkin08.blnd",
+            "ChampionSkinID": 45008,
+            "ChampionSkinName": "VeigarSkin08",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_Skin08.skn",
+            "Skeleton": "veigar_Skin08.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "Veigar_Skin08_TX_CM.dds",
+            "YOffset": 65535
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Veigar_Skin08_Joke.dds",
+            "2625724482": "true",
+            "3700722767": "Veigar_Joke",
+            "708066840": "Veigar_Joke"
+        }
+    }
+}

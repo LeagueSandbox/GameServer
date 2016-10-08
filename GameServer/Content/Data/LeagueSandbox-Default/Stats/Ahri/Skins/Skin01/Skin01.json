@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Ahri/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AhriHanbok.blnd",
+            "ChampionSkinID": 103001,
+            "ChampionSkinName": "AhriHanbok",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ahri_hanbok.skn",
+            "Skeleton": "Ahri_hanbok.skl",
+            "SkinScale": 1.26,
+            "Texture": "Ahri_hanbok_TX_CM.dds"
+        }
+    }
+}

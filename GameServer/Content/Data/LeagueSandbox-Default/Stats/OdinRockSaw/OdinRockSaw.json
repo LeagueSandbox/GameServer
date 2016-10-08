@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinRockSaw",
+        "Name": "OdinRockSaw",
+        "ResourcePath": "DATA/Characters/OdinRockSaw/OdinRockSaw.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "OdinRockSawBase.blnd",
+            "ChampionSkinName": "OdinRockSawBase",
+            "SimpleSkin": "OdinRockSaw.skn",
+            "Skeleton": "OdinRockSaw.skl",
+            "Texture": "OdinRockSaw_DM.dds"
+        }
+    }
+}

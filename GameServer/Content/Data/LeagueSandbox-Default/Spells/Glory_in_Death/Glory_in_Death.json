@@ -7,7 +7,8 @@
     },
     "Values": {
         "BuffData": {
-            "DynamicTooltip": "game_buff_tooltip_SionPassiveZombie"
+            "DynamicTooltip": "game_buff_tooltip_SionPassiveZombie",
+            "Sound_VOEventCategory": "OrderConfirmation"
         },
         "SpellData": {
             "AlternateName": "SionPassiveZombie",
@@ -15,7 +16,6 @@
             "Version": 1
         },
         "UNKNOWN_HASHES": {
-            "1441538562": "OrderConfirmation",
             "2592744643": "true"
         }
     }

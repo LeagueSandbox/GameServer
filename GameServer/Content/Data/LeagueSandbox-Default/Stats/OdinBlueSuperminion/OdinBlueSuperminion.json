@@ -1,0 +1,66 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinBlueSuperminion",
+        "Name": "OdinBlueSuperminion",
+        "ResourcePath": "DATA/Characters/OdinBlueSuperminion/OdinBlueSuperminion.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": "15.0",
+            "ArmorMaterial": "Wood",
+            "AttackDelayCastOffsetPercent": 0.0854,
+            "AttackDelayOffsetPercent": "-0.1",
+            "AttackRange": "210",
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": "22.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "890",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "Description": "game_character_description_OdinBlueSuperminion",
+            "EnemyTooltip": "<titleLeft>Super Minion</titleLeft><subtitleLeft>Enemy Minion</subtitleLeft> <mainText>A very powerful enemy minion with high health and damage.  These minions take reduced damage from towers and deal reduced damage to inhibitors and the nexus.</mainText>",
+            "ExpGivenOnDeath": "500.0",
+            "ExtraAttack1": "OdinBlueSuperminionBasicAttack2",
+            "ExtraAttack1_Probability": 0.5,
+            "FriendlyTooltip": "<titleLeft>Super Minion</titleLeft><subtitleLeft>Ally Minion</subtitleLeft> <mainText>A very powerful allied minion with high health and damage.  These minions take reduced damage from towers and deal reduced damage to inhibitors and the nexus.</mainText>",
+            "GameplayCollisionRadius": "55.0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "0",
+            "GoldGivenOnDeath": "150.0",
+            "IsMelee": "false",
+            "Metadata": "class:minion",
+            "MoveSpeed": "350",
+            "Name": "game_character_displayname_OdinBlueSuperminion",
+            "PathfindingCollisionRadius": 45.5208,
+            "SelectionHeight": "120.0000",
+            "SelectionRadius": "85.0000",
+            "Significance": 0.5,
+            "SpellBlock": "-30",
+            "UnitTags": "Minion | Minion_Lane",
+            "WeaponMaterial": "OdinBlueSuperminionBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "OdinBlueSuperminion_Circle.dds",
+            "IconSquare": "OdinBlueSuperminion_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "OdinBlueSuperminionBase.blnd",
+            "ChampionSkinName": "OdinBlueSuperminionBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OdinBlueSuperminion.skn",
+            "Skeleton": "OdinBlueSuperminion.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "OdinBlueSuperminion_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3983263047": "0"
+        }
+    }
+}

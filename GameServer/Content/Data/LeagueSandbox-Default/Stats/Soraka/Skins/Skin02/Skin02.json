@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Soraka/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "humansoraka.blnd",
+            "ChampionSkinID": 16002,
+            "ChampionSkinName": "HumanSoraka_REWORK",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Soraka_human.skn",
+            "Skeleton": "Soraka_human.skl",
+            "SkinScale": 1.27,
+            "Texture": "soraka_divine_2012_TX_CM.dds"
+        }
+    }
+}

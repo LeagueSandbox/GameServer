@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "RangerGaren.blnd",
+            "ChampionSkinID": 86005,
+            "ChampionSkinName": "RangerGaren",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "Garen_ranger.skn",
+            "Skeleton": "Garen_ranger.skl",
+            "SkinScale": "1.00",
+            "Texture": "garen_rugged_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,87 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Dragon",
+        "Name": "Dragon",
+        "ResourcePath": "DATA/Characters/Dragon/Dragon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "500",
+            "Armor": 21,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.3118,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "350",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "110",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "3500",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Dragon",
+            "EnemyTooltip": "game_character_enemyTooltip_Dragon",
+            "ExperienceRadius": "2000.0",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": "100.0",
+            "GlobalExpGivenOnDeath": 0,
+            "GlobalGoldGivenOnDeath": 0,
+            "GoldGivenOnDeath": "25.0",
+            "HPPerLevel": "0",
+            "IsEpic": "false",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Dragon",
+            "PathfindingCollisionRadius": 35.8736,
+            "SelectionHeight": "150",
+            "SelectionRadius": 155,
+            "Significance": 0.95,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "30",
+            "UnitTags": "Monster | Monster_Epic"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "Scale": "2.0",
+            "XOffset": "0",
+            "YOffset": -0.5
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Dragon_Smoke.troy mouth"
+        },
+        "Info": {
+            "IconCircle": "Dragon_Circle.dds",
+            "IconSquare": "Dragon_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "DragonBase.blnd",
+            "ChampionSkinName": "DragonBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Dragon.skn",
+            "Skeleton": "Dragon.skl",
+            "SkinScale": "2.0",
+            "Texture": "Dragon.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

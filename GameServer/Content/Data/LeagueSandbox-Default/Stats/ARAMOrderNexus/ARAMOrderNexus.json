@@ -1,0 +1,42 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ARAMOrderNexus",
+        "Name": "ARAMOrderNexus",
+        "ResourcePath": "DATA/Characters/ARAMOrderNexus/ARAMOrderNexus.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_OrderNexus"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 11,
+            "Particle1": "ARAM_Order_Nexus.troy center",
+            "Particle10": "Order_Nexus_Base_Glow.troy base5",
+            "Particle11": "Order_Nexus_Base_Glow.troy base6",
+            "Particle2": "Order_Nexus_Crystal_Glow.troy gnome1",
+            "Particle3": "Order_Nexus_Crystal_Glow.troy gnome2",
+            "Particle4": "Order_Nexus_Crystal_Glow.troy gnome3",
+            "Particle5": "Order_Nexus_Crystal_Glow.troy gnome4",
+            "Particle6": "Order_Nexus_Crystal_Glow.troy gnome5",
+            "Particle7": "Order_Nexus_Crystal_Glow.troy gnome6",
+            "Particle8": "Order_Nexus_Base_Glow.troy base3",
+            "Particle9": "Order_Nexus_Base_Glow.troy base4"
+        },
+        "MeshSkin": {
+            "Animations": "ARAMOrderNexusBase.blnd",
+            "ChampionSkinName": "ARAMOrderNexusBase",
+            "EmissiveTexture": "Nexus_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nexus.skn",
+            "Skeleton": "Nexus.skl",
+            "SkinScale": "1.0",
+            "Texture": "Nexus_diff.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "122525180": "Order_Nexus_Base_Glow.troy base1",
+            "122525181": "Order_Nexus_Base_Glow.troy base2"
+        }
+    }
+}

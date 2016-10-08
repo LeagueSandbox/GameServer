@@ -1,0 +1,43 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Zac/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ZacGrumpy.blnd",
+            "ChampionSkinID": 154001,
+            "ChampionSkinName": "ZacGrumpy",
+            "GlossTexture": "zac_grumpy_TX_GM.dds",
+            "OverrideBoundingBox": "115 260 115",
+            "ReflectionFresnel": 0.900000036,
+            "ReflectionFresnelBlue": 0.4,
+            "ReflectionFresnelGreen": 0.4,
+            "ReflectionFresnelRed": 0.4,
+            "ReflectionMap": "zac_grumpy_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.4,
+            "ReflectionOpacityGlancing": 0.4,
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "zac_grumpy.skn",
+            "Skeleton": "zac_grumpy.skl",
+            "SkinScale": 0.95,
+            "Texture": "zac_grumpy_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "zac_grumpy_puddle_TX_CM.dds",
+            "2141601294": "Zac_base_ult_mat",
+            "2632864121": "zac_grumpy_low_TX_CM.dds",
+            "2780602064": "zac_grumpy_ult_TX_GM.dds",
+            "3400833179": 0.2,
+            "343518805": 0.35,
+            "3700722767": "Zac_base_puddle_mat",
+            "384495548": "zac_grumpy_ult_TX_CM.dds",
+            "3966094422": 0.18,
+            "424197818": 0.65,
+            "455913160": 0.15,
+            "708066840": "Zac_base_tail_mat,Zac_base_puddle_mat,Zac_base_ult_mat"
+        }
+    }
+}

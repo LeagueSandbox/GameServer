@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ShopMale",
+        "Name": "ShopMale",
+        "ResourcePath": "DATA/Characters/ShopMale/ShopMale.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ShopMaleBase.blnd",
+            "ChampionSkinName": "ShopMaleBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "ShopMale.skn",
+            "Skeleton": "ShopMale.skl",
+            "SkinScale": 1.9,
+            "Texture": "shopkeeper_male_TX_CM.dds"
+        }
+    }
+}

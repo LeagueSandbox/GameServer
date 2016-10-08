@@ -1,0 +1,30 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Twitch/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Twitch_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "TwitchBase.blnd",
+            "ChampionSkinID": 29002,
+            "ChampionSkinName": "KaiserTwitch",
+            "MaterialOverride0Submesh": "Twitch_cheese_Mat",
+            "MaterialOverride0Texture": "twitch_cheese_TX_CM.dds",
+            "OverrideBoundingBox": "140 160 140",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Twitch_Whistler_village.skn",
+            "Skeleton": "Twitch_Whistler_village.skl",
+            "SkinScale": "1.0",
+            "Texture": "twitch_whistler_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31",
+            "708066840": "Twitch_Cheese_Mat"
+        }
+    }
+}

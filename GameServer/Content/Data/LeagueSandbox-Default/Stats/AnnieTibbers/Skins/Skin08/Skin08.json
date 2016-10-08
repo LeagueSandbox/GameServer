@@ -1,0 +1,26 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/AnnieTibbers/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 3,
+            "Particle1": "AnnieTibbersPanda_RedSparks.troy Buffbone_Cstm_Fire_Cracker1",
+            "Particle2": "AnnieTibbersPanda_Greensparks.troy Buffbone_Cstm_Fire_Cracker2",
+            "Particle3": "AnnieTibbersPanda_PinkSparks.troy Buffbone_Cstm_Fire_Cracker3"
+        },
+        "MeshSkin": {
+            "Animations": "AnnieTibbersPanda.blnd",
+            "ChampionSkinID": 1008,
+            "ChampionSkinName": "AnnieTibbersPanda",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "AnnieTibbers_Panda.skn",
+            "Skeleton": "AnnieTibbers_Panda.skl",
+            "SkinScale": 1.2,
+            "Texture": "Tibbers_Panda_CM.dds"
+        }
+    }
+}

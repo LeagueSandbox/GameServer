@@ -1,0 +1,33 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Aatrox/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AatroxSkin02.blnd",
+            "ChampionSkinID": 266002,
+            "ChampionSkinName": "AatroxSkin02",
+            "GlossTexture": "Aatrox_Skin02_TX_GM.dds",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 0.4,
+            "ReflectionFresnelGreen": 0.4,
+            "ReflectionFresnelRed": 0.4,
+            "ReflectionMap": "Aatrox_Skin02_TX_RM.dds",
+            "ReflectionOpacityDirect": 1,
+            "ReflectionOpacityGlancing": 1,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Aatrox_Skin02.skn",
+            "Skeleton": "Aatrox_Skin02.skl",
+            "SkinScale": 1.09,
+            "Texture": "Aatrox_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.5,
+            "2625724482": "true",
+            "708066840": "Aatrox_Mecha_Cap"
+        }
+    }
+}

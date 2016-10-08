@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/AzirSunDisc/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AzirSunDisc.blnd",
+            "ChampionSkinID": "436000",
+            "ChampionSkinName": "AzirSunDisc",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "AzirSunDisc.skn",
+            "Skeleton": "AzirSunDisc.skl",
+            "SkinScale": 1.5,
+            "Texture": "AzirSunDisc_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4276189325": "Azir_Base_P_Sundisc_Death.troy"
+        }
+    }
+}

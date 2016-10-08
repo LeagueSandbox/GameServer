@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin20",
+        "Name": "Skin20",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin20/Skin20.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardskt.blnd",
+            "ChampionSkinName": "SightWardSKT",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_SKT.skn",
+            "Skeleton": "SightWard_SKT.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_skt_TX_CM.dds"
+        }
+    }
+}

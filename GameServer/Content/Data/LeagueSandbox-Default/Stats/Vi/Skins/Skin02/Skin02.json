@@ -1,0 +1,31 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Vi/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ViSkin02.blnd",
+            "ChampionSkinID": 254002,
+            "ChampionSkinName": "ViSkin02",
+            "GlossTexture": "Vi_Skin02_TX_GM.dds",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "Vi_Skin02_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.900000036,
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Vi_Skin02.skn",
+            "Skeleton": "Vi_Skin02.skl",
+            "SkinScale": 1.07,
+            "Texture": "Vi_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Vi_PoliceOfficer_Baton_Mat donut"
+        }
+    }
+}

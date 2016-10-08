@@ -1,0 +1,88 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AscRelic",
+        "Name": "AscRelic",
+        "ResourcePath": "DATA/Characters/AscRelic/AscRelic.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": 0.0121875,
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "20",
+            "AttackSpeedPerLevel": 2,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": "10",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 1,
+            "BaseMP": "10000",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "ChasingAttackRangePercent": 0.8,
+            "Classification": "Arcane",
+            "CritAttack": "",
+            "CritAttack_AttackDelayCastOffsetPercent": 0.0121875,
+            "CritAttack_AttackDelayOffsetPercent": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_SpellBook1",
+            "EnemyTooltip": "game_character_enemyTooltip_AscRelic",
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": "0",
+            "Name": "game_character_displayname_SpellBook1",
+            "PathfindingCollisionRadius": 38.08,
+            "PerceptionBubbleRadius": "350.0",
+            "PostAttackMoveDelay": 0,
+            "SelectionHeight": 145,
+            "SelectionRadius": "110",
+            "SpellBlock": "60",
+            "SpellBlockPerLevel": "0"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": -0.8
+        },
+        "MeshSkin": {
+            "Animations": "AscRelic.blnd",
+            "ChampionSkinName": "AscRelic",
+            "SimpleSkin": "AscRelic.skn",
+            "Skeleton": "AscRelic.skl",
+            "Texture": "lichLoadScreen.dds"
+        },
+        "RecItems": {
+            "RecItem1": 3037,
+            "RecItem2": 3111,
+            "RecItem3": 3105,
+            "RecItem4": 3032,
+            "RecItem5": 3089,
+            "RecItem6": 3026
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 4,
+            "3983263047": 0
+        },
+        "Useable": {
+            "EnemyCanUse": 1,
+            "HeroUseSpell": "AscRelicCaptureChannel",
+            "IsUseable": 1,
+            "MinionUseable": "0"
+        }
+    }
+}

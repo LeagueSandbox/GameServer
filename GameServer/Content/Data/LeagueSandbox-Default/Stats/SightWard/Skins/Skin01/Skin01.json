@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardBat.blnd",
+            "ChampionSkinName": "SightWardBat",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Bat.skn",
+            "Skeleton": "SightWard_Bat.skl",
+            "SkinScale": 1.2,
+            "Texture": "sightWard_bat_TX_CM.dds",
+            "YOffset": -3.8
+        }
+    }
+}

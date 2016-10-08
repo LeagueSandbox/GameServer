@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Root",
+        "Name": "Root",
+        "ResourcePath": "DATA/Shared/Spells/Root.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Root"
+        }
+    }
+}

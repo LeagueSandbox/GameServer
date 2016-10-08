@@ -1,0 +1,43 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Zac/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Zac.blnd",
+            "ChampionSkinID": "154000",
+            "ChampionSkinName": "Zac",
+            "GlossTexture": "Zac_base_TX_GM.dds",
+            "MaterialOverride0Submesh": "Zac_base_puddle_mat",
+            "MaterialOverride0Texture": "zac_base_puddle_TX_CM.dds",
+            "OverrideBoundingBox": "115 260 115",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 0.6,
+            "ReflectionFresnelGreen": 0.6,
+            "ReflectionFresnelRed": 0.6,
+            "ReflectionMap": "zac_base_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.5,
+            "ReflectionOpacityGlancing": 0.4,
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "zac.skn",
+            "Skeleton": "zac.skl",
+            "SkinScale": 0.95,
+            "Texture": "zac_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "zac_base_ult_TX_CM.dds",
+            "2632864121": "zac_base_low_TX_CM.dds",
+            "3400833179": 0.22,
+            "343518805": 0.08,
+            "3644096975": "zac_base_ult_TX_GM.dds",
+            "3700722767": "Zac_base_ult_mat",
+            "3966094422": 0.1,
+            "424197818": 0.6,
+            "455913160": 0.3,
+            "708066840": "Zac_base_tail_mat,Zac_base_puddle_mat,Zac_base_ult_mat"
+        }
+    }
+}

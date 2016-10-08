@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/AzirTowerClicker/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Azirtowerclicker_Skin01.blnd",
+            "ChampionSkinID": 436001,
+            "ChampionSkinName": "AzirtowerclickerSkin01",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Azirtowerclicker_Skin01.skn",
+            "Skeleton": "Azirtowerclicker_Skin01.skl",
+            "Texture": "Azirtowerclicker_Skin01_TX_CM.dds"
+        }
+    }
+}

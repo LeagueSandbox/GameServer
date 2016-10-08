@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTYellowBase.blnd",
+            "ChampionSkinName": "HeimerTYellowFailed",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret.skn",
+            "Skeleton": "HeimerdingerTurret.skl",
+            "SkinScale": 1.1,
+            "Texture": "HeimerTurret_Failed_TX_CM.dds"
+        }
+    }
+}

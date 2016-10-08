@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/OrderInhibitor_D/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "OrderLaneTower_Icon_C.dds",
+            "IconSquare": "Inhibitor_square_blue.dds"
+        },
+        "MeshSkin": {
+            "Animations": "OrderInhibitor_DBase.blnd",
+            "ChampionSkinName": "OrderInhibitor_DBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Inhibitor.skn",
+            "Skeleton": "Inhibitor.skl",
+            "SkinScale": 1,
+            "Texture": "OrderInhibitor_D.dds"
+        }
+    }
+}

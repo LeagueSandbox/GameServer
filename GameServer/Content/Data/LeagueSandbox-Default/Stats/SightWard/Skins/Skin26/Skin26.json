@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin26",
+        "Name": "Skin26",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin26/Skin26.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardShurimaAmumu.blnd",
+            "ChampionSkinName": "SightWardShurimaAmumu",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_ShurimaAmumu.skn",
+            "Skeleton": "SightWard_ShurimaAmumu.skl",
+            "SkinScale": 1,
+            "Texture": "SightWard_ShurimaAmumu_TX_CM.dds",
+            "YOffset": -1.2
+        }
+    }
+}

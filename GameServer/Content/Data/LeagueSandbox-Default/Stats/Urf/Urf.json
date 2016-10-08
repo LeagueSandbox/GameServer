@@ -1,0 +1,75 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Urf",
+        "Name": "Urf",
+        "ResourcePath": "DATA/Characters/Urf/Urf.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "500",
+            "Armor": "21.0",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.3118,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "500",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "190.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.003,
+            "BaseHP": "2980.0",
+            "BaseMP": 0,
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Urf",
+            "EnemyTooltip": "game_character_enemyTooltip_Urf",
+            "ExpGivenOnDeath": 0,
+            "GlobalExpGivenOnDeath": "145.000",
+            "GlobalGoldGivenOnDeath": "130.000",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Urf",
+            "PathfindingCollisionRadius": 35.8736,
+            "SelectionHeight": "150",
+            "SelectionRadius": 155,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "UrfSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": 0
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": -0.5
+        },
+        "Info": {
+            "IconCircle": "Dragon_Circle.dds",
+            "IconSquare": "Dragon_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "UrfBase.blnd",
+            "ChampionSkinName": "UrfBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Urf_ghost.skn",
+            "Skeleton": "Urf_ghost.skl",
+            "SkinScale": 1.4,
+            "Texture": "urf_ghost_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Rumble/Skins/skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "RumbleSkin03.blnd",
+            "ChampionSkinID": 68003,
+            "ChampionSkinName": "RumbleSkin03",
+            "GlossTexture": "Rumble_Skin03_TX_GM.dds",
+            "MaterialOverride0Submesh": "Rumble_Shield",
+            "MaterialOverride0Texture": "Rumble_Skin03_Shield_TX_CM.dds",
+            "ReflectionFresnel": 0.900000036,
+            "ReflectionFresnelBlue": 1.5,
+            "ReflectionFresnelGreen": 1.9,
+            "ReflectionFresnelRed": 1.9,
+            "ReflectionMap": "Basic_low_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "rumble_skin03.skn",
+            "Skeleton": "rumble_skin03.skl",
+            "SkinScale": 1.7,
+            "Texture": "Rumble_Skin03_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1963414016": "0",
+            "212624590": "Rumble_Skin03_Shield_TX_GM.dds",
+            "2403406705": 0,
+            "2625724482": "true",
+            "708066840": "overheat_drill, Rumble_Cape",
+            "890371954": "0",
+            "971215659": "0"
+        }
+    }
+}

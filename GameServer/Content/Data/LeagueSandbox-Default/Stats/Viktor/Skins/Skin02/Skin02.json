@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Viktor/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Viktor_base.blnd",
+            "ChampionSkinID": 112002,
+            "ChampionSkinName": "Viktor_prototype",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "viktor_prototype.skn",
+            "Skeleton": "viktor_prototype.skl",
+            "SkinScale": 1.05,
+            "Texture": "viktor_prototype_TX_CM.dds",
+            "YOffset": 0.86
+        }
+    }
+}

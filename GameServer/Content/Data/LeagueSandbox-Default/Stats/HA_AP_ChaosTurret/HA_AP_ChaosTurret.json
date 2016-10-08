@@ -1,0 +1,69 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_ChaosTurret",
+        "Name": "HA_AP_ChaosTurret",
+        "ResourcePath": "DATA/Characters/HA_AP_ChaosTurret/HA_AP_ChaosTurret.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "70.0",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "-0.161",
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "160",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1700",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_ChaosTurretWorm",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "30.000",
+            "GlobalGoldGivenOnDeath": "150.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_ChaosTurretWorm",
+            "OccludedUnitSelectableDistance": "700",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": 75,
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Outer"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconSquare": "ChaosLaneTower_Icon.dds"
+        },
+        "Package": {
+            "FallbackPackage": "ChaosTurretWorm"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

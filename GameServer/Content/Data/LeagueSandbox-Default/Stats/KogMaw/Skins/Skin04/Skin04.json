@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ReindeerKogMaw.blnd",
+            "ChampionSkinID": 96004,
+            "ChampionSkinName": "ReindeerKogMaw",
+            "OverrideBoundingBox": "283 303 283",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_reindeer.skn",
+            "Skeleton": "KogMaw_reindeer.skl",
+            "SkinScale": 0.65,
+            "Texture": "kogmaw_rudolph_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31",
+            "2625724482": "true"
+        }
+    }
+}

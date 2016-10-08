@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/ThreshLantern/skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ThreshLantern.blnd",
+            "ChampionSkinName": "ThreshLanternSkin02",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "ThreshLantern_SKin02.skn",
+            "Skeleton": "ThreshLantern_Skin02.skl",
+            "SkinScale": "1.0",
+            "Texture": "ThreshLantern_Skin02_TX_CM.dds"
+        }
+    }
+}

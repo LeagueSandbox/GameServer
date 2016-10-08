@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_SoG_Chaos",
+        "Name": "Odin_SoG_Chaos",
+        "ResourcePath": "DATA/Characters/Odin_SoG_Chaos/Odin_SoG_Chaos.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_SoG_ChaosBase.blnd",
+            "ChampionSkinName": "Odin_SoG_ChaosBase",
+            "SimpleSkin": "Odin_SoG_Chaos.skn",
+            "Skeleton": "Odin_SoG_Chaos.skl",
+            "Texture": "Odin_SoG_Chaos.dds"
+        }
+    }
+}

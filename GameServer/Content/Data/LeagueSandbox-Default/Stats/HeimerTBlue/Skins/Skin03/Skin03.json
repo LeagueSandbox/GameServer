@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/HeimerTBlue/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTBlueBase.blnd",
+            "ChampionSkinName": "HeimerTBlueMechanic",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret_mechanic.skn",
+            "Skeleton": "HeimerdingerTurret_mechanic.skl",
+            "SkinScale": 1.1,
+            "Texture": "Heimerdinger_Skin03_MegaTurret_TX_CM.dds"
+        }
+    }
+}
