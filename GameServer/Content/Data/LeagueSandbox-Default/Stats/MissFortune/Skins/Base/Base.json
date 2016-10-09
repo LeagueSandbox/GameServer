@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "basemissfortune.blnd",
+            "ChampionSkinID": "21000",
+            "ChampionSkinName": "BaseMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "MissFortune.skn",
+            "Skeleton": "MissFortune.skl",
+            "SkinScale": 1.2,
+            "Texture": "MissFortune_base_TX_CM.dds"
+        }
+    }
+}

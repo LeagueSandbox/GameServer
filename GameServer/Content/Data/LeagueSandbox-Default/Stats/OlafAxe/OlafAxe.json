@@ -1,0 +1,102 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OlafAxe",
+        "Name": "OlafAxe",
+        "ResourcePath": "DATA/Characters/OlafAxe/OlafAxe.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 2,
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.0595,
+            "AttackDelayOffsetPercent": -0.375,
+            "AttackRange": "100",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": 0.1,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "540",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "ExpGivenOnDeath": "77.0",
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "22.0",
+            "HPPerLevel": "10",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "NeverRender": "0",
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "0",
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "Significance": 0.3,
+            "SoulGivenOnDeath": 0
+        },
+        "MeshSkin": {
+            "Animations": "OlafAxeBase.blnd",
+            "ChampionSkinID": "2000",
+            "ChampionSkinName": "OlafAxeBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OlafAxe.skn",
+            "Skeleton": "OlafAxe.skl",
+            "SkinScale": 1.5,
+            "Texture": "Olaf.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "MeshSkin1.blnd",
+            "ChampionSkinID": 2001,
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OlafAxe.skn",
+            "Skeleton": "OlafAxe.skl",
+            "SkinScale": 1.5,
+            "Texture": "Olaf_Black_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "MeshSkin2.blnd",
+            "ChampionSkinID": 2002,
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OlafAxe.skn",
+            "Skeleton": "OlafAxe.skl",
+            "SkinScale": 1.5,
+            "Texture": "Olaf_FrostGiant_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "MeshSkin3.blnd",
+            "ChampionSkinID": 2003,
+            "ChampionSkinName": "MeshSkin3",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "OlafAxe_bro.skn",
+            "Skeleton": "OlafAxe_bro.skl",
+            "SkinScale": 1.5,
+            "Texture": "olaf_brolaff_TX_CM.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "MeshSkin3.blnd",
+            "ChampionSkinID": 2004,
+            "ChampionSkinName": "MeshSkin4",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Olaf_pentakill_ax.skn",
+            "Skeleton": "Olaf_pentakill_ax.skl",
+            "SkinScale": 1.5,
+            "Texture": "olaf_pentakill_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Rengar/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HunterRengar.blnd",
+            "ChampionSkinID": 107001,
+            "ChampionSkinName": "HunterRengar",
+            "OverrideBoundingBox": "180 250 180",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Rengar_hunter.skn",
+            "Skeleton": "Rengar_hunter.skl",
+            "SkinScale": "0.95",
+            "Texture": "Rengar_hunter_TX_CM.dds"
+        }
+    }
+}

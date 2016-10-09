@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Janna/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Janna_Skin05.cac"
+        },
+        "MeshSkin": {
+            "Animations": "JannaForecast.blnd",
+            "ChampionSkinID": 40005,
+            "ChampionSkinName": "JannaForecast",
+            "OverrideBoundingBox": "100 265 100",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Janna_Forecast.skn",
+            "Skeleton": "Janna_Forecast.skl",
+            "SkinScale": 1.2,
+            "Texture": "janna_forecast_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "708066840": "Janna_Forecast_Hair,Janna_Forecast_LightningHair, Janna_Forecast_Camera"
+        }
+    }
+}

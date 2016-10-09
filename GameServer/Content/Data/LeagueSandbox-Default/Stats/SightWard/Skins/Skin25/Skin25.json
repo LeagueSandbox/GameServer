@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin25",
+        "Name": "Skin25",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin25/Skin25.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardShurimaRammus.blnd",
+            "ChampionSkinName": "SightWardShurimaRammus",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_ShurimaRammus.skn",
+            "Skeleton": "SightWard_ShurimaRammus.skl",
+            "SkinScale": 1,
+            "Texture": "SightWard_ShurimaRammus_TX_CM.dds",
+            "YOffset": -1.2
+        }
+    }
+}

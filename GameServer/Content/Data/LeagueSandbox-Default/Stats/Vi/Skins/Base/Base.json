@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Vi/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Vi.blnd",
+            "ChampionSkinID": "254000",
+            "ChampionSkinName": "Vi",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Vi.skn",
+            "Skeleton": "Vi.skl",
+            "SkinScale": 1.07,
+            "Texture": "Vi_TX_CM.dds"
+        }
+    }
+}

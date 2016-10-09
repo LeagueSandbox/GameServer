@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Ashe/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Ashe.blnd",
+            "ChampionSkinID": 22001,
+            "ChampionSkinName": "FreljordBowmaster",
+            "EmissiveTexture": "Bowmaster_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ashe.skn",
+            "Skeleton": "Ashe.skl",
+            "SkinScale": 1.1,
+            "Texture": "ashe_freljord_2012_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,82 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ViktorSingularity",
+        "Name": "ViktorSingularity",
+        "ResourcePath": "DATA/Characters/ViktorSingularity/ViktorSingularity.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": 0.0121875,
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "20",
+            "AttackSpeedPerLevel": 2,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": "10",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 1,
+            "BaseMP": 25,
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": 65535,
+            "ChasingAttackRangePercent": 0.8,
+            "Classification": "Arcane",
+            "CritAttack_AttackDelayCastOffsetPercent": 0.0121875,
+            "CritAttack_AttackDelayOffsetPercent": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_MaokaiSapling",
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "150",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": "0",
+            "Name": "game_character_displayname_MaokaiSapling",
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": 38.08,
+            "PerceptionBubbleRadius": "700.0",
+            "PostAttackMoveDelay": 0,
+            "SelectionHeight": 145,
+            "SelectionRadius": "110",
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "60",
+            "SpellBlockPerLevel": "0"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": "0",
+            "YOffset": "-200"
+        },
+        "MeshSkin": {
+            "Animations": "ViktorSingularityBase.blnd",
+            "ChampionSkinName": "ViktorSingularityBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "ViktorSingularity.skn",
+            "Skeleton": "ViktorSingularity.skl",
+            "SkinScale": 3.5
+        },
+        "UNKNOWN_HASHES": {
+            "1040761625": 8,
+            "105898023": 3,
+            "2786390348": 5,
+            "386495002": 4,
+            "3983263047": 0,
+            "767627316": 2
+        }
+    }
+}

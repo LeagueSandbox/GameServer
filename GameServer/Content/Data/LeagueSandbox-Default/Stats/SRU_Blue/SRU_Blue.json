@@ -1,0 +1,82 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Blue",
+        "Name": "SRU_Blue",
+        "ResourcePath": "DATA/Characters/SRU_Blue/SRU_Blue.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "20",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.567,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "AttackTotalTime": 2.03,
+            "BaseCritChance": 0,
+            "BaseDamage": 73,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "2000",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUBlue",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRUBlue",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "100.0",
+            "GameplayCollisionRadius": "110.0",
+            "GoldGivenOnDeath": "42.0",
+            "HPPerLevel": "0",
+            "IsElite": "true",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "180",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUBlue",
+            "PathfindingCollisionRadius": "50",
+            "SelectionHeight": "190",
+            "SelectionRadius": "120",
+            "SequentialAutoAttacks": 1,
+            "Significance": 0.6,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Monster | Monster_Large",
+            "UseRingIconForKillCallout": "false"
+        },
+        "HealthBar": {
+            "HPPerTick": "1000",
+            "UnitBarKey": "Dragon",
+            "WorldOffset": "0 -.2 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "SRU_BlueBuff_idle.troy Buffbone_Cstm_BlueBuff"
+        },
+        "Info": {
+            "IconCircle": "BlueSentinel_Circle.dds",
+            "IconCircleScale": 1.2,
+            "IconSquare": "BlueSentinel_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "brush_SRU_J"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0,
+            "593637254": "true"
+        }
+    }
+}

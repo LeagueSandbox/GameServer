@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Vi/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ViRacer.blnd",
+            "ChampionSkinID": 254001,
+            "ChampionSkinName": "ViRacer",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Vi_Racer.skn",
+            "Skeleton": "Vi_Racer.skl",
+            "SkinScale": 1.07,
+            "Texture": "Vi_Racer_TX_CM.dds"
+        }
+    }
+}

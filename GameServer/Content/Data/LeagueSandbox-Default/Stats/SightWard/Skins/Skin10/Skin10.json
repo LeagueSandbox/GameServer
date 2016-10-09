@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin10",
+        "Name": "Skin10",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin10/Skin10.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardSoraka.blnd",
+            "ChampionSkinName": "SightWardSoraka",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Soraka.skn",
+            "Skeleton": "SightWard_Soraka.skl",
+            "SkinScale": 1.1,
+            "Texture": "sightWard_Soraka_TX_CM.dds"
+        }
+    }
+}

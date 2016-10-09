@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": 45001,
+            "ChampionSkinName": "RedVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "Veigar.skn",
+            "Skeleton": "Veigar.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "RedVeigar.dds"
+        }
+    }
+}

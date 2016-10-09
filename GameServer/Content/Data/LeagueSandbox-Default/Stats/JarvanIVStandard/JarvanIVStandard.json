@@ -1,0 +1,134 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "JarvanIVStandard",
+        "Name": "JarvanIVStandard",
+        "ResourcePath": "DATA/Characters/JarvanIVStandard/JarvanIVStandard.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AbilityPowerIncPerLevel": "0",
+            "AcquisitionRange": 1,
+            "Armor": "0",
+            "ArmorPerLevel": "0",
+            "AttackDelayOffsetPercent": 0.02,
+            "AttackRange": 1,
+            "AttackSpeedPerLevel": 1.75,
+            "BaseAbilityPower": "0",
+            "BaseCritChance": 1.75,
+            "BaseDamage": 1,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 3,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "Classification": "Arcane",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0.25,
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_SummonerBeacon",
+            "EnemyTooltip": "game_character_enemyTooltip_SummonerBeacon",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_friendlyTooltip_SummonerBeacon",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SummonerBeacon",
+            "NoHealthBar": 1,
+            "PathfindingCollisionRadius": 13.6,
+            "PerceptionBubbleRadius": "700.00",
+            "SelectionHeight": "200",
+            "SelectionRadius": "140",
+            "Significance": 0.1,
+            "SpellBlock": "0",
+            "SpellBlockPerLevel": "0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "JarvanDemacianStandard_flag.troy root"
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": "JarvanIV_DemacianStandard.dds"
+        },
+        "MeshSkin": {
+            "Animations": "JarvanIVStandardBase.blnd",
+            "ChampionSkinName": "JarvanIVStandardBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard.skn",
+            "Skeleton": "JarvanIV_standard.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvanIV_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "CommandoJarvanIV.blnd",
+            "ChampionSkinName": "CommandoJarvanIV",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard_commando.skn",
+            "Skeleton": "JarvanIV_standard_commando.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvan_commando_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "MonsterHunterJarvanIV.blnd",
+            "ChampionSkinName": "MonsterHunterJarvanIV",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard_monsterhunter.skn",
+            "Skeleton": "JarvanIV_standard_monsterhunter.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvan_monsterhunter_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "DragoonJarvanIV.blnd",
+            "ChampionSkinName": "DragoonJarvanIV",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard_dragoon.skn",
+            "Skeleton": "JarvanIV_standard_dragoon.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvanIV_dragoon_TX_CM.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "WarheroJarvanIV.blnd",
+            "ChampionSkinName": "WarheroJarvanIV",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard.skn",
+            "Skeleton": "JarvanIV_standard.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvanIV_base_TX_CM.dds"
+        },
+        "MeshSkin5": {
+            "Animations": "LubuJarvanIV.blnd",
+            "ChampionSkinName": "LubuJarvanIV",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "JarvanIV_standard_lubu.skn",
+            "Skeleton": "JarvanIV_standard_lubu.skl",
+            "SkinScale": "1.0",
+            "Texture": "jarvanIV_lubu_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2452862585": "Special1.wav",
+            "2452862586": "Special2.wav",
+            "245402728": "Attack1.wav",
+            "245402729": "Attack2.wav",
+            "245402730": "Attack3.wav",
+            "245402731": "Attack4.wav",
+            "2896212226": "Ready.wav",
+            "386495002": "6.0",
+            "3983263047": "0",
+            "4123230931": "Death.wav",
+            "789899530": "Click1.wav",
+            "789899531": "Click2.wav",
+            "789899532": "Click3.wav",
+            "789899533": "Click4.wav",
+            "882852607": "Move1.wav",
+            "882852608": "Move2.wav",
+            "882852609": "Move3.wav",
+            "882852610": "Move4.wav"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": 45004,
+            "ChampionSkinName": "LeprechaunVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_leprechaun.skn",
+            "Skeleton": "veigar_leprechaun.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "veigar_leprechaun_TX_CM.dds"
+        }
+    }
+}

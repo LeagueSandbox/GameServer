@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AnniePanda.blnd",
+            "ChampionSkinID": 1008,
+            "ChampionSkinName": "AnniePanda",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Annie_Panda.skn",
+            "Skeleton": "Annie_Panda.skl",
+            "SkinScale": 1,
+            "Texture": "Annie_panda_CM.dds"
+        }
+    }
+}

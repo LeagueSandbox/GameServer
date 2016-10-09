@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Trundle/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseTrundle.blnd",
+            "ChampionSkinID": 48001,
+            "ChampionSkinName": "BaseballTrundle",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Trundle_baseball.skn",
+            "Skeleton": "Trundle_baseball.skl",
+            "SkinScale": "1.00",
+            "Texture": "trundle_baseball_TX_CM.dds"
+        }
+    }
+}

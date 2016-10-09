@@ -1,0 +1,103 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TeemoMushroom",
+        "Name": "TeemoMushroom",
+        "ResourcePath": "DATA/Characters/TeemoMushroom/TeemoMushroom.inibin"
+    },
+    "Values": {
+        "Data": {
+            "BaseFactorMPRegen": "0",
+            "BaseMP": "600",
+            "BaseStaticMPRegen": 65535,
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "10.0",
+            "MPPerLevel": "0",
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": 31.7931,
+            "PerceptionBubbleRadius": "330.0",
+            "Significance": 0.2,
+            "UnitTags": "Special | Special_TeleportTarget"
+        },
+        "Info": {
+            "IconSquare": "Bowmaster_ArchersMark.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "TeemoMushroomBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "BantamTrap.skn",
+            "Skeleton": "BantamTrap.skl",
+            "SkinScale": 1.5,
+            "Texture": "MushroomPatch02.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "BantamTrap.skn",
+            "Skeleton": "BantamTrap.skl",
+            "SkinScale": 1.5,
+            "Texture": "MushroomPatch02.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "BantamTrap.skn",
+            "Skeleton": "BantamTrap.skl",
+            "SkinScale": 1.5,
+            "Texture": "MushroomPatch02.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "MeshSkin3",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "BantamTrap.skn",
+            "Skeleton": "BantamTrap.skl",
+            "SkinScale": 1.5,
+            "Texture": "MushroomPatch02.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "MeshSkin4.blnd",
+            "ChampionSkinName": "MeshSkin4",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "SatelliteTrap.skn",
+            "Skeleton": "SatelliteTrap.skl",
+            "SkinScale": 1.2,
+            "Texture": "teemo_trap_astronaut_TX_CM.dds"
+        },
+        "MeshSkin5": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "MeshSkin5",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "EasterTrap.skn",
+            "Skeleton": "EasterTrap.skl",
+            "SkinScale": 1.2,
+            "Texture": "trap_easterbunny_PET_TX_CM_v01.dds"
+        },
+        "MeshSkin6": {
+            "Animations": "MeshSkin6.blnd",
+            "ChampionSkinName": "MeshSkin6",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "SuperTrap.skn",
+            "Skeleton": "SuperTrap.skl",
+            "SkinScale": 1.6,
+            "Texture": "teemo_superhero_PET_TX_CM_v01.dds"
+        },
+        "MeshSkin7": {
+            "Animations": "TeemoMushroomBase.blnd",
+            "ChampionSkinName": "MeshSkin7",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "teemo_panda_trap.skn",
+            "Skeleton": "teemo_panda_trap.skl",
+            "SkinScale": 1.6,
+            "Texture": "teemo_panda_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4200879192": "180",
+            "743731991": "180"
+        }
+    }
+}

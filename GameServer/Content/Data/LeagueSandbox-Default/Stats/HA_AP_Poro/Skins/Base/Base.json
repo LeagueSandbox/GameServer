@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_Poro/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_Poro.blnd",
+            "ChampionSkinName": "HA_AP_Poro",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_Poro.skn",
+            "Skeleton": "HA_AP_Poro.skl",
+            "SkinScale": 0.28,
+            "Texture": "HA_AP_Poro.dds"
+        }
+    }
+}

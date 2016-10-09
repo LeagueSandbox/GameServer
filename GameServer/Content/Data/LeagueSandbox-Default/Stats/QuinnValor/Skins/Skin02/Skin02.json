@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/QuinnValor/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "HealthBar": {
+            "ParallaxOffset": 5,
+            "XOffset": "0",
+            "YOffset": 2
+        },
+        "MeshSkin": {
+            "Animations": "QuinnValor.blnd",
+            "ChampionSkinName": "QuinnValorSkin02",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "QuinnValor_Skin02.skn",
+            "Skeleton": "QuinnValor_Skin02.skl",
+            "SkinScale": "2.0",
+            "Texture": "QuinnValor_Skin02_TX_CM.dds"
+        }
+    }
+}

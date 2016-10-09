@@ -1,0 +1,81 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SyndraSphere",
+        "Name": "SyndraSphere",
+        "ResourcePath": "DATA/Characters/SyndraSphere/SyndraSphere.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30",
+            "ArmorPerLevel": "0",
+            "AttackRange": "20",
+            "AttackSpeedPerLevel": 2,
+            "BaseCritChance": "0",
+            "BaseDamage": "10",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 1,
+            "BaseMP": 25,
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": 65535,
+            "ChasingAttackRangePercent": 0.8,
+            "Classification": "Arcane",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_Syndra",
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": 475,
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": "0",
+            "Name": "game_character_displayname_Syndra",
+            "NeverRender": 1,
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": "130.0000",
+            "PerceptionBubbleRadius": 0,
+            "PostAttackMoveDelay": 0,
+            "SelectionHeight": 145,
+            "SelectionRadius": "110",
+            "ServerOnly": "0",
+            "Significance": 0.3,
+            "SpellBlock": "60",
+            "SpellBlockPerLevel": "0"
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": ""
+        },
+        "MeshSkin": {
+            "Animations": "SyndraSphereBase.blnd",
+            "ChampionSkinName": "SyndraSphereBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "syndrasphere.skn",
+            "Skeleton": "syndrasphere.skl",
+            "SkinScale": "0.5",
+            "Texture": "orianna_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "SyndraSphereBase.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "syndrasphere.skn",
+            "Skeleton": "syndrasphere.skl",
+            "SkinScale": "0.5",
+            "Texture": "orianna_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "122525173": "Syndra_DarkSphere_idle.troy root",
+            "2979245175": 1,
+            "386495002": 4,
+            "3983263047": 0
+        }
+    }
+}

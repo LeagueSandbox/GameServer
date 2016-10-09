@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/AnnieTibbers/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 2,
+            "Particle1": "BearElectricity_Bolt.troy Head"
+        },
+        "MeshSkin": {
+            "Animations": "AnnieTibbers.blnd",
+            "ChampionSkinName": "AnnieTibbersFrankenstein",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "tibbers_PET_frankenstein.skn",
+            "Skeleton": "tibbers_PET_frankenstein.skl",
+            "SkinScale": 1.2,
+            "Texture": "annie_tibbers_PET_frankenstein_TX_CM.dds"
+        }
+    }
+}

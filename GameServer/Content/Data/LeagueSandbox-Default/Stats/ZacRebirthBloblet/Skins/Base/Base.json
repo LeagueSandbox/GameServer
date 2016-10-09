@@ -1,0 +1,33 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/ZacRebirthBloblet/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ZacRebirthBloblet.blnd",
+            "ChampionSkinName": "ZacRebirthBloblet",
+            "GlossTexture": "zacrebirthbloblet_TX_GM.dds",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "zac_base_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.2,
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "ZacRebirthBloblet.skn",
+            "Skeleton": "ZacRebirthBloblet.skl",
+            "SkinScale": "1.0",
+            "Texture": "ZacRebirthBloblet_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3400833179": 0.8,
+            "343518805": 0.08,
+            "3966094422": 0.1,
+            "455913160": 0.3
+        }
+    }
+}

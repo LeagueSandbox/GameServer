@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Trundle/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ClassicTrundle.blnd",
+            "ChampionSkinID": 48003,
+            "ChampionSkinName": "ClassicTrundle",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Trundle_Classic.skn",
+            "Skeleton": "Trundle_Classic.skl",
+            "SkinScale": "1.00",
+            "Texture": "Trundle_Classic.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

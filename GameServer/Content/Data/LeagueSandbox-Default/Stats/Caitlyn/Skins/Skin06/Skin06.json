@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynSkin06.blnd",
+            "ChampionSkinID": 51006,
+            "ChampionSkinName": "CaitlynSkin06",
+            "OverrideBoundingBox": "65 130 65",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Caitlyn_Skin06.skn",
+            "Skeleton": "Caitlyn_Skin06.skl",
+            "SkinScale": 1.6,
+            "Texture": "Caitlyn_Skin06_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1340311349": 1
+        }
+    }
+}

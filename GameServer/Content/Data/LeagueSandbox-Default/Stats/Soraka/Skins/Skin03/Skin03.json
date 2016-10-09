@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Soraka/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ClericSoraka.blnd",
+            "ChampionSkinID": 16003,
+            "ChampionSkinName": "ClericSoraka",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Soraka_cleric.skn",
+            "Skeleton": "Soraka_cleric.skl",
+            "SkinScale": 1.27,
+            "Texture": "soraka_cleric_TX_CM.dds"
+        }
+    }
+}

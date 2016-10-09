@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_Viking/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_Viking.blnd",
+            "CastShadows": "False",
+            "ChampionSkinName": "HA_AP_Viking",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "HA_AP_Viking.skn",
+            "Skeleton": "HA_AP_Viking.skl",
+            "SkinScale": 1.35,
+            "Texture": "HA_AP_Viking.dds"
+        }
+    }
+}

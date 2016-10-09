@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/VisionWard/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardBase.blnd",
+            "ChampionSkinName": "VisionWardBase",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard.skn",
+            "Skeleton": "SightWard.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "VisionWard.dds",
+            "YOffset": -1.2
+        }
+    }
+}

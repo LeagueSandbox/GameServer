@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Gangplank/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Gangplank.blnd",
+            "ChampionSkinID": 41003,
+            "ChampionSkinName": "SailorGangplank",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gangplank_Sailor.skn",
+            "Skeleton": "Gangplank_Sailor.skl",
+            "SkinScale": 1.4,
+            "Texture": "gangplank_sailor_TX_CM.dds"
+        }
+    }
+}

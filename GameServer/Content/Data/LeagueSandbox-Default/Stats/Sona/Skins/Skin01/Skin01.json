@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Sona/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseSona.blnd",
+            "ChampionSkinID": 37001,
+            "ChampionSkinName": "MuseSona",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sona_muse.skn",
+            "Skeleton": "Sona_muse.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sona_muse_TX_CM.dds"
+        }
+    }
+}

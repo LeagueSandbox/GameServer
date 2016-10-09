@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Elise/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Elise.blnd",
+            "ChampionSkinID": "60000",
+            "ChampionSkinName": "Elise",
+            "ExtraCharacterPreloads": "EliseSpider,EliseSpiderling",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Elise.skn",
+            "Skeleton": "Elise.skl",
+            "SkinScale": 1.25,
+            "Texture": "Elise_base_Proxy_TX_CM.dds"
+        }
+    }
+}

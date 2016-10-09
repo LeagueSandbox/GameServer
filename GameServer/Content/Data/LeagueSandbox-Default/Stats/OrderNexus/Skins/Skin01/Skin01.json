@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/OrderNexus/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "OrderNexusBase.blnd",
+            "ChampionSkinName": "HA_AP_OrderNexus",
+            "EmissiveTexture": "HA_AP_OrderNexus_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nexus.skn",
+            "Skeleton": "Nexus.skl",
+            "SkinScale": "1.0",
+            "Texture": "HA_AP_OrderNexus.dds"
+        }
+    }
+}

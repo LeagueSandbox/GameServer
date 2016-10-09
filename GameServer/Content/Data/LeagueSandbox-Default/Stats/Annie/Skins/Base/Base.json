@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": "1000",
+            "ChampionSkinName": "Annie",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "annie_2012.skn",
+            "Skeleton": "annie_2012.skl",
+            "SkinScale": 1,
+            "Texture": "annie_base_2012_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinOpeningBarrier",
+        "Name": "OdinOpeningBarrier",
+        "ResourcePath": "DATA/Characters/OdinOpeningBarrier/OdinOpeningBarrier.inibin"
+    },
+    "Values": {
+        "Data": {
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "0",
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "ServerOnly": "0"
+        },
+        "MeshSkin": {
+            "Animations": "OdinOpeningBarrierBase.blnd",
+            "ChampionSkinName": "OdinOpeningBarrierBase",
+            "SimpleSkin": "Cube.skn",
+            "Skeleton": "Cube.skl",
+            "Texture": "lichLoadScreen.dds"
+        }
+    }
+}

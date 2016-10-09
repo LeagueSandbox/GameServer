@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardGhost.blnd",
+            "ChampionSkinName": "SightWardGhost",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_ghost.skn",
+            "Skeleton": "sightWard_ghost.skl",
+            "SkinScale": "1.0",
+            "Texture": "sightWard_ghost_TX_CM.dds",
+            "YOffset": -3.8
+        }
+    }
+}

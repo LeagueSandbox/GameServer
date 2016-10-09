@@ -7,10 +7,8 @@
     },
     "Values": {
         "BuffData": {
+            "AlternateName": "ZedUlt",
             "DynamicTooltip": "game_buff_tooltip_ZedUltExecute"
-        },
-        "UNKNOWN_HASHES": {
-            "1378003864": "ZedUlt"
         }
     }
 }

@@ -1,0 +1,94 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinNeutralGuardian",
+        "Name": "OdinNeutralGuardian",
+        "ResourcePath": "DATA/Characters/OdinNeutralGuardian/OdinNeutralGuardian.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "950",
+            "Armor": 10.5,
+            "ArmorPerLevel": 4,
+            "AssetCategory": "obj",
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "0",
+            "AttackSpeedPerLevel": 1.68,
+            "BaseCritChance": "0",
+            "BaseDamage": "110",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "50000",
+            "BaseMP": "50000",
+            "BaseStaticHPRegen": "5000",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3.2,
+            "Description": "game_character_description_OdinNeutralGuardian",
+            "EnemyTooltip": "game_character_enemyTooltip_OdinNeutralGuardian",
+            "ExpGivenOnDeath": 0,
+            "ExtraSpell1": "OdinGuardianSpellAttack",
+            "FriendlyTooltip": "game_character_enemyTooltip_OdinNeutralGuardian",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": 0,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": 0,
+            "Name": "game_character_displayname_OdinNeutralGuardian",
+            "NoAutoAttack": 1,
+            "OccludedUnitSelectableDistance": "700",
+            "Passive1Level1": 1,
+            "Passive1Level2": 4,
+            "Passive1Level3": 7,
+            "Passive1Level4": "10",
+            "Passive1Level5": 13,
+            "Passive1Level6": 16,
+            "PathfindingCollisionRadius": "120.000",
+            "SelectionHeight": "250",
+            "SelectionRadius": "150",
+            "ShouldFaceTarget": "0",
+            "Spell1": "OdinGuardianSpellAttackCast",
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy crystal",
+            "BeamShouldAlwayStargetEnemy": 1,
+            "NumberOfParticles": 1,
+            "Particle1": "capture_point_gauge.troy"
+        },
+        "Info": {
+            "IconCircle": "OdinNeutralGuardian_DR_White.dds",
+            "IconSquare": "OdinNeutralGuardian_DR_White.dds"
+        },
+        "MeshSkin": {
+            "Animations": "OdinNeutralGuardianBase.blnd",
+            "ChampionSkinName": "OdinNeutralGuardianBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "OdinNeutralGuardian.skn",
+            "Skeleton": "OdinNeutralGuardian.skl",
+            "SkinScale": "1.0",
+            "Texture": "OdinNeutralGuardian.dds"
+        },
+        "Minion": {
+            "AlwaysVisible": 1,
+            "IsTower": 1
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 6,
+            "3983263047": "0"
+        },
+        "Useable": {
+            "EnemyCanUse": 1,
+            "HeroUseSpell": "OdinCaptureChannel",
+            "IsUseable": 1,
+            "MinionUseSpell": "OdinMinionSpellAttack"
+        }
+    }
+}

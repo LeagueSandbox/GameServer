@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CommandoGaren.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 86003,
+            "ChampionSkinName": "CommandoGaren",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "garen_commando.skn",
+            "Skeleton": "garen_commando.skl",
+            "SkinScale": "1.00",
+            "Texture": "garen_commando_TX_CM.dds"
+        }
+    }
+}

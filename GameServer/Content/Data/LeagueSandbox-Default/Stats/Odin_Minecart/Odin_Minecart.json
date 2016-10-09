@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_Minecart",
+        "Name": "Odin_Minecart",
+        "ResourcePath": "DATA/Characters/Odin_Minecart/Odin_Minecart.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_MinecartBase.blnd",
+            "ChampionSkinName": "Odin_MinecartBase",
+            "SimpleSkin": "Odin_Minecart.skn",
+            "Skeleton": "Odin_Minecart.skl",
+            "Texture": "Odin_Minecart.dds"
+        }
+    }
+}

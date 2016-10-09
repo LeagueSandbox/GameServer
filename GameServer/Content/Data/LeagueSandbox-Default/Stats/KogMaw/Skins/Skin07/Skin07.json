@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "FossilKogMaw.blnd",
+            "ChampionSkinID": 96007,
+            "ChampionSkinName": "FossilKogMaw",
+            "OverrideBoundingBox": "262,8 281,4 262,8",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "kogMaw_fossil.skn",
+            "Skeleton": "kogMaw_fossil.skl",
+            "SkinScale": 0.7,
+            "Texture": "kogmaw_fossil_TX_CM.dds"
+        }
+    }
+}

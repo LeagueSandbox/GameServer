@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Sona/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SilentNightSona.blnd",
+            "ChampionSkinID": 37003,
+            "ChampionSkinName": "SilentNightSona",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sona_silentnight.skn",
+            "Skeleton": "Sona_silentnight.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sona_silentnight_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31",
+            "2625724482": "true"
+        }
+    }
+}

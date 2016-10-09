@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/ChaosInhibitor/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "ChaosLaneTower_Icon_C.dds",
+            "IconSquare": "Inhibitor_square_purple.dds"
+        },
+        "MeshSkin": {
+            "Animations": "ChaosInhibitorBase.blnd",
+            "ChampionSkinName": "ChaosInhibitorBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Inhibitor.skn",
+            "Skeleton": "Inhibitor.skl",
+            "SkinScale": 1,
+            "Texture": "Chaos_Inhibitor_diff.dds"
+        }
+    }
+}

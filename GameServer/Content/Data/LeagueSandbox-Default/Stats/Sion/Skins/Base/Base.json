@@ -1,0 +1,26 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sion/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sion_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "SionBase.blnd",
+            "ChampionSkinID": "14000",
+            "ChampionSkinName": "SionBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sion.skn",
+            "Skeleton": "Sion.skl",
+            "SkinScale": 1.05,
+            "Texture": "Sion_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

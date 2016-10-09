@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Gangplank/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "GangplankSkin06.blnd",
+            "ChampionSkinID": 41006,
+            "ChampionSkinName": "GangplankSkin06",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gangplank_Skin06.skn",
+            "Skeleton": "Gangplank_Skin06.skl",
+            "SkinScale": 1.4,
+            "Texture": "gangplank_Skin06_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

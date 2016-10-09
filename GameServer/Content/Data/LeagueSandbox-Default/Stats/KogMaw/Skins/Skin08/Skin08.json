@@ -1,0 +1,36 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin08",
+        "Name": "Skin08",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin08/Skin08.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KogMawSkin08.blnd",
+            "ChampionSkinID": 96008,
+            "ChampionSkinName": "KogMawSkin08",
+            "GlossTexture": "KogMaw_Skin08_TX_GM.dds",
+            "MaterialOverride0Submesh": "Hook",
+            "MaterialOverride0Texture": "KogMaw_skin08_hook_TX_CM.dds",
+            "OverrideBoundingBox": "262,8 281,4 262,8",
+            "ReflectionFresnel": 0.5,
+            "ReflectionFresnelBlue": 0.5,
+            "ReflectionFresnelGreen": 0.5,
+            "ReflectionFresnelRed": 0.5,
+            "ReflectionMap": "KogMaw_Skin08_TX_RM.dds",
+            "ReflectionOpacityDirect": 1,
+            "ReflectionOpacityGlancing": 1,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_Skin08.skn",
+            "Skeleton": "KogMaw_Skin08.skl",
+            "SkinScale": 0.7,
+            "Texture": "KogMaw_Skin08_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "212471238": "Metal",
+            "2625724482": "true",
+            "708066840": "Hook"
+        }
+    }
+}

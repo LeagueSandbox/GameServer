@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Viktor/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MakerViktor.blnd",
+            "ChampionSkinID": 112003,
+            "ChampionSkinName": "MakerViktor",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "viktor_Maker.skn",
+            "Skeleton": "viktor_Maker.skl",
+            "SkinScale": 1.05,
+            "Texture": "viktor_maker_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.6
+        }
+    }
+}

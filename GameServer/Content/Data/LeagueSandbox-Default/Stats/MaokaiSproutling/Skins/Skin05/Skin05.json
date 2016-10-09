@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/MaokaiSproutling/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "MaokaiSproutlingBase.blnd",
+            "ChampionSkinName": "MaokaiSaplingSkin05",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sapling_skin05.skn",
+            "Skeleton": "Sapling_skin05.skl",
+            "SkinScale": 1.2,
+            "Texture": "maokai_Skin05_TX_CM.dds"
+        }
+    }
+}

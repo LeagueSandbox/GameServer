@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/CaitlynTrap/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynTrapBase.blnd",
+            "ChampionSkinName": "CaitlynTrapBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "CaitlynTrap.skn",
+            "Skeleton": "CaitlynTrap.skl",
+            "SkinScale": 2,
+            "Texture": "caitlyn_base_TX_CM_v01.dds"
+        }
+    }
+}

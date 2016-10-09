@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin15",
+        "Name": "Skin15",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin15/Skin15.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardCandycane.blnd",
+            "ChampionSkinName": "SightWardCandycane",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Candy.skn",
+            "Skeleton": "SightWard_Candy.skl",
+            "SkinScale": 1.2,
+            "Texture": "Ward_LunarRevel_Candycane_TX_CM.dds",
+            "YOffset": 65534
+        }
+    }
+}

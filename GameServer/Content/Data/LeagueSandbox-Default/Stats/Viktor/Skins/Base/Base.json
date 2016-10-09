@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Viktor/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Viktor_base.blnd",
+            "ChampionSkinID": "112000",
+            "ChampionSkinName": "Viktor_base",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "viktor.skn",
+            "Skeleton": "viktor.skl",
+            "SkinScale": 1.05,
+            "Texture": "viktor_base_TX_CM.dds"
+        }
+    }
+}

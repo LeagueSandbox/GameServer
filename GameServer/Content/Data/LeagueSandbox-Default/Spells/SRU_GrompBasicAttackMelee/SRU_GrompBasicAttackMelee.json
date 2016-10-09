@@ -46,6 +46,11 @@
             "InventoryIcon": "",
             "IsDisabledWhileDead": 1,
             "IsToggleSpell": "0",
+            "Level1Desc": "NONE",
+            "Level2Desc": "NONE",
+            "Level3Desc": "NONE",
+            "Level4Desc": "NONE",
+            "Level5Desc": "NONE",
             "LineMissileBounces": "0",
             "LineWidth": 0,
             "MissileBoneName": "R_hand",
@@ -53,23 +58,18 @@
             "MissileSpeed": 0,
             "PointEffectName": "",
             "SelectionPreference": "none",
+            "Sound_CastName": "none.wav",
+            "Sound_HitName": "none.wav",
             "SpellCastTime": 0.4,
             "SpellTotalTime": 1.6,
+            "SubjectToGlobalCooldown": 1,
             "TargettingType": 1,
+            "TextFlags": "AffectEnemies | AffectFriends | AffectMinions | AffectHeroes | AffectTurrets",
+            "TriggersGlobalCooldown": 1,
             "Version": 1
         },
         "UNKNOWN_HASHES": {
-            "1829373218": "AffectEnemies | AffectFriends | AffectMinions | AffectHeroes | AffectTurrets",
-            "1832732728": "NONE",
-            "2257188466": "none.wav",
-            "2893618454": "none.wav",
-            "2972297017": "NONE",
-            "3251122316": 0,
-            "3848571446": "NONE",
-            "4111861306": "NONE",
-            "536890465": 1,
-            "57583389": 1,
-            "693168439": "NONE"
+            "3251122316": 0
         }
     }
 }

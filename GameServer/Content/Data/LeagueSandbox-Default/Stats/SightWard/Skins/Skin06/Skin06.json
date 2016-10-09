@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardSnowMan.blnd",
+            "ChampionSkinName": "SightWardSnowMan",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_snowMan.skn",
+            "Skeleton": "SightWard_snowMan.skl",
+            "SkinScale": 1.4,
+            "Texture": "SightWard_snowMan_TX_CM.dds"
+        }
+    }
+}

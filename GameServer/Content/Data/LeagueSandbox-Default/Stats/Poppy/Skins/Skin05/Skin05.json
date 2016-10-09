@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Poppy/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BasePoppy.blnd",
+            "ChampionSkinID": 78005,
+            "ChampionSkinName": "RegalknightPoppy",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "poppy_regalknight.skn",
+            "Skeleton": "poppy_regalknight.skl",
+            "SkinScale": 1,
+            "Texture": "poppy_regalknight_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Nidalee_Cougar/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_CougarBase.blnd",
+            "ChampionSkinID": 76003,
+            "ChampionSkinName": "FrenchMaidNidaleeCougar",
+            "SelfIllumination": 0.55,
+            "SimpleSkin": "Nidalee_Cougar_Maid.skn",
+            "Skeleton": "Nidalee_Cougar_Maid.skl",
+            "SkinScale": "1.0",
+            "Texture": "Nidalee_cougar_Frenchmaid_2012.dds"
+        }
+    }
+}

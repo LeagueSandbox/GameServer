@@ -1,0 +1,62 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Kalista/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Kalista_Base.cac"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 13,
+            "Particle1": "Kalista_Base_Idle_Spear_Avatar.troy BUFFBONE_GLB_GROUND_LOC",
+            "Particle10": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Leg3",
+            "Particle11": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Leg1",
+            "Particle12": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Leg2",
+            "Particle13": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Leg3",
+            "Particle2": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Arm1",
+            "Particle3": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Arm2",
+            "Particle4": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Arm3",
+            "Particle5": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Arm1",
+            "Particle6": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Arm2",
+            "Particle7": "Kalista_Base_Idle_Glow.troy L_Buffbone_Cstm_Arm3",
+            "Particle8": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Leg1",
+            "Particle9": "Kalista_Base_Idle_Glow.troy R_Buffbone_Cstm_Leg2"
+        },
+        "MeshSkin": {
+            "Animations": "Kalista.blnd",
+            "ChampionSkinID": "429000",
+            "ChampionSkinName": "Kalista",
+            "GlossTexture": "Kalista_base_TX_GM.dds",
+            "MaterialOverride0Submesh": "Altar_Spear",
+            "MaterialOverride0Texture": "KalistaAltar_Base_TX_CM.dds",
+            "OverrideBoundingBox": "130 270 130",
+            "ReflectionFresnel": 0.1,
+            "ReflectionFresnelGreen": 0.3,
+            "ReflectionFresnelRed": 0.1,
+            "ReflectionMap": "Kalista_base_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.2,
+            "ReflectionOpacityGlancing": 0.05,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Kalista.skn",
+            "Skeleton": "Kalista.skl",
+            "SkinScale": 0.82,
+            "Texture": "Kalista_Base_TX_CM.dds",
+            "YOffset": -0.5
+        },
+        "UNKNOWN_HASHES": {
+            "1680144829": 0.1,
+            "1708595491": "Spear",
+            "1943617021": "Kalista_SpearSubmesh_TX_CM.dds",
+            "3175358980": "Spear",
+            "3400833179": 0.2,
+            "343518805": 0.3,
+            "3700722767": "Spear",
+            "3966094422": 0.1,
+            "455913160": 0.6,
+            "708066840": "Altar_Spear"
+        }
+    }
+}

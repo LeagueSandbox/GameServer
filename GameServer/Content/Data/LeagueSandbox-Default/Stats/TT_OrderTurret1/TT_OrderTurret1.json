@@ -1,0 +1,84 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_OrderTurret1",
+        "Name": "TT_OrderTurret1",
+        "ResourcePath": "DATA/Characters/TT_OrderTurret1/TT_OrderTurret1.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "60",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "-0.161",
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "170.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1600",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_OrderTurretDragon",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "50.000",
+            "GlobalGoldGivenOnDeath": "150.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_OrderTurretDragon",
+            "OccludedUnitSelectableDistance": "500",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200.0000",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": "100",
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Outer"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "NumberOfParticles": 1,
+            "Particle1": "Order_Turret_Crystal.troy joint2",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconCircle": "OrderLaneTower_Icon.dds",
+            "IconSquare": "OrderLaneTower_Icon.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_OrderTurret1Base.blnd",
+            "ChampionSkinName": "TT_OrderTurret1Base",
+            "EmissiveTexture": "BlueLaneTower_diffuse_Cmask.dds",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "BlueLaneTower.skn",
+            "Skeleton": "BlueLaneTower.skl",
+            "SkinScale": 1.1,
+            "Texture": "BlueLaneTower_diff.dds"
+        },
+        "Package": {
+            "FallbackPackage": "OrderTurretNormal"
+        },
+        "UNKNOWN_HASHES": {
+            "2628302185": "OrderTurretNormal",
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

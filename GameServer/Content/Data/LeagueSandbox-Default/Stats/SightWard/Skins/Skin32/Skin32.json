@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin32",
+        "Name": "Skin32",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin32/Skin32.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardBattleCast.blnd",
+            "ChampionSkinName": "SightWardBattleCast",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_Battlecast.skn",
+            "Skeleton": "SightWard_Battlecast.skl",
+            "SkinScale": 0.8,
+            "Texture": "Ward_Battlecast_TX_CM.dds",
+            "YOffset": -2.4
+        }
+    }
+}

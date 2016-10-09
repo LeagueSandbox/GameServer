@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Xerath/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Xerath_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseXerath.blnd",
+            "ChampionSkinID": 101001,
+            "ChampionSkinName": "RuneXerath",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Xerath_rune.skn",
+            "Skeleton": "Xerath_rune.skl",
+            "SkinScale": 1.7,
+            "Texture": "Xerath_rune_TX_CM.dds"
+        }
+    }
+}

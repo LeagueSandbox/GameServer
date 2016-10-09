@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "OktoberGragas.blnd",
+            "ChampionSkinID": 79006,
+            "ChampionSkinName": "OktoberGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_oktoberfest.skn",
+            "Skeleton": "Gragas_oktoberfest.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_oktoberfest_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

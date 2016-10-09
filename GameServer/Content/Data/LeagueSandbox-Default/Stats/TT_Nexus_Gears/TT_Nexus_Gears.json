@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Nexus_Gears",
+        "Name": "TT_Nexus_Gears",
+        "ResourcePath": "DATA/Characters/TT_Nexus_Gears/TT_Nexus_Gears.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Nexus_Gears.blnd",
+            "CastShadows": "0",
+            "ChampionSkinID": 987125,
+            "ChampionSkinName": "TT_Nexus_Gears",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Nexus_Gears.skn",
+            "Skeleton": "TT_Nexus_Gears.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Nexus_Gears.dds"
+        }
+    }
+}

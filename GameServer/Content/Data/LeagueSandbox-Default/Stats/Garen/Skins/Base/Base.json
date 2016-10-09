@@ -1,0 +1,35 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Garen.blnd",
+            "ChampionSkinID": "86000",
+            "ChampionSkinName": "Garen",
+            "GlossTexture": "Garen_base_TX_GM.dds",
+            "ReflectionFresnel": 0.3,
+            "ReflectionFresnelBlue": 0.4,
+            "ReflectionFresnelGreen": 0.4,
+            "ReflectionFresnelRed": 0.4,
+            "ReflectionMap": "Garen_base_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.7,
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Garen.skn",
+            "Skeleton": "Garen.skl",
+            "SkinScale": "1.00",
+            "Texture": "Garen_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1963414016": 0.3,
+            "2403406705": 0.3,
+            "2632864121": "Garen_base_low_TX_CM.dds",
+            "890371954": 0.3,
+            "971215659": 0.3
+        }
+    }
+}

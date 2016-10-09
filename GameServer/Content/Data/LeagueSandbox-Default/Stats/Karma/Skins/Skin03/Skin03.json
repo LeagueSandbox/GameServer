@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Karma/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "KarmaClassic.blnd",
+            "ChampionSkinID": 43003,
+            "ChampionSkinName": "KarmaClassic",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Karma_classic.skn",
+            "Skeleton": "Karma_classic.skl",
+            "SkinScale": 1.2,
+            "Texture": "karma_classic_2012_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "708066840": "karma_classic_fans_mat"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/KogMawDead/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMawDead.blnd",
+            "ChampionSkinID": 96003,
+            "ChampionSkinName": "ButterflyKogMaw",
+            "SelfIllumination": 0.3,
+            "SimpleSkin": "KogMaw_Dead.skn",
+            "Skeleton": "KogMaw_Dead.skl",
+            "SkinScale": "0.7",
+            "Texture": "KogMawDeathSkin_butterfly.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseBlindMonk.blnd",
+            "ChampionSkinID": "64000",
+            "ChampionSkinName": "BaseBlindMonk",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "LeeSin.skn",
+            "Skeleton": "LeeSin.skl",
+            "SkinScale": 1.82,
+            "Texture": "LeeSin_TX_CM.DDS"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/UdyrTigerUlt/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "PrimalUdyr.blnd",
+            "ChampionSkinID": 77002,
+            "ChampionSkinName": "PrimalUdyr",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Udyr_primal_bear.skn",
+            "Skeleton": "Udyr_primal_bear.skl",
+            "SkinScale": 1.1,
+            "Texture": "udyr_primal_bear_TX_CM.dds"
+        }
+    }
+}

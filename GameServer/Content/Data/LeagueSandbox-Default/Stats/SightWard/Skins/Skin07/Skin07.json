@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardGingerBread.blnd",
+            "ChampionSkinName": "SightWardGingerBread",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_gingerBread.skn",
+            "Skeleton": "SightWard_gingerBread.skl",
+            "SkinScale": 1.17,
+            "Texture": "SightWard_gingerBread_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "DestroyedNexus",
+        "Name": "DestroyedNexus",
+        "ResourcePath": "DATA/Characters/DestroyedNexus/DestroyedNexus.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "DestroyedNexusBase.blnd",
+            "ChampionSkinName": "DestroyedNexusBase",
+            "SelfIllumination": 0.5,
+            "Skeleton": "DestroyedNexus.skl",
+            "SkinScale": 0.8,
+            "Texture": "Nexus_Destroyed_diff.dds"
+        }
+    }
+}

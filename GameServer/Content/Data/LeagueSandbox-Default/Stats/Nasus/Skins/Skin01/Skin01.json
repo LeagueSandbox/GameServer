@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Nasus/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Nasus_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseNasus.blnd",
+            "ChampionSkinID": 75001,
+            "ChampionSkinName": "SilverNasus",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nasus_Galactic.skn",
+            "Skeleton": "Nasus_Galactic.skl",
+            "SkinScale": 1.18,
+            "Texture": "Nasus_Galactic_TX_CM.dds"
+        }
+    }
+}

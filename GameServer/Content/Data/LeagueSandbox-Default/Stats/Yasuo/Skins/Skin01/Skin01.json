@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Yasuo/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "YasuoSkin01.blnd",
+            "ChampionSkinID": 157001,
+            "ChampionSkinName": "YasuoSkin01",
+            "OverrideBoundingBox": "230 180 230",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Yasuo_Skin01.skn",
+            "Skeleton": "Yasuo_Skin01.skl",
+            "SkinScale": 0.93,
+            "Texture": "Yasuo_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.45,
+            "708066840": "Yasuo_Instrument_Mat"
+        }
+    }
+}

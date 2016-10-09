@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "VandalsGragas.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 79005,
+            "ChampionSkinName": "VandalsGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_vandals.skn",
+            "Skeleton": "Gragas_vandals.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_vandals_TX_CM.dds"
+        }
+    }
+}

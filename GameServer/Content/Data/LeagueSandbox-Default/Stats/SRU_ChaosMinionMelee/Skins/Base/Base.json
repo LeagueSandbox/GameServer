@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_ChaosMinionMelee/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Chaos_Minion_Melee.blnd",
+            "ChampionSkinName": "Chaos_Minion_Melee",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Chaos_Minion_Melee.skn",
+            "Skeleton": "Chaos_Minion_Melee.skl",
+            "SkinScale": 0.74,
+            "Texture": "ChaosMinion_Melee_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

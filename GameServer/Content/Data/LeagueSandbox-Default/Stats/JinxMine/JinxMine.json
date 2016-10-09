@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "JinxMine",
+        "Name": "JinxMine",
+        "ResourcePath": "DATA/Characters/JinxMine/JinxMine.inibin"
+    },
+    "Values": {
+        "Data": {
+            "BaseHP": 1,
+            "NoHealthBar": 1,
+            "PerceptionBubbleRadius": "550",
+            "Significance": 0.2
+        },
+        "Package": {
+            "FallbackPackage": "Jinx"
+        }
+    }
+}

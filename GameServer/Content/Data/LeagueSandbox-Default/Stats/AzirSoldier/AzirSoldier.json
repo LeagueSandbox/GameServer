@@ -1,0 +1,67 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AzirSoldier",
+        "Name": "AzirSoldier",
+        "ResourcePath": "DATA/Characters/AzirSoldier/AzirSoldier.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "10",
+            "ArmorPerLevel": "0",
+            "AttackCastTime": 0.33,
+            "AttackRange": "400",
+            "AttackSpeedPerLevel": 1.5,
+            "AttackTotalTime": 1.666,
+            "BaseCritChance": "0",
+            "BaseDamage": "40.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": 1,
+            "BaseMP": "100",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 1,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_IceBlock",
+            "ExpGivenOnDeath": "0",
+            "GoldGivenOnDeath": "0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_IceBlock",
+            "PathfindingCollisionRadius": "0",
+            "PerceptionBubbleRadius": "575.00",
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "Significance": 0.1,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell"
+        },
+        "HealthBar": {
+            "HPPerTick": "50",
+            "WorldOffset": "0 0 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconCircle": "bear_Circle.dds",
+            "IconSquare": "bear_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Azir"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": "1.0"
+        }
+    }
+}

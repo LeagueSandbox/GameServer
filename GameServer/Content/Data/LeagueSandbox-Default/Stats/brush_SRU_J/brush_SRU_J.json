@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "brush_SRU_J",
+        "Name": "brush_SRU_J",
+        "ResourcePath": "DATA/Characters/brush_SRU_J/brush_SRU_J.inibin"
+    },
+    "Values": {
+        "Interaction": {
+            "DoubleSided": "true",
+            "IdleAnim": "Distance",
+            "RandomizeIdleAnimPhase": "true"
+        },
+        "Package": {
+            "FallbackPackage": "brush_SRU_A"
+        }
+    }
+}

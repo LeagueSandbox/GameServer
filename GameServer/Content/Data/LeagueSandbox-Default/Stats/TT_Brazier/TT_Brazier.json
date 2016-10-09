@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Brazier",
+        "Name": "TT_Brazier",
+        "ResourcePath": "DATA/Characters/TT_Brazier/TT_Brazier.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Brazier.blnd",
+            "ChampionSkinID": 987123,
+            "ChampionSkinName": "TT_Brazier",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Brazier.skn",
+            "Skeleton": "TT_Brazier.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Brazier.dds"
+        }
+    }
+}

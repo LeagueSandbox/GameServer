@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "heimertyellowbase.blnd",
+            "ChampionSkinName": "HeimerTYellowBase",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "HeimerdingerTurret.skn",
+            "Skeleton": "HeimerdingerTurret.skl",
+            "SkinScale": 1.1,
+            "Texture": "HeimerTurret_Base_TX_CM.dds"
+        }
+    }
+}

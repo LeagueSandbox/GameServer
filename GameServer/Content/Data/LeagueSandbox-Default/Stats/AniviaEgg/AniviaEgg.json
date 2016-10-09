@@ -1,0 +1,143 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "AniviaEgg",
+        "Name": "AniviaEgg",
+        "ResourcePath": "DATA/Characters/AniviaEgg/AniviaEgg.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": 21.22,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 4,
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "600",
+            "AttackSpeedPerLevel": 1.68,
+            "BaseCritChance": "0",
+            "BaseDamage": 51.376,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 467.6,
+            "BaseMP": 346.04,
+            "BaseStaticHPRegen": 1.1148,
+            "BaseStaticMPRegen": 1.6016,
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3.2,
+            "Description": "game_character_description_AniviaEgg",
+            "ExtraSpell1": "FlashFrostSpell",
+            "ExtraSpell2": "GlacialStormSpell",
+            "HPPerLevel": "70",
+            "HPRegenPerLevel": 0.11,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "Lore1": "game_character_lore_RebirthEgg",
+            "MoveSpeed": 325,
+            "MPPerLevel": 53,
+            "MPRegenPerLevel": 0.12,
+            "Name": "game_character_displayname_AniviaEgg",
+            "NoAutoAttack": 1,
+            "Passive1Icon": "Cryophoenix_Rebirth.dds",
+            "Passive1Level1": 1,
+            "Passive1Level2": 4,
+            "Passive1Level3": 7,
+            "Passive1Level4": "10",
+            "Passive1Level5": 13,
+            "Passive1Level6": 16,
+            "Passive1Name": "game_character_passiveName_AniviaEgg",
+            "PassLev1Desc1": "game_character_passiveDescription_AniviaEgg",
+            "PathfindingCollisionRadius": 54.4,
+            "SelectionHeight": "80",
+            "SelectionRadius": "80",
+            "Spell1": "FlashFrost",
+            "Spell2": "Crystallize",
+            "Spell3": "Frostbite",
+            "Spell4": "GlacialStorm",
+            "SpellBlock": "30.0",
+            "SpellBlockPerLevel": "0",
+            "Tips1": "game_character_tips_RebirthEgg",
+            "UnitTags": "Champion"
+        },
+        "HealthBar": {
+            "ParallaxOffset": "0",
+            "XOffset": -0.1,
+            "YOffset": -0.4
+        },
+        "Info": {
+            "IconCircle": "Cryophoenix_Circle.dds",
+            "IconSquare": "Cryophoenix_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "AniviaEggBase.blnd",
+            "ChampionSkinName": "AniviaEggBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "RebirthEgg.skn",
+            "Skeleton": "RebirthEgg.skl",
+            "SkinScale": 1.6,
+            "Texture": "RebirthEgg.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "AniviaEggUSA.blnd",
+            "ChampionSkinName": "AniviaEggUSA",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "RebirthEgg.skn",
+            "Skeleton": "RebirthEgg.skl",
+            "SkinScale": 1.6,
+            "Texture": "RebirthEgg.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "AniviaEggBirdOfPrey.blnd",
+            "ChampionSkinName": "AniviaEggBirdOfPrey",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "RebirthEgg.skn",
+            "Skeleton": "RebirthEgg.skl",
+            "SkinScale": 1.6,
+            "Texture": "RebirthEgg.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "AniviaEggBattleArmor.blnd",
+            "ChampionSkinName": "AniviaEggBattleArmor",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "RebirthEgg.skn",
+            "Skeleton": "RebirthEgg.skl",
+            "SkinScale": 1.6,
+            "Texture": "RebirthEgg.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "AniviaEggHextech.blnd",
+            "ChampionSkinName": "AniviaEggHextech",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "RebirthEgg.skn",
+            "Skeleton": "RebirthEgg.skl",
+            "SkinScale": 1.6,
+            "Texture": "RebirthEgg.dds"
+        },
+        "MeshSkin5": {
+            "Animations": "AniviaEggBlackIce.blnd",
+            "ChampionSkinName": "AniviaEggBlackIce",
+            "GlossTexture": "AniviaEgg_BlackIce_TX_GM.dds",
+            "ReflectionFresnel": "1.0",
+            "ReflectionFresnelBlue": 1,
+            "ReflectionFresnelGreen": 0.5,
+            "ReflectionFresnelRed": 0.5,
+            "ReflectionMap": "AniviaEgg_BlackIce_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.2,
+            "ReflectionOpacityGlancing": 0.2,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "AniviaEgg_BlackIce.skn",
+            "Skeleton": "AniviaEgg_BlackIce.skl",
+            "SkinScale": 1.6,
+            "Texture": "AniviaEgg_BlackIce_TX_CM.dds"
+        },
+        "Package": {
+            "FallbackPackage": "Anivia"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 6,
+            "3983263047": "0"
+        }
+    }
+}

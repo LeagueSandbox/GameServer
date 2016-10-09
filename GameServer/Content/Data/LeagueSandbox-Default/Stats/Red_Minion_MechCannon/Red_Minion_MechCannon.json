@@ -1,0 +1,93 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Red_Minion_MechCannon",
+        "Name": "Red_Minion_MechCannon",
+        "ResourcePath": "DATA/Characters/Red_Minion_MechCannon/Red_Minion_MechCannon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 15,
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.25,
+            "AttackDelayOffsetPercent": -0.375,
+            "AttackRange": "280",
+            "AttackSpeed": "2.0",
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.8,
+            "BaseCritChance": 0,
+            "BaseDamage": "40.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": 0,
+            "BaseHP": "700",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": 0,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "DeathTime": 2.5,
+            "Description": "game_character_description_Red_Minion_MechCannon",
+            "EnemyTooltip": "",
+            "ExpGivenOnDeath": "94.0",
+            "ExtraAttack1_Probability": 0.2,
+            "FriendlyTooltip": "",
+            "GameplayCollisionRadius": "65.0",
+            "GoldGivenOnDeath": "30.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Red_Minion_MechCannon",
+            "PathfindingCollisionRadius": 55.7437,
+            "PerceptionBubbleRadius": "1200",
+            "SelectionHeight": "95.0000",
+            "SelectionRadius": "140.0000",
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "TowerTargetingPriorityBoost": 4,
+            "UnitTags": "Minion | Minion_Lane | Minion_Lane_Siege"
+        },
+        "Info": {
+            "IconCircle": "Redmechcannon_Circle.dds",
+            "IconSquare": "Redmechcannon_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Red_Minion_MechCannonBase.blnd",
+            "ChampionSkinName": "Red_Minion_MechCannonBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechCannon.skn",
+            "Skeleton": "Red_Minion_MechCannon.skl",
+            "Texture": "Red_Minion_MechCannon.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "MeshSkin1.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechCannon_Harrowing.skn",
+            "Skeleton": "Red_Minion_MechCannon.skl",
+            "Texture": "redminion_mechcannon_pumpkinhead_minions_TX_CM_v01.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "MeshSkin2.blnd",
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechCannon_Snowdown.skn",
+            "Skeleton": "Red_Minion_MechCannon.skl",
+            "Texture": "redminion_mechcannon_elf_TX_CM_v01.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "30.0",
+            "386495002": "0",
+            "3983263047": "0"
+        }
+    }
+}

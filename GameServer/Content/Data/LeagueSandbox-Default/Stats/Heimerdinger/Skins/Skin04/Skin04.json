@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Heimerdinger/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "heimerdingerbase.blnd",
+            "ChampionSkinID": 74004,
+            "ChampionSkinName": "HeimerdingerSkin04",
+            "ExtraCharacterPreloads": "HeimerTYellow,HeimerTBlue",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Heimerdinger_Snowman.skn",
+            "Skeleton": "Heimerdinger_Snowman.skl",
+            "SkinScale": 1,
+            "Texture": "heimerdinger_snowman_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Heimerdinger_Grab_Hand, Heimerdinger_Antenna"
+        }
+    }
+}

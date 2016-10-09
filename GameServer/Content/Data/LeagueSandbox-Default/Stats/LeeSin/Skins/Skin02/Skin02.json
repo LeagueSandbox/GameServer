@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseBlindMonk.blnd",
+            "ChampionSkinID": 64002,
+            "ChampionSkinName": "TempleBlindMonk",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "LeeSin_temple.skn",
+            "Skeleton": "LeeSin_temple.skl",
+            "SkinScale": 1.82,
+            "Texture": "LeeSin_temple_TX_CM.DDS"
+        }
+    }
+}

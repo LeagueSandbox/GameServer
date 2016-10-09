@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Garen/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SanguineGaren.blnd",
+            "ChampionSkinID": 86001,
+            "ChampionSkinName": "SanguineGaren",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Garen_Sanguine.skn",
+            "Skeleton": "Garen_Sanguine.skl",
+            "SkinScale": "1.00",
+            "Texture": "Garen_RedGoldArmor_TX_CM.dds"
+        }
+    }
+}

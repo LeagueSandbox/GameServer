@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/MasterYi/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMasterYi.blnd",
+            "ChampionSkinID": 11001,
+            "ChampionSkinName": "AssassinMasterYi",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "MasterYi_assassin.skn",
+            "Skeleton": "MasterYi_assassin.skl",
+            "SkinScale": 1.55,
+            "Texture": "AssassinMasterYi.dds"
+        }
+    }
+}

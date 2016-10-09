@@ -39,10 +39,13 @@
             "HavePointEffect": "0",
             "HitBoneName": "root",
             "HitEffectName": "Ezreal_mysticshot_tar.troy",
+            "InventoryIcon1": "FallenAngel_DarkBinding.dds",
+            "InventoryIcon2": "",
             "IsDisabledWhileDead": 1,
             "IsToggleSpell": "0",
             "LineDragLength": 0,
             "LineMissileBounces": "0",
+            "LineMissileCollisionFromStartPoint": "0",
             "LineMissileDelayDestroyAtEndSeconds": 0,
             "LineMissileEndsAtTargetPoint": "0",
             "LineMissileTimePulseBetweenCollisionSpellHits": 0,
@@ -62,20 +65,17 @@
             "SelectionPreference": "friend",
             "SpellRevealsChampion": 1,
             "StartCooldown": 0,
+            "SubjectToGlobalCooldown": 1,
             "TargettingType": 6,
+            "TextFlags": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "TriggersGlobalCooldown": 1,
             "UseAnimatorFramerate": 1,
             "UseMinimapTargeting": "0",
             "Version": 1
         },
         "UNKNOWN_HASHES": {
             "1536257324": "0",
-            "1829373218": "AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
-            "1877491092": "FallenAngel_DarkBinding.dds",
-            "1877491093": "",
             "237522587": "0",
-            "307233808": "0",
-            "536890465": 1,
-            "57583389": 1,
             "944948707": "0"
         }
     }

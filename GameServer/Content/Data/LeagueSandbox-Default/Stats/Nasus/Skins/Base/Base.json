@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Nasus/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Nasus_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "basenasus.blnd",
+            "ChampionSkinID": "75000",
+            "ChampionSkinName": "BaseNasus",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nasus.skn",
+            "Skeleton": "Nasus.skl",
+            "SkinScale": 1.23,
+            "Texture": "Nasus.dds"
+        }
+    }
+}

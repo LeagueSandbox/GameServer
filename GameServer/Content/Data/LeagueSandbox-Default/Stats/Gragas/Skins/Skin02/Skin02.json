@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Gragas.blnd",
+            "ChampionSkinID": 79002,
+            "ChampionSkinName": "HillBillyGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_HillBilly.skn",
+            "Skeleton": "Gragas_HillBilly.skl",
+            "SkinScale": 1.2,
+            "Texture": "Gragas_HillBilly_TX_CM.dds"
+        }
+    }
+}

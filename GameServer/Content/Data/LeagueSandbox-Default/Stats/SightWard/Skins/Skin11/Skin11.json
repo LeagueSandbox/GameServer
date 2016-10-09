@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin11",
+        "Name": "Skin11",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin11/Skin11.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardDraven.blnd",
+            "ChampionSkinName": "SightWardDraven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Draven.skn",
+            "Skeleton": "SightWard_Draven.skl",
+            "SkinScale": 1.4,
+            "Texture": "sightWard_Draven_TX_CM.dds"
+        }
+    }
+}

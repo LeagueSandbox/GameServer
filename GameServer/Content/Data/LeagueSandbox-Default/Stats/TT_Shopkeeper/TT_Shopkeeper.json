@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Shopkeeper",
+        "Name": "TT_Shopkeeper",
+        "ResourcePath": "DATA/Characters/TT_Shopkeeper/TT_Shopkeeper.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "MeshSkin": {
+            "Animations": "ShopMaleBase.blnd",
+            "ChampionSkinName": "ShopMaleBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Shopkeeper_TT.skn",
+            "Skeleton": "Shopkeeper_TT.skl",
+            "SkinScale": 2.05,
+            "Texture": "TT_shopkeeper_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "910253920": 44.2
+        }
+    }
+}

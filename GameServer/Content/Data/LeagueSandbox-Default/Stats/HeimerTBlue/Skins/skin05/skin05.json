@@ -1,0 +1,33 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/HeimerTBlue/Skins/skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTBlueBase.blnd",
+            "ChampionSkinName": "HeimerTBlueSkin05",
+            "GlossTexture": "HeimerTBlue_Skin05_TX_GM.dds",
+            "ReflectionFresnel": 1,
+            "ReflectionFresnelBlue": 5,
+            "ReflectionFresnelGreen": 5,
+            "ReflectionFresnelRed": 5,
+            "ReflectionMap": "HeimerTBlue_Skin05_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.6,
+            "ReflectionOpacityGlancing": 0.6,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HeimerTBlue_Skin05.skn",
+            "Skeleton": "HeimerTBlue_Skin05.skl",
+            "SkinScale": "1.0",
+            "Texture": "HeimerTBlue_Skin05_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3400833179": 0.22,
+            "343518805": 0.4,
+            "3966094422": 0.4,
+            "455913160": 0.4
+        }
+    }
+}

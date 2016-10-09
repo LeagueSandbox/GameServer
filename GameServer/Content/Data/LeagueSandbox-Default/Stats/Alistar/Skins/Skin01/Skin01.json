@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Alistar/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Alistar.blnd",
+            "ChampionSkinID": 12001,
+            "ChampionSkinName": "BlackMinotaur",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Alistar.skn",
+            "Skeleton": "Alistar.skl",
+            "SkinScale": 1.4,
+            "Texture": "Minotaur2Black_Diffuse.dds"
+        }
+    }
+}

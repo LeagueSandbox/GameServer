@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/NasusUlt/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseNasus.blnd",
+            "ChampionSkinID": 75004,
+            "ChampionSkinName": "Skin04NasusUlt",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nasus.skn",
+            "Skeleton": "Nasus.skl",
+            "SkinScale": 1.18,
+            "Texture": "Nasus.dds"
+        }
+    }
+}

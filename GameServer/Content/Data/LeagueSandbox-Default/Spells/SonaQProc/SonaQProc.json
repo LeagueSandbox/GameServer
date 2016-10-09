@@ -30,25 +30,23 @@
             "HavePointEffect": "0",
             "HitBoneName": "",
             "HitEffectName": "globalhit_mana.troy",
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
             "MissileBoneName": "WEAPON",
             "MissileEffect": "SoulShackle_beam_green.troy",
             "MissileSpeed": "2300.0000",
             "PointEffectName": "",
+            "RangeIndicatorTextureName": "DefaultRangeIndicator.dds",
             "SelectionPreference": "foe",
             "SpellRevealsChampion": "1.0000",
+            "SubjectToGlobalCooldown": 1,
             "TargettingType": 1,
+            "TextFlags": "Instacast | AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
+            "TriggersGlobalCooldown": 1,
             "Version": 1
-        },
-        "UNKNOWN_HASHES": {
-            "1829373218": "Instacast | AffectEnemies | AffectNeutral | AffectMinions | AffectHeroes",
-            "278926620": "DefaultRangeIndicator.dds",
-            "3771724453": 0,
-            "3771724454": 0,
-            "3771724455": 0,
-            "3771724456": 0,
-            "3771724457": 0,
-            "536890465": 1,
-            "57583389": 1
         }
     }
 }

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1005,
+            "ChampionSkinName": "AnnieFrostFire",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Annie_FrostFire.skn",
+            "Skeleton": "Annie_FrostFire.skl",
+            "SkinScale": 1,
+            "Texture": "Annie_FrostFire_TX_CM.dds"
+        }
+    }
+}

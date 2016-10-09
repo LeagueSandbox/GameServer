@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynBase.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 51003,
+            "ChampionSkinName": "SafariCaitlyn",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Caitlyn_Safari.skn",
+            "Skeleton": "Caitlyn_Safari.skl",
+            "SkinScale": 1.6,
+            "Texture": "caitlyn_Safari_TX_CM.dds"
+        }
+    }
+}

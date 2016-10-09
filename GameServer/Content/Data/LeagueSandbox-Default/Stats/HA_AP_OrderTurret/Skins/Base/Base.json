@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderTurret/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_OrderTurret.blnd",
+            "ChampionSkinName": "HA_AP_OrderTurret",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_OrderTurret.skn",
+            "Skeleton": "HA_AP_OrderTurret.skl",
+            "SkinScale": "750.0",
+            "Texture": "HA_AP_OrderTurret.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4276189325": "HA_AP_turret_explosion.troy"
+        }
+    }
+}

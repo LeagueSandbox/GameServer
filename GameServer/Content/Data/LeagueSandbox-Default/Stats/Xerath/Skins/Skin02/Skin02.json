@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Xerath/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Xerath_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseXerath.blnd",
+            "ChampionSkinID": 101002,
+            "ChampionSkinName": "IronXerath",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Xerath_Iron.skn",
+            "Skeleton": "Xerath_Iron.skl",
+            "SkinScale": 1.7,
+            "Texture": "Xerath_iron_TX_CM.dds"
+        }
+    }
+}

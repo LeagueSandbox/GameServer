@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_BridgeLaneStatue/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_BridgeLaneStatue.blnd",
+            "CastShadows": "0",
+            "ChampionSkinName": "HA_AP_BridgeLaneStatue",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_BridgeLaneStatue.skn",
+            "Skeleton": "HA_AP_BridgeLaneStatue.skl",
+            "SkinScale": "1000.0",
+            "Texture": "HA_AP_BridgeLaneStatue.dds"
+        }
+    }
+}

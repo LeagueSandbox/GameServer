@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/GnarBig/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "GnarBigSkin01.blnd",
+            "ChampionSkinID": 150001,
+            "ChampionSkinName": "GnarBigSkin01",
+            "MaterialOverride0Submesh": "GnarBig_Skin01_Recall_Mat",
+            "MaterialOverride0Texture": "GnarBig_Skin01_Recall_TX_CM.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "GnarBig_Skin01.skn",
+            "Skeleton": "GnarBig_Skin01.skl",
+            "SkinScale": 1.1,
+            "Texture": "GnarBig_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "GnarBig_Skin01_Rock, GnarBig_Skin01_Recall_Mat"
+        }
+    }
+}

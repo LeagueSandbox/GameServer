@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Tryndamere/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TryndamereBase.blnd",
+            "ChampionSkinID": 23002,
+            "ChampionSkinName": "KingTryndamere",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tryndamere_King.skn",
+            "Skeleton": "Tryndamere_King.skl",
+            "SkinScale": "2.0",
+            "Texture": "tryndamere_king_TX_CM_v01.dds",
+            "YOffset": 0.2
+        }
+    }
+}

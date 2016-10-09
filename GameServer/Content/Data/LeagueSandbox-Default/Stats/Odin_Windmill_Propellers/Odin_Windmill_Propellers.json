@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_Windmill_Propellers",
+        "Name": "Odin_Windmill_Propellers",
+        "ResourcePath": "DATA/Characters/Odin_Windmill_Propellers/Odin_Windmill_Propellers.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_Windmill_PropellersBase.blnd",
+            "ChampionSkinName": "Odin_Windmill_PropellersBase",
+            "SelfIllumination": 0.1,
+            "SimpleSkin": "Odin_Windmill_Propellers.skn",
+            "Skeleton": "Odin_Windmill_Propellers.skl",
+            "Texture": "Windmill_Propeller_D.dds"
+        }
+    }
+}

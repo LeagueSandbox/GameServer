@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Sona/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "PaxSona.blnd",
+            "ChampionSkinID": 37005,
+            "ChampionSkinName": "PaxSona",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sona_pax.skn",
+            "Skeleton": "Sona_pax.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sona_pax_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

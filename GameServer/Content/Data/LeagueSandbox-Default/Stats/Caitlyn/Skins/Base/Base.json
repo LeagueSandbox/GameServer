@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynBase.blnd",
+            "ChampionSkinID": "51000",
+            "ChampionSkinName": "CaitlynBase",
+            "EmissiveTexture": "Bowmaster_Diffuse_Cmask.dds",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Caitlyn.skn",
+            "Skeleton": "Caitlyn.skl",
+            "SkinScale": 1.6,
+            "Texture": "caitlyn_base_TX_CM_v01.dds"
+        }
+    }
+}

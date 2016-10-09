@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_BridgeLaneStatue",
+        "Name": "HA_AP_BridgeLaneStatue",
+        "ResourcePath": "DATA/Characters/HA_AP_BridgeLaneStatue/HA_AP_BridgeLaneStatue.inibin"
+    },
+    "Values": {
+        "Data": {
+            "SelectionHeight": "4000",
+            "SelectionRadius": "4000"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        }
+    }
+}

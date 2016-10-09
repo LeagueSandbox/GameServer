@@ -15,20 +15,18 @@
             "CastRangeUseBoundingBoxes": 1,
             "CastType": "0",
             "Cooldown": "0",
+            "Cooldown1": "0",
+            "Cooldown2": "0",
+            "Cooldown3": "0",
+            "Cooldown4": "0",
+            "Cooldown5": "0",
             "Flags": 252928,
+            "ManaCost1": 0,
+            "ManaCost2": 0,
+            "ManaCost3": 0,
+            "ManaCost4": 0,
+            "ManaCost5": 0,
             "TargettingType": 1
-        },
-        "UNKNOWN_HASHES": {
-            "2629301966": "0",
-            "2629301967": "0",
-            "2629301968": "0",
-            "2629301969": "0",
-            "2629301970": "0",
-            "3771724453": 0,
-            "3771724454": 0,
-            "3771724455": 0,
-            "3771724456": 0,
-            "3771724457": 0
         }
     }
 }

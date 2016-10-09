@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": "45000",
+            "ChampionSkinName": "Veigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "Veigar.skn",
+            "Skeleton": "Veigar.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "Veigar_turnaround_b.dds"
+        }
+    }
+}

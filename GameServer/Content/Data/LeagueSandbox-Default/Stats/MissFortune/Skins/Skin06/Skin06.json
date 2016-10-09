@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMissFortune.blnd",
+            "ChampionSkinID": 21006,
+            "ChampionSkinName": "MafiaMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "missfortune_mafia.skn",
+            "Skeleton": "missfortune_mafia.skl",
+            "SkinScale": 1.2,
+            "Texture": "missfortune_mafia_TX_CM.dds"
+        }
+    }
+}

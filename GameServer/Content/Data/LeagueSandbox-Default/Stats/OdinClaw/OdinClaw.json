@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinClaw",
+        "Name": "OdinClaw",
+        "ResourcePath": "DATA/Characters/OdinClaw/OdinClaw.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj"
+        },
+        "MeshSkin": {
+            "Animations": "OdinClawBase.blnd",
+            "ChampionSkinName": "OdinClawBase",
+            "SelfIllumination": 0.65,
+            "SimpleSkin": "OdinClaw.skn",
+            "Skeleton": "OdinClaw.skl",
+            "SkinScale": "1.0",
+            "Texture": "OdinClaw.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "363996279": 1
+        }
+    }
+}

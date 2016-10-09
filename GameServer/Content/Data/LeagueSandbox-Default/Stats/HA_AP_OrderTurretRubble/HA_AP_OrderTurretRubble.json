@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_OrderTurretRubble",
+        "Name": "HA_AP_OrderTurretRubble",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderTurretRubble/HA_AP_OrderTurretRubble.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "GameplayCollisionRadius": 88.4
+        },
+        "Info": {
+            "IconSquare": "OrderLaneTower_Icon.dds"
+        },
+        "Package": {
+            "FallbackPackage": "HA_AP_OrderTurret"
+        }
+    }
+}

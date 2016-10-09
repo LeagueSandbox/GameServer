@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/MasterYi/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMasterYi.blnd",
+            "ChampionSkinID": 11003,
+            "ChampionSkinName": "IonianMasterYi",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "masteryi_ionian.skn",
+            "Skeleton": "masteryi_ionian.skl",
+            "SkinScale": 1.55,
+            "Texture": "masteryi_ionian_TX_CM.dds"
+        }
+    }
+}

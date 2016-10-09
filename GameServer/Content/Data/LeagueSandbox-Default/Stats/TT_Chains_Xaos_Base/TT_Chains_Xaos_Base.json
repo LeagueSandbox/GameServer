@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Chains_Xaos_Base",
+        "Name": "TT_Chains_Xaos_Base",
+        "ResourcePath": "DATA/Characters/TT_Chains_Xaos_Base/TT_Chains_Xaos_Base.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_Chains_Xaos_Base.blnd",
+            "ChampionSkinID": 988126,
+            "ChampionSkinName": "TT_Chains_Xaos_Base",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_Chains_Xaos_Base.skn",
+            "Skeleton": "TT_Chains_Xaos_Base.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_Chains.dds"
+        }
+    }
+}

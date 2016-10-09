@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Tryndamere/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TryndamereBase.blnd",
+            "ChampionSkinID": "23000",
+            "ChampionSkinName": "TryndamereBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tryndamere.skn",
+            "Skeleton": "Tryndamere.skl",
+            "SkinScale": "2.0",
+            "Texture": "tryndamere_base2011_TX_CM.dds"
+        }
+    }
+}
