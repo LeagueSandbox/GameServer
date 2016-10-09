@@ -1,14 +1,11 @@
-﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
+﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
+using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class AzirTurret : BaseTurret
     {
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
-
-        private const float TURRET_RANGE = 905.0f;
         public Unit Owner { get; private set; }
 
         public AzirTurret(
@@ -21,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(name, model, x, y, team, netId)
         {
-            this.Owner = owner;
+            Owner = owner;
 
             BuildAzirTurret();
 
@@ -30,44 +27,43 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void BuildAzirTurret()
         {
-            Inibin inibin;
-            if (!_rafManager.readInibin("DATA/Characters/" + Model + "/" + Model + ".inibin", out inibin))
+            JObject data;
+            if (!_rafManager.ReadUnitStats(Model, out data))
             {
                 _logger.LogCoreError("couldn't find turret stats for " + Model);
                 return;
             }
 
-            stats.HealthPoints.BaseValue = inibin.getFloatValue("Data", "BaseHP");
+            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseHP");
             stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = inibin.getFloatValue("Data", "BaseMP");
+            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = inibin.getFloatValue("DATA", "BaseDamage");
-            stats.Range.BaseValue = TURRET_RANGE;
-            stats.MoveSpeed.BaseValue = inibin.getFloatValue("DATA", "MoveSpeed");
-            stats.Armor.BaseValue = inibin.getFloatValue("DATA", "Armor");
-            stats.MagicResist.BaseValue = inibin.getFloatValue("DATA", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = inibin.getFloatValue("DATA", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + inibin.getFloatValue("DATA", "AttackDelayOffsetPercent"));
+            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseDamage");
+            stats.Range.BaseValue = 905.0f;
+            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "MoveSpeed");
+            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "Armor");
+            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Values", "Data", "AttackDelayOffsetPercent"));
 
-            stats.HealthPerLevel = inibin.getFloatValue("DATA", "HPPerLevel");
-            stats.ManaPerLevel = inibin.getFloatValue("DATA", "MPPerLevel");
-            stats.AdPerLevel = inibin.getFloatValue("DATA", "DamagePerLevel");
-            stats.ArmorPerLevel = inibin.getFloatValue("DATA", "ArmorPerLevel");
-            stats.MagicResistPerLevel = inibin.getFloatValue("DATA", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = inibin.getFloatValue("DATA", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = inibin.getFloatValue("DATA", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = inibin.getFloatValue("DATA", "AttackSpeedPerLevel");
+            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPPerLevel");
+            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPPerLevel");
+            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "DamagePerLevel");
+            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "ArmorPerLevel");
+            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Values", "Data", "AttackSpeedPerLevel");
 
-            IsMelee = inibin.getBoolValue("DATA", "IsMelee");
-            CollisionRadius = inibin.getIntValue("DATA", "PathfindingCollisionRadius");
+            IsMelee = _rafManager.GetBoolValue(data, "Values", "Data", "IsMelee");
+            CollisionRadius = _rafManager.GetIntValue(data, "Values", "Data", "PathfindingCollisionRadius");
 
-            Inibin autoAttack = _rafManager.GetAutoAttackData(Model);
-
-            if (autoAttack != null)
+            JObject autoAttack;
+            if (!_rafManager.ReadAutoAttackData(Model, out autoAttack))
             {
-                AutoAttackDelay = autoAttack.getFloatValue("SpellData", "castFrame") / 30.0f;
-                AutoAttackProjectileSpeed = autoAttack.getFloatValue("SpellData", "MissileSpeed");
+                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
+                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
             }
         }
 

@@ -2,14 +2,15 @@
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
 using Ninject;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Path = LeagueSandbox.GameServer.Logic.GameObjects.Path;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -141,26 +142,37 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         private static readonly Dictionary<TurretType, int[]> _turretItems = new Dictionary<TurretType, int[]>
         {
-            { TurretType.OuterTurret, new int[] { 1500, 1501, 1502, 1503 } },
-            { TurretType.InnerTurret, new int[] { 1500, 1501, 1502, 1503, 1504 } },
-            { TurretType.InhibitorTurret, new int[] { 1501, 1502, 1503, 1505 } },
-            { TurretType.NexusTurret, new int[] { 1501, 1502, 1503, 1505 } }
+            { TurretType.OuterTurret, new[] { 1500, 1501, 1502, 1503 } },
+            { TurretType.InnerTurret, new[] { 1500, 1501, 1502, 1503, 1504 } },
+            { TurretType.InhibitorTurret, new[] { 1501, 1502, 1503, 1505 } },
+            { TurretType.NexusTurret, new[] { 1501, 1502, 1503, 1505 } }
         };
 
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         private Logger _logger = Program.ResolveDependency<Logger>();
-        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
-        private int _cannonMinionCount = 0;
+        private int _cannonMinionCount;
 
         public SummonersRift(Game game) : base(game, 15 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
-            RAF.AIMesh aiMesh = null;
-            if (!_rafManager.readAIMesh("LEVELS/Map1/AIPath.aimesh", out aiMesh))
+            var path = System.IO.Path.Combine(
+                Program.ExecutingDirectory,
+                "Content",
+                "Data",
+                _game.Config.ContentManager.GameModeName,
+                "AIMesh",
+                "Map" + GetMapId(),
+                "AIPath.aimesh"
+            );
+
+            try
             {
-                _logger.LogCoreError("Failed to load SummonersRift data.");
+                var bytes = File.ReadAllBytes(path);
+                AIMesh = new RAF.AIMesh(bytes);
+            }
+            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                _logger.LogCoreError("Failed to load Summoner's Rift data.");
                 return;
             }
-            AIMesh = aiMesh;
 
             _collisionHandler.init(3); // Needs to be initialised after AIMesh
 

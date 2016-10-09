@@ -1,5 +1,4 @@
-﻿using InibinSharp;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System;
@@ -8,7 +7,7 @@ using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
-using System.Numerics;
+using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -83,10 +82,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string _spellName;
         private float _targetType;
 
-        protected float[] _castRange = new float[5] { 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f };
-        protected float[] cooldown = new float[5] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-        protected float[] cost = new float[5] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-        protected string hitEffectName = "";
+        protected float[] _castRange = { 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f };
+        protected float[] cooldown = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+        protected float[] cost = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+        protected string hitEffectName;
 
         public float[] Coefficient { get; private set; }
         protected List<List<float>> effects = new List<List<float>>();
@@ -105,34 +104,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool NoManacost { get; }
 
         private IScriptEngine _scriptEngine;
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private Game _game = Program.ResolveDependency<Game>();
-        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         public Spell(Champion owner, string spellName, byte slot)
         {
-            this.Owner = owner;
-            this._spellName = spellName;
-            this.Slot = slot;
-            this.Level = 0;
-            this.Flags = 0;
-            this.ProjectileFlags = 0;
-            this.CastTime = 0.0f;
-            this.ProjectileSpeed = 2000.0f;
-            this._currentCastTime = 0.0f;
+            Owner = owner;
+            _spellName = spellName;
+            Slot = slot;
+            Level = 0;
+            Flags = 0;
+            ProjectileFlags = 0;
+            CastTime = 0.0f;
+            ProjectileSpeed = 2000.0f;
+            _currentCastTime = 0.0f;
             NoCooldown = _game.Config.CooldownsDisabled;
             NoManacost = _game.Config.ManaCostsDisabled;
 
-            Inibin inibin;
-
             _scriptEngine = new LuaScriptEngine();
-
             LoadLua(_scriptEngine);
+
+            JObject data;
 
             if (slot > 3)
             {
-                if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+                if (!_rafManager.ReadSpellData(spellName, out data))
                 {
                     return;
                 }
@@ -140,102 +137,102 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 // Generate cooldown values for each level of the spell
                 for (var i = 0; i < cooldown.Length; ++i)
                 {
-                    cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown");
+                    cooldown[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "Cooldown");
                 }
 
                 return;
             }
 
-            if (!_rafManager.readInibin("DATA/Spells/" + spellName + ".inibin", out inibin))
+            if (!_rafManager.ReadSpellData(spellName, out data))
             {
-                if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + ".inibin", out inibin))
-                {
-                    if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + ".inibin", out inibin))
-                    {
-                        _logger.LogCoreError("Couldn't find spell stats for " + spellName);
-                        return;
-                    }
-                }
+                _logger.LogCoreError("Couldn't find spell stats for " + spellName);
+                return;
             }
 
             // Generate cooldown values for each level of the spell
             for (var i = 0; i < cooldown.Length; ++i)
             {
-                cooldown[i] = inibin.GetValue<float>("SpellData", "Cooldown" + (i + 1));
+                cooldown[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "Cooldown" + (i + 1));
             }
 
             for (var i = 0; i < cost.Length; ++i)
             {
-                cost[i] = inibin.GetValue<float>("SpellData", "ManaCost" + (i + 1));
+                cost[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "ManaCost" + (i + 1));
             }
 
             for (var i = 0; i < _castRange.Length; ++i)
             {
-                _castRange[i] = inibin.GetValue<float>("SpellData", "CastRange" + (i + 1));
+                _castRange[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "CastRange" + (i + 1));
             }
 
-            CastTime = ((1.0f + inibin.GetValue<float>("SpellData", "DelayCastOffsetPercent"))) / 2.0f;
+            CastTime = (1.0f + _rafManager.GetFloatValue(data, "Values", "SpellData", "DelayCastOffsetPercent")) / 2.0f;
 
-            Flags = inibin.GetValue<int>("SpellData", "Flags");
-            ProjectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
+            Flags = _rafManager.GetIntValue(data, "Values", "SpellData", "Flags");
+            ProjectileSpeed = _rafManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
             for (var i = 0; true; i++)
             {
-                if (inibin.GetValue<object>("SpellData", "Coefficient" + i) == null)
+                if (_rafManager.GetValue(data, "Values", "SpellData", "Coefficient" + i) == null)
+                {
                     break;
+                }
 
-                var coeffValue = inibin.GetValue<float>("SpellData", "Coefficient" + i);
+                var coeffValue = _rafManager.GetFloatValue(data, "Values", "SpellData", "Coefficient" + i);
                 Coefficient[i] = coeffValue;
                 i++;
             }
-            LineWidth = inibin.GetValue<float>("SpellData", "LineWidth");
-            hitEffectName = inibin.GetValue<string>("SpellData", "HitEffectName");
+            LineWidth = _rafManager.GetFloatValue(data, "Values", "SpellData", "LineWidth");
+            hitEffectName = _rafManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
 
             for (var i = 0; true; i++)
             {
                 string key = "Effect" + (0 + i) + "Level0Amount";
-                if (inibin.GetValue<object>("SpellData", key) == null)
+                if (_rafManager.GetValue(data, "Values", "SpellData", key) == null)
+                {
                     break;
+                }
 
-
-                List<float> effectValues = new List<float>();
+                var effectValues = new List<float>();
                 for (var j = 0; j < 6; ++j)
                 {
                     key = "Effect" + (0 + i) + "Level" + (0 + j) + "Amount";
-                    effectValues.Add(inibin.GetValue<float>("SpellData", key));
+                    effectValues.Add(_rafManager.GetFloatValue(data, "Values", "SpellData", key));
                 }
 
                 effects.Add(effectValues);
                 ++i;
             }
 
-            _targetType = (float)Math.Floor(inibin.GetValue<float>("SpellData", "TargettingType") + 0.5f);
+            _targetType = (float) Math.Floor(
+                _rafManager.GetFloatValue(data, "Values", "SpellData", "TargettingType") +
+                0.5f
+            );
 
+            ReloadLua();
+        }
 
-            // This is starting to get ugly. How many more names / paths to go ?
-            if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Missile.inibin", out inibin))
+        public void LoadExtraSpells(Champion champ)
+        {
+            JObject data;
+            var possibilities = new List<string>
             {
-                if (!_rafManager.readInibin("DATA/Spells/" + spellName + "Mis.inibin", out inibin))
+                _spellName + "Missile",
+                _spellName + "Mis"
+            };
+
+            foreach (var spell in champ.ExtraSpells)
+            {
+                if (!possibilities.Contains(spell))
                 {
-                    if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + "Missile.inibin", out inibin))
-                    {
-                        if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + "Missile.inibin", out inibin))
-                        {
-                            if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/Spells/" + spellName + "Mis.inibin", out inibin))
-                            {
-                                if (!_rafManager.readInibin("DATA/Characters/" + owner.Model + "/" + spellName + "Mis.inibin", out inibin))
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
+                    continue;
+                }
+
+                if (_rafManager.ReadSpellData(spell, out data))
+                {
+                    hitEffectName = _rafManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
+                    ProjectileSpeed = _rafManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
+                    ProjectileFlags = _rafManager.GetIntValue(data, "Values", "SpellData", "Flags");
                 }
             }
-
-            hitEffectName = inibin.GetValue<string>("SpellData", "HitEffectName");
-            ProjectileSpeed = inibin.GetValue<float>("SpellData", "MissileSpeed");
-            ProjectileFlags = inibin.GetValue<int>("SpellData", "Flags");
-            ReloadLua();
         }
 
         /**
@@ -340,7 +337,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
-            
+
             if (_scriptEngine.IsLoaded())
             {
                 try
@@ -362,7 +359,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void applyEffects(Unit u, Projectile p = null)
         {
-            if (hitEffectName != "")
+            if (!string.IsNullOrEmpty(hitEffectName))
             {
                 ApiFunctionManager.AddParticleTarget(Owner, hitEffectName, u);
             }
@@ -438,13 +435,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 new Target(toX, toY),
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.getHash(nameMissile),
+                (int)_rafManager.GetHash(nameMissile),
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p); 
+                _game.PacketNotifier.notifyProjectileSpawn(p);
             }
         }
 
@@ -458,21 +455,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target,
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.getHash(nameMissile),
+                (int)_rafManager.GetHash(nameMissile),
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p); 
+                _game.PacketNotifier.notifyProjectileSpawn(p);
             }
         }
 
         public void AddProjectileCustom(string name, float fromX, float fromY, float toX, float toY,
             bool isServerOnly)
         {
-            var p = new Projectile(fromX, fromY, (int) LineWidth, Owner, new Target(toX, toY), this, ProjectileSpeed,
-                (int) _rafManager.getHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
+            var p = new Projectile(fromX, fromY, (int)LineWidth, Owner, new Target(toX, toY), this, ProjectileSpeed,
+                (int)_rafManager.GetHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
 
             _game.Map.AddObject(p);
             if (!isServerOnly)
@@ -484,8 +481,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddProjectileCustomTarget(string name, float fromX, float fromY, Target target,
             bool isServerOnly)
         {
-            var p = new Projectile(fromX, fromY, (int) LineWidth, Owner, target, this, ProjectileSpeed,
-                (int) _rafManager.getHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
+            var p = new Projectile(fromX, fromY, (int)LineWidth, Owner, target, this, ProjectileSpeed,
+                (int)_rafManager.GetHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
 
             _game.Map.AddObject(p);
             if (!isServerOnly)
@@ -501,7 +498,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void setAnimation(string animation, string animation2, Unit target)
         {
-            List<string> animList = new List<string> {animation, animation2};
+            List<string> animList = new List<string> { animation, animation2 };
             _game.PacketNotifier.notifySetAnimation(target, animList);
         }
 
@@ -526,7 +523,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public int getId()
         {
-            return (int)_rafManager.getHash(_spellName);
+            return (int)_rafManager.GetHash(_spellName);
         }
 
         public string getStringForSlot()
@@ -584,24 +581,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 end");
             ApiFunctionManager.AddBaseFunctionToLuaScript(scriptEngine);
             scriptEngine.SetGlobalVariable("owner", Owner);
-            //scriptEngine.RegisterFunction("getOwnerX", Owner, typeof(Champion).GetMethod("getX"));
-            //scriptEngine.RegisterFunction("getOwnerY", Owner, typeof(Champion).GetMethod("getY"));
             scriptEngine.SetGlobalVariable("spellLevel", Level);
             scriptEngine.RegisterFunction("getOwnerLevel", Owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             scriptEngine.RegisterFunction("getChampionModel", Owner, typeof(Spell).GetMethod("GetChampionModel"));
-            //scriptEngine.SetGlobalVariable("castTarget", Target);
-            //scriptEngine.SetGlobalVariable("spellToX", X);
-            //scriptEngine.SetGlobalVariable("spellToY", Y);
             scriptEngine.SetGlobalVariable("spell", this);
             scriptEngine.SetGlobalVariable("projectileSpeed", ProjectileSpeed);
             scriptEngine.SetGlobalVariable("coefficient", Coefficient);
             scriptEngine.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("AddProjectile", new Type[] { typeof(string), typeof(float), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("AddProjectileTarget", new Type[] { typeof(string), typeof(Target) , typeof(bool) }));
+            scriptEngine.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("AddProjectileTarget", new Type[] { typeof(string), typeof(Target), typeof(bool) }));
             scriptEngine.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
             scriptEngine.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
-            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) } ));
+            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) }));
             scriptEngine.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
             scriptEngine.RegisterFunction("addProjectileCustom", this, typeof(Spell).GetMethod("AddProjectileCustom", new Type[] { typeof(string), typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new Type[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
