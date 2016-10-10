@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardTree.blnd",
+            "ChampionSkinName": "SightWardTree",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_tree.skn",
+            "Skeleton": "sightWard_tree.skl",
+            "SkinScale": 0.95,
+            "Texture": "sightWard_tree_TX_CM.dds",
+            "YOffset": 65532
+        }
+    }
+}

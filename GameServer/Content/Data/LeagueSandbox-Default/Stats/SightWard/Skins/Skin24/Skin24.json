@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin24",
+        "Name": "Skin24",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin24/Skin24.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardmecha.blnd",
+            "ChampionSkinName": "SightWardMecha",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Mecha.skn",
+            "Skeleton": "SightWard_Mecha.skl",
+            "SkinScale": "0.9",
+            "Texture": "Sightward_Mecha_TX_CM.dds",
+            "YOffset": -1.8
+        }
+    }
+}

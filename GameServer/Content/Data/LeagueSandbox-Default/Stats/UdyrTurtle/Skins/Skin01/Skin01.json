@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/UdyrTurtle/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseUdyr.blnd",
+            "ChampionSkinID": 77001,
+            "ChampionSkinName": "BlackBeltUdyr",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Udyr.skn",
+            "Skeleton": "Udyr.skl",
+            "SkinScale": 1.1,
+            "Texture": "udyr_orange_gi_TX_CM.dds"
+        }
+    }
+}

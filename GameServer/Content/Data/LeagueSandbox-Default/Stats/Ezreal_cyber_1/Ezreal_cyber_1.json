@@ -1,0 +1,29 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Ezreal_cyber_1",
+        "Name": "Ezreal_cyber_1",
+        "ResourcePath": "DATA/Characters/Ezreal_cyber_1/Ezreal_cyber_1.inibin"
+    },
+    "Values": {
+        "DefaultAnimations": {
+            "Animation1": "Buffbones",
+            "Animation2": "Buffbone_Additive",
+            "NumberOfAnimations": 2
+        },
+        "MeshSkin5": {
+            "Animations": "CyberEzreal.blnd",
+            "ChampionSkinID": 81005,
+            "ChampionSkinName": "CyberEzreal",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Ezreal_Cyber1.skn",
+            "Skeleton": "Ezreal_Cyber1.skl",
+            "SkinScale": 1.1,
+            "Texture": "ezreal_cyber1_TX_CM.dds",
+            "UsesSkinVO": "true"
+        },
+        "Package": {
+            "FallbackPackage": "Ezreal"
+        }
+    }
+}

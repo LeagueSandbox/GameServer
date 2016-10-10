@@ -10,10 +10,8 @@
             "CastType": "0",
             "Flags": "34820",
             "TargettingType": 4,
+            "TextFlags": "Instacast | AffectFriends | AffectMinions",
             "Version": 1
-        },
-        "UNKNOWN_HASHES": {
-            "1829373218": "Instacast | AffectFriends | AffectMinions"
         }
     }
 }

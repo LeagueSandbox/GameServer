@@ -7,10 +7,8 @@
     },
     "Values": {
         "BuffData": {
-            "DynamicTooltip": "game_buff_tooltip_BrushPassive"
-        },
-        "UNKNOWN_HASHES": {
-            "346244872": "Nidalee_Passive.dds"
+            "DynamicTooltip": "game_buff_tooltip_BrushPassive",
+            "InventoryIcon": "Nidalee_Passive.dds"
         }
     }
 }

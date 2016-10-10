@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/UdyrPhoenix/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "PrimalUdyr.blnd",
+            "ChampionSkinID": 77002,
+            "ChampionSkinName": "PrimalUdyr",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Udyr_primal_phoenix.skn",
+            "Skeleton": "Udyr_primal_phoenix.skl",
+            "SkinScale": 1.1,
+            "Texture": "udyr_primal_phoenix_TX_CM.dds"
+        }
+    }
+}

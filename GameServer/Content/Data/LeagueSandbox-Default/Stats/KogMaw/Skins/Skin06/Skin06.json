@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMaw.blnd",
+            "ChampionSkinID": 96006,
+            "ChampionSkinName": "DeepseaKogMaw",
+            "OverrideBoundingBox": "262,8 281,4 262,8",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_deepsea.skn",
+            "Skeleton": "KogMaw_deepsea.skl",
+            "SkinScale": 0.7,
+            "Texture": "kogmaw_deepsea_TX_CM.dds"
+        }
+    }
+}

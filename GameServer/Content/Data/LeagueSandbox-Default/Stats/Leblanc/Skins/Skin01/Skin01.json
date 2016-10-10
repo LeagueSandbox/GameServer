@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Leblanc/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseLeblanc.blnd",
+            "ChampionSkinID": 7001,
+            "ChampionSkinName": "WhiteHairLeblanc",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Leblanc_white.skn",
+            "Skeleton": "Leblanc_white.skl",
+            "SkinScale": "1.00",
+            "Texture": "leblanc_white_TX_CM.dds"
+        }
+    }
+}

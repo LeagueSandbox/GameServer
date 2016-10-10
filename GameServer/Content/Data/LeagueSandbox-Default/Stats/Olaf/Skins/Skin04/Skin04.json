@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Olaf/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "PentakillOlaf.blnd",
+            "ChampionSkinID": 2004,
+            "ChampionSkinName": "PentakillOlaf",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Olaf_pentakill.skn",
+            "Skeleton": "Olaf_pentakill.skl",
+            "SkinScale": 1.1,
+            "Texture": "olaf_pentakill_TX_CM.dds"
+        }
+    }
+}

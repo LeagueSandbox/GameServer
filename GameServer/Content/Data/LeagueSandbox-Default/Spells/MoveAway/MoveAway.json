@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "MoveAway",
+        "Name": "MoveAway",
+        "ResourcePath": "DATA/Shared/Spells/MoveAway.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_MoveAway"
+        }
+    }
+}

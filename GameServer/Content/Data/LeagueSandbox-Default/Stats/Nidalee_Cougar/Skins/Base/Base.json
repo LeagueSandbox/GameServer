@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Nidalee_Cougar/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_CougarBase.blnd",
+            "ChampionSkinID": "76000",
+            "ChampionSkinName": "Nidalee_CougarBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_Cougar.skn",
+            "Skeleton": "Nidalee_Cougar.skl",
+            "SkinScale": "1.0",
+            "Texture": "nidalee_base_cat_2012_TX_CM.dds"
+        }
+    }
+}

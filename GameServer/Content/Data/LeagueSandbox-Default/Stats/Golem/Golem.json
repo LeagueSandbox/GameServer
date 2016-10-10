@@ -1,0 +1,81 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Golem",
+        "Name": "Golem",
+        "ResourcePath": "DATA/Characters/Golem/Golem.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "300",
+            "Armor": 12,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.11,
+            "AttackDelayOffsetPercent": 0.02,
+            "AttackRange": "150",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "60",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1200",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Golem",
+            "EnemyTooltip": "game_character_enemyTooltip_Golem",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "140.0",
+            "GameplayCollisionRadius": "80.0",
+            "GoldGivenOnDeath": "55.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": 285,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Golem",
+            "PathfindingCollisionRadius": 24.5747,
+            "SelectionHeight": "120",
+            "SelectionRadius": 155,
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "-10",
+            "UnitTags": "Monster | Monster_Large",
+            "WeaponMaterial": "GolemBasicAttack"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": "Golem_idle.troy spine_b"
+        },
+        "Info": {
+            "IconCircle": "Golem_Circle.dds",
+            "IconSquare": "Golem_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Golem.blnd",
+            "ChampionSkinName": "Golem",
+            "EmissiveTexture": "Golem_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Golem.skn",
+            "Skeleton": "Golem.skl",
+            "SkinScale": 1.1,
+            "Texture": "Golem.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

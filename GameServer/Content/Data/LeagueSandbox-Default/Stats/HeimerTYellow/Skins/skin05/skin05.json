@@ -1,0 +1,33 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/HeimerTYellow/Skins/skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeimerTYellowBase.blnd",
+            "ChampionSkinName": "HeimerTYellowSkin05",
+            "GlossTexture": "HeimerTYellow_Skin05_TX_GM.dds",
+            "ReflectionFresnel": 1,
+            "ReflectionFresnelBlue": 5,
+            "ReflectionFresnelGreen": 5,
+            "ReflectionFresnelRed": 5,
+            "ReflectionMap": "HeimerTYellow_Skin05_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.6,
+            "ReflectionOpacityGlancing": 0.6,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HeimerTYellow_Skin05.skn",
+            "Skeleton": "HeimerTYellow_Skin05.skl",
+            "SkinScale": "1.0",
+            "Texture": "HeimerTYellow_Skin05_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3400833179": 0.22,
+            "343518805": 0.3,
+            "3966094422": 0.3,
+            "455913160": 0.3
+        }
+    }
+}

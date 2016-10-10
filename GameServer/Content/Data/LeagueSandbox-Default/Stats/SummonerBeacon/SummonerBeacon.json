@@ -1,0 +1,80 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SummonerBeacon",
+        "Name": "SummonerBeacon",
+        "ResourcePath": "DATA/Characters/SummonerBeacon/SummonerBeacon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AbilityPowerIncPerLevel": "0",
+            "AcquisitionRange": 1,
+            "Armor": 15,
+            "ArmorPerLevel": "0",
+            "AttackDelayOffsetPercent": 0.02,
+            "AttackRange": 1,
+            "AttackSpeedPerLevel": 1.75,
+            "BaseAbilityPower": "0",
+            "BaseCritChance": 1.75,
+            "BaseDamage": 1,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "200",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "Classification": "Arcane",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0.25,
+            "DamagePerLevel": 3.5,
+            "Description": "game_character_description_SummonerBeacon",
+            "EnemyTooltip": "game_character_enemyTooltip_SummonerBeacon",
+            "FriendlyTooltip": "game_character_friendlyTooltip_SummonerBeacon",
+            "HPPerLevel": 53,
+            "IsMelee": "true",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SummonerBeacon",
+            "PathfindingCollisionRadius": 13.6,
+            "SelectionHeight": "250",
+            "SelectionRadius": "90",
+            "SpellBlock": "0",
+            "SpellBlockPerLevel": "0"
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": ""
+        },
+        "MeshSkin": {
+            "Animations": "SummonerBeaconBase.blnd",
+            "ChampionSkinName": "SummonerBeaconBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "SummonerBeacon.skn",
+            "Skeleton": "SummonerBeacon.skl",
+            "SkinScale": 3.25,
+            "Texture": "SummonerBeacon.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2452862585": "Special1.wav",
+            "2452862586": "Special2.wav",
+            "245402728": "Attack1.wav",
+            "245402729": "Attack2.wav",
+            "245402730": "Attack3.wav",
+            "245402731": "Attack4.wav",
+            "2896212226": "Ready.wav",
+            "386495002": "6.0",
+            "3983263047": "0",
+            "4123230931": "Death.wav",
+            "789899530": "Click1.wav",
+            "789899531": "Click2.wav",
+            "789899532": "Click3.wav",
+            "789899533": "Click4.wav",
+            "882852607": "Move1.wav",
+            "882852608": "Move2.wav",
+            "882852609": "Move3.wav",
+            "882852610": "Move4.wav"
+        }
+    }
+}

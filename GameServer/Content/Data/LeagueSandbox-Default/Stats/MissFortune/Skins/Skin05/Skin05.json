@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMissFortune.blnd",
+            "ChampionSkinID": 21005,
+            "ChampionSkinName": "WastelandMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "missfortune_wasteland.skn",
+            "Skeleton": "missfortune_wasteland.skl",
+            "SkinScale": 1.2,
+            "Texture": "missfortune_wasteland_TX_CM.dds"
+        }
+    }
+}

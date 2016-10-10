@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ShopKeeper",
+        "Name": "ShopKeeper",
+        "ResourcePath": "DATA/Characters/ShopKeeper/ShopKeeper.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ShopKeeperBase.blnd",
+            "ChampionSkinName": "ShopKeeperBase",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "ShopKeeper.skn",
+            "Skeleton": "ShopKeeper.skl",
+            "SkinScale": 1.55,
+            "Texture": "shop_trol_character.dds"
+        }
+    }
+}

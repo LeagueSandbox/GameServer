@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Haste",
+        "Name": "Haste",
+        "ResourcePath": "DATA/Shared/Spells/Haste.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Haste"
+        }
+    }
+}

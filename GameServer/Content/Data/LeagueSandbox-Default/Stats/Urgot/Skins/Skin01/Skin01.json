@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Urgot/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CrabUrgot.blnd",
+            "ChampionSkinID": 6001,
+            "ChampionSkinName": "CrabUrgot",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "urgot_crab.skn",
+            "Skeleton": "urgot_crab.skl",
+            "SkinScale": 1.6,
+            "Texture": "urgot_crab_TX_CM.dds"
+        }
+    }
+}

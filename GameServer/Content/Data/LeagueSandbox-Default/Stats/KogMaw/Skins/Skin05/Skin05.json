@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/KogMaw/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMaw.blnd",
+            "ChampionSkinID": 96005,
+            "ChampionSkinName": "NewYearDragonKogMaw",
+            "OverrideBoundingBox": "262,8 281,4 262,8",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_dragon.skn",
+            "Skeleton": "KogMaw_dragon.skl",
+            "SkinScale": 0.7,
+            "Texture": "kogmaw_dragon_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_ShpSouth/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_ShopSouth_Animated_Parts.blnd",
+            "ChampionSkinName": "HA_AP_ShopSouth_Animated_Parts",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_ShpSouth.skn",
+            "Skeleton": "HA_AP_ShpSouth.skl",
+            "SkinScale": "1.0",
+            "Texture": "HA_AP_ShpSouth.dds"
+        }
+    }
+}

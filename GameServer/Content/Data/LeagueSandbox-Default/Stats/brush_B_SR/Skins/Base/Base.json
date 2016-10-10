@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/brush_B_SR/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "brush_SR.blnd",
+            "ChampionSkinName": "brush_B_SR",
+            "SelfIllumination": "0",
+            "SimpleSkin": "brush_B_SR.skn",
+            "Skeleton": "brush_B_SR.skl",
+            "SkinScale": "0.85",
+            "Texture": "brush_SR.dds"
+        }
+    }
+}

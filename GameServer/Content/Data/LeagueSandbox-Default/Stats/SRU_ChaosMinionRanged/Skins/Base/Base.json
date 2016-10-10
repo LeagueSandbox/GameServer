@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_ChaosMinionRanged/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Chaos_Minion_Caster.blnd",
+            "ChampionSkinName": "Chaos_Minion_Caster",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Chaos_Minion_Caster.skn",
+            "Skeleton": "Chaos_Minion_Caster.skl",
+            "SkinScale": 0.87,
+            "Texture": "Red_Caster_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

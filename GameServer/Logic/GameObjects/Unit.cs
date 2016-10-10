@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Core.Logic.RAF;
 using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting;
@@ -57,6 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Stats stats;
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
+        protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
@@ -339,9 +341,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         */
         public virtual void autoAttackHit(Unit target)
         {
-            float damage = (_isNextAutoCrit) ? stats.getCritDamagePct() * stats.AttackDamage.Total : stats.AttackDamage.Total;
+            var damage = stats.AttackDamage.Total;
+            if (_isNextAutoCrit)
+            {
+                damage *= stats.getCritDamagePct();
+            }
 
-                dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+            dealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
                                              _isNextAutoCrit);
 
@@ -361,7 +367,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            DamageText text= DamageText.DAMAGE_TEXT_NORMAL;
+            var text = DamageText.DAMAGE_TEXT_NORMAL;
 
             if (isCrit)
             {

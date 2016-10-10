@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_ChaosTurret/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_ChaosTurret.blnd",
+            "ChampionSkinName": "HA_AP_ChaosTurret",
+            "SelfIllumination": 1,
+            "SimpleSkin": "HA_AP_ChaosTurret.skn",
+            "Skeleton": "HA_AP_ChaosTurret.skl",
+            "SkinScale": "770",
+            "Texture": "HA_AP_ChaosTurret.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4276189325": "HA_AP_turret_explosion.troy"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseSivir.blnd",
+            "ChampionSkinID": 15004,
+            "ChampionSkinName": "FreljordSivir",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_frejlord.skn",
+            "Skeleton": "Sivir_frejlord.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "sivir_frejlord_TX_CM.dds",
+            "YOffset": "-0.2"
+        }
+    }
+}

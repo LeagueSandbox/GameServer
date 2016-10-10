@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Rumble/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "rumble.blnd",
+            "ChampionSkinID": 68001,
+            "ChampionSkinName": "JungleRumble",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "rumble_jungle.skn",
+            "Skeleton": "rumble_jungle.skl",
+            "SkinScale": 1.9,
+            "Texture": "rumble_inthejungle_TX_CM.dds"
+        }
+    }
+}

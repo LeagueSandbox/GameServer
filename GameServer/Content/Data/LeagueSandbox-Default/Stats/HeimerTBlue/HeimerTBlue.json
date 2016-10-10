@@ -1,0 +1,70 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HeimerTBlue",
+        "Name": "HeimerTBlue",
+        "ResourcePath": "DATA/Characters/HeimerTBlue/HeimerTBlue.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "650",
+            "Armor": "10",
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.01198,
+            "AttackDelayOffsetPercent": -0.5,
+            "AttackRange": "650",
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": 0.001,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "10000",
+            "BaseMP": "50",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 1,
+            "CritPerLevel": 0,
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_H28QApexTurret",
+            "EnemyTooltip": "",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "",
+            "GameplayCollisionRadius": "35.0",
+            "GoldGivenOnDeath": "25.0",
+            "HPPerLevel": "0",
+            "IsImportantBotTarget": "true",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_H28QApexTurret",
+            "PARType": "MANA",
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "1000",
+            "SelectionHeight": "60.0",
+            "SelectionRadius": "60.0000",
+            "Spell1": "HeimerdingerTurretBigEnergyBlast",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": 25,
+            "Tips2": "game_character_opposing_tips_Heimerdinger",
+            "TowerTargetingPriorityBoost": "10"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 2,
+            "Particle1": "Heimerdinger_Base_Q_Turret_Yellow_Idle.troy l__piston1",
+            "Particle2": "Heimerdinger_Base_Q_Turret_Yellow_Idle.troy r__piston1"
+        },
+        "Info": {
+            "IconCircle": "Turret_Circle.dds",
+            "IconSquare": "Turret_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

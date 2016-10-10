@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_BannerMidBridge",
+        "Name": "HA_AP_BannerMidBridge",
+        "ResourcePath": "DATA/Characters/HA_AP_BannerMidBridge/HA_AP_BannerMidBridge.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_Tree1",
+        "Name": "TT_Tree1",
+        "ResourcePath": "DATA/Characters/TT_Tree1/TT_Tree1.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "TT_Tree1Base.blnd",
+            "ChampionSkinName": "TT_Tree1Base",
+            "SimpleSkin": "TT_Tree1.skn",
+            "Skeleton": "TT_Tree1.skl",
+            "SkinScale": 1,
+            "Texture": "magic_trees04.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Cassiopeia_Death/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Cassiopeia_Death.blnd",
+            "ChampionSkinID": 69004,
+            "ChampionSkinName": "Cassiopeia_Death_LunarRevel",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Cassiopeia_Death_LunarRevel.skn",
+            "Skeleton": "Cassiopeia_Death_LunarRevel.skl",
+            "SkinScale": 1.7,
+            "Texture": "cassiopeia_death_lunar_TX_CM.dds"
+        }
+    }
+}

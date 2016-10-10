@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Tryndamere/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TryndamereBase.blnd",
+            "ChampionSkinID": 23003,
+            "ChampionSkinName": "VikingTryndamere",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tryndamere_Viking.skn",
+            "Skeleton": "Tryndamere_Viking.skl",
+            "SkinScale": "2.0",
+            "Texture": "tryndamere_viking_TX_CM.dds"
+        }
+    }
+}

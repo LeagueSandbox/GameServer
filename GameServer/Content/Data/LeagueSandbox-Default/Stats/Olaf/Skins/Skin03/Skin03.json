@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Olaf/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseOlaf.blnd",
+            "ChampionSkinID": 2003,
+            "ChampionSkinName": "BroOlaf",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Olaf_bro.skn",
+            "Skeleton": "Olaf_bro.skl",
+            "SkinScale": 1.1,
+            "Texture": "olaf_brolaff_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

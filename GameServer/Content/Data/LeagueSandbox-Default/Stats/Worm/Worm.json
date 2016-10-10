@@ -1,0 +1,97 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Worm",
+        "Name": "Worm",
+        "ResourcePath": "DATA/Characters/Worm/Worm.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "400",
+            "Armor": "120.0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.1626736,
+            "AttackDelayOffsetPercent": "2.0",
+            "AttackRange": "900",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "460.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "8800",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 15,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Worm",
+            "DisableAggroIndicator": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_Worm",
+            "ExperienceRadius": "2000.0",
+            "ExpGivenOnDeath": "800.0",
+            "GameplayCollisionRadius": "100.0",
+            "GlobalExpGivenOnDeath": "600.000",
+            "GlobalGoldGivenOnDeath": "300.000",
+            "GoldGivenOnDeath": "25.0",
+            "HPPerLevel": "0",
+            "IsEpic": "false",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Worm",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "350.0000",
+            "SelectionRadius": "180.0000",
+            "Significance": 1,
+            "Spell1": "SweepingBlow",
+            "Spell2": "Propel",
+            "Spell3": "WrathoftheAncients",
+            "Spell4": "WormAttack",
+            "SpellBlock": "70",
+            "WeaponMaterial": "WormBasicAttack"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 2,
+            "Particle1": "WormFoam.troy jaw",
+            "Particle2": "WormFog.troy"
+        },
+        "Info": {
+            "IconCircle": "ChaosTurretWorm_Circle.dds",
+            "IconSquare": "ChaosTurretWorm_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Baron.blnd",
+            "ChampionSkinName": "Baron",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "ChaosTurretWorm.skn",
+            "Skeleton": "ChaosTurretWorm.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "ChaosTurretWorm2.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "MeshSkin1.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "baron_xmas.skn",
+            "Skeleton": "baron_xmas.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "baron_xmas.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": 16,
+            "352783488": "RedLaneTower_diffuse_Cmask.dds",
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

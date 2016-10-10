@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Aatrox/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Aatrox.blnd",
+            "ChampionSkinID": "266000",
+            "ChampionSkinName": "Aatrox",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Aatrox.skn",
+            "Skeleton": "Aatrox.skl",
+            "SkinScale": 1.09,
+            "Texture": "Aatrox_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

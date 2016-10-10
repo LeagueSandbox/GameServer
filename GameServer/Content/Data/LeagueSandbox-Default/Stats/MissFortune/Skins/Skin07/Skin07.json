@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ArcadeMissFortune.blnd",
+            "ChampionSkinID": 21007,
+            "ChampionSkinName": "MissFortuneSkin07",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Missfortune07.skn",
+            "Skeleton": "Missfortune07.skl",
+            "SkinScale": 1.2,
+            "Texture": "Missfortune_skin07_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Missfortune_Skin07_TV_TX_CM.dds",
+            "3700722767": "Arcade_TV_MAT",
+            "708066840": "Arcade_TV_MAT"
+        }
+    }
+}

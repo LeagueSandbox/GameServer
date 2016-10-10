@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/KogMawDead/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMawDead.blnd",
+            "ChampionSkinID": 96002,
+            "ChampionSkinName": "PoisonFrogKogMaw",
+            "SelfIllumination": 0.3,
+            "SimpleSkin": "KogMaw_Dead.skn",
+            "Skeleton": "KogMaw_Dead.skl",
+            "SkinScale": "0.7",
+            "Texture": "KogMawDeathSkin_frog.dds"
+        }
+    }
+}

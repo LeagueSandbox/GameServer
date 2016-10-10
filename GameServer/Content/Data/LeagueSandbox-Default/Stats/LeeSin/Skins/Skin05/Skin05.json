@@ -1,0 +1,27 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/LeeSin/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "leesinskin05.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 64005,
+            "ChampionSkinName": "LeeSinSkin05",
+            "MaterialOverride0Submesh": "LeeSin_tree",
+            "MaterialOverride0Texture": "LeeSin_Skin05_Recall_TX_CM.dds",
+            "OverrideBoundingBox": "75 120 75",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "LeeSin_Skin05.skn",
+            "Skeleton": "LeeSin_Skin05.skl",
+            "SkinScale": 1.82,
+            "Texture": "LeeSin_Skin05_TX_CM.DDS"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "LeeSin_Tree"
+        }
+    }
+}

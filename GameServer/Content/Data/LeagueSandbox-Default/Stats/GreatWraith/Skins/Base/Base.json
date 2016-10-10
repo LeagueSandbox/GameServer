@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/GreatWraith/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Wraith.blnd",
+            "ChampionSkinName": "Wraith",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Wraith.skn",
+            "Skeleton": "Wraith.skl",
+            "SkinScale": "2.0",
+            "Texture": "GreatWraith_base_TX_CM.dds"
+        }
+    }
+}

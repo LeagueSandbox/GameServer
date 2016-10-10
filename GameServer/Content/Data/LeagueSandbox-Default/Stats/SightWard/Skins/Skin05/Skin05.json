@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardStone.blnd",
+            "ChampionSkinName": "SightWardStone",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_stone.skn",
+            "Skeleton": "sightWard_stone.skl",
+            "SkinScale": 1.5,
+            "Texture": "sightWard_stone_TX_CM.dds"
+        }
+    }
+}

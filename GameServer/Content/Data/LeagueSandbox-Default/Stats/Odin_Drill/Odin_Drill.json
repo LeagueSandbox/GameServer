@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_Drill",
+        "Name": "Odin_Drill",
+        "ResourcePath": "DATA/Characters/Odin_Drill/Odin_Drill.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_DrillBase.blnd",
+            "ChampionSkinName": "Odin_DrillBase",
+            "SimpleSkin": "Odin_Drill.skn",
+            "Skeleton": "Odin_Drill.skl",
+            "SkinScale": 0.8,
+            "Texture": "Odin_Drill_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "GrievousWound",
+        "Name": "GrievousWound",
+        "ResourcePath": "DATA/Shared/Spells/GrievousWound.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_GrievousWound"
+        }
+    }
+}

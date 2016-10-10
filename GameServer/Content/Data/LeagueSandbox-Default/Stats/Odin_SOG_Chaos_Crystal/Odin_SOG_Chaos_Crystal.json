@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_SOG_Chaos_Crystal",
+        "Name": "Odin_SOG_Chaos_Crystal",
+        "ResourcePath": "DATA/Characters/Odin_SOG_Chaos_Crystal/Odin_SOG_Chaos_Crystal.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_SOG_Chaos_CrystalBase.blnd",
+            "ChampionSkinName": "Odin_SOG_Chaos_CrystalBase",
+            "SimpleSkin": "Odin_SoG_Chaos_Crystal.skn",
+            "Skeleton": "Odin_SoG_Chaos_Crystal.skl",
+            "Texture": "Odin_SoG_Chaos_TX_CM.dds"
+        }
+    }
+}

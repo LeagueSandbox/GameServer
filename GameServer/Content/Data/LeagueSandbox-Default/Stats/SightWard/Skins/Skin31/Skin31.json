@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin31",
+        "Name": "Skin31",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin31/Skin31.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Ward_Season2014_02_Idle.troy Orb"
+        },
+        "MeshSkin": {
+            "Animations": "S4VictoriousWard.blnd",
+            "ChampionSkinName": "S4VictoriousWard",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard_S4VictoriousWard.skn",
+            "Skeleton": "SightWard_S4VictoriousWard.skl",
+            "SkinScale": 1,
+            "Texture": "Ward_NewSkins_TX_CM.dds",
+            "YOffset": -1.2
+        }
+    }
+}

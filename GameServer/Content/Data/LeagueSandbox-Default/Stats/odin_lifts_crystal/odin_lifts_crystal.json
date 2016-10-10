@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "odin_lifts_crystal",
+        "Name": "odin_lifts_crystal",
+        "ResourcePath": "DATA/Characters/Odin_Lifts_Crystal/odin_lifts_crystal.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_Lifts_CrystalBase.blnd",
+            "ChampionSkinName": "Odin_Lifts_CrystalBase",
+            "SimpleSkin": "odin_lifts_crystal.skn",
+            "Skeleton": "odin_lifts_crystal.skl",
+            "Texture": "Lift_Gems_Props_DM.dds"
+        }
+    }
+}

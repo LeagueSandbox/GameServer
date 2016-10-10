@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "odin_lifts_buckets",
+        "Name": "odin_lifts_buckets",
+        "ResourcePath": "DATA/Characters/Odin_Lifts_Buckets/odin_lifts_buckets.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AssetCategory": "obj",
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_Lifts_BucketsBase.blnd",
+            "ChampionSkinName": "Odin_Lifts_BucketsBase",
+            "SimpleSkin": "odin_lifts_buckets.skn",
+            "Skeleton": "odin_lifts_buckets.skl",
+            "Texture": "Lift_Buckets_Props_DM.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/MissFortune/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseMissFortune.blnd",
+            "ChampionSkinID": 21002,
+            "ChampionSkinName": "WaterlooMissFortune",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "missfortune_waterloo.skn",
+            "Skeleton": "missfortune_waterloo.skl",
+            "SkinScale": 1.2,
+            "Texture": "missfortune_waterloo_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/JinxMine/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "JinxMine.blnd",
+            "ChampionSkinName": "JinxMineSkin01",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "JinxMine_Skin01.skn",
+            "Skeleton": "JinxMine_Skin01.skl",
+            "SkinScale": 1.1,
+            "Texture": "JinxMine_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.6
+        }
+    }
+}

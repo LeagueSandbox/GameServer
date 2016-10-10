@@ -1,0 +1,69 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ChaosTurretTutorial",
+        "Name": "ChaosTurretTutorial",
+        "ResourcePath": "DATA/Characters/ChaosTurretTutorial/ChaosTurretTutorial.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": 0,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0,
+            "AttackDelayOffsetPercent": -0.375,
+            "AttackRange": "700",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "150.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1300",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0.1,
+            "Description": "game_character_description_ChaosTurretTutorial",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "300.000",
+            "GlobalGoldGivenOnDeath": "100.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_ChaosTurretTutorial",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200.0000",
+            "SelectionRadius": "130.0000"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "NumberOfParticles": 1,
+            "Particle1": "Chaos_Turret_Crystal.troy joint2",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconSquare": "ChaosLaneTower_Icon.dds"
+        },
+        "MeshSkin": {
+            "Animations": "ChaosTurretTutorialBase.blnd",
+            "ChampionSkinName": "ChaosTurretTutorialBase",
+            "EmissiveTexture": "RedLaneTower_diffuse_Cmask.dds",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "RedLaneTower.skn",
+            "Skeleton": "RedLaneTower.skl",
+            "SkinScale": 1.1,
+            "Texture": "RedLaneTower_diff.dds"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Nasus/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Nasus_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "BaseNasus.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 75004,
+            "ChampionSkinName": "RiotNasus",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nasus_Riot.skn",
+            "Skeleton": "Nasus_Riot.skl",
+            "SkinScale": 1.18,
+            "Texture": "nasus_Riot_TX_CM.dds"
+        }
+    }
+}

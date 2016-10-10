@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin19",
+        "Name": "Skin19",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin19/Skin19.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardriot.blnd",
+            "ChampionSkinName": "SightWardRiot",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Riot.skn",
+            "Skeleton": "SightWard_Riot.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_Riot_TX_CM.dds"
+        }
+    }
+}

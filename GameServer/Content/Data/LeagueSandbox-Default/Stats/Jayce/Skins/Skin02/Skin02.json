@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Jayce/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Jayce_Gentleman.blnd",
+            "ChampionSkinID": 126002,
+            "ChampionSkinName": "Jayce_Gentleman",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Jayce_Gentleman.skn",
+            "Skeleton": "Jayce_Gentleman.skl",
+            "SkinScale": "1.00",
+            "Texture": "jayce_gentlemen_TX_CM.dds",
+            "YOffset": -1.3
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1004,
+            "ChampionSkinName": "AnnieProm",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "annie_prom.skn",
+            "Skeleton": "annie_prom.skl",
+            "SkinScale": 1,
+            "Texture": "annie_prom_TX_CM.dds"
+        }
+    }
+}

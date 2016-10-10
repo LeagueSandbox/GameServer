@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Nidalee_Cougar/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeadhunterNidalee.blnd",
+            "ChampionSkinID": 76006,
+            "ChampionSkinName": "HeadhunterNidalee",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_Headhunter.skn",
+            "Skeleton": "Nidalee_Headhunter.skl",
+            "SkinScale": 1,
+            "Texture": "Nidalee_cougar_headhunter_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "CrestoftheAncientGolemAura",
+        "Name": "CrestoftheAncientGolemAura",
+        "ResourcePath": "DATA/Shared/Spells/CrestoftheAncientGolemAura.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_CrestoftheAncientGolemAura"
+        }
+    }
+}

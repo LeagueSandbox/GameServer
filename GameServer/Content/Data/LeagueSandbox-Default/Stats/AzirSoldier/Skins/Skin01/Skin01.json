@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/AzirSoldier/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "AzirSoldier.blnd",
+            "ChampionSkinID": 436001,
+            "ChampionSkinName": "AzirSoldierSkin01",
+            "SelfIllumination": 0.900000036,
+            "SimpleSkin": "AzirSoldier_Skin01.skn",
+            "Skeleton": "AzirSoldier_Skin01.skl",
+            "SkinScale": "1.00",
+            "Texture": "AzirSoldier_Skin01_TX_CM.dds"
+        }
+    }
+}

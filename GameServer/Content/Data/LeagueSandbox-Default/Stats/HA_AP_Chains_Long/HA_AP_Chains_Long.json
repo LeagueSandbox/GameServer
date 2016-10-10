@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_Chains_Long",
+        "Name": "HA_AP_Chains_Long",
+        "ResourcePath": "DATA/Characters/HA_AP_Chains_Long/HA_AP_Chains_Long.inibin"
+    },
+    "Values": {
+        "Data": {
+            "SelectionHeight": "4000",
+            "SelectionRadius": "4000"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        },
+        "MeshSkin": {
+            "CastShadows": "0"
+        },
+        "Package": {
+            "FallbackPackage": "HA_AP_Chains"
+        }
+    }
+}

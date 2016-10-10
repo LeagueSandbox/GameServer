@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sruap_Ordernexus_Rubble/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sruap_Ordernexus_Rubble.blnd",
+            "ChampionSkinName": "SruapOrdernexusRubble",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sruap_Ordernexus_Rubble.skn",
+            "Skeleton": "Sruap_Ordernexus_Rubble.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sruap_Ordernexus_Rubble_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

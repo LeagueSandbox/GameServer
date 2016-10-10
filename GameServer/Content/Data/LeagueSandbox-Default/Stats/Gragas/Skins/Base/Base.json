@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Gragas.blnd",
+            "ChampionSkinID": "79000",
+            "ChampionSkinName": "Gragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas.skn",
+            "Skeleton": "Gragas.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas.dds"
+        }
+    }
+}

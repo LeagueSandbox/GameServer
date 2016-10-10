@@ -1,0 +1,77 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "YoungLizard",
+        "Name": "YoungLizard",
+        "ResourcePath": "DATA/Characters/YoungLizard/YoungLizard.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 8,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.10865,
+            "AttackDelayOffsetPercent": -0.08,
+            "AttackRange": "450",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.33,
+            "BaseCritChance": 0,
+            "BaseDamage": 12,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "400",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_YoungLizard",
+            "EnemyTooltip": "game_character_enemyTooltip_YoungLizard",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "20.0",
+            "ExtraAttack1_Probability": 0.33,
+            "ExtraAttack2_Probability": 0.34,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "7.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_YoungLizard",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100",
+            "SelectionRadius": "100",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "0",
+            "UnitTags": "Monster"
+        },
+        "Info": {
+            "IconCircle": "YoungLizard_Circle.dds",
+            "IconSquare": "YoungLizard_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "YoungLizard.blnd",
+            "ChampionSkinName": "YoungLizard",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "YoungLizard.skn",
+            "Skeleton": "YoungLizard.skl",
+            "SkinScale": 0.7,
+            "Texture": "YoungLizard.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

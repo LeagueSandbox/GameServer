@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/ZedShadow/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ZedShadow.blnd",
+            "CastShadows": "0",
+            "ChampionSkinID": 84007,
+            "ChampionSkinName": "ZedShadowStormNinja",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "ZedShadow_StormNinja.skn",
+            "Skeleton": "ZedShadow_StormNinja.skl",
+            "SkinScale": 1.17,
+            "Texture": "ZedShadow_stormNinja_TX_CM.DDS"
+        }
+    }
+}

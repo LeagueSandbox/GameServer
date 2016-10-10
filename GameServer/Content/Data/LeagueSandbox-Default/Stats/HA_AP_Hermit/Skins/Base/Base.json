@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_Hermit/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_Hermit.blnd",
+            "ChampionSkinName": "HA_AP_Hermit",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_Hermit.skn",
+            "Skeleton": "HA_AP_Hermit.skl",
+            "SkinScale": 1.2,
+            "Texture": "HA_AP_Hermit.dds"
+        }
+    }
+}

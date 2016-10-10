@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Jayce/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Jayce_Base.blnd",
+            "ChampionSkinID": "126000",
+            "ChampionSkinName": "Jayce_Base",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Jayce.skn",
+            "Skeleton": "Jayce.skl",
+            "SkinScale": "1.00",
+            "Texture": "Jayce_base_melee_TX_CM.dds",
+            "YOffset": -0.25
+        }
+    }
+}

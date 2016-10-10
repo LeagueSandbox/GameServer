@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderTurret/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_OrderTurret.blnd",
+            "ChampionSkinName": "HA_AP_OrderTurret_Destroyed",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_OrderTurret_Destroyed.skn",
+            "Skeleton": "HA_AP_OrderTurret_Destroyed.skl",
+            "SkinScale": "750.0",
+            "Texture": "HA_AP_OrderTurret.dds"
+        }
+    }
+}

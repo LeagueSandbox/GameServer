@@ -1,0 +1,83 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Red_Minion_MechMelee",
+        "Name": "Red_Minion_MechMelee",
+        "ResourcePath": "DATA/Characters/Red_Minion_MechMelee/Red_Minion_MechMelee.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30.0",
+            "ArmorMaterial": "Metal",
+            "AttackDelayCastOffsetPercent": 0.0889,
+            "AttackDelayOffsetPercent": "-0.1",
+            "AttackRange": "170",
+            "BaseAttack_Probability": 0.8,
+            "BaseCritChance": "0",
+            "BaseDamage": "180.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1500",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "10",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "DeathTime": 2.5,
+            "Description": "game_character_description_Red_Minion_MechMelee",
+            "EnemyTooltip": "game_character_enemyTooltip_Red_Minion_MechMelee",
+            "ExpGivenOnDeath": "500.0",
+            "ExtraAttack1": "Red_Minion_MechMeleeBasicAttack2",
+            "ExtraAttack1_Probability": 0.2,
+            "FriendlyTooltip": "game_character_friendlyTooltip_Red_Minion_MechMelee",
+            "GameplayCollisionRadius": "65.0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "0",
+            "GoldGivenOnDeath": "150.0",
+            "IsMelee": "false",
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "Name": "game_character_displayname_Red_Minion_MechMelee",
+            "PathfindingCollisionRadius": 55.5208,
+            "SelectionHeight": "110.0000",
+            "SelectionRadius": "145.0000",
+            "Significance": 0.5,
+            "SpellBlock": "-30",
+            "TowerTargetingPriorityBoost": 5,
+            "UnitTags": "Minion | Minion_Lane | Minion_Lane_Super",
+            "WeaponMaterial": "Red_Minion_MechMeleeBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "Redmechmelee_Circle.dds",
+            "IconSquare": "Redmechmelee_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "Red_Minion_MechMeleeBase.blnd",
+            "ChampionSkinName": "Red_Minion_MechMeleeBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechMelee.skn",
+            "Skeleton": "Red_Minion_MechMelee.skl",
+            "Texture": "Red_Minion_MechMelee.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "Red_Minion_MechMeleeBase.blnd",
+            "ChampionSkinName": "MeshSkin1",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechMelee_Harrowing.skn",
+            "Skeleton": "Red_Minion_MechMelee.skl",
+            "Texture": "redminion_mechmelee_pumpkinhead_minions_TX_CM_v01.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "Red_Minion_MechMeleeBase.blnd",
+            "ChampionSkinName": "MeshSkin2",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_MechMelee_Snowdown.skn",
+            "Skeleton": "Red_Minion_MechMelee.skl",
+            "Texture": "redminion_mechmelee_elf_TX_CM_v01.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "3983263047": "0"
+        }
+    }
+}

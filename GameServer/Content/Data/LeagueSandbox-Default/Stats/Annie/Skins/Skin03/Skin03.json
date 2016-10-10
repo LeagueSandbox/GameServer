@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Annie/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Annie.blnd",
+            "ChampionSkinID": 1003,
+            "ChampionSkinName": "AnnieWonderland",
+            "ExtraCharacterPreloads": "AnnieTibbers",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "annie_wonderland.skn",
+            "Skeleton": "annie_wonderland.skl",
+            "SkinScale": 1,
+            "Texture": "annie_wonderland_TX_CM.dds"
+        }
+    }
+}

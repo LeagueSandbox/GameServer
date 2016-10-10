@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynBase.blnd",
+            "ChampionSkinID": 51001,
+            "ChampionSkinName": "MilitaryCaitlyn",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Caitlyn_military.skn",
+            "Skeleton": "Caitlyn_military.skl",
+            "SkinScale": 1.6,
+            "Texture": "caitlyn_military_TX_CM.dds"
+        }
+    }
+}

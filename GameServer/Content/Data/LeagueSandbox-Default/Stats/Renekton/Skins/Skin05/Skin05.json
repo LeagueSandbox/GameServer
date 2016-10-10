@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Renekton/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Renekton_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "renekton_volcanogod.blnd",
+            "ChampionSkinID": 58005,
+            "ChampionSkinName": "Renekton_VolcanoGod",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Renekton_VolcanoGod.skn",
+            "Skeleton": "Renekton_VolcanoGod.skl",
+            "SkinScale": 1.56,
+            "Texture": "renekton_volcanogod_TX_CM.dds",
+            "YOffset": 0.5
+        }
+    }
+}

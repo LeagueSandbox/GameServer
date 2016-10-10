@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Veigar/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Veigar.blnd",
+            "ChampionSkinID": 45003,
+            "ChampionSkinName": "GreyVeigar",
+            "OverrideBoundingBox": "80 100 80",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "veigar_thegrey.skn",
+            "Skeleton": "veigar_thegrey.skl",
+            "SkinScale": 1.80000007,
+            "Texture": "veigar_thegrey_TX_CM.dds"
+        }
+    }
+}

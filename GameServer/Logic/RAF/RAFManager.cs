@@ -1,193 +1,113 @@
-﻿using InibinSharp;
-using InibinSharp.RAF;
-using LeagueSandbox.GameServer.Logic;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Core.Logic.RAF
 {
-    class RAFManager
+    public class RAFManager
     {
-        private RAFMasterFileList _root;
-        private Logger _logger;
-
-        public RAFManager(Logger logger)
+        private static Game _game = Program.ResolveDependency<Game>();
+        public uint GetHash(string path)
         {
-            _logger = logger;
-            _logger.LogCoreInfo("Loading RAF files in filearchives/.");
-
-            var settings = Settings.Load("Settings/Settings.json");
-
-            _root = new RAFMasterFileList(
-                System.IO.Path.Combine(settings.RadsPath, "filearchives")
-            );
-
-            _logger.LogCoreInfo("Loaded RAF files");
-        }
-
-        public string findGameBasePath()
-        {
-            var possiblePaths = new List<Tuple<string, string>>
+            uint hash = 0;
+            var mask = 0xF0000000;
+            for (var i = 0; i < path.Length; i++)
             {
-                new Tuple<string, string>(@"HKEY_CURRENT_USER\Software\Classes\VirtualStore\MACHINE\SOFTWARE\SightstoneLol",
-                    "Path"),
-                new Tuple<string, string>(
-                    @"HKEY_CURRENT_USER\Software\Classes\VirtualStore\MACHINE\SOFTWARE\RIOT GAMES", "Path"),
-                new Tuple<string, string>(
-                    @"HKEY_CURRENT_USER\Software\Classes\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\RIOT GAMES",
-                    "Path"),
-                new Tuple<string, string>(@"HKEY_CURRENT_USER\Software\RIOT GAMES", "Path"),
-                new Tuple<string, string>(@"HKEY_CURRENT_USER\Software\Wow6432Node\Riot Games", "Path"),
-                new Tuple<string, string>(@"HKEY_LOCAL_MACHINE\Software\Riot Games\League Of Legends", "Path"),
-                new Tuple<string, string>(@"HKEY_LOCAL_MACHINE\Software\Wow6432Node\Riot Games", "Path"),
-                new Tuple<string, string>(@"HKEY_LOCAL_MACHINE\Software\Wow6432Node\Riot Games\League Of Legends",
-                    "Path"),
-                // Yes, a f*ckin whitespace after "Riot Games"..
-                new Tuple<string, string>(@"HKEY_LOCAL_MACHINE\Software\Wow6432Node\Riot Games \League Of Legends",
-                    "Path"),
-            };
-
-            foreach (var tuple in possiblePaths)
-            {
-                var path = tuple.Item1;
-                var valueName = tuple.Item2;
-                try
+                hash = char.ToLower(path[i]) + 0x10 * hash;
+                if ((hash & mask) > 0)
                 {
-                    var value = Registry.GetValue(path, valueName, string.Empty);
-                    if (value == null || value.ToString() == string.Empty)
-                        continue;
-
-                    return Path.Combine(value.ToString(), "RADS", "projects", "lol_game_client");
-                }
-                catch
-                {
-
+                    hash ^= hash & mask ^ ((hash & mask) >> 24);
                 }
             }
 
-            var findLeagueDialog = new OpenFileDialog();
+            return hash;
+        }
 
-            if (!Directory.Exists(Path.Combine("C:\\", "Riot Games", "League of Legends")))
-                findLeagueDialog.InitialDirectory = Path.Combine("C:\\", "Program Files (x86)", "GarenaLoL", "GameData",
-                    "Apps", "LoL");
-            else
-                findLeagueDialog.InitialDirectory = Path.Combine("C:\\", "Riot Games", "League of Legends");
+        public bool ReadSpellData(string spellName, out JObject data)
+        {
+            var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
 
-            findLeagueDialog.DefaultExt = ".exe";
-            findLeagueDialog.Filter = "League of Legends Launcher|lol.launcher*.exe|Garena Launcher|lol.exe";
+            data = JObject.Parse(File.ReadAllText(path));
+            return true;
+        }
 
-            var result = findLeagueDialog.ShowDialog();
-            if (result != true)
-                return string.Empty;
+        public bool ReadAutoAttackData(string unitName, out JObject data)
+        {
+            return ReadSpellData(unitName + "BasicAttack", out data);
+        }
 
-            var p = findLeagueDialog.FileName.Replace("lol.launcher.exe", string.Empty).Replace("lol.launcher.admin.exe", string.Empty);
+        public bool ReadUnitStats(string unitName, out JObject data)
+        {
+            var path = _game.Config.ContentManager.GetUnitStatPath(unitName);
+
+            data = JObject.Parse(File.ReadAllText(path));
+            return true;
+        }
+
+        public JToken GetValue(JObject from, string first, string second = "", string third = "")
+        {
+            var toReturn = from.SelectToken(first);
+            if (!string.IsNullOrEmpty(second) && toReturn != null)
+            {
+                toReturn = toReturn.SelectToken(second);
+            }
+            if (!string.IsNullOrEmpty(third) && toReturn != null)
+            {
+                toReturn = toReturn.SelectToken(third);
+            }
+
+            return toReturn;
+        }
+
+        public float GetFloatValue(JObject from, string first, string second = "", string third = "")
+        {
+            var x = GetValue(from, first, second, third);
+            return x == null || string.IsNullOrEmpty((string)x) ? 0.0f : (float)x;
+        }
+
+        public int GetIntValue(JObject from, string first, string second = "", string third = "")
+        {
+            var x = GetValue(from, first, second, third);
+            return x == null || string.IsNullOrEmpty((string)x) ? 0 : (int)x;
+        }
+
+        public string GetStringValue(JObject from, string first, string second = "", string third = "")
+        {
+            var x = GetValue(from, first, second, third);
+            return x == null || string.IsNullOrEmpty((string)x) ? "" : (string)x;
+        }
+
+        public bool GetBoolValue(JObject from, string first, string second = "", string third = "")
+        {
+            var x = GetValue(from, first, second, third);
+            if (x == null)
+            {
+                return false;
+            }
+
+            var asInt = 0;
+            var asBool = false;
+            var asString = "No";
+
             try
             {
-                var key = Registry.CurrentUser.CreateSubKey("Software\\RIOT GAMES");
-                key.SetValue("Path", p);
+                asInt = Convert.ToInt32(x);
             }
             catch { }
 
-            p = Path.Combine(p, "RADS", "projects", "lol_game_client");
-            _logger.LogCoreInfo("Found base path in " + p);
-
-            return p;
-        }
-
-        internal List<RAFFileListEntry> SearchFileEntries(string path)
-        {
-            return _root.SearchFileEntries(path);
-        }
-
-        internal bool readInibin(string path, out Inibin iniFile)
-        {
-            if (_root == null)
+            try
             {
-                iniFile = null;
-                return false;
+                asBool = Convert.ToBoolean(x);
             }
-            var entries = _root.SearchFileEntries(path);
+            catch { }
 
-            if (entries.Count < 1)
+            try
             {
-                iniFile = null;
-                return false;
+                asString = Convert.ToString(x);
             }
-            if (entries.Count > 1)
-                _logger.LogCoreInfo("Found more than one inibin for query " + path);
+            catch { }
 
-            var entry = entries.First();
-            iniFile = new Inibin(entry);
-
-            return true;
-        }
-
-        public Inibin GetAutoAttackData(string model)
-        {
-            Inibin autoAttack = null;
-            string[] autoAttackPaths = new string[]
-            {
-                string.Format("DATA/Characters/{0}/{0}BasicAttack.inibin", model),
-                string.Format("DATA/Characters/{0}/Spells/{0}BasicAttack.inibin", model),
-                string.Format("DATA/Spells/{0}BasicAttack.inibin", model)
-            };
-            foreach (var path in autoAttackPaths)
-            {
-                if (readInibin(path, out autoAttack))
-                {
-                    break;
-                }
-            }
-            if (autoAttack == null)
-            {
-                _logger.LogCoreError(string.Format("Couldn't find auto-attack data for {0}", model));
-            }
-            return autoAttack;
-        }
-
-        internal bool readAIMesh(string path, out LeagueSandbox.GameServer.Logic.RAF.AIMesh aimesh)
-        {
-            if (_root == null)
-            {
-                aimesh = null;
-                return false;
-            }
-
-            var entries = _root.SearchFileEntries(path, RAFSearchType.End);
-            if (entries.Count < 1)
-            {
-                aimesh = null;
-                return false;
-            }
-            if (entries.Count > 1)
-            {
-                _logger.LogCoreError("Found " + entries.Count + " AIMesh for query " + path);
-                foreach (var e in entries)
-                {
-                    _logger.LogCoreInfo(e.FileName);
-                }
-            }
-
-            var entry = entries.First();
-            aimesh = new LeagueSandbox.GameServer.Logic.RAF.AIMesh(entry);
-
-            return true;
-        }
-
-        public uint getHash(string path)
-        {
-            uint hash = 0;
-            uint mask = 0xF0000000;
-            for (var i = 0; i < path.Length; i++)
-            {
-                hash = Char.ToLower(path[i]) + (0x10 * hash);
-                if ((hash & mask) > 0)
-                    hash ^= hash & mask ^ ((hash & mask) >> 24);
-            }
-            return hash;
+            return asInt == 1 || asBool || asString == "Yes";
         }
     }
 }

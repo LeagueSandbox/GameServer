@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Gangplank/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SpecialForcesGangplank.blnd",
+            "ChampionSkinID": 41005,
+            "ChampionSkinName": "SpecialForcesGangplank",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gangplank_special_forces.skn",
+            "Skeleton": "Gangplank_special_forces.skl",
+            "SkinScale": 1.4,
+            "Texture": "gangplank_special_forces_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

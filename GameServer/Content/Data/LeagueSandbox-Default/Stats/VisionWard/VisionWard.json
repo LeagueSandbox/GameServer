@@ -1,0 +1,266 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "VisionWard",
+        "Name": "VisionWard",
+        "ResourcePath": "DATA/Characters/VisionWard/VisionWard.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "AttackSpeed": "0",
+            "AttackSpeedPerLevel": 0,
+            "BaseDamage": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 5,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": "0",
+            "Classification": "Arcane",
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SightWard",
+            "EnemyTooltip": "game_character_enemyTooltip_SightWard",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_friendlyTooltip_SightWard",
+            "GameplayCollisionRadius": 1,
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SightWard",
+            "PARType": "None",
+            "PathfindingCollisionRadius": 5,
+            "Significance": 0.3
+        },
+        "HealthBar": {
+            "HPPerTick": 1
+        },
+        "Info": {
+            "IconSquare": "VisionWard_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "SightWardBase.blnd",
+            "ChampionSkinName": "VisionWardBase",
+            "ParallaxOffset": "0",
+            "SelfIllumination": "1.0",
+            "SimpleSkin": "SightWard.skn",
+            "Skeleton": "SightWard.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "VisionWard.dds",
+            "YOffset": -1.2
+        },
+        "MeshSkin1": {
+            "Animations": "SightWardBat.blnd",
+            "ChampionSkinName": "SightWardBat",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Bat.skn",
+            "Skeleton": "SightWard_Bat.skl",
+            "SkinScale": 1.2,
+            "Texture": "sightWard_bat_TX_CM.dds",
+            "YOffset": -3.8
+        },
+        "MeshSkin10": {
+            "Animations": "SightWardSoraka.blnd",
+            "ChampionSkinName": "SightWardSoraka",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Soraka.skn",
+            "Skeleton": "SightWard_Soraka.skl",
+            "SkinScale": 1.1,
+            "Texture": "sightWard_Soraka_TX_CM.dds"
+        },
+        "MeshSkin11": {
+            "Animations": "SightWardDraven.blnd",
+            "ChampionSkinName": "SightWardDraven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Draven.skn",
+            "Skeleton": "SightWard_Draven.skl",
+            "SkinScale": 1.4,
+            "Texture": "sightWard_Draven_TX_CM.dds"
+        },
+        "MeshSkin12": {
+            "Animations": "SightWardLux.blnd",
+            "ChampionSkinName": "SightWardLux",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lux.skn",
+            "Skeleton": "SightWard_Lux.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "sightWard_Lux_TX_CM.dds"
+        },
+        "MeshSkin13": {
+            "Animations": "SightWardS3Champ.blnd",
+            "ChampionSkinName": "SightWardS3Champ",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Champion_S3.skn",
+            "Skeleton": "SightWard_Champion_S3.skl",
+            "SkinScale": 0.8,
+            "Texture": "sightWard_championshipS3_TX_CM.dds"
+        },
+        "MeshSkin14": {
+            "Animations": "SightWardSeason3.blnd",
+            "ChampionSkinName": "SightWardSeason3",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Season3.skn",
+            "Skeleton": "SightWard_Season3.skl",
+            "SkinScale": 1.2,
+            "Texture": "sightWard_Season3_TX_CM.dds"
+        },
+        "MeshSkin15": {
+            "Animations": "SightWardCandycane.blnd",
+            "ChampionSkinName": "SightWardCandycane",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Candy.skn",
+            "Skeleton": "SightWard_Candy.skl",
+            "SkinScale": 1.2,
+            "Texture": "Ward_LunarRevel_Candycane_TX_CM.dds",
+            "YOffset": 65534
+        },
+        "MeshSkin16": {
+            "Animations": "SightWardBanner.blnd",
+            "ChampionSkinName": "SightWardHorseBanner",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Banner.skn",
+            "Skeleton": "SightWard_Banner.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "SightWard_HorseBanner_TX_CM.dds"
+        },
+        "MeshSkin17": {
+            "Animations": "SightWardHorseGong.blnd",
+            "BrushAlphaOverride": 0.6,
+            "ChampionSkinName": "SightWardHorseGong",
+            "OverrideBoundingBox": "30 100 30",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lunar_Gong.skn",
+            "Skeleton": "SightWard_Lunar_Gong.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "Sightward_Lunar_gong.dds"
+        },
+        "MeshSkin18": {
+            "Animations": "SightWardValentine.blnd",
+            "ChampionSkinName": "SightWardValentine",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Valentines.skn",
+            "Skeleton": "SightWard_Valentines.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_valentine2014_TX_CM.dds"
+        },
+        "MeshSkin19": {
+            "Animations": "SightWardRiot.blnd",
+            "ChampionSkinName": "SightWardRiot",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Riot.skn",
+            "Skeleton": "SightWard_Riot.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_Riot_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "SightWardGhost.blnd",
+            "ChampionSkinName": "SightWardGhost",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_ghost.skn",
+            "Skeleton": "sightWard_ghost.skl",
+            "SkinScale": "1.0",
+            "Texture": "sightWard_ghost_TX_CM.dds",
+            "YOffset": -3.8
+        },
+        "MeshSkin3": {
+            "Animations": "SightWardSpider.blnd",
+            "ChampionSkinName": "SightWardSpider",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_spider.skn",
+            "Skeleton": "sightWard_spider.skl",
+            "SkinScale": 0.900000036,
+            "Texture": "sightWard_spider_TX_CM.dds",
+            "YOffset": 65532
+        },
+        "MeshSkin4": {
+            "Animations": "SightWardTree.blnd",
+            "ChampionSkinName": "SightWardTree",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_tree.skn",
+            "Skeleton": "sightWard_tree.skl",
+            "SkinScale": 0.95,
+            "Texture": "sightWard_tree_TX_CM.dds",
+            "YOffset": 65532
+        },
+        "MeshSkin5": {
+            "Animations": "SightWardStone.blnd",
+            "ChampionSkinName": "SightWardStone",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "sightWard_stone.skn",
+            "Skeleton": "sightWard_stone.skl",
+            "SkinScale": 1.5,
+            "Texture": "sightWard_stone_TX_CM.dds"
+        },
+        "MeshSkin6": {
+            "Animations": "SightWardSnowMan.blnd",
+            "ChampionSkinName": "SightWardSnowMan",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_snowMan.skn",
+            "Skeleton": "SightWard_snowMan.skl",
+            "SkinScale": 1.4,
+            "Texture": "SightWard_snowMan_TX_CM.dds"
+        },
+        "MeshSkin7": {
+            "Animations": "SightWardGingerBread.blnd",
+            "ChampionSkinName": "SightWardGingerBread",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_gingerBread.skn",
+            "Skeleton": "SightWard_gingerBread.skl",
+            "SkinScale": 1.17,
+            "Texture": "SightWard_gingerBread_TX_CM.dds"
+        },
+        "MeshSkin8": {
+            "Animations": "SightWardLantern.blnd",
+            "ChampionSkinName": "SightWardLantern",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lantern.skn",
+            "Skeleton": "SightWard_Lantern.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sightWard_lantern_TX_CM.dds"
+        },
+        "MeshSkin9": {
+            "Animations": "SightWardBanner.blnd",
+            "ChampionSkinName": "SightWardBanner",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Banner.skn",
+            "Skeleton": "SightWard_Banner.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sightWard_banner_TX_CM.dds"
+        },
+        "Minimap": {
+            "MinimapIconOverride": "VisionWard"
+        },
+        "Package": {
+            "FallbackPackage": "SightWard"
+        },
+        "UNKNOWN_HASHES": {
+            "147955499": 1,
+            "1591130235": "sightward_Allstar_TX_CM.dds",
+            "1595342449": "SightWardSKT.blnd",
+            "1652534607": "SightWard_SKT.skl",
+            "1815253296": "SightWardDragonSlayer.blnd",
+            "1869245612": 1,
+            "2035164143": "SightWardAllStars.blnd",
+            "2344417914": "sightward_Dragon_Slayer_TX_CM.dds",
+            "2395801649": "SightWard_SKT.skn",
+            "2615712496": "SightWard_Dragon_Slayer.skn",
+            "2835623343": "SightWard_AllStars.skn",
+            "3097705593": "sightward_skt_TX_CM.dds",
+            "3161983793": "SightWardAllStars",
+            "3251603186": "SightWardDragonSlayer",
+            "3308073421": "SightWard_AllStars.skl",
+            "332820366": "SightWard_Dragon_Slayer.skl",
+            "3341222579": "SightWardSKT",
+            "3590535725": 1,
+            "438482843": 0.7,
+            "528102236": 0.7,
+            "617721629": 0.7
+        }
+    }
+}

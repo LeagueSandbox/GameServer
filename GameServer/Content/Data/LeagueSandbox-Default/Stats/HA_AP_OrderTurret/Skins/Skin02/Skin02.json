@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/HA_AP_OrderTurret/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_OrderTurret.blnd",
+            "ChampionSkinName": "HA_AP_OrderTurret_Idle2",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "HA_AP_OrderTurret_Idle2.skn",
+            "Skeleton": "HA_AP_OrderTurret_Idle2.skl",
+            "SkinScale": "750.0",
+            "Texture": "HA_AP_OrderTurret.dds"
+        }
+    }
+}

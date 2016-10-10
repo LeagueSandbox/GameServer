@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Nidalee_Spear/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_SpearHeadhunter.blnd",
+            "ChampionSkinName": "Nidalee_SpearHeadhunter",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_Spear_Headhunter.skn",
+            "Skeleton": "Nidalee_Spear_Headhunter.skl",
+            "SkinScale": 1.7,
+            "Texture": "Nidalee_Spear_Headhunter_TX_CM.dds"
+        }
+    }
+}

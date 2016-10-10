@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_SpiderLayer_Web",
+        "Name": "TT_SpiderLayer_Web",
+        "ResourcePath": "DATA/Characters/TT_SpiderLayer_Web/TT_SpiderLayer_Web.inibin"
+    },
+    "Values": {
+        "Info": {
+            "IconCircle": "Ahri_Circle.dds",
+            "IconSquare": "Ahri_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_SpiderLayer_Web.blnd",
+            "ChampionSkinID": "988200",
+            "ChampionSkinName": "TT_SpiderLayer_Web",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_SpiderLayer_Web.skn",
+            "Skeleton": "TT_SpiderLayer_Web.skl",
+            "SkinScale": "1.0",
+            "Texture": "TT_SpiderLayer_Web.dds"
+        }
+    }
+}

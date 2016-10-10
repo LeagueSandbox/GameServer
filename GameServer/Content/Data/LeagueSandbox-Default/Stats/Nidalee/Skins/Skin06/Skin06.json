@@ -1,0 +1,29 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Nidalee/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HeadhunterNidalee.blnd",
+            "ChampionSkinID": 76006,
+            "ChampionSkinName": "HeadhunterNidalee",
+            "ExtraCharacterPreloads": "Nidalee_Cougar,Nidalee_Spear",
+            "GlossTexture": "nidalee_headhunter_TX_GM.dds",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "nidalee_headhunter_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_headhunter.skn",
+            "Skeleton": "Nidalee_headhunter.skl",
+            "SkinScale": 1.35,
+            "Texture": "Nidalee_headhunter_TX_CM.dds"
+        }
+    }
+}

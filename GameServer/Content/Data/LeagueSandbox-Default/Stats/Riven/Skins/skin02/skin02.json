@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Riven/Skins/skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseRiven.blnd",
+            "ChampionSkinID": 92002,
+            "ChampionSkinName": "CrimsonRiven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "riven_crimson.skn",
+            "Skeleton": "riven_crimson.skl",
+            "SkinScale": 1.5,
+            "Texture": "riven_crimson_TX_CM.dds"
+        }
+    }
+}

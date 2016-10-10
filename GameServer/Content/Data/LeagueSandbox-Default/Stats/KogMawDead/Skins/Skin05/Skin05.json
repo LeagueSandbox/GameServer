@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/KogMawDead/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseKogMawDead.blnd",
+            "ChampionSkinID": 96005,
+            "ChampionSkinName": "NewYearDragonKogMaw",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "KogMaw_Dead.skn",
+            "Skeleton": "KogMaw_Dead.skl",
+            "SkinScale": "0.65",
+            "Texture": "Kogmaw_Dragon_Dead_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

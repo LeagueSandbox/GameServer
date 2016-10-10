@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/EliseSpiderling/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Elise.blnd",
+            "ChampionSkinID": 60001,
+            "ChampionSkinName": "EliseLotusFlower",
+            "SelfIllumination": 0.75,
+            "SimpleSkin": "EliseSpider_LotusFlower.skn",
+            "Skeleton": "EliseSpider_LotusFlower.skl",
+            "SkinScale": 0.375,
+            "Texture": "eliseSpiderling_lotus_TX_CM.dds"
+        }
+    }
+}

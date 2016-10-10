@@ -1,0 +1,31 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OrderInhibitor",
+        "Name": "OrderInhibitor",
+        "ResourcePath": "DATA/Characters/OrderInhibitor/OrderInhibitor.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_OrderInhibitor"
+        },
+        "HealthBar": {
+            "Scale": "2.0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 8,
+            "Particle1": "Order_Inhibit_Gem.troy root",
+            "Particle2": "Order_Inhibit_Crystal_Glow.troy gem1",
+            "Particle3": "Order_Inhibit_Crystal_Glow.troy gem2",
+            "Particle4": "Order_Inhibit_Crystal_Glow.troy gem3",
+            "Particle5": "Order_Inhibit_Crystal_Glow.troy gem4",
+            "Particle6": "Order_Inhibit_Base_Glow.troy base2",
+            "Particle7": "Order_Inhibit_Base_Glow.troy base3",
+            "Particle8": "Order_Inhibit_Base_Glow.troy base4"
+        },
+        "UNKNOWN_HASHES": {
+            "122525178": "Order_Inhibit_Base_Glow.troy base1"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Janna/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseJanna.blnd",
+            "ChampionSkinID": 40001,
+            "ChampionSkinName": "LightningJanna",
+            "SelfIllumination": 0.8,
+            "SimpleSkin": "Janna_lightning.skn",
+            "Skeleton": "Janna_lightning.skl",
+            "SkinScale": 1.31,
+            "Texture": "janna_lightning_TX_CM.dds"
+        }
+    }
+}

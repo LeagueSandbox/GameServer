@@ -1,0 +1,43 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Braum/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Braum_Base.cac"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 3,
+            "Particle1": "Orrin_Base_I_shield_Idle.troy Cstm_Buffbone_Shield_Gem",
+            "Particle2": "Orrin_Base_I_shield_Left_eye.troy Cstm_Buffbone_L_Shield_Eye",
+            "Particle3": "Orrin_Base_I_shield_Right_eye.troy Cstm_Buffbone_R_Shield_Eye"
+        },
+        "MeshSkin": {
+            "Animations": "BraumSkin01.blnd",
+            "ChampionSkinID": 201001,
+            "ChampionSkinName": "BraumSkin01",
+            "GlossTexture": "Braum_Skin01_TX_GM.DDS",
+            "MaterialOverride0Submesh": "Poro",
+            "MaterialOverride0Texture": "Braum_Skin01_Poro_TX_CM.dds",
+            "OverrideBoundingBox": "180 180 180",
+            "ReflectionFresnel": 0.5,
+            "ReflectionFresnelBlue": 0.6,
+            "ReflectionFresnelGreen": 0.6,
+            "ReflectionFresnelRed": 0.6,
+            "ReflectionMap": "Braum_Skin01_TX_RM.dds",
+            "ReflectionOpacityDirect": 1,
+            "ReflectionOpacityGlancing": "1.0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Braum_Skin01.skn",
+            "Skeleton": "Braum_Skin01.skl",
+            "SkinScale": 1.15,
+            "Texture": "Braum_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Poro"
+        }
+    }
+}

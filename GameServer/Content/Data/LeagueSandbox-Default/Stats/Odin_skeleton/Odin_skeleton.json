@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Odin_skeleton",
+        "Name": "Odin_skeleton",
+        "ResourcePath": "DATA/Characters/Odin_skeleton/Odin_skeleton.inibin"
+    },
+    "Values": {
+        "Data": {
+            "PathfindingCollisionRadius": 44.2
+        },
+        "MeshSkin": {
+            "Animations": "Odin_skeletonBase.blnd",
+            "ChampionSkinName": "Odin_skeletonBase",
+            "SimpleSkin": "Odin_skeleton.skn",
+            "Skeleton": "Odin_skeleton.skl",
+            "Texture": "Odin_skeleton.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2977633954": 0.6
+        }
+    }
+}

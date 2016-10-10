@@ -1,0 +1,39 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Sivir/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Sivir_Base.cac"
+        },
+        "MeshSkin": {
+            "Animations": "Sivir_Skin06.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 15006,
+            "ChampionSkinName": "SivirSkin06",
+            "GlossTexture": "sivir_snowflake_TX_GM.dds",
+            "ReflectionFresnel": "1.0",
+            "ReflectionFresnelBlue": 1,
+            "ReflectionFresnelGreen": 0.5,
+            "ReflectionFresnelRed": 0.3,
+            "ReflectionMap": "sivir_snowflake_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": 0.5,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sivir_Skin06.skn",
+            "Skeleton": "Sivir_Skin06.skl",
+            "SkinScale": "1.0",
+            "Texture": "sivir_snowflake_TX_CM.dds",
+            "YOffset": "-0.2"
+        },
+        "UNKNOWN_HASHES": {
+            "3400833179": "0",
+            "343518805": 1,
+            "3966094422": 1,
+            "455913160": 1
+        }
+    }
+}

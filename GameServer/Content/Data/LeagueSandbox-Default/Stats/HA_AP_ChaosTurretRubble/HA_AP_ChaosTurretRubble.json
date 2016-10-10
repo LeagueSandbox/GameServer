@@ -1,0 +1,58 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "HA_AP_ChaosTurretRubble",
+        "Name": "HA_AP_ChaosTurretRubble",
+        "ResourcePath": "DATA/Characters/HA_AP_ChaosTurretRubble/HA_AP_ChaosTurretRubble.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "70",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "-0.161",
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "160",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1700",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_ChaosTurretGiant",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "70.000",
+            "GlobalGoldGivenOnDeath": "150.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_ChaosTurretGiant",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200.0000",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": 75
+        },
+        "IdleParticles": {
+            "GameplayCollisionRadius": 88.4
+        },
+        "Info": {
+            "IconSquare": "ChaosLaneTower_Icon.dds"
+        },
+        "Package": {
+            "FallbackPackage": "HA_AP_ChaosTurret"
+        }
+    }
+}

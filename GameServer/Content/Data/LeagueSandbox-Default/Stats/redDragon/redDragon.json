@@ -1,0 +1,75 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "redDragon",
+        "Name": "redDragon",
+        "ResourcePath": "DATA/Characters/redDragon/redDragon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 15,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.3118,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "650",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": "85.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.003,
+            "BaseHP": "1350",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_redDragon",
+            "EnemyTooltip": "game_character_enemyTooltip_redDragon",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": "100.0",
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": 75,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_redDragon",
+            "PathfindingCollisionRadius": 35,
+            "SelectionHeight": "150",
+            "SelectionRadius": 175,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": 0
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Dragon_Smoke.troy mouth"
+        },
+        "Info": {
+            "IconCircle": "Dragon_Circle.dds",
+            "IconSquare": "Dragon_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "redDragonBase.blnd",
+            "ChampionSkinName": "redDragonBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "redDragon.skn",
+            "Skeleton": "redDragon.skl",
+            "SkinScale": "2.0",
+            "Texture": "redDragon.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

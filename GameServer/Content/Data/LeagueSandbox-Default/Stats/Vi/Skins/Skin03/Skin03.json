@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Vi/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Vi.blnd",
+            "ChampionSkinID": 254003,
+            "ChampionSkinName": "Skin03",
+            "GlossTexture": "Vi_Skin03_TX_GM.dds",
+            "ReflectionFresnel": 0.900000036,
+            "ReflectionFresnelBlue": 1.5,
+            "ReflectionFresnelGreen": 1.9,
+            "ReflectionFresnelRed": 1.9,
+            "ReflectionMap": "Vi_Skin03_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.5,
+            "ReflectionOpacityGlancing": 0.5,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Vi_Skin03.skn",
+            "Skeleton": "Vi_Skin03.skl",
+            "SkinScale": 1.07,
+            "Texture": "Vi_Skin03_TX_CM.dds"
+        }
+    }
+}

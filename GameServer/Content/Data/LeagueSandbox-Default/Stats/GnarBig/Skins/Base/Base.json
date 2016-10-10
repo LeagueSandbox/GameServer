@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/GnarBig/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "gnarbig.blnd",
+            "ChampionSkinID": "150000",
+            "ChampionSkinName": "GnarBig",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "GnarBig.skn",
+            "Skeleton": "GnarBig.skl",
+            "SkinScale": 1.1,
+            "Texture": "GnarBig_Base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "GnarBig_Rock"
+        }
+    }
+}

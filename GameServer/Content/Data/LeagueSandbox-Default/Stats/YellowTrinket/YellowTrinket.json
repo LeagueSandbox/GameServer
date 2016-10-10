@@ -1,0 +1,49 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "YellowTrinket",
+        "Name": "YellowTrinket",
+        "ResourcePath": "DATA/Characters/YellowTrinket/YellowTrinket.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "AttackSpeed": "0",
+            "AttackSpeedPerLevel": 0,
+            "BaseDamage": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 3,
+            "BaseMP": "60",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": "0",
+            "Classification": "Arcane",
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SightWard",
+            "EnemyTooltip": "game_character_enemyTooltip_SightWard",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_friendlyTooltip_SightWard",
+            "GameplayCollisionRadius": 1,
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SightWard",
+            "PARColor": "255 255 200",
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": 5,
+            "PerceptionBubbleRadius": "900.0",
+            "Significance": 0.3
+        },
+        "HealthBar": {
+            "HPPerTick": 1
+        },
+        "Info": {
+            "IconSquare": "YellowTrinket_Square.dds"
+        },
+        "Minimap": {
+            "MinimapIconOverride": "Ward"
+        }
+    }
+}

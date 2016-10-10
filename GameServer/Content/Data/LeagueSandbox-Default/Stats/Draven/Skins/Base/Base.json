@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Draven/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Draven_Base.blnd",
+            "ChampionSkinID": "119000",
+            "ChampionSkinName": "Draven_Base",
+            "OverrideBoundingBox": "140 240 140",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Draven.skn",
+            "Skeleton": "Draven.skl",
+            "SkinScale": 1.1,
+            "Texture": "Draven_base_TX_CM.dds"
+        }
+    }
+}

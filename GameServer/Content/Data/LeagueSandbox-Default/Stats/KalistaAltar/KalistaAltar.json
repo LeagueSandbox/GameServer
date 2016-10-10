@@ -1,0 +1,87 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "KalistaAltar",
+        "Name": "KalistaAltar",
+        "ResourcePath": "DATA/Characters/KalistaAltar/KalistaAltar.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "950",
+            "Armor": 10.5,
+            "ArmorPerLevel": 4,
+            "AssetCategory": "obj",
+            "AttackDelayCastOffsetPercent": -0.0917,
+            "AttackDelayOffsetPercent": 0,
+            "AttackRange": "0",
+            "AttackSpeedPerLevel": 1.68,
+            "BaseCritChance": "0",
+            "BaseDamage": "110",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "50000",
+            "BaseMP": "100",
+            "BaseStaticHPRegen": "5000",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 3.2,
+            "Description": "game_character_description_KalistaAltar",
+            "EnemyTooltip": "game_character_enemyTooltip_KalistaAltar",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_enemyTooltip_KalistaAltar",
+            "GoldGivenOnDeath": 0,
+            "HoverIndicatorRadius": "300",
+            "HoverIndicatorTextureName": "DirectionalCircle.dds",
+            "HoverLineIndicatorBaseTextureName": "LocalLineMissileBase.dds",
+            "HoverLineIndicatorTargetTextureName": "LocalLineMissileTarget.dds",
+            "HoverLineIndicatorWidth": "50",
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": 0,
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": 0,
+            "Name": "game_character_displayname_KalistaAltar",
+            "NoAutoAttack": 1,
+            "Passive1Level1": 1,
+            "Passive1Level2": 4,
+            "Passive1Level3": 7,
+            "Passive1Level4": "10",
+            "Passive1Level5": 13,
+            "Passive1Level6": 16,
+            "PathfindingCollisionRadius": "20.000",
+            "PerceptionBubbleRadius": 0,
+            "SelectionHeight": "200",
+            "SelectionRadius": "60",
+            "ShouldFaceTarget": "0",
+            "Significance": 0.3,
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0"
+        },
+        "Info": {
+            "IconCircle": "OdinNeutralGuardian_DR_White.dds",
+            "IconSquare": "OdinNeutralGuardian_DR_White.dds"
+        },
+        "Minion": {
+            "AlwaysVisible": 1,
+            "IsTower": "0"
+        },
+        "Package": {
+            "FallbackPackage": "Kalista"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 6,
+            "3983263047": "0"
+        },
+        "Useable": {
+            "AllyCanUse": 1,
+            "CooldownSpellSlot": 65535,
+            "HeroUseSpell": "KalistaPChannel",
+            "IsUseable": 1,
+            "MinionUseable": "0"
+        }
+    }
+}

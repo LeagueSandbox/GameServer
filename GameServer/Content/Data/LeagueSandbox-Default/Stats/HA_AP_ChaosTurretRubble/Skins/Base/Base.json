@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/HA_AP_ChaosTurretRubble/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "HA_AP_ChaosTurret.blnd",
+            "ChampionSkinName": "HA_AP_ChaosTurretRubble",
+            "SelfIllumination": 1,
+            "SimpleSkin": "HA_AP_ChaosTurretRubble.skn",
+            "Skeleton": "HA_AP_ChaosTurretRubble.skl",
+            "SkinScale": "770",
+            "Texture": "HA_AP_ChaosTurret.dds"
+        }
+    }
+}

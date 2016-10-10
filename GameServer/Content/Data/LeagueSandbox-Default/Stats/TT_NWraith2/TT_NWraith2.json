@@ -1,0 +1,81 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "TT_NWraith2",
+        "Name": "TT_NWraith2",
+        "ResourcePath": "DATA/Characters/TT_NWraith2/TT_NWraith2.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 8,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.06065,
+            "AttackDelayOffsetPercent": -0.02,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseAttack_Probability": 0.33,
+            "BaseCritChance": 0,
+            "BaseDamage": 12,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "380",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_LesserWraith",
+            "EnemyTooltip": "game_character_enemyTooltip_LesserWraith",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "48.0",
+            "ExtraAttack1_Probability": 0.33,
+            "ExtraAttack2_Probability": 0.34,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "18.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_LesserWraith",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100.0000",
+            "SelectionRadius": "120.0000",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "WeaponMaterial": "LesserWraithBasicAttack"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Wraith_Glow.troy Spine"
+        },
+        "Info": {
+            "IconCircle": "Lesserwraith_Circle.dds",
+            "IconSquare": "Lesserwraith_Square.dds"
+        },
+        "MeshSkin": {
+            "Animations": "TT_NWraith2.blnd",
+            "ChampionSkinID": "237000",
+            "ChampionSkinName": "TT_NWraith2",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "TT_NWraith2.skn",
+            "Skeleton": "TT_NWraith2.skl",
+            "SkinScale": 1.2,
+            "Texture": "TT_NWraith2_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Stealth",
+        "Name": "Stealth",
+        "ResourcePath": "DATA/Shared/Spells/Stealth.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_Stealth"
+        }
+    }
+}

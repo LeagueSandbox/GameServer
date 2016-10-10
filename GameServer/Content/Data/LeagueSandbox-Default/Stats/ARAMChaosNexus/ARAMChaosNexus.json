@@ -1,0 +1,42 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ARAMChaosNexus",
+        "Name": "ARAMChaosNexus",
+        "ResourcePath": "DATA/Characters/ARAMChaosNexus/ARAMChaosNexus.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_ChaosNexus"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 11,
+            "Particle1": "ARAM_Chaos_Nexus.troy center",
+            "Particle10": "Chaos_Nexus_Base_Glow.troy base5",
+            "Particle11": "Chaos_Nexus_Base_Glow.troy base6",
+            "Particle2": "Chaos_Nexus_Crystal_Glow.troy gnome1",
+            "Particle3": "Chaos_Nexus_Crystal_Glow.troy gnome2",
+            "Particle4": "Chaos_Nexus_Crystal_Glow.troy gnome3",
+            "Particle5": "Chaos_Nexus_Crystal_Glow.troy gnome4",
+            "Particle6": "Chaos_Nexus_Crystal_Glow.troy gnome5",
+            "Particle7": "Chaos_Nexus_Crystal_Glow.troy gnome6",
+            "Particle8": "Chaos_Nexus_Base_Glow.troy base3",
+            "Particle9": "Chaos_Nexus_Base_Glow.troy base4"
+        },
+        "MeshSkin": {
+            "Animations": "ARAMChaosNexusBase.blnd",
+            "ChampionSkinName": "ARAMChaosNexusBase",
+            "EmissiveTexture": "Nexus_Diffuse_Cmask.dds",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Nexus.skn",
+            "Skeleton": "Nexus.skl",
+            "SkinScale": "1.0",
+            "Texture": "Chaos_Nexus_diff.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "122525180": "Chaos_Nexus_Base_Glow.troy base1",
+            "122525181": "Chaos_Nexus_Base_Glow.troy base2"
+        }
+    }
+}

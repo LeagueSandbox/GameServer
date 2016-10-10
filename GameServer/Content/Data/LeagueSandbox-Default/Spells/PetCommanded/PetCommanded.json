@@ -1,0 +1,13 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "PetCommanded",
+        "Name": "PetCommanded",
+        "ResourcePath": "DATA/Shared/Spells/PetCommanded.inibin"
+    },
+    "Values": {
+        "BuffData": {
+            "DynamicTooltip": "game_buff_tooltip_PetCommanded"
+        }
+    }
+}

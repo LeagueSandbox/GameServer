@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Jayce/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Jayce_Base.blnd",
+            "ChampionSkinID": 126001,
+            "ChampionSkinName": "Jayce_Sentinel",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Jayce_Sentinel.skn",
+            "Skeleton": "Jayce_Sentinel.skl",
+            "SkinScale": "1.00",
+            "Texture": "Jayce_sentinel_TX_CM.dds",
+            "YOffset": -0.25
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

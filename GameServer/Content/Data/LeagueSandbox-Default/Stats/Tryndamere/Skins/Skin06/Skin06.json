@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin06",
+        "Name": "Skin06",
+        "ResourcePath": "DATA/Characters/Tryndamere/Skins/Skin06/Skin06.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TryndamereSkin06.blnd",
+            "ChampionSkinID": 23006,
+            "ChampionSkinName": "TryndamereSkin06",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tryndamere_Skin06.skn",
+            "Skeleton": "Tryndamere_Skin06.skl",
+            "SkinScale": 2,
+            "Texture": "Tryndamere_Skin06_TX_CM.dds",
+            "YOffset": -0.1
+        }
+    }
+}

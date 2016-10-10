@@ -1,0 +1,69 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "OdinMinionGraveyardPortal",
+        "Name": "OdinMinionGraveyardPortal",
+        "ResourcePath": "DATA/Characters/OdinMinionGraveyardPortal/OdinMinionGraveyardPortal.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "600",
+            "Armor": "30",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": "0",
+            "AttackDelayCastOffsetPercent": 0.0121875,
+            "AttackDelayOffsetPercent": "0",
+            "AttackRange": "20",
+            "AttackSpeedPerLevel": 2,
+            "BaseCritChance": "0",
+            "BaseDamage": "10",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "50000",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": 65535,
+            "ChasingAttackRangePercent": 0.8,
+            "CritAttack": "",
+            "CritAttack_AttackDelayCastOffsetPercent": 0.0121875,
+            "CritAttack_AttackDelayOffsetPercent": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": "0",
+            "Description": "game_character_description_OdinMinionGraveyardPortal",
+            "ExpGivenOnDeath": "0",
+            "GameplayCollisionRadius": "1.0",
+            "GoldGivenOnDeath": 0,
+            "HPPerLevel": "0",
+            "HPRegenPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "MPRegenPerLevel": "0",
+            "Name": "game_character_displayname_OdinMinionGraveyardPortal",
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": 0,
+            "SelectionHeight": 1,
+            "SelectionRadius": 1,
+            "SpellBlock": "60",
+            "SpellBlockPerLevel": "0"
+        },
+        "MeshSkin": {
+            "Animations": "OdinMinionGraveyardPortalBase.blnd",
+            "ChampionSkinName": "OdinMinionGraveyardPortalBase",
+            "SimpleSkin": "Cube.skn",
+            "Skeleton": "Cube.skl",
+            "Texture": "odinShrineLoadScreen.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1040761625": 8,
+            "105898023": 3,
+            "2786390348": 5,
+            "386495002": 4,
+            "3983263047": 0,
+            "767627316": 2
+        }
+    }
+}

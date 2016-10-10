@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Janna/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseJanna.blnd",
+            "ChampionSkinID": 40003,
+            "ChampionSkinName": "FrostqueenJanna",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Janna_frostqueen.skn",
+            "Skeleton": "Janna_frostqueen.skl",
+            "SkinScale": 1.31,
+            "Texture": "janna_frostqueen_TX_CM.dds"
+        }
+    }
+}

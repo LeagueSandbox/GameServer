@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin18",
+        "Name": "Skin18",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin18/Skin18.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardvalentine.blnd",
+            "ChampionSkinName": "SightWardValentine",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Valentines.skn",
+            "Skeleton": "SightWard_Valentines.skl",
+            "SkinScale": 1,
+            "Texture": "sightward_valentine2014_TX_CM.dds"
+        }
+    }
+}

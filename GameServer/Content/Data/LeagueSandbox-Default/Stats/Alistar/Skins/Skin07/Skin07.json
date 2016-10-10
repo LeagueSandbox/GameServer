@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin07",
+        "Name": "Skin07",
+        "ResourcePath": "DATA/Characters/Alistar/Skins/Skin07/Skin07.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Alistar.blnd",
+            "ChampionSkinID": 12007,
+            "ChampionSkinName": "Alistar_Skin07",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "alistar_skin07.skn",
+            "Skeleton": "alistar_skin07.skl",
+            "SkinScale": 1.4,
+            "Texture": "alistar_skin07_TX_CM.dds"
+        }
+    }
+}

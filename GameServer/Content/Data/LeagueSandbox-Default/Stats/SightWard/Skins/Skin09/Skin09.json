@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin09",
+        "Name": "Skin09",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin09/Skin09.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardBanner.blnd",
+            "ChampionSkinName": "SightWardBanner",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Banner.skn",
+            "Skeleton": "SightWard_Banner.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "sightWard_banner_TX_CM.dds"
+        }
+    }
+}

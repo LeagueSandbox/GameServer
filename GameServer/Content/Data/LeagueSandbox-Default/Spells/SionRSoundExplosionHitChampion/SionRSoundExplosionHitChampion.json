@@ -7,15 +7,13 @@
     },
     "Values": {
         "BuffData": {
-            "DynamicTooltip": "game_buff_tooltip_SionWPassive"
-        },
-        "UNKNOWN_HASHES": {
-            "1441538562": "OrderConfirmation",
-            "1706124924": 0,
-            "218475640": 0,
-            "2407954427": 0,
-            "3109783930": 0,
-            "3811613433": 0
+            "DynamicTooltip": "game_buff_tooltip_SionWPassive",
+            "Effect1Level1Amount": 0,
+            "Effect1Level2Amount": 0,
+            "Effect1Level3Amount": 0,
+            "Effect1Level4Amount": 0,
+            "Effect1Level5Amount": 0,
+            "Sound_VOEventCategory": "OrderConfirmation"
         }
     }
 }

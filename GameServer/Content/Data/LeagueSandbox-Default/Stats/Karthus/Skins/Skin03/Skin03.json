@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Karthus/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseLich.blnd",
+            "ChampionSkinID": 30003,
+            "ChampionSkinName": "GrimLich",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "karthus_grimreaper.skn",
+            "Skeleton": "karthus_grimreaper.skl",
+            "SkinScale": 1.35,
+            "Texture": "karthus_grimreaper_TX_CM.dds"
+        }
+    }
+}

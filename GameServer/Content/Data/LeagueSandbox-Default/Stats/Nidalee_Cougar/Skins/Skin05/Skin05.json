@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin05",
+        "Name": "Skin05",
+        "ResourcePath": "DATA/Characters/Nidalee_Cougar/Skins/Skin05/Skin05.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Nidalee_CougarBase.blnd",
+            "ChampionSkinID": 76005,
+            "ChampionSkinName": "WitchNidalee",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Nidalee_Cougarwitch.skn",
+            "Skeleton": "Nidalee_Cougarwitch.skl",
+            "SkinScale": 1,
+            "Texture": "Nidalee_cougar_witch_2012.dds"
+        }
+    }
+}

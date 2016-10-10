@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin28",
+        "Name": "Skin28",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin28/Skin28.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SightWardS4Champ.blnd",
+            "ChampionSkinName": "SightWardS4Champ",
+            "ParallaxOffset": "0",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_ChampS4.skn",
+            "Skeleton": "SightWard_ChampS4.skl",
+            "SkinScale": "0.9",
+            "Texture": "Sightward_Season4_TX_CM.dds",
+            "YOffset": 65535
+        }
+    }
+}

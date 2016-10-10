@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "DestroyedInhibitor",
+        "Name": "DestroyedInhibitor",
+        "ResourcePath": "DATA/Characters/DestroyedInhibitor/DestroyedInhibitor.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "DestroyedBuilding_idle.troy root"
+        },
+        "MeshSkin": {
+            "Animations": "DestroyedInhibitorBase.blnd",
+            "ChampionSkinName": "DestroyedInhibitorBase",
+            "SelfIllumination": 0.5,
+            "Skeleton": "DestroyedInhibitor.skl",
+            "SkinScale": 1,
+            "Texture": "Inhibitor_destroyed_diff.dds"
+        }
+    }
+}

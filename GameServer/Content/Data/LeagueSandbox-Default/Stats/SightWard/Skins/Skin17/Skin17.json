@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin17",
+        "Name": "Skin17",
+        "ResourcePath": "DATA/Characters/SightWard/Skins/Skin17/Skin17.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sightwardhorsegong.blnd",
+            "ChampionSkinName": "SightWardHorseGong",
+            "OverrideBoundingBox": "30 100 30",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SightWard_Lunar_Gong.skn",
+            "Skeleton": "SightWard_Lunar_Gong.skl",
+            "SkinScale": 1.30000007,
+            "Texture": "Sightward_Lunar_gong.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.6
+        }
+    }
+}

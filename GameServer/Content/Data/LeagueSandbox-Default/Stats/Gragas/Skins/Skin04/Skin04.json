@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Gragas/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "Gragas_Skin04_Idle_Smoke.troy BUFFBONE_CSTM_CIG"
+        },
+        "MeshSkin": {
+            "Animations": "ClassyGragas.blnd",
+            "ChampionSkinID": 79004,
+            "ChampionSkinName": "ClassyGragas",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Gragas_classy.skn",
+            "Skeleton": "Gragas_classy.skl",
+            "SkinScale": 1.2,
+            "Texture": "gragas_classy_TX_CM.dds"
+        }
+    }
+}

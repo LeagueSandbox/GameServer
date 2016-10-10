@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Caitlyn/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "CaitlynBase.blnd",
+            "ChampionSkinID": 51002,
+            "ChampionSkinName": "SheriffCaitlyn",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Caitlyn_sheriff.skn",
+            "Skeleton": "Caitlyn_sheriff.skl",
+            "SkinScale": 1.6,
+            "Texture": "caitlyn_sheriff_TX_CM.dds"
+        }
+    }
+}

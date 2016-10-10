@@ -1998,16 +1998,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class AddBuff : Packet
     {
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
-
         public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmdS2C.PKT_S2C_AddBuff)
         {
+            var _rafManager = Program.ResolveDependency<RAFManager>();
+
             buffer.Write(u.NetId);//target
             buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
-            buffer.Write(_rafManager.getHash(name)); //Buff id
+            buffer.Write(_rafManager.GetHash(name)); //Buff id
             buffer.Write((byte)0xde);
             buffer.Write((byte)0x88);
             buffer.Write((byte)0xc6);
@@ -2062,12 +2062,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveBuff : BasePacket
     {
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
-
         public RemoveBuff(Unit u, string name) : base(PacketCmdS2C.PKT_S2C_RemoveBuff, u.NetId)
         {
+            var _rafManager = Program.ResolveDependency<RAFManager>();
             buffer.Write((byte)0x01);
-            buffer.Write(_rafManager.getHash(name));
+            buffer.Write(_rafManager.GetHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.NetId);//source?
         }
@@ -3173,20 +3172,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SpawnParticle : BasePacket
     {
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
-
         const short MAP_WIDTH = (13982 / 2);
         const short MAP_HEIGHT = (14446 / 2);
 
         public SpawnParticle(Particle particle) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, particle.Owner.NetId)
         {
+            var _rafManager = Program.ResolveDependency<RAFManager>();
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)particle.Owner.getChampionHash());
-            buffer.Write((uint)_rafManager.getHash(particle.Name));
+            buffer.Write((uint)_rafManager.GetHash(particle.Name));
             buffer.Write((int)0x00000020); // flags ?
 
             buffer.Write((short)0); // Unk
-            buffer.Write((uint)_rafManager.getHash(particle.BoneName));
+            buffer.Write((uint)_rafManager.GetHash(particle.BoneName));
 
             buffer.Write((byte)1); // number of targets ?
             buffer.Write((uint)particle.Owner.NetId);
