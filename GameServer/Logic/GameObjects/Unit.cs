@@ -517,6 +517,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     cKiller.KillDeathCounter += 1;
                 }
             }
+
+            if (IsDashing)
+            {
+                IsDashing = false;
+            }
         }
 
         public void AddBuff(Buff b)
@@ -600,40 +605,41 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public int ClassifyTarget(Unit target)
+        public ClassifyUnit ClassifyTarget(Unit target)
         {
-            /*
-Under normal circumstances, a minion痴 behavior is simple. Minions follow their attack route until they reach an enemy to engage.
-Every few seconds, they will scan the area around them for the highest priority target. When a minion receives a call for help
-from an ally, it will evaluate its current target in relation to the target designated by the call. It will switch its attack
-to the new target if and only if the new target is of a higher priority than their current target. Minions prioritize targets
-in the following order:
-
-    1. An enemy champion designated by a call for help from an allied champion. (Enemy champion attacking an Allied champion)
-    2. An enemy minion designated by a call for help from an allied champion. (Enemy minion attacking an Allied champion)
-    3. An enemy minion designated by a call for help from an allied minion. (Enemy minion attacking an Allied minion)
-    4. An enemy turret designated by a call for help from an allied minion. (Enemy turret attacking an Allied minion)
-    5. An enemy champion designated by a call for help from an allied minion. (Enemy champion attacking an Allied minion)
-    6. The closest enemy minion.
-    7. The closest enemy champion.
-*/
-
             if (target.TargetUnit != null && target.TargetUnit.isInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
             {
-                if (target is Champion && target.TargetUnit is Champion) // If it's a champion attacking a friendly champion
-                    return 1;
-                else if (target is Minion && target.TargetUnit is Champion) // If it's a minion attacking a friendly champion.
-                    return 2;
-                else if (target is Minion && target.TargetUnit is Minion) // Minion attacking minion
-                    return 3;
-                else if (target is BaseTurret && target.TargetUnit is Minion) // Turret attacking minion
-                    return 4;
-                else if (target is Champion && target.TargetUnit is Minion) // Champion attacking minion
-                    return 5;
+                if (target is Champion && target.TargetUnit is Champion) // If it's a champion attacking an allied champion
+                {
+                    return ClassifyUnit.ChampionAttackingChampion;
+                }
+
+                if (target is Minion && target.TargetUnit is Champion) // If it's a minion attacking an allied champion.
+                {
+                    return ClassifyUnit.MinionAttackingChampion;
+                }
+
+                if (target is Minion && target.TargetUnit is Minion) // Minion attacking minion
+                {
+                    return ClassifyUnit.MinionAttackingMinion;
+                }
+
+                if (target is BaseTurret && target.TargetUnit is Minion) // Turret attacking minion
+                {
+                    return ClassifyUnit.TurretAttackingMinion;
+                }
+
+                if (target is Champion && target.TargetUnit is Minion) // Champion attacking minion
+                {
+                    return ClassifyUnit.ChampionAttackingMinion;
+                }
             }
 
-            if (target is Placeable)
-                return 6;
+            var p = target as Placeable;
+            if (p != null)
+            {
+                return ClassifyUnit.Placeable;
+            }
 
             var m = target as Minion;
             if (m != null)
@@ -641,19 +647,26 @@ in the following order:
                 switch (m.getType())
                 {
                     case MinionSpawnType.MINION_TYPE_MELEE:
-                        return 7;
+                        return ClassifyUnit.MeleeMinion;
                     case MinionSpawnType.MINION_TYPE_CASTER:
-                        return 8;
+                        return ClassifyUnit.CasterMinion;
                     case MinionSpawnType.MINION_TYPE_CANNON:
                     case MinionSpawnType.MINION_TYPE_SUPER:
-                        return 9;
+                        return ClassifyUnit.SuperOrCannonMinion;
                 }
             }
 
-            if (target is Champion)
-                return 10;
+            if (target is BaseTurret)
+            {
+                return ClassifyUnit.Turret;
+            }
 
-            return 11;
+            if (target is Champion)
+            {
+                return ClassifyUnit.Champion;
+            }
+
+            return ClassifyUnit.Default;
 
             /*Turret* t = dynamic_cast<Turret*>(target);
 
@@ -697,5 +710,21 @@ in the following order:
         TurretDestroyed = 0x24,
         SummonerDisconnected = 0x47,
         SummonerReconnected = 0x48
+    }
+
+    public enum ClassifyUnit
+    {
+        ChampionAttackingChampion = 1,
+        MinionAttackingChampion = 2,
+        MinionAttackingMinion = 3,
+        TurretAttackingMinion = 4,
+        ChampionAttackingMinion = 5,
+        Placeable = 6,
+        MeleeMinion = 7,
+        CasterMinion = 8,
+        SuperOrCannonMinion = 9,
+        Turret = 10,
+        Champion = 11,
+        Default = 12
     }
 }

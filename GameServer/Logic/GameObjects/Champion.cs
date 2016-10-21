@@ -43,35 +43,35 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseHP");
+            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseHP");
             stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseMP");
+            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseDamage");
-            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "AttackRange");
-            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "MoveSpeed");
-            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "Armor");
-            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Values", "Data", "AttackDelayOffsetPercent"));
+            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseDamage");
+            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Data", "AttackRange");
+            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Data", "MoveSpeed");
+            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Data", "Armor");
+            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Data", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Data", "AttackDelayOffsetPercent"));
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
-            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPPerLevel");
-            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPPerLevel");
-            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "DamagePerLevel");
-            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "ArmorPerLevel");
-            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Values", "Data", "AttackSpeedPerLevel");
+            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Data", "HPPerLevel");
+            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Data", "MPPerLevel");
+            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Data", "DamagePerLevel");
+            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Data", "ArmorPerLevel");
+            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Data", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
 
             Spells = new List<Spell>
             {
-                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell1"), 0),
-                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell2"), 1),
-                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell3"), 2),
-                new Spell(this, _rafManager.GetStringValue(data, "Values", "Data", "Spell4"), 3),
+                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0),
+                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1),
+                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2),
+                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3),
                 new Spell(this, "SummonerHeal", 4),
                 new Spell(this, "SummonerFlash", 5),
                 new Spell(this, "Recall", 13)
@@ -81,22 +81,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             for (var i = 1; true; i++)
             {
-                if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Values", "Data", "ExtraSpell" + i)))
+                if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i)))
                 {
                     break;
                 }
 
-                ExtraSpells.Add(_rafManager.GetStringValue(data, "Values", "Data", "ExtraSpell" + i));
+                ExtraSpells.Add(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i));
             }
 
-            IsMelee = _rafManager.GetBoolValue(data, "Values", "Data", "IsMelee");
-            CollisionRadius = _rafManager.GetIntValue(data, "Values", "Data", "PathfindingCollisionRadius");
+            IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
+            CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
 
             JObject autoAttack;
             if (_rafManager.ReadAutoAttackData(model, out autoAttack))
             {
-                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "Values", "SpellData", "CastFrame") / 30.0f;
-                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "Values", "SpellData", "MissileSpeed");
+                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
+                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
             }
 
             LoadLua();
@@ -293,9 +293,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 Dictionary<uint, GameObject> objects = _game.Map.GetObjects();
-                float distanceToTarget = 9000000.0f;
+                var distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
-                float range = Math.Max(stats.Range.Total, DETECT_RANGE);
+                var range = Math.Max(stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {

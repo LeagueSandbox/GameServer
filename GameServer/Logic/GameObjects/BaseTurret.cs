@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -28,20 +27,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var objects = _game.Map.GetObjects();
             Unit nextTarget = null;
-            int nextTargetPriority = 11;
+            var nextTargetPriority = 12;
 
             foreach (var it in objects)
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.IsDead || u.Team == this.Team || GetDistanceTo(u) > stats.Range.Total)
+                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > stats.Range.Total)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
                 if (TargetUnit == null)
                 {
-                    var priority = ClassifyTarget(u);
+                    var priority = (int)ClassifyTarget(u);
                     if (priority < nextTargetPriority)
                     {
                         nextTarget = u;
@@ -62,8 +61,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             var enemyChampTarget = enemyChamp.TargetUnit as Champion;
                             if (enemyChampTarget != null && // Enemy Champion is targeting an ally
                                 enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
-                                GetDistanceTo(enemyChampTarget) <= stats.Range.Total)
-                            {                                     // Enemy within range of this turret
+                                GetDistanceTo(enemyChampTarget) <= stats.Range.Total) // Enemy within range of this turret
+                            {
                                 nextTarget = enemyChamp; // No priority required
                                 break;
                             }

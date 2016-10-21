@@ -34,8 +34,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             Target = target;
 
-            if (!target.isSimpleTarget())
+            if (!target.IsSimpleTarget)
+            {
                 ((GameObject)target).incrementAttackerCount();
+            }
 
             owner.incrementAttackerCount();
         }
@@ -48,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (Target.isSimpleTarget())
+            if (Target.IsSimpleTarget)
             { // Skillshot
                 var objects = _game.Map.GetObjects();
                 foreach (var it in objects)
@@ -95,11 +97,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             continue;
 
                         var i = u as Inhibitor;
-                        if (i != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
-                            continue;
-
                         var n = u as Nexus;
-                        if (n != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                        if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                             continue;
 
                         var c = u as Champion;
@@ -138,7 +137,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void setToRemove()
         {
-            if (Target != null && !Target.isSimpleTarget())
+            if (Target != null && !Target.IsSimpleTarget)
                 (Target as GameObject).decrementAttackerCount();
 
             Owner.decrementAttackerCount();

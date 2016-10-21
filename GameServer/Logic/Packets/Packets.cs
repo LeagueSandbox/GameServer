@@ -9,7 +9,6 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
 
@@ -904,7 +903,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)u.X);
             buffer.Write((float)u.Y);
             buffer.Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
-            if (t.isSimpleTarget())
+            if (t.IsSimpleTarget)
             {
                 buffer.Write((uint)0);
             }
@@ -3086,7 +3085,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)0); // Unk
             buffer.Write((int)0x7f7fffff); // Unk
             buffer.Write((byte)0); // Unk
-            if (!p.Target.isSimpleTarget())
+            if (!p.Target.IsSimpleTarget)
             {
                 buffer.Write((byte)0x6B); // <-|
             }                             //   |
@@ -3119,7 +3118,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)p.Target.X);
             buffer.Write((float)p.GetZ()+100.0f);
             buffer.Write((float)p.Target.Y);
-            if (!p.Target.isSimpleTarget())
+            if (!p.Target.IsSimpleTarget)
             {
                 buffer.Write((byte)0x01); // Unk (number of targets?)
                 buffer.Write((p.Target as Unit).NetId);
@@ -3191,7 +3190,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((uint)particle.NetId); // Particle net id ?
             buffer.Write((uint)particle.Owner.NetId);
 
-            if (particle.Target.isSimpleTarget())
+            if (particle.Target.IsSimpleTarget)
                 buffer.Write((int)0);
             else
                 buffer.Write((particle.Target as GameObject).NetId);

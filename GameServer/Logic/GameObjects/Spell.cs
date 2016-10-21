@@ -137,7 +137,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 // Generate cooldown values for each level of the spell
                 for (var i = 0; i < cooldown.Length; ++i)
                 {
-                    cooldown[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "Cooldown");
+                    cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown");
                 }
 
                 return;
@@ -152,41 +152,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // Generate cooldown values for each level of the spell
             for (var i = 0; i < cooldown.Length; ++i)
             {
-                cooldown[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "Cooldown" + (i + 1));
+                cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown" + (i + 1));
             }
 
             for (var i = 0; i < cost.Length; ++i)
             {
-                cost[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "ManaCost" + (i + 1));
+                cost[i] = _rafManager.GetFloatValue(data, "SpellData", "ManaCost" + (i + 1));
             }
 
             for (var i = 0; i < _castRange.Length; ++i)
             {
-                _castRange[i] = _rafManager.GetFloatValue(data, "Values", "SpellData", "CastRange" + (i + 1));
+                if (_rafManager.GetFloatValue(data, "SpellData", "CastRange" + (i + 1)) == 0)
+                {
+                    _castRange[i] = _rafManager.GetFloatValue(data, "SpellData", "CastRange");
+                }
+                else
+                {
+                    _castRange[i] = _rafManager.GetFloatValue(data, "SpellData", "CastRange" + (i + 1));
+                }
             }
 
-            CastTime = (1.0f + _rafManager.GetFloatValue(data, "Values", "SpellData", "DelayCastOffsetPercent")) / 2.0f;
+            CastTime = (1.0f + _rafManager.GetFloatValue(data, "SpellData", "DelayCastOffsetPercent")) / 2.0f;
 
-            Flags = _rafManager.GetIntValue(data, "Values", "SpellData", "Flags");
-            ProjectileSpeed = _rafManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
+            Flags = _rafManager.GetIntValue(data, "SpellData", "Flags");
+            ProjectileSpeed = _rafManager.GetFloatValue(data, "SpellData", "MissileSpeed");
             for (var i = 0; true; i++)
             {
-                if (_rafManager.GetValue(data, "Values", "SpellData", "Coefficient" + i) == null)
+                if (_rafManager.GetValue(data, "SpellData", "Coefficient" + i) == null)
                 {
                     break;
                 }
 
-                var coeffValue = _rafManager.GetFloatValue(data, "Values", "SpellData", "Coefficient" + i);
+                var coeffValue = _rafManager.GetFloatValue(data, "SpellData", "Coefficient" + i);
                 Coefficient[i] = coeffValue;
                 i++;
             }
-            LineWidth = _rafManager.GetFloatValue(data, "Values", "SpellData", "LineWidth");
-            hitEffectName = _rafManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
+            LineWidth = _rafManager.GetFloatValue(data, "SpellData", "LineWidth");
+            hitEffectName = _rafManager.GetStringValue(data, "SpellData", "HitEffectName");
 
             for (var i = 0; true; i++)
             {
                 string key = "Effect" + (0 + i) + "Level0Amount";
-                if (_rafManager.GetValue(data, "Values", "SpellData", key) == null)
+                if (_rafManager.GetValue(data, "SpellData", key) == null)
                 {
                     break;
                 }
@@ -195,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 for (var j = 0; j < 6; ++j)
                 {
                     key = "Effect" + (0 + i) + "Level" + (0 + j) + "Amount";
-                    effectValues.Add(_rafManager.GetFloatValue(data, "Values", "SpellData", key));
+                    effectValues.Add(_rafManager.GetFloatValue(data, "SpellData", key));
                 }
 
                 effects.Add(effectValues);
@@ -203,7 +210,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             _targetType = (float) Math.Floor(
-                _rafManager.GetFloatValue(data, "Values", "SpellData", "TargettingType") +
+                _rafManager.GetFloatValue(data, "SpellData", "TargettingType") +
                 0.5f
             );
 
@@ -228,9 +235,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 if (_rafManager.ReadSpellData(spell, out data))
                 {
-                    hitEffectName = _rafManager.GetStringValue(data, "Values", "SpellData", "HitEffectName");
-                    ProjectileSpeed = _rafManager.GetFloatValue(data, "Values", "SpellData", "MissileSpeed");
-                    ProjectileFlags = _rafManager.GetIntValue(data, "Values", "SpellData", "Flags");
+                    hitEffectName = _rafManager.GetStringValue(data, "SpellData", "HitEffectName");
+                    ProjectileSpeed = _rafManager.GetFloatValue(data, "SpellData", "MissileSpeed");
+                    ProjectileFlags = _rafManager.GetIntValue(data, "SpellData", "Flags");
                 }
             }
         }

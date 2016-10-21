@@ -44,9 +44,9 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return true;
         }
 
-        public JToken GetValue(JObject from, string first, string second = "", string third = "")
+        public JToken GetValue(JObject from, string second = "", string third = "")
         {
-            var toReturn = from.SelectToken(first);
+            var toReturn = from.SelectToken("Values");
             if (!string.IsNullOrEmpty(second) && toReturn != null)
             {
                 toReturn = toReturn.SelectToken(second);
@@ -59,27 +59,27 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return toReturn;
         }
 
-        public float GetFloatValue(JObject from, string first, string second = "", string third = "")
+        public float GetFloatValue(JObject from, string second = "", string third = "")
         {
-            var x = GetValue(from, first, second, third);
+            var x = GetValue(from, second, third);
             return x == null || string.IsNullOrEmpty((string)x) ? 0.0f : (float)x;
         }
 
-        public int GetIntValue(JObject from, string first, string second = "", string third = "")
+        public int GetIntValue(JObject from, string second = "", string third = "")
         {
-            var x = GetValue(from, first, second, third);
+            var x = GetValue(from, second, third);
             return x == null || string.IsNullOrEmpty((string)x) ? 0 : (int)x;
         }
 
-        public string GetStringValue(JObject from, string first, string second = "", string third = "")
+        public string GetStringValue(JObject from, string second = "", string third = "")
         {
-            var x = GetValue(from, first, second, third);
+            var x = GetValue(from, second, third);
             return x == null || string.IsNullOrEmpty((string)x) ? "" : (string)x;
         }
 
-        public bool GetBoolValue(JObject from, string first, string second = "", string third = "")
+        public bool GetBoolValue(JObject from, string second = "", string third = "")
         {
-            var x = GetValue(from, first, second, third);
+            var x = GetValue(from, second, third);
             if (x == null)
             {
                 return false;
