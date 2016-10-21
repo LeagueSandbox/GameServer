@@ -58,6 +58,7 @@
     <Compile Include="Items\TestInventoryManager.cs" />
     <Compile Include="Logic\API\ApiFunctionManagerTests.cs" />
     <Compile Include="Logic\Chatbox\ChatboxManagerTests.cs" />
+    <Compile Include="Logic\TestGameplayElements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Blowfish\TestBlowfish.cs" />
     <Compile Include="TestHelpers.cs" />

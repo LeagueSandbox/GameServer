@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                 _game.PacketNotifier.notifySetAnimation(unit, animList);
             }
 
-            if (target.isSimpleTarget())
+            if (target.IsSimpleTarget)
             {
                 var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);

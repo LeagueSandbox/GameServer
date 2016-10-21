@@ -52,30 +52,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseHP");
+            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseHP");
             stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseMP");
+            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseMP");
             stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseDamage");
-            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "AttackRange");
-            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "MoveSpeed");
-            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "Armor");
-            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Values", "Data", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Values", "Data", "AttackDelayOffsetPercent"));
+            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseDamage");
+            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Data", "AttackRange");
+            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Data", "MoveSpeed");
+            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Data", "Armor");
+            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Data", "SpellBlock");
+            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticHPRegen");
+            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticMPRegen");
+            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Data", "AttackDelayOffsetPercent"));
 
-            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPPerLevel");
-            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPPerLevel");
-            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "DamagePerLevel");
-            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "ArmorPerLevel");
-            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Values", "Data", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Values", "Data", "AttackSpeedPerLevel");
+            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Data", "HPPerLevel");
+            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Data", "MPPerLevel");
+            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Data", "DamagePerLevel");
+            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Data", "ArmorPerLevel");
+            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Data", "SpellBlockPerLevel");
+            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "HPRegenPerLevel");
+            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
+            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
 
-            IsMelee = _rafManager.GetBoolValue(data, "Values", "Data", "IsMelee");
-            CollisionRadius = _rafManager.GetIntValue(data, "Values", "Data", "PathfindingCollisionRadius");
+            IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
+            CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
 
             if (!_rafManager.ReadAutoAttackData(model, out data))
             {

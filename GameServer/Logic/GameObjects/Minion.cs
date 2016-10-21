@@ -110,14 +110,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!IsDead)
             {
-                if (IsDashing)
-                    return;
-                if (!_AIPaused)
+                if (IsDashing || _AIPaused)
                 {
-                    if (scanForTargets())     // returns true if we have a target
-                        keepFocussingTarget(); // fight target
-                    else
-                        walkToDestination(); // walk to destination (or target)
+                    return;
+                }
+
+                if (scanForTargets()) // returns true if we have a target
+                {
+                    keepFocussingTarget(); // fight target
+                }
+                else
+                {
+                    walkToDestination(); // walk to destination (or target)
                 }
             }
         }
@@ -145,7 +149,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool scanForTargets()
         {
             Unit nextTarget = null;
-            var nextTargetPriority = 11;
+            var nextTargetPriority = 12;
 
             var objects = _game.Map.GetObjects();
             foreach (var it in objects)
@@ -153,14 +157,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var u = it.Value as Unit;
 
                 // Targets have to be:
-                if (u == null ||                                    // a unit
-                     u.IsDead ||                                  // alive
-                     u.Team == Team ||                    // not on our team
-                     GetDistanceTo(u) > DETECT_RANGE ||              // in range
-                     !_game.Map.TeamHasVisionOn(Team, u))       // visible to this minion
-                    continue;                                       // If not, look for something else
+                if (u == null ||                          // a unit
+                    u.IsDead ||                          // alive
+                    u.Team == Team ||                    // not on our team
+                    GetDistanceTo(u) > DETECT_RANGE ||   // in range
+                    !_game.Map.TeamHasVisionOn(Team, u)) // visible to this minion
+                    continue;                             // If not, look for something else
 
-                var priority = ClassifyTarget(u);  // get the priority.
+                var priority = (int)ClassifyTarget(u);  // get the priority.
                 if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously
                 {
                     nextTarget = u;                // make him a potential target.
@@ -174,8 +178,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.notifySetTarget(this, nextTarget);
                 return true;
             }
+
             return false;
         }
+
         protected void walkToDestination()
         {
             if (mainWaypoints.Count > curMainWaypoint + 1)

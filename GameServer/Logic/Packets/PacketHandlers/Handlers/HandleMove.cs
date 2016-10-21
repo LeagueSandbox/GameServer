@@ -19,7 +19,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo.Champion;
-            if (peerInfo == null || champion.IsDashing || champion.IsDead || champion.IsCastingSpell)
+            if (peerInfo == null ||
+                champion.IsDashing ||
+                champion.IsDead ||
+                champion.IsCastingSpell)
                 return true;
 
             var request = new MovementReq(data);
