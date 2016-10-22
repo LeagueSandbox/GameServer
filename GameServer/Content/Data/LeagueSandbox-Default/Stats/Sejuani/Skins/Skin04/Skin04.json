@@ -1,0 +1,28 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Sejuani/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "DefaultAnimations": {
+            "Animation1": "BBs",
+            "NumberOfAnimations": 1
+        },
+        "MeshSkin": {
+            "Animations": "SejuaniSkin04.blnd",
+            "ChampionSkinID": 113004,
+            "ChampionSkinName": "SejuaniSkin04",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sejuani_Skin04.skn",
+            "Skeleton": "Sejuani_Skin04.skl",
+            "SkinScale": "1.0",
+            "Texture": "sejuani_Skin04_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.5,
+            "708066840": "sejuani_Skin04_world_weapon"
+        }
+    }
+}

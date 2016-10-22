@@ -1,0 +1,26 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRUAP_OrderNexus/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRUAP_OrderNexus.blnd",
+            "ChampionSkinName": "SRUAP_OrderNexus",
+            "MaterialOverride0Submesh": "Destroyed",
+            "MaterialOverride0Texture": "sruap_ordernexus_destroyed_tx_cm.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRUAP_OrderNexus.skn",
+            "Skeleton": "SRUAP_OrderNexus.skl",
+            "SkinScale": "1.0",
+            "Texture": "SRUAP_OrderNexus_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2,
+            "4276189325": "sru_Order_nexus_explosion.troy",
+            "708066840": "Destroyed"
+        }
+    }
+}

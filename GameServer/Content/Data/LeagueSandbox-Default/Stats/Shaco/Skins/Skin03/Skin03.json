@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Shaco/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseJester.blnd",
+            "ChampionSkinID": 35003,
+            "ChampionSkinName": "NutcrackerJester",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Shaco_nutcracker.skn",
+            "Skeleton": "Shaco_nutcracker.skl",
+            "SkinScale": 1.85,
+            "Texture": "shaco_nutcracker_TX_CM_v01.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Maokai/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "GraveDiggerMaokai.blnd",
+            "ChampionSkinID": 57004,
+            "ChampionSkinName": "GraveDiggerMaokai",
+            "OverrideBoundingBox": "190 260 190",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Maokai_graveDigger.skn",
+            "Skeleton": "Maokai_graveDigger.skl",
+            "SkinScale": 1,
+            "Texture": "Maokai_graveDigger_TX_CM.dds"
+        }
+    }
+}

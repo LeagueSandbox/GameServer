@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Blue/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Blue.blnd",
+            "ChampionSkinName": "SRU_Blue",
+            "MaterialOverride0Submesh": "BlueBuff_Bird_Mat",
+            "MaterialOverride0Texture": "SRU_Blue_Bird.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Blue.skn",
+            "Skeleton": "SRU_Blue.skl",
+            "SkinScale": 1.17,
+            "Texture": "SRU_Blue_Golem_V2.dds"
+        }
+    }
+}

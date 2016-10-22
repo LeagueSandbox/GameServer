@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_RedMini/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_RedMini.blnd",
+            "ChampionSkinName": "SRU_RedMini",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_RedMini.skn",
+            "Skeleton": "SRU_RedMini.skl",
+            "SkinScale": 1.35,
+            "Texture": "SRU_RedMini.dds"
+        }
+    }
+}

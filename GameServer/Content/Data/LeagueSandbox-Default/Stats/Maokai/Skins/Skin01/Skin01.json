@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Maokai/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "maokai.blnd",
+            "ChampionSkinID": 57001,
+            "ChampionSkinName": "BurntMaokai",
+            "OverrideBoundingBox": "190 260 190",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Maokai_burnt.skn",
+            "Skeleton": "Maokai_burnt.skl",
+            "SkinScale": 1,
+            "Texture": "maokai_burnt_TX_CM.dds"
+        }
+    }
+}

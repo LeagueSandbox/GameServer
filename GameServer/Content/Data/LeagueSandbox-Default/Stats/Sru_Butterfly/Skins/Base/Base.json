@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sru_Butterfly/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Butterfly.blnd",
+            "ChampionSkinName": "SruButterfly",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sru_Butterfly.skn",
+            "Skeleton": "Sru_Butterfly.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sru_Butterfly_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sru_Gromp_Prop/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Gromp_Prop.blnd",
+            "CastShadows": 1,
+            "ChampionSkinName": "SruGrompProp",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sru_Gromp_Prop.skn",
+            "Skeleton": "Sru_Gromp_Prop.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sru_Gromp_Prop_TX_CM.dds"
+        }
+    }
+}

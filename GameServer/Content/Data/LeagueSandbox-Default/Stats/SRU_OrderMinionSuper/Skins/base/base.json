@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_OrderMinionSuper/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SR_AP_Blue_Minion_superminionBase.blnd",
+            "ChampionSkinName": "SR_AP_Blue_Minion_superminionBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Blue_Minion_superminion.skn",
+            "Skeleton": "Blue_Minion_superminion.skl",
+            "SkinScale": 1.05,
+            "Texture": "blue_superminion_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

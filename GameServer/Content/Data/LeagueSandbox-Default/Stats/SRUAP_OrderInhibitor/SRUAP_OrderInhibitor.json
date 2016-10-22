@@ -1,0 +1,29 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRUAP_OrderInhibitor",
+        "Name": "SRUAP_OrderInhibitor",
+        "ResourcePath": "DATA/Characters/SRUAP_OrderInhibitor/SRUAP_OrderInhibitor.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_SRU_OrderInhibitor",
+            "UnitTags": "Structure | Structure_Inhibitor"
+        },
+        "HealthBar": {
+            "UnitBarKey": "Turret",
+            "WorldOffset": "0 -3,7 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconCircle": "Inhibitor_Blue_Circle.dds",
+            "IconSquare": "Inhibitor_Blue_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "SRUAP_ChaosInhibitor"
+        }
+    }
+}

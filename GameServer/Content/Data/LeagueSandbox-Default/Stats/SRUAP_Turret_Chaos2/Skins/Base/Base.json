@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRUAP_Turret_Chaos2/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRUAP_Turret_Chaos1.blnd",
+            "ChampionSkinName": "SRUAPTurretChaos2",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRUAP_turret_Chaos1.skn",
+            "Skeleton": "SRUAP_turret_Chaos1.skl",
+            "SkinScale": "1.0",
+            "Texture": "SRUAP_turret_Chaos1_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2,
+            "708066840": "Stage1,Stage2,Rubble,Break1,Break2,Break3"
+        }
+    }
+}

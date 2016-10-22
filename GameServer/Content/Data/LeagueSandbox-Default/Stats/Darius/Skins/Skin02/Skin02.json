@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Darius/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Darius_ZaunKnight.blnd",
+            "ChampionSkinID": 122002,
+            "ChampionSkinName": "Darius_ZaunKnight",
+            "OverrideBoundingBox": "120 250 120",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Darius_ZaunKnight.skn",
+            "Skeleton": "Darius_ZaunKnight.skl",
+            "SkinScale": "1.0",
+            "Texture": "darius_zaun_knight_TX_CM.dds",
+            "YOffset": -1.5
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_OrderMinionRanged/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SR_AP_Blue_Minion_CasterBase.blnd",
+            "ChampionSkinName": "Order_Minion_Caster",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Order_Minion_caster.skn",
+            "Skeleton": "Order_Minion_caster.skl",
+            "SkinScale": 0.76,
+            "Texture": "OrderMinion_caster_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

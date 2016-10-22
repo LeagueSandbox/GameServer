@@ -1,0 +1,32 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Lissandra/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseLiss.blnd",
+            "ChampionSkinID": "127000",
+            "ChampionSkinName": "BaseLiss",
+            "GlossTexture": "Lissandra_base_TX_GM.dds",
+            "OverrideBoundingBox": "130 330 130",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "Lissandra_base_TX_RM.dds",
+            "ReflectionOpacityDirect": "1.0",
+            "ReflectionOpacityGlancing": 0.7,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lissandra.skn",
+            "Skeleton": "Lissandra.skl",
+            "SkinScale": 1.12,
+            "Texture": "Lissandra_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Lissandra_Q_Spike2"
+        }
+    }
+}

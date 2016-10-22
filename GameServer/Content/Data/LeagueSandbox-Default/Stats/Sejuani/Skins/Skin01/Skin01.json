@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Sejuani/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SejuaniBase.blnd",
+            "ChampionSkinID": 113001,
+            "ChampionSkinName": "SejuaniBeastLord",
+            "SelfIllumination": 0.55,
+            "SimpleSkin": "Sejuani_beastlord.skn",
+            "Skeleton": "Sejuani_beastlord.skl",
+            "SkinScale": "1.00",
+            "Texture": "sejuani_beastlord_TX_CM.dds"
+        }
+    }
+}

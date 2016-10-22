@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin04",
+        "Name": "Skin04",
+        "ResourcePath": "DATA/Characters/Riven/Skins/Skin04/Skin04.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Season2Riven.blnd",
+            "ChampionSkinID": 92004,
+            "ChampionSkinName": "Season2Riven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "riven_season2.skn",
+            "Skeleton": "riven_season2.skl",
+            "SkinScale": 1.5,
+            "Texture": "riven_season2_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Razorbeak/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sru_Razorbeak.blnd",
+            "ChampionSkinName": "SRU_Razorbeak",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Razorbeak.skn",
+            "Skeleton": "SRU_Razorbeak.skl",
+            "SkinScale": 1.4,
+            "Texture": "SRU_Razorbeak_TX_CM.dds"
+        }
+    }
+}

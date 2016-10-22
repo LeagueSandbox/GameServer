@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sru_Dragonfly/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Dragonfly.blnd",
+            "ChampionSkinName": "SruDragonfly",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sru_Dragonfly.skn",
+            "Skeleton": "Sru_Dragonfly.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sru_Dragonfly_TX_CM.dds"
+        }
+    }
+}

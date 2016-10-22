@@ -1,0 +1,14 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_storeKeeperNorth",
+        "Name": "SRU_storeKeeperNorth",
+        "ResourcePath": "DATA/Characters/sru_storekeepernorth/SRU_storeKeeperNorth.inibin"
+    },
+    "Values": {
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        }
+    }
+}

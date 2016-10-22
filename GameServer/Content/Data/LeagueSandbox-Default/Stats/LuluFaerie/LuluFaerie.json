@@ -1,0 +1,129 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LuluFaerie",
+        "Name": "LuluFaerie",
+        "ResourcePath": "DATA/Characters/LuluFaerie/LuluFaerie.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "800",
+            "AllowPetControl": "0",
+            "Armor": 13,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 3.5,
+            "AttackDelayCastOffsetPercent": "-0.099465",
+            "AttackDelayOffsetPercent": -0.065,
+            "AttackRange": "0",
+            "AttackSpeedPerLevel": "0",
+            "BaseAttack_Probability": "1.0",
+            "BaseCritChance": "0",
+            "BaseDamage": 24,
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": 0,
+            "BaseHP": "300",
+            "BaseMP": 255,
+            "BaseStaticHPRegen": 0.95,
+            "BaseStaticMPRegen": 1.30000007,
+            "ChasingAttackRangePercent": 0.8,
+            "CritAttack": "CaitlynCritAttack",
+            "CritAttack_AttackDelayCastOffsetPercent": "-0.099465",
+            "CritAttack_AttackDelayOffsetPercent": "-0.065",
+            "CritDamageBonus": 2,
+            "CritPerLevel": "0",
+            "DamagePerLevel": 1.5,
+            "Description": "game_character_description_Caitlyn",
+            "ExtraAttack1": "CaitlynBasicAttack2",
+            "ExtraSpell1": "LuluPassiveMissile",
+            "ExtraSpell2": "LuluDummySpell",
+            "HPPerLevel": "80",
+            "HPRegenPerLevel": 0.11,
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": 275,
+            "MPPerLevel": 35,
+            "MPRegenPerLevel": 0.11,
+            "Name": "game_character_displayname_Caitlyn",
+            "PathfindingCollisionRadius": "0",
+            "PostAttackMoveDelay": 0,
+            "SelectionHeight": "0",
+            "SelectionRadius": "0",
+            "Spell1": "",
+            "Spell2": "",
+            "Spell3": "",
+            "Spell4": "",
+            "SpellBlock": "30",
+            "SpellBlockPerLevel": "0"
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": ""
+        },
+        "MeshSkin": {
+            "Animations": "LuluFaerie.blnd",
+            "ChampionSkinName": "LuluFaerie",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lulu_faerie.skn",
+            "Skeleton": "Lulu_faerie.skl",
+            "SkinScale": "2.0",
+            "Texture": "Lulu_base_TX_CM.dds"
+        },
+        "MeshSkin1": {
+            "Animations": "LuluFaerie.blnd",
+            "ChampionSkinName": "DarkLuluFaerie",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lulu_faerie_darkcandy.skn",
+            "Skeleton": "Lulu_faerie_darkcandy.skl",
+            "SkinScale": 1.7,
+            "Texture": "Lulu_darkcandy_TX_CM.dds"
+        },
+        "MeshSkin2": {
+            "Animations": "LuluFaerie.blnd",
+            "ChampionSkinName": "ClassicLuluFaerie",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lulu_faerie_classic.skn",
+            "Skeleton": "Lulu_faerie_classic.skl",
+            "SkinScale": "2.0",
+            "Texture": "Lulu_classic_TX_CM.dds"
+        },
+        "MeshSkin3": {
+            "Animations": "LuluFaerieDragonTrainer.blnd",
+            "ChampionSkinName": "LuluFaerieDragonTrainer",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lulu_faerie_DragonTrainer.skn",
+            "Skeleton": "Lulu_faerie_DragonTrainer.skl",
+            "SkinScale": "2.0",
+            "Texture": "Lulu_DragonTrainer_TX_CM.dds"
+        },
+        "MeshSkin4": {
+            "Animations": "LuluFaerieSkin04.blnd",
+            "ChampionSkinName": "LuluFaerieSkin04",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lulu_faerie_Skin04.skn",
+            "Skeleton": "Lulu_faerie_Skin04.skl",
+            "SkinScale": "2.0",
+            "Texture": "lulu_fairy_skin04_TX_CM.dds"
+        },
+        "Sounds": {
+            "Attack1": "ChloeNil-Attack1-NORM_01.wav",
+            "Attack2": "ChloeNil-Attack2-NORM_01.wav",
+            "Attack3": "ChloeNil-Attack3-NORM_01.wav",
+            "Attack4": "ChloeNil-Attack4-NORM_01.wav",
+            "Death": "ChloeNil-Death1-NORM_01.wav"
+        },
+        "UNKNOWN_HASHES": {
+            "2003803037": "ChloeNil-Ready1-NORM_01.wav",
+            "386495002": 3,
+            "3983263047": "0",
+            "4285410714": "ChloeNil-Move1-NORM_01.wav",
+            "4285410715": "ChloeNil-Move2-NORM_01.wav",
+            "4285410716": "ChloeNil-Move3-NORM_01.wav",
+            "4285410717": "ChloeNil-Move4-NORM_01.wav",
+            "43754799": "ChloeNil-Click1-NORM_01.wav",
+            "43754800": "ChloeNil-Click2-NORM_01.wav",
+            "43754801": "ChloeNil-Click3-NORM_01.wav",
+            "43754802": "ChloeNil-Click4-NORM_01.wav"
+        }
+    }
+}

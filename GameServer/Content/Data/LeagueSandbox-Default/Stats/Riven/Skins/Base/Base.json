@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Riven/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseRiven.blnd",
+            "ChampionSkinID": "92000",
+            "ChampionSkinName": "BaseRiven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "riven.skn",
+            "Skeleton": "riven.skl",
+            "SkinScale": 1.5,
+            "Texture": "riven_base_TX_CM.dds"
+        }
+    }
+}

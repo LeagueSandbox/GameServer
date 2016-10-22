@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_ChaosMinionSuper/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SR_AP_Red_Minion_SuperminionBase.blnd",
+            "ChampionSkinName": "SR_AP_Red_Minion_SuperminionBase",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Red_Minion_Superminion.skn",
+            "Skeleton": "Red_Minion_Superminion.skl",
+            "SkinScale": 1.05,
+            "Texture": "red_superminion_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

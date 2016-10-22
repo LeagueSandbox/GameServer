@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Murkwolf/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Murkwolf.blnd",
+            "ChampionSkinName": "SRU_Murkwolf",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Murkwolf.skn",
+            "Skeleton": "SRU_Murkwolf.skl",
+            "SkinScale": 1.2,
+            "Texture": "SRU_Murkwolf.dds"
+        }
+    }
+}

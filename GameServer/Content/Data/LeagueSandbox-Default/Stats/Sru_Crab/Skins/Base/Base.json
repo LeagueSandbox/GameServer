@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sru_Crab/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Crab.blnd",
+            "ChampionSkinName": "SruCrab",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sru_Crab.skn",
+            "Skeleton": "Sru_Crab.skl",
+            "SkinScale": 0.75,
+            "Texture": "Sru_Crab_TX_CM.dds"
+        }
+    }
+}

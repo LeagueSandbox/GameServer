@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Darius/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Darius_Base.blnd",
+            "ChampionSkinID": "122000",
+            "ChampionSkinName": "Darius_Base",
+            "OverrideBoundingBox": "120 250 120",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Darius.skn",
+            "Skeleton": "Darius.skl",
+            "SkinScale": "1.0",
+            "Texture": "darius_base_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

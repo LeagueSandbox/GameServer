@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Shaco/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BaseJester.blnd",
+            "ChampionSkinID": 35001,
+            "ChampionSkinName": "HatterJester",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Shaco_madHatter.skn",
+            "Skeleton": "Shaco_madHatter.skl",
+            "SkinScale": 1.85,
+            "Texture": "Shaco_Hatter_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Tristana/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TristanaBase.blnd",
+            "ChampionSkinID": 18003,
+            "ChampionSkinName": "FirefighterTristana",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tristana_firefighter.skn",
+            "Skeleton": "Tristana_firefighter.skl",
+            "SkinScale": 1.57,
+            "Texture": "Tristana_Firefighter_TX_CM.dds"
+        }
+    }
+}

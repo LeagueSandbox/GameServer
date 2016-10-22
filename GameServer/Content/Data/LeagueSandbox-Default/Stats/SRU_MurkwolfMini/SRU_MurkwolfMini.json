@@ -1,0 +1,71 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_MurkwolfMini",
+        "Name": "SRU_MurkwolfMini",
+        "ResourcePath": "DATA/Characters/SRU_MurkwolfMini/SRU_MurkwolfMini.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 6,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.5,
+            "AttackRange": 175,
+            "AttackTotalTime": 1.6,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": "16.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "420",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 1.5,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUMurkwolfMini",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRUMurkwolfMini",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "30.0",
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "14.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "450",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUMurkwolfMini",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100",
+            "SelectionRadius": "80",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Monster"
+        },
+        "HealthBar": {
+            "Scale": 0.900000036,
+            "WorldOffset": "0 .1 0"
+        },
+        "Info": {
+            "IconCircle": "MurkWolf_Circle.dds",
+            "IconSquare": "MurkWolf_Square.dds"
+        },
+        "Package": {
+            "FallbackPackage": "SRU_Murkwolf"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

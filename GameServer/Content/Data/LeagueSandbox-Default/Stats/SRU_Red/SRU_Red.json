@@ -1,0 +1,77 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Red",
+        "Name": "SRU_Red",
+        "ResourcePath": "DATA/Characters/SRU_Red/SRU_Red.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "20",
+            "ArmorMaterial": "Wood",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.53,
+            "AttackRange": "200",
+            "AttackTotalTime": 1.67,
+            "BaseCritChance": 0,
+            "BaseDamage": "80",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1800",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRURed",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRURed",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "100.0",
+            "GameplayCollisionRadius": "100.0",
+            "GoldGivenOnDeath": "42.0",
+            "HPPerLevel": "0",
+            "IsElite": "true",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRURed",
+            "PathfindingCollisionRadius": "100",
+            "SelectionHeight": "100",
+            "SelectionRadius": 145,
+            "SequentialAutoAttacks": 1,
+            "Significance": 0.6,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": 0,
+            "UnitTags": "Monster | Monster_Large",
+            "UseRingIconForKillCallout": "false"
+        },
+        "HealthBar": {
+            "HPPerTick": "1000",
+            "UnitBarKey": "Dragon",
+            "WorldOffset": "0 -.3 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "SRU_Red_idle.troy Orb"
+        },
+        "Info": {
+            "IconCircle": "Brambleback_Circle.dds",
+            "IconCircleScale": 1.2,
+            "IconSquare": "Brambleback_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0,
+            "593637254": "true"
+        }
+    }
+}

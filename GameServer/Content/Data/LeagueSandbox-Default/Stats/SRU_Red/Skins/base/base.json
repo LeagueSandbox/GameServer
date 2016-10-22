@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Red/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Red.blnd",
+            "ChampionSkinName": "SRU_Red",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Red.skn",
+            "Skeleton": "SRU_Red.skl",
+            "SkinScale": 1.7,
+            "Texture": "SRU_Red.dds"
+        }
+    }
+}

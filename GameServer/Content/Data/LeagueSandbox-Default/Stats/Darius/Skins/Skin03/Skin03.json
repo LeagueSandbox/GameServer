@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Darius/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Darius_NorseKing.blnd",
+            "ChampionSkinID": 122003,
+            "ChampionSkinName": "Darius_NorseKing",
+            "OverrideBoundingBox": "120 250 120",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Darius_NorseKing.skn",
+            "Skeleton": "Darius_NorseKing.skl",
+            "SkinScale": "1.0",
+            "Texture": "darius_norseking_TX_CM.dds",
+            "YOffset": -1.5
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

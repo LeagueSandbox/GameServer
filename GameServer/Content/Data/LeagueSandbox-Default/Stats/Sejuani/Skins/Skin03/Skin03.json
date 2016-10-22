@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Sejuani/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SejuaniClassic.blnd",
+            "ChampionSkinID": 113003,
+            "ChampionSkinName": "SejuaniClassic",
+            "SelfIllumination": 0.55,
+            "SimpleSkin": "Sejuani_Classic.skn",
+            "Skeleton": "Sejuani_Classic.skl",
+            "SkinScale": "1.00",
+            "Texture": "Sejuani_Classic_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true"
+        }
+    }
+}

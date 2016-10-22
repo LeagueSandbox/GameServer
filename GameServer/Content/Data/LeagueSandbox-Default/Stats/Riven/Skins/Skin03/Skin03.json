@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Riven/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "BattlebunnyRiven.blnd",
+            "ChampionSkinID": 92003,
+            "ChampionSkinName": "BattlebunnyRiven",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "riven_battlebunny.skn",
+            "Skeleton": "riven_battlebunny.skl",
+            "SkinScale": 1.5,
+            "Texture": "riven_battlebunny_TX_CM.dds",
+            "YOffset": 0.5
+        }
+    }
+}

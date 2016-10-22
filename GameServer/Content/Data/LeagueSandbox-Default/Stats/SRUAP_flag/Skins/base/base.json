@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/sruap_flag/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRUAP_flag.blnd",
+            "ChampionSkinName": "SRUAPflag",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRUAP_flag.skn",
+            "Skeleton": "SRUAP_flag.skl",
+            "SkinScale": 0.45,
+            "Texture": "SRUAP_flag_TX_CM.dds"
+        }
+    }
+}

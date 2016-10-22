@@ -1,0 +1,26 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Thresh/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "DefaultAnimations": {
+            "Animation1": "undersea_idle1_chesttire_1frame",
+            "NumberOfAnimations": 1
+        },
+        "MeshSkin": {
+            "Animations": "ThreshUndersea.blnd",
+            "ChampionSkinID": 412001,
+            "ChampionSkinName": "ThreshUndersea",
+            "ExtraCharacterPreloads": "ThreshLantern",
+            "OverrideBoundingBox": "160 280 160",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Thresh_undersea.skn",
+            "Skeleton": "Thresh_undersea.skl",
+            "SkinScale": 0.95,
+            "Texture": "Thresh_UnderSea_TX_CM.dds"
+        }
+    }
+}

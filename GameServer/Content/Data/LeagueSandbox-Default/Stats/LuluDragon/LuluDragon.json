@@ -1,0 +1,72 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "LuluDragon",
+        "Name": "LuluDragon",
+        "ResourcePath": "DATA/Characters/LuluDragon/LuluDragon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 6,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": 0.072,
+            "AttackDelayOffsetPercent": -0.05,
+            "AttackRange": "100",
+            "AttackSpeed": 1.5,
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 25,
+            "BaseDamage": "14.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "360",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Wolf",
+            "EnemyTooltip": "game_character_enemyTooltip_Wolf",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "10.0",
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "5.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MoveSpeed": "560",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Wolf",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100",
+            "SelectionRadius": 115,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "WeaponMaterial": "WolfBasicAttack"
+        },
+        "Info": {
+            "IconCircle": "",
+            "IconSquare": ""
+        },
+        "MeshSkin": {
+            "Animations": "LuluDragonBase.blnd",
+            "ChampionSkinName": "LuluDragonBase",
+            "MaterialOverridePriority": "1200",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "lulu_Dragon.skn",
+            "Skeleton": "lulu_Dragon.skl",
+            "SkinScale": 1.7,
+            "Texture": "Lulu_PET_Dragon_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "50.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

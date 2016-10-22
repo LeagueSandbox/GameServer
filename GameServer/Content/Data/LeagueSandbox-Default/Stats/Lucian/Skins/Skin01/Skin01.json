@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Lucian/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "LucianSkin01.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 236001,
+            "ChampionSkinName": "LucianSkin01",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lucian_Skin01.skn",
+            "Skeleton": "Lucian_Skin01.skl",
+            "SkinScale": 1.2,
+            "Texture": "Lucian_Skin01_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.4,
+            "708066840": "Lucian_Skin01_Chair_Mat Lucian_Skin01_Red_Pot_Mat Lucian_Skin01_Blue_Pot_Mat"
+        }
+    }
+}

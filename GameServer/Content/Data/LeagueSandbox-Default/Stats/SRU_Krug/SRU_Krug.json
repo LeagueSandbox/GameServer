@@ -1,0 +1,71 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Krug",
+        "Name": "SRU_Krug",
+        "ResourcePath": "DATA/Characters/SRU_Krug/SRU_Krug.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "300",
+            "Armor": 12,
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.6,
+            "AttackRange": "190",
+            "AttackSpeedPerLevel": 0,
+            "AttackTotalTime": 1.63,
+            "BaseAttack_Probability": "0.4",
+            "BaseCritChance": 0,
+            "BaseDamage": 73,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1440",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUKrug",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRUKrug",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "150.0",
+            "ExtraAttack1_Probability": "0.4",
+            "ExtraAttack2_Probability": "0.2",
+            "GameplayCollisionRadius": "100.0",
+            "GoldGivenOnDeath": "66.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": 285,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUKrug",
+            "PathfindingCollisionRadius": 85,
+            "SelectionHeight": "120",
+            "SelectionRadius": "100",
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "-10",
+            "UnitTags": "Monster | Monster_Large"
+        },
+        "HealthBar": {
+            "Scale": 1.30000007
+        },
+        "Info": {
+            "IconCircle": "AncientKrug_Circle.dds",
+            "IconSquare": "AncientKrug_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_OrderMinionMelee/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Order_Minion_Melee.blnd",
+            "ChampionSkinName": "Order_Minion_Melee",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Order_Minion_Melee.skn",
+            "Skeleton": "Order_Minion_Melee.skl",
+            "SkinScale": 0.7,
+            "Texture": "OrderMinion_Melee_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

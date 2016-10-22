@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Darius/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Darius_Base.blnd",
+            "ChampionSkinID": 122001,
+            "ChampionSkinName": "Darius_Emperor",
+            "OverrideBoundingBox": "120 250 120",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Darius_Emperor.skn",
+            "Skeleton": "Darius_Emperor.skl",
+            "SkinScale": "1.0",
+            "Texture": "darius_Emperor_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.55
+        }
+    }
+}

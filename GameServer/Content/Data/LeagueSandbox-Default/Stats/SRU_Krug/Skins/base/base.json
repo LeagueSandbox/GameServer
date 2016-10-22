@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Krug/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Krug.blnd",
+            "ChampionSkinName": "SRU_Krug",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_Krug.skn",
+            "Skeleton": "SRU_Krug.skl",
+            "SkinScale": 1.15,
+            "Texture": "SRU_Krug.dds"
+        }
+    }
+}
