@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
-            Target t = new Target(toX, toY);
+            var t = new Target(toX, toY);
             _game.PacketNotifier.notifyParticleSpawn(new Particle(champion, t, particle, size, bone));
         }
 
