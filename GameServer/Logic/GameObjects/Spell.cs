@@ -530,7 +530,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public void AddLaser(float toX, float toY)
+        public void AddLaser(float toX, float toY, bool damageOnCastEnd = true)
         {
             var l = new Laser(
                 Owner.X,
@@ -541,6 +541,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 this,
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
+            l.ExecuteOnCastEnd = damageOnCastEnd;
             _game.Map.AddObject(l);
         }
 
@@ -652,7 +653,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
             scriptEngine.RegisterFunction("setCooldown", this, typeof(Spell).GetMethod("SetCooldown", new[] { typeof(byte), typeof(float) }));
             scriptEngine.RegisterFunction("lowerCooldown", this, typeof(Spell).GetMethod("LowerCooldown", new[] { typeof(byte), typeof(float) }));
-            scriptEngine.RegisterFunction("addLaser", this, typeof(Spell).GetMethod("AddLaser", new[] { typeof(float), typeof(float) }));
+            scriptEngine.RegisterFunction("addLaser", this, typeof(Spell).GetMethod("AddLaser", new[] { typeof(float), typeof(float), typeof(bool) }));
 
             /*scriptEngine.RegisterFunction("addMovementSpeedBuff", this, typeof(Spell).GetMethod("addMovementSpeedBuff", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
             

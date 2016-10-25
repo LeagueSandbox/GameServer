@@ -19,6 +19,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Logger _logger = Program.ResolveDependency<Logger>();
         protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
         private List<PieceOfLaser> _piecesOfLaser = new List<PieceOfLaser>();
+        public bool ExecuteOnCastEnd { get; set; }
+        private bool _fullyCreated;
 
         public Laser(
             float x,
@@ -42,37 +44,53 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             owner.incrementAttackerCount();
-
-            while (GetDistanceTo(Target) > CollisionRadius)
-            {
-                var to = new Vector2(Target.X, Target.Y);
-                var cur = new Vector2(X, Y); //?
-                var goingTo = to - cur;
-                _direction = Vector2.Normalize(goingTo);
-                if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
-                {
-                    _direction = new Vector2(0, 0);
-                }
-                X += _direction.X * CollisionRadius;
-                Y += _direction.Y * CollisionRadius;
-                _piecesOfLaser.Add(new PieceOfLaser(X, Y));
-            }
-
-            foreach (var piece in _piecesOfLaser)
-            {
-                var units = _game.Map.GetObjects().Values;
-                foreach (var unit in units)
-                {
-                    CheckFlagsForUnit(unit as Unit);
-                }
-            }
-			
-            setToRemove();
         }
 
         public override float getMoveSpeed()
         {
             return float.MaxValue;
+        }
+
+        public override void update(long diff)
+        {
+            if (_originSpell.state != SpellState.STATE_CASTING && ExecuteOnCastEnd && _fullyCreated)
+            {
+                Execute();
+                return;
+            }
+
+            if (_fullyCreated)
+            {
+                return;
+            }
+
+            if (X == Target.X && Y == Target.Y)
+            {
+                _fullyCreated = true;
+                return;
+            }
+
+            _game.PacketHandlerManager.broadcastPacket(new AttentionPingAns(_playerManager.GetPlayers().Find(l => l.Item2.Champion == Owner).Item2, new AttentionPing { x = X, y = Y, type = Pings.Ping_Default }), Channel.CHL_S2C);
+
+            if (GetDistanceTo(Target) < CollisionRadius)
+            {
+                X = Target.X;
+                Y = Target.Y;
+            }
+
+            var to = new Vector2(Target.X, Target.Y);
+            var cur = new Vector2(X, Y); //?
+            var goingTo = to - cur;
+            _direction = Vector2.Normalize(goingTo);
+
+            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            {
+                _direction = new Vector2(0, 0);
+            }
+
+            X += _direction.X * CollisionRadius;
+            Y += _direction.Y * CollisionRadius;
+            _piecesOfLaser.Add(new PieceOfLaser(X, Y, CollisionRadius));
         }
 
         protected void CheckFlagsForUnit(Unit unit)
@@ -141,15 +159,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        private class PieceOfLaser
+        public void Execute()
         {
-            public float X;
-            public float Y;
+            var objects = _game.Map.GetObjects().Values;
+            foreach (var obj in objects)
+            {
+                var u = obj as Unit;
+                if (u == null)
+                {
+                    continue;
+                }
 
-            internal PieceOfLaser(float x, float y)
+                foreach (var laserPiece in _piecesOfLaser)
+                {
+                    if (laserPiece.Collide(u) && !ObjectsHit.Contains(u))
+                    {
+                        CheckFlagsForUnit(u);
+                    }
+                }
+            }
+
+            setToRemove();
+        }
+
+        private class PieceOfLaser : GameObject
+        {
+            internal PieceOfLaser(float x, float y, int collisionRadius) : base(x, y, collisionRadius)
             {
                 X = x;
                 Y = y;
+                CollisionRadius = collisionRadius;
+                setToRemove();
             }
         }
     }

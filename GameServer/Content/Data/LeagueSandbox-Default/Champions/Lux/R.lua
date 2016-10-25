@@ -6,18 +6,15 @@ function onStartCasting()
     local range = to * 3340
     local trueCoords = current + range
 
+    addLaser(trueCoords.x, trueCoords.y, true)
+
     addParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords.x, trueCoords.y)
     spellAnimation("SPELL4", owner)
     addParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner)
 end
 
 function onFinishCasting()
-    local current = Vector2:new(owner.X, owner.Y)
-    local to = (Vector2:new(spell.X, spell.Y) - current):normalize()
-    local range = to * 3340
-    local trueCoords = current + range
 
-    addLaser(trueCoords.x, trueCoords.y)
 end
 
 function applyEffects()
