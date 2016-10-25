@@ -1,5 +1,8 @@
 before_build:
-- nuget restore
+  - nuget restore
+
+install:
+  - git submodule update --init --recursive
 
 build:
   project: GameServer.sln

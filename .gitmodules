@@ -1,0 +1,3 @@
+[submodule "GameServer/Content/Data/LeagueSandbox-Default"]
+	path = GameServer/Content/Data/LeagueSandbox-Default
+	url = https://github.com/LeagueSandbox/LeagueSandbox-Default.git
