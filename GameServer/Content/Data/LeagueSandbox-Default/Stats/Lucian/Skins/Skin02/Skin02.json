@@ -1,0 +1,24 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Lucian/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "lucianskin02.blnd",
+            "AttributeFlags": 1,
+            "ChampionSkinID": 236002,
+            "ChampionSkinName": "LucianSkin02",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lucian_Skin02.skn",
+            "Skeleton": "Lucian_Skin02.skl",
+            "SkinScale": 1.2,
+            "Texture": "Lucian_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2212039952": 0.4
+        }
+    }
+}

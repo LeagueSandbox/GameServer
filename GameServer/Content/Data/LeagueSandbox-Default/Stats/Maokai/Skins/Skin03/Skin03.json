@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Maokai/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "maokai.blnd",
+            "ChampionSkinID": 57003,
+            "ChampionSkinName": "MaokaiSkin03",
+            "OverrideBoundingBox": "190 260 190",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Maokai_christmas.skn",
+            "Skeleton": "Maokai_christmas.skl",
+            "SkinScale": "1.0",
+            "Texture": "Maokai_Skin03_TX_CM.dds"
+        }
+    }
+}

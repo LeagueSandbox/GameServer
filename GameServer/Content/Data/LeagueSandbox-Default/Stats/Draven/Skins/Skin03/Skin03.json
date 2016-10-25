@@ -1,0 +1,30 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin03",
+        "Name": "Skin03",
+        "ResourcePath": "DATA/Characters/Draven/Skins/Skin03/Skin03.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "Draven_Skin03.cac"
+        },
+        "MeshSkin": {
+            "Animations": "Draven_Skin03.blnd",
+            "ChampionSkinID": 119003,
+            "ChampionSkinName": "DravenSkin03",
+            "MaterialOverride0Submesh": "Recall",
+            "MaterialOverride0Texture": "Draven_skin03_recall_TX_CM.dds",
+            "OverrideBoundingBox": "140 240 140",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Draven_skin03.skn",
+            "Skeleton": "Draven_skin03.skl",
+            "SkinScale": 1.1,
+            "Texture": "draven_skin03_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2625724482": "true",
+            "708066840": "Recall"
+        }
+    }
+}

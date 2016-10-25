@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Maokai/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "maokai.blnd",
+            "ChampionSkinID": 57002,
+            "ChampionSkinName": "TotemMaokai",
+            "OverrideBoundingBox": "190 260 190",
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "Maokai_totem.skn",
+            "Skeleton": "Maokai_totem.skl",
+            "SkinScale": 1,
+            "Texture": "maokai_totem_TX_CM.dds"
+        }
+    }
+}

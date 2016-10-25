@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRUAP_Turret_Order5/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRUAPTurretOrder5.blnd",
+            "ChampionSkinName": "SRUAPTurretOrder5",
+            "GlowFactor": 0.2,
+            "SelfIllumination": 0.5,
+            "SimpleSkin": "SRUAP_Turret_Order5.skn",
+            "Skeleton": "SRUAP_Turret_Order5.skl",
+            "SkinScale": 1.1,
+            "Texture": "SRUAP_Turret_Pali5.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}

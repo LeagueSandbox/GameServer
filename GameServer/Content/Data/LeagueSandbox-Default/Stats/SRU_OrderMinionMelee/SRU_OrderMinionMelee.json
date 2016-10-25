@@ -1,0 +1,70 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_OrderMinionMelee",
+        "Name": "SRU_OrderMinionMelee",
+        "ResourcePath": "DATA/Characters/SRU_OrderMinionMelee/SRU_OrderMinionMelee.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.393,
+            "AttackRange": "110",
+            "AttackSpeed": 1.6,
+            "AttackSpeedPerLevel": 0,
+            "AttackTotalTime": 0.8,
+            "BaseCritChance": 0,
+            "BaseDamage": "12.0",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0,
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 455,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0,
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_Blue_Minion_Basic",
+            "EnemyTooltip": "game_character_enemyTooltip_Blue_Minion_Basic",
+            "ExpGivenOnDeath": "77.0",
+            "FriendlyTooltip": "game_character_friendlyTooltip_Blue_Minion_Basic",
+            "GameplayCollisionRadius": "48.0",
+            "GoldGivenOnDeath": "20.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "Metadata": "class:minion",
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Blue_Minion_Basic",
+            "PathfindingCollisionRadius": 35.7437,
+            "PerceptionBubbleRadius": "1200",
+            "SelectionHeight": "75.0000",
+            "SelectionRadius": "115.0000",
+            "SequentialAutoAttacks": 1,
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "TowerTargetingPriorityBoost": 1,
+            "UnitTags": "Minion | Minion_Lane"
+        },
+        "HealthBar": {
+            "WorldOffset": "0 .6 0"
+        },
+        "Info": {
+            "IconCircle": "BlueMelee_Circle.dds",
+            "IconSquare": "BlueMelee_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2818610673": "60.0",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

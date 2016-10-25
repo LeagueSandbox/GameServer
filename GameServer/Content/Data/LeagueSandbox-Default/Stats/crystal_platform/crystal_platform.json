@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "crystal_platform",
+        "Name": "crystal_platform",
+        "ResourcePath": "DATA/Characters/crystal_platform/crystal_platform.inibin"
+    },
+    "Values": {
+        "Data": {
+            "PathfindingCollisionRadius": "0",
+            "Spell1": "OdinDisintegrate"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 1,
+            "Particle1": "capture_point_gauge.troy"
+        },
+        "MeshSkin": {
+            "Animations": "crystal_platformBase.blnd",
+            "ChampionSkinName": "crystal_platformBase",
+            "SimpleSkin": "crystal_platform.skn",
+            "Skeleton": "crystal_platform.skl",
+            "Texture": "platform_d.dds"
+        }
+    }
+}

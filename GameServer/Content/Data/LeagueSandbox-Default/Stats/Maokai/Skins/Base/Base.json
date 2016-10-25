@@ -1,0 +1,21 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Maokai/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Maokai.blnd",
+            "ChampionSkinID": "57000",
+            "ChampionSkinName": "Maokai",
+            "OverrideBoundingBox": "190 260 190",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Maokai.skn",
+            "Skeleton": "Maokai.skl",
+            "SkinScale": 1.05,
+            "Texture": "Maokai_Base_2014_TX_CM.dds"
+        }
+    }
+}

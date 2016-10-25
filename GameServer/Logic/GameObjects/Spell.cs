@@ -364,24 +364,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          * In here we apply the effects : damage, buffs, debuffs...
          */
 
-        public void applyEffects(Unit u, Projectile p = null)
+        public void applyEffects(Unit u, Projectile p = null, Laser l = null)
         {
             if (!string.IsNullOrEmpty(hitEffectName))
             {
                 ApiFunctionManager.AddParticleTarget(Owner, hitEffectName, u);
             }
 
-            _scriptEngine.SetGlobalVariable("u", u);
-            _scriptEngine.Execute(@"
-                function getTarget()
-                    return u
-                end");
+            _scriptEngine.SetGlobalVariable("target", u);
 
-            _scriptEngine.SetGlobalVariable("p", p);
-            _scriptEngine.Execute(@"
+            if (p != null)
+            {
+                _scriptEngine.SetGlobalVariable("p", p);
+                _scriptEngine.Execute(@"
                 function destroyProjectile()
                     p:setToRemove()
                 end");
+            }
+            else if (l != null)
+            {
+                _scriptEngine.SetGlobalVariable("l", l);
+                _scriptEngine.Execute(@"
+                function destroyLaser()
+                    l:setToRemove()
+                end");
+            }
 
             _scriptEngine.SetGlobalVariable("TYPE_PHYSICAL", DamageType.DAMAGE_TYPE_PHYSICAL);
             _scriptEngine.SetGlobalVariable("TYPE_MAGICAL", DamageType.DAMAGE_TYPE_MAGICAL);
@@ -390,22 +397,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.SetGlobalVariable("SOURCE_SUMMONER_SPELL", DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL);
             _scriptEngine.SetGlobalVariable("SOURCE_ATTACK", DamageSource.DAMAGE_SOURCE_ATTACK);
             _scriptEngine.SetGlobalVariable("SOURCE_PASSIVE", DamageSource.DAMAGE_SOURCE_PASSIVE);
-            _scriptEngine.SetGlobalVariable("countObjectsHit", p.ObjectsHit.Count);
+            if (p != null)
+            {
+                _scriptEngine.SetGlobalVariable("countObjectsHit", p.ObjectsHit.Count);
+            }
+            else if (l != null)
+            {
+                _scriptEngine.SetGlobalVariable("countObjectsHit", l.ObjectsHit.Count);
+            }
 
 
             _scriptEngine.Execute(@"
                 function dealPhysicalDamage(amount)
-                    owner:dealDamageTo(u, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
+                    owner:dealDamageTo(target, amount, TYPE_PHYSICAL, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
                 function dealMagicalDamage(amount)
-                    owner:dealDamageTo(u, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
+                    owner:dealDamageTo(target, amount, TYPE_MAGICAL, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
                 function dealTrueDamage(amount)
-                    owner:dealDamageTo(u, amount, TYPE_TRUE, SOURCE_SPELL, false)
+                    owner:dealDamageTo(target, amount, TYPE_TRUE, SOURCE_SPELL, false)
                 end");
 
             _scriptEngine.Execute(@"
@@ -475,8 +489,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddProjectileCustom(string name, float fromX, float fromY, float toX, float toY,
             bool isServerOnly)
         {
-            var p = new Projectile(fromX, fromY, (int)LineWidth, Owner, new Target(toX, toY), this, ProjectileSpeed,
-                (int)_rafManager.GetHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
+            var p = new Projectile(
+                fromX,
+                fromY,
+                (int)LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                ProjectileSpeed,
+                (int)_rafManager.GetHash(name),
+                ProjectileFlags != 0 ? ProjectileFlags : Flags
+            );
 
             _game.Map.AddObject(p);
             if (!isServerOnly)
@@ -488,14 +511,38 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddProjectileCustomTarget(string name, float fromX, float fromY, Target target,
             bool isServerOnly)
         {
-            var p = new Projectile(fromX, fromY, (int)LineWidth, Owner, target, this, ProjectileSpeed,
-                (int)_rafManager.GetHash(name), ProjectileFlags != 0 ? ProjectileFlags : Flags);
+            var p = new Projectile(
+                fromX,
+                fromY,
+                (int)LineWidth,
+                Owner,
+                target,
+                this,
+                ProjectileSpeed,
+                (int)_rafManager.GetHash(name),
+                ProjectileFlags != 0 ? ProjectileFlags : Flags
+            );
 
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
                 _game.PacketNotifier.notifyProjectileSpawn(p);
             }
+        }
+
+        public void AddLaser(float toX, float toY, bool damageOnCastEnd = true)
+        {
+            var l = new Laser(
+                Owner.X,
+                Owner.Y,
+                (int)LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                ProjectileFlags != 0 ? ProjectileFlags : Flags
+            );
+            l.ExecuteOnCastEnd = damageOnCastEnd;
+            _game.Map.AddObject(l);
         }
 
         public void spellAnimation(string animName, Unit target)
@@ -594,18 +641,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.SetGlobalVariable("spell", this);
             scriptEngine.SetGlobalVariable("projectileSpeed", ProjectileSpeed);
             scriptEngine.SetGlobalVariable("coefficient", Coefficient);
-            scriptEngine.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("AddProjectile", new Type[] { typeof(string), typeof(float), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("AddProjectileTarget", new Type[] { typeof(string), typeof(Target), typeof(bool) }));
-            scriptEngine.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new Type[] { typeof(int) }));
-            scriptEngine.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new Type[] { typeof(string), typeof(Unit) }));
-            scriptEngine.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new Type[] { typeof(string), typeof(string), typeof(Unit) }));
-            scriptEngine.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new Type[] { typeof(Unit) }));
-            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new Type[] { typeof(int) }));
-            scriptEngine.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new Type[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
-            scriptEngine.RegisterFunction("addProjectileCustom", this, typeof(Spell).GetMethod("AddProjectileCustom", new Type[] { typeof(string), typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool) }));
-            scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new Type[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
-            scriptEngine.RegisterFunction("setCooldown", this, typeof(Spell).GetMethod("SetCooldown", new Type[] { typeof(byte), typeof(float) }));
-            scriptEngine.RegisterFunction("lowerCooldown", this, typeof(Spell).GetMethod("LowerCooldown", new Type[] { typeof(byte), typeof(float) }));
+            scriptEngine.RegisterFunction("addProjectile", this, typeof(Spell).GetMethod("AddProjectile", new[] { typeof(string), typeof(float), typeof(float), typeof(bool) }));
+            scriptEngine.RegisterFunction("addProjectileTarget", this, typeof(Spell).GetMethod("AddProjectileTarget", new[] { typeof(string), typeof(Target), typeof(bool) }));
+            scriptEngine.RegisterFunction("getEffectValue", this, typeof(Spell).GetMethod("getEffectValue", new[] { typeof(int) }));
+            scriptEngine.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new[] { typeof(string), typeof(Unit) }));
+            scriptEngine.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new[] { typeof(string), typeof(string), typeof(Unit) }));
+            scriptEngine.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new[] { typeof(Unit) }));
+            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new[] { typeof(int) }));
+            scriptEngine.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
+            scriptEngine.RegisterFunction("addProjectileCustom", this, typeof(Spell).GetMethod("AddProjectileCustom", new[] { typeof(string), typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool) }));
+            scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
+            scriptEngine.RegisterFunction("setCooldown", this, typeof(Spell).GetMethod("SetCooldown", new[] { typeof(byte), typeof(float) }));
+            scriptEngine.RegisterFunction("lowerCooldown", this, typeof(Spell).GetMethod("LowerCooldown", new[] { typeof(byte), typeof(float) }));
+            scriptEngine.RegisterFunction("addLaser", this, typeof(Spell).GetMethod("AddLaser", new[] { typeof(float), typeof(float), typeof(bool) }));
 
             /*scriptEngine.RegisterFunction("addMovementSpeedBuff", this, typeof(Spell).GetMethod("addMovementSpeedBuff", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
             

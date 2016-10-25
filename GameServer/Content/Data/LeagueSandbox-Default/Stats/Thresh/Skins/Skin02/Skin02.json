@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Thresh/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ThreshSkin02.blnd",
+            "ChampionSkinID": 412002,
+            "ChampionSkinName": "ThreshSkin02",
+            "ExtraCharacterPreloads": "ThreshLantern",
+            "OverrideBoundingBox": "160 280 160",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Thresh_Skin02.skn",
+            "Skeleton": "Thresh_Skin02.skl",
+            "SkinScale": 0.95,
+            "Texture": "Thresh_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "708066840": "Thresh_Skin02_Platform_Mat"
+        }
+    }
+}

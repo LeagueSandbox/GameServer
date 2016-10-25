@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Sru_Lizard/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Lizard.blnd",
+            "CastShadows": 1,
+            "ChampionSkinName": "Sru_Lizard",
+            "SelfIllumination": 1,
+            "SimpleSkin": "Sru_Lizard.skn",
+            "Skeleton": "Sru_Lizard.skl",
+            "SkinScale": 1.2,
+            "Texture": "Sru_Lizard_TX_CM.dds"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/sru_storekeepernorth/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "sru_storekeepernorth.blnd",
+            "ChampionSkinName": "SRUShopKeeperNorth",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRU_StoreKeeperNorth.skn",
+            "Skeleton": "SRU_StoreKeeperNorth.skl",
+            "SkinScale": "1.0",
+            "Texture": "SRU_StoreKeeperNorth_TX_CM.dds"
+        }
+    }
+}

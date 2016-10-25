@@ -1,0 +1,17 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_StoreKeeperSouth",
+        "Name": "SRU_StoreKeeperSouth",
+        "ResourcePath": "DATA/Characters/sru_storekeepersouth/SRU_StoreKeeperSouth.inibin"
+    },
+    "Values": {
+        "ContextualAction": {
+            "RuleConfigFile": "SRU_StoreKeeperSouth.cac"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0",
+            "Particle1": ""
+        }
+    }
+}

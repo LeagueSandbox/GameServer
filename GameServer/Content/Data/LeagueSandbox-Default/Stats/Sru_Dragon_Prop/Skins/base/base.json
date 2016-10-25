@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/sru_dragon_prop/skins/base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Sru_Dragon_Prop.blnd",
+            "ChampionSkinName": "SruDragonProp",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Sru_Dragon_Prop.skn",
+            "Skeleton": "Sru_Dragon_Prop.skl",
+            "SkinScale": "1.0",
+            "Texture": "Sru_Dragon_Prop_TX_CM.dds"
+        }
+    }
+}

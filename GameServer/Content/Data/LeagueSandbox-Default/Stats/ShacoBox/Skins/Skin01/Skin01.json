@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/ShacoBox/Skins/Skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "ShacoBoxBase.blnd",
+            "ChampionSkinName": "ShacoBoxBase",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "JackintheBox.skn",
+            "Skeleton": "JackintheBox.skl",
+            "SkinScale": 4.3,
+            "Texture": "JackintheBox_Hatter.dds"
+        }
+    }
+}

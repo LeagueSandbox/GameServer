@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Tristana/Skins/Skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "TristanaBase.blnd",
+            "ChampionSkinID": 18002,
+            "ChampionSkinName": "EarnestElfTristana",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Tristana_earnestelf.skn",
+            "Skeleton": "Tristana_earnestelf.skl",
+            "SkinScale": 1.57,
+            "Texture": "Tristana_earnestelf.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1598226273": "2013-07-31"
+        }
+    }
+}

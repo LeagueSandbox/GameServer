@@ -1,0 +1,19 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/brush_SRU_H/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "brush_SRU_A.blnd",
+            "ChampionSkinName": "brushSRUH",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "brush_SRU_H.skn",
+            "Skeleton": "brush_SRU_H.skl",
+            "SkinScale": 1,
+            "Texture": "SRU_Brush.dds"
+        }
+    }
+}

@@ -1,0 +1,66 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "ShacoBox",
+        "Name": "ShacoBox",
+        "ResourcePath": "DATA/Characters/ShacoBox/ShacoBox.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "700",
+            "Armor": "50",
+            "ArmorMaterial": "Metal",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": -0.01198,
+            "AttackDelayOffsetPercent": -0.54,
+            "AttackRange": "600",
+            "AttackSpeedPerLevel": 0,
+            "BaseCritChance": 0,
+            "BaseDamage": 15,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "150",
+            "BaseMP": "60",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": "0",
+            "Description": "game_spell_description_JackInTheBox",
+            "EnemyTooltip": "game_character_enemyTooltip_Skeleton_Minion_Archer",
+            "ExpGivenOnDeath": 0,
+            "FriendlyTooltip": "game_character_friendlyTooltip_Skeleton_Minion_Archer",
+            "GameplayCollisionRadius": "10",
+            "GoldGivenOnDeath": "10.0",
+            "HPPerLevel": "0",
+            "IsImportantBotTarget": "true",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MoveSpeed": 325,
+            "MPPerLevel": "0",
+            "Name": "game_spell_displayname_JackInTheBox",
+            "PARType": "Shield",
+            "PathfindingCollisionRadius": 1,
+            "PerceptionBubbleRadius": "700",
+            "SelectionHeight": "75.0",
+            "SelectionRadius": "115.0000",
+            "Significance": 0.3,
+            "Spell1": "ShacoBoxSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "100",
+            "Tips2": "game_character_opposing_tips_Jester",
+            "UnitTags": "Special | Special_TeleportTarget"
+        },
+        "Info": {
+            "IconCircle": "Jackinthebox_Circle.dds",
+            "IconSquare": "Jackinthebox_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

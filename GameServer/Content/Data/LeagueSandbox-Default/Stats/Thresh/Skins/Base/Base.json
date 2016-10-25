@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/Thresh/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Thresh.blnd",
+            "ChampionSkinID": "412000",
+            "ChampionSkinName": "Thresh",
+            "ExtraCharacterPreloads": "ThreshLantern",
+            "OverrideBoundingBox": "160 280 160",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Thresh.skn",
+            "Skeleton": "Thresh.skl",
+            "SkinScale": 0.95,
+            "Texture": "Thresh_Base_TX_CM.dds"
+        }
+    }
+}

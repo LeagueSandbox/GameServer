@@ -1,0 +1,79 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Dragon",
+        "Name": "SRU_Dragon",
+        "ResourcePath": "DATA/Characters/SRU_Dragon/SRU_Dragon.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "1000",
+            "Armor": 21,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.8,
+            "AttackRange": "350",
+            "AttackTotalTime": 1.67,
+            "BaseAttack_Probability": "0",
+            "BaseCritChance": 0,
+            "BaseDamage": "230",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "3500",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUDragon",
+            "EnemyTooltip": "game_character_enemyTooltip_SRUDragon",
+            "ExperienceRadius": "2000.0",
+            "ExpGivenOnDeath": "000.0",
+            "ExtraAttack1": "DragonFireBall",
+            "ExtraAttack1_Probability": 1,
+            "GameplayCollisionRadius": "125.0",
+            "GlobalExpGivenOnDeath": 0,
+            "GlobalGoldGivenOnDeath": 0,
+            "GoldGivenOnDeath": "25.0",
+            "HPPerLevel": "0",
+            "IsEpic": "true",
+            "IsMelee": "false",
+            "JointForAnimAdjustedSelection": "Root",
+            "LevelDodge": 0,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUDragon",
+            "OutlineBBoxExpansion": "50.0",
+            "PathfindingCollisionRadius": 1,
+            "SelectionHeight": "250",
+            "SelectionRadius": "200",
+            "Significance": 0.95,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "DragonTakeoff",
+            "Spell2": "SRUDragonBasicAttack",
+            "Spell3": "DragonFireBall",
+            "Spell4": "DragonFireBall2",
+            "SpellBlock": "30",
+            "UnitTags": "Monster | Monster_Epic",
+            "UseRingIconForKillCallout": "false"
+        },
+        "HealthBar": {
+            "AttachToBone": "Buffbone_Cstm_Healthbar",
+            "HPPerTick": "1000",
+            "UnitBarKey": "Dragon",
+            "WorldOffset": "0 0 0"
+        },
+        "Info": {
+            "IconCircle": "Dragon_Circle.dds",
+            "IconCircleScale": 1.2,
+            "IconSquare": "Dragon_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0,
+            "593637254": "true"
+        }
+    }
+}

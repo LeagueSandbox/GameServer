@@ -1,0 +1,20 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_Spiritwolf/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRU_Spiritwolf.blnd",
+            "CastShadows": "0",
+            "ChampionSkinName": "SRU_SpiritWolf",
+            "SelfIllumination": 0.85,
+            "SimpleSkin": "SRU_Spiritwolf.skn",
+            "Skeleton": "SRU_Spiritwolf.skl",
+            "SkinScale": 0.95,
+            "Texture": "SRU_Spiritwolf.dds"
+        }
+    }
+}

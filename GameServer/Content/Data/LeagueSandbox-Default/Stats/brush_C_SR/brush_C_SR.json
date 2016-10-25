@@ -1,0 +1,18 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "brush_C_SR",
+        "Name": "brush_C_SR",
+        "ResourcePath": "DATA/Characters/brush_C_SR/brush_C_SR.inibin"
+    },
+    "Values": {
+        "Interaction": {
+            "DoubleSided": "true",
+            "IdleAnim": "Distance",
+            "RandomizeIdleAnimPhase": "true"
+        },
+        "Package": {
+            "FallbackPackage": "Brush_A_SR"
+        }
+    }
+}

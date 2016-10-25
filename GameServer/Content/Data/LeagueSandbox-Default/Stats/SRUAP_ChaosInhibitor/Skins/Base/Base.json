@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRUAP_ChaosInhibitor/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "SRUAP_ChaosInhibitor.blnd",
+            "ChampionSkinName": "SRUAP_ChaosInhibitor",
+            "MaterialOverride0Submesh": "Destroyed",
+            "MaterialOverride0Texture": "SRUAP_ChaosInhibitor_Destroyed_TX_CM.dds",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "SRUAP_ChaosInhibitor.skn",
+            "Skeleton": "SRUAP_ChaosInhibitor.skl",
+            "SkinScale": "1.0",
+            "Texture": "SRUAP_ChaosInhibitor_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2,
+            "708066840": "Destroyed"
+        }
+    }
+}

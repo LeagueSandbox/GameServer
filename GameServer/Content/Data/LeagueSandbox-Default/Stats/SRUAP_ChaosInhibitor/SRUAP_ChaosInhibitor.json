@@ -1,0 +1,26 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRUAP_ChaosInhibitor",
+        "Name": "SRUAP_ChaosInhibitor",
+        "ResourcePath": "DATA/Characters/SRUAP_ChaosInhibitor/SRUAP_ChaosInhibitor.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_SRU_ChaosInhibitor",
+            "UnitTags": "Structure | Structure_Inhibitor"
+        },
+        "HealthBar": {
+            "UnitBarKey": "Turret",
+            "WorldOffset": "0 -4,15 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": "0"
+        },
+        "Info": {
+            "IconCircle": "Inhibitor_Red_Circle.dds",
+            "IconSquare": "Inhibitor_Red_Square.dds"
+        }
+    }
+}

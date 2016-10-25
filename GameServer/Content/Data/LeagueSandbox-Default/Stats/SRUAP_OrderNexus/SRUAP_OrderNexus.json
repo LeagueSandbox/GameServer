@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRUAP_OrderNexus",
+        "Name": "SRUAP_OrderNexus",
+        "ResourcePath": "DATA/Characters/SRUAP_OrderNexus/SRUAP_OrderNexus.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_SRU_OrderNexus",
+            "UnitTags": "Structure | Structure_Nexus | Structure | Structure_Nexus"
+        },
+        "HealthBar": {
+            "UnitBarKey": "NexusPaladin",
+            "WorldOffset": "0 -2,5 0"
+        },
+        "Info": {
+            "IconCircle": "Nexus_Blue_Square.dds",
+            "IconSquare": "Nexus_Blue_Square.dds"
+        }
+    }
+}

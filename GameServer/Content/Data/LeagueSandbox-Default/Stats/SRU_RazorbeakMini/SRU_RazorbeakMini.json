@@ -1,0 +1,66 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_RazorbeakMini",
+        "Name": "SRU_RazorbeakMini",
+        "ResourcePath": "DATA/Characters/SRU_RazorbeakMini/SRU_RazorbeakMini.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 5,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.4,
+            "AttackRange": 125,
+            "AttackTotalTime": 1.5,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": 0,
+            "BaseDamage": "20",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "250",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRURazorbeakMini",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRURazorbeakMini",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "20.0",
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "12.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "350",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRURazorbeakMini",
+            "PathfindingCollisionRadius": 31.5208,
+            "SelectionHeight": "100.0000",
+            "SelectionRadius": "80",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "UnitTags": "Monster"
+        },
+        "HealthBar": {
+            "Scale": 0.8
+        },
+        "Info": {
+            "IconCircle": "RazorbeakMini_Circle.dds",
+            "IconSquare": "RazorbeakMini_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

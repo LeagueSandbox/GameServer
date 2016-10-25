@@ -1,0 +1,73 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Spiritwolf",
+        "Name": "SRU_Spiritwolf",
+        "ResourcePath": "DATA/Characters/SRU_Spiritwolf/SRU_Spiritwolf.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": "0",
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.5,
+            "AttackRange": 175,
+            "AttackTotalTime": 1.6,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": "0",
+            "BaseDamage": 0,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": 95,
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 1.5,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUSpiritWolf",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_SRUSpiritWolf",
+            "ExperienceRadius": 0,
+            "ExpGivenOnDeath": 0,
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "50.0",
+            "GoldGivenOnDeath": "5.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "500",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUSpiritWolf",
+            "PathfindingCollisionRadius": 31.5208,
+            "PerceptionBubbleRadius": "450",
+            "SelectionHeight": "100",
+            "SelectionRadius": "80",
+            "Significance": 0.4,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "WeaponMaterial": "SRUSpiritwolfMiniBasicAttack"
+        },
+        "HealthBar": {
+            "AttachToBone": "C_Buffbone_Cstm_Healthbar",
+            "Scale": 1,
+            "ShowWhileUntargetable": 1,
+            "UnitBarKey": "Counter",
+            "WorldOffset": "-1 0 0"
+        },
+        "Info": {
+            "IconCircle": "SpiritWolf_Circle.dds",
+            "IconSquare": "SpiritWolf_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1251173554": "false",
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

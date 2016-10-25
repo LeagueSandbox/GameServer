@@ -1,0 +1,68 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Gromp",
+        "Name": "SRU_Gromp",
+        "ResourcePath": "DATA/Characters/SRU_Gromp/SRU_Gromp.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 15,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.4,
+            "AttackDelayCastOffsetPercent": -0.12,
+            "AttackDelayOffsetPercent": -0.02,
+            "AttackRange": "550",
+            "AttackTotalTime": 1.6,
+            "BaseCritChance": 0,
+            "BaseDamage": "90",
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1600",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_enemyTooltip_Gromp",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_Gromp",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "200.0",
+            "GameplayCollisionRadius": "120.0",
+            "GoldGivenOnDeath": "72.0",
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "330",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_Gromp",
+            "PathfindingCollisionRadius": "40",
+            "SelectionHeight": "120",
+            "SelectionRadius": 155,
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "0",
+            "UnitTags": "Monster | Monster_Large"
+        },
+        "HealthBar": {
+            "Scale": 1.4
+        },
+        "Info": {
+            "IconCircle": "Gromp_Circle.dds",
+            "IconSquare": "Gromp_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

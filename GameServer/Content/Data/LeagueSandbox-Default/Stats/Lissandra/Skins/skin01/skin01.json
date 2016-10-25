@@ -1,0 +1,25 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin01",
+        "Name": "Skin01",
+        "ResourcePath": "DATA/Characters/Lissandra/Skins/skin01/Skin01.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "lissandra_skin01.blnd",
+            "ChampionSkinID": 127001,
+            "ChampionSkinName": "Lissandra_skin01",
+            "OverrideBoundingBox": "130 330 130",
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "Lissandra_deadwood.skn",
+            "Skeleton": "Lissandra_deadwood.skl",
+            "SkinScale": 1.12,
+            "Texture": "Lissandra_deadwood_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "4118570059": 1,
+            "708066840": "Lissandra_Q_Spike2"
+        }
+    }
+}

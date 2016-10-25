@@ -1,0 +1,23 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRUAP_ChaosNexus",
+        "Name": "SRUAP_ChaosNexus",
+        "ResourcePath": "DATA/Characters/SRUAP_ChaosNexus/SRUAP_ChaosNexus.inibin"
+    },
+    "Values": {
+        "Data": {
+            "ArmorMaterial": "Stone",
+            "Name": "game_character_displayname_SRU_ChaosNexus",
+            "UnitTags": "Structure | Structure_Nexus | Structure | Structure_Nexus"
+        },
+        "HealthBar": {
+            "UnitBarKey": "NexusMage",
+            "WorldOffset": "0 -3,15 0"
+        },
+        "Info": {
+            "IconCircle": "Nexus_Red_Square.dds",
+            "IconSquare": "Nexus_Red_Square.dds"
+        }
+    }
+}

@@ -1,0 +1,76 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRU_Murkwolf",
+        "Name": "SRU_Murkwolf",
+        "ResourcePath": "DATA/Characters/SRU_Murkwolf/SRU_Murkwolf.inibin"
+    },
+    "Values": {
+        "Data": {
+            "Armor": 9,
+            "ArmorMaterial": "Flesh",
+            "ArmorPerLevel": 0,
+            "AttackCastTime": 0.5,
+            "AttackRange": 175,
+            "AttackTotalTime": 1.6,
+            "BaseAttack_Probability": 0.5,
+            "BaseCritChance": 0,
+            "BaseDamage": 42,
+            "BaseDodge": 0,
+            "BaseFactorHPRegen": 0.0015,
+            "BaseFactorMPRegen": 0.0015,
+            "BaseHP": "1320",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": 0.5,
+            "BaseStaticMPRegen": 0.5,
+            "CritDamageBonus": 1.5,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_SRUMurkwolf",
+            "DisableContinuousTargetFacing": "true",
+            "EnemyTooltip": "game_character_enemyTooltip_S2015_SRUMurkwolf",
+            "ExperienceRadius": "400.0",
+            "ExpGivenOnDeath": "142.0",
+            "ExtraAttack1_Probability": 0.5,
+            "GameplayCollisionRadius": "80.0",
+            "GoldGivenOnDeath": "48.0",
+            "HPPerLevel": "0",
+            "IsMelee": "true",
+            "LevelDodge": 0,
+            "MonsterDataTableId": 1,
+            "MoveSpeed": "450",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_SRUMurkwolf",
+            "PathfindingCollisionRadius": "40",
+            "SelectionHeight": "120",
+            "SelectionRadius": "100",
+            "Significance": 0.5,
+            "SoulGivenOnDeath": 0,
+            "Spell1": "BaseSpell",
+            "Spell2": "BaseSpell",
+            "Spell3": "BaseSpell",
+            "Spell4": "BaseSpell",
+            "SpellBlock": "0",
+            "UnitTags": "Monster | Monster_Large"
+        },
+        "HealthBar": {
+            "Scale": 1.2,
+            "WorldOffset": "0 .3 0"
+        },
+        "IdleParticles": {
+            "NumberOfParticles": 18,
+            "Particle1": "SRU_Murkwolf_eyeglow_R.troy L_Buffbone_Cstm_R_Eye",
+            "Particle2": "SRU_Murkwolf_eyeglow_L.troy L_Buffbone_Cstm_L_Eye",
+            "Particle3": "SRU_Murkwolf_eyeglow_R.troy R_Buffbone_Cstm_R_Eye",
+            "Particle4": "SRU_Murkwolf_eyeglow_L.troy R_Buffbone_Cstm_L_Eye"
+        },
+        "Info": {
+            "IconCircle": "GreaterMurkWolf_Circle.dds",
+            "IconSquare": "GreaterMurkWolf_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": 0
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Skin02",
+        "Name": "Skin02",
+        "ResourcePath": "DATA/Characters/Lissandra/Skins/skin02/Skin02.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "lissandraSkin02.blnd",
+            "ChampionSkinID": 127002,
+            "ChampionSkinName": "lissandraSkin02",
+            "GlossTexture": "Lissandra_skin02_TX_GM.dds",
+            "MaterialOverride0Submesh": "Lissandra_Recall",
+            "MaterialOverride0Texture": "Lissandra_Skin02_TX_CM_ProxyRecall.dds",
+            "OverrideBoundingBox": "130 330 130",
+            "ReflectionFresnel": 0.6,
+            "ReflectionFresnelBlue": 1.6,
+            "ReflectionFresnelGreen": 1.6,
+            "ReflectionFresnelRed": 1.6,
+            "ReflectionMap": "Lissandra_Skin02_TX_RM.dds",
+            "ReflectionOpacityDirect": 0.900000036,
+            "ReflectionOpacityGlancing": 0.900000036,
+            "SelfIllumination": 0.7,
+            "SimpleSkin": "lissandra_Skin02.skn",
+            "Skeleton": "lissandra_Skin02.skl",
+            "SkinScale": 1.12,
+            "Texture": "lissandra_Skin02_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "1943617021": "Lissandra_skin02_Q_TX_CM.dds",
+            "3400833179": "0",
+            "343518805": 0.1,
+            "3700722767": "Lissandra_Q_Spike2",
+            "3966094422": 0.1,
+            "455913160": 0.1,
+            "708066840": "Lissandra_Q_Spike2,Lissandra_Recall,",
+            "752814109": "Lissandra_Diff.DDS"
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "brush_SRU_A",
+        "Name": "brush_SRU_A",
+        "ResourcePath": "DATA/Characters/brush_SRU_A/brush_SRU_A.inibin"
+    },
+    "Values": {
+        "Interaction": {
+            "DoubleSided": "true",
+            "IdleAnim": "Distance",
+            "RandomizeIdleAnimPhase": "true"
+        }
+    }
+}

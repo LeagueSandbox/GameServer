@@ -1,0 +1,73 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "SRUAP_Turret_Order1",
+        "Name": "SRUAP_Turret_Order1",
+        "ResourcePath": "DATA/Characters/SRUAP_Turret_Order1/SRUAP_Turret_Order1.inibin"
+    },
+    "Values": {
+        "Data": {
+            "AcquisitionRange": "750",
+            "Armor": "100",
+            "ArmorMaterial": "Stone",
+            "ArmorPerLevel": 0,
+            "AttackDelayCastOffsetPercent": "-0.161",
+            "AttackDelayOffsetPercent": -0.25,
+            "AttackRange": "750",
+            "AttackSpeedPerLevel": 2.125,
+            "BaseCritChance": "0",
+            "BaseDamage": "152.0",
+            "BaseDodge": "0",
+            "BaseFactorHPRegen": "0",
+            "BaseFactorMPRegen": "0",
+            "BaseHP": "1000",
+            "BaseMP": "0",
+            "BaseStaticHPRegen": "0",
+            "BaseStaticMPRegen": "0",
+            "CritDamageBonus": 2,
+            "CritPerLevel": 0,
+            "DamagePerLevel": 0,
+            "Description": "game_character_description_OrderTurretNormal",
+            "ExpGivenOnDeath": 0,
+            "GameplayCollisionRadius": 88.4,
+            "GlobalExpGivenOnDeath": "0",
+            "GlobalGoldGivenOnDeath": "100.000",
+            "GoldGivenOnDeath": 0,
+            "HitFxScale": 0.5,
+            "HPPerLevel": "0",
+            "IsMelee": "false",
+            "LevelDodge": "0",
+            "LocalExpGivenOnDeath": 0,
+            "LocalGoldGivenOnDeath": "150.000",
+            "LocalGoldSplitWithLastHitter": "1.0",
+            "MoveSpeed": "0",
+            "MPPerLevel": "0",
+            "Name": "game_character_displayname_OrderTurretNormal",
+            "OccludedUnitSelectableDistance": "500",
+            "PathfindingCollisionRadius": 88.4,
+            "SelectionHeight": "200",
+            "SelectionRadius": "130.0000",
+            "SpellBlock": "100",
+            "UnitTags": "Structure | Structure_Turret | Structure_Turret_Outer"
+        },
+        "HealthBar": {
+            "UnitBarKey": "Turret",
+            "WorldOffset": "0 0 0"
+        },
+        "IdleParticles": {
+            "BeamParticle": "LaserSight_beam.troy joint2",
+            "ChampTargetingParticle": "yikes-champ.troy C_Buffbone_Glb_Head_Loc",
+            "NumberOfParticles": 1,
+            "Particle1": "SRU_Order_Turret_Sparkles.troy joint2",
+            "TowerTargetingParticle": "Yikes-Tower.troy joint2"
+        },
+        "Info": {
+            "IconCircle": "Turret_Blue_Circle.dds",
+            "IconSquare": "Turret_Blue_Square.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "386495002": 0,
+            "3983263047": "0"
+        }
+    }
+}

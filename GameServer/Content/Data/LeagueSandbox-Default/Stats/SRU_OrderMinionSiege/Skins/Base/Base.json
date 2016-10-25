@@ -1,0 +1,22 @@
+{
+    "MetaData": {
+        "ContentFormatVersion": 4,
+        "Id": "Base",
+        "Name": "Base",
+        "ResourcePath": "DATA/Characters/SRU_OrderMinionSiege/Skins/Base/Base.inibin"
+    },
+    "Values": {
+        "MeshSkin": {
+            "Animations": "Order_Minion_Siege.blnd",
+            "ChampionSkinName": "Order_Minion_Siege",
+            "SelfIllumination": 0.6,
+            "SimpleSkin": "Order_Minion_Siege.skn",
+            "Skeleton": "Order_Minion_Siege.skl",
+            "SkinScale": 0.925,
+            "Texture": "Order_Minion_Siege_TX_CM.dds"
+        },
+        "UNKNOWN_HASHES": {
+            "2047148300": 2
+        }
+    }
+}
