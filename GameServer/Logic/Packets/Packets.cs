@@ -3154,7 +3154,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0xFF);
             buffer.Write((byte)0xFF);
             buffer.Write((int)0);
-            buffer.Write((uint)unit.NetId); // Fog Attached, when unit dead it disappears
+            buffer.Write((uint)unit.NetId); // Fog Attached, when unit dies it disappears
             buffer.Write((uint)_networkManager.GetNewNetID()); //Fog NetID
             buffer.Write((int)0);
             buffer.Write((float)unit.X);
@@ -3199,9 +3199,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             for (var i = 0; i < 3; ++i)
             {
-
+                var map = _game.Map;
+                var ownerHeight = map.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
+                var particleHeight = map.GetHeightAtLocation(particle.X, particle.Y);
+                var higherValue = Math.Max(ownerHeight, particleHeight);
                 buffer.Write((short)((particle.Target.X - MAP_WIDTH) / 2));
-                buffer.Write(_game.Map.GetHeightAtLocation(particle.Target.X, particle.Target.Y));
+                buffer.Write((float)higherValue);
                 buffer.Write((short)((particle.Target.Y - MAP_HEIGHT) / 2));
             }
 

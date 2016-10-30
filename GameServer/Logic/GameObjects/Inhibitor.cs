@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         }
 
-        public override void setToRemove()
+        protected override void setToRemove()
         {
 
         }

@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             int t;
             if (!int.TryParse(split[1], out t))
                 return;
-            var team = CustomConvert.toTeamId(t);
+            var team = CustomConvert.ToTeamId(t);
             playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
         }
     }

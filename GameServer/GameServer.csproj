@@ -59,6 +59,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.1.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -71,6 +72,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
     <Compile Include="Logic\GameObjects\BuildingStats.cs" />
+    <Compile Include="Logic\GameObjects\Laser.cs" />
     <Compile Include="Logic\GameObjects\Particle.cs" />
     <Compile Include="Logic\GameObjects\Placeable.cs" />
     <Compile Include="Logic\GameObjects\Nexus.cs" />

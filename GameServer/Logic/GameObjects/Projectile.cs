@@ -8,9 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public List<GameObject> ObjectsHit { get; private set; }
         public Unit Owner { get; private set; }
         public int ProjectileId { get; private set; }
-        private float _moveSpeed;
-        private int _flags;
-        private Spell _originSpell;
+        protected float _moveSpeed;
+        protected int _flags;
+        protected Spell _originSpell;
 
         public Projectile(
             float x,
@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _moveSpeed;
         }
 
-        public override void setToRemove()
+        protected override void setToRemove()
         {
             if (Target != null && !Target.IsSimpleTarget)
                 (Target as GameObject).decrementAttackerCount();
