@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        protected override void setToRemove()
+        public override void setToRemove()
         {
             if (Target != null && !Target.IsSimpleTarget)
             {
@@ -60,70 +60,54 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             toRemove = true;
         }
 
-        private void CheckFlagsForUnit(Unit unit)
+        protected override void CheckFlagsForUnit(Unit unit)
         {
-            if (Target.IsSimpleTarget)
-            { // Skillshot
-                if (unit == null || ObjectsHit.Contains(unit))
-                    return;
+            if (!Target.IsSimpleTarget)
+                return;
 
-                if (unit.Team == Owner.Team
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
-                    return;
+            if (unit == null || ObjectsHit.Contains(unit))
+                return;
 
-                if (unit.Team == TeamId.TEAM_NEUTRAL
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
-                    return;
+            if (unit.Team == Owner.Team
+                && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                return;
 
-                if (unit.Team != Owner.Team
-                    && unit.Team != TeamId.TEAM_NEUTRAL
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
-                    return;
+            if (unit.Team == TeamId.TEAM_NEUTRAL
+                && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                return;
+
+            if (unit.Team != Owner.Team
+                && unit.Team != TeamId.TEAM_NEUTRAL
+                && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                return;
 
 
-                if (unit.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
-                    return;
+            if (unit.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                return;
 
-                var m = unit as Minion;
-                if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
-                    return;
+            var m = unit as Minion;
+            if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
+                return;
 
-                var p = unit as Placeable;
-                if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
-                    return;
+            var p = unit as Placeable;
+            if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
+                return;
 
-                var t = unit as BaseTurret;
-                if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
-                    return;
+            var t = unit as BaseTurret;
+            if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                return;
 
-                var i = unit as Inhibitor;
-                var n = unit as Nexus;
-                if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
-                    return;
+            var i = unit as Inhibitor;
+            var n = unit as Nexus;
+            if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                return;
 
-                var c = unit as Champion;
-                if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
-                    return;
+            var c = unit as Champion;
+            if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
+                return;
 
-                ObjectsHit.Add(unit);
-                _originSpell.applyEffects(unit, this);
-            }
-            else
-            {
-                var u = Target as Unit;
-                if (u != null && Collide(u))
-                { // Autoguided spell
-                    if (_originSpell != null)
-                    {
-                        _originSpell.applyEffects(u, this);
-                    }
-                    else
-                    { // auto attack
-                        Owner.autoAttackHit(u);
-                        setToRemove();
-                    }
-                }
-            }
+            ObjectsHit.Add(unit);
+            _originSpell.applyEffects(unit, this);
         }
 
         /* WARNING!

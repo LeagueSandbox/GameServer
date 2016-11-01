@@ -204,7 +204,7 @@ namespace LeagueSandbox.GameServer.Logic
             return toRemove;
         }
 
-        protected virtual void setToRemove()
+        public virtual void setToRemove()
         {
             toRemove = true;
         }

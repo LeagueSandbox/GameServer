@@ -39,11 +39,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
+            var objects = _game.Map.GetObjects().Values;
+            foreach (var obj in objects)
+            {
+                var u = obj as Unit;
+                if (u != null && u.TargetUnit == this)
+                {
+                    u.SetTargetUnit(null);
+                    u.AutoAttackTarget = null;
+                    u.IsAttacking = false;
+                    _game.PacketNotifier.notifySetTarget(u, null);
+                    u._hasMadeInitialAttack = false;
+                }
+            }
+
             if (RespawnTimer != null) //?
                 RespawnTimer.Stop();
 
-            RespawnTimer = new System.Timers.Timer(RESPAWN_TIMER);
-            RespawnTimer.AutoReset = false;
+            RespawnTimer = new System.Timers.Timer(RESPAWN_TIMER) {AutoReset = false};
+
             RespawnTimer.Elapsed += (a, b) =>
             {
                 GetStats().CurrentHealth = GetStats().HealthPoints.Total;
@@ -55,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (killer != null && killer is Champion)
             {
-                Champion c = killer as Champion;
+                var c = (Champion)killer;
                 c.GetStats().Gold += GOLD_WORTH;
                 _game.PacketNotifier.notifyAddGold(c, this, GOLD_WORTH);
             }
@@ -102,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         }
 
-        protected override void setToRemove()
+        public override void setToRemove()
         {
 
         }

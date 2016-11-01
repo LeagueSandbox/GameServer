@@ -50,65 +50,76 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
+            var objects = _game.Map.GetObjects();
+            foreach (var it in objects)
+            {
+                var u = it.Value as Unit;
+                if (u != null)
+                {
+                    CheckFlagsForUnit(u);
+                }
+            }
+
+            base.update(diff);
+        }
+
+        public override float getMoveSpeed()
+        {
+            return _moveSpeed;
+        }
+
+        protected virtual void CheckFlagsForUnit(Unit unit)
+        {
+            if (!Collide(unit))
+            {
+                return;
+            }
+
             if (Target.IsSimpleTarget)
             { // Skillshot
-                var objects = _game.Map.GetObjects();
-                foreach (var it in objects)
-                {
-                    if (isToRemove())
-                        return;
+                if (unit == null || ObjectsHit.Contains(unit))
+                    return;
 
-                    if (Collide(it.Value))
-                    {
-                        if (ObjectsHit.Contains(it.Value))
-                            continue;
+                if (unit.Team == Owner.Team
+                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                    return;
 
-                        var u = it.Value as Unit;
-                        if (u == null)
-                            continue;
+                if (unit.Team == TeamId.TEAM_NEUTRAL
+                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                    return;
 
-                        if (u.Team == Owner.Team
-                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
-                            continue;
-
-                        if (u.Team == TeamId.TEAM_NEUTRAL
-                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
-                            continue;
-
-                        if (u.Team != Owner.Team
-                            && u.Team != TeamId.TEAM_NEUTRAL
-                            && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
-                            continue;
+                if (unit.Team != Owner.Team
+                    && unit.Team != TeamId.TEAM_NEUTRAL
+                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                    return;
 
 
-                        if (u.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
-                            continue;
+                if (unit.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                    return;
 
-                        var m = u as Minion;
-                        if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
-                            continue;
+                var m = unit as Minion;
+                if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
+                    return;
 
-                        var p = u as Placeable;
-                        if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
-                            continue;
+                var p = unit as Placeable;
+                if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
+                    return;
 
-                        var t = u as BaseTurret;
-                        if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
-                            continue;
+                var t = unit as BaseTurret;
+                if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                    return;
 
-                        var i = u as Inhibitor;
-                        var n = u as Nexus;
-                        if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
-                            continue;
+                var i = unit as Inhibitor;
+                var n = unit as Nexus;
+                if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                    return;
 
-                        var c = u as Champion;
-                        if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
-                            continue;
+                var c = unit as Champion;
+                if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
+                    return;
 
-                        ObjectsHit.Add(u);
-                        _originSpell.applyEffects(u, this);
-                    }
-                }
+                ObjectsHit.Add(unit);
+                _originSpell.applyEffects(unit, this);
             }
             else
             {
@@ -126,16 +137,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                 }
             }
-
-            base.update(diff);
         }
 
-        public override float getMoveSpeed()
-        {
-            return _moveSpeed;
-        }
-
-        protected override void setToRemove()
+        public override void setToRemove()
         {
             if (Target != null && !Target.IsSimpleTarget)
                 (Target as GameObject).decrementAttackerCount();

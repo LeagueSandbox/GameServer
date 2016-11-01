@@ -154,6 +154,7 @@ namespace LeagueSandbox
             }
         }
     }
+
     public static class CustomConvert
     {
         public static TeamId ToTeamId(int i)

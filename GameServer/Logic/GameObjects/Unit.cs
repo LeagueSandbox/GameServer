@@ -64,10 +64,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
         private float _autoAttackCurrentDelay;
-        public bool IsAttacking { get; protected set; }
+        public bool IsAttacking { protected get; set; }
         public bool IsModelUpdated { get; set; }
         public bool IsMelee { get; set; }
-        private bool _hasMadeInitialAttack;
+        protected internal bool _hasMadeInitialAttack;
         private bool _nextAttackFlag;
         public Unit DistressCause { get; protected set; }
         private long _statUpdateTimer;
@@ -666,38 +666,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return ClassifyUnit.Champion;
             }
 
+            if (target is Inhibitor && !target.IsDead)
+            {
+                return ClassifyUnit.Inhibitor;
+            }
+
+            if (target is Nexus)
+            {
+                return ClassifyUnit.Nexus;
+            }
+
             return ClassifyUnit.Default;
-
-            /*Turret* t = dynamic_cast<Turret*>(target);
-
-            // Turrets before champions
-            if (t) {
-               return 6;
-            }
-
-            Minion* m = dynamic_cast<Minion*>(target);
-
-            if (m) {
-               switch (m.getType()) {
-                  case MINION_TYPE_MELEE:
-                     return 4;
-                  case MINION_TYPE_CASTER:
-                     return 5;
-                  case MINION_TYPE_CANNON:
-                  case MINION_TYPE_SUPER:
-                     return 3;
-               }
-            }
-
-            Champion* c = dynamic_cast<Champion*>(target);
-            if (c) {
-               return 7;
-            }
-
-            //Trap (Shaco box) return 1
-            //Pet (Tibbers) return 2
-
-            return 10;*/
         }
 
     }
@@ -725,6 +704,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         SuperOrCannonMinion = 9,
         Turret = 10,
         Champion = 11,
-        Default = 12
+        Inhibitor = 12,
+        Nexus = 13,
+        Default = 14
     }
 }
