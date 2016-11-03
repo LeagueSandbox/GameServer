@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             timer.Elapsed += (a, b) =>
             {
                 var win = new GameEnd(true);
-                _game.PacketHandlerManager.broadcastPacketTeam(CustomConvert.getEnemyTeam(losingTeam), win, Channel.CHL_S2C);
+                _game.PacketHandlerManager.broadcastPacketTeam(CustomConvert.GetEnemyTeam(losingTeam), win, Channel.CHL_S2C);
                 var lose = new GameEnd(false);
                 _game.PacketHandlerManager.broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
             };
@@ -296,11 +296,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
-                notifyMinionSpawned(m, CustomConvert.getEnemyTeam(m.Team));
+                notifyMinionSpawned(m, CustomConvert.GetEnemyTeam(m.Team));
 
             var c = u as Champion;
             if (c != null)
-                notifyChampionSpawned(c, CustomConvert.getEnemyTeam(c.Team));
+                notifyChampionSpawned(c, CustomConvert.GetEnemyTeam(c.Team));
 
             var monster = u as Monster;
             if (monster != null)

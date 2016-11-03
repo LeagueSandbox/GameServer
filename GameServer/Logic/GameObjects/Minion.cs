@@ -149,7 +149,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected bool scanForTargets()
         {
             Unit nextTarget = null;
-            var nextTargetPriority = 12;
+            var nextTargetPriority = 14;
 
             var objects = _game.Map.GetObjects();
             foreach (var it in objects)

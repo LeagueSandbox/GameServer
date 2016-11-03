@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                var p = new SetTeam((this as Unit), team);
+                var p = new SetTeam(this as Unit, team);
                 _game.PacketHandlerManager.broadcastPacket(p, Core.Logic.PacketHandlers.Channel.CHL_S2C);
             }
         }
@@ -38,11 +38,11 @@ namespace LeagueSandbox.GameServer.Logic
         protected bool toRemove;
         public int AttackerCount { get; private set; }
         public int CollisionRadius { get; set; }
-        private Vector2 _direction;
+        protected Vector2 _direction;
         public int VisionRadius { get; private set; }
         public bool IsDashing { get; protected set; }
         public override bool IsSimpleTarget { get { return false; } }
-        private float _dashSpeed;
+        protected float _dashSpeed;
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game = Program.ResolveDependency<Game>();
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
@@ -93,8 +93,7 @@ namespace LeagueSandbox.GameServer.Logic
             var to = new Vector2(Target.X, Target.Y);
             var cur = new Vector2(X, Y); //?
 
-
-            var goingTo = (to - cur);
+            var goingTo = to - cur;
             _direction = Vector2.Normalize(goingTo);
             if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
             {

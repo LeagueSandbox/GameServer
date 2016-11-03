@@ -120,6 +120,7 @@
     <Compile Include="Logic\GameObjects\Fountain.cs" />
     <Compile Include="Logic\GameObjects\GameObjects.cs" />
     <Compile Include="Logic\GameObjects\BuildingStats.cs" />
+    <Compile Include="Logic\GameObjects\Laser.cs" />
     <Compile Include="Logic\GameObjects\Particle.cs" />
     <Compile Include="Logic\GameObjects\Placeable.cs" />
     <Compile Include="Logic\GameObjects\Nexus.cs" />

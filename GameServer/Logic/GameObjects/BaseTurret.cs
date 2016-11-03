@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var objects = _game.Map.GetObjects();
             Unit nextTarget = null;
-            var nextTargetPriority = 12;
+            var nextTargetPriority = 14;
 
             foreach (var it in objects)
             {
