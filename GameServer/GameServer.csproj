@@ -205,10 +205,6 @@
       <Project>{d3aff7fa-96f6-42b8-b03c-e508dc80ec3a}</Project>
       <Name>ENetCS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\InibinSharp\InibinSharp.csproj">
-      <Project>{f47ac3d4-6c0f-4f02-9a7f-fbed54cf6e0a}</Project>
-      <Name>InibinSharp</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
