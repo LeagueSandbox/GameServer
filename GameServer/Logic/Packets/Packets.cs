@@ -837,7 +837,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     class SpellAnimation : BasePacket
     {
-
         public SpellAnimation(Unit u, string animationName) : base(PacketCmdS2C.PKT_S2C_SpellAnimation, u.NetId)
         {
             buffer.Write((byte)0xC4); // unk
@@ -846,6 +845,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 buffer.Write(b);
+
             buffer.Write((byte)0);
         }
     }
@@ -3172,9 +3172,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SpawnParticle : BasePacket
     {
-        const short MAP_WIDTH = (13982 / 2);
-        const short MAP_HEIGHT = (14446 / 2);
-
         public SpawnParticle(Particle particle) : base(PacketCmdS2C.PKT_S2C_SpawnParticle, particle.Owner.NetId)
         {
             var _rafManager = Program.ResolveDependency<RAFManager>();
@@ -3204,9 +3201,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var ownerHeight = map.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
                 var particleHeight = map.GetHeightAtLocation(particle.X, particle.Y);
                 var higherValue = Math.Max(ownerHeight, particleHeight);
-                buffer.Write((short)((particle.Target.X - MAP_WIDTH) / 2));
+                buffer.Write((short)((particle.Target.X - _game.Map.GetWidth() / 2) / 2));
                 buffer.Write((float)higherValue);
-                buffer.Write((short)((particle.Target.Y - MAP_HEIGHT) / 2));
+                buffer.Write((short)((particle.Target.Y - _game.Map.GetHeight() / 2) / 2));
             }
 
             buffer.Write((uint)0); // unk
@@ -3235,7 +3232,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class UpdateStats : GamePacket
     {
-        public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats, 0)
+        public UpdateStats(Unit u, bool partial = true) : base(PacketCmdS2C.PKT_S2C_CharStats)
         {
             var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
 
@@ -3294,7 +3291,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public LevelPropSpawn(LevelProp lp) : base(PacketCmdS2C.PKT_S2C_LevelPropSpawn)
         {
             buffer.Write((int)lp.NetId);
-            buffer.Write((int)0x00000040); // Unk
+            buffer.Write((byte)0x40); // unk
+            buffer.Write((byte)lp.SkinId);
+            buffer.Write((byte)0);
+            buffer.Write((byte)0);
             buffer.Write((byte)0); // Unk
             buffer.Write((float)lp.X);
             buffer.Write((float)lp.Z);

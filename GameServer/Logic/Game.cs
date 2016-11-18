@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
@@ -18,7 +19,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
     {
         private Host _server;
         public BlowFish Blowfish { get; private set; }
-        protected object _lock = new object();
 
         public bool IsRunning { get; private set; }
         public int PlayersReady { get; private set; }
@@ -70,7 +70,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
-            Map = new SummonersRift(this);
+
+            RegisterMap((byte)Config.GameConfig.Map);
+
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
             IsRunning = false;
@@ -81,6 +83,26 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
 
             return true;
+        }
+
+        public void RegisterMap(byte mapId)
+        {
+            var mapName = Config.ContentManager.GameModeName + "-Map" + mapId;
+            var dic = new Dictionary<string, Type>
+            {
+                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) },
+                // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
+                { "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
+                // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
+                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
+            };
+
+            if (!dic.ContainsKey(mapName))
+            {
+                Map = new SummonersRift(this);
+            }
+
+            Map = (Map)Activator.CreateInstance(dic[mapName], this);
         }
 
         public void NetLoop()
@@ -96,7 +118,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         case EventType.Connect:
                             //Logging->writeLine("A new client connected: %i.%i.%i.%i:%i", event.peer->address.host & 0xFF, (event.peer->address.host >> 8) & 0xFF, (event.peer->address.host >> 16) & 0xFF, (event.peer->address.host >> 24) & 0xFF, event.peer->address.port);
 
-                            /* Set some defaults */
+                            // Set some defaults
                             enetEvent.Peer.Mtu = PEER_MTU;
                             enetEvent.Data = 0;
                             break;
@@ -107,7 +129,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                                 //enet_peer_disconnect(event.peer, 0);
                             }
 
-                            /* Clean up the packet now that we're done using it. */
+                            // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;
 
@@ -117,7 +139,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     }
                 }
                 if (IsRunning)
+                {
                     Map.Update(_timeElapsed);
+                }
                 watch.Stop();
                 _timeElapsed = watch.ElapsedMilliseconds;
                 watch.Restart();

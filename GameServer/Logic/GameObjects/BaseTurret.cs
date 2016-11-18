@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) + u.CollisionRadius > stats.Range.Total)
+                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > stats.Range.Total)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && GetDistanceTo(TargetUnit) + TargetUnit.CollisionRadius > stats.Range.Total)
+            if (TargetUnit != null && GetDistanceTo(TargetUnit) > stats.Range.Total)
             {
                 TargetUnit = null;
                 _game.PacketNotifier.NotifySetTarget(this, null);

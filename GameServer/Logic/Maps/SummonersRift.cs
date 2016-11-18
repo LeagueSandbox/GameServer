@@ -167,8 +167,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return;
             }
 
-            _collisionHandler.init(3); // Needs to be initialised after AIMesh
-
             AddObject(new LaneTurret("Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE,
                 TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
             AddObject(new LaneTurret("Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE,
@@ -191,11 +189,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 TurretType.NexusTurret, GetTurretItems(TurretType.NexusTurret)));
             AddObject(new LaneTurret("Turret_T1_C_02_A", 1768.19f, 1589.47f, TeamId.TEAM_BLUE,
                 TurretType.NexusTurret, GetTurretItems(TurretType.NexusTurret)));
-            AddObject(new LaneTurret("Turret_T2_C_05_A", 8548.0f, 8289.0f, TeamId.TEAM_PURPLE, 
+            AddObject(new LaneTurret("Turret_T2_C_05_A", 8548.0f, 8289.0f, TeamId.TEAM_PURPLE,
                 TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
             AddObject(new LaneTurret("Turret_T2_C_04_A", 9361.0f, 9892.0f, TeamId.TEAM_PURPLE,
                 TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
-            AddObject(new LaneTurret("Turret_T2_C_03_A", 10743.0f, 11010.0f, TeamId.TEAM_PURPLE, 
+            AddObject(new LaneTurret("Turret_T2_C_03_A", 10743.0f, 11010.0f, TeamId.TEAM_PURPLE,
                 TurretType.InhibitorTurret, GetTurretItems(TurretType.InhibitorTurret)));
             AddObject(new LaneTurret("Turret_T2_C_01_A", 12662.0f, 12442.0f, TeamId.TEAM_PURPLE,
                 TurretType.NexusTurret, GetTurretItems(TurretType.NexusTurret)));
@@ -275,7 +273,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public int[] GetTurretItems(TurretType type)
         {
             if (!_turretItems.ContainsKey(type))
+            {
                 return null;
+            }
 
             return _turretItems[type];
         }
@@ -345,19 +345,20 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return 0.0f;
             }
 
-            switch (m.getType())
+            var dic = new Dictionary<MinionSpawnType, float>
             {
-                case MinionSpawnType.MINION_TYPE_MELEE:
-                    return 19.8f + ((0.2f) * (int)(GameTime / (90 * 1000)));
-                case MinionSpawnType.MINION_TYPE_CASTER:
-                    return 16.8f + ((0.2f) * (int)(GameTime / (90 * 1000)));
-                case MinionSpawnType.MINION_TYPE_CANNON:
-                    return 40.0f + ((0.5f) * (int)(GameTime / (90 * 1000)));
-                case MinionSpawnType.MINION_TYPE_SUPER:
-                    return 40.0f + ((1.0f) * (int)(GameTime / (180 * 1000)));
+                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(GameTime / (180 * 1000)) }
+            };
+
+            if (!dic.ContainsKey(m.getType()))
+            {
+                return 0.0f;
             }
 
-            return 0.0f;
+            return dic[m.getType()];
         }
 
         public override float GetExperienceFor(Unit u)
@@ -366,20 +367,20 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             if (m == null)
                 return 0.0f;
-
-            switch (m.getType())
+            var dic = new Dictionary<MinionSpawnType, float>
             {
-                case MinionSpawnType.MINION_TYPE_MELEE:
-                    return 64.0f;
-                case MinionSpawnType.MINION_TYPE_CASTER:
-                    return 32.0f;
-                case MinionSpawnType.MINION_TYPE_CANNON:
-                    return 92.0f;
-                case MinionSpawnType.MINION_TYPE_SUPER:
-                    return 97.0f;
+                { MinionSpawnType.MINION_TYPE_MELEE, 64.0f },
+                { MinionSpawnType.MINION_TYPE_CASTER, 32.0f },
+                { MinionSpawnType.MINION_TYPE_CANNON, 92.0f },
+                { MinionSpawnType.MINION_TYPE_SUPER, 97.0f }
+            };
+
+            if (!dic.ContainsKey(m.getType()))
+            {
+                return 0.0f;
             }
 
-            return 0.0f;
+            return dic[m.getType()];
         }
 
         public override Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)

@@ -142,6 +142,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.Execute(@"
                 function onDamageTaken(attacker, damage, type, source)
                 end");
+            _scriptEngine.Execute(@"
+                function onCollide(collider)
+                end");
+            _scriptEngine.Execute(@"
+                function onCollideWithTerrain()
+                end");
 
             ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
         }
@@ -172,6 +178,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _timerUpdate = 0;
             }
 
+            UpdateAutoAttackTarget(diff);
+
+            base.update(diff);
+
+            _statUpdateTimer += diff;
+            if (_statUpdateTimer >= 500)
+            { // update stats (hpregen, manaregen) every 0.5 seconds
+                stats.update(_statUpdateTimer);
+                _statUpdateTimer = 0;
+            }
+        }
+
+        public void UpdateAutoAttackTarget(long diff)
+        {
             if (IsDead)
             {
                 if (TargetUnit != null)
@@ -229,7 +249,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 else if (GetDistanceTo(TargetUnit) <= stats.Range.Total)
                 {
                     refreshWaypoints();
-                    _isNextAutoCrit = new Random().Next(0, 100) < stats.CriticalChance.Total * 100;
                     _isNextAutoCrit = random.Next(0, 100) < stats.CriticalChance.Total * 100;
                     if (_autoAttackCurrentCooldown <= 0)
                     {
@@ -273,8 +292,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else if (IsAttacking)
             {
-                if (
-                    AutoAttackTarget == null
+                if (AutoAttackTarget == null
                     || AutoAttackTarget.IsDead
                     || !_game.Map.TeamHasVisionOn(Team, AutoAttackTarget)
                 )
@@ -285,18 +303,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            base.update(diff);
-
             if (_autoAttackCurrentCooldown > 0)
             {
                 _autoAttackCurrentCooldown -= diff / 1000.0f;
-            }
-
-            _statUpdateTimer += diff;
-            if (_statUpdateTimer >= 500)
-            { // update stats (hpregen, manaregen) every 0.5 seconds
-                stats.update(_statUpdateTimer);
-                _statUpdateTimer = 0;
             }
         }
 
@@ -325,18 +334,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             base.onCollision(collider);
-            /*if (_scriptEngine.IsLoaded())
+
+            if (!_scriptEngine.IsLoaded())
             {
-                try
+                return;
+            }
+
+            try
+            {
+                if (collider == null)
+                {
+                    if (!IsDashing)
+                    {
+                        setPosition(_game.Map.AIMesh.getClosestTerrainExit(new Vector2(X, Y)));
+                    }
+                    _scriptEngine.Execute("onCollideWithTerrain()");
+                }
+                else
                 {
                     _scriptEngine.SetGlobalVariable("object", collider);
                     _scriptEngine.Execute("onCollide(object)");
                 }
-                catch (LuaException e)
-                {
-                    Logger.LogCoreError("LUA ERROR : " + e.Message);
-                }
-            }*/
+            }
+            catch (LuaException e)
+            {
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
         }
 
         /// <summary>
@@ -600,7 +623,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else
             {
-                Target t = new Target(Waypoints[Waypoints.Count - 1]);
+                var t = new Target(Waypoints[Waypoints.Count - 1]);
                 if (t.GetDistanceTo(TargetUnit) >= 25.0f)
                 {
                     SetWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(TargetUnit.X, TargetUnit.Y) });

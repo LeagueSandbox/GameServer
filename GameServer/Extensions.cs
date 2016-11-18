@@ -159,6 +159,7 @@ namespace LeagueSandbox
 
     public static class CustomConvert
     {
+        private static PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
         public static TeamId ToTeamId(int i)
         {
             var dic = new Dictionary<int, TeamId>
@@ -207,6 +208,11 @@ namespace LeagueSandbox
             }
 
             return dic[team];
+        }
+
+        public static ClientInfo GetClientInfoByChampion(Champion champ)
+        {
+            return _playerManager.GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }
     }
 }

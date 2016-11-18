@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var _game = Program.ResolveDependency<Game>();
-            var _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
             var _playerManager = Program.ResolveDependency<PlayerManager>();
 
             var split = arguments.ToLower().Split(' ');
@@ -32,10 +31,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var champion = _playerManager.GetPeerInfo(peer).Champion;
                 var random = new Random();
 
-                var caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_MID);
-                var cannon = new Minion(MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_MID);
-                var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_MID);
-                var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_MID);
+                var caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_BOT);
+                var cannon = new Minion(MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_BOT);
+                var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_BOT);
+                var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_BOT);
 
                 const int x = 400;
                 caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));

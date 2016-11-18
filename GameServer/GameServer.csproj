@@ -147,7 +147,9 @@
     <Compile Include="Logic\Content\ItemManager.cs" />
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
+    <Compile Include="Logic\Maps\HowlingAbyss.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
+    <Compile Include="Logic\Maps\TwistedTreeline.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleScoreboard.cs" />

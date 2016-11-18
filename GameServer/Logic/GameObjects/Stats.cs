@@ -544,22 +544,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void update(long diff)
         {
-            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total)
+            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total && CurrentHealth > 0)
             {
-                float newHealth = CurrentHealth + (HealthRegeneration.Total * diff * 0.001f);
+                var newHealth = CurrentHealth + HealthRegeneration.Total * diff * 0.001f;
                 newHealth = Math.Min(HealthPoints.Total, newHealth);
                 CurrentHealth = newHealth;
             }
 
             if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
             {
-                float newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
+                var newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
                 newMana = Math.Min(ManaPoints.Total, newMana);
                 CurrentMana = newMana;
             }
             if (generatingGold && GoldPerSecond.Total > 0)
             {
-                float newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
+                var newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
                 Gold = newGold;
             }
         }

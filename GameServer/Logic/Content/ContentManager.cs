@@ -110,26 +110,28 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 depth--;
                 path = GetContentPath(contentPackages[depth], contentType, fileName);
             }
+
             if (!File.Exists(path))
             {
                 throw new ContentNotFoundException("Failed to load content [" + contentType + "][" + fileName + "]");
             }
+
             _logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
             return path;
         }
 
         public string GetMapDataPath(int mapId)
         {
-            var mapName = string.Format("Map{0}", mapId);
+            var mapName = $"Map{mapId}";
             var contentType = "Maps";
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
-                throw new ContentNotFoundException();
+                throw new ContentNotFoundException($"Map{mapId} was not found in the files.");
             }
 
             var contentPackages = _content[contentType][mapName];
-            var fileName = string.Format("{0}/{0}.json", mapName);
+            var fileName = $"{mapName}/{mapName}.json";
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
@@ -139,11 +141,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(championName))
             {
-                throw new ContentNotFoundException();
+                throw new ContentNotFoundException($"{championName}/{spellSlot}.lua was not found.");
             }
 
             var contentPackages = _content[contentType][championName];
-            var fileName = string.Format("{0}/{1}.lua", championName, spellSlot);
+            var fileName = $"{championName}/{spellSlot}.lua";
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
@@ -153,11 +155,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(buffName))
             {
-                throw new ContentNotFoundException();
+                throw new ContentNotFoundException($"Buff {buffName} was not found.");
             }
 
             var contentPackages = _content[contentType][buffName];
-            var fileName = string.Format("{0}/{1}.lua", buffName, buffName);
+            var fileName = $"{buffName}/{buffName}.lua";
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
@@ -167,11 +169,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(model))
             {
-                throw new ContentNotFoundException();
+                throw new ContentNotFoundException($"Stat file for {model} was not found.");
             }
 
             var contentPackages = _content[contentType][model];
-            var fileName = string.Format("{0}/{1}.json", model, model);
+            var fileName = $"{model}/{model}.json";
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
@@ -181,11 +183,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(spellName))
             {
-                throw new ContentNotFoundException();
+                throw new ContentNotFoundException($"Spell data for {spellName} was not found.");
             }
 
             var contentPackages = _content[contentType][spellName];
-            var fileName = string.Format("{0}/{1}.json", spellName, spellName);
+            var fileName = $"{spellName}/{spellName}.json";
 
             return GetContentPath(contentPackages, contentType, fileName);
         }

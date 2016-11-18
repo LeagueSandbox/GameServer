@@ -49,16 +49,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             _game.PacketHandlerManager.broadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
 
-            var timer = new System.Timers.Timer(5000);
-            timer.AutoReset = false;
+            var timer = new System.Timers.Timer(5000) { AutoReset = false };
             timer.Elapsed += (a, b) =>
             {
+                Console.WriteLine("Game is over. Program will close in 5 seconds.");
                 var win = new GameEnd(true);
                 _game.PacketHandlerManager.broadcastPacketTeam(CustomConvert.GetEnemyTeam(losingTeam), win, Channel.CHL_S2C);
                 var lose = new GameEnd(false);
                 _game.PacketHandlerManager.broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
             };
             timer.Start();
+
+            var timer2 = new System.Timers.Timer(10000) { AutoReset = false };
+            timer2.Elapsed += (c, d) => Environment.Exit(0);
+            timer2.Start();
         }
 
         public void NotifyUpdatedStats(Unit u, bool partial = true)

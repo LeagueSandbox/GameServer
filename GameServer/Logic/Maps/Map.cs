@@ -163,7 +163,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 }
             }
 
-            _collisionHandler.update(diff);
+            _collisionHandler.Update();
 
             foreach (var announce in _announcerEvents)
             {
@@ -313,7 +313,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 }
             }
 
-            _collisionHandler.addObject(o);
+            _collisionHandler.AddObject(o);
 
             if (!(o is Unit))
                 return;
@@ -345,7 +345,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 }
             }
             //collisionHandler.stackChanged(o);
-            _collisionHandler.removeObject(o);
+            _collisionHandler.RemoveObject(o);
 
             if (o is Unit)
                 RemoveVisionUnit(o as Unit);

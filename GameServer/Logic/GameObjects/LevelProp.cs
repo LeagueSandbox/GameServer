@@ -10,6 +10,7 @@
         public float DirZ { get; private set; }
         public float Unk1 { get; private set; }
         public float Unk2 { get; private set; }
+        public byte SkinId { get; private set; }
 
         public LevelProp(
             float x,
@@ -22,10 +23,10 @@
             float unk2,
             string name,
             string model,
+            byte skin = 0,
             uint netId = 0
         ) : base(x, y, 0, 0, netId)
         {
-            SetTeam(Enet.TeamId.TEAM_NEUTRAL);
             Z = z;
             DirX = dirX;
             DirY = dirY;
@@ -34,6 +35,7 @@
             Unk2 = unk2;
             Name = name;
             Model = model;
+            SkinId = skin;
             Team = Enet.TeamId.TEAM_NEUTRAL;
         }
 
