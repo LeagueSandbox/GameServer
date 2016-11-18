@@ -163,7 +163,7 @@ namespace LeagueSandbox.GameServer.Logic
             if (xvector == 0 && yvector == 0)
                 return;
 
-            float toDivide = Math.Abs(xvector) + Math.Abs(yvector);
+            var toDivide = Math.Abs(xvector) + Math.Abs(yvector);
             xvector /= toDivide;
             yvector /= toDivide;
         }
@@ -218,6 +218,13 @@ namespace LeagueSandbox.GameServer.Logic
             X = x;
             Y = y;
 
+            Target = null;
+        }
+
+        public virtual void setPosition(Vector2 vec)
+        {
+            X = vec.X;
+            Y = vec.Y;
             Target = null;
         }
 

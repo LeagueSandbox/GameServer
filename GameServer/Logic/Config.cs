@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic
             foreach (var player in playerConfigurations)
             {
                 var playerConfig = new PlayerConfig(player);
-                Players.Add(string.Format("player{0}", Players.Count + 1), playerConfig);
+                Players.Add($"player{Players.Count + 1}", playerConfig);
             }
 
             //Read cost/cd info
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         internal int GetYForPlayer(int playerId)
         {
-            return (int)((JArray)_spawns[playerId])[0];
+            return (int)((JArray)_spawns[playerId])[1];
         }
     }
 

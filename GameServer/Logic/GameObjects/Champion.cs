@@ -26,8 +26,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Champion(string model, uint playerId, RuneCollection runeList, uint netId = 0)
             : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
-            this._playerId = playerId;
-            this.RuneList = runeList;
+            _playerId = playerId;
+            RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
