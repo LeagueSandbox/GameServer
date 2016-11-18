@@ -48,25 +48,25 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
                 case DebugMsgType.ERROR: // Tag: [ERROR], Color: Red
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.INFO: // Tag: [INFO], Color: Green
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAX: // Tag: [SYNTAX], Color: Blue
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAXERROR: // Tag: [ERROR], Color: Red
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append("Incorrect command syntax");
-                    _game.PacketNotifier.notifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.NORMAL: // No tag, no format
-                    _game.PacketNotifier.notifyDebugMessage(message);
+                    _game.PacketNotifier.NotifyDebugMessage(message);
                     break;
             }
         }

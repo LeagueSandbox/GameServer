@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox
 {

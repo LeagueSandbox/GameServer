@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;

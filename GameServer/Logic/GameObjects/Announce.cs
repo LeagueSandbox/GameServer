@@ -12,8 +12,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Announce(Game game, long eventTime, Announces id, bool isMapSpecific)
         {
-            this.IsAnnounced = false;
-            this.EventTime = eventTime;
+            IsAnnounced = false;
+            EventTime = eventTime;
             _messageId = id;
             _isMapSpecific = isMapSpecific;
             _game = game;
@@ -21,8 +21,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void Execute()
         {
-            _game.PacketNotifier.notifyAnnounceEvent(_messageId, _isMapSpecific);
-            this.IsAnnounced = true;
+            _game.PacketNotifier.NotifyAnnounceEvent(_messageId, _isMapSpecific);
+            IsAnnounced = true;
         }
     }
 

@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     foreach (var item in t.Inventory)
                     {
                         if (item == null) continue;
-                        _game.PacketNotifier.notifyItemBought(t, item as Item);
+                        _game.PacketNotifier.NotifyItemBought(t, item as Item);
                     }
 
                     continue;

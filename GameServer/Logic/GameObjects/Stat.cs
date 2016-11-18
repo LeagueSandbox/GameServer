@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Stat
     {
@@ -26,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float BaseValue { get { return _baseValue; } set { Modified = true; _baseValue = value; } }
         public float PercentBonus { get { return _percentBonus; } set { Modified = true; _percentBonus = value; } }
         public float PercentBaseBonus { get { return _percentBaseBonus; } set { Modified = true; _percentBaseBonus = value; } }
-        
+
         public float Total { get { return ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus)*(1+PercentBonus); } }
 
         public Stat(float baseValue, float baseBonus, float percentBaseBonus, float flatBonus, float percentBonus)
@@ -41,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Stat() : this(0, 0, 0, 0, 0)
         {
-            
+
         }
 
         public bool ApplyStatModificator(StatModifcator statModifcator)

@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -22,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             BuildAzirTurret();
 
-            SetTeam(team);
+            Team = team;
         }
 
         public void BuildAzirTurret()

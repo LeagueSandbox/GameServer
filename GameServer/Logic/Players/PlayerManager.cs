@@ -45,11 +45,11 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
             if (p.Value.Team.ToLower() == "blue")
             {
-                c.SetTeam(TeamId.TEAM_BLUE);
+                c.Team = TeamId.TEAM_BLUE;
             }
             else
             {
-                c.SetTeam(TeamId.TEAM_PURPLE);
+                c.Team = TeamId.TEAM_PURPLE;
             }
 
             c.LevelUp();

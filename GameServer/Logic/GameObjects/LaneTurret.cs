@@ -1,13 +1,5 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -291,7 +283,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public override void autoAttackHit(Unit target)
+        public override void AutoAttackHit(Unit target)
         {
             if (Type == TurretType.FountainTurret)
             {
@@ -299,7 +291,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             else
             {
-                base.autoAttackHit(target);
+                base.AutoAttackHit(target);
             }
         }
     }

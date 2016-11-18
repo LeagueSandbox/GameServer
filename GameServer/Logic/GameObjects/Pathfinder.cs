@@ -14,9 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected static Map chart;
         private const int GRID_SIZE = 1024;
-        protected static int successes = 0, oot = 0, empties = 0;
+        protected static int successes, oot, empties;
         protected static int totalDuration = 0, durations = 0;
-        protected static DateTime g_Clock = System.DateTime.Now;
+        protected static DateTime g_Clock = DateTime.Now;
         protected static bool debugOutput = false;
         protected static int MAX_PATHFIND_TRIES = 100;
 
@@ -24,21 +24,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public static Path getPath(Vector2 from, Vector2 to, float boxSize)
         {
+            var path = new Path();
+            var job = new PathJob();
 
-            Path path = new Path();
-            PathJob job = new PathJob();
-
-            if ((System.DateTime.Now - g_Clock).Milliseconds > 4000 && (successes + oot + empties) > 0)
+            if ((DateTime.Now - g_Clock).Milliseconds > 4000 && successes + oot + empties > 0)
+            {
                 _logger.LogCoreInfo(string.Format(
                     "Pathfinding successrate: {0}",
-                    (float)successes / (float)(successes + oot + empties) * (100.0f)
+                    (float)successes / (successes + oot + empties) * 100.0f
                 ));
+            }
 
             if (debugOutput)
+            {
                 _logger.LogCoreInfo("Recording this minion movement.");
+            }
 
-            if (chart == null) _logger.LogCoreError("Tried to find a path without setting the map.");
-            if (getMesh() == null) _logger.LogCoreError("Can't start pathfinding without initialising the AIMesh");
+            if (chart == null)
+            {
+                _logger.LogCoreError("Tried to find a path without setting the map.");
+            }
+            if (getMesh() == null)
+            {
+                _logger.LogCoreError("Can't start pathfinding without initialising the AIMesh");
+            }
 
 
             job.start = job.fromPositionToGrid(from); // Save start in grid info
@@ -76,7 +85,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     job.cleanLists();
                     return path;
                 }
-                else if (job.traverseOpenList(tries == 0))
+                if (job.traverseOpenList(tries == 0))
                 {
                     path.error = PathError.PATH_ERROR_NONE;
                     successes++;
@@ -89,7 +98,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             if (debugOutput)
+            {
                 _logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
+            }
 
             //CORE_WARNING("PATH_ERROR_OPENLIST_EMPTY");
             path.error = PathError.PATH_ERROR_OPENLIST_EMPTY;
@@ -99,6 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             job.cleanLists();
             return path;
         }
+
         public static Path getPath(Vector2 from, Vector2 to)// { if (!chart->getAIMesh()) CORE_FATAL("Can't get path because of a missing AIMesh."); return getPath(from, to, PATH_DEFAULT_BOX_SIZE(mesh->getSize())); }
         {
             if (chart.AIMesh == null)
@@ -107,22 +119,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             return getPath(from, to, PATH_DEFAULT_BOX_SIZE(getMesh().getSize()));
         }
+
         public static void setMap(Map map)// { chart = map; mesh = chart->getAIMesh(); }
         {
             chart = map;
         }
+
         public static AIMesh getMesh()
         {
-            if (chart == null)
+            if (chart != null)
             {
-                _logger.LogCoreError("The map hasn't been set but the mesh was requested.");
-                return null;
+                return chart.AIMesh;
             }
-            return chart.AIMesh;
+
+            _logger.LogCoreError("The map hasn't been set but the mesh was requested.");
+            return null;
         }
+
         private static float PATH_DEFAULT_BOX_SIZE(float map_size)
         {
-            return map_size / (float)GRID_SIZE;
+            return map_size / GRID_SIZE;
         }
     }
     class Path
@@ -134,10 +150,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return error == PathError.PATH_ERROR_NONE;
         }
+
         public PathError getError()
         {
             return error;
         }
+
         //std::vector<Vector2> getWaypoints() { return waypoints; }
         public List<Vector2> getWaypoints()
         {
@@ -162,13 +180,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             start = new Vector2();
             destination = new Vector2();
             for (var i = 0; i < GRID_WIDTH; i++)
+            {
                 for (var j = 0; j < GRID_HEIGHT; j++)
+                {
                     map[i, j] = new Grid();
+                }
+            }
         }
 
         public Vector2 fromGridToPosition(Vector2 position)
         {
-            AIMesh mesh = Pathfinder.getMesh();
+            var mesh = Pathfinder.getMesh();
             if (mesh == null)
             {
                 _logger.LogCoreError("Tried to get a grid location without an initialised AIMesh!");

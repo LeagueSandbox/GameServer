@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -30,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
-            SetTeam(TeamId.TEAM_NEUTRAL);
+            Team = TeamId.TEAM_NEUTRAL;
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)

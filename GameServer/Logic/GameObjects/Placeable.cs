@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -17,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
-            SetTeam(owner.Team);
+            Team = owner.Team;
 
             Owner = owner;
 

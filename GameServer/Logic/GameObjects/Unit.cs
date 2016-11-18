@@ -60,6 +60,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
         protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
+        private Random random = new Random();
+
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
@@ -74,9 +76,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
-        /**
-         * Unit we want to attack as soon as in range
-         */
+        /// <summary>
+        /// Unit we want to attack as soon as in range
+        /// </summary>
         public Unit TargetUnit { get; set; }
         public Unit AutoAttackTarget { get; set; }
 
@@ -177,7 +179,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     SetTargetUnit(null);
                     AutoAttackTarget = null;
                     IsAttacking = false;
-                    _game.PacketNotifier.notifySetTarget(this, null);
+                    _game.PacketNotifier.NotifySetTarget(this, null);
                     _hasMadeInitialAttack = false;
                 }
                 return;
@@ -189,7 +191,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;
-                    _game.PacketNotifier.notifySetTarget(this, null);
+                    _game.PacketNotifier.NotifySetTarget(this, null);
                     _hasMadeInitialAttack = false;
 
                 }
@@ -200,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     {
                         if (!IsMelee)
                         {
-                            Projectile p = new Projectile(
+                            var p = new Projectile(
                                 X,
                                 Y,
                                 5,
@@ -213,11 +215,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 _autoAttackProjId
                             );
                             _game.Map.AddObject(p);
-                            _game.PacketNotifier.notifyShowProjectile(p);
+                            _game.PacketNotifier.NotifyShowProjectile(p);
                         }
                         else
                         {
-                            autoAttackHit(AutoAttackTarget);
+                            AutoAttackHit(AutoAttackTarget);
                         }
                         _autoAttackCurrentCooldown = 1.0f / (stats.GetTotalAttackSpeed());
                         IsAttacking = false;
@@ -228,6 +230,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     refreshWaypoints();
                     _isNextAutoCrit = new Random().Next(0, 100) < stats.CriticalChance.Total * 100;
+                    _isNextAutoCrit = random.Next(0, 100) < stats.CriticalChance.Total * 100;
                     if (_autoAttackCurrentCooldown <= 0)
                     {
                         IsAttacking = true;
@@ -238,7 +241,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         if (!_hasMadeInitialAttack)
                         {
                             _hasMadeInitialAttack = true;
-                            _game.PacketNotifier.notifyBeginAutoAttack(
+                            _game.PacketNotifier.NotifyBeginAutoAttack(
                                 this,
                                 TargetUnit,
                                 _autoAttackProjId,
@@ -248,7 +251,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         else
                         {
                             _nextAttackFlag = !_nextAttackFlag; // The first auto attack frame has occurred
-                            _game.PacketNotifier.notifyNextAutoAttack(
+                            _game.PacketNotifier.NotifyNextAutoAttack(
                                 this,
                                 TargetUnit,
                                 _autoAttackProjId,
@@ -258,7 +261,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         }
 
                         var attackType = IsMelee ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        _game.PacketNotifier.notifyOnAttack(this, TargetUnit, attackType);
+                        _game.PacketNotifier.NotifyOnAttack(this, TargetUnit, attackType);
                     }
 
                 }
@@ -336,10 +339,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }*/
         }
 
-        /**
-        * This is called by the AA projectile when it hits its target
-        */
-        public virtual void autoAttackHit(Unit target)
+        /// <summary>
+        /// This is called by the AA projectile when it hits its target
+        /// </summary>
+        public virtual void AutoAttackHit(Unit target)
         {
             var damage = stats.AttackDamage.Total;
             if (_isNextAutoCrit)
@@ -443,13 +446,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.IsDead = true;
                 target.die(this);
             }
-            _game.PacketNotifier.notifyDamageDone(this, target, damage, type, text);
+            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, text);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
-                _game.PacketNotifier.notifyUpdatedStats(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this);
             }
         }
 
@@ -471,7 +474,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             setToRemove();
             _game.Map.StopTargeting(this);
 
-            _game.PacketNotifier.notifyNpcDie(this, killer);
+            _game.PacketNotifier.NotifyNpcDie(this, killer);
 
             float exp = _game.Map.GetExperienceFor(this);
             var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
@@ -500,7 +503,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return;
 
                 cKiller.GetStats().Gold += gold;
-                _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
+                _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
                 if (cKiller.KillDeathCounter < 0)
                 {

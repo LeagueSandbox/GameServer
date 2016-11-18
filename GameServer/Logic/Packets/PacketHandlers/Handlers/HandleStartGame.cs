@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -32,7 +27,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
                         _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
-                    _game.PacketNotifier.notifyUpdatedStats(player.Item2.Champion, false);
+                    _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
                 }
 
                 _game.Start();
