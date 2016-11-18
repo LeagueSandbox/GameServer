@@ -18,8 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
-            this.Name = name;
-            SetTeam(team);
+            Name = name;
+            Team = team;
             Inventory = InventoryManager.CreateInventory(this);
         }
 
@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > stats.Range.Total)
+                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) + u.CollisionRadius > stats.Range.Total)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (nextTarget != null)
             {
                 TargetUnit = nextTarget;
-                _game.PacketNotifier.notifySetTarget(this, nextTarget);
+                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
             }
         }
 
@@ -85,10 +85,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && GetDistanceTo(TargetUnit) > stats.Range.Total)
+            if (TargetUnit != null && GetDistanceTo(TargetUnit) + TargetUnit.CollisionRadius > stats.Range.Total)
             {
                 TargetUnit = null;
-                _game.PacketNotifier.notifySetTarget(this, null);
+                _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
             base.update(diff);
@@ -110,9 +110,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
 
                 player.GetStats().Gold += goldEarn;
-                _game.PacketNotifier.notifyAddGold(player, this, goldEarn);
+                _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
-            _game.PacketNotifier.notifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
             base.die(killer);
         }
 

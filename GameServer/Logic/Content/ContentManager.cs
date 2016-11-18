@@ -1,12 +1,9 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
-using Ninject;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {

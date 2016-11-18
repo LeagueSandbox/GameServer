@@ -314,7 +314,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     TargetUnit = nextTarget;
-                    _game.PacketNotifier.notifySetTarget(this, nextTarget);
+                    _game.PacketNotifier.NotifySetTarget(this, nextTarget);
                 }
             }
 
@@ -333,7 +333,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     float respawnX = spawnPos.Item1;
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
-                    _game.PacketNotifier.notifyChampionRespawn(this);
+                    _game.PacketNotifier.NotifyChampionRespawn(this);
                     GetStats().CurrentHealth = GetStats().HealthPoints.Total;
                     GetStats().CurrentMana = GetStats().HealthPoints.Total;
                     IsDead = false;
@@ -343,8 +343,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var isLevelup = LevelUp();
             if (isLevelup)
             {
-                _game.PacketNotifier.notifyLevelUp(this);
-                _game.PacketNotifier.notifyUpdatedStats(this, false);
+                _game.PacketNotifier.NotifyLevelUp(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
             foreach (var s in Spells)
@@ -439,7 +439,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null)
             {
-                _game.PacketNotifier.notifyChampionDie(this, killer, 0);
+                _game.PacketNotifier.NotifyChampionDie(this, killer, 0);
                 return;
             }
 
@@ -467,7 +467,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (gold > 0)
             {
-                _game.PacketNotifier.notifyChampionDie(this, cKiller, 0);
+                _game.PacketNotifier.NotifyChampionDie(this, cKiller, 0);
                 return;
             }
 
@@ -483,10 +483,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.Map.HasFirstBloodHappened = true;
             }
 
-            _game.PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
+            _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);
 
             cKiller.GetStats().Gold = cKiller.GetStats().Gold + gold;
-            _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
+            _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -23,7 +18,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
             _playerManager.GetPeerInfo(peer).Champion.getInventory().SwapItems(request.slotFrom, request.slotTo);
-            _game.PacketNotifier.notifyItemsSwapped(
+            _game.PacketNotifier.NotifyItemsSwapped(
                 _playerManager.GetPeerInfo(peer).Champion,
                 request.slotFrom,
                 request.slotTo

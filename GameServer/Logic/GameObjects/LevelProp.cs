@@ -25,15 +25,16 @@
             uint netId = 0
         ) : base(x, y, 0, 0, netId)
         {
-            this.Z = z;
-            this.DirX = dirX;
-            this.DirY = dirY;
-            this.DirZ = dirZ;
-            this.Unk1 = unk1;
-            this.Unk2 = unk2;
-            this.Name = name;
-            this.Model = model;
             SetTeam(Enet.TeamId.TEAM_NEUTRAL);
+            Z = z;
+            DirX = dirX;
+            DirY = dirY;
+            DirZ = dirZ;
+            Unk1 = unk1;
+            Unk2 = unk2;
+            Name = name;
+            Model = model;
+            Team = Enet.TeamId.TEAM_NEUTRAL;
         }
 
         public override float getMoveSpeed()

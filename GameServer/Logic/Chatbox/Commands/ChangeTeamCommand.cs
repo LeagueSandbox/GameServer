@@ -1,11 +1,5 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
-using System.Linq;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -16,8 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game game = Program.ResolveDependency<Game>();
-            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
+            var playerManager = Program.ResolveDependency<PlayerManager>();
 
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -26,11 +19,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
+
             int t;
             if (!int.TryParse(split[1], out t))
+            {
                 return;
+            }
+
             var team = CustomConvert.ToTeamId(t);
-            playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
+            playerManager.GetPeerInfo(peer).Champion.Team = team;
         }
     }
 }

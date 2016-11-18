@@ -1,13 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Items;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -35,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             return SafeGetItemType(itemId, null);
         }
-        
+
         public void ResetItems()
         {
             _itemTypes.Clear();

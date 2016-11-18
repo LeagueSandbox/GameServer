@@ -1,25 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Maps;
-using System.Net.Sockets;
-using System.Net;
 using BlowFishCS;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using Ninject;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
@@ -42,7 +32,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         protected const PacketFlags UNRELIABLE = PacketFlags.None;
         protected const double REFRESH_RATE = 16.666; // 60 fps
         private long _timeElapsed;
-
         private Logger _logger;
         // Object managers
         private ItemManager _itemManager;
@@ -73,9 +62,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
-            var key = System.Convert.FromBase64String(baseKey);
+            var key = Convert.FromBase64String(baseKey);
             if (key.Length <= 0)
+            {
                 return false;
+            }
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
@@ -88,6 +79,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 _playerManager.AddPlayer(p);
             }
+
             return true;
         }
 

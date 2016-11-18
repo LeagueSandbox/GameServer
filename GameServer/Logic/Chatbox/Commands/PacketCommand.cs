@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ENet;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;

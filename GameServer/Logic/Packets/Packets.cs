@@ -815,12 +815,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             buffer.Write((int)m.NetId);
             buffer.Write((byte)0); // movement mask
-            buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
-            buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
+            buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
+            buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
             for (int i = m.CurWaypoint; i < waypoints.Count; ++i)
             {
-                buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].X));
-                buffer.Write((short)MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                buffer.Write((short)MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                buffer.Write((short)MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
 
@@ -916,9 +916,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)backDistance);
             buffer.Write((float)travelTime);
 
-            var waypoints = new List<Vector2>();
-            waypoints.Add(new Vector2(u.X, u.Y));
-            waypoints.Add(new Vector2(t.X, t.Y));
+            var waypoints = new List<Vector2>
+            {
+                new Vector2(u.X, u.Y),
+                new Vector2(t.X, t.Y)
+            };
 
             buffer.Write(Movement.EncodeWaypoints(waypoints));
         }
@@ -938,12 +940,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    /**
-     * This is basically a "Unit Spawn" packet with only the net ID and the additionnal data
-     */
+    /// <summary>
+    /// This is basically a "Unit Spawn" packet with only the net ID and the additionnal data
+    /// </summary>
     public class EnterVisionAgain : BasePacket
     {
-
         public EnterVisionAgain(Minion m) : base(PacketCmdS2C.PKT_S2C_ObjectSpawn, m.NetId)
         {
             buffer.fill(0, 13);
@@ -958,12 +959,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)m.NetId);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
             buffer.Write((byte)0); // movement mask
-            buffer.Write((short)MovementVector.targetXToNormalFormat(m.X));
-            buffer.Write((short)MovementVector.targetYToNormalFormat(m.Y));
+            buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
+            buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
             for (int i = m.CurWaypoint; i < waypoints.Count; i++)
             {
-                buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].X));
-                buffer.Write(MovementVector.targetXToNormalFormat((float)waypoints[i].Y));
+                buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].X));
+                buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].Y));
             }
         }
 
@@ -1001,12 +1002,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
             buffer.Write(c.NetId);
             buffer.Write((byte)0); // movement mask; 1=KeepMoving?
-            buffer.Write(MovementVector.targetXToNormalFormat(c.X));
-            buffer.Write(MovementVector.targetYToNormalFormat(c.Y));
+            buffer.Write(MovementVector.TargetXToNormalFormat(c.X));
+            buffer.Write(MovementVector.TargetYToNormalFormat(c.Y));
             for (int i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].X));
-                buffer.Write(MovementVector.targetXToNormalFormat(waypoints[i].Y));
+                buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
     }
@@ -2235,10 +2236,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                                           // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write(MovementVector.targetXToNormalFormat(attacked.X));
+            buffer.Write(MovementVector.TargetXToNormalFormat(attacked.X));
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
-            buffer.Write(MovementVector.targetYToNormalFormat(attacked.Y));
+            buffer.Write(MovementVector.TargetYToNormalFormat(attacked.Y));
             buffer.Write((byte)0xCC);
             buffer.Write((byte)0x35);
             buffer.Write((byte)0xC4);
@@ -2358,7 +2359,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class ResourceType : ExtendedPacket
     {
-        public ResourceType(uint playernetid, byte resourceType) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        public ResourceType(uint playernetid, byte resourceType) : base(ExtendedPacketCmd.EPKT_S2C_ResourceType, playernetid)
         {
             buffer.Write((byte)resourceType);
         }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic;
-using Ninject;
 using BlowFishCS;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -45,13 +42,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleMap(), PacketCmdC2S.PKT_C2S_ClientReady, Channel.CHL_LOADING_SCREEN);
             registerHandler(new HandleSynch(), PacketCmdC2S.PKT_C2S_SynchVersion, Channel.CHL_C2S);
             registerHandler(new HandleCastSpell(), PacketCmdC2S.PKT_C2S_CastSpell, Channel.CHL_C2S);
-            //registerHandler(new HandleGameNumber(),      PacketCmd.PKT_C2S_GameNumberReq, Channel.CHL_C2S);
+            // registerHandler(new HandleGameNumber(), PacketCmd.PKT_C2S_GameNumberReq, Channel.CHL_C2S);
             registerHandler(new HandleQueryStatus(), PacketCmdC2S.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
             registerHandler(new HandleStartGame(), PacketCmdC2S.PKT_C2S_StartGame, Channel.CHL_C2S);
             registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Exit, Channel.CHL_C2S);
             registerHandler(new HandleView(), PacketCmdC2S.PKT_C2S_ViewReq, Channel.CHL_C2S);
             registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
-            //registerHandler(new HandleNull(),            PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
+            // registerHandler(new HandleNull(), PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
             registerHandler(new HandleAttentionPing(), PacketCmdC2S.PKT_C2S_AttentionPing, Channel.CHL_C2S);
             registerHandler(new HandleChatBoxMessage(), PacketCmdC2S.PKT_C2S_ChatBoxMessage, Channel.CHL_COMMUNICATION);
             registerHandler(new HandleMove(), PacketCmdC2S.PKT_C2S_MoveReq, Channel.CHL_C2S);
@@ -71,9 +68,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleQuestClicked(), PacketCmdC2S.PKT_C2S_QuestClicked, Channel.CHL_C2S);
             registerHandler(new HandleUseObject(), PacketCmdC2S.PKT_C2S_UseObject, Channel.CHL_C2S);
             registerHandler(new HandleCursorPositionOnWorld(), PacketCmdC2S.PKT_C2S_CursorPositionOnWorld, Channel.CHL_C2S);
+            registerHandler(new HandleScoreboard(), PacketCmdC2S.PKT_C2S_Scoreboard, Channel.CHL_C2S);
 
-
-            //registerHandler(new ?, PacketCmdC2S.PKT_C2S_PauseReq, Channel.?);
+            // registerHandler(new HandleX(), PacketCmdC2S.PKT_C2S_X, Channel.CHL_C2S);
         }
 
         public void registerHandler(IPacketHandler handler, PacketCmdC2S pktcmd, Channel channel)
@@ -99,7 +96,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
             return null;
         }
-        public bool sendPacket(Peer peer, LeagueSandbox.GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool sendPacket(Peer peer, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             return sendPacket(peer, packet.GetBytes(), channelNo, flag);
         }
@@ -125,6 +122,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 System.Diagnostics.Debug.Write(str);
                 foreach (var b in buffer)
                     System.Diagnostics.Debug.Write(b.ToString("X2") + " ");
+
                 System.Diagnostics.Debug.WriteLine("");
                 System.Diagnostics.Debug.WriteLine("--------");
             }
@@ -156,11 +154,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var packet = new Packet();
             packet.Create(temp);
             _server.Broadcast((byte)channelNo, ref packet);
-
             return true;
         }
 
-        public bool broadcastPacket(LeagueSandbox.GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacket(GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacket(packet.GetBytes(), channelNo, flag);
         }
@@ -174,12 +171,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return true;
         }
 
-        public bool broadcastPacketTeam(TeamId team, LeagueSandbox.GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketTeam(TeamId team, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool broadcastPacketVision(GameObject o, LeagueSandbox.GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketVision(GameObject o, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
@@ -197,12 +194,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     broadcastPacketTeam(team, data, channelNo, flag);
                 }
             }
+
             return true;
         }
 
         public bool handlePacket(Peer peer, byte[] data, Channel channelID)
         {
-            var header = new LeagueSandbox.GameServer.Logic.Packets.PacketHeader(data);
+            var header = new GameServer.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
             // printPacket(data, "Received: ");
 
@@ -213,7 +211,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 case PacketCmdC2S.PKT_C2S_ViewReq:
                     break;
                 default:
-                    Console.WriteLine("Requested " + header.cmd.ToString());
+                    Console.WriteLine("Requested " + header.cmd);
                     break;
             }
 
@@ -221,16 +219,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 if (!handler.HandlePacket(peer, data))
                 {
-                    Console.WriteLine("Handle failed for " + header.cmd.ToString());
+                    Console.WriteLine("Handle failed for " + header.cmd);
                     return false;
                 }
+
                 return true;
             }
-            else
-            {
-                _logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
-                printPacket(data, "Error: ");
-            }
+            _logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
+            printPacket(data, "Error: ");
             return false;
         }
 

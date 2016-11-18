@@ -1,6 +1,5 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
-using Ninject;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands

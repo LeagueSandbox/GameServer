@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -59,7 +53,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     _playerManager.GetPeerInfo(peer).Champion.GetStats().RemoveBuff(instance.ItemType);
                     var champion = _playerManager.GetPeerInfo(peer).Champion;
                     var inventory = champion.getInventory();
-                    _game.PacketNotifier.notifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    _game.PacketNotifier.NotifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
@@ -69,7 +63,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             _playerManager.GetPeerInfo(peer).Champion.GetStats().Gold =
                 _playerManager.GetPeerInfo(peer).Champion.GetStats().Gold - price;
             _playerManager.GetPeerInfo(peer).Champion.GetStats().AddBuff(itemTemplate);
-            _game.PacketNotifier.notifyItemBought(_playerManager.GetPeerInfo(peer).Champion, i);
+            _game.PacketNotifier.NotifyItemBought(_playerManager.GetPeerInfo(peer).Champion, i);
 
             return true;
         }

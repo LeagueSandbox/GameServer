@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             UserId = userId;
         }
     }
-    public enum TeamId : int
+    public enum TeamId
     {
         TEAM_BLUE = 0x64,
         TEAM_PURPLE = 0xC8,

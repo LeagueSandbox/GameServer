@@ -4,7 +4,7 @@
     {
         PKT_S2C_MoveAns = 0x61,
         PKT_S2C_CharStats = 0xC4 //?
-    };
+    }
 
     public enum PacketCmdS2C : byte
     {
@@ -123,7 +123,7 @@
         PKT_S2C_SetItemStacks2 = 0xFD,
         PKT_S2C_Extended = 0xFE,
         PKT_S2C_Batch = 0xFF
-    };
+    }
 
     public enum PacketCmdC2S
     {
@@ -176,7 +176,7 @@
         EPKT_S2C_FloatingText = 0x28,
         EPKT_S2C_ForceTargetSpell = 0x29,
         EPKT_S2C_MoveChampionCameraCenter = 0x2B
-    };
+    }
 
     public enum MoveType : uint
     {
@@ -185,13 +185,13 @@
         ATTACK = 3,
         ATTACKMOVE = 7,
         STOP = 10,
-    };
+    }
 
     public enum ChatType : uint
     {
         CHAT_ALL = 0,
         CHAT_TEAM = 1,
-    };
+    }
 
     //#define CHL_MAX = 7
     public enum Channel : uint
@@ -203,7 +203,7 @@
         CHL_LOW_PRIORITY = 4,
         CHL_COMMUNICATION = 5,
         CHL_LOADING_SCREEN = 7,
-    };
+    }
 
     public enum SummonerSpellIds : uint
     {
@@ -221,7 +221,7 @@
         SPL_Clair = 0x09896765,
         SPL_Flash = 0x06496EA8,
         SPL_Test = 0x0103D94C
-    };
+    }
 
     public enum MasterMask : uint
     {
@@ -230,5 +230,5 @@
         MM_Three = 0x04,
         MM_Four = 0x08,
         MM_Five = 0x10,
-    };
+    }
 }

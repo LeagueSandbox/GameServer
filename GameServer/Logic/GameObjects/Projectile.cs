@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
             {
                 var u = Target as Unit;
-                if (u != null && Collide(u))
+                if (u != null && IsCollidingWith(u))
                 { // Autoguided spell
                     if (_originSpell != null)
                     {
@@ -132,7 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     else
                     { // auto attack
-                        Owner.autoAttackHit(u);
+                        Owner.AutoAttackHit(u);
                         setToRemove();
                     }
                 }
@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             Owner.decrementAttackerCount();
             base.setToRemove();
-            _game.PacketNotifier.notifyProjectileDestroy(this);
+            _game.PacketNotifier.NotifyProjectileDestroy(this);
         }
     }
 }
