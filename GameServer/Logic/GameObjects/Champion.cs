@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public long RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
-        public List<Spell> Spells { get; private set; }
+        public Dictionary<short, Spell> Spells { get; private set; }
         public List<string> ExtraSpells { get; private set; }
 
         private short _skillPoints;
@@ -66,15 +66,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
             stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
 
-            Spells = new List<Spell>
+            Spells = new Dictionary<short, Spell>
             {
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3),
-                new Spell(this, "SummonerHeal", 4),
-                new Spell(this, "SummonerFlash", 5),
-                new Spell(this, "Recall", 13)
+                { 0, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0) },
+                { 1, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1) },
+                { 2, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2) },
+                { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
+                { 4, new Spell(this, "SummonerHeal", 4) },
+                { 5, new Spell(this, "SummonerFlash", 5) },
+                { 13, new Spell(this, "Recall", 13) }
             };
 
             ExtraSpells = new List<string>();
@@ -100,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             LoadLua();
-            foreach (var spell in Spells)
+            foreach (var spell in Spells.Values)
             {
                 spell.LoadExtraSpells(this);
             }
@@ -198,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
             Spell s = null;
-            foreach (Spell t in Spells)
+            foreach (var t in Spells.Values)
             {
                 if (t.Slot == slot)
                 {
@@ -347,7 +347,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
-            foreach (var s in Spells)
+            foreach (var s in Spells.Values)
                 s.update(diff);
 
             if (_championHitFlagTimer > 0)

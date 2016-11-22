@@ -252,6 +252,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.futureProjNetId = futureProjNetId;
             this.spellNetId = spellNetId;
             _scriptEngine.SetGlobalVariable("castTarget", Target);
+            _scriptEngine.SetGlobalVariable("spellLevel", Level);
+            _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
 
             if (_targetType == 1 && Target != null && Target.GetDistanceTo(Owner) > _castRange[Level - 1])
             {
@@ -282,6 +284,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _scriptEngine.SetGlobalVariable("castTarget", Target);
                 _scriptEngine.SetGlobalVariable("spell", this);
+                _scriptEngine.SetGlobalVariable("spellLevel", Level);
+                _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
                 _scriptEngine.Execute("onStartCasting()");
             }
             catch (LuaException e)
@@ -348,6 +352,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 try
                 {
                     _scriptEngine.SetGlobalVariable("diff", diff);
+                    _scriptEngine.SetGlobalVariable("spellLevel", Level);
+                    _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
                     _scriptEngine.Execute("onUpdate(diff)");
                 }
                 catch (LuaException e)
@@ -544,7 +550,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.PacketNotifier.NotifySetAnimation(target, animList);
         }
 
-        public int getOtherSpellLevel(int slotId)
+        public int getOtherSpellLevel(short slotId)
         {
             return Owner.Spells[slotId].Level;
         }
@@ -616,6 +622,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ApiFunctionManager.AddBaseFunctionToLuaScript(scriptEngine);
             scriptEngine.SetGlobalVariable("owner", Owner);
             scriptEngine.SetGlobalVariable("spellLevel", Level);
+            scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
             scriptEngine.RegisterFunction("getOwnerLevel", Owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             scriptEngine.RegisterFunction("getChampionModel", Owner, typeof(Spell).GetMethod("GetChampionModel"));
             scriptEngine.SetGlobalVariable("spell", this);
@@ -627,7 +634,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new[] { typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new[] { typeof(string), typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new[] { typeof(Unit) }));
-            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new[] { typeof(int) }));
+            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new[] { typeof(short) }));
             scriptEngine.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
             scriptEngine.RegisterFunction("addProjectileCustom", this, typeof(Spell).GetMethod("AddProjectileCustom", new[] { typeof(string), typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
