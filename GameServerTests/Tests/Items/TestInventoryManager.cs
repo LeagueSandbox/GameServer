@@ -1,11 +1,9 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.Items;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Chatbox;
 
-namespace GameServerTests
+namespace GameServerTests.Tests
 {
     [TestClass]
     public class InventoryManagerTests

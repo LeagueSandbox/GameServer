@@ -2,7 +2,7 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GameServerTests
+namespace GameServerTests.Tests
 {
     [TestClass]
     public class TestStatModificator
