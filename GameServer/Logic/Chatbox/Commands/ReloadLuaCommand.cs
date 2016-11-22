@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
             var champ = _playerManager.GetPeerInfo(peer).Champion;
-            foreach (var spell in champ.Spells)
+            foreach (var spell in champ.Spells.Values)
             {
                 spell.ReloadLua();
             }
