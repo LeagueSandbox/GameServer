@@ -14,11 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected static Map chart;
         private const int GRID_SIZE = 1024;
-        protected static int successes, oot, empties;
-        protected static int totalDuration = 0, durations = 0;
+        protected static int successes;
+        protected static int oot;
+        protected static int empties;
+        protected static int totalDuration;
+        protected static int durations;
         protected static DateTime g_Clock = DateTime.Now;
-        protected static bool debugOutput = false;
-        protected static int MAX_PATHFIND_TRIES = 100;
+        protected const bool DEBUG_OUTPUT = false;
+        protected const int MAX_PATHFIND_TRIES = 100;
 
         public Pathfinder()/*:mesh(0),chart(0)*/ { }
 
@@ -35,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 ));
             }
 
-            if (debugOutput)
+            if (DEBUG_OUTPUT)
             {
                 _logger.LogCoreInfo("Recording this minion movement.");
             }
@@ -53,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             job.start = job.fromPositionToGrid(from); // Save start in grid info
             job.destination = job.fromPositionToGrid(to); // Save destination in grid info
 
-            if (debugOutput)
+            if (DEBUG_OUTPUT)
             {
                 _logger.LogCoreInfo(string.Format(
                     "Going from ({0}, {1}) to ({2}, {3})",
@@ -71,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             int tries;
             for (tries = 0; job.openList.Count != 0; tries++) // Go through the open list while it's not empty
             {
-                if (debugOutput)
+                if (DEBUG_OUTPUT)
                     _logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
 
 
@@ -97,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (debugOutput)
+            if (DEBUG_OUTPUT)
             {
                 _logger.LogCoreInfo("Going through openlist. Tries: " + tries + " | Objects on list: " + job.openList.Count);
             }

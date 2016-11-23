@@ -586,7 +586,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void AddPlaceable(float toX, float toY, string model, string name)
         {
             var p = new Placeable(Owner, toX, toY, model, name);
-            p.Team = Owner.Team;
+            p.SetTeam(Owner.Team);
 
             p.SetVisibleByTeam(Owner.Team, true);
 

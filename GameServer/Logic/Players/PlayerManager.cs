@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
         {
-            SummonerSpellIds[] summonerSkills = new SummonerSpellIds[]
+            var summonerSkills = new[]
             {
                 EnumParser.ParseSummonerSpell(p.Value.Summoner1),
                 EnumParser.ParseSummonerSpell(p.Value.Summoner2)
@@ -45,11 +45,11 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
             if (p.Value.Team.ToLower() == "blue")
             {
-                c.Team = TeamId.TEAM_BLUE;
+                c.SetTeam(TeamId.TEAM_BLUE);
             }
             else
             {
-                c.Team = TeamId.TEAM_PURPLE;
+                c.SetTeam(TeamId.TEAM_PURPLE);
             }
 
             c.LevelUp();
@@ -64,9 +64,19 @@ namespace LeagueSandbox.GameServer.Logic.Players
         public ClientInfo GetPeerInfo(Peer peer)
         {
             foreach (var player in _players)
+            {
                 if (player.Item1 == peer.Address.port)
+                {
                     return player.Item2;
+                }
+            }
+
             return null;
+        }
+
+        public ClientInfo GetClientInfoByChampion(Champion champ)
+        {
+            return GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }
 
         public List<Pair<uint, ClientInfo>> GetPlayers()

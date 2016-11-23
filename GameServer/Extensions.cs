@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox
@@ -208,11 +207,6 @@ namespace LeagueSandbox
             }
 
             return dic[team];
-        }
-
-        public static ClientInfo GetClientInfoByChampion(Champion champ)
-        {
-            return _playerManager.GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }
     }
 }

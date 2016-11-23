@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
             Name = name;
-            Team = team;
+            SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
         }
 

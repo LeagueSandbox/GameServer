@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 40, x, y, 0, netId)
         {
-            Team = owner.Team;
+            SetTeam(owner.Team);
 
             Owner = owner;
 

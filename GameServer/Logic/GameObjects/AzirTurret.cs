@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             BuildAzirTurret();
 
-            Team = team;
+            SetTeam(team);
         }
 
         public void BuildAzirTurret()

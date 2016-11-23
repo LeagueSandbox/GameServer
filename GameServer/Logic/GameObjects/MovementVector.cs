@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         public short x;
         public short y;
-        private static Game _game = Program.ResolveDependency<Game>();
+        private Game _game = Program.ResolveDependency<Game>();
 
         public MovementVector() { }
 
@@ -34,12 +34,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public static short TargetXToNormalFormat(float value)
         {
-            return FormatCoordinate(value, _game.Map.GetWidth() / 2);
+            var game = Program.ResolveDependency<Game>();
+            return FormatCoordinate(value, game.Map.GetWidth() / 2);
         }
 
         public static short TargetYToNormalFormat(float value)
         {
-            return FormatCoordinate(value, _game.Map.GetHeight() / 2);
+            var game = Program.ResolveDependency<Game>();
+            return FormatCoordinate(value, game.Map.GetHeight() / 2);
         }
     }
 }

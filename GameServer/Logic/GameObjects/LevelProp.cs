@@ -36,7 +36,7 @@
             Name = name;
             Model = model;
             SkinId = skin;
-            Team = Enet.TeamId.TEAM_NEUTRAL;
+            SetTeam(Enet.TeamId.TEAM_NEUTRAL);
         }
 
         public override float getMoveSpeed()

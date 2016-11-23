@@ -21,20 +21,17 @@ namespace LeagueSandbox.GameServer.Logic
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
-        private TeamId _team;
-        public TeamId Team
+        public TeamId Team { get; private set; }
+
+        public void SetTeam(TeamId team)
         {
-            get { return _team; }
-            set
+            _visibleByTeam[Team] = false;
+            Team = team;
+            _visibleByTeam[Team] = true;
+            if (_game.IsRunning)
             {
-                _visibleByTeam[_team] = false;
-                _team = value;
-                _visibleByTeam[_team] = true;
-                if (_game.IsRunning && this is Unit)
-                {
-                    var p = new SetTeam(this as Unit, value);
-                    _game.PacketHandlerManager.broadcastPacket(p, Core.Logic.PacketHandlers.Channel.CHL_S2C);
-                }
+                var p = new SetTeam(this as Unit, team);
+                _game.PacketHandlerManager.broadcastPacket(p, Core.Logic.PacketHandlers.Channel.CHL_S2C);
             }
         }
 

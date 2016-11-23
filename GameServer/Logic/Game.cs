@@ -57,7 +57,15 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public bool Initialize(Address address, string baseKey)
         {
             _logger.LogCoreInfo("Loading Config.");
-            Config = new Config("Settings/GameInfo.json");
+
+            var programsConfigPath = Program.GameInfoPath;
+            var configPath = "Settings/GameInfo.json";
+            if (!string.IsNullOrEmpty(programsConfigPath))
+            {
+                configPath = Program.GameInfoPath;
+            }
+
+            Config = new Config(configPath);
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
@@ -109,7 +117,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             var watch = new Stopwatch();
             var enetEvent = new Event();
-            while (true)
+            while (!Program.IsSetToExit)
             {
                 while (_server.Service(0, out enetEvent) > 0)
                 {

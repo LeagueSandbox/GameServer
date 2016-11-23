@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _AIPaused = false;
 
             var spawnSpecifics = _game.Map.GetMinionSpawnPosition(SpawnPosition);
-            Team = spawnSpecifics.Item1;
+            SetTeam(spawnSpecifics.Item1);
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             _game.Map.SetMinionStats(this); // Let the map decide how strong this minion has to be.
@@ -141,15 +141,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             if (collider == TargetUnit) // If we're colliding with the target, don't do anything.
-                return;
-
-            if (TargetUnit != null)
             {
-                // Thread this?
-                // var newPath = Pathfinder.getPath(GetPosition(), TargetUnit.GetPosition());
-                // if (newPath.error == PathError.PATH_ERROR_NONE)
-                    // SetWaypoints(newPath.getWaypoints());
+                return;
             }
+
             base.onCollision(collider);
         }
 
