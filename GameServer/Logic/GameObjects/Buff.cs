@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Packets;
 using NLua.Exceptions;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
-using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -74,14 +68,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
         {
             _game = game;
-            this.Duration = dur;
-            this.Stacks = stacks;
-            this.Name = buffName;
-            this.TimeElapsed = 0;
+            Duration = dur;
+            Stacks = stacks;
+            Name = buffName;
+            TimeElapsed = 0;
             _remove = false;
-            this.TargetUnit = onto;
-            this.SourceUnit = from;
-            this.BuffType = BuffType.Aura;
+            TargetUnit = onto;
+            SourceUnit = from;
+            BuffType = BuffType.Aura;
             LoadLua();
             try
             {

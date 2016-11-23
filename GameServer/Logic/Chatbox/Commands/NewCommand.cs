@@ -1,7 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using System;
-using System.Text;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands

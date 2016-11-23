@@ -22,9 +22,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     };
     public class Minion : Unit
     {
-        /**
- * Const waypoints that define the minion's route
- */
+        /// <summary>
+        /// Const waypoints that define the minion's route
+        /// </summary>
         protected List<Vector2> mainWaypoints;
         protected int curMainWaypoint = 0;
         public MinionSpawnPosition SpawnPosition { get; private set; }
@@ -38,10 +38,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base("", new MinionStats(), 40, 0, 0, 1100, netId)
         {
-            this.minionType = type;
-            this.SpawnPosition = position;
+            minionType = type;
+            SpawnPosition = position;
             this.mainWaypoints = mainWaypoints;
-            this.curMainWaypoint = 0;
+            curMainWaypoint = 0;
             _AIPaused = false;
 
             var spawnSpecifics = _game.Map.GetMinionSpawnPosition(SpawnPosition);
@@ -50,21 +50,33 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.Map.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
-            string minionModel = "";
-            if (spawnSpecifics.Item1 == 0) // If we're the blue side
+            var minionModel = "";
+            if (spawnSpecifics.Item1 == Enet.TeamId.TEAM_BLUE) // If we're the blue side
+            {
                 minionModel += "Blue_Minion_"; // make it a blue minion
+            }
             else
+            {
                 minionModel += "Red_Minion_"; // otherwise make it a red minion
+            }
 
             // Finish model name with type
             if (type == MinionSpawnType.MINION_TYPE_MELEE)
+            {
                 minionModel += "Basic";
+            }
             else if (type == MinionSpawnType.MINION_TYPE_CASTER)
+            {
                 minionModel += "Wizard";
+            }
             else if (type == MinionSpawnType.MINION_TYPE_CANNON)
+            {
                 minionModel += "MechCannon";
+            }
             else
+            {
                 minionModel += "MechMelee";
+            }
 
             // Set model
             Model = minionModel;
@@ -126,18 +138,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void onCollision(GameObject a_Collider)
+        public override void onCollision(GameObject collider)
         {
-            if (a_Collider == TargetUnit) // If we're colliding with the target, don't do anything.
-                return;
-
-            if (TargetUnit != null)
+            if (collider == TargetUnit) // If we're colliding with the target, don't do anything.
             {
-                // Thread this?
-                //Path newPath = Pathfinder::getPath(getPosition(), TargetUnit->getPosition());
-                //if (newPath.error == PATH_ERROR_NONE)
-                //SetWaypoints(newPath.getWaypoints());
+                return;
             }
+
+            base.onCollision(collider);
         }
 
         public override bool isInDistress()
@@ -175,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (nextTarget != null) // If we have a target
             {
                 TargetUnit = nextTarget; // Set the new target and refresh waypoints
-                _game.PacketNotifier.notifySetTarget(this, nextTarget);
+                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
                 return true;
             }
 
@@ -199,7 +207,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > stats.Range.Total))
             // If target is dead or out of range
             {
-                _game.PacketNotifier.notifyStopAutoAttack(this);
+                _game.PacketNotifier.NotifyStopAutoAttack(this);
                 IsAttacking = false;
             }
         }

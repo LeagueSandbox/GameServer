@@ -1,11 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Maps;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -19,6 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _fountainSize;
         private long _healTickTimer;
         private TeamId _team;
+        private Game _game = Program.ResolveDependency<Game>(); 
 
         public Fountain(TeamId team, float x, float y, float size)
         {
@@ -29,15 +24,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _team = team;
         }
 
-        internal void Update(Map map, long diff)
+        internal void Update(long diff)
         {
             _healTickTimer += diff;
             if (_healTickTimer < HEAL_FREQUENCY)
+            {
                 return;
+            }
 
             _healTickTimer = 0;
 
-            var champions = map.GetChampionsInRange(_x, _y, _fountainSize, true);
+            var champions = _game.Map.GetChampionsInRange(_x, _y, _fountainSize, true);
             foreach (var champion in champions)
             {
                 if (champion.Team != _team)

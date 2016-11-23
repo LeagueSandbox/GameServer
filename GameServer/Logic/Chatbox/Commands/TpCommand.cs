@@ -1,11 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -29,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             if (float.TryParse(split[1], out x))
                 if (float.TryParse(split[2], out y))
-                    _game.PacketNotifier.notifyTeleport(_playerManager.GetPeerInfo(peer).Champion, x, y);
+                    _game.PacketNotifier.NotifyTeleport(_playerManager.GetPeerInfo(peer).Champion, x, y);
         }
     }
 }

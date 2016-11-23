@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox
 {
@@ -157,6 +158,7 @@ namespace LeagueSandbox
 
     public static class CustomConvert
     {
+        private static PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
         public static TeamId ToTeamId(int i)
         {
             var dic = new Dictionary<int, TeamId>

@@ -1,7 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
 
@@ -15,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
             var champ = _playerManager.GetPeerInfo(peer).Champion;
-            foreach (var spell in champ.Spells)
+            foreach (var spell in champ.Spells.Values)
             {
                 spell.ReloadLua();
             }

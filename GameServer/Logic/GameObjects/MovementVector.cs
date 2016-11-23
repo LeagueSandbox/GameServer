@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class MovementVector
     {
-        const int MAP_WIDTH = 13982 / 2;
-        const int MAP_HEIGHT = 14446 / 2;
-        public short x = 0;
-        public short y = 0;
+        public short x;
+        public short y;
+        private Game _game = Program.ResolveDependency<Game>();
 
-        public MovementVector()
-        {
-        }
+        public MovementVector() { }
 
         public MovementVector(short x, short y)
         {
@@ -25,13 +18,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public MovementVector(float x, float y)
         {
-            x = FormatCoordinate(x, MAP_WIDTH);
-            y = FormatCoordinate(y, MAP_HEIGHT);
+            this.x = FormatCoordinate(x, _game.Map.GetHeight() / 2);
+            this.y = FormatCoordinate(y, _game.Map.GetWidth() / 2);
         }
 
-        public Target toTarget()
+        public Target ToTarget()
         {
-            return new Target(2.0f * x + MAP_WIDTH, 2.0f * y + MAP_HEIGHT);
+            return new Target(2.0f * x + _game.Map.GetWidth() / 2, 2.0f * y + _game.Map.GetHeight() / 2);
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -39,14 +32,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return (short)((coordinate - origin) / 2f);
         }
 
-        public static short targetXToNormalFormat(float value)
+        public static short TargetXToNormalFormat(float value)
         {
-            return FormatCoordinate(value, MAP_WIDTH);
+            var game = Program.ResolveDependency<Game>();
+            return FormatCoordinate(value, game.Map.GetWidth() / 2);
         }
 
-        public static short targetYToNormalFormat(float value)
+        public static short TargetYToNormalFormat(float value)
         {
-            return FormatCoordinate(value, MAP_HEIGHT);
+            var game = Program.ResolveDependency<Game>();
+            return FormatCoordinate(value, game.Map.GetHeight() / 2);
         }
     }
 }

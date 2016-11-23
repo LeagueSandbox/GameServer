@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
-            this.Name = name;
+            Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
         }
@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (nextTarget != null)
             {
                 TargetUnit = nextTarget;
-                _game.PacketNotifier.notifySetTarget(this, nextTarget);
+                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
             }
         }
 
@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (TargetUnit != null && GetDistanceTo(TargetUnit) > stats.Range.Total)
             {
                 TargetUnit = null;
-                _game.PacketNotifier.notifySetTarget(this, null);
+                _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
             base.update(diff);
@@ -110,9 +110,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
 
                 player.GetStats().Gold += goldEarn;
-                _game.PacketNotifier.notifyAddGold(player, this, goldEarn);
+                _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
-            _game.PacketNotifier.notifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
             base.die(killer);
         }
 

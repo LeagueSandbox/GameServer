@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public long RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
-        public List<Spell> Spells { get; private set; }
+        public Dictionary<short, Spell> Spells { get; private set; }
         public List<string> ExtraSpells { get; private set; }
 
         private short _skillPoints;
@@ -26,8 +26,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Champion(string model, uint playerId, RuneCollection runeList, uint netId = 0)
             : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
-            this._playerId = playerId;
-            this.RuneList = runeList;
+            _playerId = playerId;
+            RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
@@ -66,15 +66,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
             stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
 
-            Spells = new List<Spell>
+            Spells = new Dictionary<short, Spell>
             {
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2),
-                new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3),
-                new Spell(this, "SummonerHeal", 4),
-                new Spell(this, "SummonerFlash", 5),
-                new Spell(this, "Recall", 13)
+                { 0, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0) },
+                { 1, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1) },
+                { 2, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2) },
+                { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
+                { 4, new Spell(this, "SummonerHeal", 4) },
+                { 5, new Spell(this, "SummonerFlash", 5) },
+                { 13, new Spell(this, "Recall", 13) }
             };
 
             ExtraSpells = new List<string>();
@@ -100,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             LoadLua();
-            foreach (var spell in Spells)
+            foreach (var spell in Spells.Values)
             {
                 spell.LoadExtraSpells(this);
             }
@@ -198,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
         {
             Spell s = null;
-            foreach (Spell t in Spells)
+            foreach (var t in Spells.Values)
             {
                 if (t.Slot == slot)
                 {
@@ -314,7 +314,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (nextTarget != null)
                 {
                     TargetUnit = nextTarget;
-                    _game.PacketNotifier.notifySetTarget(this, nextTarget);
+                    _game.PacketNotifier.NotifySetTarget(this, nextTarget);
                 }
             }
 
@@ -333,7 +333,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     float respawnX = spawnPos.Item1;
                     float respawnY = spawnPos.Item2;
                     setPosition(respawnX, respawnY);
-                    _game.PacketNotifier.notifyChampionRespawn(this);
+                    _game.PacketNotifier.NotifyChampionRespawn(this);
                     GetStats().CurrentHealth = GetStats().HealthPoints.Total;
                     GetStats().CurrentMana = GetStats().HealthPoints.Total;
                     IsDead = false;
@@ -343,11 +343,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var isLevelup = LevelUp();
             if (isLevelup)
             {
-                _game.PacketNotifier.notifyLevelUp(this);
-                _game.PacketNotifier.notifyUpdatedStats(this, false);
+                _game.PacketNotifier.NotifyLevelUp(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
-            foreach (var s in Spells)
+            foreach (var s in Spells.Values)
                 s.update(diff);
 
             if (_championHitFlagTimer > 0)
@@ -439,7 +439,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null)
             {
-                _game.PacketNotifier.notifyChampionDie(this, killer, 0);
+                _game.PacketNotifier.NotifyChampionDie(this, killer, 0);
                 return;
             }
 
@@ -467,7 +467,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (gold > 0)
             {
-                _game.PacketNotifier.notifyChampionDie(this, cKiller, 0);
+                _game.PacketNotifier.NotifyChampionDie(this, cKiller, 0);
                 return;
             }
 
@@ -483,10 +483,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.Map.HasFirstBloodHappened = true;
             }
 
-            _game.PacketNotifier.notifyChampionDie(this, cKiller, (int)gold);
+            _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);
 
             cKiller.GetStats().Gold = cKiller.GetStats().Gold + gold;
-            _game.PacketNotifier.notifyAddGold(cKiller, this, gold);
+            _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 

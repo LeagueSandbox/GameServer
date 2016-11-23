@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Packets;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -48,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     u.SetTargetUnit(null);
                     u.AutoAttackTarget = null;
                     u.IsAttacking = false;
-                    _game.PacketNotifier.notifySetTarget(u, null);
+                    _game.PacketNotifier.NotifySetTarget(u, null);
                     u._hasMadeInitialAttack = false;
                 }
             }
@@ -71,7 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var c = (Champion)killer;
                 c.GetStats().Gold += GOLD_WORTH;
-                _game.PacketNotifier.notifyAddGold(c, this, GOLD_WORTH);
+                _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
             }
 
             setState(InhibitorState.Dead, killer);

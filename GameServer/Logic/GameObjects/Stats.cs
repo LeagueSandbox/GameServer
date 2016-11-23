@@ -1,11 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -15,6 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         FM1_Gold_Total = 0x00000002,
         FM1_Spells_Enabled = 0x00000004, // Bits: 0-3 -> Q-R, 4-9 -> Items, 10 -> Trinket
         FM1_SummonerSpells_Enabled = 0x00000010, // Bits: 0 -> D, 1 -> F
+
         FM2_Base_Ad = 0x00000020, // champ's base ad that increase every level. No item bonus should be added here
         FM2_Base_Ap = 0x00000040,
         FM2_Crit_Chance = 0x00000100, // 0.5 = 50%
@@ -28,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         FM2_Bonus_Ap_Flat = 0x00010000, // AP flat bonuses
         FM2_Bonus_Ap_Pct = 0x00020000, // AP flat bonuses
         FM2_Atks_multiplier = 0x00080000, // Attack speed multiplier. If set to 2 and champ's base attack speed is 0.600, then his new AtkSpeed becomes 1.200
-        FM2_cdr = 0x00400000, // Cooldown reduction. 0.5 = 50%   
+        FM2_cdr = 0x00400000, // Cooldown reduction. 0.5 = 50%
         FM2_Armor_Pen_Flat = 0x01000000,
         FM2_Armor_Pen_Pct = 0x02000000, // Armor pen. 0.5 = 50%
         FM2_Magic_Pen_Flat = 0x04000000,
@@ -36,6 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         FM2_LifeSteal = 0x10000000, //Life Steal. 0.5 = 50%
         FM2_SpellVamp = 0x20000000, //Spell Vamp. 0.5 = 50%
         FM2_Tenacity = 0x40000000, //Tenacity. 0.5 = 50%
+
         FM3_Armor_Pen_Pct = 0x00000001, //Armor pen. 1.7 = 30% -- These are probably consequence of some bit ops
         FM3_Magic_Pen_Pct = 0x00000002, //Magic pen. 1.7 = 30%
 
@@ -60,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public static StatMod FromValues(MasterMask blockId, FieldMask mask, float value)
         {
-            return new StatMod()
+            return new StatMod
             {
                 BlockId = blockId,
                 Mask = mask,
@@ -160,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_CurrentMana, CurrentMana);
             }
         }
-        
+
         protected bool generatingGold; // Used to determine if the stats update should include generating gold. Changed in Champion.h
         protected float spellCostReduction; //URF Buff/Lissandra's passive
         protected float critDamagePct; //Default = 2... add with runes/items (change with yasuo's passive)
@@ -358,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
             }
         }
-        
+
         public virtual float GetStat(MasterMask blockId, FieldMask stat)
         {
             if (blockId == MasterMask.MM_One)
@@ -446,10 +443,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         return MoveSpeed.Total;
                 }
             }
-            
+
             return 0;
         }
-        
+
         protected void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
         {
             if (!collection.ContainsKey(blockId))
@@ -547,22 +544,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void update(long diff)
         {
-            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total)
+            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total && CurrentHealth > 0)
             {
-                float newHealth = CurrentHealth + (HealthRegeneration.Total * diff * 0.001f);
+                var newHealth = CurrentHealth + HealthRegeneration.Total * diff * 0.001f;
                 newHealth = Math.Min(HealthPoints.Total, newHealth);
                 CurrentHealth = newHealth;
             }
 
             if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
             {
-                float newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
+                var newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
                 newMana = Math.Min(ManaPoints.Total, newMana);
                 CurrentMana = newMana;
             }
             if (generatingGold && GoldPerSecond.Total > 0)
             {
-                float newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
+                var newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
                 Gold = newGold;
             }
         }

@@ -1,6 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Packets;
 using System;
 using System.Collections.Generic;
 using NLua.Exceptions;
@@ -46,8 +45,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         SPELL_FLAG_IgnoreAllyMinion = 0x10000000,
         SPELL_FLAG_IgnoreEnemyMinion = 0x20000000,
         SPELL_FLAG_IgnoreLaneMinion = 0x40000000,
-        SPELL_FLAG_IgnoreClones = 0x80000000,
-    };
+        SPELL_FLAG_IgnoreClones = 0x80000000
+    }
 
     public enum SpellState
     {
@@ -242,9 +241,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        /**
-         * Called when the character casts the spell
-         */
+        /// <summary>
+        /// Called when the character casts the spell
+        /// </summary>
         public virtual bool cast(float x, float y, Unit u = null, uint futureProjNetId = 0, uint spellNetId = 0)
         {
             X = x;
@@ -253,6 +252,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             this.futureProjNetId = futureProjNetId;
             this.spellNetId = spellNetId;
             _scriptEngine.SetGlobalVariable("castTarget", Target);
+            _scriptEngine.SetGlobalVariable("spellLevel", Level);
+            _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
 
             if (_targetType == 1 && Target != null && Target.GetDistanceTo(Owner) > _castRange[Level - 1])
             {
@@ -283,6 +284,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _scriptEngine.SetGlobalVariable("castTarget", Target);
                 _scriptEngine.SetGlobalVariable("spell", this);
+                _scriptEngine.SetGlobalVariable("spellLevel", Level);
+                _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
                 _scriptEngine.Execute("onStartCasting()");
             }
             catch (LuaException e)
@@ -291,13 +294,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        /**
-         * Called when the spell is finished casting and we're supposed to do things
-         * such as projectile spawning, etc.
-         */
+        /// <summary>
+        /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
+        /// </summary>
         public virtual void finishCasting()
         {
-
             _logger.LogCoreInfo("Spell from slot " + Slot);
             try
             {
@@ -314,14 +315,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (Slot < 4)
             {
-                _game.PacketNotifier.notifySetCooldown(Owner, Slot, _currentCooldown, getCooldown());
+                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, _currentCooldown, getCooldown());
             }
 
             Owner.IsCastingSpell = false;
         }
-        /**
-         * Called every diff milliseconds to update the spell
-         */
+
+        /// <summary>
+        /// Called every diff milliseconds to update the spell
+        /// </summary>
         public virtual void update(long diff)
         {
             switch (state)
@@ -350,6 +352,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 try
                 {
                     _scriptEngine.SetGlobalVariable("diff", diff);
+                    _scriptEngine.SetGlobalVariable("spellLevel", Level);
+                    _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
                     _scriptEngine.Execute("onUpdate(diff)");
                 }
                 catch (LuaException e)
@@ -359,11 +363,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        /**
-         * Called by projectiles when they land / hit
-         * In here we apply the effects : damage, buffs, debuffs...
-         */
-
+        /// <summary>
+        /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
+        /// </summary>
         public void applyEffects(Unit u, Projectile p = null)
         {
             if (!string.IsNullOrEmpty(hitEffectName))
@@ -448,7 +450,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p);
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -468,7 +470,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p);
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -490,7 +492,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p);
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -512,7 +514,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.Map.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.notifyProjectileSpawn(p);
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -533,22 +535,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void spellAnimation(string animName, Unit target)
         {
-            _game.PacketNotifier.notifySpellAnimation(target, animName);
+            _game.PacketNotifier.NotifySpellAnimation(target, animName);
         }
 
         public void setAnimation(string animation, string animation2, Unit target)
         {
             List<string> animList = new List<string> { animation, animation2 };
-            _game.PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.NotifySetAnimation(target, animList);
         }
 
         public void resetAnimations(Unit target)
         {
             List<string> animList = new List<string>();
-            _game.PacketNotifier.notifySetAnimation(target, animList);
+            _game.PacketNotifier.NotifySetAnimation(target, animList);
         }
 
-        public int getOtherSpellLevel(int slotId)
+        public int getOtherSpellLevel(short slotId)
         {
             return Owner.Spells[slotId].Level;
         }
@@ -558,9 +560,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return Owner.Model;
         }
 
-        /**
-         * @return Spell's unique ID
-         */
+        /// <returns>spell's unique ID</returns>
         public int getId()
         {
             return (int)_rafManager.GetHash(_spellName);
@@ -622,6 +622,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ApiFunctionManager.AddBaseFunctionToLuaScript(scriptEngine);
             scriptEngine.SetGlobalVariable("owner", Owner);
             scriptEngine.SetGlobalVariable("spellLevel", Level);
+            scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
             scriptEngine.RegisterFunction("getOwnerLevel", Owner.GetStats(), typeof(Stats).GetMethod("GetLevel"));
             scriptEngine.RegisterFunction("getChampionModel", Owner, typeof(Spell).GetMethod("GetChampionModel"));
             scriptEngine.SetGlobalVariable("spell", this);
@@ -633,7 +634,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("spellAnimation", this, typeof(Spell).GetMethod("spellAnimation", new[] { typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("setAnimation", this, typeof(Spell).GetMethod("setAnimation", new[] { typeof(string), typeof(string), typeof(Unit) }));
             scriptEngine.RegisterFunction("resetAnimations", this, typeof(Spell).GetMethod("resetAnimations", new[] { typeof(Unit) }));
-            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new[] { typeof(int) }));
+            scriptEngine.RegisterFunction("getOtherSpellLevel", this, typeof(Spell).GetMethod("getOtherSpellLevel", new[] { typeof(short) }));
             scriptEngine.RegisterFunction("addPlaceable", this, typeof(Spell).GetMethod("AddPlaceable", new[] { typeof(float), typeof(float), typeof(string), typeof(string) }));
             scriptEngine.RegisterFunction("addProjectileCustom", this, typeof(Spell).GetMethod("AddProjectileCustom", new[] { typeof(string), typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool) }));
             scriptEngine.RegisterFunction("addProjectileCustomTarget", this, typeof(Spell).GetMethod("AddProjectileCustomTarget", new[] { typeof(string), typeof(float), typeof(float), typeof(Target), typeof(bool) }));
@@ -670,9 +671,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return cooldown[Level - 1];
         }
 
-        /**
-         * @return the mana/energy/health cost
-         */
+        /// <returns>the mana/energy/health cost</returns>
         public float getCost()
         {
             if (Level <= 0 || NoManacost)
@@ -692,13 +691,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (newCd <= 0)
             {
-                _game.PacketNotifier.notifySetCooldown(Owner, slot, 0, 0);
+                _game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
                 targetSpell.state = SpellState.STATE_READY;
                 targetSpell._currentCooldown = 0;
             }
             else
             {
-                _game.PacketNotifier.notifySetCooldown(Owner, slot, newCd, targetSpell.getCooldown());
+                _game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.getCooldown());
                 targetSpell.state = SpellState.STATE_COOLDOWN;
                 targetSpell._currentCooldown = newCd;
             }

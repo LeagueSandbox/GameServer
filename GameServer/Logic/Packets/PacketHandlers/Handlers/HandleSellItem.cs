@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
@@ -30,7 +24,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                _game.PacketNotifier.notifyRemoveItem(client.Champion, sell.slotId, i.StackSize);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
                     client.Champion.getInventory().RemoveItem(sell.slotId);
@@ -38,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             }
             else
             {
-                _game.PacketNotifier.notifyRemoveItem(client.Champion, sell.slotId, 0);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, 0);
                 client.Champion.getInventory().RemoveItem(sell.slotId);
             }
 

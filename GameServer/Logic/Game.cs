@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Maps;
-using System.Net.Sockets;
-using System.Net;
 using BlowFishCS;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using Ninject;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
@@ -28,7 +19,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
     {
         private Host _server;
         public BlowFish Blowfish { get; private set; }
-        protected object _lock = new object();
 
         public bool IsRunning { get; private set; }
         public int PlayersReady { get; private set; }
@@ -42,7 +32,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         protected const PacketFlags UNRELIABLE = PacketFlags.None;
         protected const double REFRESH_RATE = 16.666; // 60 fps
         private long _timeElapsed;
-
         private Logger _logger;
         // Object managers
         private ItemManager _itemManager;
@@ -68,18 +57,30 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public bool Initialize(Address address, string baseKey)
         {
             _logger.LogCoreInfo("Loading Config.");
-            Config = new Config("Settings/GameInfo.json");
+
+            var programsConfigPath = Program.GameInfoPath;
+            var configPath = "Settings/GameInfo.json";
+            if (!string.IsNullOrEmpty(programsConfigPath))
+            {
+                configPath = Program.GameInfoPath;
+            }
+
+            Config = new Config(configPath);
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
-            var key = System.Convert.FromBase64String(baseKey);
+            var key = Convert.FromBase64String(baseKey);
             if (key.Length <= 0)
+            {
                 return false;
+            }
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
-            Map = new SummonersRift(this);
+
+            RegisterMap((byte)Config.GameConfig.Map);
+
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
             IsRunning = false;
@@ -88,14 +89,35 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 _playerManager.AddPlayer(p);
             }
+
             return true;
+        }
+
+        public void RegisterMap(byte mapId)
+        {
+            var mapName = Config.ContentManager.GameModeName + "-Map" + mapId;
+            var dic = new Dictionary<string, Type>
+            {
+                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) },
+                // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
+                { "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
+                // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
+                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
+            };
+
+            if (!dic.ContainsKey(mapName))
+            {
+                Map = new SummonersRift(this);
+            }
+
+            Map = (Map)Activator.CreateInstance(dic[mapName], this);
         }
 
         public void NetLoop()
         {
             var watch = new Stopwatch();
             var enetEvent = new Event();
-            while (true)
+            while (!Program.IsSetToExit)
             {
                 while (_server.Service(0, out enetEvent) > 0)
                 {
@@ -104,7 +126,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         case EventType.Connect:
                             //Logging->writeLine("A new client connected: %i.%i.%i.%i:%i", event.peer->address.host & 0xFF, (event.peer->address.host >> 8) & 0xFF, (event.peer->address.host >> 16) & 0xFF, (event.peer->address.host >> 24) & 0xFF, event.peer->address.port);
 
-                            /* Set some defaults */
+                            // Set some defaults
                             enetEvent.Peer.Mtu = PEER_MTU;
                             enetEvent.Data = 0;
                             break;
@@ -115,7 +137,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                                 //enet_peer_disconnect(event.peer, 0);
                             }
 
-                            /* Clean up the packet now that we're done using it. */
+                            // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;
 
@@ -125,7 +147,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     }
                 }
                 if (IsRunning)
+                {
                     Map.Update(_timeElapsed);
+                }
                 watch.Stop();
                 _timeElapsed = watch.ElapsedMilliseconds;
                 watch.Restart();

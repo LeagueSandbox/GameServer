@@ -50,17 +50,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            var objects = _game.Map.GetObjects();
-            foreach (var it in objects)
+            base.update(diff);
+        }
+
+        public override void onCollision(GameObject collider)
+        {
+            base.onCollision(collider);
+            if (Target != null && Target.IsSimpleTarget)
             {
-                var u = it.Value as Unit;
-                if (u != null)
+                CheckFlagsForUnit(collider as Unit);
+            }
+            else
+            {
+                if (Target == collider)
                 {
-                    CheckFlagsForUnit(u);
+                    CheckFlagsForUnit(collider as Unit);
                 }
             }
-
-            base.update(diff);
         }
 
         public override float getMoveSpeed()
@@ -70,7 +76,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected virtual void CheckFlagsForUnit(Unit unit)
         {
-            if (!Collide(unit))
+            if (Target == null)
             {
                 return;
             }
@@ -124,7 +130,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
             {
                 var u = Target as Unit;
-                if (u != null && Collide(u))
+                if (u != null)
                 { // Autoguided spell
                     if (_originSpell != null)
                     {
@@ -132,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     else
                     { // auto attack
-                        Owner.autoAttackHit(u);
+                        Owner.AutoAttackHit(u);
                         setToRemove();
                     }
                 }
@@ -146,7 +152,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             Owner.decrementAttackerCount();
             base.setToRemove();
-            _game.PacketNotifier.notifyProjectileDestroy(this);
+            _game.PacketNotifier.NotifyProjectileDestroy(this);
         }
     }
 }

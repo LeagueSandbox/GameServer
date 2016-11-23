@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             var coords = new Vector2(x, y);
             var truePos = _game.Map.AIMesh.getClosestTerrainExit(coords);
-            _game.PacketNotifier.notifyTeleport(unit, truePos.X, truePos.Y);
+            _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
@@ -45,18 +45,18 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             var buff = new Buff(_game, buffName, duration, stacks, onto, from);
             onto.AddBuff(buff);
-            _game.PacketNotifier.notifyAddBuff(buff);
+            _game.PacketNotifier.NotifyAddBuff(buff);
         }
 
         public static void AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            _game.PacketNotifier.notifyParticleSpawn(new Particle(champion, t, particle, size, bone));
+            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, t, particle, size, bone));
         }
 
         public static void AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            _game.PacketNotifier.notifyParticleSpawn(new Particle(champion, target, particle, size, bone));
+            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, target, particle, size, bone));
         }
 
         public static void PrintChat(string msg)
@@ -94,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             if (animation != null)
             {
                 var animList = new List<string> {"RUN", animation};
-                _game.PacketNotifier.notifySetAnimation(unit, animList);
+                _game.PacketNotifier.NotifySetAnimation(unit, animList);
             }
 
             if (target.IsSimpleTarget)
@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                 var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.notifyDash(
+                _game.PacketNotifier.NotifyDash(
                     unit,
                     newTarget,
                     dashSpeed,
@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             else
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.notifyDash(
+                _game.PacketNotifier.NotifyDash(
                     unit,
                     target,
                     dashSpeed,

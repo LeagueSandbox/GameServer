@@ -1,12 +1,8 @@
 ﻿using LeagueSandbox.GameServer.Logic.Content;
 using Newtonsoft.Json.Linq;
-using NLua;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -37,7 +33,8 @@ namespace LeagueSandbox.GameServer.Logic
             foreach (var player in playerConfigurations)
             {
                 var playerConfig = new PlayerConfig(player);
-                Players.Add(string.Format("player{0}", Players.Count + 1), playerConfig);
+                var playerNum = Players.Count + 1;
+                Players.Add($"player{playerNum}", playerConfig);
             }
 
             //Read cost/cd info
@@ -107,7 +104,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         internal int GetYForPlayer(int playerId)
         {
-            return (int)((JArray)_spawns[playerId])[0];
+            return (int)((JArray)_spawns[playerId])[1];
         }
     }
 
