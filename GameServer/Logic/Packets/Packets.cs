@@ -667,7 +667,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public ChangeSpell(Unit unit, int slot, string spell) : base(PacketCmdS2C.PKT_S2C_ChangeSpell, unit.NetId)
         {
             buffer.Write((byte)slot);
-            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00); // 0 for champion spells?, 1 for summoner spells?
             buffer.Write((byte)0x02);
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x00);
