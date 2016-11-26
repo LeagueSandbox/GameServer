@@ -55,16 +55,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Items\TestInventoryManager.cs" />
-    <Compile Include="Logic\API\ApiFunctionManagerTests.cs" />
-    <Compile Include="Logic\Chatbox\ChatboxManagerTests.cs" />
-    <Compile Include="Logic\TestGameplayElements.cs" />
+    <Compile Include="Tests\Items\TestInventoryManager.cs" />
+    <Compile Include="Tests\Logic\API\ApiFunctionManagerTests.cs" />
+    <Compile Include="Tests\Logic\Chatbox\ChatboxManagerTests.cs" />
+    <Compile Include="Tests\Logic\TestGameplayElements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Blowfish\TestBlowfish.cs" />
-    <Compile Include="TestHelpers.cs" />
-    <Compile Include="TestStat.cs" />
-    <Compile Include="TestStats.cs" />
-    <Compile Include="TestStatModificator.cs" />
+    <Compile Include="Tests\Blowfish\TestBlowfish.cs" />
+    <Compile Include="Tests\TestStat.cs" />
+    <Compile Include="Tests\TestStats.cs" />
+    <Compile Include="Tests\TestStatModificator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ENetCS\ENetCS.csproj">
@@ -75,6 +74,9 @@
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
       <Name>GameServer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Framework\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

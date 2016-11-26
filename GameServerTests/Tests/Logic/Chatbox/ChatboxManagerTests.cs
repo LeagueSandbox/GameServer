@@ -1,16 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
 
-namespace GameServerTests
+namespace GameServerTests.Tests
 {
     [TestClass]
     public class ChatboxManagerTests
