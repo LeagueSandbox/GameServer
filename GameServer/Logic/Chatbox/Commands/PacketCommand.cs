@@ -1,6 +1,6 @@
 ﻿using System;
 using ENet;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     class PacketCommand : ChatCommand
     {
-        public PacketCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+        public PacketCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {

@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         private Logger _logger = Program.ResolveDependency<Logger>();
         private int _cannonMinionCount;
 
-        public SummonersRift(Game game) : base(game, 15 * 1000, 30 * 1000, 90 * 1000, true, 1)
+        public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
         {
             var path = System.IO.Path.Combine(
                 Program.ExecutingDirectory,

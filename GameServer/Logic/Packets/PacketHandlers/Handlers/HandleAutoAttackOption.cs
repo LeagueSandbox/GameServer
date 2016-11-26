@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleAutoAttackOption : IPacketHandler
     {
-        private ChatboxManager _chatboxManager = Program.ResolveDependency<ChatboxManager>();
+        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
@@ -17,8 +17,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 state = "Activated";
             }
 
-            _chatboxManager.SendDebugMsgFormatted(
-                GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL,
+            _chatCommandManager.SendDebugMsgFormatted(
+                GameServer.Logic.Chatbox.ChatCommandManager.DebugMsgType.NORMAL,
                 "Auto attack: " + state
             );
             return true;

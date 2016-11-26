@@ -11,6 +11,7 @@ using System.Threading;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
@@ -36,19 +37,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
         // Object managers
         private ItemManager _itemManager;
         // Other managers
-        private ChatboxManager _chatboxManager;
+        private ChatCommandManager _chatCommandManager;
         private PlayerManager _playerManager;
         private NetworkIdManager _networkIdManager;
 
         public Game(
             ItemManager itemManager,
-            ChatboxManager chatboxManager,
+            ChatCommandManager chatCommandManager,
             NetworkIdManager networkIdManager,
             PlayerManager playerManager,
             Logger logger
         ) {
             _itemManager = itemManager;
-            _chatboxManager = chatboxManager;
+            _chatCommandManager = chatCommandManager;
             _networkIdManager = networkIdManager;
             _playerManager = playerManager;
             _logger = logger;
@@ -66,6 +67,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
 
             Config = new Config(configPath);
+
+            _chatCommandManager.LoadCommands();
 
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
@@ -108,6 +111,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             if (!dic.ContainsKey(mapName))
             {
                 Map = new SummonersRift(this);
+                return;
             }
 
             Map = (Map)Activator.CreateInstance(dic[mapName], this);

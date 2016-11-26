@@ -6,14 +6,14 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleQuestClicked : IPacketHandler
     {
-        private ChatboxManager _chatboxManager = Program.ResolveDependency<ChatboxManager>();
+        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var questClicked = new QuestClicked(data);
 
-            _chatboxManager.SendDebugMsgFormatted(
-                GameServer.Logic.Chatbox.ChatboxManager.DebugMsgType.NORMAL,
+            _chatCommandManager.SendDebugMsgFormatted(
+                GameServer.Logic.Chatbox.ChatCommandManager.DebugMsgType.NORMAL,
                 string.Format("Clicked quest with netid: {0}", questClicked.netid.ToString())
             );
             return true;

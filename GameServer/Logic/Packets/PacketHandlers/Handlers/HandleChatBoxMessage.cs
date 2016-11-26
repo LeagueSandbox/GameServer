@@ -1,7 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     class HandleChatBoxMessage : IPacketHandler
     {
         private Game _game = Program.ResolveDependency<Game>();
-        private ChatboxManager _chatboxManager = Program.ResolveDependency<ChatboxManager>();
+        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
         private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
         public bool HandlePacket(Peer peer, byte[] data)
@@ -36,13 +36,13 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             #region Commands
             // Execute commands
-            var CommandStarterCharacter = _chatboxManager.CommandStarterCharacter;
+            var CommandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
             if (message.msg.StartsWith(CommandStarterCharacter))
             {
                 message.msg = message.msg.Remove(0, 1);
                 split = message.msg.ToLower().Split(' ');
 
-                ChatCommand command = _chatboxManager.GetCommand(split[0]);
+                ChatCommand command = _chatCommandManager.GetCommand(split[0]);
                 if (command != null)
                 {
                     command.Execute(peer, true, message.msg);
@@ -50,8 +50,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
                 else
                 {
-                    _chatboxManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + _chatboxManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                    _chatboxManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>" + _chatboxManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> for a list of available commands");
+                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> for a list of available commands");
                     return true;
                 }
             }

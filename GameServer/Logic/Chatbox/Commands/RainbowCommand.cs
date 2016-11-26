@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     class RainbowCommand : ChatCommand
     {
-        public RainbowCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+        public RainbowCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
 
         private static Champion me;
-        private static ChatboxManager owner;
+        private static ChatCommandManager owner;
         private static bool run = false;
         private static float a = 0.5f;
         private static float speed = 0.25f;

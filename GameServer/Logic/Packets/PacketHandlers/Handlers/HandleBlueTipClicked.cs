@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
     class HandleBlueTipClicked : IPacketHandler
     {
         private Game _game = Program.ResolveDependency<Game>();
-        private ChatboxManager _chatboxManager = Program.ResolveDependency<ChatboxManager>();
+        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
         private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
         public bool HandlePacket(Peer peer, byte[] data)
@@ -23,8 +23,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             );
             _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
 
-            _chatboxManager.SendDebugMsgFormatted(
-                ChatboxManager.DebugMsgType.NORMAL,
+            _chatCommandManager.SendDebugMsgFormatted(
+                ChatCommandManager.DebugMsgType.NORMAL,
                 string.Format("Clicked blue tip with netid: {0}", blueTipClicked.netid)
             );
             return true;

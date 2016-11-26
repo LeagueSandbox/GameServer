@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer
             Bind<Game>().To<Game>().InSingletonScope();
 
             Bind<ItemManager>().To<ItemManager>().InSingletonScope();
-            Bind<ChatboxManager>().To<ChatboxManager>().InSingletonScope();
+            Bind<ChatCommandManager>().To<ChatCommandManager>().InSingletonScope();
             Bind<PlayerManager>().To<PlayerManager>().InSingletonScope();
             Bind<NetworkIdManager>().To<NetworkIdManager>().InSingletonScope();
 

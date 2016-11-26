@@ -60,19 +60,20 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game = game;
             HasFirstBloodHappened = false;
             IsKillGoldRewardReductionActive = true;
-            _spawnEnabled = false;
+            _spawnEnabled = _game.Config.MinionSpawnsEnabled;
             _hasFountainHeal = hasFountainHeal;
             _collisionHandler = new CollisionHandler(this);
-            _fountains = new Dictionary<TeamId, Fountain>();
-            _fountains.Add(TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000));
-            _fountains.Add(TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000));
+            _fountains = new Dictionary<TeamId, Fountain>
+            {
+                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
+                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
+            };
             Id = id;
 
             _teamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             foreach (var team in _teamsIterator)
                 _visionUnits.Add(team, new Dictionary<uint, Unit>());
-
         }
 
         public virtual void Update(long diff)

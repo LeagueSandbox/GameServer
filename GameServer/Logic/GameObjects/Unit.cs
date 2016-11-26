@@ -344,10 +344,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (collider == null)
                 {
-                    if (!IsDashing)
-                    {
-                        setPosition(_game.Map.AIMesh.getClosestTerrainExit(new Vector2(X, Y)));
-                    }
                     _scriptEngine.Execute("onCollideWithTerrain()");
                 }
                 else

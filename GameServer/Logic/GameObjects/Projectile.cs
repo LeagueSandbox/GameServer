@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             base.onCollision(collider);
-            if (Target != null && Target.IsSimpleTarget)
+            if (Target != null && Target.IsSimpleTarget && !isToRemove())
             {
                 CheckFlagsForUnit(collider as Unit);
             }
