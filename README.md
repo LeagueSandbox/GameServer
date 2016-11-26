@@ -25,7 +25,6 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Clone the git repository
-* Copy `GameServer/Settings/Settings.json.template` to `GameServer/Settings/Settings.json`
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
 * Modify the just copied settings files as required
 * Build and run
@@ -46,13 +45,16 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
-* No StyleCop warnings should be present in new code
-* No pushing/committing to master—all changes must go through pull requests
-* Don't merge your own pull requests—get someone else to review/merge it
+* Pull requests must be approved before they can be merged
 * Pull requests should not be merged before the build has passed
     * If the build fails, ping the pull request creator and tell him to fix it
 * Files and folders in `PascalCase`
 * JSON dictionary keys in `PascalCase`
+* Keep the code as simple and clear to read as possible
+* Each separate feature should be developed in their own branch
+* Commits should be in logical small pieces
+* Pull requests should be kept as small as possible, generally one feature per pull requests
+    * Instead of submitting one huge pull request with 3 features, submit each feature individually
 
 # C# guidelines
 * Function names in `PascalCase`
@@ -65,8 +67,9 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 * Boolean variable names should be prefixed with a question (is/can/should)
 * Conditional operator should be avoided. `condition ? option1 : option2`
     * This is fine to use in some niche cases where you can't avoid using it
+* Interpolated strings with embedded logic should not be used
 
-# Development flow
+# Development flow and how to use git shell
 1. Pull latest version of master
     * `git fetch -p`
     * `git pull origin master`
