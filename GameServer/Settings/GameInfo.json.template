@@ -49,10 +49,10 @@
         "map": 1,
         "gameMode": "LeagueSandbox-Default"
     },
-    "spellInfo": {
-        // True = sandbox mode
-        // False = normal game
-        "NO_MANACOST": true,
-        "NO_COOLDOWN": true
+    "gameInfo": {
+        "MANACOSTS_ENABLED": false,
+        "COOLDOWNS_ENABLED": false,
+        "CHEATS_ENABLED": true,
+        "MINION_SPAWNS_ENABLED": false
     }
 }

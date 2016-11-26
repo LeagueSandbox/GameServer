@@ -1,5 +1,4 @@
-﻿using System;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;

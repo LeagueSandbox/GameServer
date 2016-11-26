@@ -5,20 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 
 namespace GameServerTests
 {
-    [TestClass()]
+    [TestClass]
     public class ChatboxManagerTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void AddCommandTest()
         {
-            var chatboxManager = new ChatboxManager();
+            var chatboxManager = new ChatCommandManager();
 
             var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
             var result = chatboxManager.AddCommand(command);
@@ -27,10 +27,10 @@ namespace GameServerTests
             Assert.AreEqual(false, result);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void RemoveCommandTest()
         {
-            var chatboxManager = new ChatboxManager();
+            var chatboxManager = new ChatCommandManager();
 
             var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
             var result = chatboxManager.AddCommand(command);

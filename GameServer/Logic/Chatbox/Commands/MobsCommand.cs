@@ -6,13 +6,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Linq;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     class MobsCommand : ChatCommand
     {
-        public MobsCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+        public MobsCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {

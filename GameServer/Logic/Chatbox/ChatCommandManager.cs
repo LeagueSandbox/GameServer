@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
-    public class ChatboxManager
+    public class ChatCommandManager
     {
-        public string CommandStarterCharacter= ".";
+        public string CommandStarterCharacter = ".";
 
-        private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>()
+        private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>
         {
             /*
             {".gold",  new GoldCommand(".gold", ".gold goldAmount")},
@@ -34,12 +34,19 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             {".xp",  new XpCommand(".xp", ".xp xp")}*/
         };
 
-        public enum DebugMsgType { ERROR, INFO, SYNTAX, SYNTAXERROR, NORMAL };
+        public enum DebugMsgType
+        {
+            ERROR,
+            INFO,
+            SYNTAX,
+            SYNTAXERROR,
+            NORMAL
+        }
 
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
+            var _game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
             int fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
@@ -71,17 +78,26 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public ChatboxManager()
+        public ChatCommandManager()
         {
+            AddCommand(new HelpCommand("help", "", this));
+        }
+
+        public void LoadCommands()
+        {
+            var _game = Program.ResolveDependency<Game>();
+            if (!_game.Config.ChatCheatsEnabled)
+            {
+                return;
+            }
+
             AddCommand(new AdCommand("ad", "ad bonusAd", this));
             AddCommand(new ApCommand("ap", "ap bonusAp", this));
-            AddCommand(new ChCommand("ch", "ch championName", this));
             AddCommand(new ChangeTeamCommand("changeteam", "changeteam teamNumber", this));
+            AddCommand(new ChCommand("ch", "ch championName", this));
             AddCommand(new CoordsCommand("coords", "", this));
-            AddCommand(new HelpCommand("help", "", this));
             AddCommand(new GoldCommand("gold", "gold goldAmount", this));
             AddCommand(new HealthCommand("health", "health maxHealth", this));
-            AddCommand(new HelpCommand("help", "", this));
             AddCommand(new InhibCommand("inhib", "", this));
             AddCommand(new JunglespawnCommand("junglespawn", "", this));
             AddCommand(new KillCommand("kill", "kill minions", this));
@@ -108,11 +124,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             {
                 return false;
             }
-            else
-            {
-                _chatCommandsDictionary.Add(command.Command, command);
-                return true;
-            }
+
+            _chatCommandsDictionary.Add(command.Command, command);
+            return true;
         }
 
         public bool RemoveCommand(ChatCommand command)
@@ -122,10 +136,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
                 _chatCommandsDictionary.Remove(command.Command);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public bool RemoveCommand(string commandString)
@@ -135,10 +147,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
                 _chatCommandsDictionary.Remove(commandString);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public List<ChatCommand> GetCommands()
@@ -157,10 +167,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             {
                 return _chatCommandsDictionary[commandString];
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

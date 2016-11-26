@@ -1,12 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatboxManager;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     class JunglespawnCommand : ChatCommand
     {
-        public JunglespawnCommand(string command, string syntax, ChatboxManager owner) : base(command, syntax, owner) { }
+        public JunglespawnCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {

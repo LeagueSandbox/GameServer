@@ -14,8 +14,10 @@ namespace LeagueSandbox.GameServer.Logic
         public ContentManager ContentManager { get; private set; }
         public const string VERSION = "Version 4.20.0.315 [PUBLIC]";
 
-        public bool CooldownsDisabled { get; protected set; }
-        public bool ManaCostsDisabled { get; protected set; }
+        public bool CooldownsEnabled { get; private set; }
+        public bool ManaCostsEnabled { get; private set; }
+        public bool ChatCheatsEnabled { get; private set; }
+        public bool MinionSpawnsEnabled { get; private set; }
 
         public Config(string path)
         {
@@ -37,10 +39,16 @@ namespace LeagueSandbox.GameServer.Logic
                 Players.Add($"player{playerNum}", playerConfig);
             }
 
-            //Read cost/cd info
-            var spellInfo = data.SelectToken("spellInfo");
-            CooldownsDisabled = (bool)spellInfo.SelectToken("NO_COOLDOWN");
-            ManaCostsDisabled = (bool)spellInfo.SelectToken("NO_MANACOST");
+            // Read cost/cd info
+            var gameInfo = data.SelectToken("gameInfo");
+            CooldownsEnabled = (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED");
+            ManaCostsEnabled = (bool)gameInfo.SelectToken("MANACOSTS_ENABLED");
+
+            // Read if chat commands are enabled
+            ChatCheatsEnabled = (bool)gameInfo.SelectToken("CHEATS_ENABLED");
+
+            // Read if minion spawns are enabled
+            MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED");
 
             // Read the game configuration
             var game = data.SelectToken("game");

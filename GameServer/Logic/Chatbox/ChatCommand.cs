@@ -4,14 +4,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public abstract class ChatCommand
     {
-        internal ChatboxManager _owner;
+        internal ChatCommandManager _owner;
 
         public string Command { get; set; }
         public string Syntax { get; set; }
         public bool IsHidden { get; set; }
         public bool IsDisabled { get; set; }
 
-        public ChatCommand(string command, string syntax, ChatboxManager owner)
+        public ChatCommand(string command, string syntax, ChatCommandManager owner)
         {
             Command = command;
             Syntax = syntax;
@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public void ShowSyntax()
         {
-            _owner.SendDebugMsgFormatted(ChatboxManager.DebugMsgType.SYNTAX, _owner.CommandStarterCharacter + Syntax);
+            _owner.SendDebugMsgFormatted(ChatCommandManager.DebugMsgType.SYNTAX, _owner.CommandStarterCharacter + Syntax);
         }
     }
 }

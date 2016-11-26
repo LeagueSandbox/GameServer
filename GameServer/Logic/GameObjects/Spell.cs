@@ -118,8 +118,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             CastTime = 0.0f;
             ProjectileSpeed = 2000.0f;
             _currentCastTime = 0.0f;
-            NoCooldown = _game.Config.CooldownsDisabled;
-            NoManacost = _game.Config.ManaCostsDisabled;
+            NoCooldown = !_game.Config.CooldownsEnabled;
+            NoManacost = !_game.Config.ManaCostsEnabled;
 
             _scriptEngine = new LuaScriptEngine();
             LoadLua(_scriptEngine);
