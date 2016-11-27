@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer
     class Server : IDisposable
     {
         private uint SERVER_HOST = Address.IPv4HostAny;
-        private ushort SERVER_PORT = 5119;
+        private ushort SERVER_PORT = Program.ServerPort;
         private string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private string SERVER_VERSION = "0.2.0";
         private Logger _logger;

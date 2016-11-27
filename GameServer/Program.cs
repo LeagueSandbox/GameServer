@@ -1,8 +1,8 @@
 using System;
-using System.IO;
 using Ninject;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic.Content;
+using CommandLine;
 
 namespace LeagueSandbox
 {
@@ -12,18 +12,16 @@ namespace LeagueSandbox
         public static string ExecutingDirectory { get; private set; }
         private static StandardKernel _kernel;
         public static bool IsSetToExit { get; set; }
-        public static string GameInfoPath { get; private set; }
+        public static string ConfigPath { get; private set; }
+        public static ushort ServerPort { get; private set; }
 
         static void Main(string[] args)
         {
-            if (args.Length != 0)
-            {
-                Console.WriteLine("Lobby Server wants to use custom GameInfo file. Will use that if possible.");
-                if (File.Exists(args[0]))
-                {
-                    GameInfoPath = args[0];
-                }
-            }
+            var options = new ArgsOptions();
+            Parser.Default.ParseArguments(args, options);
+
+            ConfigPath = options.ConfigPath;
+            ServerPort = options.ServerPort;
 
             _kernel = new StandardKernel();
             _kernel.Load(new Bindings());
@@ -50,5 +48,14 @@ namespace LeagueSandbox
         {
             return _kernel.Get<T>();
         }
+    }
+
+    class ArgsOptions
+    {
+        [Option("path", DefaultValue = "Settings/GameInfo.json")]
+        public string ConfigPath { get; set; }
+
+        [Option("port", DefaultValue = (ushort)5119)]
+        public ushort ServerPort { get; set; }
     }
 }

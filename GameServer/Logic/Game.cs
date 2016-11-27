@@ -59,14 +59,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             _logger.LogCoreInfo("Loading Config.");
 
-            var programsConfigPath = Program.GameInfoPath;
-            var configPath = "Settings/GameInfo.json";
-            if (!string.IsNullOrEmpty(programsConfigPath))
-            {
-                configPath = Program.GameInfoPath;
-            }
-
-            Config = new Config(configPath);
+            Config = new Config(Program.ConfigPath);
 
             _chatCommandManager.LoadCommands();
 
