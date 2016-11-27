@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
 
-namespace GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests
 {
     [TestClass]
     public class InventoryManagerTests

@@ -10,7 +10,7 @@ using System.Numerics;
 using System.Text;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox
+namespace LeagueSandbox.GameServer
 {
     static class Extensions
     {

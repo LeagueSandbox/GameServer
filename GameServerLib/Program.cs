@@ -1,11 +1,21 @@
 using System;
 using Ninject;
-using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic.Content;
-using CommandLine;
 
-namespace LeagueSandbox
+namespace LeagueSandbox.GameServer
 {
+    /// <summary>
+    /// This class is used by the GameServerApp to launch the server.
+    /// Ideally the Program class in this project would be removed entirely, but that's not possible yet.
+    /// </summary>
+    public class GameServerLauncher
+    {
+        public static void LaunchServer(string configPath, ushort serverPort)
+        {
+            Program.Run(configPath, serverPort);
+        }
+    }
+
     class Program
     {
         // TODO: Require consumers of this inject a ServerContext
@@ -15,13 +25,10 @@ namespace LeagueSandbox
         public static string ConfigPath { get; private set; }
         public static ushort ServerPort { get; private set; }
 
-        static void Main(string[] args)
+        public static void Run(string configPath, ushort serverPort)
         {
-            var options = new ArgsOptions();
-            Parser.Default.ParseArguments(args, options);
-
-            ConfigPath = options.ConfigPath;
-            ServerPort = options.ServerPort;
+            ConfigPath = configPath;
+            ServerPort = serverPort;
 
             _kernel = new StandardKernel();
             _kernel.Load(new Bindings());
@@ -48,14 +55,5 @@ namespace LeagueSandbox
         {
             return _kernel.Get<T>();
         }
-    }
-
-    class ArgsOptions
-    {
-        [Option("path", DefaultValue = "Settings/GameInfo.json")]
-        public string ConfigPath { get; set; }
-
-        [Option("port", DefaultValue = (ushort)5119)]
-        public ushort ServerPort { get; set; }
     }
 }

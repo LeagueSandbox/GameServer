@@ -2,7 +2,7 @@
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
 
-namespace GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests
 {
     [TestClass]
     public class ChatboxManagerTests
