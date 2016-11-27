@@ -1,5 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7olahkndcs3r295p/branch/master?svg=true)](https://ci.appveyor.com/project/MythicManiac/gameserver/branch/master)
-[![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=travis-ci)](https://travis-ci.org/LeagueSandbox/GameServer)
+[![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=master)](https://travis-ci.org/LeagueSandbox/GameServer)
 [![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=master)](https://codecov.io/github/LeagueSandbox/GameServer?branch=master)
 # The League Sandbox project's game server
 Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
