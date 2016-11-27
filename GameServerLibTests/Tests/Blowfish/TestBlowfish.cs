@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BlowFishCS;
 using System.Text;
 
-namespace GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests
 {
     [TestClass]
     public class TestBlowfish

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.API;
 
-namespace GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests
 {
     [TestClass()]
     public class ApiFunctionManagerTests

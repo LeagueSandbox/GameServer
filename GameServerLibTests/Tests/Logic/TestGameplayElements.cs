@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests
 {
     [TestClass]
     public class TestGameplayElements

@@ -114,3 +114,5 @@ UpgradeLog*.XML
 # Custom stuff
 GameServer/Settings/Settings.json
 GameServer/Settings/GameInfo.json
+GameServerApp/Settings/Settings.json
+GameServerApp/Settings/GameInfo.json
