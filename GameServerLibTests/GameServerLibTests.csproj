@@ -57,6 +57,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -65,13 +69,7 @@
         <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
       </ItemGroup>
     </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
-      </ItemGroup>
-    </Otherwise>
+    <Otherwise />
   </Choose>
   <ItemGroup>
     <Compile Include="Tests\Items\TestInventoryManager.cs" />
@@ -118,21 +116,28 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <_ContentSourceDirectory>$(SolutionDir)GameServerApp\Content</_ContentSourceDirectory>
+    <_ContentTargetDirectory>$(TargetDir)Content\</_ContentTargetDirectory>
+    <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings</_SettingsSourceDirectory>
+    <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
+    <_LuaLibSourceDirectory>$(SolutionDir)GameServerLib\LuaLib</_LuaLibSourceDirectory>
+    <_LuaLibTargetdirectory>$(TargetDir)LuaLib\</_LuaLibTargetdirectory>
+    <_LibSourceDirectory>$(SolutionDir)lib</_LibSourceDirectory>
+    <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
+    <_NLuaSourceDirectory>$(SolutionDir)packages\NLua.1.3.2.1\lib\native\.</_NLuaSourceDirectory>
+    <_NLuaTargetDirectory>$(TargetDir)</_NLuaTargetDirectory>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /s /y /q /d "$(SolutionDir)GameServerApp\Content" "$(TargetDir)Content\*"
-xcopy /s /y /q /d "$(SolutionDir)GameServerApp\Settings" "$(TargetDir)Settings\*"
-xcopy /s /y /q /d "$(SolutionDir)GameServerLib\LuaLib" "$(TargetDir)LuaLib\*"
-xcopy /s /y /q /d "$(SolutionDir)lib" "$(TargetDir)*"
-xcopy /s /y /q /d "$(SolutionDir)packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)*"</PostBuildEvent>
+  <PropertyGroup Condition="'$(OS)' != 'Unix'">
+    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
+  <PropertyGroup Condition="'$(OS)' == 'Unix'">
+    <_CopyCommand>cp -r -u</_CopyCommand>
+  </PropertyGroup>
   <Target Name="AfterBuild">
+    <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(_ContentTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(_SettingsTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_LuaLibSourceDirectory)&quot; &quot;$(_LuaLibTargetdirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_NLuaSourceDirectory)&quot; &quot;$(_NLuaTargetDirectory)&quot;" />
   </Target>
-  -->
 </Project>
