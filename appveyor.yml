@@ -9,8 +9,8 @@ build:
   verbosity: minimal
 
 after_test:
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerAppTests\bin\Debug\GameServerAppTests.dll" -filter:"+[LeagueSandboxGameServer]*  -[LeagueSandboxGameServer]GameServer.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerApp_coverage.xml
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\GameServerLibTests.dll" -filter:"+[LeagueSandboxGameServer]*  -[LeagueSandboxGameServer]GameServer.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
+  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerAppTests\bin\Debug\GameServerAppTests.dll" -filter:"+[GameServerApp]*  -[GameServerApp]GameServerApp.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerApp_coverage.xml
+  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "GameServerApp_coverage.xml"
