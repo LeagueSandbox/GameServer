@@ -1,18 +1,18 @@
-﻿using System;
+﻿using BlowFishCS;
+using ENet;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Exceptions;
+using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Players;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Maps;
-using BlowFishCS;
 using System.Threading;
-using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
-using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -55,21 +55,20 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger = logger;
         }
 
-        public bool Initialize(Address address, string baseKey)
+        public void Initialize(Address address, string blowfishKey)
         {
             _logger.LogCoreInfo("Loading Config.");
 
             Config = new Config(Program.ConfigPath);
 
             _chatCommandManager.LoadCommands();
-
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
-            var key = Convert.FromBase64String(baseKey);
+            var key = Convert.FromBase64String(blowfishKey);
             if (key.Length <= 0)
             {
-                return false;
+                throw new InvalidKeyException("Invalid blowfish key supplied");
             }
 
             Blowfish = new BlowFish(key);
@@ -85,8 +84,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 _playerManager.AddPlayer(p);
             }
-
-            return true;
         }
 
         public void RegisterMap(byte mapId)
@@ -153,7 +150,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 var timeToWait = REFRESH_RATE - _timeElapsed;
                 if (timeToWait < 0)
                 {
-                    timeToWait = 0;
+                    continue;
                 }
                 Thread.Sleep((int)timeToWait);
             }

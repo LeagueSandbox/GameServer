@@ -7,9 +7,9 @@ namespace LeagueSandbox.GameServer
 {
     class Server : IDisposable
     {
+        private string BLOWFISH_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private uint SERVER_HOST = Address.IPv4HostAny;
         private ushort SERVER_PORT = Program.ServerPort;
-        private string SERVER_KEY = "17BLOhi6KZsTtldTsizvHg==";
         private string SERVER_VERSION = "0.2.0";
         private Logger _logger;
         private ServerContext _serverContext;
@@ -24,18 +24,9 @@ namespace LeagueSandbox.GameServer
 
         public void Start()
         {
-            Console.WriteLine("Yorick " + SERVER_VERSION);
-
+            Console.WriteLine($"Yorick {SERVER_VERSION}");
             _logger.LogCoreInfo("Game started");
-            
-            var address = new Address(SERVER_HOST, SERVER_PORT);
-
-            if (!_game.Initialize(address, SERVER_KEY))
-            {
-                _logger.LogCoreError("Couldn't listen on port " + SERVER_PORT + ", or invalid key");
-                throw new ApplicationException();
-            }
-
+            _game.Initialize(new Address(SERVER_HOST, SERVER_PORT), BLOWFISH_KEY);
             _game.NetLoop();
         }
 
