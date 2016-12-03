@@ -640,7 +640,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (enabled)
                 mask |= (short)(1 << id);
             else
-                mask |= (short)(~(1 << id));
+                mask &= (short)(~(1 << id));
             _spellsEnabled = mask;
             appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
         }
