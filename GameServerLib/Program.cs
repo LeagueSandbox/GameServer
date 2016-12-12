@@ -1,6 +1,7 @@
 using System;
 using Ninject;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic;
 
 namespace LeagueSandbox.GameServer
 {
@@ -10,9 +11,9 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class GameServerLauncher
     {
-        public static void LaunchServer(string configPath, ushort serverPort)
+        public static void LaunchServer(ushort serverPort, Config config)
         {
-            Program.Run(configPath, serverPort);
+            Program.Run(serverPort, config);
         }
     }
 
@@ -22,12 +23,12 @@ namespace LeagueSandbox.GameServer
         public static string ExecutingDirectory { get; private set; }
         private static StandardKernel _kernel;
         public static bool IsSetToExit { get; set; }
-        public static string ConfigPath { get; private set; }
+        public static Config Config { get; private set; }
         public static ushort ServerPort { get; private set; }
 
-        public static void Run(string configPath, ushort serverPort)
+        public static void Run(ushort serverPort, Config config)
         {
-            ConfigPath = configPath;
+            Config = config;
             ServerPort = serverPort;
 
             _kernel = new StandardKernel();

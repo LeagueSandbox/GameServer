@@ -55,11 +55,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger = logger;
         }
 
-        public void Initialize(Address address, string blowfishKey)
+        public void Initialize(Address address, string blowfishKey, Config config)
         {
             _logger.LogCoreInfo("Loading Config.");
-
-            Config = new Config(Program.ConfigPath);
+            Config = config;
 
             _chatCommandManager.LoadCommands();
             _server = new Host();
@@ -84,6 +83,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 _playerManager.AddPlayer(p);
             }
+
+
+            _logger.LogCoreInfo("Game is ready.");
         }
 
         public void RegisterMap(byte mapId)
@@ -109,10 +111,19 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void NetLoop()
         {
-            var watch = new Stopwatch();
+            long minTime = 0;
+            long maxTime = 0;
+            long averageTime = 0;
+            long averageCount = 0;
+            var debugWatch = new Stopwatch();
+            debugWatch.Start();
+
+            var logicDurationWatch = new Stopwatch();
+            var lastMapDurationWatch = new Stopwatch();
             var enetEvent = new Event();
             while (!Program.IsSetToExit)
             {
+                logicDurationWatch.Restart();
                 while (_server.Service(0, out enetEvent) > 0)
                 {
                     switch (enetEvent.Type)
@@ -140,19 +151,37 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
                     }
                 }
+                var sinceLastMapTime = lastMapDurationWatch.ElapsedMilliseconds;
+                lastMapDurationWatch.Restart();
                 if (IsRunning)
                 {
-                    Map.Update(_timeElapsed);
+                    Map.Update(sinceLastMapTime);
                 }
-                watch.Stop();
-                _timeElapsed = watch.ElapsedMilliseconds;
-                watch.Restart();
-                var timeToWait = REFRESH_RATE - _timeElapsed;
-                if (timeToWait < 0)
+                logicDurationWatch.Stop();
+                _timeElapsed = logicDurationWatch.ElapsedMilliseconds;
+
+                minTime = Math.Min(minTime, _timeElapsed);
+                minTime = Math.Min(maxTime, _timeElapsed);
+                averageCount++;
+                averageTime += _timeElapsed;
+
+                if (debugWatch.ElapsedMilliseconds >= 10000)
                 {
-                    continue;
+                    debugWatch.Restart();
+
+                    _logger.LogCoreInfo("Networking logic and map processing time average: {0}, min: {1}, max: {2}", (averageTime) / averageCount, minTime, maxTime);
+
+                    minTime = _timeElapsed;
+                    maxTime = _timeElapsed;
+                    averageCount = 0;
+                    averageTime = 0;
                 }
-                Thread.Sleep((int)timeToWait);
+
+                var timeToWait = REFRESH_RATE - _timeElapsed;
+                if (timeToWait > 0)
+                {
+                    Thread.Sleep((int)timeToWait);
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logic;
 
 namespace LeagueSandbox.GameServerApp
 {
@@ -8,7 +9,16 @@ namespace LeagueSandbox.GameServerApp
         static void Main(string[] args)
         {
             var options = ArgsOptions.Parse(args);
-            GameServerLauncher.LaunchServer(options.ConfigPath, options.ServerPort);
+            Config config;
+            if (string.IsNullOrEmpty(options.ConfigJson))
+            {
+                config = Config.LoadFromFile(options.ConfigPath);
+            }
+            else
+            {
+                config = Config.LoadFromJson(options.ConfigJson);
+            }
+            GameServerLauncher.LaunchServer(options.ServerPort, config);
         }
     }
 
@@ -16,6 +26,9 @@ namespace LeagueSandbox.GameServerApp
     {
         [Option("config", DefaultValue = "Settings/GameInfo.json")]
         public string ConfigPath { get; set; }
+
+        [Option("config-json", DefaultValue = "")]
+        public string ConfigJson { get; set; }
 
         [Option("port", DefaultValue = (ushort)5119)]
         public ushort ServerPort { get; set; }
