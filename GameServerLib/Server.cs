@@ -2,6 +2,7 @@
 using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic;
 
 namespace LeagueSandbox.GameServer
 {
@@ -14,19 +15,21 @@ namespace LeagueSandbox.GameServer
         private Logger _logger;
         private ServerContext _serverContext;
         private Game _game;
+        private Config _config;
 
-        public Server(Logger logger, ServerContext serverContext, Game game)
+        public Server(Logger logger, ServerContext serverContext, Game game, Config config)
         {
             _logger = logger;
             _serverContext = serverContext;
             _game = game;
+            _config = config;
         }
 
         public void Start()
         {
-            Console.WriteLine($"Yorick {SERVER_VERSION}");
-            _logger.LogCoreInfo("Game started");
-            _game.Initialize(new Address(SERVER_HOST, SERVER_PORT), BLOWFISH_KEY);
+            _logger.LogCoreInfo($"Yorick {SERVER_VERSION}");
+            _logger.LogCoreInfo("Game started on port: {0}", SERVER_PORT);
+            _game.Initialize(new Address(SERVER_HOST, SERVER_PORT), BLOWFISH_KEY, _config);
             _game.NetLoop();
         }
 

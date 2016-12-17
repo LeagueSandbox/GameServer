@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -19,16 +20,29 @@ namespace LeagueSandbox.GameServer.Logic
         public bool ChatCheatsEnabled { get; private set; }
         public bool MinionSpawnsEnabled { get; private set; }
 
-        public Config(string path)
+        private Config()
         {
-            LoadConfig(path);
         }
 
-        private void LoadConfig(string path)
+        public static Config LoadFromJson(string json)
+        {
+            var result = new Config();
+            result.LoadConfig(json);
+            return result;
+        }
+
+        public static Config LoadFromFile(string path)
+        {
+            var result = new Config();
+            result.LoadConfig(File.ReadAllText(path));
+            return result;
+        }
+
+        private void LoadConfig(string json)
         {
             Players = new Dictionary<string, PlayerConfig>();
 
-            var data = JObject.Parse(File.ReadAllText(path));
+            var data = JObject.Parse(json);
 
             // Read the player configuration
             var playerConfigurations = data.SelectToken("players");

@@ -88,12 +88,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     continue;
                 }
 
-                if (obj.isMovementUpdated())
-                {
-                    _game.PacketNotifier.NotifyMovement(obj);
-                    obj.clearMovementUpdated();
-                }
-
                 obj.update(diff);
 
                 if (!(obj is Unit))
@@ -120,14 +114,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
                     {
-                        _game.PacketNotifier.NotifyEnterVision(u, team);
                         u.SetVisibleByTeam(team, true);
+                        _game.PacketNotifier.NotifyEnterVision(u, team);
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
                     else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u))
                     {
-                        _game.PacketNotifier.NotifyLeaveVision(u, team);
                         u.SetVisibleByTeam(team, false);
+                        _game.PacketNotifier.NotifyLeaveVision(u, team);
                     }
                 }
 
@@ -161,6 +155,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 {
                     _game.PacketNotifier.NotifyModelUpdate(u);
                     u.IsModelUpdated = false;
+                }
+
+
+
+                if (obj.isMovementUpdated())
+                {
+                    _game.PacketNotifier.NotifyMovement(obj);
+                    obj.clearMovementUpdated();
                 }
             }
 
