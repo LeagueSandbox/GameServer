@@ -17,12 +17,12 @@ namespace LeagueSandbox.GameServer
         private Game _game;
         private Config _config;
 
-        public Server(Logger logger, ServerContext serverContext, Game game, Config config)
+        public Server(Logger logger, ServerContext serverContext, Game game)
         {
             _logger = logger;
             _serverContext = serverContext;
             _game = game;
-            _config = config;
+            _config = Config.LoadFromJson(Program.ConfigJson);
         }
 
         public void Start()
