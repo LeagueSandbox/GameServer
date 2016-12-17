@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic;
+using System.IO;
 
 namespace LeagueSandbox.GameServerApp
 {
@@ -9,16 +10,14 @@ namespace LeagueSandbox.GameServerApp
         static void Main(string[] args)
         {
             var options = ArgsOptions.Parse(args);
-            Config config;
-            if (string.IsNullOrEmpty(options.ConfigJson))
+
+            string configJson = options.ConfigJson;
+            if (string.IsNullOrEmpty(configJson))
             {
-                config = Config.LoadFromFile(options.ConfigPath);
+                configJson = File.ReadAllText(options.ConfigPath);
             }
-            else
-            {
-                config = Config.LoadFromJson(options.ConfigJson);
-            }
-            GameServerLauncher.LaunchServer(options.ServerPort, config);
+
+            GameServerLauncher.LaunchServer(options.ServerPort, configJson);
         }
     }
 

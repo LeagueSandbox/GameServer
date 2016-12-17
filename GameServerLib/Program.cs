@@ -11,9 +11,9 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class GameServerLauncher
     {
-        public static void LaunchServer(ushort serverPort, Config config)
+        public static void LaunchServer(ushort serverPort, string configJson)
         {
-            Program.Run(serverPort, config);
+            Program.Run(serverPort, configJson);
         }
     }
 
@@ -23,12 +23,12 @@ namespace LeagueSandbox.GameServer
         public static string ExecutingDirectory { get; private set; }
         private static StandardKernel _kernel;
         public static bool IsSetToExit { get; set; }
-        public static Config Config { get; private set; }
+        public static string ConfigJson { get; private set; }
         public static ushort ServerPort { get; private set; }
 
-        public static void Run(ushort serverPort, Config config)
+        public static void Run(ushort serverPort, String configJson)
         {
-            Config = config;
+            ConfigJson = configJson;
             ServerPort = serverPort;
 
             _kernel = new StandardKernel();
