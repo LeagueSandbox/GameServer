@@ -233,11 +233,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PacketCmdS2C cmd;
         public uint netId;
-        public int unk1;
+        public int position;
         public long userId;
         public float loaded;
-        public float ping;
-        public short unk2;
+        public float unk2;
+        public short ping;
         public short unk3;
         public byte unk4;
 
@@ -246,11 +246,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var reader = new BinaryReader(new MemoryStream(data));
             cmd = (PacketCmdS2C)reader.ReadByte();
             netId = reader.ReadUInt32();
-            unk1 = reader.ReadInt32();
+            position = reader.ReadInt32();
             userId = reader.ReadInt64();
             loaded = reader.ReadSingle();
-            ping = reader.ReadSingle();
-            unk2 = reader.ReadInt16();
+            unk2 = reader.ReadSingle();
+            ping = reader.ReadInt16();
             unk3 = reader.ReadInt16();
             unk4 = reader.ReadByte();
             reader.Close();
@@ -258,11 +258,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public PingLoadInfo(PingLoadInfo loadInfo, long id) : base(PacketCmdS2C.PKT_S2C_Ping_Load_Info, loadInfo.netId)
         {
-            buffer.Write((uint)loadInfo.unk1);
+            buffer.Write((uint)loadInfo.position);
             buffer.Write((ulong)id);
             buffer.Write((float)loadInfo.loaded);
-            buffer.Write((float)loadInfo.ping);
-            buffer.Write((short)loadInfo.unk2);
+            buffer.Write((float)loadInfo.unk2);
+            buffer.Write((short)loadInfo.ping);
             buffer.Write((short)loadInfo.unk3);
             buffer.Write((byte)loadInfo.unk4);
         }
@@ -312,6 +312,48 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write(currentBlue);
             buffer.Write(currentPurple);
         }
+    }
+
+    public class LoadScreenPlayerName : Packet
+    {
+        public LoadScreenPlayerName(Pair<uint, ClientInfo> player) : base(PacketCmdS2C.PKT_S2C_LoadName)
+        {
+            buffer.Write((long)player.Item2.UserId);
+            buffer.Write((int)0);
+            buffer.Write((int)player.Item2.Name.Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Item2.Name))
+                buffer.Write(b);
+            buffer.Write((byte)0);
+        }
+
+        /*
+         * long userId;
+         * int unk1; // most likly not skinId ?
+         * int length;
+         * byte* playerName;
+         */
+    }
+
+    public class LoadScreenPlayerChampion : Packet
+    {
+
+        public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p) : base(PacketCmdS2C.PKT_S2C_LoadHero)
+        {
+            var player = p.Item2;
+            buffer.Write((long)player.UserId);
+            buffer.Write((int)player.SkinNo);
+            buffer.Write((int)player.Champion.Model.Length + 1);
+            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
+                buffer.Write(b);
+            buffer.Write((byte)0);
+        }
+
+        /*
+         * long userId;
+         * int skinId;
+         * int length;
+         * byte* championName;
+         */
     }
 
     public class KeyCheck : Packet
@@ -2096,46 +2138,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((short)7); // unk
             buffer.Write((int)0); // Flags?
         }
-    }
-
-    public class LoadScreenPlayerName : Packet
-    {
-        public LoadScreenPlayerName(Pair<uint, ClientInfo> player) : base(PacketCmdS2C.PKT_S2C_LoadName)
-        {
-            buffer.Write((long)player.Item2.UserId);
-            buffer.Write((int)0);
-            buffer.Write((int)player.Item2.Name.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.Name))
-                buffer.Write(b);
-            buffer.Write((byte)0);
-        }
-
-        /*byte cmd;
-        long userId;
-        int skinId;
-        int length;
-        byte* description;*/
-    }
-
-    public class LoadScreenPlayerChampion : Packet
-    {
-
-        public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p) : base(PacketCmdS2C.PKT_S2C_LoadHero)
-        {
-            var player = p.Item2;
-            buffer.Write((long)player.UserId);
-            buffer.Write((int)player.SkinNo);
-            buffer.Write((int)player.Champion.Model.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
-                buffer.Write(b);
-            buffer.Write((byte)0);
-        }
-
-        /*byte cmd;
-        long userId;
-        int skinId;
-        int length;
-        byte* description;*/
     }
 
     public class AttentionPing
