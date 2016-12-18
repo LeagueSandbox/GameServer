@@ -404,7 +404,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _visionUnits[team].Remove(netId);
         }
 
-        public virtual Target GetRespawnLocation(int team)
+        public virtual Target GetRespawnLocation(TeamId team)
         {
             return null;
         }

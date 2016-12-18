@@ -128,10 +128,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
         };
 
-        private static readonly Dictionary<int, Target> _spawnsByTeam = new Dictionary<int, Target>
+        private static readonly Dictionary<TeamId, Target> _spawnsByTeam = new Dictionary<TeamId, Target>
         {
-            {0, new Target(25.90f, 280)},
-            {1, new Target(14119, 14063)}
+            {TeamId.TEAM_BLUE, new Target(25.90f, 280)},
+            {TeamId.TEAM_PURPLE, new Target(13948, 14202)}
         };
 
         private static readonly Dictionary<TurretType, int[]> _turretItems = new Dictionary<TurretType, int[]>
@@ -295,10 +295,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 1.9f;
         }
 
-        public override Target GetRespawnLocation(int team)
+        public override Target GetRespawnLocation(TeamId team)
         {
             if (!_spawnsByTeam.ContainsKey(team))
+            {
                 return new Target(25.90f, 280);
+            }
 
             return _spawnsByTeam[team];
         }

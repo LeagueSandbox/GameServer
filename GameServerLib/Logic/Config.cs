@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -99,13 +100,9 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 Blue[playerCount] = spawns;
             }
-            else if (team.ToLower() == "purple")
-            {
-                Purple[playerCount] = spawns;
-            }
             else
             {
-                throw new Exception("Invalid team");
+                Purple[playerCount] = spawns;
             }
         }
     }
@@ -119,14 +116,9 @@ namespace LeagueSandbox.GameServer.Logic
             _spawns = spawns;
         }
 
-        internal int GetXForPlayer(int playerId)
+        internal Vector2 GetCoordsForPlayer(int playerId)
         {
-            return (int)((JArray)_spawns[playerId])[0];
-        }
-
-        internal int GetYForPlayer(int playerId)
-        {
-            return (int)((JArray)_spawns[playerId])[1];
+            return new Vector2((int)((JArray)_spawns[playerId])[0], (int)((JArray)_spawns[playerId])[1]);
         }
     }
 

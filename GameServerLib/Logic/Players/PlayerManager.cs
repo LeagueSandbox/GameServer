@@ -13,10 +13,25 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
         private int _currentId = 1;
+        private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
+        {
+            { TeamId.TEAM_BLUE, 0 },
+            { TeamId.TEAM_PURPLE, 0 }
+        };
 
         public PlayerManager(NetworkIdManager networkIdManager)
         {
             _networkIdManager = networkIdManager;
+        }
+
+        private TeamId GetTeamIdFromConfig(PlayerConfig p)
+        {
+            if (p.Team.ToLower() == "blue")
+            {
+                return TeamId.TEAM_BLUE;
+            }
+
+            return TeamId.TEAM_PURPLE;
         }
 
         public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
@@ -26,9 +41,10 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 EnumParser.ParseSummonerSpell(p.Value.Summoner1),
                 EnumParser.ParseSummonerSpell(p.Value.Summoner2)
             };
+            var teamId = GetTeamIdFromConfig(p.Value);
             var player = new ClientInfo(
                 p.Value.Rank,
-                ((p.Value.Team.ToLower() == "blue") ? TeamId.TEAM_BLUE : TeamId.TEAM_PURPLE),
+                teamId,
                 p.Value.Ribbon,
                 p.Value.Icon,
                 p.Value.Skin,
@@ -37,26 +53,15 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
+            var c = new Champion(p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes);
+            c.SetTeam(teamId);
 
-            var c = new Champion(p.Value.Champion, (uint)player.UserId, p.Value.Runes);
-            var pos = c.getRespawnPosition();
-
-            c.setPosition(pos.Item1, pos.Item2);
-
-            if (p.Value.Team.ToLower() == "blue")
-            {
-                c.SetTeam(TeamId.TEAM_BLUE);
-            }
-            else
-            {
-                c.SetTeam(TeamId.TEAM_PURPLE);
-            }
-
+            var pos = c.GetSpawnPosition();
+            c.setPosition(pos.X, pos.Y);
             c.LevelUp();
 
             player.Champion = c;
-            var pair = new Pair<uint, ClientInfo>();
-            pair.Item2 = player;
+            var pair = new Pair<uint, ClientInfo> {Item2 = player};
             _players.Add(pair);
         }
 

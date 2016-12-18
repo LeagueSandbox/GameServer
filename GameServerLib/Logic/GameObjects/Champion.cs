@@ -2,7 +2,9 @@
 using LeagueSandbox.GameServer.Logic.Items;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
 using NLua.Exceptions;
 
@@ -20,13 +22,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private short _skillPoints;
         public int Skin { get; set; }
         private long _championHitFlagTimer;
+        /// <summary>
+        /// Player number ordered by the config file.
+        /// </summary>
         private uint _playerId;
+        /// <summary>
+        /// Player number in the team ordered by the config file. 
+        /// Used in nowhere but to set spawnpoint at the game start.
+        /// </summary>
+        private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
-        public Champion(string model, uint playerId, RuneCollection runeList, uint netId = 0)
+        public Champion(string model, uint playerId, uint playerTeamSpecialId, RuneCollection runeList, uint netId = 0)
             : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
             _playerId = playerId;
+            _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(this);
@@ -123,26 +134,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private string GetPlayerIndex()
         {
-            return string.Format("player{0}", _playerId);
+            return $"player{_playerId}";
         }
 
-        public int getTeamSize()
+        public int GetTeamSize()
         {
-            int blueTeamSize = 0;
-            int purpTeamSize = 0;
+            var blueTeamSize = 0;
+            var purpTeamSize = 0;
 
             foreach (var player in _game.Config.Players.Values)
             {
-                switch (player.Team.ToLower())
+                if (player.Team.ToLower() == "blue")
                 {
-                    case "blue":
-                        blueTeamSize++;
-                        break;
-                    case "purple":
-                        purpTeamSize++;
-                        break;
-                    default:
-                        break;
+                    blueTeamSize++;
+                }
+                else
+                {
+                    purpTeamSize++;
                 }
             }
 
@@ -153,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     case "blue":
                         return blueTeamSize;
-                    case "purple":
+                    default:
                         return purpTeamSize;
                 }
             }
@@ -161,13 +169,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public Tuple<float, float> getRespawnPosition()
+        public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
-            var mapId = config.GameConfig.Map;
             var playerIndex = GetPlayerIndex();
             var playerTeam = "";
-            var teamSize = getTeamSize();
+            var teamSize = GetTeamSize();
 
             if (teamSize > 6) //???
                 teamSize = 6;
@@ -177,22 +184,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var p = config.Players[playerIndex];
                 playerTeam = p.Team;
             }
-            var x = 0;
-            var y = 0;
-            switch (playerTeam.ToLower())
-            {
-                //TODO : repair function
-                case "blue":
-                    x = config.MapSpawns.Blue[teamSize - 1].GetXForPlayer(0);
-                    y = config.MapSpawns.Blue[teamSize - 1].GetYForPlayer(0);
-                    break;
-                case "purple":
-                    x = config.MapSpawns.Purple[teamSize - 1].GetXForPlayer(0);
-                    y = config.MapSpawns.Purple[teamSize - 1].GetYForPlayer(0);
-                    break;
-            }
 
-            return new Tuple<float, float>(x, y);
+            var spawnsByTeam = new Dictionary<TeamId, Dictionary<int, PlayerSpawns>>
+            {
+                {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
+                {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
+            };
+
+            var spawns = spawnsByTeam[Team];
+            return spawns[teamSize - 1].GetCoordsForPlayer((int)_playerTeamSpecialId);
+        }
+
+        public Vector2 GetRespawnPosition()
+        {
+            var config = _game.Config;
+            var playerIndex = GetPlayerIndex();
+
+            if (config.Players.ContainsKey(playerIndex))
+            {
+                var p = config.Players[playerIndex];
+            }
+            var coords = new Vector2
+            {
+                X = _game.Map.GetRespawnLocation(Team).X,
+                Y = _game.Map.GetRespawnLocation(Team).Y
+            };
+            return new Vector2(coords.X, coords.Y);
         }
 
         public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
@@ -292,7 +309,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
-                Dictionary<uint, GameObject> objects = _game.Map.GetObjects();
+                var objects = _game.Map.GetObjects();
                 var distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 var range = Math.Max(stats.Range.Total, DETECT_RANGE);
@@ -301,7 +318,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     var u = it.Value as Unit;
 
-                    if (u == null || u.IsDead || u.Team == this.Team || GetDistanceTo(u) > range)
+                    if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
                         continue;
 
                     if (GetDistanceTo(u) < distanceToTarget)
@@ -329,10 +346,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 RespawnTimer -= diff;
                 if (RespawnTimer <= 0)
                 {
-                    var spawnPos = getRespawnPosition();
-                    float respawnX = spawnPos.Item1;
-                    float respawnY = spawnPos.Item2;
-                    setPosition(respawnX, respawnY);
+                    var spawnPos = GetRespawnPosition();
+                    setPosition(spawnPos.X, spawnPos.Y);
                     _game.PacketNotifier.NotifyChampionRespawn(this);
                     GetStats().CurrentHealth = GetStats().HealthPoints.Total;
                     GetStats().CurrentMana = GetStats().HealthPoints.Total;
