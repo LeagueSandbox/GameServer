@@ -257,12 +257,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 1.9f;
         }
 
-        public override Target GetRespawnLocation(int team)
+        public override Target GetRespawnLocation(TeamId team)
         {
-            var dic = new Dictionary<int, Target>
+            var dic = new Dictionary<TeamId, Target>
             {
-                { 0, new Target(1051.19f, 7283.599f) },
-                { 1, new Target(14364, 7277) }
+                { TeamId.TEAM_BLUE, new Target(1051.19f, 7283.599f) },
+                { TeamId.TEAM_PURPLE, new Target(14364, 7277) }
             };
 
             if (!dic.ContainsKey(team))
