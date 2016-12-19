@@ -254,7 +254,7 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[team] = visible;
             if (this is Unit)
             {
-                _game.PacketNotifier.NotifyUpdatedStats(this as Unit);
+                _game.PacketNotifier.NotifyUpdatedStats(this as Unit, false);
             }
         }
 

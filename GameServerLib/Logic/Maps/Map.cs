@@ -142,7 +142,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 if (u.GetStats().GetUpdatedStats().Count > 0)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u);
+                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     u.GetStats().ClearUpdatedStats();
                 }
 

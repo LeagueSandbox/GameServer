@@ -471,7 +471,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (regain != 0)
             {
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
-                _game.PacketNotifier.NotifyUpdatedStats(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
         }
 
