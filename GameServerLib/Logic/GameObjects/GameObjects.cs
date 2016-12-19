@@ -252,10 +252,6 @@ namespace LeagueSandbox.GameServer.Logic
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-            if (this is Unit)
-            {
-                _game.PacketNotifier.NotifyUpdatedStats(this as Unit);
-            }
         }
 
         public void DashToTarget(Target t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
