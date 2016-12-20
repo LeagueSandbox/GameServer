@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return RESPAWN_TIMER - diff.TotalMilliseconds;
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             if (!RespawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
             {

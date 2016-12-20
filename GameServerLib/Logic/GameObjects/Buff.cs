@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             LoadLua();
             try
             {
-                _scriptEngine.Execute("onAddBuff()");
+                _scriptEngine.RunFunction("onAddBuff");
             }
             catch (LuaException e)
             {
@@ -119,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.Load(scriptLoc);
         }
 
-        public void Update(long diff)
+        public void Update(float diff)
         {
             TimeElapsed += (float)diff / 1000.0f;
 
@@ -127,8 +127,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 try
                 {
-                    _scriptEngine.SetGlobalVariable("diff", diff);
-                    _scriptEngine.Execute("onUpdate(diff)");
+                    _scriptEngine.RunFunction("onUpdate", diff);
                 }
                 catch (LuaException e)
                 {
@@ -142,7 +141,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     try
                     {
-                        _scriptEngine.Execute("onBuffEnd()");
+                        _scriptEngine.RunFunction("onBuffEnd");
                     }
                     catch (LuaException e)
                     {

@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 
@@ -24,10 +25,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected int _minionNumber;
         protected long _firstSpawnTime;
         protected long _spawnInterval;
-        public long GameTime { get; private set; }
+        public float GameTime { get; private set; }
         protected long _nextSpawnTime;
         public long FirstGoldTime { get; protected set; } // Time that gold should begin to generate
-        protected long _nextSyncTime;
+        protected float _nextSyncTime;
         protected List<Announce> _announcerEvents;
         protected Game _game;
         public bool HasFirstBloodHappened { get; set; }
@@ -75,8 +76,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             foreach (var team in _teamsIterator)
                 _visionUnits.Add(team, new Dictionary<uint, Unit>());
         }
-
-        public virtual void Update(long diff)
+        
+        public int GetNumberOfObjects()
+        {
+            return GetObjects().Count;
+        }
+        
+        public virtual void Update(float diff)
         {
             var temp = GetObjects();
             foreach (var obj in temp.Values)
@@ -165,7 +171,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     obj.clearMovementUpdated();
                 }
             }
-
             _collisionHandler.Update();
 
             foreach (var announce in _announcerEvents)

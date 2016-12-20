@@ -38,12 +38,17 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.Lua
         {
             _lua.RegisterFunction(path, target, function);
         }
-
+        
         public void Execute(string script)
         {
             _lua.DoString(script);
         }
 
+        public void RunFunction(string function, params object[] args)
+        {
+            _lua.GetFunction(function).Call(args);
+        }
+        
         public void SetGlobalVariable(string name, object value)
         {
             _lua[name] = value;

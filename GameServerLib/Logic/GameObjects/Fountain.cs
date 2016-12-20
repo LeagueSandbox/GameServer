@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _x;
         private float _y;
         private float _fountainSize;
-        private long _healTickTimer;
+        private float _healTickTimer;
         private TeamId _team;
         private Game _game = Program.ResolveDependency<Game>(); 
 
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _team = team;
         }
 
-        internal void Update(long diff)
+        internal void Update(float diff)
         {
             _healTickTimer += diff;
             if (_healTickTimer < HEAL_FREQUENCY)

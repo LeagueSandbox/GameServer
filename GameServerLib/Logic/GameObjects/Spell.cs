@@ -286,7 +286,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _scriptEngine.SetGlobalVariable("spell", this);
                 _scriptEngine.SetGlobalVariable("spellLevel", Level);
                 _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
-                _scriptEngine.Execute("onStartCasting()");
+
+                _scriptEngine.RunFunction("onStartCasting");
             }
             catch (LuaException e)
             {
@@ -324,7 +325,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called every diff milliseconds to update the spell
         /// </summary>
-        public virtual void update(long diff)
+        public virtual void update(float diff)
         {
             switch (state)
             {
@@ -354,7 +355,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _scriptEngine.SetGlobalVariable("diff", diff);
                     _scriptEngine.SetGlobalVariable("spellLevel", Level);
                     _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
-                    _scriptEngine.Execute("onUpdate(diff)");
+                    _scriptEngine.RunFunction("onUpdate", diff);
                 }
                 catch (LuaException e)
                 {

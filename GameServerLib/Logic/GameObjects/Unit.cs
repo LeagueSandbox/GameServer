@@ -72,7 +72,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected internal bool _hasMadeInitialAttack;
         private bool _nextAttackFlag;
         public Unit DistressCause { get; protected set; }
-        private long _statUpdateTimer;
+        private float _statUpdateTimer;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private object _buffsLock = new object();
         private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
-        private long _timerUpdate;
+        private float _timerUpdate;
 
         public bool IsCastingSpell { get; set; }
 
@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return stats;
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             _timerUpdate += diff;
             if (_timerUpdate >= UPDATE_TIME)
@@ -166,9 +166,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     try
                     {
-                        _scriptEngine.SetGlobalVariable("diff", _timerUpdate);
-                        _scriptEngine.SetGlobalVariable("me", this);
-                        _scriptEngine.Execute("onUpdate(diff)");
+                        _scriptEngine.RunFunction("onUpdate", _timerUpdate);
                     }
                     catch (LuaScriptException e)
                     {
@@ -190,7 +188,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public void UpdateAutoAttackTarget(long diff)
+        public void UpdateAutoAttackTarget(float diff)
         {
             if (IsDead)
             {
@@ -344,12 +342,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (collider == null)
                 {
-                    _scriptEngine.Execute("onCollideWithTerrain()");
+                    _scriptEngine.RunFunction("onCollideWithTerrain");
                 }
                 else
                 {
-                    _scriptEngine.SetGlobalVariable("object", collider);
-                    _scriptEngine.Execute("onCollide(object)");
+                    _scriptEngine.RunFunction("onCollide", collider);
                 }
             }
             catch (LuaException e)
@@ -377,8 +374,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 try
                 {
-                    _scriptEngine.SetGlobalVariable("target", target);
-                    _scriptEngine.Execute("onAutoAttack(target)");
+                    _scriptEngine.RunFunction("onAutoAttack", target);
                 }
                 catch (LuaScriptException e)
                 {
@@ -400,11 +396,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 try
                 {
-                    _scriptEngine.SetGlobalVariable("target", target);
-                    _scriptEngine.SetGlobalVariable("damage", damage);
-                    _scriptEngine.SetGlobalVariable("type", type);
-                    _scriptEngine.SetGlobalVariable("source", source);
-                    _scriptEngine.Execute("onDealDamage(target, damage, type, source)");
+                    _scriptEngine.RunFunction("onDealDamage", target, damage, type, source);
                 }
                 catch (LuaScriptException e)
                 {
@@ -443,15 +435,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 try
                 {
-                    target._scriptEngine.SetGlobalVariable("attacker", this);
-                    target._scriptEngine.SetGlobalVariable("damage", damage);
-                    target._scriptEngine.SetGlobalVariable("type", type);
-                    target._scriptEngine.SetGlobalVariable("source", source);
                     target._scriptEngine.Execute(@"
                         function modifyIncomingDamage(value)
                             damage = value
                         end");
-                    target._scriptEngine.Execute("onDamageTaken(attacker, damage, type, source)");
+                    target._scriptEngine.RunFunction("onDamageTaken", this, damage, type, source);
                 }
                 catch (LuaScriptException e)
                 {
@@ -481,8 +469,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 try
                 {
-                    _scriptEngine.SetGlobalVariable("killer", killer);
-                    _scriptEngine.Execute("onDie(killer)");
+                    _scriptEngine.RunFunction("onDie", killer);
                 }
                 catch (LuaScriptException e)
                 {

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -31,8 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         protected const int PEER_MTU = 996;
         protected const PacketFlags RELIABLE = PacketFlags.Reliable;
         protected const PacketFlags UNRELIABLE = PacketFlags.None;
-        protected const double REFRESH_RATE = 16.666; // 60 fps
-        private long _timeElapsed;
+        protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
         private Logger _logger;
         // Object managers
         private ItemManager _itemManager;
@@ -47,7 +47,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             NetworkIdManager networkIdManager,
             PlayerManager playerManager,
             Logger logger
-        ) {
+        )
+        {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;
             _networkIdManager = networkIdManager;
@@ -111,76 +112,45 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void NetLoop()
         {
-            long minTime = 0;
-            long maxTime = 0;
-            long averageTime = 0;
-            long averageCount = 0;
-            var debugWatch = new Stopwatch();
-            debugWatch.Start();
-
-            var logicDurationWatch = new Stopwatch();
-            var lastMapDurationWatch = new Stopwatch();
             var enetEvent = new Event();
-            while (!Program.IsSetToExit)
+
+            var lastMapDurationWatch = new Stopwatch();
+            lastMapDurationWatch.Start();
+            using (PreciseTimer.SetResolution(1))
             {
-                logicDurationWatch.Restart();
-                while (_server.Service(0, out enetEvent) > 0)
+                while (!Program.IsSetToExit)
                 {
-                    switch (enetEvent.Type)
+                    while (_server.Service(0, out enetEvent) > 0)
                     {
-                        case EventType.Connect:
-                            //Logging->writeLine("A new client connected: %i.%i.%i.%i:%i", event.peer->address.host & 0xFF, (event.peer->address.host >> 8) & 0xFF, (event.peer->address.host >> 16) & 0xFF, (event.peer->address.host >> 24) & 0xFF, event.peer->address.port);
+                        switch (enetEvent.Type)
+                        {
+                            case EventType.Connect:
+                                // Set some defaults
+                                enetEvent.Peer.Mtu = PEER_MTU;
+                                enetEvent.Data = 0;
+                                break;
 
-                            // Set some defaults
-                            enetEvent.Peer.Mtu = PEER_MTU;
-                            enetEvent.Data = 0;
-                            break;
+                            case EventType.Receive:
+                                // Clean up the packet now that we're done using it.
+                                enetEvent.Packet.Dispose();
+                                break;
 
-                        case EventType.Receive:
-                            if (!PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
-                            {
-                                //enet_peer_disconnect(event.peer, 0);
-                            }
-
-                            // Clean up the packet now that we're done using it.
-                            enetEvent.Packet.Dispose();
-                            break;
-
-                        case EventType.Disconnect:
-                            HandleDisconnect(enetEvent.Peer);
-                            break;
+                            case EventType.Disconnect:
+                                HandleDisconnect(enetEvent.Peer);
+                                break;
+                        }
                     }
-                }
-                var sinceLastMapTime = lastMapDurationWatch.ElapsedMilliseconds;
-                lastMapDurationWatch.Restart();
-                if (IsRunning)
-                {
-                    Map.Update(sinceLastMapTime);
-                }
-                logicDurationWatch.Stop();
-                _timeElapsed = logicDurationWatch.ElapsedMilliseconds;
 
-                minTime = Math.Min(minTime, _timeElapsed);
-                minTime = Math.Min(maxTime, _timeElapsed);
-                averageCount++;
-                averageTime += _timeElapsed;
-
-                if (debugWatch.ElapsedMilliseconds >= 10000)
-                {
-                    debugWatch.Restart();
-
-                    _logger.LogCoreInfo("Networking logic and map processing time average: {0}, min: {1}, max: {2}", (averageTime) / averageCount, minTime, maxTime);
-
-                    minTime = _timeElapsed;
-                    maxTime = _timeElapsed;
-                    averageCount = 0;
-                    averageTime = 0;
-                }
-
-                var timeToWait = REFRESH_RATE - _timeElapsed;
-                if (timeToWait > 0)
-                {
-                    Thread.Sleep((int)timeToWait);
+                    if (lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                    {
+                        double sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                        lastMapDurationWatch.Restart();
+                        if (IsRunning)
+                        {
+                            Map.Update((float)sinceLastMapTime);
+                        }
+                    }
+                    Thread.Sleep(1);
                 }
             }
         }

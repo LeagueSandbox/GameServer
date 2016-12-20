@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             //Update stats if it's time
             switch (Type)

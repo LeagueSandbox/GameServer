@@ -158,6 +158,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleScoreboard.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
+    <Compile Include="Logic\PreciseTimer.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />

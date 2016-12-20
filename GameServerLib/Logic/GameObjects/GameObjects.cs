@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic
         /// Moves the object depending on its target, updating its coordinate.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
-        public void Move(long diff)
+        public void Move(float diff)
         {
             if (Target == null)
             {
@@ -165,7 +165,7 @@ namespace LeagueSandbox.GameServer.Logic
             yvector /= toDivide;
         }
 
-        public virtual void update(long diff)
+        public virtual void update(float diff)
         {
             Move(diff);
         }
@@ -252,7 +252,7 @@ namespace LeagueSandbox.GameServer.Logic
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-            if (this is Unit)
+            if(this is Unit)
             {
                 _game.PacketNotifier.NotifyUpdatedStats(this as Unit, false);
             }
