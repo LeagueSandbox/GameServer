@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -28,8 +29,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 {
                     if (player.Peer != null)
                     {
-                        _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
-                        return false;
+                        if (!player.IsDisconnected)
+                        {
+                            _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                            return false;
+                        }
                     }
 
                     //TODO: add at least port or smth
