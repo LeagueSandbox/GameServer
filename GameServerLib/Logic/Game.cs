@@ -131,6 +131,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                                 break;
 
                             case EventType.Receive:
+                                PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID);
                                 // Clean up the packet now that we're done using it.
                                 enetEvent.Packet.Dispose();
                                 break;
