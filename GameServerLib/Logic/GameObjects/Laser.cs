@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _affectAsCastIsOver = affectAsCastIsOver;
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             if (!_affectAsCastIsOver)
             {

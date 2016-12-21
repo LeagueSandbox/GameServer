@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Champion : Unit
     {
         public Shop Shop { get; protected set; }
-        public long RespawnTimer { get; private set; }
+        public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; }
@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private short _skillPoints;
         public int Skin { get; set; }
-        private long _championHitFlagTimer;
+        private float _championHitFlagTimer;
         /// <summary>
         /// Player number ordered by the config file.
         /// </summary>
@@ -238,11 +238,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentMana = stats.CurrentMana - s.getCost() * (1 - stats.getSpellCostReduction());
                 try
                 {
-                    _scriptEngine.SetGlobalVariable("x", x);
-                    _scriptEngine.SetGlobalVariable("y", y);
-                    _scriptEngine.SetGlobalVariable("slot", slot);
-                    _scriptEngine.SetGlobalVariable("target", target);
-                    _scriptEngine.Execute("onSpellCast(x, y, slot, target)");
+                    _scriptEngine.RunFunction("onSpellCast", x, y, slot, target);
                 }
                 catch (LuaScriptException e)
                 {
@@ -303,7 +299,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return Spells[slot];
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             base.update(diff);
 

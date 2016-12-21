@@ -542,7 +542,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return AttackSpeedFlat*AttackSpeedMultiplier.Total;
         }
 
-        public void update(long diff)
+        public void update(float diff)
         {
             if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total && CurrentHealth > 0)
             {

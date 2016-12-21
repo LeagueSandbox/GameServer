@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _AIPaused = b;
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             base.update(diff);
 

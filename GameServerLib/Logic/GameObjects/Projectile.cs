@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             owner.incrementAttackerCount();
         }
 
-        public override void update(long diff)
+        public override void update(float diff)
         {
             if (Target == null)
             {

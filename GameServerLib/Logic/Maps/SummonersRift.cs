@@ -280,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _turretItems[type];
         }
 
-        public override void Update(long diff)
+        public override void Update(float diff)
         {
             base.Update(diff);
 

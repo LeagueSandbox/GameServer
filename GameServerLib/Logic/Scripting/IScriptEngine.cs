@@ -9,5 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Scripting
         void RegisterFunction(string functionName, object target, MethodBase function);
         void Execute(string script);
         void SetGlobalVariable(string name, object value);
+        void RunFunction(string function, params object[] args);
     }
 }
