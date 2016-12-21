@@ -80,14 +80,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             switch (message.type)
             {
                 case ChatType.CHAT_ALL:
-                    //return _game.PacketHandlerManager.broadcastPacket(data, Channel.CHL_COMMUNICATION);
                     _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
                     _game.PacketHandlerManager.broadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2C);
                     return true;
                 case ChatType.CHAT_TEAM:
-                    /*return _game.PacketHandlerManager.broadcastPacketTeam(
-                        _playerManager.GetPeerInfo(peer).Team, data, Channel.CHL_COMMUNICATION
-                    );*/
                     dmTeam = new DebugMessage(teamChatColor + debugMessage);
                     _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
                     return true;
