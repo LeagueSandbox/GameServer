@@ -91,6 +91,15 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                     continue;
                 }
+                else if (kv.Value is Champion)
+                {
+                    var champion = kv.Value as Champion;
+                    if(champion.IsVisibleByTeam(peerInfo.Champion.Team))
+                    {
+                        var enterVisionPacket = new EnterVisionAgain(champion);
+                        _game.PacketHandlerManager.sendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
+                    }
+                }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
                     var inhibtor = kv.Value as Unit;
