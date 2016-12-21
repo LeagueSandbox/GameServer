@@ -2,6 +2,7 @@ using System;
 using Ninject;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer
 {
@@ -37,10 +38,18 @@ namespace LeagueSandbox.GameServer
             var context = _kernel.Get<ServerContext>();
             var server = _kernel.Get<Server>();
             var itemManager = _kernel.Get<ItemManager>();
+            var logger = _kernel.Get<Logger>();
 
-            ExecutingDirectory = context.ExecutingDirectory;
-            itemManager.LoadItems();
-            server.Start();
+            try
+            {
+                ExecutingDirectory = context.ExecutingDirectory;
+                itemManager.LoadItems();
+                server.Start();
+            }
+            catch (Exception e)
+            {
+                logger.LogFatalError("Error: {0}", e.ToString());
+            }
         }
 
         public static void SetToExit()

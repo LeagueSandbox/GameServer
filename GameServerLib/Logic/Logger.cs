@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -25,6 +30,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logWriter.Log("A first chance exception was thrown", "EXCEPTION");
             _logWriter.Log(e.Exception.Message, "EXCEPTION");
             _logWriter.Log(e.ToString(), "EXCEPTION");
+            _logWriter.Log(e.Exception.StackTrace, "EXCEPTION");
         }
 
         public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs x)
@@ -33,6 +39,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var ex = (Exception)x.ExceptionObject;
             _logWriter.Log(ex.Message, "UNHANDLEDEXCEPTION");
             _logWriter.Log(ex.ToString(), "UNHANDLEDEXCEPTION");
+            _logWriter.Log(ex.StackTrace, "UNHANDLEDEXCEPTION");
         }
 
         public void Log(string line, string type = "LOG")
@@ -70,33 +77,80 @@ namespace LeagueSandbox.GameServer.Core.Logic
             LogCoreError(string.Format(format, args));
         }
 
-        private class LogWriter
+        public void Flush()
+        {
+            _logWriter.Flush();
+        }
+
+        public void LogFatalError(string line)
+        {
+            Log(line, "FATAL_ERROR");
+            Flush();
+        }
+
+        public void LogFatalError(string format, params object[] args)
+        {
+            LogFatalError(string.Format(format, args));
+        }
+
+        private class LogWriter : IDisposable
         {
             public string _logFileName;
-            private object _locker = new object();
+            private FileStream _logFile;
+            private StringBuilder _stringBuilder;
+            private const double REFRESH_RATE = 1000.0 / 10.0; //10fps
+            private System.Timers.Timer _refreshTimer;
 
             public LogWriter(string executingDirectory, string logFileName)
             {
                 CreateLogFile(executingDirectory, logFileName);
+
+                _stringBuilder = new StringBuilder();
+                //Start refresh loop
+                _refreshTimer = new System.Timers.Timer(REFRESH_RATE)
+                {
+                    AutoReset = true,
+                    Enabled = true
+                };
+                _refreshTimer.Elapsed += (_, _2) => RefreshLoop();
+                _refreshTimer.Start();
+            }
+
+            public void Flush()
+            {
+                RefreshLoop();
+            }
+
+            private void RefreshLoop()
+            {
+                if (_stringBuilder.Length > 0)
+                {
+                    String text = _stringBuilder.ToString();
+                    _stringBuilder.Clear();
+                    Task.Factory.StartNew(() =>
+                    {
+                        Console.Write(text);
+                    });
+                    WriteTextToLogFile(text + Environment.NewLine);
+                }
+            }
+
+            private void WriteTextToLogFile(string text)
+            {
+                byte[] info = new UTF8Encoding(true).GetBytes(text);
+                _logFile.WriteAsync(info, 0, info.Length);
             }
 
             public void Log(string lines, string type = "LOG")
             {
                 var text = string.Format(
-                    "({0} {1}) [{2}]: {3}",
-                    DateTime.Now.ToShortDateString(),
-                    DateTime.Now.ToShortTimeString(),
+                    "({0}) [{1}]: {2}",
+                    DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"),
                     type.ToUpper(),
                     lines
                 );
-                lock (_locker)
-                {
-                    File.AppendAllText(
-                        _logFileName,
-                        text + Environment.NewLine
-                    );
-                    Console.WriteLine(text);
-                }
+
+                _stringBuilder.AppendLine(text);
             }
 
             public void CreateLogFile(string directory, string name)
@@ -119,10 +173,31 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 );
                 _logFileName = Path.Combine(path, logName);
 
-                var file = File.Create(_logFileName);
-
-                file.Close();
+                _logFile = File.Create(_logFileName);
             }
+
+            #region IDisposable Support
+            private bool disposedValue = false; // To detect redundant calls
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        Flush();
+                        _logFile.Flush();
+                        _logFile.Close();
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            // This code added to correctly implement the disposable pattern.
+            public void Dispose()
+            {
+                Dispose(true);
+            }
+            #endregion
         }
     }
 }
