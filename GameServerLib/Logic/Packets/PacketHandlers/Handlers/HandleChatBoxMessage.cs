@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Logic.Players;
+using System;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
@@ -15,6 +16,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var message = new ChatMessage(data);
+            Console.WriteLine("PlayerID: " + message.playerId);
             var split = message.msg.Split(' ');
             if (split.Length > 1)
             {
@@ -56,14 +58,35 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
             }
             #endregion
+
+            var debugMessage = string.Format("{0} ({1}): </font><font color=\"#FFFFFF\">{2}",
+                _playerManager.GetPeerInfo(peer).Name,
+                _playerManager.GetPeerInfo(peer).Champion.Model,
+                message.msg);
+            var teamChatColor = "<font color=\"#00FF00\">";
+            var enemyChatColor = "<font color=\"#FF0000\">";
+            var dmTeam = new DebugMessage(teamChatColor + "[All] " + debugMessage);
+            var dmEnemy = new DebugMessage(enemyChatColor + "[All] " + debugMessage);
+            var ownTeam = _playerManager.GetPeerInfo(peer).Team;
+            var enemyTeam = CustomConvert.GetEnemyTeam(ownTeam);
+
+            if (_game.Config.ChatCheatsEnabled)
+            {
+                _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
+                _game.PacketHandlerManager.broadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2C);
+                return true;
+            }
+
             switch (message.type)
             {
                 case ChatType.CHAT_ALL:
-                    return _game.PacketHandlerManager.broadcastPacket(data, Channel.CHL_COMMUNICATION);
+                    _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
+                    _game.PacketHandlerManager.broadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2C);
+                    return true;
                 case ChatType.CHAT_TEAM:
-                    return _game.PacketHandlerManager.broadcastPacketTeam(
-                        _playerManager.GetPeerInfo(peer).Team, data, Channel.CHL_COMMUNICATION
-                    );
+                    dmTeam = new DebugMessage(teamChatColor + debugMessage);
+                    _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
+                    return true;
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");
                     return _game.PacketHandlerManager.sendPacket(peer, data, Channel.CHL_COMMUNICATION);
