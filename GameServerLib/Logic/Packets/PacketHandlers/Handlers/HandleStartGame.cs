@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                var start = new StatePacket(PacketCmdS2C.PKT_S2C_StartGame);
+                var start = new StatePacket(PacketCmd.PKT_S2C_StartGame);
                 _game.PacketHandlerManager.broadcastPacket(start, Channel.CHL_S2C);
 
                 foreach (var player in _playerManager.GetPlayers())
