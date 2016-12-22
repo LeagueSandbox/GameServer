@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             // registerHandler(new HandleGameNumber(), PacketCmd.PKT_C2S_GameNumberReq, Channel.CHL_C2S);
             registerHandler(new HandleQueryStatus(), PacketCmdC2S.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
             registerHandler(new HandleStartGame(), PacketCmdC2S.PKT_C2S_StartGame, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Exit, Channel.CHL_C2S);
+            registerHandler(new HandleExit(), PacketCmdC2S.PKT_C2S_Exit, Channel.CHL_C2S);
             registerHandler(new HandleView(), PacketCmdC2S.PKT_C2S_ViewReq, Channel.CHL_C2S);
             registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
             // registerHandler(new HandleNull(), PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
