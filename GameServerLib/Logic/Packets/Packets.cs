@@ -47,14 +47,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class GamePacket : BasePacket
-    {
-        public GamePacket(PacketCmd cmd = PacketCmd.PKT_KeyCheck, uint netId = 0) : base(cmd, netId)
-        {
-            buffer.Write(Environment.TickCount);
-        }
-    }
-
     public class ExtendedPacket : BasePacket
     {
         public ExtendedPacket(ExtendedPacketCmd ecmd = (ExtendedPacketCmd)0, uint netId = 0) : base(PacketCmd.PKT_S2C_Extended, netId)
@@ -914,7 +906,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     };
 
-    public class Dash : GamePacket
+    public class Dash : BasePacket
     {
         public Dash(Unit u,
                     Target t,
@@ -926,6 +918,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                     float travelTime = 0.0f
         ) : base(PacketCmd.PKT_S2C_Dash)
         {
+            buffer.Write(Environment.TickCount); // syncID
             buffer.Write((short)1); // Number of dashes
             buffer.Write((byte)4); // Waypoints size * 2
             buffer.Write((uint)u.NetId);
@@ -1090,7 +1083,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class MovementAns : GamePacket
+    public class MovementAns : BasePacket
     {
         public MovementAns(GameObject obj) : this(new List<GameObject> { obj })
         {
@@ -1099,6 +1092,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public MovementAns(List<GameObject> actors) : base(PacketCmd.PKT_S2C_MoveAns)
         {
+            buffer.Write(Environment.TickCount); // syncID
             buffer.Write((short)actors.Count);
 
             foreach (var actor in actors)
@@ -2486,7 +2480,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         static short a = 0x01;
         public TeleportRequest(uint netId, float x, float y, bool first) : base(PacketCmd.PKT_S2C_MoveAns)
         {
-            buffer.Write((int)Environment.TickCount);//not 100% sure
+            buffer.Write((int)Environment.TickCount); // syncID
             buffer.Write((byte)0x01); // Unk
             buffer.Write((byte)0x00); // Unk
             if (first == true) //seems to be id, 02 = before teleporting, 03 = do teleport
@@ -2532,13 +2526,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class CastSpellAns : GamePacket
+    public class CastSpellAns : BasePacket
     {
         public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId)
                : base(PacketCmd.PKT_S2C_CastSpellAns, s.Owner.NetId)
         {
             var m = _game.Map;
 
+            buffer.Write(Environment.TickCount); // syncID
             buffer.Write((byte)0);
             buffer.Write((byte)0x66); // <-| Flag
             buffer.Write((byte)0x00); // <-|
@@ -3178,7 +3173,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class UpdateStats : GamePacket
+    public class UpdateStats : BasePacket
     {
         public UpdateStats(Unit u, bool partial = true) : base(PacketCmd.PKT_S2C_CharStats)
         {
@@ -3190,6 +3185,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 stats = u.GetStats().GetAllStats();
             var orderedStats = stats.OrderBy(x => x.Key);
 
+            buffer.Write(Environment.TickCount); // syncID
             buffer.Write((byte)1); // updating 1 unit
 
             byte masterMask = 0;
