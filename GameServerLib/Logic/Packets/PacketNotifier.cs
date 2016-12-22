@@ -51,10 +51,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var timer = new System.Timers.Timer(5000) { AutoReset = false };
             timer.Elapsed += (a, b) =>
             {
-                var win = new GameEnd(true);
-                _game.PacketHandlerManager.broadcastPacketTeam(CustomConvert.GetEnemyTeam(losingTeam), win, Channel.CHL_S2C);
-                var lose = new GameEnd(false);
-                _game.PacketHandlerManager.broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
+                var gameEndPacket = new GameEnd(losingTeam != TeamId.TEAM_BLUE);
+                _game.PacketHandlerManager.broadcastPacket(gameEndPacket, Channel.CHL_S2C);
             };
             timer.Start();
             Program.SetToExit();

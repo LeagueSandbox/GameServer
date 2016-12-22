@@ -2403,9 +2403,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class GameEnd : BasePacket
     {
-        public GameEnd(bool win) : base(PacketCmdS2C.PKT_S2C_GameEnd)
+        public GameEnd(bool winningTeamIsBlue) : base(PacketCmdS2C.PKT_S2C_GameEnd)
         {
-            buffer.Write(win ? (byte)1 : (byte)0); //0 : lose 1 : Win
+            buffer.Write(winningTeamIsBlue ? (byte)1 : (byte)0);
         }
     }
 
