@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packets.Packet((PacketCmdS2C)opcode);
+                var packet = new Packets.Packet((PacketCmd)opcode);
                 var buffer = packet.getBuffer();
 
                 for (int i = 2; i < s.Length; i++)

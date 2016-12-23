@@ -51,10 +51,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var timer = new System.Timers.Timer(5000) { AutoReset = false };
             timer.Elapsed += (a, b) =>
             {
-                var win = new GameEnd(true);
-                _game.PacketHandlerManager.broadcastPacketTeam(CustomConvert.GetEnemyTeam(losingTeam), win, Channel.CHL_S2C);
-                var lose = new GameEnd(false);
-                _game.PacketHandlerManager.broadcastPacketTeam(losingTeam, lose, Channel.CHL_S2C);
+                var gameEndPacket = new GameEnd(losingTeam != TeamId.TEAM_BLUE);
+                _game.PacketHandlerManager.broadcastPacket(gameEndPacket, Channel.CHL_S2C);
             };
             timer.Start();
             Program.SetToExit();
@@ -111,13 +109,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, BuffType.Aura, b.Name, 1);
+            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, BuffType.Aura, b.Name, b.Slot);
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
-        public void NotifyRemoveBuff(Unit u, string buffName)
+        public void NotifyRemoveBuff(Unit u, string buffName, byte slot = 0x01)
         {
-            var remove = new RemoveBuff(u, buffName);
+            var remove = new RemoveBuff(u, buffName, slot);
             _game.PacketHandlerManager.broadcastPacket(remove, Channel.CHL_S2C);
         }
 

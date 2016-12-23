@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -131,6 +132,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
                                 break;
 
                             case EventType.Receive:
+                                if (!PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
+                                {
+                                    //enet_peer_disconnect(event.peer, 0);
+                                }
                                 // Clean up the packet now that we're done using it.
                                 enetEvent.Packet.Dispose();
                                 break;
@@ -175,8 +180,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var peerinfo = _playerManager.GetPeerInfo(peer);
             if (peerinfo != null)
             {
-                // TODO: Handle disconnect
-                _logger.LogCoreInfo("Player " + peerinfo.UserId + " disconnected");
+                if (!peerinfo.IsDisconnected)
+                {
+                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerDisconnected, peerinfo.Champion);
+                }
+                peerinfo.IsDisconnected = true;
             }
             return true;
         }
