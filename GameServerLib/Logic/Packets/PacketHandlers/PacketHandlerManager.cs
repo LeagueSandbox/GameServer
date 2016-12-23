@@ -202,7 +202,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             var header = new GameServer.Logic.Packets.PacketHeader(data);
             var handler = GetHandler(header.cmd, channelID);
-            // printPacket(data, "Received: ");
 
             switch (header.cmd)
             {
@@ -211,7 +210,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 case PacketCmd.PKT_C2S_ViewReq:
                     break;
                 default:
-                    Console.WriteLine("Requested " + header.cmd);
                     break;
             }
 
@@ -219,13 +217,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 if (!handler.HandlePacket(peer, data))
                 {
-                    Console.WriteLine("Handle failed for " + header.cmd);
                     return false;
                 }
 
                 return true;
             }
-            _logger.LogCoreWarning("Unhandled OpCode " + header.cmd);
             printPacket(data, "Error: ");
             return false;
         }
