@@ -157,7 +157,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SynchVersionAns(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map) : base(PacketCmd.PKT_S2C_SynchVersion)
         {
-            buffer.Write((byte)9); // unk
+            buffer.Write((byte)1); // Bit field
+                                   // First bit: doVersionsMatch - If set to 0, the client closes
+                                   // Second bit: Seems to enable a 'ClientMetricsLogger'
             buffer.Write((uint)map); // mapId
             foreach (var player in players)
             {
@@ -171,7 +173,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 buffer.Write((int)p.Team); // Probably a short
                 buffer.fill(0, 64); // name is no longer here
                 buffer.fill(0, 64);
-                //buffer.Write(p.getRank());
                 foreach (var b in Encoding.Default.GetBytes(p.Rank))
                     buffer.Write((byte)b);
                 buffer.fill(0, 24 - p.Rank.Length);
@@ -374,25 +375,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public uint trash2;
     }
 
-    public class CameraLock
-    {
-        PacketHeader header;
-        short isLock;
-        int padding;
-    }
-
-    /*typedef struct _ViewReq {
-        short cmd;
-        int unk1;
-        float x;
-        float zoom;
-        float y;
-        float y2;		//Unk
-        int width;	//Unk
-        int height;	//Unk
-        int unk2;	//Unk
-        short requestNo;
-    } ViewReq;*/
     public class SpawnMonster : Packet
     {
         public SpawnMonster(Monster m) : base(PacketCmd.PKT_S2C_ObjectSpawn)
@@ -736,24 +718,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class PauseGame : Packet
+    public class PauseGame : BasePacket
     {
-        public PauseGame(byte seconds) : base(PacketCmd.PKT_S2C_PauseGame)
+        public PauseGame(byte seconds, bool showWindow) : base(PacketCmd.PKT_S2C_PauseGame)
         {
             // The following structure might be incomplete or wrong
-            buffer.Write(0x00);
-            buffer.Write(0x00);
-            buffer.Write((byte)seconds);
+            buffer.Write((int)0);
+            buffer.Write((int)seconds);
+            buffer.Write(showWindow);
         }
     }
 
-    public class MessagesAvailable : Packet
+    public class MessagesAvailable : BasePacket
     {
-        public MessagesAvailable(byte messagesAvailable) : base(PacketCmd.PKT_S2C_MessagesAvailable)
+        public MessagesAvailable(int messagesAvailable) : base(PacketCmd.PKT_S2C_MessagesAvailable)
         {
             // The following structure might be incomplete or wrong
-            buffer.Write(0x00);
-            buffer.Write((byte)messagesAvailable);
+            buffer.Write((int)messagesAvailable);
         }
     }
 
@@ -862,13 +843,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpellAnimation(Unit u, string animationName) : base(PacketCmd.PKT_S2C_SpellAnimation, u.NetId)
         {
-            buffer.Write((byte)0xC4); // unk
-            buffer.Write((uint)0); // unk
-            buffer.Write((uint)0); // unk
+            buffer.Write((byte)0xC4); // unk  <--
+            buffer.Write((uint)0); // unk     <-- One of these bytes is a flag
+            buffer.Write((uint)0); // unk     <--
             buffer.Write((float)1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 buffer.Write(b);
-
             buffer.Write((byte)0);
         }
     }
@@ -1123,18 +1103,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    /*typedef struct _ViewAns {
-        _ViewAns() {
-            cmd = PKT_S2C_ViewAns;
-            unk1 = 0;
-        }
-
-        short cmd;
-        int unk1;
-        short requestNo;
-    } ViewAns;*/
-
-
     public class QueryStatus : BasePacket
     {
         public QueryStatus() : base(PacketCmd.PKT_S2C_QueryStatusAns)
@@ -1145,15 +1113,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Quest : BasePacket
     {
-        public Quest(string questName, string questDescription, byte type, byte remove, uint netid, byte success = 0) : base(PacketCmd.PKT_S2C_Quest)
+        public Quest(string title, string description, byte type, byte command, uint netid, byte questEvent = 0)
+               : base(PacketCmd.PKT_S2C_Quest)
         {
-            buffer.Write(Encoding.Default.GetBytes(questName));
-            buffer.fill(0, 256 - questName.Length);
-            buffer.Write(Encoding.Default.GetBytes(questDescription));
-            buffer.fill(0, 256 - questDescription.Length);
-            buffer.Write((byte)type);
-            buffer.Write((byte)remove);
-            buffer.Write((byte)success); // 252 to 255: Success, anything else: Fail
+            buffer.Write(Encoding.Default.GetBytes(title));
+            buffer.fill(0, 256 - title.Length);
+            buffer.Write(Encoding.Default.GetBytes(description));
+            buffer.fill(0, 256 - description.Length);
+            buffer.Write((byte)type); // 0 : Primary quest, 1 : Secondary quest
+            buffer.Write((byte)command); // 0 : Activate quest, 1 : Complete quest, 2 : Remove quest
+            buffer.Write((byte)questEvent); // 0 : Roll over, 1 : Roll out, 2 : Mouse down, 3 : Mouse up
             buffer.Write((int)netid);
         }
     }
@@ -1162,10 +1131,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public ChangeCrystalScarNexusHP(TeamId team, int hp) : base(PacketCmd.PKT_S2C_ChangeCrystalScarNexusHP)
         {
-            buffer.Write((byte)team);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            buffer.Write((uint)team);
             buffer.Write(hp);
         }
     }
@@ -1293,13 +1259,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SoundSettings(byte soundCategory, bool mute) : base(PacketCmd.PKT_S2C_SoundSettings)
         {
-            byte state = 0x00;
-            if (mute)
-            {
-                state = 0x01;
-            }
             buffer.Write((byte)soundCategory);
-            buffer.Write((byte)state);
+            buffer.Write(mute);
         }
     }
 
@@ -1394,7 +1355,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x96);
 
             buffer.Write((float)x);
-            buffer.Write((float)y);
+            buffer.Write((float)z); // I think this coordinate is ignored
             buffer.Write((float)y);
             buffer.Write((float)seconds);
         }
@@ -1415,17 +1376,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public RestrictCameraMovement(float x, float y, float z, float radius, bool enable)
                : base(PacketCmd.PKT_S2C_RestrictCameraMovement)
         {
-            byte state = 0x00;
-            if (enable)
-            {
-                state = 0x01;
-            }
-
             buffer.Write((float)x);
             buffer.Write((float)z);
             buffer.Write((float)y);
             buffer.Write((float)radius);
-            buffer.Write((byte)state);
+            buffer.Write(enable);
         }
     }
 
@@ -1458,11 +1413,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class PlaySound : BasePacket
     {
-        public PlaySound(Unit unit, string soundName) : base(PacketCmd.PKT_S2C_SetTeam, unit.NetId)
+        public PlaySound(Unit unit, string soundName) : base(PacketCmd.PKT_S2C_PlaySound, unit.NetId)
         {
             buffer.Write(Encoding.Default.GetBytes(soundName));
             buffer.fill(0, 1024 - soundName.Length);
-            buffer.Write(unit.NetId);
+            buffer.Write(unit.NetId); // audioEventNetworkID?
         }
     }
 
@@ -1494,13 +1449,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public ShowHPAndName(Unit unit, bool show) : base(PacketCmd.PKT_S2C_ShowHPAndName, unit.NetId)
         {
-            var state = 0xFC; // Disable
-            if (show)
-            {
-                state = 0xFD; // Enable
-            }
-
-            buffer.Write((byte)state);
+            buffer.Write(show);
             buffer.Write((byte)0x00);
         }
     }
@@ -1570,15 +1519,32 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class UpdateModel : BasePacket
     {
-        public UpdateModel(uint netID, string szModel) : base(PacketCmd.PKT_S2C_UpdateModel, netID)
+        public UpdateModel(uint netID, string modelName, bool useSpells = true)
+               : base(PacketCmd.PKT_S2C_UpdateModel, netID)
         {
-            buffer.Write((int)netID & ~0x40000000); //id
-            buffer.Write((byte)1); //bOk
-            buffer.Write((int)-1); //unk1
-            foreach (var b in Encoding.Default.GetBytes(szModel))
+            buffer.Write(useSpells); // Use spells from the new model
+            buffer.Write((byte)0x00); // <-- These three bytes most likely form
+            buffer.Write((byte)0x00); // <-- an int with the useSpells byte, but
+            buffer.Write((byte)0x00); // <-- they don't seem to affect anything
+            buffer.Write((byte)1); // Bit field with bits 1 and 2. Unk
+            buffer.Write((int)-1); // SkinID (Maybe -1 means keep using current one?)
+            foreach (var b in Encoding.Default.GetBytes(modelName))
                 buffer.Write((byte)b);
-            if (szModel.Length < 32)
-                buffer.fill(0, 32 - szModel.Length);
+            if (modelName.Length < 32)
+                buffer.fill(0, 32 - modelName.Length);
+        }
+    }
+
+    public class ChangeCharacterVoice : BasePacket
+    {
+        public ChangeCharacterVoice(uint netID, string voiceOverride, bool resetOverride = false)
+               : base(PacketCmd.PKT_S2C_ChangeCharacterVoice, netID)
+        {
+            buffer.Write(resetOverride); // If this is 1, resets voice to default state and ignores voiceOverride
+            foreach (var b in Encoding.Default.GetBytes(voiceOverride))
+                buffer.Write((byte)b);
+            if (voiceOverride.Length < 32)
+                buffer.fill(0, 32 - voiceOverride.Length);
         }
     }
 
@@ -1596,21 +1562,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((short)0); //unk
         }
     }
-    /*
-    public class FogUpdate2
-    {
-        PacketHeader header;
-        float x;
-        float y;
-        int radius;
-        short unk1;
-        public FogUpdate2()
-        {
-            header = new PacketHeader();
-            header.cmd = PacketCmd.PKT_S2C_FogUpdate2;
-            header.netId = 0x40000019;
-        }
-    }*/
 
     public class Click
     {
@@ -1644,12 +1595,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class HeroSpawn : Packet
+    public class HeroSpawn : BasePacket
     {
 
         public HeroSpawn(ClientInfo player, int playerId) : base(PacketCmd.PKT_S2C_HeroSpawn)
         {
-            buffer.Write((int)0); // ???
             buffer.Write((int)player.Champion.NetId);
             buffer.Write((int)playerId); // player Id
             buffer.Write((byte)40); // netNodeID ?
@@ -1711,31 +1661,34 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0x80);
             buffer.Write((byte)0x01);
         }
-
-        /*PacketHeader header;
-        int tID;
-        short name[28];
-        short type[42];*/
     }
 
     public class BlueTip : BasePacket
     {
-        public BlueTip(string title, string text, uint playernetid, uint netid, bool delete = false) : base(PacketCmd.PKT_S2C_BlueTip, playernetid)
+        public BlueTip(string title,
+                       string text,
+                       string imagePath,
+                       byte tipCommand,
+                       uint playernetid,
+                       uint netid)
+               : base(PacketCmd.PKT_S2C_BlueTip, playernetid)
         {
             foreach (var b in Encoding.Default.GetBytes(text))
                 buffer.Write(b);
             buffer.fill(0, 128 - text.Length);
             foreach (var b in Encoding.Default.GetBytes(title))
                 buffer.Write(b);
-            buffer.fill(0, 256 - title.Length);
-            if (delete)
-            {
-                buffer.Write((byte)0x01);
-            }
-            else
-            {
-                buffer.Write((byte)0x00);
-            }
+            buffer.fill(0, 128 - title.Length);
+            foreach (var b in Encoding.Default.GetBytes(imagePath))
+                buffer.Write(b);
+            buffer.fill(0, 128 - imagePath.Length);
+            buffer.Write((byte)tipCommand); /* ACTIVATE_TIP     = 0
+                                               REMOVE_TIP       = 1
+                                               ENABLE_TIP_EVENTS  = 2
+                                               DISABLE_TIP_EVENTS  = 3
+                                               ACTIVATE_TIP_DIALOGUE  = 4
+                                               ENABLE_TIP_DIALOGUE_EVENTS  = 5
+                                               DISABLE_TIP_DIALOGUE_EVENTS  = 6 */
             buffer.Write((int)netid);
         }
     }
@@ -1833,21 +1786,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             reader.Close();
         }
     }
-
-    /* public class SpellSet
-     {
-         public PacketHeader header;
-         public int spellID;
-         public int level;
-         public SpellSet(int netID, int _spellID, int _level)
-         {
-             header = new PacketHeader();
-             header.cmd = (PacketCmd)0x5A;
-             header.netId = netID;
-             spellID = _spellID;
-             level = _level;
-         }
-     }*/
 
     public class SkillUpPacket : BasePacket
     {
@@ -1962,8 +1900,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    /* New Style Packets */
-
     class Announce : BasePacket
     {
         public Announce(Announces messageId, int mapId = 0) : base(PacketCmd.PKT_S2C_Announce)
@@ -1990,14 +1926,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible
             buffer.Write(_rafManager.GetHash(name)); //Buff id
-            buffer.Write((byte)0xde);
-            buffer.Write((byte)0x88);
-            buffer.Write((byte)0xc6);
-            buffer.Write((byte)0xee);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00); //
+            buffer.Write((byte)0x00); // <-- Probably runningTime
+            buffer.Write((byte)0x00); //
+            buffer.Write((byte)0x00); //
 
             buffer.Write((float)time);
 
@@ -2044,10 +1976,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class RemoveBuff : BasePacket
     {
-        public RemoveBuff(Unit u, string name) : base(PacketCmd.PKT_S2C_RemoveBuff, u.NetId)
+        public RemoveBuff(Unit u, string name, byte slot) : base(PacketCmd.PKT_S2C_RemoveBuff, u.NetId)
         {
             var _rafManager = Program.ResolveDependency<RAFManager>();
-            buffer.Write((byte)0x01);
+            buffer.Write((byte)slot);
             buffer.Write(_rafManager.GetHash(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.NetId);//source?
@@ -2072,10 +2004,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public NpcDie(Unit die, Unit killer) : base(ExtendedPacketCmd.EPKT_S2C_NPC_Die, die.NetId)
         {
             buffer.Write((int)0);
-            buffer.Write((short)0);
+            buffer.Write((byte)0);
             buffer.Write(killer.NetId);
-            buffer.Write((short)0); // unk
-            buffer.Write((short)7); // unk
+            buffer.Write((byte)0); // unk
+            buffer.Write((byte)7); // unk
             buffer.Write((int)0); // Flags?
         }
     }
@@ -2124,11 +2056,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class AttentionPingAns : Packet
+    public class AttentionPingAns : BasePacket
     {
         public AttentionPingAns(ClientInfo player, AttentionPing ping) : base(PacketCmd.PKT_S2C_AttentionPing)
         {
-            buffer.Write((int)0); //unk1
             buffer.Write((float)ping.x);
             buffer.Write((float)ping.y);
             buffer.Write((int)ping.targetNetId);
@@ -2169,14 +2100,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public BeginAutoAttack(Unit attacker, Unit attacked, uint futureProjNetId, bool isCritical) : base(PacketCmd.PKT_S2C_BeginAutoAttack, attacker.NetId)
         {
             buffer.Write(attacked.NetId);
-            buffer.Write((byte)0x80); // unk
+            buffer.Write((byte)0x80); // extraTime
             buffer.Write(futureProjNetId); // Basic attack projectile ID, to be spawned later
             if (isCritical)
-                buffer.Write((byte)0x49);
+                buffer.Write((byte)0x49); // attackSlot
             else
-                buffer.Write((byte)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
-                                          // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
-            buffer.Write((byte)0x80);
+                buffer.Write((byte)0x40); // attackSlot
+
+            buffer.Write((byte)0x80); // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
             buffer.Write((byte)0x01);
             buffer.Write(MovementVector.TargetXToNormalFormat(attacked.X));
             buffer.Write((byte)0x80);
@@ -2198,15 +2129,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write(attacked.NetId);
             if (initial)
-                buffer.Write((byte)0x80); // These flags appear to change only to 0x80 and 0x7F after the first autoattack.
+                buffer.Write((byte)0x80); // extraTime
             else
-                buffer.Write((byte)0x7F);
+                buffer.Write((byte)0x7F); // extraTime
 
             buffer.Write(futureProjNetId);
             if (isCritical)
-                buffer.Write((byte)0x49);
+                buffer.Write((byte)0x49); // attackSlot
             else
-                buffer.Write((byte)0x40); // unk -- seems to be flags related to things like critical strike (0x49)
+                buffer.Write((byte)0x40); // attackSlot
 
             buffer.Write((byte)0x40);
             buffer.Write((byte)0x01);
@@ -2228,23 +2159,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public StopAutoAttack(Unit attacker) : base(PacketCmd.PKT_S2C_StopAutoAttack, attacker.NetId)
         {
-            buffer.Write((int)0); // Unk. Rarely, this is a net ID. Dunno what for.
-            buffer.Write((byte)3); // Unk. Sometimes "2", sometimes "11" when the above netId is not 0.
-        }
-    }
-
-    public class StopAutoAttackUnk : BasePacket
-    {
-
-        public StopAutoAttackUnk(Unit attacker) : base(PacketCmd.PKT_S2C_StopAutoAttack, attacker.NetId)
-        {
-            // Same number of bytes as StopAutoAttack, but might have a different structure
-            // It could also just be the same packet
-            buffer.Write((byte)0x43);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            buffer.Write((byte)0); // Flag
+            buffer.Write((int)0); // A netId
         }
     }
 
@@ -2262,10 +2178,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class Surrender : BasePacket
     {
-        public Surrender(Unit starter, byte unk, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut)
+        public Surrender(Unit starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut)
         : base(PacketCmd.PKT_S2C_Surrender)
         {
-            buffer.Write((byte)unk); // Bit field?
+            buffer.Write((byte)flag); // Flag. 2 bits
             buffer.Write((uint)starter.NetId);
             buffer.Write((byte)yesVotes);
             buffer.Write((byte)noVotes);
@@ -2277,9 +2193,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class UnpauseGame : BasePacket
     {
-        public UnpauseGame(uint unpauserNetId) : base(PacketCmd.PKT_S2C_UnpauseGame)
+        public UnpauseGame(uint unpauserNetId, bool showWindow) : base(PacketCmd.PKT_S2C_UnpauseGame)
         {
-            buffer.Write(unpauserNetId);
+            buffer.Write((uint)unpauserNetId);
+            buffer.Write(showWindow);
         }
     }
 
@@ -2332,9 +2249,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SurrenderResult : BasePacket
     {
-        public SurrenderResult(bool early, int yes, int no, TeamId team) : base(PacketCmd.PKT_S2C_SurrenderResult)
+        public SurrenderResult(bool reason, int yes, int no, TeamId team) : base(PacketCmd.PKT_S2C_SurrenderResult)
         {
-            buffer.Write(BitConverter.GetBytes(early)); //surrendererNetworkId
+            buffer.Write(reason); //surrendererNetworkId
             buffer.Write((byte)yes); //yesVotes
             buffer.Write((byte)no); //noVotes
             buffer.Write((int)team); //team
@@ -2447,19 +2364,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetScreenTint : BasePacket
     {
-        public SetScreenTint(TeamId team, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha) : base(PacketCmd.PKT_S2C_SetScreenTint)
+        public SetScreenTint(TeamId team, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha)
+               : base(PacketCmd.PKT_S2C_SetScreenTint)
         {
-            byte active = 0x00;
-            if (enable)
-                active = 0x01;
-            buffer.Write(active);
-            buffer.Write(transitionTime); // Transition time in seconds
+            buffer.Write(enable);
+            buffer.Write((float)transitionTime); // Transition time in seconds
             buffer.Write((int)team);
-            buffer.Write(blue);
-            buffer.Write(green);
-            buffer.Write(red);
+            buffer.Write((byte)blue);
+            buffer.Write((byte)green);
+            buffer.Write((byte)red);
             buffer.Write((byte)0xFF); // Unk
-            buffer.Write(alpha);
+            buffer.Write((float)alpha);
         }
     }
 

@@ -94,6 +94,7 @@
         PKT_C2S_World_SendGameNumber = 0x92, // <-- At least one of these is probably wrong
         PKT_S2C_World_SendGameNumber = 0x92, // <--
         PKT_S2C_Ping_Load_Info = 0x95,
+        PKT_S2C_ChangeCharacterVoice = 0x96,
         PKT_S2C_UpdateModel = 0x97,
         PKT_S2C_DisconnectedAnnouncement = 0x98,
         PKT_C2S_CastSpell = 0x9A,
