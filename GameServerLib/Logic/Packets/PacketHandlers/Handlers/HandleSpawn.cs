@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 var spawn = new HeroSpawn(p.Item2, playerId++);
                 _game.PacketHandlerManager.sendPacket(peer, spawn, Channel.CHL_S2C);
 
-                var info = new PlayerInfo(p.Item2);
+                var info = new AvatarInfo(p.Item2);
                 _game.PacketHandlerManager.sendPacket(peer, info, Channel.CHL_S2C);
             }
 
