@@ -1914,13 +1914,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class AddBuff : Packet
+    public class AddBuff : BasePacket
     {
-        public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot) : base(PacketCmd.PKT_S2C_AddBuff)
+        public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, int slot)
+               : base(PacketCmd.PKT_S2C_AddBuff, u.NetId)
         {
             var _rafManager = Program.ResolveDependency<RAFManager>();
 
-            buffer.Write(u.NetId);//target
             buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
