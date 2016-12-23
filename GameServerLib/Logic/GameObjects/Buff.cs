@@ -57,6 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected IScriptEngine _scriptEngine = new LuaScriptEngine();
         public string Name { get; private set; }
         public int Stacks { get; private set; }
+        public byte Slot { get; private set; }
         protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
@@ -70,6 +71,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game = game;
             Duration = dur;
             Stacks = stacks;
+            Slot = 0x01;
             Name = buffName;
             TimeElapsed = 0;
             _remove = false;
