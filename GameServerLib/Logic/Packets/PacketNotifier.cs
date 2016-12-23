@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, BuffType.Aura, b.Name, 1);
+            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, BuffType.Aura, b.Name, b.Slot);
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 

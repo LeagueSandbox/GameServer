@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     {
                         if (buff.Name != "")
                         {
-                            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name);
+                            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
                         }
                         u.RemoveBuff(buff);
                         continue;
