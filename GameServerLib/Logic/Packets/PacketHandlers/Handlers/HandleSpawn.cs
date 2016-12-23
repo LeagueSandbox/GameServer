@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
-            var start = new StatePacket2(PacketCmdS2C.PKT_S2C_StartSpawn);
+            var start = new StatePacket2(PacketCmd.PKT_S2C_StartSpawn);
             _game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
             _logger.LogCoreInfo("Spawning map");
 
@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 _game.PacketHandlerManager.sendPacket(peer, setHealthPacket, Channel.CHL_S2C);
             }
 
-            var endSpawnPacket = new StatePacket(PacketCmdS2C.PKT_S2C_EndSpawn);
+            var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2C_EndSpawn);
             return _game.PacketHandlerManager.sendPacket(peer, endSpawnPacket, Channel.CHL_S2C);
         }
     }

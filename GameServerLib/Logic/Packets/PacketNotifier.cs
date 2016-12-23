@@ -113,9 +113,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
-        public void NotifyRemoveBuff(Unit u, string buffName)
+        public void NotifyRemoveBuff(Unit u, string buffName, byte slot = 0x01)
         {
-            var remove = new RemoveBuff(u, buffName);
+            var remove = new RemoveBuff(u, buffName, slot);
             _game.PacketHandlerManager.broadcastPacket(remove, Channel.CHL_S2C);
         }
 

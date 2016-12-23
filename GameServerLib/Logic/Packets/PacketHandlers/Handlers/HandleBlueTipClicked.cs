@@ -17,9 +17,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var removeBlueTip = new BlueTip(
                 "",
                 "",
+                "",
+                0,
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
-                blueTipClicked.netid,
-                true
+                blueTipClicked.netid
             );
             _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
 

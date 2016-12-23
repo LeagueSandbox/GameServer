@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class PacketHandlerManager
     {
-        private Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>> _handlerTable;
+        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private List<TeamId> _teamsEnumerator;
         private Logger _logger;
         private BlowFish _blowfish;
@@ -34,46 +34,46 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         private void InitHandlers()
         {
-            _handlerTable = new Dictionary<PacketCmdC2S, Dictionary<Channel, IPacketHandler>>();
+            _handlerTable = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
 
-            registerHandler(new HandleKeyCheck(), PacketCmdC2S.PKT_C2S_KeyCheck, Channel.CHL_HANDSHAKE);
-            registerHandler(new HandleLoadPing(), PacketCmdC2S.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
-            registerHandler(new HandleSpawn(), PacketCmdC2S.PKT_C2S_CharLoaded, Channel.CHL_C2S);
-            registerHandler(new HandleMap(), PacketCmdC2S.PKT_C2S_ClientReady, Channel.CHL_LOADING_SCREEN);
-            registerHandler(new HandleSynch(), PacketCmdC2S.PKT_C2S_SynchVersion, Channel.CHL_C2S);
-            registerHandler(new HandleCastSpell(), PacketCmdC2S.PKT_C2S_CastSpell, Channel.CHL_C2S);
+            registerHandler(new HandleKeyCheck(), PacketCmd.PKT_KeyCheck, Channel.CHL_HANDSHAKE);
+            registerHandler(new HandleLoadPing(), PacketCmd.PKT_C2S_Ping_Load_Info, Channel.CHL_C2S);
+            registerHandler(new HandleSpawn(), PacketCmd.PKT_C2S_CharLoaded, Channel.CHL_C2S);
+            registerHandler(new HandleMap(), PacketCmd.PKT_C2S_ClientReady, Channel.CHL_LOADING_SCREEN);
+            registerHandler(new HandleSynch(), PacketCmd.PKT_C2S_SynchVersion, Channel.CHL_C2S);
+            registerHandler(new HandleCastSpell(), PacketCmd.PKT_C2S_CastSpell, Channel.CHL_C2S);
             // registerHandler(new HandleGameNumber(), PacketCmd.PKT_C2S_GameNumberReq, Channel.CHL_C2S);
-            registerHandler(new HandleQueryStatus(), PacketCmdC2S.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
-            registerHandler(new HandleStartGame(), PacketCmdC2S.PKT_C2S_StartGame, Channel.CHL_C2S);
-            registerHandler(new HandleExit(), PacketCmdC2S.PKT_C2S_Exit, Channel.CHL_C2S);
-            registerHandler(new HandleView(), PacketCmdC2S.PKT_C2S_ViewReq, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
+            registerHandler(new HandleQueryStatus(), PacketCmd.PKT_C2S_QueryStatusReq, Channel.CHL_C2S);
+            registerHandler(new HandleStartGame(), PacketCmd.PKT_C2S_StartGame, Channel.CHL_C2S);
+            registerHandler(new HandleExit(), PacketCmd.PKT_C2S_Exit, Channel.CHL_C2S);
+            registerHandler(new HandleView(), PacketCmd.PKT_C2S_ViewReq, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_Click, Channel.CHL_C2S);
             // registerHandler(new HandleNull(), PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
-            registerHandler(new HandleAttentionPing(), PacketCmdC2S.PKT_C2S_AttentionPing, Channel.CHL_C2S);
-            registerHandler(new HandleChatBoxMessage(), PacketCmdC2S.PKT_C2S_ChatBoxMessage, Channel.CHL_COMMUNICATION);
-            registerHandler(new HandleMove(), PacketCmdC2S.PKT_C2S_MoveReq, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_MoveConfirm, Channel.CHL_C2S);
-            registerHandler(new HandleSkillUp(), PacketCmdC2S.PKT_C2S_SkillUp, Channel.CHL_C2S);
-            registerHandler(new HandleEmotion(), PacketCmdC2S.PKT_C2S_Emotion, Channel.CHL_C2S);
-            registerHandler(new HandleBuyItem(), PacketCmdC2S.PKT_C2S_BuyItemReq, Channel.CHL_C2S);
-            registerHandler(new HandleSellItem(), PacketCmdC2S.PKT_C2S_SellItem, Channel.CHL_C2S);
-            registerHandler(new HandleSwapItems(), PacketCmdC2S.PKT_C2S_SwapItems, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_LockCamera, Channel.CHL_C2S);
-            registerHandler(new HandleNull(), PacketCmdC2S.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
-            registerHandler(new HandleClick(), PacketCmdC2S.PKT_C2S_Click, Channel.CHL_C2S);
-            registerHandler(new HandleHeartBeat(), PacketCmdC2S.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
-            registerHandler(new HandleSurrender(), PacketCmdC2S.PKT_C2S_Surrender, Channel.CHL_C2S);
-            registerHandler(new HandleBlueTipClicked(), PacketCmdC2S.PKT_C2S_BlueTipClicked, Channel.CHL_C2S);
-            registerHandler(new HandleAutoAttackOption(), PacketCmdC2S.PKT_C2S_AutoAttackOption, Channel.CHL_C2S);
-            registerHandler(new HandleQuestClicked(), PacketCmdC2S.PKT_C2S_QuestClicked, Channel.CHL_C2S);
-            registerHandler(new HandleUseObject(), PacketCmdC2S.PKT_C2S_UseObject, Channel.CHL_C2S);
-            registerHandler(new HandleCursorPositionOnWorld(), PacketCmdC2S.PKT_C2S_CursorPositionOnWorld, Channel.CHL_C2S);
-            registerHandler(new HandleScoreboard(), PacketCmdC2S.PKT_C2S_Scoreboard, Channel.CHL_C2S);
+            registerHandler(new HandleAttentionPing(), PacketCmd.PKT_C2S_AttentionPing, Channel.CHL_C2S);
+            registerHandler(new HandleChatBoxMessage(), PacketCmd.PKT_C2S_ChatBoxMessage, Channel.CHL_COMMUNICATION);
+            registerHandler(new HandleMove(), PacketCmd.PKT_C2S_MoveReq, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_MoveConfirm, Channel.CHL_C2S);
+            registerHandler(new HandleSkillUp(), PacketCmd.PKT_C2S_SkillUp, Channel.CHL_C2S);
+            registerHandler(new HandleEmotion(), PacketCmd.PKT_C2S_Emotion, Channel.CHL_C2S);
+            registerHandler(new HandleBuyItem(), PacketCmd.PKT_C2S_BuyItemReq, Channel.CHL_C2S);
+            registerHandler(new HandleSellItem(), PacketCmd.PKT_C2S_SellItem, Channel.CHL_C2S);
+            registerHandler(new HandleSwapItems(), PacketCmd.PKT_C2S_SwapItems, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_LockCamera, Channel.CHL_C2S);
+            registerHandler(new HandleNull(), PacketCmd.PKT_C2S_StatsConfirm, Channel.CHL_C2S);
+            registerHandler(new HandleClick(), PacketCmd.PKT_C2S_Click, Channel.CHL_C2S);
+            registerHandler(new HandleHeartBeat(), PacketCmd.PKT_C2S_HeartBeat, Channel.CHL_GAMEPLAY);
+            registerHandler(new HandleSurrender(), PacketCmd.PKT_C2S_Surrender, Channel.CHL_C2S);
+            registerHandler(new HandleBlueTipClicked(), PacketCmd.PKT_C2S_BlueTipClicked, Channel.CHL_C2S);
+            registerHandler(new HandleAutoAttackOption(), PacketCmd.PKT_C2S_AutoAttackOption, Channel.CHL_C2S);
+            registerHandler(new HandleQuestClicked(), PacketCmd.PKT_C2S_QuestClicked, Channel.CHL_C2S);
+            registerHandler(new HandleUseObject(), PacketCmd.PKT_C2S_UseObject, Channel.CHL_C2S);
+            registerHandler(new HandleCursorPositionOnWorld(), PacketCmd.PKT_C2S_CursorPositionOnWorld, Channel.CHL_C2S);
+            registerHandler(new HandleScoreboard(), PacketCmd.PKT_C2S_Scoreboard, Channel.CHL_C2S);
 
-            // registerHandler(new HandleX(), PacketCmdC2S.PKT_C2S_X, Channel.CHL_C2S);
+            // registerHandler(new HandleX(), PacketCmd.PKT_C2S_X, Channel.CHL_C2S);
         }
 
-        public void registerHandler(IPacketHandler handler, PacketCmdC2S pktcmd, Channel channel)
+        public void registerHandler(IPacketHandler handler, PacketCmd pktcmd, Channel channel)
         {
 
             if (!_handlerTable.ContainsKey(pktcmd))
@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 dict[channel] = handler;
         }
 
-        internal IPacketHandler GetHandler(PacketCmdC2S cmd, Channel channelID)
+        internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelID)
         {
             if (_handlerTable.ContainsKey(cmd))
             {
@@ -206,9 +206,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             switch (header.cmd)
             {
-                case PacketCmdC2S.PKT_C2S_StatsConfirm:
-                case PacketCmdC2S.PKT_C2S_MoveConfirm:
-                case PacketCmdC2S.PKT_C2S_ViewReq:
+                case PacketCmd.PKT_C2S_StatsConfirm:
+                case PacketCmd.PKT_C2S_MoveConfirm:
+                case PacketCmd.PKT_C2S_ViewReq:
                     break;
                 default:
                     Console.WriteLine("Requested " + header.cmd);

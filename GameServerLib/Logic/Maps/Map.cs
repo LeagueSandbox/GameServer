@@ -76,12 +76,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             foreach (var team in _teamsIterator)
                 _visionUnits.Add(team, new Dictionary<uint, Unit>());
         }
-        
+
         public int GetNumberOfObjects()
         {
             return GetObjects().Count;
         }
-        
+
         public virtual void Update(float diff)
         {
             var temp = GetObjects();
