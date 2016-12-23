@@ -28,7 +28,7 @@
         PKT_S2C_FogUpdate2 = 0x23,
         PKT_S2C_MoveCamera = 0x25,
         PKT_S2C_SoundSettings = 0x27,
-        PKT_S2C_PlayerInfo = 0x2A,
+        PKT_S2C_AvatarInfo = 0x2A,
         PKT_S2C_InhibitorState = 0x2B,
         PKT_S2C_ViewAns = 0x2C,
         PKT_C2S_ViewReq = 0x2E,
