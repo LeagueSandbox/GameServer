@@ -44,15 +44,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public BasePacket(PacketCmd cmd = PacketCmd.PKT_KeyCheck, uint netId = 0) : base(cmd)
         {
             buffer.Write((uint)netId);
-        }
-    }
-
-    public class ExtendedPacket : BasePacket
-    {
-        public ExtendedPacket(ExtendedPacketCmd ecmd = (ExtendedPacketCmd)0, uint netId = 0) : base(PacketCmd.PKT_S2C_Extended, netId)
-        {
-            buffer.Write((byte)ecmd);
-            buffer.Write((byte)1);
+            if ((short)cmd > 0xFF) // Make an extended packet instead
+            {
+                var oldPosition = buffer.BaseStream.Position;
+                buffer.BaseStream.Position = 0;
+                buffer.BaseStream.Write(new byte[] { (byte)PacketCmd.PKT_S2C_Extended }, 0, 1);
+                buffer.BaseStream.Position = oldPosition;
+                buffer.Write((short)cmd);
+            }
         }
     }
 
@@ -155,7 +154,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SynchVersionAns : BasePacket
     {
-        public SynchVersionAns(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map) : base(PacketCmd.PKT_S2C_SynchVersion)
+        public SynchVersionAns(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map)
+               : base(PacketCmd.PKT_S2C_SynchVersion)
         {
             buffer.Write((byte)1); // Bit field
                                    // First bit: doVersionsMatch - If set to 0, the client closes
@@ -1203,9 +1203,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class FloatingText2 : ExtendedPacket
+    public class FloatingText2 : BasePacket
     {
-        public FloatingText2(Unit u, string text, byte type, int unk) : base(ExtendedPacketCmd.EPKT_S2C_FloatingText, u.NetId)
+        public FloatingText2(Unit u, string text, byte type, int unk) : base(PacketCmd.PKT_S2C_FloatingText, u.NetId)
         {
             buffer.fill(0, 10);
             buffer.Write((byte)type); // From 0x00 to 0x1B, 0x1C shows nothing and 0x1D bugsplats
@@ -1221,10 +1221,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class SetSpellActiveState : ExtendedPacket
+    public class SetSpellActiveState : BasePacket
     {
         public SetSpellActiveState(Unit u, byte slot, byte state)
-               : base(ExtendedPacketCmd.EPKT_S2C_SetSpellActiveState, u.NetId)
+               : base(PacketCmd.PKT_S2C_SetSpellActiveState, u.NetId)
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);
@@ -1234,10 +1234,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class MoveChampionCameraCenter : ExtendedPacket
+    public class MoveChampionCameraCenter : BasePacket
     {
         public MoveChampionCameraCenter(Champion c, bool enable, byte mode, float distance)
-               : base(ExtendedPacketCmd.EPKT_S2C_MoveChampionCameraCenter, c.NetId)
+               : base(PacketCmd.PKT_S2C_MoveChampionCameraCenter, c.NetId)
         {
             byte state = 0x00;
             if (enable)
@@ -1264,10 +1264,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class ForceTargetSpell : ExtendedPacket
+    public class ForceTargetSpell : BasePacket
     {
         public ForceTargetSpell(Unit u, byte slot, float time)
-               : base(ExtendedPacketCmd.EPKT_S2C_ForceTargetSpell, u.NetId)
+               : base(PacketCmd.PKT_S2C_ForceTargetSpell, u.NetId)
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);
@@ -1277,10 +1277,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class ReplaceStoreItem : ExtendedPacket
+    public class ReplaceStoreItem : BasePacket
     {
         public ReplaceStoreItem(Unit u, uint replacedItemHash, uint newItemHash)
-               : base(ExtendedPacketCmd.EPKT_S2C_ReplaceStoreItem, u.NetId)
+               : base(PacketCmd.PKT_S2C_ReplaceStoreItem, u.NetId)
         {
             buffer.Write((uint)replacedItemHash);
             buffer.Write((uint)newItemHash);
@@ -1289,7 +1289,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class InhibitorDeathAnimation : BasePacket
     {
-        public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer) : base(PacketCmd.PKT_S2C_InhibitorDeathAnimation, inhi.NetId)
+        public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer)
+               : base(PacketCmd.PKT_S2C_InhibitorDeathAnimation, inhi.NetId)
         {
             if (killer != null)
                 buffer.Write((uint)killer.NetId);
@@ -1301,7 +1302,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class UnitAnnounce : BasePacket
     {
-        public UnitAnnounce(UnitAnnounces id, Unit target, GameObject killer = null, List<Champion> assists = null) : base(PacketCmd.PKT_S2C_Announce2, target.NetId)
+        public UnitAnnounce(UnitAnnounces id, Unit target, GameObject killer = null, List<Champion> assists = null)
+               : base(PacketCmd.PKT_S2C_Announce2, target.NetId)
         {
             if (assists == null)
                 assists = new List<Champion>();
@@ -1337,7 +1339,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class MoveCamera : BasePacket
     {
-        public MoveCamera(Champion champ, float x, float y, float z, float seconds) : base(PacketCmd.PKT_S2C_MoveCamera, champ.NetId)
+        public MoveCamera(Champion champ, float x, float y, float z, float seconds)
+               : base(PacketCmd.PKT_S2C_MoveCamera, champ.NetId)
         {
             // Unk, if somebody figures out let @horato know
             buffer.Write((byte)0x97);
@@ -1363,7 +1366,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetCameraPosition : BasePacket
     {
-        public SetCameraPosition(Champion champ, float x, float y, float z) : base(PacketCmd.PKT_S2C_SetCameraPosition, champ.NetId)
+        public SetCameraPosition(Champion champ, float x, float y, float z)
+               : base(PacketCmd.PKT_S2C_SetCameraPosition, champ.NetId)
         {
             buffer.Write((float)x);
             buffer.Write((float)z); // Doesn't seem to matter
@@ -1454,9 +1458,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class SpellEmpower : ExtendedPacket
+    public class SpellEmpower : BasePacket
     {
-        public SpellEmpower(Unit unit, byte slot, byte empowerLevel) : base(ExtendedPacketCmd.EPKT_S2C_SpellEmpower, unit.NetId)
+        public SpellEmpower(Unit unit, byte slot, byte empowerLevel) : base(PacketCmd.PKT_S2C_SpellEmpower, unit.NetId)
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);
@@ -1799,7 +1803,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             netId = reader.ReadUInt32();
             skill = reader.ReadByte();
         }
-        public SkillUpPacket(uint netId, byte skill, byte level, byte pointsLeft) : base(PacketCmd.PKT_S2C_SkillUp, netId)
+        public SkillUpPacket(uint netId, byte skill, byte level, byte pointsLeft)
+               : base(PacketCmd.PKT_S2C_SkillUp, netId)
         {
             buffer.Write(skill);
             buffer.Write(level);
@@ -1999,9 +2004,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class NpcDie : ExtendedPacket
+    public class NpcDie : BasePacket
     {
-        public NpcDie(Unit die, Unit killer) : base(ExtendedPacketCmd.EPKT_S2C_NPC_Die, die.NetId)
+        public NpcDie(Unit die, Unit killer) : base(PacketCmd.PKT_S2C_NPC_Die, die.NetId)
         {
             buffer.Write((int)0);
             buffer.Write((byte)0);
@@ -2097,7 +2102,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class BeginAutoAttack : BasePacket
     {
-        public BeginAutoAttack(Unit attacker, Unit attacked, uint futureProjNetId, bool isCritical) : base(PacketCmd.PKT_S2C_BeginAutoAttack, attacker.NetId)
+        public BeginAutoAttack(Unit attacker, Unit attacked, uint futureProjNetId, bool isCritical)
+               : base(PacketCmd.PKT_S2C_BeginAutoAttack, attacker.NetId)
         {
             buffer.Write(attacked.NetId);
             buffer.Write((byte)0x80); // extraTime
@@ -2125,7 +2131,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class NextAutoAttack : BasePacket
     {
 
-        public NextAutoAttack(Unit attacker, Unit attacked, uint futureProjNetId, bool isCritical, bool initial) : base(PacketCmd.PKT_S2C_NextAutoAttack, attacker.NetId)
+        public NextAutoAttack(Unit attacker, Unit attacked, uint futureProjNetId, bool isCritical, bool initial)
+               : base(PacketCmd.PKT_S2C_NextAutoAttack, attacker.NetId)
         {
             buffer.Write(attacked.NetId);
             if (initial)
@@ -2164,9 +2171,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class OnAttack : ExtendedPacket
+    public class OnAttack : BasePacket
     {
-        public OnAttack(Unit attacker, Unit attacked, AttackType attackType) : base(ExtendedPacketCmd.EPKT_S2C_OnAttack, attacker.NetId)
+        public OnAttack(Unit attacker, Unit attacked, AttackType attackType)
+               : base(PacketCmd.PKT_S2C_OnAttack, attacker.NetId)
         {
             buffer.Write((byte)attackType);
             buffer.Write(attacked.X);
@@ -2208,26 +2216,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class SurrenderState : ExtendedPacket
+    public class SurrenderState : BasePacket
     {
-        public SurrenderState(uint playernetid, byte state) : base(ExtendedPacketCmd.EPKT_S2C_SurrenderState, playernetid)
+        public SurrenderState(uint playernetid, byte state) : base(PacketCmd.PKT_S2C_SurrenderState, playernetid)
         {
             buffer.Write((byte)state);
         }
     }
 
-    public class ResourceType : ExtendedPacket
+    public class ResourceType : BasePacket
     {
-        public ResourceType(uint playernetid, byte resourceType) : base(ExtendedPacketCmd.EPKT_S2C_ResourceType, playernetid)
+        public ResourceType(uint playernetid, byte resourceType) : base(PacketCmd.PKT_S2C_ResourceType, playernetid)
         {
             buffer.Write((byte)resourceType);
         }
     }
 
-    public class CreateMonsterCamp : ExtendedPacket
+    public class CreateMonsterCamp : BasePacket
     {
         public CreateMonsterCamp(float x, float y, float z, string iconName, byte campId, byte campUnk, float unk)
-               : base(ExtendedPacketCmd.EPKT_S2C_CreateMonsterCamp)
+               : base(PacketCmd.PKT_S2C_CreateMonsterCamp)
         {
             buffer.Write((float)x);
             buffer.Write((float)z);
@@ -2318,10 +2326,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
-    public class ChampionDeathTimer : ExtendedPacket
+    public class ChampionDeathTimer : BasePacket
     {
 
-        public ChampionDeathTimer(Champion die) : base(ExtendedPacketCmd.EPKT_S2C_ChampionDeathTimer, die.NetId)
+        public ChampionDeathTimer(Champion die) : base(PacketCmd.PKT_S2C_ChampionDeathTimer, die.NetId)
         {
             buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
@@ -2380,7 +2388,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetModelTransparency : BasePacket
     {
-        public SetModelTransparency(Unit u, float transparency, float transitionTime) : base(PacketCmd.PKT_S2C_SetModelTransparency, u.NetId)
+        public SetModelTransparency(Unit u, float transparency, float transitionTime)
+               : base(PacketCmd.PKT_S2C_SetModelTransparency, u.NetId)
         {
             // Applied to Teemo's mushrooms for example
             buffer.Write((byte)0xDB); // Unk
@@ -2520,7 +2529,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 buffer.Write((byte)0);
             }
 
-            buffer.Write((byte)30); // avatarLevel 
+            buffer.Write((short)30); // avatarLevel
         }
     }
 
@@ -2950,7 +2959,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class SetCooldown : BasePacket
     {
-        public SetCooldown(uint netId, byte slotId, float currentCd, float totalCd = 0.0f) : base(PacketCmd.PKT_S2C_SetCooldown, netId)
+        public SetCooldown(uint netId, byte slotId, float currentCd, float totalCd = 0.0f)
+               : base(PacketCmd.PKT_S2C_SetCooldown, netId)
         {
             buffer.Write(slotId);
             buffer.Write((byte)0xF8); // 4.18

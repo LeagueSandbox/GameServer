@@ -1,6 +1,6 @@
 ﻿namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
 {
-    public enum PacketCmd : byte
+    public enum PacketCmd : short
     {
         PKT_KeyCheck = 0x00,
         PKT_S2C_RestrictCameraMovement = 0x06,
@@ -148,23 +148,20 @@
         PKT_S2C_MessagesAvailable = 0xF9,
         PKT_S2C_SetItemStacks2 = 0xFD,
         PKT_S2C_Extended = 0xFE,
-        PKT_S2C_Batch = 0xFF
-    }
+        PKT_S2C_Batch = 0xFF,
 
-    public enum ExtendedPacketCmd : byte
-    {
-        EPKT_S2C_SurrenderState = 0x0E,
-        EPKT_S2C_OnAttack = 0x0F,
-        EPKT_S2C_ChampionDeathTimer = 0x17,
-        EPKT_S2C_SetSpellActiveState = 0x18,
-        EPKT_S2C_ResourceType = 0x19,
-        EPKT_S2C_ReplaceStoreItem = 0x1C,
-        EPKT_S2C_CreateMonsterCamp = 0x22,
-        EPKT_S2C_SpellEmpower = 0x25,
-        EPKT_S2C_NPC_Die = 0x26,
-        EPKT_S2C_FloatingText = 0x28,
-        EPKT_S2C_ForceTargetSpell = 0x29,
-        EPKT_S2C_MoveChampionCameraCenter = 0x2B
+        PKT_S2C_SurrenderState = 0x10E,
+        PKT_S2C_OnAttack = 0x10F,
+        PKT_S2C_ChampionDeathTimer = 0x117,
+        PKT_S2C_SetSpellActiveState = 0x118,
+        PKT_S2C_ResourceType = 0x119,
+        PKT_S2C_ReplaceStoreItem = 0x11C,
+        PKT_S2C_CreateMonsterCamp = 0x122,
+        PKT_S2C_SpellEmpower = 0x125,
+        PKT_S2C_NPC_Die = 0x126,
+        PKT_S2C_FloatingText2 = 0x128,
+        PKT_S2C_ForceTargetSpell = 0x129,
+        PKT_S2C_MoveChampionCameraCenter = 0x12B
     }
 
     public enum MoveType : uint
