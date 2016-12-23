@@ -130,8 +130,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     Task.Factory.StartNew(() =>
                     {
                         Console.Write(text);
+<<<<<<< HEAD
                     });
                     WriteTextToLogFile(text + Environment.NewLine);
+=======
+                        WriteTextToLogFile(text + Environment.NewLine);
+                    });
+>>>>>>> Resolve #304 -- Fix Logger Lag
                 }
             }
 
