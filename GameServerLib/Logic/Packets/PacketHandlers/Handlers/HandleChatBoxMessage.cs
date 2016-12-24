@@ -12,6 +12,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         private Game _game = Program.ResolveDependency<Game>();
         private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
         private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
 
         public bool HandlePacket(Peer peer, byte[] data)
         {
@@ -47,7 +48,16 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 ChatCommand command = _chatCommandManager.GetCommand(split[0]);
                 if (command != null)
                 {
-                    command.Execute(peer, true, message.msg);
+                    try
+                    {
+                        command.Execute(peer, true, message.msg);
+                    }
+                    catch
+                    {
+                        _logger.LogCoreWarning(command + " sent an exception.");
+                        var dm = new DebugMessage("Something went wrong...Did you wrote the command well ? ");
+                        _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
+                    }
                     return true;
                 }
                 else
