@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Target target,
             Spell originSpell,
             int flags,
-            bool affectAsCastIsOver) : base(x, y, collisionRadius, owner, target, originSpell, 0, 0, flags)
+            bool affectAsCastIsOver) : base(x, y, collisionRadius, owner, target, originSpell, 0, "", flags)
         {
             CreateRectangle(new Target(x, y), target);
             _affectAsCastIsOver = affectAsCastIsOver;

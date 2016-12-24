@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
-        public TeamId Team { get; private set; }
+        public TeamId Team { get; protected set; }
 
         public void SetTeam(TeamId team)
         {
@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic
         public int AttackerCount { get; private set; }
         public int CollisionRadius { get; set; }
         protected Vector2 _direction;
-        public int VisionRadius { get; private set; }
+        public float VisionRadius { get; protected set; }
         public bool IsDashing { get; protected set; }
         public override bool IsSimpleTarget { get { return false; } }
         protected float _dashSpeed;

@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Core.Logic.RAF;
+using LeagueSandbox.GameServer.Core.Logic;
+using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -11,6 +14,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _moveSpeed;
         protected int _flags;
         protected Spell _originSpell;
+        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+        private Logger _logger = Program.ResolveDependency<Logger>();
 
         public Projectile(
             float x,
@@ -20,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Target target,
             Spell originSpell,
             float moveSpeed,
-            int projectileId,
+            string projectileName,
             int flags = 0,
             uint netId = 0
         ) : base(x, y, collisionRadius, 0, netId)
@@ -28,7 +33,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;
             Owner = owner;
-            ProjectileId = projectileId;
+            Team = owner.Team;
+            ProjectileId = (int)_rafManager.GetHash(projectileName);
+            if (!string.IsNullOrEmpty(projectileName))
+            {
+                JObject data;
+                if (!_rafManager.ReadSpellData(projectileName, out data))
+                {
+                    _logger.LogCoreError("Couldn't find projectile stats for " + projectileName);
+                    return;
+                }
+                VisionRadius = _rafManager.GetFloatValue(data, "SpellData", "MissilePerceptionBubbleRadius");
+            }
             _flags = flags;
             ObjectsHit = new List<GameObject>();
 
