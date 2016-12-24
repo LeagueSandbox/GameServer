@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleNull(), PacketCmd.PKT_C2S_Click, Channel.CHL_C2S);
             // registerHandler(new HandleNull(), PacketCmd.PKT_C2S_OpenShop, Channel.CHL_C2S);
             registerHandler(new HandleAttentionPing(), PacketCmd.PKT_C2S_AttentionPing, Channel.CHL_C2S);
-            registerHandler(new HandleChatBoxMessage(), PacketCmd.PKT_C2S_ChatBoxMessage, Channel.CHL_COMMUNICATION);
+            registerHandler(new HandleChatBoxMessage(), PacketCmd.PKT_ChatBoxMessage, Channel.CHL_COMMUNICATION);
             registerHandler(new HandleMove(), PacketCmd.PKT_C2S_MoveReq, Channel.CHL_C2S);
             registerHandler(new HandleNull(), PacketCmd.PKT_C2S_MoveConfirm, Channel.CHL_C2S);
             registerHandler(new HandleSkillUp(), PacketCmd.PKT_C2S_SkillUp, Channel.CHL_C2S);
