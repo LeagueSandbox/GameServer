@@ -121,24 +121,33 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 RefreshLoop();
             }
 
+            //Can get called by different threads
             private void RefreshLoop()
             {
-                if (_stringBuilder.Length > 0)
+                string text = null;
+                lock (_stringBuilder)
                 {
-                    String text = _stringBuilder.ToString();
-                    _stringBuilder.Clear();
-                    Task.Factory.StartNew(() =>
+                    if (_stringBuilder.Length > 0)
                     {
-                        Console.Write(text);
-                    });
+                        text = _stringBuilder.ToString();
+                        _stringBuilder.Clear();
+                    }
+                }
+                if (text != null)
+                {
                     WriteTextToLogFile(text + Environment.NewLine);
+                    Console.Write(text);
                 }
             }
 
+            //Can get called by different threads
             private void WriteTextToLogFile(string text)
             {
                 byte[] info = new UTF8Encoding(true).GetBytes(text);
-                _logFile.WriteAsync(info, 0, info.Length);
+                lock (_logFile)
+                {
+                    _logFile.WriteAsync(info, 0, info.Length);
+                }
             }
 
             public void Log(string lines, string type = "LOG")
@@ -149,8 +158,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     type.ToUpper(),
                     lines
                 );
-
-                _stringBuilder.AppendLine(text);
+                lock (_stringBuilder)
+                {
+                    _stringBuilder.AppendLine(text);
+                }
             }
 
             public void CreateLogFile(string directory, string name)
