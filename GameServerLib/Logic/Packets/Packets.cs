@@ -609,6 +609,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class ModifyShield : BasePacket
+    {
+        public ModifyShield(Unit unit, float amount, ShieldType type) : base(PacketCmd.PKT_S2C_ModifyShield, unit.NetId)
+        {
+            buffer.Write((byte)type);
+            buffer.Write((float)amount);
+        }
+    }
+
     public class SetHealthTest : BasePacket
     {
         public SetHealthTest(uint netId, short unk, float maxhp, float hp) : base(PacketCmd.PKT_S2C_SetHealth, netId)

@@ -154,6 +154,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(dd, Channel.CHL_S2C);
         }
 
+        public void NotifyModifyShield(Unit unit, float amount, ShieldType type)
+        {
+            var ms = new ModifyShield(unit, amount, type);
+            _game.PacketHandlerManager.broadcastPacket(ms, Channel.CHL_S2C);
+        }
+
         public void NotifyBeginAutoAttack(Unit attacker, Unit victim, uint futureProjNetId, bool isCritical)
         {
             var aa = new BeginAutoAttack(attacker, victim, futureProjNetId, isCritical);

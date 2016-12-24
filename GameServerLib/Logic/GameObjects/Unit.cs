@@ -49,6 +49,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         MOVE_ORDER_ATTACKMOVE
     }
 
+    public enum ShieldType : byte
+    {
+        GreenShield = 0x01,
+        MagicShield = 0x02,
+        NormalShield = 0x03
+    }
+
     public class Unit : GameObject
     {
         internal const float DETECT_RANGE = 475.0f;
