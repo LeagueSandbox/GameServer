@@ -228,7 +228,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 AutoAttackTarget,
                                 null,
                                 AutoAttackProjectileSpeed,
-                                0,
+                                "",
                                 0,
                                 _autoAttackProjId
                             );

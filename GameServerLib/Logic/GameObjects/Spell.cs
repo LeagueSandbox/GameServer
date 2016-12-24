@@ -445,7 +445,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 new Target(toX, toY),
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.GetHash(nameMissile),
+                nameMissile,
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
             _game.Map.AddObject(p);
@@ -465,7 +465,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target,
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.GetHash(nameMissile),
+                nameMissile,
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
             _game.Map.AddObject(p);
@@ -486,7 +486,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 new Target(toX, toY),
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.GetHash(name),
+                name,
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
 
@@ -508,7 +508,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target,
                 this,
                 ProjectileSpeed,
-                (int)_rafManager.GetHash(name),
+                name,
                 ProjectileFlags != 0 ? ProjectileFlags : Flags
             );
 
@@ -644,7 +644,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("addLaser", this, typeof(Spell).GetMethod("AddLaser", new[] { typeof(float), typeof(float), typeof(bool) }));
 
             /*scriptEngine.RegisterFunction("addMovementSpeedBuff", this, typeof(Spell).GetMethod("addMovementSpeedBuff", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
-            
+
             public void addMovementSpeedBuff(Unit u, float amount, float duration)
             {
                 Buff b = new Buff(duration);
