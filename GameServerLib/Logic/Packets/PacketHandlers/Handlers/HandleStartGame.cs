@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
 
-            if(!peerInfo.IsDisconnected)
+            if (!peerInfo.IsDisconnected)
             {
                 _game.IncrementReadyPlayers();
             }
@@ -56,6 +56,11 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                              * of updating a champion's level, but it works */
                             var levelUpPacket = new LevelUp(player.Item2.Champion);
                             _game.PacketHandlerManager.sendPacket(peer, levelUpPacket, Channel.CHL_S2C);
+                            if (_game.IsPaused)
+                            {
+                                var pausePacket = new PauseGame((int)_game.PauseTimeLeft, true);
+                                _game.PacketHandlerManager.sendPacket(peer, pausePacket, Channel.CHL_S2C);
+                            }
                         }
                     }
                     peerInfo.IsDisconnected = false;

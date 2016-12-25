@@ -6,7 +6,7 @@
         PKT_S2C_RestrictCameraMovement = 0x06,
         PKT_C2S_HeartBeat = 0x08,
         PKT_C2S_SellItem = 0x09,
-        PKT_S2C_UnpauseGame = 0x0A,
+        PKT_UnpauseGame = 0x0A,
         PKT_S2C_RemoveItem = 0x0B,
         PKT_S2C_NextAutoAttack = 0x0C,
         PKT_S2C_EditMessageBoxTop = 0x0D,
@@ -99,8 +99,7 @@
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
         PKT_S2C_SetItemStacks = 0x9F,
         PKT_S2C_MessageBoxRight = 0xA0,
-        PKT_S2C_PauseGame = 0xA1, // <-- PKT_Pause ?
-        PKT_C2S_PauseReq = 0xA1,  // <--
+        PKT_PauseGame = 0xA1, // <-- PKT_Pause ?
         PKT_S2C_RemoveMessageBoxTop = 0xA2,
         PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_C2S_Surrender = 0xA4,

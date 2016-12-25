@@ -297,6 +297,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
         }
 
+        public void NotifyPauseGame(int seconds, bool showWindow)
+        {
+            var pg = new PauseGame(seconds, showWindow);
+            _game.PacketHandlerManager.broadcastPacket(pg, Channel.CHL_S2C);
+        }
+
+        public void NotifyResumeGame(Unit unpauser, bool showWindow)
+        {
+            UnpauseGame upg;
+            if (unpauser == null)
+            {
+                upg = new UnpauseGame(0, showWindow);
+            }
+            else
+            {
+                upg = new UnpauseGame(unpauser.NetId, showWindow);
+            }
+            _game.PacketHandlerManager.broadcastPacket(upg, Channel.CHL_S2C);
+        }
+
         public void NotifySpawn(Unit u)
         {
             var m = u as Minion;

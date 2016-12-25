@@ -157,7 +157,9 @@
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleExit.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandlePauseReq.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleScoreboard.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUnpauseReq.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\PreciseTimer.cs" />
     <Compile Include="Logic\Scripting\Lua\LuaScriptEngine.cs" />

@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
+using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -24,6 +24,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public BlowFish Blowfish { get; private set; }
 
         public bool IsRunning { get; private set; }
+
+        public bool IsPaused { get; set; }
+        private Timer _pauseTimer;
+        public long PauseTimeLeft { get; private set; }
+        private bool _autoResumeCheck;
+
         public int PlayersReady { get; private set; }
 
         public Map Map { get; private set; }
@@ -31,8 +37,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public PacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
-        protected const PacketFlags RELIABLE = PacketFlags.Reliable;
-        protected const PacketFlags UNRELIABLE = PacketFlags.None;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
         private Logger _logger;
         // Object managers
@@ -41,6 +45,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private ChatCommandManager _chatCommandManager;
         private PlayerManager _playerManager;
         private NetworkIdManager _networkIdManager;
+        private Stopwatch _lastMapDurationWatch;
 
         public Game(
             ItemManager itemManager,
@@ -86,13 +91,21 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 _playerManager.AddPlayer(p);
             }
 
+            _pauseTimer = new Timer
+            {
+                AutoReset = true,
+                Enabled = false,
+                Interval = 1000
+            };
+            _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
+            PauseTimeLeft = 30 * 60; // 30 minutes
 
             _logger.LogCoreInfo("Game is ready.");
         }
 
         public void RegisterMap(byte mapId)
         {
-            var mapName = Config.ContentManager.GameModeName + "-Map" + mapId;
+            var mapName = $"{Config.ContentManager.GameModeName}-Map{mapId}";
             var dic = new Dictionary<string, Type>
             {
                 { "LeagueSandbox-Default-Map1", typeof(SummonersRift) },
@@ -115,8 +128,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             var enetEvent = new Event();
 
-            var lastMapDurationWatch = new Stopwatch();
-            lastMapDurationWatch.Start();
+            _lastMapDurationWatch = new Stopwatch();
+            _lastMapDurationWatch.Start();
             using (PreciseTimer.SetResolution(1))
             {
                 while (!Program.IsSetToExit)
@@ -132,10 +145,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                                 break;
 
                             case EventType.Receive:
-                                if (!PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID))
-                                {
-                                    //enet_peer_disconnect(event.peer, 0);
-                                }
+                                PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID);
                                 // Clean up the packet now that we're done using it.
                                 enetEvent.Packet.Dispose();
                                 break;
@@ -146,10 +156,23 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         }
                     }
 
-                    if (lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                    if (IsPaused)
                     {
-                        double sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                        lastMapDurationWatch.Restart();
+                        _lastMapDurationWatch.Stop();
+                        _pauseTimer.Enabled = true;
+                        if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                        {
+                            PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
+                                .HandlePacket(null, new byte[0]);
+                            _autoResumeCheck = true;
+                        }
+                        continue;
+                    }
+
+                    if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                    {
+                        double sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                        _lastMapDurationWatch.Restart();
                         if (IsRunning)
                         {
                             Map.Update((float)sinceLastMapTime);
@@ -173,6 +196,23 @@ namespace LeagueSandbox.GameServer.Core.Logic
         public void Stop()
         {
             IsRunning = false;
+        }
+
+        public void Pause()
+        {
+            if (PauseTimeLeft <= 0)
+            {
+                return;
+            }
+            IsPaused = true;
+            PacketNotifier.NotifyPauseGame((int)PauseTimeLeft, true);
+        }
+
+        public void Unpause()
+        {
+            _lastMapDurationWatch.Start();
+            IsPaused = false;
+            _pauseTimer.Enabled = false;
         }
 
         private bool HandleDisconnect(Peer peer)
