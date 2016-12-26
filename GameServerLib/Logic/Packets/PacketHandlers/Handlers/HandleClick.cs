@@ -6,6 +6,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleClick : IPacketHandler
     {
+        private Game _game = Program.ResolveDependency<Game>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 

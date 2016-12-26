@@ -1,15 +1,17 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
-    class HandleScoreboard : IPacketHandler
+    class HandlePauseReq : IPacketHandler
     {
+        private Game _game = Program.ResolveDependency<Game>();
         private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
+
         public bool HandlePacket(Peer peer, byte[] data)
         {
-            _logger.LogCoreInfo($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
+            _game.Pause();
             return true;
         }
     }

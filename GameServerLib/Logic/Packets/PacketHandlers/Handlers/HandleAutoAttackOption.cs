@@ -6,6 +6,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 {
     class HandleAutoAttackOption : IPacketHandler
     {
+        private Game _game = Program.ResolveDependency<Game>();
         private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
 
         public bool HandlePacket(Peer peer, byte[] data)

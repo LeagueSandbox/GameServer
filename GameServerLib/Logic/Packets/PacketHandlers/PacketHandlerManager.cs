@@ -69,6 +69,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             registerHandler(new HandleUseObject(), PacketCmd.PKT_C2S_UseObject, Channel.CHL_C2S);
             registerHandler(new HandleCursorPositionOnWorld(), PacketCmd.PKT_C2S_CursorPositionOnWorld, Channel.CHL_C2S);
             registerHandler(new HandleScoreboard(), PacketCmd.PKT_C2S_Scoreboard, Channel.CHL_C2S);
+            registerHandler(new HandlePauseReq(), PacketCmd.PKT_PauseGame, Channel.CHL_C2S);
+            registerHandler(new HandleUnpauseReq(), PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S);
 
             // registerHandler(new HandleX(), PacketCmd.PKT_C2S_X, Channel.CHL_C2S);
         }
@@ -88,6 +90,25 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelID)
         {
+            var game = Program.ResolveDependency<Game>();
+            var packetsHandledWhilePaused = new List<PacketCmd>
+            {
+                PacketCmd.PKT_UnpauseGame,
+                PacketCmd.PKT_C2S_CharLoaded,
+                PacketCmd.PKT_C2S_Click,
+                PacketCmd.PKT_C2S_ClientReady,
+                PacketCmd.PKT_C2S_Exit,
+                PacketCmd.PKT_C2S_HeartBeat,
+                PacketCmd.PKT_C2S_QueryStatusReq,
+                PacketCmd.PKT_C2S_StartGame,
+                PacketCmd.PKT_C2S_World_SendGameNumber,
+                PacketCmd.PKT_ChatBoxMessage,
+                PacketCmd.PKT_KeyCheck
+            };
+            if (game.IsPaused && !packetsHandledWhilePaused.Contains(cmd))
+            {
+                return null;
+            }
             if (_handlerTable.ContainsKey(cmd))
             {
                 var handlers = _handlerTable[cmd];
@@ -208,8 +229,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 case PacketCmd.PKT_C2S_StatsConfirm:
                 case PacketCmd.PKT_C2S_MoveConfirm:
                 case PacketCmd.PKT_C2S_ViewReq:
-                    break;
-                default:
                     break;
             }
 
