@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var questClicked = new QuestClicked(data);
 
             _chatCommandManager.SendDebugMsgFormatted(
-                GameServer.Logic.Chatbox.ChatCommandManager.DebugMsgType.NORMAL,
-                string.Format("Clicked quest with netid: {0}", questClicked.netid.ToString())
+                ChatCommandManager.DebugMsgType.NORMAL,
+                $"Clicked quest with netid: {questClicked.netid}"
             );
             return true;
         }

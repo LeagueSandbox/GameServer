@@ -729,12 +729,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class PauseGame : BasePacket
     {
-        public PauseGame(byte seconds, bool showWindow) : base(PacketCmd.PKT_S2C_PauseGame)
+        public PauseGame(int seconds, bool showWindow) : base(PacketCmd.PKT_PauseGame)
         {
             // The following structure might be incomplete or wrong
             buffer.Write((int)0);
             buffer.Write((int)seconds);
-            buffer.Write(showWindow);
+            buffer.Write((bool)showWindow);
         }
     }
 
@@ -2210,7 +2210,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class UnpauseGame : BasePacket
     {
-        public UnpauseGame(uint unpauserNetId, bool showWindow) : base(PacketCmd.PKT_S2C_UnpauseGame)
+        public UnpauseGame(uint unpauserNetId, bool showWindow) : base(PacketCmd.PKT_UnpauseGame)
         {
             buffer.Write((uint)unpauserNetId);
             buffer.Write(showWindow);
