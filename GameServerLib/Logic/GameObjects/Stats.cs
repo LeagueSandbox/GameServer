@@ -204,8 +204,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (ArmorPenetration.ApplyStatModificator(buff.ArmorPenetration))
             {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, Armor.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, Armor.PercentBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
             }
             if (AttackDamage.ApplyStatModificator(buff.AttackDamage))
             {
@@ -240,8 +240,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (MagicPenetration.ApplyStatModificator(buff.MagicPenetration))
             {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicResist.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicResist.PercentBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             }
             if (ManaPoints.ApplyStatModificator(buff.ManaPoints))
             {
@@ -287,8 +287,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (ArmorPenetration.RemoveStatModificator(buff.ArmorPenetration))
             {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, Armor.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, Armor.PercentBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
             }
             if (AttackDamage.RemoveStatModificator(buff.AttackDamage))
             {
@@ -323,8 +323,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             if (MagicPenetration.RemoveStatModificator(buff.MagicPenetration))
             {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicResist.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicResist.PercentBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
+                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             }
             if (ManaPoints.RemoveStatModificator(buff.ManaPoints))
             {
@@ -497,18 +497,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, Armor.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, Armor.PercentBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, Armor.BaseValue);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, Armor.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, Armor.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicResist.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicResist.PercentBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
+            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_exp, Experience);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
