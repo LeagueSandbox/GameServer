@@ -20,6 +20,7 @@ For more detailed project specifications head over to https://leaguesandbox.gith
 If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know
 
 # Setup guide
+* NOTE: If you need a complete guide with all the steps [click here](https://github.com/LeagueSandbox/GameServer/wiki)
 * Install Microsoft Visual Studio 2015 (Community Edition is fine)
 * Install DotNet 4.6.1 Framework
 * Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
