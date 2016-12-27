@@ -54,7 +54,8 @@ namespace LeagueSandbox.GameServer
 
         public static void SetToExit()
         {
-            Console.WriteLine("Game is over. Game Server will exit in 10 seconds.");
+            Logger _logger = Program.ResolveDependency<Logger>();
+            _logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
             var timer = new System.Timers.Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => IsSetToExit = true;
             timer.Start();

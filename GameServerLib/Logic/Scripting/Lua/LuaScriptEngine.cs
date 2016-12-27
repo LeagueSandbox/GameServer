@@ -1,4 +1,5 @@
-﻿using NLua;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using NLua;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,6 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.Lua
 {
     public class LuaScriptEngine : IScriptEngine
     {
+        private Logger _logger = Program.ResolveDependency<Logger>();
+
         private bool _isLoaded;
         private NLua.Lua _lua;
 
@@ -30,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.Lua
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogCoreError(e.Message);
             }
         }
 

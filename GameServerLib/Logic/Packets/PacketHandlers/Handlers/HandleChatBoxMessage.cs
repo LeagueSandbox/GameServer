@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         public bool HandlePacket(Peer peer, byte[] data)
         {
             var message = new ChatMessage(data);
-            Console.WriteLine("PlayerID: " + message.playerId);
             var split = message.msg.Split(' ');
             if (split.Length > 1)
             {
