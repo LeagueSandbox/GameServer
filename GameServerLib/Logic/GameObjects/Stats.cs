@@ -509,6 +509,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
             appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_exp, Experience);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
