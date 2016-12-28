@@ -2461,19 +2461,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
     public class CastSpellAns : BasePacket
     {
-        public CastSpellAns(Spell s, float x, float y, uint futureProjNetId, uint spellNetId)
+        public CastSpellAns(Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
                : base(PacketCmd.PKT_S2C_CastSpellAns, s.Owner.NetId)
         {
             var m = _game.Map;
 
             buffer.Write(Environment.TickCount); // syncID
-            buffer.Write((byte)0);
-            buffer.Write((byte)0x66); // <-| Flag
-            buffer.Write((byte)0x00); // <-|
+            buffer.Write((byte)0); // Unk
+            buffer.Write((short)0x66); // Buffer size from here
             buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
             buffer.Write((uint)spellNetId); // Spell net ID
-            buffer.Write((byte)1); // Unk
-            buffer.Write((float)1.0f); // Unk
+            buffer.Write((byte)s.Level - 1);
+            buffer.Write((float)1.0f); // attackSpeedMod
             buffer.Write((uint)s.Owner.NetId);
             buffer.Write((uint)s.Owner.NetId);
             buffer.Write((int)s.Owner.getChampionHash());
@@ -2481,16 +2480,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)x);
             buffer.Write((float)m.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
-            buffer.Write((float)x);
-            buffer.Write((float)m.GetHeightAtLocation(x, y));
-            buffer.Write((float)y);
-            buffer.Write((byte)0); // Unk
-            buffer.Write(s.CastTime);
-            buffer.Write((float)0.0f); // Delay betwen spell and animation/sound
-            buffer.Write((float)1.0f); // 0 : invisible, More than 0 : visible
-            buffer.Write(s.getCooldown());
-            buffer.Write((float)0.0f); // Unk
-            buffer.Write((byte)0); // Unk
+            buffer.Write((float)xDragEnd);
+            buffer.Write((float)m.GetHeightAtLocation(xDragEnd, yDragEnd));
+            buffer.Write((float)yDragEnd);
+            buffer.Write((byte)0); // numTargets (if >0, what follows is a list of {uint32 targetNetId, uint8 hitResult})
+            buffer.Write((float)s.CastTime); // designerCastTime
+            buffer.Write((float)0.0f); // extraTimeForCast
+            buffer.Write((float)s.CastTime /*+ s.ChannelTime*/); // designerTotalTime
+            buffer.Write((float)s.getCooldown());
+            buffer.Write((float)0.0f); // startCastTime
+            buffer.Write((byte)0); // flags (isAutoAttack, secondAttack, forceCastingOrChannelling, mShouldOverrideCastPosition)
             buffer.Write((byte)s.Slot);
             buffer.Write((float)s.getCost());
             buffer.Write((float)s.Owner.X);

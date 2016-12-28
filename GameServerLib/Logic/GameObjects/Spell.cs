@@ -171,7 +171,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            CastTime = (1.0f + _rafManager.GetFloatValue(data, "SpellData", "DelayCastOffsetPercent")) / 2.0f;
+            if (_rafManager.DoesValueExist(data, "SpellData", "OverrideCastTime"))
+            {
+                CastTime = _rafManager.GetFloatValue(data, "SpellData", "OverrideCastTime");;
+            }
+            else
+            {
+                CastTime = (1.0f + _rafManager.GetFloatValue(data, "SpellData", "DelayCastOffsetPercent")) / 2.0f;
+            }
 
             Flags = _rafManager.GetIntValue(data, "SpellData", "Flags");
             ProjectileSpeed = _rafManager.GetFloatValue(data, "SpellData", "MissileSpeed");

@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (s == null)
                 return false;
 
-            var response = new CastSpellAns(s, spell.x, spell.y, futureProjNetId, spellNetId);
+            var response = new CastSpellAns(s, spell.x, spell.y, spell.x2, spell.y2, futureProjNetId, spellNetId);
             _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }
