@@ -2576,17 +2576,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)0); // Unk
             if (!p.Target.IsSimpleTarget)
             {
-                buffer.Write((byte)0x6B); // <-|
-            }                             //   |
-            else                          //   |-> maybe a bit field?, last bit 1 if it's a targeted projectile?
-            {                             //   |
-                buffer.Write((byte)0x66); // <-|
+                buffer.Write((short)0x6B); // Buffer size from here
             }
-            buffer.Write((byte)0); // Part of the above bit field?
+            else
+            {
+                buffer.Write((short)0x66); // Buffer size from here
+            }
             buffer.Write((int)p.ProjectileId); // projectile ID (hashed name)
             buffer.Write((int)0); // Second net ID
-            buffer.Write((byte)0); // Unk
-            buffer.Write(1.0f); // Unk
+            buffer.Write((byte)0); // spellLevel
+            buffer.Write((float)1.0f); // attackSpeedMod
             buffer.Write((int)p.Owner.NetId);
             buffer.Write((int)p.Owner.NetId);
 
@@ -2602,26 +2601,29 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)p.GetZ());
+            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)p.GetZ()+100.0f);
+            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y)+100.0f);
             buffer.Write((float)p.Target.Y);
             if (!p.Target.IsSimpleTarget)
             {
-                buffer.Write((byte)0x01); // Unk (number of targets?)
+                buffer.Write((byte)0x01); // numTargets
                 buffer.Write((p.Target as Unit).NetId);
+                buffer.Write((byte)0); // hitResult
             }
-            buffer.Write((byte)0); // Unk
-            buffer.Write((float)1.0f); // Unk ((float)castTime ?)
-            buffer.Write((int)0); // Unk ((float) Delay betwen spell and animation/sound?)
-            buffer.Write((float)1.0f); // (0 : Invisible, More than 0 : Visible?)
-            buffer.Write((byte)0x3C); // Unk
-            buffer.Write((byte)0xDB); // Unk
-            buffer.Write((byte)0x1E); // Unk
-            buffer.fill(0, 6); // Unk
-            buffer.Write((byte)0x30); // Unk
-            buffer.Write((int)0); // Unk
+            else
+            {
+                buffer.Write((byte)0); // numTargets
+            }
+            buffer.Write((float)1.0f); // designerCastTime -- Doesn't seem to matter
+            buffer.Write((int)0); // extraTimeForCast -- Doesn't seem to matter
+            buffer.Write((float)1.0f); // designerTotalTime -- Doesn't seem to matter
+            buffer.Write((float)0.0f); // cooldown -- Doesn't seem to matter
+            buffer.Write((float)0.0f); // startCastTime -- Doesn't seem to matter
+            buffer.Write((byte)0x00); // flags?
+            buffer.Write((byte)0x30); // slot?
+            buffer.Write((float)0.0f); // manaCost?
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
             buffer.Write((float)p.Y);
