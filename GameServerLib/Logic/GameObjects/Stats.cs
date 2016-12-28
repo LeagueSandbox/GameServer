@@ -69,7 +69,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     public class Stats
     {
         protected Dictionary<MasterMask, Dictionary<FieldMask, float>> _updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-        protected bool _updatedHealth;
 
         protected float _gold;
         protected float _level;
@@ -144,7 +143,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             set
             {
                 _currentHealth = value;
-                _updatedHealth = true;
             }
         }
 
@@ -164,7 +162,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Stats()
         {
-            _updatedHealth = false;
             spellCostReduction = 0;
             critDamagePct = 2;
 
@@ -513,6 +510,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
             appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_CurrentHp, CurrentHealth);
+            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_CurrentMana, CurrentMana);
 
             foreach (var block in stats)
             {
@@ -527,15 +526,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void ClearUpdatedStats()
         {
             _updatedStats.Clear();
-        }
-
-        public bool IsUpdatedHealth()
-        {
-            if (!_updatedHealth)
-                return false;
-            if (_updatedHealth)
-                _updatedHealth = false;
-            return true;
         }
 
         public float GetTotalAttackSpeed()
