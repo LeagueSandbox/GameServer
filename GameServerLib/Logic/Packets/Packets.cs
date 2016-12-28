@@ -2471,7 +2471,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((short)0x66); // Buffer size from here
             buffer.Write((int)s.getId()); // Spell hash, for example hash("EzrealMysticShot")
             buffer.Write((uint)spellNetId); // Spell net ID
-            buffer.Write((byte)s.Level - 1);
+            buffer.Write((byte)(s.Level - 1));
             buffer.Write((float)1.0f); // attackSpeedMod
             buffer.Write((uint)s.Owner.NetId);
             buffer.Write((uint)s.Owner.NetId);
