@@ -44,6 +44,12 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return true;
         }
 
+        public bool DoesValueExist(JObject from, string second = "", string third = "")
+        {
+            var x = GetValue(from, second, third);
+            return x != null;
+        }
+
         public JToken GetValue(JObject from, string second = "", string third = "")
         {
             var toReturn = from.SelectToken("Values");
