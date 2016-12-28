@@ -70,14 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 return;
             }
 
-            if (!partial)
-            {
-                _game.PacketHandlerManager.broadcastPacketTeam(u.Team, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
-            }
-            else
-            {
-                _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
-            }
+            _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
         }
 
         public void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)

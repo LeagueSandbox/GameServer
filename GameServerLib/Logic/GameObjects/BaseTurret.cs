@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(model, new Stats(), 50, x, y, 1200, netId)
+        ) : base(model, new TurretStats(), 50, x, y, 1200, netId)
         {
             Name = name;
             SetTeam(team);
