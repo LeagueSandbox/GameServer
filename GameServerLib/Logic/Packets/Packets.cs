@@ -363,7 +363,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             userId = reader.ReadInt64();
             trash = reader.ReadUInt32();
             checkId = reader.ReadUInt64();
-            trash2 = reader.ReadUInt32();
+            if (reader.BaseStream.Position != reader.BaseStream.Length)
+            {
+                trash2 = reader.ReadUInt32();
+            }
             reader.Close();
         }
 
