@@ -6,8 +6,8 @@
             "champion": "Ezreal",
             "team": "BLUE",
             "skin": 0,
-            "summoner1": "HEAL",
-            "summoner2": "FLASH",
+            "summoner1": "SummonerHeal",
+            "summoner2": "SummonerFlash",
             "ribbon": 2,
             "icon": 0,
             "runes": {

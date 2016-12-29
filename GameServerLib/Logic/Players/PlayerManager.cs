@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -38,8 +39,8 @@ namespace LeagueSandbox.GameServer.Logic.Players
         {
             var summonerSkills = new[]
             {
-                EnumParser.ParseSummonerSpell(p.Value.Summoner1),
-                EnumParser.ParseSummonerSpell(p.Value.Summoner2)
+                p.Value.Summoner1,
+                p.Value.Summoner2
             };
             var teamId = GetTeamIdFromConfig(p.Value);
             var player = new ClientInfo(
@@ -53,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
-            var c = new Champion(p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes);
+            var c = new Champion(p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();

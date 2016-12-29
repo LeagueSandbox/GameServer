@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
         public bool IsMatchingVersion { get; set; }
         public bool IsDisconnected { get; set; }
         public int SkinNo { get; private set; }
-        public SummonerSpellIds[] SummonerSkills { get; private set; }
+        public string[] SummonerSkills { get; private set; }
         public string Name { get; private set; }
         public string  Rank { get; private set; }
         public short Ribbon { get; private set; }
@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
                           int icon,
                           int skinNo,
                           string name,
-                          SummonerSpellIds[] summonerSkills,
+                          string[] summonerSkills,
                           long userId)
         {
             Rank = rank;

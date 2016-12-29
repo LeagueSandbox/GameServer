@@ -27,13 +27,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         private uint _playerId;
         /// <summary>
-        /// Player number in the team ordered by the config file. 
+        /// Player number in the team ordered by the config file.
         /// Used in nowhere but to set spawnpoint at the game start.
         /// </summary>
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
-        public Champion(string model, uint playerId, uint playerTeamSpecialId, RuneCollection runeList, uint netId = 0)
+        public Champion(string model,
+                        uint playerId,
+                        uint playerTeamSpecialId,
+                        RuneCollection runeList,
+                        ClientInfo clientInfo,
+                        uint netId = 0)
             : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
             _playerId = playerId;
@@ -83,8 +88,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 { 1, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1) },
                 { 2, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2) },
                 { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
-                { 4, new Spell(this, "SummonerHeal", 4) },
-                { 5, new Spell(this, "SummonerFlash", 5) },
+                { 4, new Spell(this, clientInfo.SummonerSkills[0], 4) },
+                { 5, new Spell(this, clientInfo.SummonerSkills[1], 5) },
                 { 13, new Spell(this, "Recall", 13) }
             };
 

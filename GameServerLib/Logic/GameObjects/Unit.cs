@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.Scripting.Lua;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -66,6 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
         protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
+        protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
         private Random random = new Random();
 
