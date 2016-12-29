@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     public class Packet
     {
         protected Game _game = Program.ResolveDependency<Game>();
+        protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private MemoryStream memStream;
         protected BinaryWriter buffer;
@@ -167,8 +168,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var summonerSpells = p.SummonerSkills;
                 buffer.Write((long)p.UserId);
                 buffer.Write((short)0x1E); // unk
-                buffer.Write((int)summonerSpells[0]);
-                buffer.Write((int)summonerSpells[1]);
+                buffer.Write((uint)_rafManager.GetHash(summonerSpells[0]));
+                buffer.Write((uint)_rafManager.GetHash(summonerSpells[1]));
                 buffer.Write((byte)0); // bot boolean
                 buffer.Write((int)p.Team); // Probably a short
                 buffer.fill(0, 64); // name is no longer here
@@ -1933,8 +1934,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public AddBuff(Unit u, Unit source, int stacks, float time, BuffType buffType, string name, byte slot)
                : base(PacketCmd.PKT_S2C_AddBuff, u.NetId)
         {
-            var _rafManager = Program.ResolveDependency<RAFManager>();
-
             buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
@@ -1992,7 +1991,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public RemoveBuff(Unit u, string name, byte slot) : base(PacketCmd.PKT_S2C_RemoveBuff, u.NetId)
         {
-            var _rafManager = Program.ResolveDependency<RAFManager>();
             buffer.Write((byte)slot);
             buffer.Write(_rafManager.GetHash(name));
             buffer.Write((int)0x0);
@@ -2517,8 +2515,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
 
             var summonerSpells = player.SummonerSkills;
-            buffer.Write((int)summonerSpells[0]);
-            buffer.Write((int)summonerSpells[1]);
+            buffer.Write((uint)_rafManager.GetHash(summonerSpells[0]));
+            buffer.Write((uint)_rafManager.GetHash(summonerSpells[1]));
 
             int talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>(){
@@ -2664,7 +2662,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpawnParticle(Particle particle) : base(PacketCmd.PKT_S2C_SpawnParticle, particle.Owner.NetId)
         {
-            var _rafManager = Program.ResolveDependency<RAFManager>();
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)particle.Owner.getChampionHash());
             buffer.Write((uint)_rafManager.GetHash(particle.Name));

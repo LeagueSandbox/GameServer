@@ -23,12 +23,14 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
+            var currentChampion = _playerManager.GetPeerInfo(peer).Champion;
             var c = new Champion(
                 split[1],
                 (uint)_playerManager.GetPeerInfo(peer).UserId,
                 0, // Doesnt matter at this point
-                _playerManager.GetPeerInfo(peer).Champion.RuneList,
-                _playerManager.GetPeerInfo(peer).Champion.NetId
+                currentChampion.RuneList,
+                _playerManager.GetClientInfoByChampion(currentChampion),
+                currentChampion.NetId
             );
             c.setPosition(
                 _playerManager.GetPeerInfo(peer).Champion.X,
