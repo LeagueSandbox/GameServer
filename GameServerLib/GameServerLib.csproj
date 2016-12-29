@@ -118,6 +118,7 @@
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Announce.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
+    <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\GameObjects\Champion.cs" />
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />

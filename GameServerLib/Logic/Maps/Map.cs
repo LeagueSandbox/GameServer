@@ -152,18 +152,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     u.GetStats().ClearUpdatedStats();
                 }
 
-                if (u.GetStats().IsUpdatedHealth())
-                {
-                    _game.PacketNotifier.NotifySetHealth(u);
-                }
-
                 if (u.IsModelUpdated)
                 {
                     _game.PacketNotifier.NotifyModelUpdate(u);
                     u.IsModelUpdated = false;
                 }
-
-
 
                 if (obj.isMovementUpdated())
                 {

@@ -461,6 +461,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.die(this);
             }
             _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, text);
+            _game.PacketNotifier.NotifyUpdatedStats(target, false);
 
             //Get health from lifesteal/spellvamp
             if (regain != 0)
