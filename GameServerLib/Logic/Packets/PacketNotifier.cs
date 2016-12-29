@@ -60,16 +60,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyUpdatedStats(Unit u, bool partial = true)
         {
-            //if (u is Monster)
-            //    return;
             var us = new UpdateStats(u, partial);
-
-            if (u is BaseTurret)
-            {
-                _game.PacketHandlerManager.broadcastPacket(us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
-                return;
-            }
-
             _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
         }
 
