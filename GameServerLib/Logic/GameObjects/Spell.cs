@@ -126,22 +126,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             JObject data;
 
-            if (slot > 3)
-            {
-                if (!_rafManager.ReadSpellData(spellName, out data))
-                {
-                    return;
-                }
-
-                // Generate cooldown values for each level of the spell
-                for (var i = 0; i < cooldown.Length; ++i)
-                {
-                    cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown");
-                }
-
-                return;
-            }
-
             if (!_rafManager.ReadSpellData(spellName, out data))
             {
                 _logger.LogCoreError("Couldn't find spell stats for " + spellName);
@@ -269,7 +253,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             RunCastLua();
 
-            if (CastTime > 0 && Flags != (int)SpellFlag.SPELL_FLAG_InstantCast)
+            if (CastTime > 0 && (Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
                 Owner.setPosition(Owner.X, Owner.Y);//stop moving serverside too. TODO: check for each spell if they stop movement or not
                 state = SpellState.STATE_CASTING;
