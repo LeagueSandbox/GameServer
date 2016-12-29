@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
             /* if (_game.IsRunning)
                 return true; */
-            
+
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
                 var start = new StatePacket(PacketCmd.PKT_S2C_StartGame);
@@ -34,6 +34,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                         var dm = new DebugMessage("Your client version does not match the server. Check the server log for more information.");
                         _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
+                    _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
                 }
 
