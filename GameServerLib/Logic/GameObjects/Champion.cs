@@ -93,6 +93,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 { 13, new Spell(this, "Recall", 13) }
             };
 
+            Spells[4].levelUp();
+            Spells[5].levelUp();
+
             ExtraSpells = new List<string>();
 
             for (var i = 1; true; i++)

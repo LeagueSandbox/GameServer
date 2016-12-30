@@ -132,10 +132,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            // Generate cooldown values for each level of the spell
+            // Load cooldowns
             for (var i = 0; i < cooldown.Length; ++i)
             {
-                cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown" + (i + 1));
+                // If Cooldown<level> exists, use its value
+                if (_rafManager.DoesValueExist(data, "SpellData", "Cooldown" + (i + 1)))
+                {
+                    cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown" + (i + 1));
+                }
+                else // If not, use the value in Cooldown
+                {
+                    cooldown[i] = _rafManager.GetFloatValue(data, "SpellData", "Cooldown");
+                }
             }
 
             for (var i = 0; i < cost.Length; ++i)
