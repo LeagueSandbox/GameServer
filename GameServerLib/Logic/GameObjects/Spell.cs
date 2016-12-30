@@ -683,6 +683,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void levelUp()
         {
             ++Level;
+            if (Slot < 4)
+            {
+                Owner.GetStats().ManaCost[Slot] = cost[Level - 1];
+            }
         }
 
         public void SetCooldown(byte slot, float newCd)
