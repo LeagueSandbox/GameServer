@@ -8,8 +8,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         FM1_Gold = 0x00000001,
         FM1_Gold_Total = 0x00000002,
-        FM1_Spells_Enabled = 0x00000004, // Bits: 0-3 -> Q-R, 4-9 -> Items, 10 -> Trinket
-        FM1_SummonerSpells_Enabled = 0x00000010, // Bits: 0 -> D, 1 -> F
+        FM1_Spells_Enabled = 0x00000004, // Lower bits. Bits: 0-3 -> Q-R, 4-9 -> Items, 10 -> Trinket
+        FM1_Spells_Enabled2 = 0x00000008, // Upper bits
+        FM1_SummonerSpells_Enabled = 0x00000010, // Lower bits. Bits: 0 -> D, 1 -> F
+        FM1_SummonerSpells_Enabled2 = 0x00000020, // Upper bits
+        FM1_EvolvePoints = 0x00000040,
+        FM1_EvolveFlags = 0x00000080,
+        FM1_ManaCost0 = 0x00000100,
+        FM1_ManaCost1 = 0x00000200,
+        FM1_ManaCost2 = 0x00000400,
+        FM1_ManaCost3 = 0x00000800,
+        FM1_ManaCostEx0 = 0x00001000,
+        FM1_ManaCostEx1 = 0x00002000,
+        FM1_ManaCostEx2 = 0x00004000,
+        FM1_ManaCostEx3 = 0x00008000,
+        FM1_ManaCostEx4 = 0x00010000,
+        FM1_ManaCostEx5 = 0x00020000,
+        FM1_ManaCostEx6 = 0x00040000,
+        FM1_ManaCostEx7 = 0x00080000,
+        FM1_ManaCostEx8 = 0x00100000,
+        FM1_ManaCostEx9 = 0x00200000,
+        FM1_ManaCostEx10 = 0x00400000,
+        FM1_ManaCostEx11 = 0x00800000,
+        FM1_ManaCostEx12 = 0x01000000,
+        FM1_ManaCostEx13 = 0x02000000,
+        FM1_ManaCostEx14 = 0x04000000,
+        FM1_ManaCostEx15 = 0x08000000,
 
         FM2_Base_Ad = 0x00000020, // champ's base ad that increase every level. No item bonus should be added here
         FM2_Base_Ap = 0x00000040,
@@ -87,6 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float HealthRegenerationPerLevel { get; set; }
         public float ManaRegenerationPerLevel { get; set; }
         public float GrowthAttackSpeed { get; set; }
+        public float[] ManaCost { get; set; }
 
         public Stat AbilityPower { get; }
         public Stat Armor { get; }
@@ -164,6 +189,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             spellCostReduction = 0;
             critDamagePct = 2;
+            ManaCost = new float[4];
 
             AbilityPower = new Stat();
             Armor = new Stat();
