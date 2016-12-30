@@ -448,6 +448,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = 5000 + GetStats().Level * 2500;
             _game.Map.StopTargeting(this);
 
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
+
             var cKiller = killer as Champion;
 
             if (cKiller == null && _championHitFlagTimer > 0)

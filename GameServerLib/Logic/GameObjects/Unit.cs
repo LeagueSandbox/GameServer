@@ -702,6 +702,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public enum UnitAnnounces : byte
     {
+        Death = 0x04,
         InhibitorDestroyed = 0x1F,
         InhibitorAboutToSpawn = 0x20,
         InhibitorSpawned = 0x21,
