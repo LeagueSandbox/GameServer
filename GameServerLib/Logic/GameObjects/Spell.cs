@@ -52,7 +52,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         STATE_READY,
         STATE_CASTING,
-        STATE_COOLDOWN
+        STATE_COOLDOWN,
+        STATE_CHANNELING
     };
 
     public enum SpellTargetType : int
@@ -84,6 +85,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float[] _castRange = { 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f };
         protected float[] cooldown = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
         protected float[] cost = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+        protected float[] channelDuration = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         protected string hitEffectName;
 
         public float[] Coefficient { get; private set; }
@@ -92,6 +94,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public SpellState state { get; protected set; } = SpellState.STATE_READY;
         private float _currentCooldown;
         private float _currentCastTime;
+        private float _currentChannelDuration;
         protected uint futureProjNetId;
         protected uint spellNetId;
 
@@ -118,6 +121,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             CastTime = 0.0f;
             ProjectileSpeed = 2000.0f;
             _currentCastTime = 0.0f;
+            _currentChannelDuration = 0.0f;
             NoCooldown = !_game.Config.CooldownsEnabled;
             NoManacost = !_game.Config.ManaCostsEnabled;
 
@@ -132,7 +136,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            // Load cooldowns
+            // Generate cooldown values for each level of the spell
             for (var i = 0; i < cooldown.Length; ++i)
             {
                 // If Cooldown<level> exists, use its value
@@ -161,6 +165,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     _castRange[i] = _rafManager.GetFloatValue(data, "SpellData", "CastRange" + (i + 1));
                 }
+            }
+
+            for (var i = 0; i < channelDuration.Length; ++i)
+            {
+                if (_rafManager.GetFloatValue(data, "SpellData", "ChannelDuration" + (i + 1)) == 0)
+                {
+                    channelDuration[i] = _rafManager.GetFloatValue(data, "SpellData", "ChannelDuration");
+                }
+                else
+                {
+                    channelDuration[i] = _rafManager.GetFloatValue(data, "SpellData", "ChannelDuration" + (i + 1));
+                }
+            }
+
+            if (slot == 13)
+            {
+                channelDuration = new float[5] { 8.0f, 8.0f, 8.0f, 8.0f, 8.0f };
             }
 
             if (_rafManager.DoesValueExist(data, "SpellData", "OverrideCastTime"))
@@ -299,10 +320,67 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void finishCasting()
         {
-            _logger.LogCoreInfo("Spell from slot " + Slot);
+            //_logger.LogCoreInfo("Spell from slot " + Slot + " has channeltime: " + getChannelDuration());
             try
             {
                 _scriptEngine.Execute("onFinishCasting()");
+            }
+            catch (LuaException e)
+            {
+                _logger.LogCoreError("LUA ERROR : " + e.Message);
+            }
+
+            if(getChannelDuration() == 0)
+            {
+                state = SpellState.STATE_COOLDOWN;
+
+                _currentCooldown = getCooldown();
+
+                if (Slot < 4)
+                {
+                    _game.PacketNotifier.NotifySetCooldown(Owner, Slot, _currentCooldown, getCooldown());
+                }
+
+                Owner.IsCastingSpell = false;
+            }
+        }
+
+        /// <summary>
+        /// Called when the spell is started casting and we're supposed to do things such as projectile spawning, etc.
+        /// </summary>
+        public virtual void channel()
+        {
+            state = SpellState.STATE_CHANNELING;
+            _currentChannelDuration = getChannelDuration();
+            RunChannelLua();
+            //_logger.LogCoreInfo("Channeling Spell on " + Slot);
+        }
+
+        private void RunChannelLua()
+        {
+            if (!_scriptEngine.IsLoaded())
+                return;
+
+            try
+            {
+                _scriptEngine.SetGlobalVariable("channelTime", getChannelDuration());
+                _scriptEngine.RunFunction("onStartChanneling");
+            }
+            catch (LuaException e)
+            {
+                _logger.LogCoreError("LUA ERROR : " + e);
+            }
+        }
+
+        /// <summary>
+        /// Called when the character finished channeling
+        /// </summary>
+        public virtual void finishChanneling()
+        {
+            //_logger.LogCoreInfo("Channeled Spell on " + Slot);
+            try
+            {
+                _scriptEngine.Execute("onFinishChanneling()");
             }
             catch (LuaException e)
             {
@@ -336,6 +414,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (_currentCastTime <= 0)
                     {
                         finishCasting();
+                        if(getChannelDuration() > 0)
+                        {
+                            channel();
+                        }
                     }
                     break;
                 case SpellState.STATE_COOLDOWN:
@@ -343,6 +425,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (_currentCooldown < 0)
                     {
                         state = SpellState.STATE_READY;
+                    }
+                    break;
+                case SpellState.STATE_CHANNELING:
+                    _currentChannelDuration -= diff / 1000.0f;
+                    if(_currentChannelDuration <= 0)
+                    {
+                        finishChanneling();
                     }
                     break;
             }
@@ -619,6 +708,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.Execute(@"
                 function onStartCasting()
                 end");
+            scriptEngine.Execute(@"
+                function onStartChanneling()
+                end");
+            scriptEngine.Execute(@"
+                function onFinishChanneling()
+                end");
             ApiFunctionManager.AddBaseFunctionToLuaScript(scriptEngine);
             scriptEngine.SetGlobalVariable("owner", Owner);
             scriptEngine.SetGlobalVariable("spellLevel", Level);
@@ -641,6 +736,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             scriptEngine.RegisterFunction("setCooldown", this, typeof(Spell).GetMethod("SetCooldown", new[] { typeof(byte), typeof(float) }));
             scriptEngine.RegisterFunction("lowerCooldown", this, typeof(Spell).GetMethod("LowerCooldown", new[] { typeof(byte), typeof(float) }));
             scriptEngine.RegisterFunction("addLaser", this, typeof(Spell).GetMethod("AddLaser", new[] { typeof(float), typeof(float), typeof(bool) }));
+            scriptEngine.RegisterFunction("teleport", this, typeof(Spell).GetMethod("Teleport", new[] { typeof(Unit), typeof(float), typeof(float) }));
 
             /*scriptEngine.RegisterFunction("addMovementSpeedBuff", this, typeof(Spell).GetMethod("addMovementSpeedBuff", new Type[] { typeof(Unit), typeof(float), typeof(float) }));
 
@@ -653,6 +749,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }*/
 
             scriptEngine.Load(scriptloc); //todo: abstract class that loads a lua file for any lua
+        }
+
+        public void Teleport(Unit target, float x, float y)
+        {
+            _game.PacketNotifier.NotifyTeleport(target, x, y);
         }
 
         public void ReloadLua()
@@ -678,6 +779,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return 0;
 
             return cost[Level - 1];
+        }
+
+        /// <returns>channelduration</returns>
+        public float getChannelDuration()
+        {
+            if (Level <= 0)
+                return channelDuration[0];
+            return channelDuration[Level - 1];
         }
 
         public virtual void levelUp()
