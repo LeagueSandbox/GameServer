@@ -25,7 +25,7 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
-* Clone the git repository
+* Clone the git repository and run ```git submodule update --init --recursive``` to download the necessary contents package 
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
 * Modify the just copied settings files as required
 * Build and run
