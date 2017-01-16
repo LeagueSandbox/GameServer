@@ -791,7 +791,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void levelUp()
         {
-            ++Level;
+            if (Level <= 5)
+            {
+                ++Level;
+            }
             if (Slot < 4)
             {
                 Owner.GetStats().ManaCost[Slot] = cost[Level - 1];
