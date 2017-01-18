@@ -111,7 +111,7 @@
     <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand>cp -r -u</_CopyCommand>
+    <_CopyCommand>cp -r</_CopyCommand>
   </PropertyGroup>
   <Target Name="AfterBuild">
     <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(_ContentTargetDirectory)&quot;" />
@@ -119,6 +119,5 @@
     <Exec Command="$(_CopyCommand) &quot;$(_LuaLibSourceDirectory)&quot; &quot;$(_LuaLibTargetdirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_NLuaSourceDirectory)&quot; &quot;$(_NLuaTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
   </Target>
 </Project>

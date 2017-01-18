@@ -1,5 +1,5 @@
 ﻿using BlowFishCS;
-using ENet;
+using ENetCS;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logic;
@@ -140,7 +140,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         {
                             case EventType.Connect:
                                 // Set some defaults
-                                enetEvent.Peer.Mtu = PEER_MTU;
+                                //enetEvent.Peer.Mtu = PEER_MTU;
                                 enetEvent.Data = 0;
                                 break;
 

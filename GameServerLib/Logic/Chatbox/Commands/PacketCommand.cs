@@ -1,5 +1,5 @@
 ﻿using System;
-using ENet;
+using ENetCS;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Core.Logic;

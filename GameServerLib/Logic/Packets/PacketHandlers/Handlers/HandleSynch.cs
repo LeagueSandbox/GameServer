@@ -1,4 +1,4 @@
-﻿using ENet;
+﻿using ENetCS;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Players;

@@ -4,7 +4,7 @@ using System.Linq;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using System.Runtime.InteropServices;
-using ENet;
+using ENetCS;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic;
 using BlowFishCS;

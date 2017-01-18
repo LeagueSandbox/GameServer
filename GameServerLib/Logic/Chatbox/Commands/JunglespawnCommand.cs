@@ -1,4 +1,4 @@
-﻿using ENet;
+﻿using ENetCS;
 using LeagueSandbox.GameServer.Core.Logic;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 

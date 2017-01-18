@@ -1,6 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using ENet;
+using ENetCS;
 
 namespace LeagueSandbox.GameServer.Logic.Enet
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ENet;
+using ENetCS;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;

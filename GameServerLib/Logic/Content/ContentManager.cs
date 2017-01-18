@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -71,7 +72,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var contentDirectories = Directory.GetDirectories(folderPath);
                 foreach (var directory in contentDirectories)
                 {
-                    contents.Add(directory.Split('\\').Last());
+                    contents.Add(directory.Split('/').Last());
                 }
             }
             return contents.ToArray();
@@ -127,7 +128,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
-                throw new ContentNotFoundException($"Map{mapId} was not found in the files.");
+				Console.WriteLine(JsonConvert.SerializeObject(_content));
+				throw new ContentNotFoundException($"Map{mapId} was not found in the files. ");
             }
 
             var contentPackages = _content[contentType][mapName];

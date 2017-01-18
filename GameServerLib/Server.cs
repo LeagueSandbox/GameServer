@@ -1,5 +1,5 @@
 ﻿using System;
-using ENet;
+using ENetCS;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic;

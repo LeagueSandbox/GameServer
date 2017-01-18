@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void NotifyUpdatedStats(Unit u, bool partial = true)
         {
             var us = new UpdateStats(u, partial);
-            _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
+            _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENetCS.PacketFlags.Unsequenced);
         }
 
         public void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)
