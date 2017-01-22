@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
+using System;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -25,10 +26,17 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             _owner.SendDebugMsgFormatted(
                 DebugMsgType.NORMAL,
                 string.Format(
-                    "At Coords - X: {0} Y: {1} Z: {2}",
+                    "Coordiantes - X: {0} Y: {1} Z: {2}",
                     champion.X,
                     champion.Y,
                     champion.GetZ()
+                )
+            );
+            _owner.SendDebugMsgFormatted(
+                DebugMsgType.NORMAL,
+                string.Format(
+                    "Direction : {0}",
+                    Math.Atan2(champion.Direction.Y, champion.Direction.X) * 180 / Math.PI
                 )
             );
         }

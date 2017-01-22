@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Logic
         protected bool toRemove;
         public int AttackerCount { get; private set; }
         public int CollisionRadius { get; set; }
-        protected Vector2 _direction;
+        public Vector2 Direction { get; private set; }
         public float VisionRadius { get; protected set; }
         public bool IsDashing { get; protected set; }
         public override bool IsSimpleTarget { get { return false; } }
@@ -87,7 +87,6 @@ namespace LeagueSandbox.GameServer.Logic
         {
             if (Target == null)
             {
-                _direction = new Vector2();
                 return;
             }
 
@@ -95,10 +94,10 @@ namespace LeagueSandbox.GameServer.Logic
             var cur = new Vector2(X, Y); //?
 
             var goingTo = to - cur;
-            _direction = Vector2.Normalize(goingTo);
-            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            Direction = Vector2.Normalize(goingTo);
+            if (float.IsNaN(Direction.X) || float.IsNaN(Direction.Y))
             {
-                _direction = new Vector2(0, 0);
+                Direction = new Vector2(0, 0);
             }
 
             var moveSpeed = getMoveSpeed();
@@ -109,8 +108,8 @@ namespace LeagueSandbox.GameServer.Logic
 
             var deltaMovement = (moveSpeed) * 0.001f * diff;
 
-            var xx = _direction.X * deltaMovement;
-            var yy = _direction.Y * deltaMovement;
+            var xx = Direction.X * deltaMovement;
+            var yy = Direction.Y * deltaMovement;
 
             X += xx;
             Y += yy;
