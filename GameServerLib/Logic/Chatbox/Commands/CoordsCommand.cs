@@ -30,8 +30,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     champion.X,
                     champion.Y,
                     champion.GetZ(),
-                    direction.X * direction.Length(),
-                    direction.Y * direction.Length()
+                    direction.X * 360,
+                    direction.Y * 360
                 )
             );
         }
