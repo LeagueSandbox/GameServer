@@ -1,6 +1,8 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
+using System;
+using System.Numerics;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -15,8 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
 
             var champion = playerManager.GetPeerInfo(peer).Champion;
-            var direction = champion.getDirection();
-
             logger.LogCoreInfo(string.Format(
                 "At {0}; {1}",
                 champion.X,
@@ -26,12 +26,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             _owner.SendDebugMsgFormatted(
                 DebugMsgType.NORMAL,
                 string.Format(
-                    "At Coords - X: {0} Y: {1} Z: {2}  Direction - X: {3} Y: {4}",
+                    "At Coords - X: {0} Y: {1} Z: {2}  Direction - {3}",
                     champion.X,
                     champion.Y,
                     champion.GetZ(),
-                    direction.X * 360,
-                    direction.Y * 360
+                    Math.Atan2(champion.Direction.Y, champion.Direction.X) * 180 / Math.PI
                 )
             );
         }
