@@ -287,7 +287,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (Type == TurretType.FountainTurret)
             {
-                dealDamageTo(target, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                DealDamageTo(target, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             }
             else
             {

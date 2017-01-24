@@ -516,6 +516,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return AIMesh.getY(x, y);
         }
 
+        public float GetHeightAtLocation(Vector2 loc)
+        {
+            return AIMesh.getY(loc.X, loc.Y);
+        }
+
         public bool IsWalkable(float x, float y)
         {
             return AIMesh.isWalkable(x, y);
