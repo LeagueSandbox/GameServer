@@ -86,6 +86,7 @@
     <Compile Include="Logic\Chatbox\Commands\ChangeTeamCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\RainbowCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ReloadLuaCommand.cs" />
+    <Compile Include="Logic\Chatbox\Commands\ReviveCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\SpawnStateCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\AdCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ApCommand.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\HowlingAbyss.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
+    <Compile Include="Logic\Maps\OriginalTwistedTreeline.cs" />
     <Compile Include="Logic\Maps\TwistedTreeline.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />

@@ -350,12 +350,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 RespawnTimer -= diff;
                 if (RespawnTimer <= 0)
                 {
-                    var spawnPos = GetRespawnPosition();
-                    setPosition(spawnPos.X, spawnPos.Y);
-                    _game.PacketNotifier.NotifyChampionRespawn(this);
-                    GetStats().CurrentHealth = GetStats().HealthPoints.Total;
-                    GetStats().CurrentMana = GetStats().HealthPoints.Total;
-                    IsDead = false;
+                    Respawn();
                 }
             }
 
@@ -377,6 +372,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _championHitFlagTimer = 0;
                 }
             }
+        }
+
+        public void Respawn()
+        {
+            var spawnPos = GetRespawnPosition();
+            setPosition(spawnPos.X, spawnPos.Y);
+            _game.PacketNotifier.NotifyChampionRespawn(this);
+            GetStats().CurrentHealth = GetStats().HealthPoints.Total;
+            GetStats().CurrentMana = GetStats().HealthPoints.Total;
+            IsDead = false;
+            RespawnTimer = -1;
         }
 
         public void setSkillPoints(int _skillPoints)
