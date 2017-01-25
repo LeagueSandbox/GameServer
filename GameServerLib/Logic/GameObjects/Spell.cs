@@ -791,9 +791,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void levelUp()
         {
-            if (Level <= 5)
+            try
             {
                 ++Level;
+            }
+            catch
+            {
+                _logger.LogCoreWarning("Something went wrong while trying to level up");
             }
             if (Slot < 4)
             {
