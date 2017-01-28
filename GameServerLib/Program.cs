@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer
             timer.Start();
         }
 
-        [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
+        //[Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
         public static T ResolveDependency<T>()
         {
             return _kernel.Get<T>();

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Core.Logic
@@ -100,7 +101,17 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
+            _logger.LogCoreInfo("Loading C# Scripts");
+
+            LoadScripts();
+
             _logger.LogCoreInfo("Game is ready.");
+        }
+
+        public bool LoadScripts()
+        {
+            var scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            return scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
         }
 
         public void RegisterMap(byte mapId)
@@ -172,7 +183,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                     if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                     {
-                        double sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                        var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                         _lastMapDurationWatch.Restart();
                         if (IsRunning)
                         {

@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -62,6 +63,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var us = new UpdateStats(u, partial);
             _game.PacketHandlerManager.broadcastPacketVision(u, us, Channel.CHL_LOW_PRIORITY, ENet.PacketFlags.Unsequenced);
+        }
+
+        public void NotifyFaceDirection(Unit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
+        {
+            var fd = new FaceDirection(u, direction.X, direction.Y, _game.Map.GetHeightAtLocation(direction), isInstant, turnTime);
+            _game.PacketHandlerManager.broadcastPacketVision(u, fd, Channel.CHL_S2C);
         }
 
         public void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)

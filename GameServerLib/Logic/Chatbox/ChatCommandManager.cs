@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new ModelCommand("model", "model modelName", this));
             AddCommand(new PacketCommand("packet", "packet XX XX XX...", this));
             AddCommand(new RainbowCommand("rainbow", "rainbow alpha speed", this));
-            AddCommand(new ReloadLuaCommand("reloadlua", "", this));
+            AddCommand(new ReloadScriptsCommand("reloadscripts", "", this));
             AddCommand(new ReviveCommand("revive", "", this));
             AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
             AddCommand(new SizeCommand("size", "size size", this));

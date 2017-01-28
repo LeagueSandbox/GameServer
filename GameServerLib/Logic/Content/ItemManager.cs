@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class ItemType : IBuff
     {
-        private ItemManager _owner;
+        //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
 
         // Meta

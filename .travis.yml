@@ -1,10 +1,6 @@
 sudo: true
-language: csharp
-solution: GameServer.sln
-install:
-    - sudo nuget update -self
-    - sudo nuget restore GameServer.sln
+mono: none
 script:
-    - xbuild /p:Configuration=Debug GameServer.sln
+    - exit 0
 notifications:
     email: false

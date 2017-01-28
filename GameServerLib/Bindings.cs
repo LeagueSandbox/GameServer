@@ -4,8 +4,7 @@ using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
-using LeagueSandbox.GameServer.Logic.Scripting;
-using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Ninject.Modules;
 
 namespace LeagueSandbox.GameServer
@@ -27,8 +26,7 @@ namespace LeagueSandbox.GameServer
             Bind<PlayerManager>().To<PlayerManager>().InSingletonScope();
             Bind<NetworkIdManager>().To<NetworkIdManager>().InSingletonScope();
 
-            // Other bindings
-            Bind<IScriptEngine>().To<LuaScriptEngine>();
+            Bind<CSharpScriptEngine>().To<CSharpScriptEngine>().InSingletonScope();
         }
     }
 }

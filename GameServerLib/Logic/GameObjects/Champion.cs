@@ -6,7 +6,6 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
-using NLua.Exceptions;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -117,29 +116,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
                 AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
             }
-
-            LoadLua();
+            
             foreach (var spell in Spells.Values)
             {
                 spell.LoadExtraSpells(this);
             }
         }
-
-        public override void LoadLua()
-        {
-            base.LoadLua();
-            var scriptloc = _game.Config.ContentManager.GetSpellScriptPath(Model, "Passive");
-            _scriptEngine.SetGlobalVariable("me", this);
-            _scriptEngine.Execute(@"
-                function getOwner()
-                    return me
-                end");
-            _scriptEngine.Execute(@"
-                function onSpellCast(x, y, slot, target)
-                end");
-            _scriptEngine.Load(scriptloc);
-        }
-
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
@@ -244,14 +226,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (s.cast(x, y, target, futureProjNetId, spellNetId))
             {
                 stats.CurrentMana = stats.CurrentMana - s.getCost() * (1 - stats.getSpellCostReduction());
-                try
-                {
-                    _scriptEngine.RunFunction("onSpellCast", x, y, slot, target);
-                }
-                catch (LuaScriptException e)
-                {
-                    _logger.LogCoreError("LUA ERROR : " + e.Message);
-                }
                 return s;
             }
             return null;
@@ -533,9 +507,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void dealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        public override void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            base.dealDamageTo(target, damage, type, source, isCrit);
+            base.DealDamageTo(target, damage, type, source, isCrit);
 
             var cTarget = target as Champion;
             if (cTarget == null)

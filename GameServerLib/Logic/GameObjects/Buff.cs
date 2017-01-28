@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.API;
-using NLua.Exceptions;
-using LeagueSandbox.GameServer.Logic.Scripting;
-using LeagueSandbox.GameServer.Logic.Scripting.Lua;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -54,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Unit TargetUnit { get; private set; }
         public Unit SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
-        protected IScriptEngine _scriptEngine = new LuaScriptEngine();
+        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
@@ -78,77 +75,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             TargetUnit = onto;
             SourceUnit = from;
             BuffType = BuffType.Aura;
-            LoadLua();
-            try
-            {
-                _scriptEngine.RunFunction("onAddBuff");
-            }
-            catch (LuaException e)
-            {
-                _logger.LogCoreError("LUA ERROR : " + e.Message);
-            }
         }
 
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto)
                : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
-
-        public void LoadLua()
-        {
-            var scriptLoc = _game.Config.ContentManager.GetBuffScriptPath(Name);
-            _logger.LogCoreInfo("Loading buff from " + scriptLoc);
-
-            _scriptEngine.Execute("package.path = 'LuaLib/?.lua;' .. package.path");
-            _scriptEngine.Execute(@"
-                function onAddBuff()
-                end");
-            _scriptEngine.Execute(@"
-                function onUpdate(diff)
-                end");
-            _scriptEngine.Execute(@"
-                function onBuffEnd()
-                end");
-            _scriptEngine.RegisterFunction("getSourceUnit", this, typeof(Buff).GetMethod("GetSourceUnit"));
-            _scriptEngine.RegisterFunction("getUnit", this, typeof(Buff).GetMethod("GetUnit"));
-            _scriptEngine.RegisterFunction("getStacks", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("addStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("substractStat", this, typeof(Buff).GetMethod("GetStacks"));
-            _scriptEngine.RegisterFunction("setStat", this, typeof(Buff).GetMethod("GetStacks"));
-
-            ApiFunctionManager.AddBaseFunctionToLuaScript(_scriptEngine);
-
-            _scriptEngine.Load(scriptLoc);
-        }
-
         public void Update(float diff)
         {
             TimeElapsed += (float)diff / 1000.0f;
-
-            if (_scriptEngine.IsLoaded())
-            {
-                try
-                {
-                    _scriptEngine.RunFunction("onUpdate", diff);
-                }
-                catch (LuaException e)
-                {
-                    _logger.LogCoreError("LUA ERROR : " + e.Message);
-                }
-            }
-
             if (Duration != 0.0f)
             {
                 if (TimeElapsed >= Duration)
                 {
-                    try
-                    {
-                        _scriptEngine.RunFunction("onBuffEnd");
-                    }
-                    catch (LuaException e)
-                    {
-                        _logger.LogCoreError("LUA ERROR : " + e.Message);
-                    }
                     _remove = true;
                 }
             }
