@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void LogCoreInfo(string line)
         {
-            Log(line, "CORE_INFO");
+            Log(line, "INFO");
         }
 
         public void LogCoreInfo(string format, params object[] args)
@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void LogCoreWarning(string line)
         {
-            Log(line, "CORE_WARNING");
+            Log(line, "WARNING");
         }
 
         public void LogCoreWarning(string format, params object[] args)
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void LogCoreError(string line)
         {
-            Log(line, "CORE_ERROR");
+            Log(line, "ERROR");
         }
 
         public void LogCoreError(string format, params object[] args)
@@ -152,12 +152,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             public void Log(string lines, string type = "LOG")
             {
-                var text = string.Format(
-                    "({0}) [{1}]: {2}",
-                    DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"),
-                    type.ToUpper(),
-                    lines
-                );
+                var text = $"({DateTime.Now:MM/dd/yyyy hh:mm:ss.fff}) [{type.ToUpper()}]: {lines}";
                 lock (_stringBuilder)
                 {
                     _stringBuilder.AppendLine(text);
