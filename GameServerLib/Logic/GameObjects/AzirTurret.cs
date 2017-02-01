@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             JObject data;
             if (!_rafManager.ReadUnitStats(Model, out data))
             {
-                _logger.LogCoreError("couldn't find turret stats for " + Model);
+                _logger.LogCoreError("Couldn't find turret stats for " + Model);
                 return;
             }
 

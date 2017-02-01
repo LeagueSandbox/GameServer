@@ -96,11 +96,17 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 return default(T);
             }
 
-            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
-            var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
+            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
+            if (classType != null)
+            {
+                var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
+                if (desiredFunction != null)
+                {
+                    return (T)(object)Delegate.CreateDelegate(typeof(T), desiredFunction, false);
+                }
+            }
 
-            var typeParameterType = typeof(T);
-            return (T)(object)Delegate.CreateDelegate(typeParameterType, desiredFunction);
+            return default(T);
         }
 
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
