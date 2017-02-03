@@ -6,8 +6,8 @@ using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic;
 using BlowFishCS;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic

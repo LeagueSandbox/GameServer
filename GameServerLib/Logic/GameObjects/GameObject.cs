@@ -1,13 +1,12 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets;
 
-namespace LeagueSandbox.GameServer.Logic
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class GameObject : Target
     {

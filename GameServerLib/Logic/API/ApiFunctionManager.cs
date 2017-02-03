@@ -6,7 +6,6 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
-using LeagueSandbox.GameServer.Logic.Scripting;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.API
@@ -31,8 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void TeleportTo(Unit unit, float x, float y)
         {
-            var coords = new Vector2(x, y);
-            var truePos = _game.Map.AIMesh.getClosestTerrainExit(coords);
+            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(x, y));
             _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
         }
 
@@ -105,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
@@ -133,7 +131,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                     travelTime
                 );
             }
-            unit.TargetUnit = null;
+           unit.TargetUnit = null;
         }
 
         public static void DashToLocation(Unit unit,

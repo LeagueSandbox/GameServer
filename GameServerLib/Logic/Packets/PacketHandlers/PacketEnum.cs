@@ -99,7 +99,7 @@
         PKT_S2C_NPC_Hide = 0x9E, // (4.18) not sure what this became
         PKT_S2C_SetItemStacks = 0x9F,
         PKT_S2C_MessageBoxRight = 0xA0,
-        PKT_PauseGame = 0xA1, // <-- PKT_Pause ?
+        PKT_PauseGame = 0xA1,
         PKT_S2C_RemoveMessageBoxTop = 0xA2,
         PKT_S2C_Announce2 = 0xA3, // ? idk
         PKT_C2S_Surrender = 0xA4,

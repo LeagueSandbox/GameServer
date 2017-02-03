@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.RAF;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -158,21 +159,21 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { MinionSpawnType.MINION_TYPE_SUPER, 97.0f }
         };
 
-        public TwistedTreeline(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
+        public TwistedTreeline(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 10)
         {
-            var path = System.IO.Path.Combine(
+            var path = Path.Combine(
                 Program.ExecutingDirectory,
                 "Content",
                 "Data",
                 _game.Config.ContentManager.GameModeName,
                 "AIMesh",
                 "Map" + GetMapId(),
-                "AIPath.aimesh"
+                "AIPath.aimesh_ngrid"
             );
 
             if (File.Exists(path))
             {
-                AIMesh = new RAF.AIMesh(path);
+                NavGrid = NavGridReader.ReadBinary(path);
             }
             else
             {
@@ -271,6 +272,38 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             return dic[team];
+        }
+
+        public override string GetMinionModel(TeamId team, MinionSpawnType type)
+        {
+            var toRet = "HA_";
+            switch (team)
+            {
+                case TeamId.TEAM_BLUE:
+                    toRet += "OrderMinion";
+                    break;
+                case TeamId.TEAM_PURPLE:
+                    toRet += "ChaosMinion";
+                    break;
+            }
+
+            switch (type)
+            {
+                case MinionSpawnType.MINION_TYPE_MELEE:
+                    toRet += "Melee";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CASTER:
+                    toRet += "Ranged";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CANNON:
+                    toRet += "Siege";
+                    break;
+                case MinionSpawnType.MINION_TYPE_SUPER:
+                    toRet += "Super";
+                    break;
+            }
+
+            return toRet;
         }
 
         public override float GetGoldFor(Unit u)
