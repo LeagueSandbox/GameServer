@@ -227,7 +227,7 @@
     <Compile Include="Logic\GameObjects\Champion.cs" />
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
-    <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\GameObject.cs" />
     <Compile Include="Logic\GameObjects\BuildingStats.cs" />
     <Compile Include="Logic\GameObjects\Laser.cs" />
     <Compile Include="Logic\GameObjects\Particle.cs" />
@@ -249,7 +249,6 @@
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\MovementVector.cs" />
-    <Compile Include="Logic\GameObjects\Pathfinder.cs" />
     <Compile Include="Logic\GameObjects\Spell.cs" />
     <Compile Include="Logic\GameObjects\Stats.cs" />
     <Compile Include="Logic\GameObjects\Target.cs" />
@@ -260,6 +259,7 @@
     <Compile Include="Logic\Maps\HowlingAbyss.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\Maps\OriginalTwistedTreeline.cs" />
+    <Compile Include="Logic\Maps\NewSummonersRift.cs" />
     <Compile Include="Logic\Maps\TwistedTreeline.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
@@ -304,7 +304,7 @@
     <Compile Include="Logic\Packets\Packets.cs" />
     <Compile Include="Logic\Packets\PacketNotifier.cs" />
     <Compile Include="Logic\Pair.cs" />
-    <Compile Include="Logic\RAF\AIMesh.cs" />
+    <Compile Include="Logic\RAF\NavGrid.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

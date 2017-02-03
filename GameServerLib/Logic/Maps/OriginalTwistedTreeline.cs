@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.RAF;
 
 
 namespace LeagueSandbox.GameServer.Logic.Maps
@@ -139,12 +140,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _game.Config.ContentManager.GameModeName,
                 "AIMesh",
                 "Map" + GetMapId(),
-                "AIPath.aimesh"
+                "AIPath.aimesh_ngrid"
             );
 
             if (File.Exists(path))
             {
-                AIMesh = new RAF.AIMesh(path);
+                NavGrid = NavGridReader.ReadBinary(path);
             }
             else
             {
@@ -165,8 +166,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             AddObject(new LaneTurret("Turret_T2_R_01_A", 12355.7578f, 4041.023f, TeamId.TEAM_PURPLE, TurretType.InhibitorTurret, GetTurretItems(TurretType.InhibitorTurret)));
             AddObject(new LaneTurret("Turret_T2_R_02_A", 10079.3438f, 3400.3772f, TeamId.TEAM_PURPLE, TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
             AddObject(new LaneTurret("Turret_T2_L_02_A", 9562.389f, 8235.934f, TeamId.TEAM_PURPLE, TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
-
-
 
             //TODO
             var COLLISION_RADIUS = 0;

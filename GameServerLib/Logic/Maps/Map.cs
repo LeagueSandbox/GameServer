@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.RAF;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public bool IsKillGoldRewardReductionActive { get; set; }
         protected bool _hasFountainHeal;
         protected bool _spawnEnabled;
-        public RAF.AIMesh AIMesh { get; protected set; }
+        public NavGrid NavGrid { get; protected set; }
         public int Id { get; private set; }
 
         protected CollisionHandler _collisionHandler;
@@ -96,10 +97,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 obj.update(diff);
 
-                if (!(obj is Unit))
+                var u = obj as Unit;
+                if (u == null)
                     continue;
 
-                var u = obj as Unit;
                 foreach (var team in _teamsIterator)
                 {
                     if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
@@ -228,6 +229,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return 0;
         }
 
+        public virtual string GetMinionModel(TeamId team, MinionSpawnType type)
+        {
+            return string.Empty;
+        }
+
         public void SetSpawnState(bool state)
         {
             _spawnEnabled = state;
@@ -245,12 +251,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public virtual float GetWidth()
         {
-            return AIMesh.getWidth();
+            return NavGrid.MapWidth;
         }
 
         public virtual float GetHeight()
         {
-            return AIMesh.getHeight();
+            return NavGrid.MapHeight;
         }
 
         public virtual Vector2 GetSize()
@@ -513,22 +519,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public float GetHeightAtLocation(float x, float y)
         {
-            return AIMesh.getY(x, y);
+            return NavGrid.GetHeightAtLocation(new Vector2(x, y));
         }
 
         public float GetHeightAtLocation(Vector2 loc)
         {
-            return AIMesh.getY(loc.X, loc.Y);
+            return NavGrid.GetHeightAtLocation(loc);
         }
 
         public bool IsWalkable(float x, float y)
         {
-            return AIMesh.isWalkable(x, y);
-        }
-
-        public MovementVector ToMovementVector(float x, float y)
-        {
-            return new MovementVector((short)((x - AIMesh.getWidth() / 2) / 2), (short)((y - AIMesh.getHeight() / 2) / 2));
+            return NavGrid.IsWalkable(x, y);
         }
 
         public bool TeamHasVisionOn(TeamId team, GameObject o)

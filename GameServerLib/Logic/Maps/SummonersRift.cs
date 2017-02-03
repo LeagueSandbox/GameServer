@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.RAF;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -154,12 +155,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _game.Config.ContentManager.GameModeName,
                 "AIMesh",
                 "Map" + GetMapId(),
-                "AIPath.aimesh"
+                "AIPath.aimesh_ngrid"
             );
 
             if (File.Exists(path))
             {
-                AIMesh = new RAF.AIMesh(path);
+                NavGrid = NavGridReader.ReadBinary(path);
             }
             else
             {
@@ -278,6 +279,38 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             return _turretItems[type];
+        }
+
+        public override string GetMinionModel(TeamId team, MinionSpawnType type)
+        {
+            var toRet = "";
+            switch (team)
+            {
+                case TeamId.TEAM_BLUE:
+                    toRet += "Blue_Minion_";
+                    break;
+                case TeamId.TEAM_PURPLE:
+                    toRet += "Red_Minion_";
+                    break;
+            }
+
+            switch (type)
+            {
+                case MinionSpawnType.MINION_TYPE_MELEE:
+                    toRet += "Basic";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CASTER:
+                    toRet += "Wizard";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CANNON:
+                    toRet += "MechCannon";
+                    break;
+                case MinionSpawnType.MINION_TYPE_SUPER:
+                    toRet += "MechMelee";
+                    break;
+            }
+
+            return toRet;
         }
 
         public override void Update(float diff)

@@ -123,8 +123,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 { "LeagueSandbox-Default-Map4", typeof(OriginalTwistedTreeline) },
                 // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
                 { "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
-                // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
-                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
+                { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
+                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) }
             };
 
             if (!dic.ContainsKey(mapName))
