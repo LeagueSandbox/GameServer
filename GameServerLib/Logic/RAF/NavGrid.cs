@@ -529,7 +529,7 @@ namespace LeagueSandbox.GameServer.Logic.RAF
         }
     }
 
-    class NavGridReader
+    public class NavGridReader
     {
         public static NavGrid ReadBinary(string filePath)
         {
@@ -567,9 +567,10 @@ namespace LeagueSandbox.GameServer.Logic.RAF
         {
             var grid = new NavGrid
             {
-                MajorVersion = b.GetBinaryReader().ReadByte(),
-                MinorVersion = b.GetBinaryReader().ReadInt16()
+                MajorVersion = b.GetBinaryReader().ReadByte()
             };
+            if (grid.MajorVersion != 2)
+                grid.MinorVersion =  b.GetBinaryReader().ReadInt16();
 
             grid = ReadStandardNavGridHeader(b, grid);
             grid.Cells = new NavGridCell[grid.XCellCount * grid.YCellCount];
@@ -591,10 +592,10 @@ namespace LeagueSandbox.GameServer.Logic.RAF
                     grid.XSampledHeightCount = b.GetBinaryReader().ReadInt32();
                     grid.YSampledHeightCount = b.GetBinaryReader().ReadInt32();
 
+                    //should be mXSampledHeightDist
                     grid.DirectionX = b.GetBinaryReader().ReadSingle();
+                    //should be mYSampledHeightDist
                     grid.DirectionY = b.GetBinaryReader().ReadSingle();
-
-                    var Unk = b.GetBinaryReader().ReadSingle();
                     break;
                 case 0x07:
                     // Read cells, total size: 0x30 * XCellCount * YCellCount bytes
