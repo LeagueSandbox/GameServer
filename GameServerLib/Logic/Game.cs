@@ -86,6 +86,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
             IsRunning = false;
+            
+            _logger.LogCoreInfo("Loading C# Scripts");
+
+            LoadScripts();
 
             foreach (var p in Config.Players)
             {
@@ -100,10 +104,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             };
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
-
-            _logger.LogCoreInfo("Loading C# Scripts");
-
-            LoadScripts();
 
             _logger.LogCoreInfo("Game is ready.");
         }
