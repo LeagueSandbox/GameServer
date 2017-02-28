@@ -223,6 +223,7 @@
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Announce.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
+    <Compile Include="Logic\GameObjects\ChampionStatModifier.cs" />
     <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\GameObjects\Champion.cs" />
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUnpauseReq.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\PreciseTimer.cs" />
+    <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
     <Compile Include="Logic\Scripting\CSharp\CSharpScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />

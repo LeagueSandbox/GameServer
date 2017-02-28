@@ -6,6 +6,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.Scripting;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -17,6 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; }
         public List<string> ExtraSpells { get; private set; }
+
+        public List<BuffGameScript> BuffGameScripts { get; private set; }
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -97,6 +100,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             ExtraSpells = new List<string>();
 
+            BuffGameScripts = new List<BuffGameScript>();
+
             for (var i = 1; true; i++)
             {
                 if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i)))
@@ -158,6 +163,38 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             return 0;
         }
+
+        public void AddStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.AddBuff(statModifier);
+        }
+
+        public void UpdateStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.UpdateBuff(statModifier);
+        }
+
+        public void RemoveStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.RemoveBuff(statModifier);
+        }
+
+        public BuffGameScript AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell)
+        {
+            BuffGameScript buff = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
+
+            BuffGameScripts.Add(buff);
+
+            buff.OnActivate(this, ownerSpell);
+
+            return buff;
+        }
+        public void RemoveBuffGameScript(BuffGameScript buff)
+        {
+            buff.OnDeactivate(this);
+            BuffGameScripts.Remove(buff);
+        }
+
 
         public Vector2 GetSpawnPosition()
         {
@@ -339,6 +376,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             foreach (var s in Spells.Values)
                 s.update(diff);
+
+            foreach (var b in BuffGameScripts)
+                b.OnUpdate(diff);
 
             if (_championHitFlagTimer > 0)
             {
