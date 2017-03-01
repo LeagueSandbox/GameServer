@@ -1940,7 +1940,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
-            buffer.Write((byte)0x00); // Visible
+            buffer.Write((bool)true); // Visible was (byte)0x00
             buffer.Write(_rafManager.GetHash(name)); //Buff id
             buffer.Write((byte)0x00); //
             buffer.Write((byte)0x00); // <-- Probably runningTime

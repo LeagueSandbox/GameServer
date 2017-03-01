@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.API
     public static class ApiFunctionManager
     {
         private static Game _game;
+        private static Logger _logger;
 
         public static byte[] StringToByteArray(string hex)
         {
@@ -27,6 +28,20 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
+            _logger = Program.ResolveDependency<Logger>();
+        }
+
+
+        public static void AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto)
+        {
+            AddBuffHUDVisual(buffName, duration, stacks, onto, onto);
+        }
+        public static void AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto, Unit from)
+        {
+            _logger.LogCoreInfo("Sending buff display: " + buffName);
+            Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
+
+            _game.PacketNotifier.NotifyAddBuff(b);
         }
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
