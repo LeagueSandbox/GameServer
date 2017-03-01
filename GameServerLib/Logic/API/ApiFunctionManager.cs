@@ -29,6 +29,20 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game = game;
         }
 
+        public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
+        {
+            List<TeamId> teams = GetTeams();
+            foreach (TeamId id in teams)
+            {
+                gameObject.SetVisibleByTeam(id, visibility);
+            }
+        }
+
+        public static List<TeamId> GetTeams()
+        {
+            return _game.Map.GetTeams();
+        }
+
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
@@ -165,6 +179,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             return gameObject.Team;
         }
+        
 
         public static bool IsDead(Unit unit)
         {
