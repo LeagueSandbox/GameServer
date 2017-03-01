@@ -309,6 +309,7 @@
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
+    <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

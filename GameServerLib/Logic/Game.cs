@@ -48,6 +48,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private NetworkIdManager _networkIdManager;
         private Stopwatch _lastMapDurationWatch;
 
+        private List<GameScriptTimer> _gameScriptTimers;
+
         public Game(
             ItemManager itemManager,
             ChatCommandManager chatCommandManager,
@@ -67,6 +69,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             _logger.LogCoreInfo("Loading Config.");
             Config = config;
+
+            _gameScriptTimers = new List<GameScriptTimer>();
 
             _chatCommandManager.LoadCommands();
             _server = new Host();
@@ -188,11 +192,23 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         if (IsRunning)
                         {
                             Map.Update((float)sinceLastMapTime);
+                            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
+                            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
                         }
                     }
                     Thread.Sleep(1);
                 }
             }
+        }
+
+        public void AddGameScriptTimer(GameScriptTimer timer)
+        {
+            _gameScriptTimers.Add(timer);
+        }
+
+        public void RemoveGameScriptTimer(GameScriptTimer timer)
+        {
+            _gameScriptTimers.Remove(timer);
         }
 
         public void IncrementReadyPlayers()

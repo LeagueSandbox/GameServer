@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.API
 {
@@ -31,6 +32,22 @@ namespace LeagueSandbox.GameServer.Logic.API
             _logger = Program.ResolveDependency<Logger>();
         }
 
+        public static void LogInfo(string format)
+        {
+            _logger.LogCoreInfo(format);
+        }
+
+        public static void LogInfo(string format, params object[] args)
+        {
+            _logger.LogCoreInfo(format, args);
+        }
+
+        public static GameScriptTimer CreateTimer(float duration, Action callback)
+        {
+            GameScriptTimer newTimer = new GameScriptTimer(duration, callback);
+            _game.AddGameScriptTimer(newTimer);
+            return newTimer;
+        }
 
         public static void AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto)
         {
