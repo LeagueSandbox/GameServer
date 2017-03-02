@@ -371,7 +371,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
             
-            ApiEventManager.OnUnitDamaged.Publish(target);
+            ApiEventManager.OnUnitDamageTaken.Publish(target);
 
             //onDamageTaken?.Invoke(target, this, damage, type, source);
             //onDealDamage?.Invoke(this, target, damage, type, source);
