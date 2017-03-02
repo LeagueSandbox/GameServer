@@ -127,6 +127,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
+            //Set the game script for the spell
+            spellGameScript = _scriptEngine.CreateObject<GameScript>(GetSpellScriptClass(), GetSpellScriptName());
+
+            //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
+            spellGameScript.OnActivate(owner);
+
             JObject data;
 
             if (!_rafManager.ReadSpellData(spellName, out data))
@@ -231,11 +237,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _rafManager.GetFloatValue(data, "SpellData", "TargettingType") +
                 0.5f
             );
-
-            //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>(GetSpellScriptClass(), GetSpellScriptName());
-            //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            spellGameScript.OnActivate(owner);
         }
 
         public void LoadExtraSpells(Champion champ)
@@ -306,7 +307,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         
         public string GetSpellScriptClass()
         {
-            if (Slot > 3)
+            if (Slot > 3 && Slot != 14)
             {
                 return "Global";
             }
@@ -317,7 +318,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public string GetSpellScriptName()
         {
-            if (Slot > 3)
+            if (Slot > 3 && Slot != 14)
             {
                 return _spellName;
             }
@@ -589,6 +590,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return "E";
                 case 3:
                     return "R";
+                case 14:
+                    return "Passive";
             }
 
             return "undefined";

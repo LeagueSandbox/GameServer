@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -364,14 +365,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
             }
 
-            var onDamageTaken = target._scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDamageTaken");
-            var onDealDamage = _scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDealDamage");
+            //var onDamageTaken = target._scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDamageTaken");
+            //var onDealDamage = _scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDealDamage");
 
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
-
-            onDamageTaken?.Invoke(target, this, damage, type, source);
-            onDealDamage?.Invoke(this, target, damage, type, source);
+            
+            Champion championTarget = target as Champion;
+            if (championTarget != null)
+            {
+                ApiEventManager.publishOnChampionDamaged(championTarget);
+            }
+            //onDamageTaken?.Invoke(target, this, damage, type, source);
+            //onDealDamage?.Invoke(this, target, damage, type, source);
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
             if (!target.IsDead && target.GetStats().CurrentHealth <= 0)

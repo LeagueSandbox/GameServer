@@ -183,6 +183,7 @@
     <Compile Include="Bindings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
+    <Compile Include="Logic\API\ApiEventManager.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatCommandManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />

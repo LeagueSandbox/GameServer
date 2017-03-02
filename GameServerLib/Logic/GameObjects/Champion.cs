@@ -92,7 +92,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
                 { 4, new Spell(this, clientInfo.SummonerSkills[0], 4) },
                 { 5, new Spell(this, clientInfo.SummonerSkills[1], 5) },
-                { 13, new Spell(this, "Recall", 13) }
+                { 13, new Spell(this, "Recall", 13) },
+                { 14, new Spell(this, _rafManager.GetStringValue(data, "Data", "Passive1LuaName"), 14) }
             };
 
             Spells[4].levelUp();

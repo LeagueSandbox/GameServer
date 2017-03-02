@@ -52,6 +52,11 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             _remove = true;
             _callback();
         }
+        public void EndTimerWithoutCallback()
+        {
+            _currentTime = _duration;
+            _remove = true;
+        }
         public bool IsDead()
         {
             return _remove;

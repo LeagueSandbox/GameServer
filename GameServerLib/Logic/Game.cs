@@ -89,6 +89,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
+            ApiEventManager.SetGame(this);
             IsRunning = false;
             
             _logger.LogCoreInfo("Loading C# Scripts");
