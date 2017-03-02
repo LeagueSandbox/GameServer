@@ -6,6 +6,51 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Possible Events:
+[OnActivate]
+[OnAddPAR]
+[OnAllowAdd]
+[OnAssist]
+[OnAssistUnit]
+[OnBeingDodged]
+[OnBeingHit]
+[OnBeingSpellHit]
+[OnCollision]
+[OnCollisionTerrain]
+[OnDeactivate]
+[OnDealDamage]
+[OnDeath]
+[OnDodge]
+[OnHeal]
+[OnHitUnit]
+[OnKill]
+[OnKillUnit]
+[OnLaunchAttack]
+[OnLaunchMissile]
+[OnLevelUp]
+[OnLevelUpSpell]
+[OnMiss]
+[OnMissileEnd]
+[OnMissileUpdate]
+[OnMoveEnd]
+[OnMoveFailure]
+[OnMoveSuccess]
+[OnNearbyDeath]
+[OnPreAttack]
+[OnPreDamage]
+[OnPreDealDamage]
+[OnPreMitigationDamage]
+[OnResurrect]
+[OnSpellCast]
+[OnSpellHit]
+[OnTakeDamage]
+[OnUpdateActions]
+[OnUpdateAmmo]
+[OnUpdateStats]
+[OnZombie]
+ */
+
 namespace LeagueSandbox.GameServer.Logic.API
 {
     public static class ApiEventManager
