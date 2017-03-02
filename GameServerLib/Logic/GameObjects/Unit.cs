@@ -371,11 +371,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
             
-            Champion championTarget = target as Champion;
-            if (championTarget != null)
-            {
-                ApiEventManager.publishOnChampionDamaged(championTarget);
-            }
+            ApiEventManager.OnUnitDamaged.Publish(target);
+
             //onDamageTaken?.Invoke(target, this, damage, type, source);
             //onDealDamage?.Invoke(this, target, damage, type, source);
 
