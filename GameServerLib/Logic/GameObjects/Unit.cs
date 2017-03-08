@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.API;
+using System.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -115,6 +116,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool IsCastingSpell { get; set; }
 
+        private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
+
         public Unit(
             string model,
             Stats stats,
@@ -134,6 +137,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return stats;
         }
 
+        public void ApplyCrowdControl(UnitCrowdControl cc)
+        {
+            crowdControlList.Add(cc);
+        }
+        public void RemoveCrowdControl(UnitCrowdControl cc)
+        {
+            crowdControlList.Remove(cc);
+        }
+        public void ClearAllCrowdControl()
+        {
+            crowdControlList.Clear();
+        }
+        public bool HasCrowdControl(CrowdControlType ccType)
+        {
+            return crowdControlList.FirstOrDefault((cc)=>cc.IsType(ccType)) != null;
+        }
+
         public override void update(float diff)
         {
             _timerUpdate += diff;
@@ -141,6 +161,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _timerUpdate = 0;
             }
+
+            foreach(UnitCrowdControl cc in crowdControlList)
+            {
+                cc.Update(diff);
+            }
+            crowdControlList.RemoveAll((cc)=>cc.IsDead());
 
             var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
@@ -318,6 +344,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void AutoAttackHit(Unit target)
         {
+            if (HasCrowdControl(CrowdControlType.Blind)) {
+                // a modified DealDamageTo() to set damage text to "blind"
+                return;
+            }
+
             var damage = stats.AttackDamage.Total;
             if (_isNextAutoCrit)
             {
