@@ -183,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public BuffGameScript AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell)
         {
             BuffGameScript buff = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
-
+            
             BuffGameScripts.Add(buff);
 
             buff.OnActivate(this, ownerSpell);

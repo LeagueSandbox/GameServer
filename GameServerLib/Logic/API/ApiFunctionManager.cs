@@ -49,16 +49,23 @@ namespace LeagueSandbox.GameServer.Logic.API
             return newTimer;
         }
 
-        public static void AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto)
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto)
         {
-            AddBuffHUDVisual(buffName, duration, stacks, onto, onto);
+            return AddBuffHUDVisual(buffName, duration, stacks, onto, onto);
         }
-        public static void AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto, Unit from)
+
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto, Unit from)
         {
             _logger.LogCoreInfo("Sending buff display: " + buffName);
             Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
-
             _game.PacketNotifier.NotifyAddBuff(b);
+
+            return b;
+        }
+
+        public static void RemoveBuffHUDVisual(Buff b)
+        {
+            _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
         }
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
