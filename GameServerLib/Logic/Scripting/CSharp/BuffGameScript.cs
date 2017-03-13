@@ -9,10 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Scripting
 {
     public interface BuffGameScript
     {
-        void OnActivate(Champion owner, Spell ownerSpell);
-
-        void OnDeactivate(Champion owner);
-
         void OnUpdate(double diff);
 
         void OnActivate(Unit unit, Spell ownerSpell);

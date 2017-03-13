@@ -414,11 +414,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
-
-            spellGameScript.OnUpdate(diff);
-            //Old static code
-            //var onUpdate = _scriptEngine.GetStaticMethod<Action<double>>(GetSpellScriptClass(), GetSpellScriptName(), "OnUpdate");
-            //onUpdate?.Invoke(diff);
         }
 
         /// <summary>
