@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
 using System.Linq;
 
@@ -85,6 +86,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
+        public List<BuffGameScript> BuffGameScripts { get; private set; }
+
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
@@ -152,6 +155,36 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool HasCrowdControl(CrowdControlType ccType)
         {
             return crowdControlList.FirstOrDefault((cc)=>cc.IsType(ccType)) != null;
+        }
+        public void AddStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.AddBuff(statModifier);
+        }
+
+        public void UpdateStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.UpdateBuff(statModifier);
+        }
+
+        public void RemoveStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.RemoveBuff(statModifier);
+        }
+
+        public BuffGameScript AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell)
+        {
+            BuffGameScript buff = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
+
+            BuffGameScripts.Add(buff);
+
+            buff.OnActivate(this, ownerSpell);
+
+            return buff;
+        }
+        public void RemoveBuffGameScript(BuffGameScript buff)
+        {
+            buff.OnDeactivate(this);
+            BuffGameScripts.Remove(buff);
         }
 
         public override void update(float diff)

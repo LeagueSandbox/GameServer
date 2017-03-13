@@ -14,5 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.Scripting
         void OnDeactivate(Champion owner);
 
         void OnUpdate(double diff);
+
+        void OnActivate(Unit unit, Spell ownerSpell);
+
+        void OnDeactivate(Unit unit);
     }
 }
