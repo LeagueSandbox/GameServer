@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
-        public List<BuffGameScript> BuffGameScripts { get; private set; }
+        public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
 
         /// <summary>
         /// Unit we want to attack as soon as in range
@@ -132,6 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
+            BuffGameScriptControllers = new List<BuffGameScriptController>();
             this.stats = stats;
             Model = model;
         }
@@ -171,20 +172,40 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.RemoveBuff(statModifier);
         }
 
-        public BuffGameScript AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell)
+        public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
         {
-            BuffGameScript buff = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
+            if (isUnique)
+            {
+                RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
+            }
 
-            BuffGameScripts.Add(buff);
+            BuffGameScriptController buffController = 
+                new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
+            BuffGameScriptControllers.Add(buffController);
+            buffController.ActivateBuff();
 
-            buff.OnActivate(this, ownerSpell);
-
-            return buff;
+            return buffController;
         }
-        public void RemoveBuffGameScript(BuffGameScript buff)
+        public void RemoveBuffGameScript(BuffGameScriptController buffController)
         {
-            buff.OnDeactivate(this);
-            BuffGameScripts.Remove(buff);
+            buffController.DeactivateBuff();
+            BuffGameScriptControllers.Remove(buffController);
+        }
+        public bool HasBuffGameScriptActive(String buffNamespace, String buffClass)
+        {
+            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            {
+                if (b.IsBuffSame(buffNamespace, buffClass)) return true;
+            }
+            return false;
+        }
+        public void RemoveBuffGameScriptsWithName(String buffNamespace, String buffClass)
+        {
+            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            {
+                if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
+            }
+            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
         }
 
         public override void update(float diff)
@@ -200,6 +221,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 cc.Update(diff);
             }
             crowdControlList.RemoveAll((cc)=>cc.IsDead());
+
+            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
 
             var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);

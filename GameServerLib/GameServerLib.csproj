@@ -274,6 +274,7 @@
     <Compile Include="Logic\PreciseTimer.cs" />
     <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
+    <Compile Include="Logic\Scripting\CSharp\BuffGameScriptController.cs" />
     <Compile Include="Logic\Scripting\CSharp\CSharpScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />

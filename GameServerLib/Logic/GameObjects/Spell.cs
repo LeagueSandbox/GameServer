@@ -300,9 +300,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private void RunCastScript()
         {
             spellGameScript.OnStartCasting(Owner, this, Target);
-            //Old static code
-            //var onStartCasting = _scriptEngine.GetStaticMethod<Action<Champion, Spell,Unit>>(GetSpellScriptClass(), GetSpellScriptName(), "OnStartCasting");
-            //onStartCasting?.Invoke(Owner, this, Target);
         }
         
         public string GetSpellScriptClass()
@@ -334,9 +331,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void finishCasting()
         {
             spellGameScript.OnFinishCasting(Owner, this, Target);
-            //Old static code
-            //var onFinishCasting = _scriptEngine.GetStaticMethod<Action<Champion, Spell, Unit>>(GetSpellScriptClass(), GetSpellScriptName(), "OnFinishCasting");
-            //onFinishCasting?.Invoke(Owner, this, Target);
             if (getChannelDuration() == 0)
             {
                 state = SpellState.STATE_COOLDOWN;
@@ -427,9 +421,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             spellGameScript.ApplyEffects(Owner, u, this, p);
-            //Old static code
-            //var applyEffects = _scriptEngine.GetStaticMethod<Action<Champion, Unit, Spell, Projectile>>(GetSpellScriptClass(), GetSpellScriptName(), "ApplyEffects");
-            //applyEffects?.Invoke(Owner, u, this, p);
         }
 
         public float getEffectValue(int effectNo)
