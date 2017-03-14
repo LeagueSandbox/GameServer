@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             return _remove;
         }
-        public bool IsType(CrowdControlType type)
+        public bool IsTypeOf(CrowdControlType type)
         {
             return type == _type;
         }

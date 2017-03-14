@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             _logger = Program.ResolveDependency<Logger>();
         }
 
-        public static void removeAllListenersForOwner(Object owner)
+        public static void removeAllListenersForOwner(object owner)
         {
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
@@ -78,14 +78,14 @@ namespace LeagueSandbox.GameServer.Logic.API
 
     public class EventOnUpdate
     {
-        private List<Tuple<Object, Action<float>>> listeners = new List<Tuple<object, Action<float>>>();
-        public void AddListener(Object owner, Action<float> callback)
+        private List<Tuple<object, Action<float>>> listeners = new List<Tuple<object, Action<float>>>();
+        public void AddListener(object owner, Action<float> callback)
         {
             var listenerTuple = new Tuple<object, Action<float>>(owner, callback);
             listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(Object owner)
+        public void RemoveListener(object owner)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
@@ -99,18 +99,18 @@ namespace LeagueSandbox.GameServer.Logic.API
 
     public class EventOnUnitDamageTaken
     {
-        private List<Tuple<Object, Unit, Action>> listeners = new List<Tuple<object, Unit, Action>>();
-        public void AddListener(Object owner, Unit unit, Action callback)
+        private List<Tuple<object, Unit, Action>> listeners = new List<Tuple<object, Unit, Action>>();
+        public void AddListener(object owner, Unit unit, Action callback)
         {
             var listenerTuple = new Tuple<object, Unit, Action>(owner, unit, callback);
             listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(Object owner, Unit unit)
+        public void RemoveListener(object owner, Unit unit)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
         }
-        public void RemoveListener(Object owner)
+        public void RemoveListener(object owner)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
@@ -128,18 +128,18 @@ namespace LeagueSandbox.GameServer.Logic.API
 
     public class EventOnChampionDamageTaken
     {
-        private List<Tuple<Object, Champion, Action>> listeners = new List<Tuple<object, Champion, Action>>();
-        public void AddListener(Object owner, Champion champion, Action callback)
+        private List<Tuple<object, Champion, Action>> listeners = new List<Tuple<object, Champion, Action>>();
+        public void AddListener(object owner, Champion champion, Action callback)
         {
             var listenerTuple = new Tuple<object, Champion, Action>(owner, champion, callback);
             listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(Object owner, Champion champion)
+        public void RemoveListener(object owner, Champion champion)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
         }
-        public void RemoveListener(Object owner)
+        public void RemoveListener(object owner)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner);
         }

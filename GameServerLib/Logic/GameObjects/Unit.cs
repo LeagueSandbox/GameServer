@@ -155,7 +155,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public bool HasCrowdControl(CrowdControlType ccType)
         {
-            return crowdControlList.FirstOrDefault((cc)=>cc.IsType(ccType)) != null;
+            return crowdControlList.FirstOrDefault((cc)=>cc.IsTypeOf(ccType)) != null;
         }
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
@@ -401,7 +401,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void AutoAttackHit(Unit target)
         {
             if (HasCrowdControl(CrowdControlType.Blind)) {
-                // a modified DealDamageTo() to set damage text to "blind"
+                DealDamageTo(target, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
+                                             DamageSource.DAMAGE_SOURCE_ATTACK,
+                                             DamageText.DAMAGE_TEXT_MISS);
                 return;
             }
 
@@ -419,14 +421,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                              _isNextAutoCrit);
         }
 
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
         {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
-            }
             float defense = 0;
             float regain = 0;
             switch (type)
@@ -438,7 +434,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = target.GetStats().MagicPenetration.Total;
-                    defense = (1 - stats.MagicPenetration.PercentBonus)*defense - stats.MagicPenetration.FlatBonus;
+                    defense = (1 - stats.MagicPenetration.PercentBonus) * defense - stats.MagicPenetration.FlatBonus;
                     break;
             }
 
@@ -452,16 +448,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
             }
 
-            //var onDamageTaken = target._scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDamageTaken");
-            //var onDealDamage = _scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDealDamage");
-
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
-            
-            ApiEventManager.OnUnitDamageTaken.Publish(target);
 
-            //onDamageTaken?.Invoke(target, this, damage, type, source);
-            //onDealDamage?.Invoke(this, target, damage, type, source);
+            ApiEventManager.OnUnitDamageTaken.Publish(target);
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
             if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
@@ -469,7 +459,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.IsDead = true;
                 target.die(this);
             }
-            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, text);
+            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, damageText);
             _game.PacketNotifier.NotifyUpdatedStats(target, false);
 
             //Get health from lifesteal/spellvamp
@@ -478,6 +468,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
+        }
+
+        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        {
+            var text = DamageText.DAMAGE_TEXT_NORMAL;
+
+            if (isCrit)
+            {
+                text = DamageText.DAMAGE_TEXT_CRITICAL;
+            }
+            DealDamageTo(target, damage, type, source, text);
         }
 
         public virtual void die(Unit killer)
