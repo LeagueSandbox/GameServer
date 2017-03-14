@@ -187,6 +187,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
         }
 
+        public void NotifyParticleDestroy(Particle particle)
+        {
+            var dp = new DestroyParticle(particle);
+            _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
+        }
+
         public void NotifyModelUpdate(Unit obj)
         {
             var mp = new UpdateModel(obj.NetId, obj.Model);

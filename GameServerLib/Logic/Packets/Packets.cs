@@ -2699,6 +2699,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         }
     }
 
+    public class DestroyParticle : BasePacket
+    {
+        public DestroyParticle(Particle p) : base(PacketCmd.PKT_S2C_DestroyObject, p.NetId)
+        {
+            buffer.Write((uint)p.NetId);
+        }
+    }
+
     public class DestroyObject : BasePacket
     {
         public DestroyObject(Unit destroyer, Unit destroyed) : base(PacketCmd.PKT_S2C_DestroyObject, destroyer.NetId)

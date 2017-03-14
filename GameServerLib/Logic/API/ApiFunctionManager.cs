@@ -105,15 +105,24 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyAddBuff(buff);
         }
 
-        public static void AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, t, particle, size, bone));
+            Particle p = new Particle(champion, t, particle, size, bone);
+            _game.PacketNotifier.NotifyParticleSpawn(p);
+            return p;
         }
 
-        public static void AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
+        public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, target, particle, size, bone));
+            Particle p = new Particle(champion, target, particle, size, bone);
+            _game.PacketNotifier.NotifyParticleSpawn(p);
+            return p;
+        }
+
+        public static void RemoveParticle(Particle p)
+        {
+            _game.PacketNotifier.NotifyParticleDestroy(p);
         }
 
         public static void PrintChat(string msg)
