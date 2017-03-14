@@ -8,6 +8,9 @@ using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.API;
+using System.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -83,6 +86,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
+        public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
+
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
@@ -114,6 +119,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool IsCastingSpell { get; set; }
 
+        private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
+
         public Unit(
             string model,
             Stats stats,
@@ -125,12 +132,80 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
+            BuffGameScriptControllers = new List<BuffGameScriptController>();
             this.stats = stats;
             Model = model;
         }
         public Stats GetStats()
         {
             return stats;
+        }
+
+        public void ApplyCrowdControl(UnitCrowdControl cc)
+        {
+            crowdControlList.Add(cc);
+        }
+        public void RemoveCrowdControl(UnitCrowdControl cc)
+        {
+            crowdControlList.Remove(cc);
+        }
+        public void ClearAllCrowdControl()
+        {
+            crowdControlList.Clear();
+        }
+        public bool HasCrowdControl(CrowdControlType ccType)
+        {
+            return crowdControlList.FirstOrDefault((cc)=>cc.IsTypeOf(ccType)) != null;
+        }
+        public void AddStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.AddBuff(statModifier);
+        }
+
+        public void UpdateStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.UpdateBuff(statModifier);
+        }
+
+        public void RemoveStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.RemoveBuff(statModifier);
+        }
+
+        public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        {
+            if (isUnique)
+            {
+                RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
+            }
+
+            BuffGameScriptController buffController = 
+                new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
+            BuffGameScriptControllers.Add(buffController);
+            buffController.ActivateBuff();
+
+            return buffController;
+        }
+        public void RemoveBuffGameScript(BuffGameScriptController buffController)
+        {
+            buffController.DeactivateBuff();
+            BuffGameScriptControllers.Remove(buffController);
+        }
+        public bool HasBuffGameScriptActive(String buffNamespace, String buffClass)
+        {
+            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            {
+                if (b.IsBuffSame(buffNamespace, buffClass)) return true;
+            }
+            return false;
+        }
+        public void RemoveBuffGameScriptsWithName(String buffNamespace, String buffClass)
+        {
+            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            {
+                if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
+            }
+            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
         }
 
         public override void update(float diff)
@@ -140,6 +215,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _timerUpdate = 0;
             }
+
+            foreach(UnitCrowdControl cc in crowdControlList)
+            {
+                cc.Update(diff);
+            }
+            crowdControlList.RemoveAll((cc)=>cc.IsDead());
+
+            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
 
             var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
@@ -317,6 +400,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void AutoAttackHit(Unit target)
         {
+            if (HasCrowdControl(CrowdControlType.Blind)) {
+                DealDamageTo(target, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
+                                             DamageSource.DAMAGE_SOURCE_ATTACK,
+                                             DamageText.DAMAGE_TEXT_MISS);
+                return;
+            }
+
             var damage = stats.AttackDamage.Total;
             if (_isNextAutoCrit)
             {
@@ -331,14 +421,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                              _isNextAutoCrit);
         }
 
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
         {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
-            }
             float defense = 0;
             float regain = 0;
             switch (type)
@@ -350,7 +434,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = target.GetStats().MagicPenetration.Total;
-                    defense = (1 - stats.MagicPenetration.PercentBonus)*defense - stats.MagicPenetration.FlatBonus;
+                    defense = (1 - stats.MagicPenetration.PercentBonus) * defense - stats.MagicPenetration.FlatBonus;
                     break;
             }
 
@@ -364,14 +448,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
             }
 
-            var onDamageTaken = target._scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDamageTaken");
-            var onDealDamage = _scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDealDamage");
-
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
 
-            onDamageTaken?.Invoke(target, this, damage, type, source);
-            onDealDamage?.Invoke(this, target, damage, type, source);
+            ApiEventManager.OnUnitDamageTaken.Publish(target);
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
             if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
@@ -379,7 +459,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 target.IsDead = true;
                 target.die(this);
             }
-            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, text);
+            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, damageText);
             _game.PacketNotifier.NotifyUpdatedStats(target, false);
 
             //Get health from lifesteal/spellvamp
@@ -388,6 +468,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
+        }
+
+        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        {
+            var text = DamageText.DAMAGE_TEXT_NORMAL;
+
+            if (isCrit)
+            {
+                text = DamageText.DAMAGE_TEXT_CRITICAL;
+            }
+            DealDamageTo(target, damage, type, source, text);
         }
 
         public virtual void die(Unit killer)

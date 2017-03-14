@@ -6,6 +6,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.Scripting;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -89,7 +90,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
                 { 4, new Spell(this, clientInfo.SummonerSkills[0], 4) },
                 { 5, new Spell(this, clientInfo.SummonerSkills[1], 5) },
-                { 13, new Spell(this, "Recall", 13) }
+                { 13, new Spell(this, "Recall", 13) },
+                { 14, new Spell(this, _rafManager.GetStringValue(data, "Data", "Passive1LuaName"), 14) }
             };
 
             Spells[4].levelUp();
@@ -158,6 +160,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             return 0;
         }
+
+        public void AddStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.AddBuff(statModifier);
+        }
+
+        public void UpdateStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.UpdateBuff(statModifier);
+        }
+
+        public void RemoveStatModifier(ChampionStatModifier statModifier)
+        {
+            stats.RemoveBuff(statModifier);
+        }
+
 
         public Vector2 GetSpawnPosition()
         {

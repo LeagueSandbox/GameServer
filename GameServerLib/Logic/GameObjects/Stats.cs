@@ -213,6 +213,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Tenacity = new Stat();
         }
 
+        public void UpdateBuff(IBuff buff)
+        {
+            RemoveBuff(buff);
+            AddBuff(buff);
+        }
+
         public void AddBuff(IBuff buff)
         {
             if (AbilityPower.ApplyStatModificator(buff.AbilityPower))

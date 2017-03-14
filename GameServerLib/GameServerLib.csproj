@@ -183,6 +183,8 @@
     <Compile Include="Bindings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
+    <Compile Include="Logic\API\ApiEventManager.cs" />
+    <Compile Include="Logic\API\UnitCrowdControl.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatCommandManager.cs" />
     <Compile Include="Logic\Chatbox\ChatCommand.cs" />
@@ -223,6 +225,7 @@
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\Announce.cs" />
     <Compile Include="Logic\GameObjects\Buff.cs" />
+    <Compile Include="Logic\GameObjects\ChampionStatModifier.cs" />
     <Compile Include="Logic\GameObjects\TurretStats.cs" />
     <Compile Include="Logic\GameObjects\Champion.cs" />
     <Compile Include="Logic\GameObjects\CollisionHandler.cs" />
@@ -269,7 +272,9 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUnpauseReq.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\PreciseTimer.cs" />
+    <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
+    <Compile Include="Logic\Scripting\CSharp\BuffGameScriptController.cs" />
     <Compile Include="Logic\Scripting\CSharp\CSharpScriptEngine.cs" />
     <Compile Include="Logic\Maps\SummonersRift.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAutoAttackOption.cs" />
@@ -306,6 +311,8 @@
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\RAF\RAFManager.cs" />
+    <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
+    <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

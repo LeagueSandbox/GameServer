@@ -108,6 +108,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Game _game = Program.ResolveDependency<Game>();
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
+        private GameScript spellGameScript;
+
         public Spell(Champion owner, string spellName, byte slot)
         {
             Owner = owner;
@@ -124,6 +126,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             NoManacost = !_game.Config.ManaCostsEnabled;
 
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+
+            //Set the game script for the spell
+            spellGameScript = _scriptEngine.CreateObject<GameScript>(GetSpellScriptClass(), GetSpellScriptName());
+
+            //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
+            spellGameScript.OnActivate(owner);
 
             JObject data;
 
@@ -291,13 +299,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         
         private void RunCastScript()
         {
-            var onStartCasting = _scriptEngine.GetStaticMethod<Action<Champion, Spell,Unit>>(GetSpellScriptClass(), GetSpellScriptName(), "OnStartCasting");
-            onStartCasting?.Invoke(Owner, this, Target);
+            spellGameScript.OnStartCasting(Owner, this, Target);
         }
         
         public string GetSpellScriptClass()
         {
-            if (Slot > 3)
+            if (Slot > 3 && Slot != 14)
             {
                 return "Global";
             }
@@ -308,7 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public string GetSpellScriptName()
         {
-            if (Slot > 3)
+            if (Slot > 3 && Slot != 14)
             {
                 return _spellName;
             }
@@ -323,9 +330,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void finishCasting()
         {
-            //Champion owner, Spell spell, Unit target
-            var onFinishCasting = _scriptEngine.GetStaticMethod<Action<Champion, Spell, Unit>>(GetSpellScriptClass(), GetSpellScriptName(), "OnFinishCasting");
-            onFinishCasting?.Invoke(Owner, this, Target);
+            spellGameScript.OnFinishCasting(Owner, this, Target);
             if (getChannelDuration() == 0)
             {
                 state = SpellState.STATE_COOLDOWN;
@@ -403,9 +408,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     break;
             }
-
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<double>>(GetSpellScriptClass(), GetSpellScriptName(), "OnUpdate");
-            onUpdate?.Invoke(diff);
         }
 
         /// <summary>
@@ -417,9 +419,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 ApiFunctionManager.AddParticleTarget(Owner, hitEffectName, u);
             }
-            
-            var applyEffects = _scriptEngine.GetStaticMethod<Action<Champion, Unit, Spell, Projectile>>(GetSpellScriptClass(), GetSpellScriptName(), "ApplyEffects");
-            applyEffects?.Invoke(Owner, u, this, p);
+
+            spellGameScript.ApplyEffects(Owner, u, this, p);
         }
 
         public float getEffectValue(int effectNo)
@@ -575,6 +576,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return "E";
                 case 3:
                     return "R";
+                case 14:
+                    return "Passive";
             }
 
             return "undefined";

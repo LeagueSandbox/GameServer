@@ -100,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, BuffType.Aura, b.Name, b.Slot);
+            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, b.BuffType, b.Name, b.Slot);
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -185,6 +185,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var sp = new SpawnParticle(particle);
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
+        }
+
+        public void NotifyParticleDestroy(Particle particle)
+        {
+            var dp = new DestroyParticle(particle);
+            _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
         }
 
         public void NotifyModelUpdate(Unit obj)

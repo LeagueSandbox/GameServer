@@ -111,6 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
+            _logger.LogCoreInfo("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
             {
                 return default(T);

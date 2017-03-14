@@ -1940,19 +1940,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)slot); //Slot
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
-            buffer.Write((byte)0x00); // Visible
+            buffer.Write((byte)0x00); // Visible was (byte)0x00
             buffer.Write(_rafManager.GetHash(name)); //Buff id
-            buffer.Write((byte)0x00); //
-            buffer.Write((byte)0x00); // <-- Probably runningTime
-            buffer.Write((byte)0x00); //
-            buffer.Write((byte)0x00); //
+            
+            buffer.Write((int)0); // <-- Probably runningTime
+
+            buffer.Write((float)0); // <- ProgressStartPercent
 
             buffer.Write((float)time);
-
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x50);
-            buffer.Write((byte)0xc3);
-            buffer.Write((byte)0x46);
 
             if (source != null)
             {
@@ -2701,6 +2696,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((uint)0); // unk
             buffer.Write((uint)0); // unk
             buffer.Write((float)particle.Size); // Particle size
+        }
+    }
+
+    public class DestroyParticle : BasePacket
+    {
+        public DestroyParticle(Particle p) : base(PacketCmd.PKT_S2C_DestroyObject, p.NetId)
+        {
+            buffer.Write((uint)p.NetId);
         }
     }
 

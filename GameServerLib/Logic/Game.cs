@@ -48,6 +48,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private NetworkIdManager _networkIdManager;
         private Stopwatch _lastMapDurationWatch;
 
+        private List<GameScriptTimer> _gameScriptTimers;
+
         public Game(
             ItemManager itemManager,
             ChatCommandManager chatCommandManager,
@@ -68,6 +70,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger.LogCoreInfo("Loading Config.");
             Config = config;
 
+            _gameScriptTimers = new List<GameScriptTimer>();
+
             _chatCommandManager.LoadCommands();
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
@@ -85,7 +89,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
+            ApiEventManager.SetGame(this);
             IsRunning = false;
+            
+            _logger.LogCoreInfo("Loading C# Scripts");
+
+            LoadScripts();
 
             foreach (var p in Config.Players)
             {
@@ -100,10 +109,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             };
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
-
-            _logger.LogCoreInfo("Loading C# Scripts");
-
-            LoadScripts();
 
             _logger.LogCoreInfo("Game is ready.");
         }
@@ -188,11 +193,23 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         if (IsRunning)
                         {
                             Map.Update((float)sinceLastMapTime);
+                            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
+                            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
                         }
                     }
                     Thread.Sleep(1);
                 }
             }
+        }
+
+        public void AddGameScriptTimer(GameScriptTimer timer)
+        {
+            _gameScriptTimers.Add(timer);
+        }
+
+        public void RemoveGameScriptTimer(GameScriptTimer timer)
+        {
+            _gameScriptTimers.Remove(timer);
         }
 
         public void IncrementReadyPlayers()

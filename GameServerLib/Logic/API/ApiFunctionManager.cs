@@ -8,12 +8,14 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.API
 {
     public static class ApiFunctionManager
     {
         private static Game _game;
+        private static Logger _logger;
 
         public static byte[] StringToByteArray(string hex)
         {
@@ -27,6 +29,61 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
+            _logger = Program.ResolveDependency<Logger>();
+        }
+
+        public static void LogInfo(string format)
+        {
+            _logger.LogCoreInfo(format);
+        }
+
+        public static void LogInfo(string format, params object[] args)
+        {
+            _logger.LogCoreInfo(format, args);
+        }
+
+        public static GameScriptTimer CreateTimer(float duration, Action callback)
+        {
+            GameScriptTimer newTimer = new GameScriptTimer(duration, callback);
+            _game.AddGameScriptTimer(newTimer);
+            return newTimer;
+        }
+
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto, float removeAfter = -1.0f)
+        {
+            return AddBuffHUDVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
+        }
+
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, Unit onto, Unit from, float removeAfter = -1.0f)
+        {
+            Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
+            _game.PacketNotifier.NotifyAddBuff(b);
+            if (removeAfter >= 0)
+            {
+                ApiFunctionManager.CreateTimer(removeAfter, () => {
+                    RemoveBuffHUDVisual(b);
+                });
+            }
+            return b;
+        }
+
+        public static void RemoveBuffHUDVisual(Buff b)
+        {
+            _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
+        }
+
+        public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
+        {
+            List<TeamId> teams = GetTeams();
+            foreach (TeamId id in teams)
+            {
+                gameObject.SetVisibleByTeam(id, visibility);
+            }
+        }
+
+        public static List<TeamId> GetTeams()
+        {
+            return _game.Map.GetTeams();
         }
 
         public static void TeleportTo(Unit unit, float x, float y)
@@ -48,15 +105,24 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyAddBuff(buff);
         }
 
-        public static void AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, t, particle, size, bone));
+            Particle p = new Particle(champion, t, particle, size, bone);
+            _game.PacketNotifier.NotifyParticleSpawn(p);
+            return p;
         }
 
-        public static void AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
+        public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            _game.PacketNotifier.NotifyParticleSpawn(new Particle(champion, target, particle, size, bone));
+            Particle p = new Particle(champion, target, particle, size, bone);
+            _game.PacketNotifier.NotifyParticleSpawn(p);
+            return p;
+        }
+
+        public static void RemoveParticle(Particle p)
+        {
+            _game.PacketNotifier.NotifyParticleDestroy(p);
         }
 
         public static void PrintChat(string msg)
@@ -165,6 +231,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             return gameObject.Team;
         }
+        
 
         public static bool IsDead(Unit unit)
         {

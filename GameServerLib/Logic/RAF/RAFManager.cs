@@ -7,6 +7,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
     public class RAFManager
     {
         private static Game _game = Program.ResolveDependency<Game>();
+        private static Logger _logger = Program.ResolveDependency<Logger>();
         public uint GetHash(string path)
         {
             uint hash = 0;
@@ -26,7 +27,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
         public bool ReadSpellData(string spellName, out JObject data)
         {
             var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
-
+            _logger.LogCoreInfo("Loading spell " + spellName + " data from path: " + Path.GetFullPath(path));
             data = JObject.Parse(File.ReadAllText(path));
             return true;
         }
