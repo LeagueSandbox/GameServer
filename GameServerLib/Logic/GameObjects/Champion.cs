@@ -19,8 +19,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Dictionary<short, Spell> Spells { get; private set; }
         public List<string> ExtraSpells { get; private set; }
 
-        public List<BuffGameScript> BuffGameScripts { get; private set; }
-
         private short _skillPoints;
         public int Skin { get; set; }
         private float _championHitFlagTimer;
@@ -101,8 +99,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             ExtraSpells = new List<string>();
 
-            BuffGameScripts = new List<BuffGameScript>();
-
             for (var i = 1; true; i++)
             {
                 if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i)))
@@ -178,22 +174,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
             stats.RemoveBuff(statModifier);
-        }
-
-        public BuffGameScript AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell)
-        {
-            BuffGameScript buff = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
-            
-            BuffGameScripts.Add(buff);
-
-            buff.OnActivate(this, ownerSpell);
-
-            return buff;
-        }
-        public void RemoveBuffGameScript(BuffGameScript buff)
-        {
-            buff.OnDeactivate(this);
-            BuffGameScripts.Remove(buff);
         }
 
 
@@ -377,9 +357,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             foreach (var s in Spells.Values)
                 s.update(diff);
-
-            foreach (var b in BuffGameScripts)
-                b.OnUpdate(diff);
 
             if (_championHitFlagTimer > 0)
             {
