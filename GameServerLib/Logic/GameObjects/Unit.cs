@@ -121,6 +121,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
 
+        private GameScriptInformation _gameScriptInformation;
+        private GameScript _gameScript = null;
+
         public Unit(
             string model,
             Stats stats,
@@ -128,14 +131,34 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float x = 0,
             float y = 0,
             int visionRadius = 0,
-            uint netId = 0
+            uint netId = 0,
+            GameScriptInformation gameScriptInformation = null
         ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             this.stats = stats;
             Model = model;
+            if (gameScriptInformation != null)
+            {
+                _gameScriptInformation = gameScriptInformation;
+                //Create script
+                _gameScript = _scriptEngine.CreateObject<GameScript>(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
+            }
         }
+
+        public void Activate()
+        {
+            //Called when unit is placed in the map
+            _gameScript?.OnActivate(_gameScriptInformation.OwnerUnit as Champion);
+        }
+
+        public void Deactivate()
+        {
+            //Called when the unit is removed from the map
+            _gameScript?.OnDeactivate(_gameScriptInformation.OwnerUnit as Champion);
+        }
+
         public Stats GetStats()
         {
             return stats;
@@ -224,6 +247,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
 
+            // Useless - Remove and Replace
             var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
 
@@ -385,11 +409,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.onCollision(collider);
             if (collider == null)
             {
+                // Useless - Remove and Replace
                 var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
             }
             else
             {
+                // Useless - Remove and Replace
                 var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider as Unit);
             }
@@ -413,8 +439,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 damage *= stats.getCritDamagePct();
             }
 
-            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
-            onAutoAttack?.Invoke(this, target);
+            // Useless - Remove and Replace
+            //var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
+            //onAutoAttack?.Invoke(this, target);
 
             DealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
@@ -488,8 +515,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
-            onDie?.Invoke(this, killer);
+            // Useless - Remove and Replace
+            //var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
+            //onDie?.Invoke(this, killer);
 
             var exp = _game.Map.GetExperienceFor(this);
             var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
