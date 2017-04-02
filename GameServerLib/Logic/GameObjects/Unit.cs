@@ -450,10 +450,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
+
             if (target.HasCrowdControl(CrowdControlType.Invulnerable))
             {
-                damage = 0;
-                damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
+                bool attackerIsFountainTurret = this is LaneTurret && (this as LaneTurret).Type == TurretType.FountainTurret;
+                if (attackerIsFountainTurret == false)
+                {
+                    damage = 0;
+                    damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
+                }
             }
             ApiEventManager.OnUnitDamageTaken.Publish(target);
 
