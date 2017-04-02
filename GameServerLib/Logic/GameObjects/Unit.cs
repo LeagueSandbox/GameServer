@@ -450,7 +450,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
-
+            if (target.HasCrowdControl(CrowdControlType.Invulnerable))
+            {
+                damage = 0;
+                damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
+            }
             ApiEventManager.OnUnitDamageTaken.Publish(target);
 
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
