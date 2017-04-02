@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -232,6 +233,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             if (s == null)
+            {
+                return null;
+            }
+
+            if (s.Owner.HasCrowdControl(CrowdControlType.Disarm))
             {
                 return null;
             }
