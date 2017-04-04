@@ -118,11 +118,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
                 AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
             }
-            
-            foreach (var spell in Spells.Values)
-            {
-                spell.LoadExtraSpells(this);
-            }
         }
         private string GetPlayerIndex()
         {
@@ -238,12 +233,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
 
-            if ((s.getCost() * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
+            if ((s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
                 return null;
 
             if (s.cast(x, y, target, futureProjNetId, spellNetId))
             {
-                stats.CurrentMana = stats.CurrentMana - s.getCost() * (1 - stats.getSpellCostReduction());
+                stats.CurrentMana = stats.CurrentMana - s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction());
                 var onSpellCast = _scriptEngine.GetStaticMethod<Action<Vector2, Spell, Unit>>(Model, "Passive", "OnSpellCast");
                 onSpellCast?.Invoke(new Vector2(x, y), s, target);
                 return s;
