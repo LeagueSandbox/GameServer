@@ -406,6 +406,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                              DamageText.DAMAGE_TEXT_MISS);
                 return;
             }
+            if (HasCrowdControl(CrowdControlType.Disarm))
+            {
+                return;
+            }
 
             var damage = stats.AttackDamage.Total;
             if (_isNextAutoCrit)
