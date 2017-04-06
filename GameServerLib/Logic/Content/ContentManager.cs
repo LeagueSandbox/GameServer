@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
     public class ContentManager
     {
         private Logger _logger = Program.ResolveDependency<Logger>();
+        private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
 
         private static readonly string[] CONTENT_TYPES = new string[]
         {
@@ -190,6 +192,33 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var fileName = $"{spellName}/{spellName}.json";
 
             return GetContentPath(contentPackages, contentType, fileName);
+        }
+        
+        public SpellData GetSpellData(string spellName)
+        {
+            if (_spellData.ContainsKey("spellName"))
+            {
+                return _spellData[spellName];
+            }
+            _spellData[spellName] = new SpellData();
+            _spellData[spellName].Load(spellName);
+            return _spellData[spellName];
+        }
+
+        public ContentFile GetSpellDataContentFile(string spellName)
+        {
+            try
+            {
+                var path = GetSpellDataPath(spellName);
+                _logger.LogCoreInfo($"Loading spell {spellName} data from path: {Path.GetFullPath(path)}!");
+                var text = File.ReadAllText(Path.GetFullPath(path));
+                return JsonConvert.DeserializeObject<ContentFile>(text);
+            }
+            catch(ContentNotFoundException notfound)
+            {
+                _logger.LogCoreWarning($"Spell data for {spellName} was not found.");
+            }
+            return new ContentFile();
         }
 
         public static ContentManager LoadGameMode(string gameModeName)

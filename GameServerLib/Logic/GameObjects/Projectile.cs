@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -11,12 +12,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public List<GameObject> ObjectsHit { get; private set; }
         public Unit Owner { get; private set; }
         public int ProjectileId { get; private set; }
+        public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
-        protected int _flags;
         protected Spell _originSpell;
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         private Logger _logger = Program.ResolveDependency<Logger>();
-
+        
         public Projectile(
             float x,
             float y,
@@ -30,6 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(x, y, collisionRadius, 0, netId)
         {
+            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;
             Owner = owner;
@@ -37,15 +39,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ProjectileId = (int)_rafManager.GetHash(projectileName);
             if (!string.IsNullOrEmpty(projectileName))
             {
-                JObject data;
-                if (!_rafManager.ReadSpellData(projectileName, out data))
-                {
-                    _logger.LogCoreError("Couldn't find projectile stats for " + projectileName);
-                    return;
-                }
-                VisionRadius = _rafManager.GetFloatValue(data, "SpellData", "MissilePerceptionBubbleRadius");
+                VisionRadius = SpellData.MissilePerceptionBubbleRadius;
             }
-            _flags = flags;
             ObjectsHit = new List<GameObject>();
 
             Target = target;
@@ -103,41 +98,41 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return;
 
                 if (unit.Team == Owner.Team
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
                     return;
 
                 if (unit.Team == TeamId.TEAM_NEUTRAL
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
                     return;
 
                 if (unit.Team != Owner.Team
                     && unit.Team != TeamId.TEAM_NEUTRAL
-                    && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
                     return;
 
 
-                if (unit.IsDead && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
                     return;
 
                 var m = unit as Minion;
-                if (m != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
+                if (m != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
                     return;
 
                 var p = unit as Placeable;
-                if (p != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
+                if (p != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
                     return;
 
                 var t = unit as BaseTurret;
-                if (t != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
                     return;
 
                 var i = unit as Inhibitor;
                 var n = unit as Nexus;
-                if ((i != null || n != null) && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
                     return;
 
                 var c = unit as Champion;
-                if (c != null && !((_flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
+                if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
                     return;
 
                 ObjectsHit.Add(unit);
