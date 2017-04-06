@@ -241,6 +241,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void UpdateAutoAttackTarget(float diff)
         {
+            if (HasCrowdControl(CrowdControlType.Disarm))
+            {
+                return;
+            }
             if (IsDead)
             {
                 if (TargetUnit != null)
