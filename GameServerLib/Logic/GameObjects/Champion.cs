@@ -237,7 +237,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return null;
             }
 
-            if (s.Owner.HasCrowdControl(CrowdControlType.Disarm))
+            if (s.Owner.HasCrowdControl(CrowdControlType.Silence))
             {
                 return null;
             }
@@ -535,6 +535,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
         {
+            if (HasCrowdControl(CrowdControlType.Disarm))
+            {
+                return;
+            }
             base.DealDamageTo(target, damage, type, source, isCrit);
 
             var cTarget = target as Champion;
