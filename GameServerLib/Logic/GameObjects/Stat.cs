@@ -21,7 +21,11 @@
         public float PercentBonus { get { return _percentBonus; } set { Modified = true; _percentBonus = value; } }
         public float PercentBaseBonus { get { return _percentBaseBonus; } set { Modified = true; _percentBaseBonus = value; } }
 
-        public float Total { get { return ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus)*(1+PercentBonus); } }
+        public float Total
+        {
+            get { return ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus)*(1+PercentBonus); }
+            set { throw new System.NotImplementedException(); }
+        }
 
         public Stat(float baseValue, float baseBonus, float percentBaseBonus, float flatBonus, float percentBonus)
         {

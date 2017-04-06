@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
     public class ContentManager
     {
         private Logger _logger = Program.ResolveDependency<Logger>();
+        private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
 
         private static readonly string[] CONTENT_TYPES = new string[]
         {
@@ -29,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
-            foreach(var contentType in CONTENT_TYPES)
+            foreach (var contentType in CONTENT_TYPES)
             {
                 _content[contentType] = new Dictionary<string, List<string>>();
             }
@@ -42,7 +44,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 contents = contentSet.ToObject<string[]>();
             }
-            else if(contentSet.Value<string>() == "*")
+            else if (contentSet.Value<string>() == "*")
             {
                 var contentPath = GetContentSetPath(packageName, contentType);
                 contents = GetFolderNamesFromPath(contentPath);
@@ -52,10 +54,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 throw new Exception("Invalid content configuration");
             }
 
-            foreach(var content in contents)
+            foreach (var content in contents)
             {
                 _logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
-                if(!_content[contentType].ContainsKey(content))
+                if (!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
                 }
@@ -89,7 +91,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private string GetContentSetPath(string packageName, string contentType)
         {
-            if(packageName == "Self")
+            if (packageName == "Self")
             {
                 return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), GameModeName, contentType);
             }
@@ -192,6 +194,33 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
+        public SpellData GetSpellData(string spellName)
+        {
+            if (_spellData.ContainsKey("spellName"))
+            {
+                return _spellData[spellName];
+            }
+            _spellData[spellName] = new SpellData();
+            _spellData[spellName].Load(spellName);
+            return _spellData[spellName];
+        }
+
+        public ContentFile GetSpellDataContentFile(string spellName)
+        {
+            try
+            {
+                var path = GetSpellDataPath(spellName);
+                _logger.LogCoreInfo($"Loading spell {spellName} data from path: {Path.GetFullPath(path)}!");
+                var text = File.ReadAllText(Path.GetFullPath(path));
+                return JsonConvert.DeserializeObject<ContentFile>(text);
+            }
+            catch (ContentNotFoundException notfound)
+            {
+                _logger.LogCoreWarning($"Spell data for {spellName} was not found.");
+            }
+            return new ContentFile();
+        }
+
         public static ContentManager LoadGameMode(string gameModeName)
         {
             var contentManager = new ContentManager(gameModeName);
@@ -200,11 +229,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
             var dataConfiguration = gameModeConfiguration.SelectToken("data");
 
-            foreach(JProperty dataPackage in dataConfiguration)
+            foreach (JProperty dataPackage in dataConfiguration)
             {
                 if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
 
-                foreach(var contentType in CONTENT_TYPES)
+                foreach (var contentType in CONTENT_TYPES)
                 {
                     var contentSet = dataPackage.Value.SelectToken(contentType);
 
@@ -223,7 +252,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if (packageName.Count(c => c == '-') < 1) return false;
             string[] parts = packageName.Split('-');
-            foreach(var part in parts)
+            foreach (var part in parts)
             {
                 if (part.Length < 2) return false;
             }
