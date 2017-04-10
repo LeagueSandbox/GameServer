@@ -2480,14 +2480,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetHeightAtLocation(xDragEnd, yDragEnd));
             buffer.Write((float)yDragEnd);
             buffer.Write((byte)0); // numTargets (if >0, what follows is a list of {uint32 targetNetId, uint8 hitResult})
-            buffer.Write((float)s.CastTime); // designerCastTime
+            buffer.Write((float)s.SpellData.GetCastTime()); // designerCastTime
             buffer.Write((float)0.0f); // extraTimeForCast
-            buffer.Write((float)s.CastTime /*+ s.ChannelTime*/); // designerTotalTime
+            buffer.Write((float)s.SpellData.GetCastTime() /*+ s.ChannelTime*/); // designerTotalTime
             buffer.Write((float)s.getCooldown());
             buffer.Write((float)0.0f); // startCastTime
             buffer.Write((byte)0); // flags (isAutoAttack, secondAttack, forceCastingOrChannelling, mShouldOverrideCastPosition)
             buffer.Write((byte)s.Slot);
-            buffer.Write((float)s.getCost());
+            buffer.Write((float)s.SpellData.ManaCost[s.Level]);
             buffer.Write((float)s.Owner.X);
             buffer.Write((float)s.Owner.GetZ());
             buffer.Write((float)s.Owner.Y);
