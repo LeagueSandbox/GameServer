@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
-        public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
+        public List<GameScriptBuffController> BuffGameScriptControllers { get; private set; }
 
         /// <summary>
         /// Unit we want to attack as soon as in range
@@ -108,7 +108,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
         private bool _isNextAutoCrit;
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         protected Logger _logger = Program.ResolveDependency<Logger>();
 
         public int KillDeathCounter { get; protected set; }
@@ -122,7 +122,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
 
         private GameScriptInformation _gameScriptInformation;
-        private GameScript _gameScript = null;
+        private IGameScript _gameScript = null;
 
         public Unit(
             string model,
@@ -136,27 +136,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
-            BuffGameScriptControllers = new List<BuffGameScriptController>();
+            BuffGameScriptControllers = new List<GameScriptBuffController>();
             this.stats = stats;
             Model = model;
             if (gameScriptInformation != null)
             {
                 _gameScriptInformation = gameScriptInformation;
                 //Create script
-                _gameScript = _scriptEngine.CreateObject<GameScript>(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
+                _gameScript = _scriptEngine.GetGameScript(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
             }
         }
 
         public void Activate()
         {
             //Called when unit is placed in the map
-            _gameScript?.OnActivate(_gameScriptInformation.OwnerUnit as Champion);
+            _gameScript?.OnActivate(_gameScriptInformation);
         }
 
         public void Deactivate()
         {
             //Called when the unit is removed from the map
-            _gameScript?.OnDeactivate(_gameScriptInformation.OwnerUnit as Champion);
+            _gameScript?.OnDeactivate();
         }
 
         public Stats GetStats()
@@ -195,28 +195,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.RemoveBuff(statModifier);
         }
 
-        public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        public GameScriptBuffController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false, Unit ownerUnit = null)
         {
             if (isUnique)
             {
                 RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
             }
+            if (ownerUnit == null) ownerUnit = this;
 
-            BuffGameScriptController buffController = 
-                new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
+            GameScriptBuffController buffController = 
+                new GameScriptBuffController(ownerUnit, this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
             return buffController;
         }
-        public void RemoveBuffGameScript(BuffGameScriptController buffController)
+        public void RemoveBuffGameScript(GameScriptBuffController buffController)
         {
             buffController.DeactivateBuff();
             BuffGameScriptControllers.Remove(buffController);
         }
         public bool HasBuffGameScriptActive(String buffNamespace, String buffClass)
         {
-            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            foreach (GameScriptBuffController b in BuffGameScriptControllers)
             {
                 if (b.IsBuffSame(buffNamespace, buffClass)) return true;
             }
@@ -224,7 +225,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void RemoveBuffGameScriptsWithName(String buffNamespace, String buffClass)
         {
-            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            foreach (GameScriptBuffController b in BuffGameScriptControllers)
             {
                 if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
             }
@@ -246,10 +247,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             crowdControlList.RemoveAll((cc)=>cc.IsDead());
 
             BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
-
-            // Useless - Remove and Replace
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
-            onUpdate?.Invoke(this, diff);
 
             UpdateAutoAttackTarget(diff);
 
@@ -414,14 +411,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (collider == null)
             {
                 // Useless - Remove and Replace
-                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
-                onCollideWithTerrain?.Invoke(this);
+                //var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
+                //onCollideWithTerrain?.Invoke(this);
             }
             else
             {
                 // Useless - Remove and Replace
-                var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
-                onCollide?.Invoke(this, collider as Unit);
+                //var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
+                //onCollide?.Invoke(this, collider as Unit);
             }
         }
 

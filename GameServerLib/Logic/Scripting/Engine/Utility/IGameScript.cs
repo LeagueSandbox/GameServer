@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public interface GameScript
+    public interface IGameScript
     {
         void OnActivate(GameScriptInformation gameScriptInformation);
         void OnDeactivate();

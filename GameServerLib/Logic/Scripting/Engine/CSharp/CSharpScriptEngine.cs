@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public class CSharpScriptEngine
+    class CSharpScriptEngine
     {
         private Assembly _scriptAssembly;
 
@@ -116,9 +116,8 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             {
                 return default(T);
             }
-
-            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
-
+            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
+            if (classType == null) return default(T);
             return (T)Activator.CreateInstance(classType);
         }
         public static object RunFunctionOnObject(object obj, string method, params object[] args)

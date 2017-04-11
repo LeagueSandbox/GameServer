@@ -1,9 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
@@ -14,12 +10,14 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
     }
     public class GameScriptInformation
     {
-        //Construct in way: new GameScriptInformation {Namespace=..., Name=..., OwnerUnit=..., OwnerSpell=...}
+        //Construct in way: 
+        //new GameScriptInformation {Namespace=..., Name=..., OwnerUnit=..., OwnerSpell=...}
 
         public String Namespace { get; set; } = "";
         public String Name { get; set; } = "";
         public Unit OwnerUnit { get; set; } = null;
         public Spell OwnerSpell { get; set; } = null;
+        public Unit TargetUnit { get; set; } = null; // Usage: Buffs - Who buff is applied to
         public GameScriptTriggerSlot TriggerSlot = GameScriptTriggerSlot.None;
     }
 }

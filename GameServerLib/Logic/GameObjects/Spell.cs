@@ -37,12 +37,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float X { get; private set; }
         public float Y { get; private set; }
 
-        private CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        private GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private Game _game = Program.ResolveDependency<Game>();
         private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
-        private GameScript spellGameScript;
+        private IGameScript spellGameScript;
 
         public SpellData SpellData { get; private set; }
 
@@ -52,12 +52,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SpellName = spellName;
             Slot = slot;
             SpellData = _game.Config.ContentManager.GetSpellData(spellName);
-            _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>(GetSpellScriptClass(), GetSpellScriptName());
+            spellGameScript = _scriptEngine.GetGameScript(GetSpellScriptClass(), GetSpellScriptName());
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            spellGameScript.OnActivate(owner);
+            spellGameScript.OnActivate(
+                new GameScriptInformation {
+                    Namespace = GetSpellScriptClass(),
+                    Name = GetSpellScriptName(),
+                    OwnerUnit = owner,
+                    OwnerSpell = this});
         }
 
         /// <summary>
@@ -95,7 +100,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         
         private void RunCastScript()
         {
-            spellGameScript.OnStartCasting(Owner, this, Target);
+            //TODO : Change cast to be nicer, maybe different way of giving target
+            ApiEventManager.OnSpellCast.Publish(this, Target);
         }
         
         public string GetSpellScriptClass()
@@ -126,7 +132,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void finishCasting()
         {
-            spellGameScript.OnFinishCasting(Owner, this, Target);
+            //TODO: make new system finish casting doesn't need to be handled by the Spell
+            ApiEventManager.OnSpellFinishCast.Publish(this, Target);
             if (SpellData.ChannelDuration[Level] == 0)
             {
                 state = SpellState.STATE_COOLDOWN;
@@ -216,7 +223,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 ApiFunctionManager.AddParticleTarget(Owner, SpellData.HitEffectName, u);
             }
 
-            spellGameScript.ApplyEffects(Owner, u, this, p);
+            //TODO : Replace, don't handle here. Handle in GameScripts on projectile creation
+            ApiEventManager.OnSpellApplyEffects.Publish(this, u, p);
         }
 
         public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)

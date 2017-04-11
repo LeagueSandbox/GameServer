@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Unit TargetUnit { get; private set; }
         public Unit SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
