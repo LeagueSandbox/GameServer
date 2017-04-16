@@ -1,0 +1,19 @@
+﻿<Properties StartupConfiguration="{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GameServerLib/Logic/Scripting/Engine/CSharp/CSharpScriptEngine.cs">
+    <Files>
+      <File FileName="GameServerApp/Program.cs" Line="1" Column="1" />
+      <File FileName="GameServerApp/GameServerApp.csproj" Line="79" Column="24" />
+      <File FileName="GameServerLib/Logic/Content/ContentManager.cs" Line="76" Column="91" />
+      <File FileName="GameServerLib/Logic/PreciseTimer.cs" Line="20" Column="6" />
+      <File FileName="GameServerLib/Logic/Scripting/Engine/GameScriptEngine.cs" Line="21" Column="51" />
+      <File FileName="GameServerLib/Logic/Scripting/Engine/CSharp/CSharpScriptEngine.cs" Line="24" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.GameServerApp PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+</Properties>

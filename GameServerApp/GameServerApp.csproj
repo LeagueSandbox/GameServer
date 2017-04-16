@@ -76,7 +76,7 @@
     <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand>cp -r -u</_CopyCommand>
+    <_CopyCommand>cp -r</_CopyCommand>
   </PropertyGroup>
   <Target Name="AfterBuild">
     <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(_ContentTargetDirectory)&quot;" />

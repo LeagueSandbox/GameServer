@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
@@ -17,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         }
         public bool LoadScripts(String gameMode)
         {
-            return _scriptingEngine.LoadSubdirectoryScripts($"Content/Data/{gameMode}/");
+			return _scriptingEngine.LoadSubdirectoryScripts(Path.Combine("Content", "Data", gameMode));
         }
         public IGameScript GetGameScript(string namespaceName, string className)
         {

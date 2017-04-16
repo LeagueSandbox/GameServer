@@ -18,8 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         public bool LoadSubdirectoryScripts(string folder)
         {
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories);
-            return Load(new List<string>(allfiles));
+            return Load(new List<string>(Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories)));
         }
 
         //Takes about 300 milliseconds for a single script

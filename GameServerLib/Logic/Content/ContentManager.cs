@@ -73,7 +73,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var contentDirectories = Directory.GetDirectories(folderPath);
                 foreach (var directory in contentDirectories)
                 {
-                    contents.Add(directory.Split('\\').Last());
+					//Console.WriteLine("Printing: " + directory.Split(new Char[] { '\\', '/' }).Last());
+                    contents.Add(directory.Split(new Char[] { '\\', '/' }).Last());
                 }
             }
             return contents.ToArray();
@@ -126,6 +127,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var mapName = $"Map{mapId}";
             var contentType = "Maps";
+
+
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
