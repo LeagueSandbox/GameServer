@@ -1,7 +1,8 @@
 sudo: true
+dist: xenial
 language: csharp
 solution: GameServer.sln
-mono: 3.8.0
+mono: latest
 install:
     - sudo nuget update -self
     - sudo nuget restore GameServer.sln
