@@ -226,6 +226,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (s.cast(x, y, target, futureProjNetId, spellNetId))
             {
                 stats.CurrentMana = stats.CurrentMana - s.getCost() * (1 - stats.getSpellCostReduction());
+                var onSpellCast = _scriptEngine.GetStaticMethod<Action<Vector2, Spell, Unit>>(Model, "Passive", "OnSpellCast");
+                onSpellCast?.Invoke(new Vector2(x, y), s, target);
                 return s;
             }
             return null;

@@ -5,6 +5,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
@@ -12,26 +13,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public enum DamageType : byte
     {
-        DAMAGE_TYPE_PHYSICAL = 0,
-        DAMAGE_TYPE_MAGICAL = 1,
-        DAMAGE_TYPE_TRUE = 2
+        DAMAGE_TYPE_PHYSICAL = 0x0,
+        DAMAGE_TYPE_MAGICAL = 0x1,
+        DAMAGE_TYPE_TRUE = 0x2
     }
 
     public enum DamageText : byte
     {
-        DAMAGE_TEXT_INVULNERABLE = 0x00,
-        DAMAGE_TEXT_DODGE = 0x02,
-        DAMAGE_TEXT_CRITICAL = 0x03,
-        DAMAGE_TEXT_NORMAL = 0x04,
-        DAMAGE_TEXT_MISS = 0x05,
+        DAMAGE_TEXT_INVULNERABLE = 0x0,
+        DAMAGE_TEXT_DODGE = 0x2,
+        DAMAGE_TEXT_CRITICAL = 0x3,
+        DAMAGE_TEXT_NORMAL = 0x4,
+        DAMAGE_TEXT_MISS = 0x5
     }
 
     public enum DamageSource
     {
         DAMAGE_SOURCE_ATTACK,
         DAMAGE_SOURCE_SPELL,
-        DAMAGE_SOURCE_SUMMONER_SPELL, //Ignite shouldn't destroy Banshee's
-        DAMAGE_SOURCE_PASSIVE //Red/Thornmail shouldn't as well
+        DAMAGE_SOURCE_SUMMONER_SPELL, // Ignite shouldn't destroy Banshee's
+        DAMAGE_SOURCE_PASSIVE // Red/Thornmail shouldn't as well
     }
 
     public enum AttackType : byte
@@ -125,7 +126,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         {
             this.stats = stats;
-            this.Model = model;
+            Model = model;
         }
         public Stats GetStats()
         {
@@ -139,6 +140,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _timerUpdate = 0;
             }
+
+            var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
+            onUpdate?.Invoke(this, diff);
 
             UpdateAutoAttackTarget(diff);
 
@@ -296,14 +300,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void onCollision(GameObject collider)
         {
             base.onCollision(collider);
-                if (collider == null)
-                {
-                    //_scriptEngine.RunFunction("onCollideWithTerrain");
-                }
-                else
-                {
-                   // _scriptEngine.RunFunction("onCollide", collider);
-                }
+            if (collider == null)
+            {
+                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
+                onCollideWithTerrain?.Invoke(this);
+            }
+            else
+            {
+                var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
+                onCollide?.Invoke(this, collider as Unit);
+            }
         }
 
         /// <summary>
@@ -316,6 +322,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 damage *= stats.getCritDamagePct();
             }
+
+            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
+            onAutoAttack?.Invoke(this, target);
 
             DealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
@@ -355,8 +364,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
             }
 
+            var onDamageTaken = target._scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDamageTaken");
+            var onDealDamage = _scriptEngine.GetStaticMethod<Action<Unit, Unit, float, DamageType, DamageSource>>(Model, "Passive", "OnDealDamage");
+
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
+
+            onDamageTaken?.Invoke(target, this, damage, type, source);
+            onDealDamage?.Invoke(this, target, damage, type, source);
+
             target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
             if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
             {
@@ -381,7 +397,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            float exp = _game.Map.GetExperienceFor(this);
+            var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
+            onDie?.Invoke(this, killer);
+
+            var exp = _game.Map.GetExperienceFor(this);
             var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
@@ -403,9 +422,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                float gold = _game.Map.GetGoldFor(this);
+                var gold = _game.Map.GetGoldFor(this);
                 if (gold <= 0)
+                {
                     return;
+                }
 
                 cKiller.GetStats().Gold += gold;
                 _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
@@ -413,10 +434,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller.KillDeathCounter < 0)
                 {
                     cKiller.ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo(string.Format(
-                        "Adding gold form minions to reduce death spree: {0}",
-                        cKiller.ChampionGoldFromMinions
-                    ));
+                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
                 }
 
                 if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
