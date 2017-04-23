@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
             AddCommand(new SizeCommand("size", "size size", this));
             AddCommand(new SkillpointsCommand("skillpoints", "", this));
-            AddCommand(new SpawnCommand("spawn", "spawn minions", this));
+            AddCommand(new SpawnCommand("spawn", "spawn minionsblue, minionspurple", this));
             AddCommand(new SpawnStateCommand("spawnstate", "spawnstate 0 (disable) / 1 (enable)", this));
             AddCommand(new SpeedCommand("speed", "speed speed", this));
             AddCommand(new TpCommand("tp", "tp x y", this));
