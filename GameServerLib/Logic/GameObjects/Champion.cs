@@ -380,6 +380,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
+	public void Recall(Unit owner)
+        {
+            var spawnPos = GetRespawnPosition();
+            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+        }
+
         public void setSkillPoints(int _skillPoints)
         {
             _skillPoints = (short)_skillPoints;
