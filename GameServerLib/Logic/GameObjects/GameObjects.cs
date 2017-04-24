@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic
         protected bool movementUpdated;
         protected bool toRemove;
         public int AttackerCount { get; private set; }
-        public int CollisionRadius { get; set; }
+        public float CollisionRadius { get; set; }
         protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
         public bool IsDashing { get; protected set; }
