@@ -58,12 +58,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
             CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
 
-            JObject autoAttack;
-            if (!_rafManager.ReadAutoAttackData(Model, out autoAttack))
-            {
-                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
-                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
-            }
+            AASpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+            AutoAttackDelay = AASpellData.CastFrame / 30.0f;
+            AutoAttackProjectileSpeed = AASpellData.MissileSpeed;
         }
 
         public override void refreshWaypoints()

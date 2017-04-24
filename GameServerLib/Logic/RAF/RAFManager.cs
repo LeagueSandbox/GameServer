@@ -24,19 +24,6 @@ namespace LeagueSandbox.GameServer.Core.Logic.RAF
             return hash;
         }
 
-        public bool ReadSpellData(string spellName, out JObject data)
-        {
-            var path = _game.Config.ContentManager.GetSpellDataPath(spellName);
-            _logger.LogCoreInfo("Loading spell " + spellName + " data from path: " + Path.GetFullPath(path));
-            data = JObject.Parse(File.ReadAllText(path));
-            return true;
-        }
-
-        public bool ReadAutoAttackData(string unitName, out JObject data)
-        {
-            return ReadSpellData(unitName + "BasicAttack", out data);
-        }
-
         public bool ReadUnitStats(string unitName, out JObject data)
         {
             var path = _game.Config.ContentManager.GetUnitStatPath(unitName);

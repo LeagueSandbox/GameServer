@@ -76,14 +76,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
             CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
 
-            if (!_rafManager.ReadAutoAttackData(model, out data))
-            {
-                _logger.LogCoreError("Couldn't find monster auto-attack data for " + model);
-                return;
-            }
-
-            AutoAttackDelay = _rafManager.GetFloatValue(data, "SpellData", "CastFrame") / 30.0f;
-            AutoAttackProjectileSpeed = _rafManager.GetFloatValue(data, "SpellData", "MissileSpeed");
+            AASpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
+            AutoAttackDelay = AASpellData.CastFrame / 30.0f;
+            AutoAttackProjectileSpeed = AASpellData.MissileSpeed;
         }
 
         public override bool isInDistress()

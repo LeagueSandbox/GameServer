@@ -72,6 +72,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private Random random = new Random();
 
+        public SpellData AASpellData { get; protected set; }
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
