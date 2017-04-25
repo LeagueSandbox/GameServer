@@ -233,7 +233,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public void Load(string name)
         {
-            ContentFile file;
+            ContentFile file = new ContentFile();
             try
             {
                 var path = _game.Config.ContentManager.GetSpellDataPath(name);
@@ -382,7 +382,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             //OrientRangeIndicatorToFacing
             OverrideCastTime = file.GetFloat("SpellData", "OverrideCastTime", OverrideCastTime);
             //public Vector3 ParticleStartOffset { get; set; } = new Vector3(0, 0, 0);
-            var _ParticleStartOffset = file.GetArray("SpellData", "ParticleStartOffset", new float[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
+            var _ParticleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new float[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
             ParticleStartOffset = new Vector3(_ParticleStartOffset[0], _ParticleStartOffset[1], _ParticleStartOffset[2]);
             //PlatformEnabled
             PointEffectName = file.GetString("SpellData", "PointEffectName", PointEffectName);

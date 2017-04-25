@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
             if (Values.ContainsKey("UNKNOWN_HASHES"))
             {
-                var hash = Hash(section, name).ToString();
+                var hash = HashFunctions.HashStringSDBM(section, name).ToString();
                 if (Values["UNKNOWN_HASHES"].ContainsKey(hash))
                 {
                     //TODO: Log that unkown hash was found!
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return obj == null ? defaultValue : float.Parse(obj, CultureInfo.InvariantCulture);
         }
 
-        public float[] GetArray(string section, string name, float[] defaultValue )
+        public float[] GetFloatArray(string section, string name, float[] defaultValue )
         {
             var obj = GetObject(section, name);
             if(obj != null)
@@ -78,6 +78,23 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     for(int i = 0; i<defaultValue.Length; i++)
                     {
                         defaultValue[i] = float.Parse(list[i], CultureInfo.InvariantCulture);
+                    }
+                }
+            }
+            return defaultValue;
+        }
+
+        public int[] GetIntArray(string section, string name, int[] defaultValue)
+        {
+            var obj = GetObject(section, name);
+            if (obj != null)
+            {
+                var list = obj.Split(' ');
+                if (defaultValue.Length == list.Length)
+                {
+                    for (int i = 0; i < defaultValue.Length; i++)
+                    {
+                        defaultValue[i] = (int)(float.Parse(list[i], CultureInfo.InvariantCulture));
                     }
                 }
             }

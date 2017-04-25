@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
@@ -15,7 +14,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
         protected Spell _originSpell;
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         
         public Projectile(
@@ -36,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _moveSpeed = moveSpeed;
             Owner = owner;
             Team = owner.Team;
-            ProjectileId = (int)_rafManager.GetHash(projectileName);
+            ProjectileId = (int)HashFunctions.HashString(projectileName);
             if (!string.IsNullOrEmpty(projectileName))
             {
                 VisionRadius = SpellData.MissilePerceptionBubbleRadius;

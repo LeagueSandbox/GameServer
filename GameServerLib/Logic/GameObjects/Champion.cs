@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Items;
+﻿using LeagueSandbox.GameServer.Logic.Items;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -17,8 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
-        public Dictionary<short, Spell> Spells { get; private set; }
-        public List<string> ExtraSpells { get; private set; }
+        public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -53,72 +51,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.GoldPerSecond.BaseValue = _game.Map.GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
-            JObject data;
-            if (!_rafManager.ReadUnitStats(model, out data))
+            //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
+            for(short i = 0; i<CharData.SpellNames.Length;i++)
             {
-                _logger.LogCoreError("Couldn't find champion stats for " + Model);
-                return;
+                if(CharData.SpellNames[i] != "")
+                {
+                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
+                }
             }
-
-            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseHP");
-            stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseMP");
-            stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseDamage");
-            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Data", "AttackRange");
-            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Data", "MoveSpeed");
-            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Data", "Armor");
-            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Data", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Data", "AttackDelayOffsetPercent"));
-            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
-
-            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Data", "HPPerLevel");
-            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Data", "MPPerLevel");
-            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Data", "DamagePerLevel");
-            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Data", "ArmorPerLevel");
-            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Data", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
-
-            Spells = new Dictionary<short, Spell>
-            {
-                { 0, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0) },
-                { 1, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1) },
-                { 2, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2) },
-                { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
-                { 4, new Spell(this, clientInfo.SummonerSkills[0], 4) },
-                { 5, new Spell(this, clientInfo.SummonerSkills[1], 5) },
-                { 13, new Spell(this, "Recall", 13) },
-                { 14, new Spell(this, _rafManager.GetStringValue(data, "Data", "Passive1LuaName"), 14) }
-            };
+            Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
+            Spells[13] = new Spell(this, "Recall", 13);
+            Spells[14] = new Spell(this, CharData.Passives[0].PassiveLuaName, 14);
 
             Spells[4].levelUp();
             Spells[5].levelUp();
 
-            ExtraSpells = new List<string>();
-
-            for (var i = 1; true; i++)
-            {
-                if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i)))
-                {
-                    break;
-                }
-
-                ExtraSpells.Add(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i));
-            }
-
-            IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
-            CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
-
-            JObject autoAttack;
-            if (_rafManager.ReadAutoAttackData(model, out autoAttack))
-            {
-                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
-                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
-            }
         }
         private string GetPlayerIndex()
         {

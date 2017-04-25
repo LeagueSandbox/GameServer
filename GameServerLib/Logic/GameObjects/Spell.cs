@@ -1,5 +1,4 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using System;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.API;
@@ -40,7 +39,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private Game _game = Program.ResolveDependency<Game>();
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private GameScript spellGameScript;
 
@@ -282,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <returns>spell's unique ID</returns>
         public int getId()
         {
-            return (int)_rafManager.GetHash(SpellName);
+            return (int)HashFunctions.HashString(SpellName);
         }
 
         public string getStringForSlot()

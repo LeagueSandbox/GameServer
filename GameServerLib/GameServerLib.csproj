@@ -217,9 +217,11 @@
     <Compile Include="Logic\Chatbox\Commands\TpCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\XpCommand.cs" />
     <Compile Include="Logic\Config.cs" />
+    <Compile Include="Logic\Content\CharData.cs" />
     <Compile Include="Logic\Content\ContentFile.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ContentNotFoundException.cs" />
+    <Compile Include="Logic\Content\HashFunctions.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
     <Compile Include="Logic\Content\RuneCollection.cs" />
     <Compile Include="Logic\Content\SpellData.cs" />
@@ -312,7 +314,6 @@
     <Compile Include="Logic\Packets\PacketNotifier.cs" />
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
-    <Compile Include="Logic\RAF\RAFManager.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Program.cs" />
