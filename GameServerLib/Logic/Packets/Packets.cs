@@ -166,8 +166,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 var summonerSpells = p.SummonerSkills;
                 buffer.Write((long)p.UserId);
                 buffer.Write((short)0x1E); // unk
-                buffer.Write((uint)HashFunctions.GetHash1(summonerSpells[0]));
-                buffer.Write((uint)HashFunctions.GetHash1(summonerSpells[1]));
+                buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
+                buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
                 buffer.Write((byte)0); // bot boolean
                 buffer.Write((int)p.Team); // Probably a short
                 buffer.fill(0, 64); // name is no longer here
@@ -1939,7 +1939,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)buffType); //Type
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible was (byte)0x00
-            buffer.Write(HashFunctions.GetHash1(name)); //Buff id
+            buffer.Write(HashFunctions.HashString(name)); //Buff id
             
             buffer.Write((int)0); // <-- Probably runningTime
 
@@ -1988,7 +1988,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public RemoveBuff(Unit u, string name, byte slot) : base(PacketCmd.PKT_S2C_RemoveBuff, u.NetId)
         {
             buffer.Write((byte)slot);
-            buffer.Write(HashFunctions.GetHash1(name));
+            buffer.Write(HashFunctions.HashString(name));
             buffer.Write((int)0x0);
             //buffer.Write(u.NetId);//source?
         }
@@ -2511,8 +2511,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
 
             var summonerSpells = player.SummonerSkills;
-            buffer.Write((uint)HashFunctions.GetHash1(summonerSpells[0]));
-            buffer.Write((uint)HashFunctions.GetHash1(summonerSpells[1]));
+            buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
+            buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
 
             int talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>(){
@@ -2660,11 +2660,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             buffer.Write((byte)1); // number of particles
             buffer.Write((uint)particle.Owner.getChampionHash());
-            buffer.Write((uint)HashFunctions.GetHash1(particle.Name));
+            buffer.Write((uint)HashFunctions.HashString(particle.Name));
             buffer.Write((int)0x00000020); // flags ?
 
             buffer.Write((short)0); // Unk
-            buffer.Write((uint)HashFunctions.GetHash1(particle.BoneName));
+            buffer.Write((uint)HashFunctions.HashString(particle.BoneName));
 
             buffer.Write((byte)1); // number of targets ?
             buffer.Write((uint)particle.Owner.NetId);

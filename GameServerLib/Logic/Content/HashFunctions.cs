@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class HashFunctions
     {
-        static public uint GetHash1(string path)
+        static public uint HashString(string path)
         {
             uint hash = 0;
             var mask = 0xF0000000;
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return hash;
         }
 
-        static public UInt32 GetHash2(string section, string name)
+        static public UInt32 HashStringSDBM(string section, string name)
         {
             UInt32 hash = 0;
             foreach (var c in section)

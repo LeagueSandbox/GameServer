@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _moveSpeed = moveSpeed;
             Owner = owner;
             Team = owner.Team;
-            ProjectileId = (int)HashFunctions.GetHash1(projectileName);
+            ProjectileId = (int)HashFunctions.HashString(projectileName);
             if (!string.IsNullOrEmpty(projectileName))
             {
                 VisionRadius = SpellData.MissilePerceptionBubbleRadius;

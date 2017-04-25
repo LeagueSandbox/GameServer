@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
             if (Values.ContainsKey("UNKNOWN_HASHES"))
             {
-                var hash = HashFunctions.GetHash2(section, name).ToString();
+                var hash = HashFunctions.HashStringSDBM(section, name).ToString();
                 if (Values["UNKNOWN_HASHES"].ContainsKey(hash))
                 {
                     //TODO: Log that unkown hash was found!

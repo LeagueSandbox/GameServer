@@ -280,7 +280,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <returns>spell's unique ID</returns>
         public int getId()
         {
-            return (int)HashFunctions.GetHash1(SpellName);
+            return (int)HashFunctions.HashString(SpellName);
         }
 
         public string getStringForSlot()
