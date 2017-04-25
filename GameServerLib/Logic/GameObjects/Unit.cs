@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             this.stats = stats;
             Model = model;
-            CharData = _game.Config.ContentManager.GetCharData(Model);
+            CharData = _game.Config.ContentManager.GetCharData(model);
             stats.LoadStats(CharData);
             AASpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
             AutoAttackDelay = AASpellData.CastFrame / 30.0f;

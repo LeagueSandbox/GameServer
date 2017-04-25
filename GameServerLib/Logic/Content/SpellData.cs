@@ -233,7 +233,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public void Load(string name)
         {
-            ContentFile file;
+            ContentFile file = new ContentFile();
             try
             {
                 var path = _game.Config.ContentManager.GetSpellDataPath(name);

@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
             for(short i = 0; i<CharData.SpellNames.Length;i++)
             {
-                if(CharData.SpellNames[i] == "")
+                if(CharData.SpellNames[i] != "")
                 {
                     Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
                 }
