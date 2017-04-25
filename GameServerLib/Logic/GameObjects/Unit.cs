@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -67,11 +66,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Stats stats;
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
-        protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
         private Random random = new Random();
 
+        public CharData CharData { get; protected set; }
+        public SpellData AASpellData { get; protected set; }
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
@@ -135,6 +135,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             this.stats = stats;
             Model = model;
+            CharData = _game.Config.ContentManager.GetCharData(model);
+            stats.LoadStats(CharData);
+            AASpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+            AutoAttackDelay = AASpellData.CastFrame / 30.0f;
+            AutoAttackProjectileSpeed = AASpellData.MissileSpeed;
+            IsMelee = CharData.IsMelee;
+            CollisionRadius = CharData.PathfindingCollisionRadius;
+            stats.CurrentMana = stats.ManaPoints.Total;
+            stats.CurrentHealth = stats.HealthPoints.Total;
+            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
         public Stats GetStats()
         {

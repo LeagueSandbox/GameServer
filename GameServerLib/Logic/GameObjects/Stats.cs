@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Content;
 using System;
 using System.Collections.Generic;
 
@@ -212,7 +213,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SpellVamp = new Stat();
             Tenacity = new Stat();
         }
-
+        public void LoadStats(CharData charData)
+        {
+            HealthPoints.BaseValue = charData.BaseHP;
+            ManaPoints.BaseValue = charData.BaseMP;
+            AttackDamage.BaseValue = charData.BaseDamage;
+            Range.BaseValue = charData.AttackRange;
+            MoveSpeed.BaseValue = charData.MoveSpeed;
+            Armor.BaseValue = charData.Armor;
+            MagicResist.BaseValue = charData.SpellBlock;
+            HealthRegeneration.BaseValue = charData.BaseStaticHPRegen;
+            ManaRegeneration.BaseValue = charData.BaseStaticMPRegen;
+            AttackSpeedFlat = 0.625f / (1 + charData.AttackDelayOffsetPercent);
+            HealthPerLevel = charData.HPPerLevel;
+            ManaPerLevel = charData.MPPerLevel;
+            AdPerLevel = charData.DamagePerLevel;
+            ArmorPerLevel = charData.ArmorPerLevel;
+            MagicResistPerLevel = charData.SpellBlockPerLevel;
+            HealthRegenerationPerLevel = charData.HPRegenPerLevel;
+            ManaRegenerationPerLevel = charData.MPRegenPerLevel;
+            GrowthAttackSpeed = charData.AttackSpeedPerLevel;
+        }
         public void UpdateBuff(IBuff buff)
         {
             RemoveBuff(buff);
