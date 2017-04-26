@@ -315,6 +315,7 @@
     <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
+    <Compile Include="Logic\Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
