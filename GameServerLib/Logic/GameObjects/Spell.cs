@@ -53,7 +53,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>(GetSpellScriptClass(), GetSpellScriptName());
+            spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
+            if(spellGameScript == null)
+            {
+                spellGameScript = new GameScriptEmpty();
+            }
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             spellGameScript.OnActivate(owner);
         }
@@ -96,29 +100,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             spellGameScript.OnStartCasting(Owner, this, Target);
         }
         
-        public string GetSpellScriptClass()
-        {
-            if (Slot > 3 && Slot != 14)
-            {
-                return "Global";
-            }
-            else
-            {
-                return Owner.Model;
-            }
-        }
-        public string GetSpellScriptName()
-        {
-            if (Slot > 3 && Slot != 14)
-            {
-                return SpellName;
-            }
-            else
-            {
-                return getStringForSlot();
-            }
-        }
-
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
