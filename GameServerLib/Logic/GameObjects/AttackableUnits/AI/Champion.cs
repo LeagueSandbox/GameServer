@@ -120,7 +120,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.RemoveModifier(statModifier);
         }
 
-
         public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
@@ -275,7 +274,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	public void Recall(Unit owner)
+	    public void Recall(Unit owner)
         {
             var spawnPos = GetRespawnPosition();
             _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
