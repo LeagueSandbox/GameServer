@@ -37,6 +37,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Unit Target { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
+        public float X2 { get; private set; }
+        public float Y2 { get; private set; }
 
         private CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         private Logger _logger = Program.ResolveDependency<Logger>();
@@ -77,6 +79,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
             X = x;
             Y = y;
+            X2 = x2;
+            Y2 = y2;
             Target = u;
             FutureProjNetId = _networkIdManager.GetNewNetID();
             SpellNetId = _networkIdManager.GetNewNetID();

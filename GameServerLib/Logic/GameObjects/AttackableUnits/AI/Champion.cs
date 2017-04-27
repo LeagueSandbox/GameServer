@@ -169,54 +169,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return Spells[slot];
         }
 
-        public Spell levelUpSpell(short slot)
+        public Spell GetSpellByName(string name)
         {
-            var _udyrModels = new List<string>
+            foreach(var s in Spells.Values)
             {
-                "Udyr",
-                "UdyrPhoenix",
-                "UdyrPhoenixUlt",
-                "UdyrTiger",
-                "UdyrTigerUlt",
-                "UdyrTurtle",
-                "UdyrTurtleUlt",
-                "UdyrUlt"
-            };
+                if (s == null)
+                    continue;
+                if (s.SpellName == name)
+                    return s;
+            }
+            return null;
+        }
 
-            var _specificModels = new List<string>
-            {
-                "Elise",
-                "EliseSpider",
-                "Karma",
-                "Nidalee",
-                "NidaleeCougar"
-            };
-            if (slot >= Spells.Count)
-                return null;
-
+        public Spell LevelUpSpell(short slot)
+        {
             if (_skillPoints == 0)
                 return null;
 
-            if ((!_udyrModels.Contains(Model) && slot != 3) || _udyrModels.Contains(Model))
-            {
-                if (Spells[slot].Level >= Math.Ceiling((decimal)GetStats().Level))
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                if ((!_specificModels.Contains(Model) && GetStats().Level < 1 + Spells[slot].Level * 5) ||
-                    (_specificModels.Contains(Model) && GetStats().Level < 1 + (Spells[slot].Level - 1) * 5))
-                {
-                    return null;
-                }
-            }
+            var s = GetSpell((byte) slot);
 
-            Spells[slot].levelUp();
+            if (s == null)
+                return null;
+
+            s.levelUp();
             _skillPoints--;
 
-            return Spells[slot];
+            return s;
         }
 
         public override void update(float diff)
