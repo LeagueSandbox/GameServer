@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Projectile : GameObject
+    public class Projectile : ObjMissile
     {
         public List<GameObject> ObjectsHit { get; private set; }
         public Unit Owner { get; private set; }

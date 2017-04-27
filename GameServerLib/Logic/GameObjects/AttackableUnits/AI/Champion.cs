@@ -10,7 +10,7 @@ using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Champion : Unit
+    public class Champion : ObjAIBase
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }

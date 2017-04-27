@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         MINION_TYPE_CANNON = 0x02,
         MINION_TYPE_SUPER = 0x01
     };
-    public class Minion : Unit
+    public class Minion : ObjAIBase
     {
         /// <summary>
         /// Const waypoints that define the minion's route
