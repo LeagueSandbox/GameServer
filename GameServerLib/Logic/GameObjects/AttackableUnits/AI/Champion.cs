@@ -75,7 +75,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (CharData.ExtraSpells[i] != "")
                 {
-                    Spells[(byte)(i + 45)] = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    Spells[(byte)(i + 45)] = spell;
+                    spell.levelUp();
                 }
             }
             Spells[4].levelUp();
