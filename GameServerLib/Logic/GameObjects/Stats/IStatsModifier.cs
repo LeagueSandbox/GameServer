@@ -1,6 +1,6 @@
 ﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public interface IBuff
+    public interface IStatsModifier
     {
         StatModifcator HealthPoints { get; set; }
         StatModifcator HealthRegeneration { get; set; }

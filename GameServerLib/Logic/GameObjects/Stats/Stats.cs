@@ -234,173 +234,173 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ManaRegenerationPerLevel = charData.MPRegenPerLevel;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
         }
-        public void UpdateBuff(IBuff buff)
+        public void UpdateModifier(IStatsModifier modifier)
         {
-            RemoveBuff(buff);
-            AddBuff(buff);
+            RemoveModifier(modifier);
+            AddModifier(modifier);
         }
 
-        public void AddBuff(IBuff buff)
+        public void AddModifier(IStatsModifier modifier)
         {
-            if (AbilityPower.ApplyStatModificator(buff.AbilityPower))
+            if (AbilityPower.ApplyStatModificator(modifier.AbilityPower))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
             }
-            if (Armor.ApplyStatModificator(buff.Armor))
+            if (Armor.ApplyStatModificator(modifier.Armor))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
             }
-            if (ArmorPenetration.ApplyStatModificator(buff.ArmorPenetration))
+            if (ArmorPenetration.ApplyStatModificator(modifier.ArmorPenetration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
             }
-            if (AttackDamage.ApplyStatModificator(buff.AttackDamage))
+            if (AttackDamage.ApplyStatModificator(modifier.AttackDamage))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
             }
-            if (AttackSpeedMultiplier.ApplyStatModificator(buff.AttackSpeed))
+            if (AttackSpeedMultiplier.ApplyStatModificator(modifier.AttackSpeed))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
             }
-            if (CriticalChance.ApplyStatModificator(buff.CriticalChance))
+            if (CriticalChance.ApplyStatModificator(modifier.CriticalChance))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
             }
-            GoldPerSecond.ApplyStatModificator(buff.GoldPerSecond);
-            if (HealthPoints.ApplyStatModificator(buff.HealthPoints))
+            GoldPerSecond.ApplyStatModificator(modifier.GoldPerSecond);
+            if (HealthPoints.ApplyStatModificator(modifier.HealthPoints))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
             }
-            if (HealthRegeneration.ApplyStatModificator(buff.HealthRegeneration))
+            if (HealthRegeneration.ApplyStatModificator(modifier.HealthRegeneration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Hp5, HealthRegeneration.Total);
             }
-            if (LifeSteal.ApplyStatModificator(buff.LifeSteel))
+            if (LifeSteal.ApplyStatModificator(modifier.LifeSteel))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
             }
-            if (MagicResist.ApplyStatModificator(buff.MagicResist))
+            if (MagicResist.ApplyStatModificator(modifier.MagicResist))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
             }
-            if (MagicPenetration.ApplyStatModificator(buff.MagicPenetration))
+            if (MagicPenetration.ApplyStatModificator(modifier.MagicPenetration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             }
-            if (ManaPoints.ApplyStatModificator(buff.ManaPoints))
+            if (ManaPoints.ApplyStatModificator(modifier.ManaPoints))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
             }
-            if (ManaRegeneration.ApplyStatModificator(buff.ManaRegeneration))
+            if (ManaRegeneration.ApplyStatModificator(modifier.ManaRegeneration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Mp5, ManaRegeneration.Total);
             }
-            if (MoveSpeed.ApplyStatModificator(buff.MoveSpeed))
+            if (MoveSpeed.ApplyStatModificator(modifier.MoveSpeed))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
             }
-            if (Range.ApplyStatModificator(buff.Range))
+            if (Range.ApplyStatModificator(modifier.Range))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Range, Range.Total);
             }
-            if (Size.ApplyStatModificator(buff.Size))
+            if (Size.ApplyStatModificator(modifier.Size))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
             }
-            if (SpellVamp.ApplyStatModificator(buff.SpellVamp))
+            if (SpellVamp.ApplyStatModificator(modifier.SpellVamp))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
             }
-            if (Tenacity.ApplyStatModificator(buff.Tenacity))
+            if (Tenacity.ApplyStatModificator(modifier.Tenacity))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
             }
         }
 
-        public void RemoveBuff(IBuff buff)
+        public void RemoveModifier(IStatsModifier modifier)
         {
-            if (AbilityPower.RemoveStatModificator(buff.AbilityPower))
+            if (AbilityPower.RemoveStatModificator(modifier.AbilityPower))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
             }
-            if (Armor.RemoveStatModificator(buff.Armor))
+            if (Armor.RemoveStatModificator(modifier.Armor))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
             }
-            if (ArmorPenetration.RemoveStatModificator(buff.ArmorPenetration))
+            if (ArmorPenetration.RemoveStatModificator(modifier.ArmorPenetration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
             }
-            if (AttackDamage.RemoveStatModificator(buff.AttackDamage))
+            if (AttackDamage.RemoveStatModificator(modifier.AttackDamage))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
             }
-            if (AttackSpeedMultiplier.RemoveStatModificator(buff.AttackSpeed))
+            if (AttackSpeedMultiplier.RemoveStatModificator(modifier.AttackSpeed))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
             }
-            if (CriticalChance.RemoveStatModificator(buff.CriticalChance))
+            if (CriticalChance.RemoveStatModificator(modifier.CriticalChance))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
             }
-            GoldPerSecond.RemoveStatModificator(buff.GoldPerSecond);
-            if (HealthPoints.RemoveStatModificator(buff.HealthPoints))
+            GoldPerSecond.RemoveStatModificator(modifier.GoldPerSecond);
+            if (HealthPoints.RemoveStatModificator(modifier.HealthPoints))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
             }
-            if (HealthRegeneration.RemoveStatModificator(buff.HealthRegeneration))
+            if (HealthRegeneration.RemoveStatModificator(modifier.HealthRegeneration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Hp5, HealthRegeneration.Total);
             }
-            if (LifeSteal.RemoveStatModificator(buff.LifeSteel))
+            if (LifeSteal.RemoveStatModificator(modifier.LifeSteel))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
             }
-            if (MagicResist.RemoveStatModificator(buff.MagicResist))
+            if (MagicResist.RemoveStatModificator(modifier.MagicResist))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
             }
-            if (MagicPenetration.RemoveStatModificator(buff.MagicPenetration))
+            if (MagicPenetration.RemoveStatModificator(modifier.MagicPenetration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
             }
-            if (ManaPoints.RemoveStatModificator(buff.ManaPoints))
+            if (ManaPoints.RemoveStatModificator(modifier.ManaPoints))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
             }
-            if (ManaRegeneration.RemoveStatModificator(buff.ManaRegeneration))
+            if (ManaRegeneration.RemoveStatModificator(modifier.ManaRegeneration))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Mp5, ManaRegeneration.Total);
             }
-            if (MoveSpeed.RemoveStatModificator(buff.MoveSpeed))
+            if (MoveSpeed.RemoveStatModificator(modifier.MoveSpeed))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
             }
-            if (Range.RemoveStatModificator(buff.Range))
+            if (Range.RemoveStatModificator(modifier.Range))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Range, Range.Total);
             }
-            if (Size.RemoveStatModificator(buff.Size))
+            if (Size.RemoveStatModificator(modifier.Size))
             {
                 appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
             }
-            if (SpellVamp.RemoveStatModificator(buff.SpellVamp))
+            if (SpellVamp.RemoveStatModificator(modifier.SpellVamp))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
             }
-            if (Tenacity.RemoveStatModificator(buff.Tenacity))
+            if (Tenacity.RemoveStatModificator(modifier.Tenacity))
             {
                 appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
             }

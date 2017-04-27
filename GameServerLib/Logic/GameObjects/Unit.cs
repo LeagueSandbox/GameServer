@@ -169,17 +169,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddBuff(statModifier);
+            stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateBuff(statModifier);
+            stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveBuff(statModifier);
+            stats.RemoveModifier(statModifier);
         }
 
         public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)

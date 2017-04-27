@@ -235,6 +235,7 @@
     <Compile Include="Logic\GameObjects\Other\Announce.cs" />
     <Compile Include="Logic\GameObjects\Spells\Buff.cs" />
     <Compile Include="Logic\GameObjects\Stats\ChampionStatModifier.cs" />
+    <Compile Include="Logic\GameObjects\Stats\IStatsModifier.cs" />
     <Compile Include="Logic\GameObjects\Stats\TurretStats.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\Champion.cs" />
     <Compile Include="Logic\GameObjects\Other\CollisionHandler.cs" />
@@ -245,7 +246,6 @@
     <Compile Include="Logic\GameObjects\Particle.cs" />
     <Compile Include="Logic\GameObjects\Other\Placeable.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Nexus.cs" />
-    <Compile Include="Logic\GameObjects\Stats\IBuff.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Inhibitor.cs" />
     <Compile Include="Logic\GameObjects\LevelProp.cs" />
     <Compile Include="Logic\GameObjects\Monster.cs" />
