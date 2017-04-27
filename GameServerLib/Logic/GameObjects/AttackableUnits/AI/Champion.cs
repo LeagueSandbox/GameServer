@@ -62,11 +62,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
             Spells[13] = new Spell(this, "Recall", 13);
-            Spells[14] = new Spell(this, CharData.Passives[0].PassiveLuaName, 14);
 
+            for(short i = 0; i<CharData.Passives.Length; i++)
+            {
+                if (CharData.Passives[i].PassiveLuaName != "")
+                {
+                    Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                }
+            }
+
+            for (short i = 0; i < CharData.ExtraSpells.Length; i++)
+            {
+                if (CharData.ExtraSpells[i] != "")
+                {
+                    Spells[(byte)(i + 45)] = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                }
+            }
             Spells[4].levelUp();
             Spells[5].levelUp();
-
         }
         private string GetPlayerIndex()
         {
