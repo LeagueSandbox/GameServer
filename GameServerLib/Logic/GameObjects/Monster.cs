@@ -43,10 +43,5 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             CampUnk = campUnk;
             SpawnAnimationTime = spawnAnimationTime;
         }
-
-        public override bool isInDistress()
-        {
-            return DistressCause != null;
-        }
     }
 }

@@ -164,40 +164,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return new Vector2(coords.X, coords.Y);
         }
 
-        public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
+        public Spell GetSpell(byte slot)
         {
-            Spell s = null;
-            foreach (var t in Spells.Values)
-            {
-                if (t.Slot == slot)
-                {
-                    s = t;
-                }
-            }
-
-            if (s == null)
-            {
-                return null;
-            }
-
-            if (s.Owner.HasCrowdControl(CrowdControlType.Silence))
-            {
-                return null;
-            }
-
-            s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
-
-            if ((s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
-                return null;
-
-            if (s.cast(x, y, target, futureProjNetId, spellNetId))
-            {
-                stats.CurrentMana = stats.CurrentMana - s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction());
-                var onSpellCast = _scriptEngine.GetStaticMethod<Action<Vector2, Spell, Unit>>(Model, "Passive", "OnSpellCast");
-                onSpellCast?.Invoke(new Vector2(x, y), s, target);
-                return s;
-            }
-            return null;
+            return Spells[slot];
         }
 
         public Spell levelUpSpell(short slot)

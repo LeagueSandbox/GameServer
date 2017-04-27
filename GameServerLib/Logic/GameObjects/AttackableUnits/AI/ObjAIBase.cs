@@ -12,6 +12,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(model, stats, collisionRadius, x, y, visionRadius, netId)
         {
+            AASpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+            AutoAttackDelay = AASpellData.CastFrame / 30.0f;
+            AutoAttackProjectileSpeed = AASpellData.MissileSpeed;
         }
     }
 }

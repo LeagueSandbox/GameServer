@@ -5,6 +5,8 @@ using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -41,6 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Game _game = Program.ResolveDependency<Game>();
 
         private GameScript spellGameScript;
+        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
 
@@ -65,21 +68,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool cast(float x, float y, Unit u = null, uint futureProjNetId = 0, uint spellNetId = 0)
+        public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
         {
+            var stats = Owner.GetStats();
+            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
+                state != SpellState.STATE_READY)
+                return false;
+            stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
             X = x;
             Y = y;
             Target = u;
-            this.FutureProjNetId = futureProjNetId;
-            this.SpellNetId = spellNetId;
+            FutureProjNetId = _networkIdManager.GetNewNetID();
+            SpellNetId = _networkIdManager.GetNewNetID();
 
             if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
             {
                 return false;
             }
 
-
-            RunCastScript();
+            spellGameScript.OnStartCasting(Owner, this, Target);
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
@@ -91,13 +98,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 finishCasting();
             }
+            var response = new CastSpellAns(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
-        }
-
-        
-        private void RunCastScript()
-        {
-            spellGameScript.OnStartCasting(Owner, this, Target);
         }
         
         /// <summary>
