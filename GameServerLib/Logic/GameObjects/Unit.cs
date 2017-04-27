@@ -137,9 +137,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(model);
             stats.LoadStats(CharData);
-            AASpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
-            AutoAttackDelay = AASpellData.CastFrame / 30.0f;
-            AutoAttackProjectileSpeed = AASpellData.MissileSpeed;
+            AutoAttackDelay = 0;
+            AutoAttackProjectileSpeed = 500;
             IsMelee = CharData.IsMelee;
             CollisionRadius = CharData.PathfindingCollisionRadius;
             stats.CurrentMana = stats.ManaPoints.Total;
@@ -169,17 +168,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddBuff(statModifier);
+            stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateBuff(statModifier);
+            stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveBuff(statModifier);
+            stats.RemoveModifier(statModifier);
         }
 
         public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)

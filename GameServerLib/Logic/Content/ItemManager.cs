@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType : IBuff
+    public class ItemType : IStatsModifier
     {
         //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;

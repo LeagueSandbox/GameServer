@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (itemTemplate == null)
                         continue;
                     var i = Inventory.AddItem(itemTemplate);
-                    GetStats().AddBuff(itemTemplate);
+                    GetStats().AddModifier(itemTemplate);
                 }
             }
 

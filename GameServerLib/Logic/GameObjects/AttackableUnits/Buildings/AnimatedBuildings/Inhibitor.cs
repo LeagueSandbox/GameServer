@@ -3,7 +3,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Inhibitor : Unit
+    public class Inhibitor : ObjAnimatedBuilding
     {
         private System.Timers.Timer RespawnTimer;
         private InhibitorState State;

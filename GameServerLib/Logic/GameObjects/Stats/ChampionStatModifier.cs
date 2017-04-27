@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class ChampionStatModifier : IBuff
+    public class ChampionStatModifier : IStatsModifier
     {
         // Stats
         public StatModifcator HealthPoints { get; set; }

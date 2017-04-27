@@ -10,7 +10,7 @@ using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Champion : Unit
+    public class Champion : ObjAIBase
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
@@ -62,11 +62,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
             Spells[13] = new Spell(this, "Recall", 13);
-            Spells[14] = new Spell(this, CharData.Passives[0].PassiveLuaName, 14);
 
+            for(short i = 0; i<CharData.Passives.Length; i++)
+            {
+                if (CharData.Passives[i].PassiveLuaName != "")
+                {
+                    Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                }
+            }
+
+            for (short i = 0; i < CharData.ExtraSpells.Length; i++)
+            {
+                if (CharData.ExtraSpells[i] != "")
+                {
+                    var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    Spells[(byte)(i + 45)] = spell;
+                    spell.levelUp();
+                }
+            }
             Spells[4].levelUp();
             Spells[5].levelUp();
-
         }
         private string GetPlayerIndex()
         {
@@ -107,19 +122,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddBuff(statModifier);
+            stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateBuff(statModifier);
+            stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveBuff(statModifier);
+            stats.RemoveModifier(statModifier);
         }
-
 
         public Vector2 GetSpawnPosition()
         {
@@ -164,90 +178,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return new Vector2(coords.X, coords.Y);
         }
 
-        public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
+        public Spell GetSpell(byte slot)
         {
-            Spell s = null;
-            foreach (var t in Spells.Values)
+            return Spells[slot];
+        }
+
+        public Spell GetSpellByName(string name)
+        {
+            foreach(var s in Spells.Values)
             {
-                if (t.Slot == slot)
-                {
-                    s = t;
-                }
-            }
-
-            if (s == null)
-            {
-                return null;
-            }
-
-            if (s.Owner.HasCrowdControl(CrowdControlType.Silence))
-            {
-                return null;
-            }
-
-            s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
-
-            if ((s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
-                return null;
-
-            if (s.cast(x, y, target, futureProjNetId, spellNetId))
-            {
-                stats.CurrentMana = stats.CurrentMana - s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction());
-                var onSpellCast = _scriptEngine.GetStaticMethod<Action<Vector2, Spell, Unit>>(Model, "Passive", "OnSpellCast");
-                onSpellCast?.Invoke(new Vector2(x, y), s, target);
-                return s;
+                if (s == null)
+                    continue;
+                if (s.SpellName == name)
+                    return s;
             }
             return null;
         }
 
-        public Spell levelUpSpell(short slot)
+        public Spell LevelUpSpell(short slot)
         {
-            var _udyrModels = new List<string>
-            {
-                "Udyr",
-                "UdyrPhoenix",
-                "UdyrPhoenixUlt",
-                "UdyrTiger",
-                "UdyrTigerUlt",
-                "UdyrTurtle",
-                "UdyrTurtleUlt",
-                "UdyrUlt"
-            };
-
-            var _specificModels = new List<string>
-            {
-                "Elise",
-                "EliseSpider",
-                "Karma",
-                "Nidalee",
-                "NidaleeCougar"
-            };
-            if (slot >= Spells.Count)
-                return null;
-
             if (_skillPoints == 0)
                 return null;
 
-            if ((!_udyrModels.Contains(Model) && slot != 3) || _udyrModels.Contains(Model))
-            {
-                if (Spells[slot].Level >= Math.Ceiling((decimal)GetStats().Level))
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                if ((!_specificModels.Contains(Model) && GetStats().Level < 1 + Spells[slot].Level * 5) ||
-                    (_specificModels.Contains(Model) && GetStats().Level < 1 + (Spells[slot].Level - 1) * 5))
-                {
-                    return null;
-                }
-            }
+            var s = GetSpell((byte) slot);
 
-            Spells[slot].levelUp();
+            if (s == null)
+                return null;
+
+            s.levelUp();
             _skillPoints--;
 
-            return Spells[slot];
+            return s;
         }
 
         public override void update(float diff)
@@ -328,7 +289,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	public void Recall(Unit owner)
+	    public void Recall(Unit owner)
         {
             var spawnPos = GetRespawnPosition();
             _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
