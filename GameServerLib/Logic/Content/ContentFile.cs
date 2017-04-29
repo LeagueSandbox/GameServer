@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var obj = GetObject(section, name);
             float value;
-            if (!float.TryParse(GetObject(section, name), out value))
+            if (!float.TryParse(GetObject(section, name), NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
                 return defaultValue;
             return value;
         }
@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for(int i = 0; i<defaultValue.Length; i++)
                     {
-                        float.TryParse(list[i], out defaultValue[i]);
+                        float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     for (int i = 0; i < defaultValue.Length; i++)
                     {
                         float value;
-                        if(float.TryParse(list[i], out value))
+                        if(float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
                             defaultValue[i] = (int)(value);
                     }
                 }
