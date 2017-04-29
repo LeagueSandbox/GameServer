@@ -1,11 +1,12 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using System;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -36,13 +37,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Unit Target { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
+        public float X2 { get; private set; }
+        public float Y2 { get; private set; }
 
         private GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private Game _game = Program.ResolveDependency<Game>();
-        private RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
 
         private IGameScript spellGameScript;
+        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
 
@@ -55,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.GetGameScript(GetSpellScriptClass(), GetSpellScriptName());
+            spellGameScript = _scriptEngine.GetGameScript("Spells", spellName);
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             spellGameScript.OnActivate(
                 new GameScriptInformation {
@@ -68,21 +71,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool cast(float x, float y, Unit u = null, uint futureProjNetId = 0, uint spellNetId = 0)
+        public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
         {
+            var stats = Owner.GetStats();
+            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
+                state != SpellState.STATE_READY)
+                return false;
+            stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
             X = x;
             Y = y;
+            X2 = x2;
+            Y2 = y2;
             Target = u;
-            this.FutureProjNetId = futureProjNetId;
-            this.SpellNetId = spellNetId;
+            FutureProjNetId = _networkIdManager.GetNewNetID();
+            SpellNetId = _networkIdManager.GetNewNetID();
 
             if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
             {
                 return false;
             }
 
-
-            RunCastScript();
+            spellGameScript.OnStartCasting(Owner, this, Target);
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
@@ -94,39 +103,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 finishCasting();
             }
+            var response = new CastSpellAns(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }
-
-        
-        private void RunCastScript()
-        {
-            //TODO : Change cast to be nicer, maybe different way of giving target
-            ApiEventManager.OnSpellCast.Publish(this, Target);
-        }
-        
-        public string GetSpellScriptClass()
-        {
-            if (Slot > 3 && Slot != 14)
-            {
-                return "Global";
-            }
-            else
-            {
-                return Owner.Model;
-            }
-        }
-        public string GetSpellScriptName()
-        {
-            if (Slot > 3 && Slot != 14)
-            {
-                return SpellName;
-            }
-            else
-            {
-                return getStringForSlot();
-            }
-        }
-
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
@@ -290,7 +270,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <returns>spell's unique ID</returns>
         public int getId()
         {
-            return (int)_rafManager.GetHash(SpellName);
+            return (int)HashFunctions.HashString(SpellName);
         }
 
         public string getStringForSlot()

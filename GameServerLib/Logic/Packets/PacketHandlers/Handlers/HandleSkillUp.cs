@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var skillUpPacket = new SkillUpPacket(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).Champion.levelUpSpell(skillUpPacket.skill);
+            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.skill);
 
             if (s == null)
                 return false;

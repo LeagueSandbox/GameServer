@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Core.Logic.RAF;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -67,11 +66,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Stats stats;
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
-        protected RAFManager _rafManager = Program.ResolveDependency<RAFManager>();
         protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
 
         private Random random = new Random();
 
+        public CharData CharData { get; protected set; }
+        public SpellData AASpellData { get; protected set; }
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
@@ -139,6 +139,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             BuffGameScriptControllers = new List<GameScriptBuffController>();
             this.stats = stats;
             Model = model;
+            CharData = _game.Config.ContentManager.GetCharData(model);
+            stats.LoadStats(CharData);
+            AutoAttackDelay = 0;
+            AutoAttackProjectileSpeed = 500;
+            IsMelee = CharData.IsMelee;
+            CollisionRadius = CharData.PathfindingCollisionRadius;
+            stats.CurrentMana = stats.ManaPoints.Total;
+            stats.CurrentHealth = stats.HealthPoints.Total;
+            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
+
             if (gameScriptInformation != null)
             {
                 _gameScriptInformation = gameScriptInformation;
@@ -182,17 +192,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddBuff(statModifier);
+            stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateBuff(statModifier);
+            stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveBuff(statModifier);
+            stats.RemoveModifier(statModifier);
         }
 
         public GameScriptBuffController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false, Unit ownerUnit = null)

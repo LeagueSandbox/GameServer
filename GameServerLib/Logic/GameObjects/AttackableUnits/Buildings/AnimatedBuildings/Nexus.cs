@@ -2,7 +2,7 @@
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Nexus : Unit
+    public class Nexus : ObjAnimatedBuilding
     {
         public Nexus(
             string model,

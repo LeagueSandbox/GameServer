@@ -116,7 +116,11 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 return default(T);
             }
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
-            if (classType == null) return default(T);
+            if(classType == null)
+            {
+                _logger.LogCoreWarning($"Failed to load script: {scriptNamespace}.{scriptClass}");
+                return default(T);
+            }
             return (T)Activator.CreateInstance(classType);
         }
         public static object RunFunctionOnObject(object obj, string method, params object[] args)

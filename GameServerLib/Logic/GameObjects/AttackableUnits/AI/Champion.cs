@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.RAF;
-using LeagueSandbox.GameServer.Logic.Items;
+﻿using LeagueSandbox.GameServer.Logic.Items;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -11,14 +10,13 @@ using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Champion : Unit
+    public class Champion : ObjAIBase
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
-        public Dictionary<short, Spell> Spells { get; private set; }
-        public List<string> ExtraSpells { get; private set; }
+        public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -53,72 +51,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.GoldPerSecond.BaseValue = _game.Map.GetGoldPerSecond();
             stats.SetGeneratingGold(false);
 
-            JObject data;
-            if (!_rafManager.ReadUnitStats(model, out data))
+            //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
+            for(short i = 0; i<CharData.SpellNames.Length;i++)
             {
-                _logger.LogCoreError("Couldn't find champion stats for " + Model);
-                return;
+                if(CharData.SpellNames[i] != "")
+                {
+                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
+                }
+            }
+            Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
+            Spells[13] = new Spell(this, "Recall", 13);
+
+            for(short i = 0; i<CharData.Passives.Length; i++)
+            {
+                if (CharData.Passives[i].PassiveLuaName != "")
+                {
+                    Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                }
             }
 
-            stats.HealthPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseHP");
-            stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.ManaPoints.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseMP");
-            stats.CurrentMana = stats.ManaPoints.Total;
-            stats.AttackDamage.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseDamage");
-            stats.Range.BaseValue = _rafManager.GetFloatValue(data, "Data", "AttackRange");
-            stats.MoveSpeed.BaseValue = _rafManager.GetFloatValue(data, "Data", "MoveSpeed");
-            stats.Armor.BaseValue = _rafManager.GetFloatValue(data, "Data", "Armor");
-            stats.MagicResist.BaseValue = _rafManager.GetFloatValue(data, "Data", "SpellBlock");
-            stats.HealthRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticHPRegen");
-            stats.ManaRegeneration.BaseValue = _rafManager.GetFloatValue(data, "Data", "BaseStaticMPRegen");
-            stats.AttackSpeedFlat = 0.625f / (1 + _rafManager.GetFloatValue(data, "Data", "AttackDelayOffsetPercent"));
-            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
-
-            stats.HealthPerLevel = _rafManager.GetFloatValue(data, "Data", "HPPerLevel");
-            stats.ManaPerLevel = _rafManager.GetFloatValue(data, "Data", "MPPerLevel");
-            stats.AdPerLevel = _rafManager.GetFloatValue(data, "Data", "DamagePerLevel");
-            stats.ArmorPerLevel = _rafManager.GetFloatValue(data, "Data", "ArmorPerLevel");
-            stats.MagicResistPerLevel = _rafManager.GetFloatValue(data, "Data", "SpellBlockPerLevel");
-            stats.HealthRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "HPRegenPerLevel");
-            stats.ManaRegenerationPerLevel = _rafManager.GetFloatValue(data, "Data", "MPRegenPerLevel");
-            stats.GrowthAttackSpeed = _rafManager.GetFloatValue(data, "Data", "AttackSpeedPerLevel");
-
-            Spells = new Dictionary<short, Spell>
+            for (short i = 0; i < CharData.ExtraSpells.Length; i++)
             {
-                { 0, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell1"), 0) },
-                { 1, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell2"), 1) },
-                { 2, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell3"), 2) },
-                { 3, new Spell(this, _rafManager.GetStringValue(data, "Data", "Spell4"), 3) },
-                { 4, new Spell(this, clientInfo.SummonerSkills[0], 4) },
-                { 5, new Spell(this, clientInfo.SummonerSkills[1], 5) },
-                { 13, new Spell(this, "Recall", 13) },
-                { 14, new Spell(this, _rafManager.GetStringValue(data, "Data", "Passive1LuaName"), 14) }
-            };
-
+                if (CharData.ExtraSpells[i] != "")
+                {
+                    var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    Spells[(byte)(i + 45)] = spell;
+                    spell.levelUp();
+                }
+            }
             Spells[4].levelUp();
             Spells[5].levelUp();
-
-            ExtraSpells = new List<string>();
-
-            for (var i = 1; true; i++)
-            {
-                if (string.IsNullOrEmpty(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i)))
-                {
-                    break;
-                }
-
-                ExtraSpells.Add(_rafManager.GetStringValue(data, "Data", "ExtraSpell" + i));
-            }
-
-            IsMelee = _rafManager.GetBoolValue(data, "Data", "IsMelee");
-            CollisionRadius = _rafManager.GetIntValue(data, "Data", "PathfindingCollisionRadius");
-
-            JObject autoAttack;
-            if (_rafManager.ReadAutoAttackData(model, out autoAttack))
-            {
-                AutoAttackDelay = _rafManager.GetFloatValue(autoAttack, "SpellData", "CastFrame") / 30.0f;
-                AutoAttackProjectileSpeed = _rafManager.GetFloatValue(autoAttack, "SpellData", "MissileSpeed");
-            }
         }
         private string GetPlayerIndex()
         {
@@ -159,19 +122,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddBuff(statModifier);
+            stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateBuff(statModifier);
+            stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveBuff(statModifier);
+            stats.RemoveModifier(statModifier);
         }
-
 
         public Vector2 GetSpawnPosition()
         {
@@ -216,91 +178,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return new Vector2(coords.X, coords.Y);
         }
 
-        public Spell castSpell(byte slot, float x, float y, Unit target, uint futureProjNetId, uint spellNetId)
+        public Spell GetSpell(byte slot)
         {
-            Spell s = null;
-            foreach (var t in Spells.Values)
+            return Spells[slot];
+        }
+
+        public Spell GetSpellByName(string name)
+        {
+            foreach(var s in Spells.Values)
             {
-                if (t.Slot == slot)
-                {
-                    s = t;
-                }
-            }
-
-            if (s == null)
-            {
-                return null;
-            }
-
-            if (s.Owner.HasCrowdControl(CrowdControlType.Silence))
-            {
-                return null;
-            }
-
-            s.Slot = slot;//temporary hack until we redo spells to be almost fully lua-based
-
-            if ((s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || s.state != SpellState.STATE_READY)
-                return null;
-
-            if (s.cast(x, y, target, futureProjNetId, spellNetId))
-            {
-                stats.CurrentMana = stats.CurrentMana - s.SpellData.ManaCost[s.Level] * (1 - stats.getSpellCostReduction());
-                //Replace
-                //var onSpellCast = _scriptEngine.GetStaticMethod<Action<Vector2, Spell, Unit>>(Model, "Passive", "OnSpellCast");
-                //onSpellCast?.Invoke(new Vector2(x, y), s, target);
-                return s;
+                if (s == null)
+                    continue;
+                if (s.SpellName == name)
+                    return s;
             }
             return null;
         }
 
-        public Spell levelUpSpell(short slot)
+        public Spell LevelUpSpell(short slot)
         {
-            var _udyrModels = new List<string>
-            {
-                "Udyr",
-                "UdyrPhoenix",
-                "UdyrPhoenixUlt",
-                "UdyrTiger",
-                "UdyrTigerUlt",
-                "UdyrTurtle",
-                "UdyrTurtleUlt",
-                "UdyrUlt"
-            };
-
-            var _specificModels = new List<string>
-            {
-                "Elise",
-                "EliseSpider",
-                "Karma",
-                "Nidalee",
-                "NidaleeCougar"
-            };
-            if (slot >= Spells.Count)
-                return null;
-
             if (_skillPoints == 0)
                 return null;
 
-            if ((!_udyrModels.Contains(Model) && slot != 3) || _udyrModels.Contains(Model))
-            {
-                if (Spells[slot].Level >= Math.Ceiling((decimal)GetStats().Level))
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                if ((!_specificModels.Contains(Model) && GetStats().Level < 1 + Spells[slot].Level * 5) ||
-                    (_specificModels.Contains(Model) && GetStats().Level < 1 + (Spells[slot].Level - 1) * 5))
-                {
-                    return null;
-                }
-            }
+            var s = GetSpell((byte) slot);
 
-            Spells[slot].levelUp();
+            if (s == null)
+                return null;
+
+            s.levelUp();
             _skillPoints--;
 
-            return Spells[slot];
+            return s;
         }
 
         public override void update(float diff)
@@ -379,6 +287,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             GetStats().CurrentMana = GetStats().HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
+        }
+
+	    public void Recall(Unit owner)
+        {
+            var spawnPos = GetRespawnPosition();
+            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
         }
 
         public void setSkillPoints(int _skillPoints)

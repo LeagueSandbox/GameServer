@@ -3,7 +3,7 @@ using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class BaseTurret : Unit
+    public class BaseTurret : ObjAIBase
     {
         public string Name { get; private set; }
         protected float globalGold = 250.0f;

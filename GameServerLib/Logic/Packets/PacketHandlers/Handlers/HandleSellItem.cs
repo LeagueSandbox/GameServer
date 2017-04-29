@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 client.Champion.getInventory().RemoveItem(sell.slotId);
             }
 
-            client.Champion.GetStats().RemoveBuff(i.ItemType);
+            client.Champion.GetStats().RemoveModifier(i.ItemType);
 
             return true;
         }
