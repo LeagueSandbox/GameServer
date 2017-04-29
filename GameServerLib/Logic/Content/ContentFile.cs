@@ -23,15 +23,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 hash = char.ToLower(c) + 65599 * hash;
             return hash;
         }
+        
         public string GetObject(string section, string name)
         {
-            if (Values.ContainsKey(section))
+            if (Values.ContainsKey(section) && Values[section].ContainsKey(name))
             {
-                if (Values[section].ContainsKey(name))
-                { 
-                    return Values[section][name];
-                }
+                return Values[section][name];
             }
+            
             if (Values.ContainsKey("UNKNOWN_HASHES"))
             {
                 var hash = HashFunctions.HashStringSDBM(section, name).ToString();
@@ -41,6 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     return Values["UNKNOWN_HASHES"][hash];
                 }
             }
+            
             return null;
         }
 
@@ -54,14 +54,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var obj = GetObject(section, name);
             float value;
-            if (!float.TryParse(GetObject(section, name), NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
+            if (!float.TryParse(obj, NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
                 return defaultValue;
             return value;
         }
 
         public int GetInt(string section, string name, int defaultValue = 0)
         {
-            return (int)(GetFloat(section, name, defaultValue));
+            return (int) GetFloat(section, name, defaultValue);
         }
 
         public bool GetBool(string section, string name, bool defaultValue = false)
@@ -72,17 +72,18 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float[] GetFloatArray(string section, string name, float[] defaultValue )
         {
             var obj = GetObject(section, name);
-            if(obj != null)
+            if (obj != null)
             {
                 var list = obj.Split(' ');
-                if(defaultValue.Length == list.Length)
+                if (defaultValue.Length == list.Length)
                 {
-                    for(int i = 0; i<defaultValue.Length; i++)
+                    for (int i = 0; i<defaultValue.Length; i++)
                     {
                         float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
                 }
             }
+            
             return defaultValue;
         }
 
@@ -97,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     for (int i = 0; i < defaultValue.Length; i++)
                     {
                         float value;
-                        if(float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
+                        if (float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
                             defaultValue[i] = (int)(value);
                     }
                 }
@@ -109,7 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             float[] result = new float[num+1];
             result[0] = GetFloat(section, name, defaultValue);
-            for(int i = 1; i < num + 1; i++)
+            for (int i = 1; i < num + 1; i++)
             {
                 result[i] = GetFloat(section, string.Format("{0}{1}", name, i), result[0]);
             }
