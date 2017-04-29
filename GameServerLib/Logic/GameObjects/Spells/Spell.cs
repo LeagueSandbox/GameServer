@@ -62,8 +62,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             spellGameScript.OnActivate(
                 new GameScriptInformation {
-                    Namespace = GetSpellScriptClass(),
-                    Name = GetSpellScriptName(),
+                    Namespace = "Spells",
+                    Name = spellName,
                     OwnerUnit = owner,
                     OwnerSpell = this});
         }
@@ -91,7 +91,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return false;
             }
 
-            spellGameScript.OnStartCasting(Owner, this, Target);
+            //spellGameScript.OnStartCasting(Owner, this, Target);
+            ApiEventManager.OnSpellCast.Publish(this, Target);
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
