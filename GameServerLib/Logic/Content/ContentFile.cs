@@ -50,21 +50,27 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return obj == null ? defaultValue : obj;
         }
 
-        public int GetInt(string section, string name, int defaultValue = 0)
+        public float GetFloat(string section, string name, float defaultValue = 0)
         {
             var obj = GetObject(section, name);
-            return obj == null ? defaultValue : Int32.Parse(obj);
+            try
+            {
+                return obj == null ? defaultValue : float.Parse(obj, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException formate)
+            {
+                return defaultValue;
+            }
+        }
+
+        public int GetInt(string section, string name, int defaultValue = 0)
+        {
+            return (int)(GetFloat(section, name, defaultValue));
         }
 
         public bool GetBool(string section, string name, bool defaultValue = false)
         {
             return GetInt(section, name, defaultValue ? 1 : 0) != 0;
-        }
-
-        public float GetFloat(string section, string name, float defaultValue = 0)
-        {
-            var obj = GetObject(section, name);
-            return obj == null ? defaultValue : float.Parse(obj, CultureInfo.InvariantCulture);
         }
 
         public float[] GetFloatArray(string section, string name, float[] defaultValue )
@@ -77,7 +83,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for(int i = 0; i<defaultValue.Length; i++)
                     {
-                        defaultValue[i] = float.Parse(list[i], CultureInfo.InvariantCulture);
+                        try
+                        {
+                            defaultValue[i] = float.Parse(list[i], CultureInfo.InvariantCulture);
+                        }
+                        catch (FormatException formate)
+                        {
+                        }
                     }
                 }
             }
@@ -94,7 +106,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for (int i = 0; i < defaultValue.Length; i++)
                     {
-                        defaultValue[i] = (int)(float.Parse(list[i], CultureInfo.InvariantCulture));
+                        try
+                        {
+                            defaultValue[i] = (int)(float.Parse(list[i], CultureInfo.InvariantCulture));
+                        }
+                        catch (FormatException formate)
+                        {
+
+                        }
                     }
                 }
             }
