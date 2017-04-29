@@ -131,39 +131,39 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
-                MaxStack = itemInfo.SafeGetInt("Data", "MaxStack"),
-                Price = itemInfo.SafeGetInt("Data", "Price"),
-                ItemGroup = itemInfo.SafeGetString("Data", "ItemGroup"),
-                SellBackModifier = itemInfo.SafeGetFloat("Data", "SellBackModifier", 0.7f),
+                MaxStack = itemInfo.GetInt("Data", "MaxStack"),
+                Price = itemInfo.GetInt("Data", "Price"),
+                ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
+                SellBackModifier = itemInfo.GetFloat("Data", "SellBackModifier", 0.7f),
 
-                RecipeItem1 = itemInfo.SafeGetInt("Data", "RecipeItem1", -1),
-                RecipeItem2 = itemInfo.SafeGetInt("Data", "RecipeItem2", -1),
-                RecipeItem3 = itemInfo.SafeGetInt("Data", "RecipeItem3", -1),
-                RecipeItem4 = itemInfo.SafeGetInt("Data", "RecipeItem4", -1)
+                RecipeItem1 = itemInfo.GetInt("Data", "RecipeItem1", -1),
+                RecipeItem2 = itemInfo.GetInt("Data", "RecipeItem2", -1),
+                RecipeItem3 = itemInfo.GetInt("Data", "RecipeItem3", -1),
+                RecipeItem4 = itemInfo.GetInt("Data", "RecipeItem4", -1)
             };
 
-            result.Armor.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatArmorMod");
-            result.CriticalChance.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatCritChanceMod");
+            result.Armor.FlatBonus = itemInfo.GetFloat("Data", "FlatArmorMod");
+            result.CriticalChance.FlatBonus = itemInfo.GetFloat("Data", "FlatCritChanceMod");
             //itemInfo.SafeGetFloat("Data", "FlatCritDamageMod"); // TODO
-            result.HealthPoints.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatHPPoolMod");
-            result.ManaPoints.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMPPoolMod");
-            result.AbilityPower.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMagicDamageMod");
-            result.MagicPenetration.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMagicPenetrationMod");
-            result.MoveSpeed.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatMovementSpeedMod");
-            result.AttackDamage.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatPhysicalDamageMod");
-            result.MagicResist.FlatBonus = itemInfo.SafeGetFloat("Data", "FlatSpellBlockMod");
-            result.Armor.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentArmorMod");
-            result.AttackSpeed.FlatBonus = itemInfo.SafeGetFloat("Data", "PercentAttackSpeedMod");
+            result.HealthPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatHPPoolMod");
+            result.ManaPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatMPPoolMod");
+            result.AbilityPower.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicDamageMod");
+            result.MagicPenetration.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicPenetrationMod");
+            result.MoveSpeed.FlatBonus = itemInfo.GetFloat("Data", "FlatMovementSpeedMod");
+            result.AttackDamage.FlatBonus = itemInfo.GetFloat("Data", "FlatPhysicalDamageMod");
+            result.MagicResist.FlatBonus = itemInfo.GetFloat("Data", "FlatSpellBlockMod");
+            result.Armor.PercentBonus = itemInfo.GetFloat("Data", "PercentArmorMod");
+            result.AttackSpeed.FlatBonus = itemInfo.GetFloat("Data", "PercentAttackSpeedMod");
             //itemInfo.SafeGetFloat("Data", "PercentCritDamageMod"); // TODO
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
-            result.HealthPoints.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentHPPoolMod");
-            result.HealthRegeneration.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentBaseHPRegenMod");
-            result.ManaPoints.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMPPoolMod");
-            result.ManaRegeneration.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentBaseMPRegenMod");
-            result.AbilityPower.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMagicDamageMod");
-            result.MoveSpeed.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentMovementSpeedMod");
-            result.AttackDamage.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentPhysicalDamageMod");
-            result.MagicResist.PercentBonus = itemInfo.SafeGetFloat("Data", "PercentSpellBlockMod");
+            result.HealthPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentHPPoolMod");
+            result.HealthRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseHPRegenMod");
+            result.ManaPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentMPPoolMod");
+            result.ManaRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod");
+            result.AbilityPower.PercentBonus = itemInfo.GetFloat("Data", "PercentMagicDamageMod");
+            result.MoveSpeed.PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod");
+            result.AttackDamage.PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod");
+            result.MagicResist.PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod");
 
             result.CreateRecipe(owner);
             return result;
