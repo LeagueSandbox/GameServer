@@ -122,7 +122,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
 
         private GameScriptInformation _gameScriptInformation;
-        private IGameScript _gameScript = null;
+        private IGameScript _behaviorGameScript = null;
 
         public Unit(
             string model,
@@ -153,20 +153,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 _gameScriptInformation = gameScriptInformation;
                 //Create script
-                _gameScript = _scriptEngine.GetGameScript(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
+                _behaviorGameScript = _scriptEngine.GetGameScript(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
             }
         }
 
         public void Activate()
         {
             //Called when unit is placed in the map
-            _gameScript?.OnActivate(_gameScriptInformation);
+            _behaviorGameScript?.OnActivate(_gameScriptInformation);
         }
 
         public void Deactivate()
         {
             //Called when the unit is removed from the map
-            _gameScript?.OnDeactivate();
+            _behaviorGameScript?.OnDeactivate();
         }
 
         public Stats GetStats()
