@@ -53,14 +53,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float GetFloat(string section, string name, float defaultValue = 0)
         {
             var obj = GetObject(section, name);
-            try
-            {
-                return obj == null ? defaultValue : float.Parse(obj, CultureInfo.InvariantCulture);
-            }
-            catch (FormatException formate)
-            {
+            float value;
+            if (!float.TryParse(GetObject(section, name), out value))
                 return defaultValue;
-            }
+            return value;
         }
 
         public int GetInt(string section, string name, int defaultValue = 0)
@@ -83,13 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for(int i = 0; i<defaultValue.Length; i++)
                     {
-                        try
-                        {
-                            defaultValue[i] = float.Parse(list[i], CultureInfo.InvariantCulture);
-                        }
-                        catch (FormatException formate)
-                        {
-                        }
+                        float.TryParse(list[i], out defaultValue[i]);
                     }
                 }
             }
@@ -106,14 +96,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for (int i = 0; i < defaultValue.Length; i++)
                     {
-                        try
-                        {
-                            defaultValue[i] = (int)(float.Parse(list[i], CultureInfo.InvariantCulture));
-                        }
-                        catch (FormatException formate)
-                        {
-
-                        }
+                        float value;
+                        if(float.TryParse(list[i], out value))
+                            defaultValue[i] = (int)(value);
                     }
                 }
             }
