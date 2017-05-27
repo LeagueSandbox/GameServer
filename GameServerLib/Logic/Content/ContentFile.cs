@@ -10,9 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentFile
     {
-        public Dictionary<string, Dictionary<string, string>> Values { get; set; }
+        public Dictionary<string, Dictionary<string, string>> Values { get; set; } 
+            = new Dictionary<string, Dictionary<string, string>>();
         public Dictionary<string, object> MetaData { get; set; }
-
+            = new Dictionary<string, object>();
         private UInt32 Hash(string section, string name)
         {
             UInt32 hash = 0;
@@ -26,7 +27,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         
         public string GetObject(string section, string name)
         {
-            if (Values.ContainsKey(section) && Values[section].ContainsKey(name))
+            if (Values.ContainsKey(section) && Values[section].ContainsKey(name)
+                && !string.IsNullOrEmpty(Values[section][name]))
             {
                 return Values[section][name];
             }
@@ -54,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var obj = GetObject(section, name);
             float value;
-            if (!float.TryParse(obj, NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
+            if (!float.TryParse(obj, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
                 return defaultValue;
             return value;
         }
@@ -79,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     for (int i = 0; i<defaultValue.Length; i++)
                     {
-                        float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out defaultValue[i]);
+                        float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
                 }
             }
@@ -98,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     for (int i = 0; i < defaultValue.Length; i++)
                     {
                         float value;
-                        if (float.TryParse(list[i], NumberStyles.Currency, CultureInfo.InvariantCulture, out value))
+                        if (float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
                             defaultValue[i] = (int)(value);
                     }
                 }
