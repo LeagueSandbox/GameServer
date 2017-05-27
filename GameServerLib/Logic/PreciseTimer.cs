@@ -9,20 +9,14 @@ namespace LeagueSandbox.GameServer.Logic
         PreciseTimer(int r)
         {
             resolution = r;
-            timeBeginPeriod(resolution);
         }
         void IDisposable.Dispose()
         {
-            timeEndPeriod(resolution);
         }
 
         public static PreciseTimer SetResolution(int r)
         {
             return new PreciseTimer(r);
         }
-        [DllImport("winmm.dll")]
-        private static extern int timeBeginPeriod(int msec);
-        [DllImport("winmm.dll")]
-        private static extern int timeEndPeriod(int msec);
     }
 }
