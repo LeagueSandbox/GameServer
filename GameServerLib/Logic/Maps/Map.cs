@@ -324,6 +324,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             if (!(o is Unit))
                 return;
 
+            (o as Unit)?.Activate();
+
             AddVisionUnit(o as Unit);
 
             if (o is Minion)
@@ -352,6 +354,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             //collisionHandler.stackChanged(o);
             _collisionHandler.RemoveObject(o);
+            
+            (o as Unit)?.Deactivate();
 
             if (o is Unit)
                 RemoveVisionUnit(o as Unit);

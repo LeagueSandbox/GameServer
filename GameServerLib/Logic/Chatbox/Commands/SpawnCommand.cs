@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -97,6 +98,25 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 _game.Map.AddObject(cannon);
                 _game.Map.AddObject(melee);
                 _game.Map.AddObject(super);
+            }
+            else if (split[1] == "poro")
+            {
+                var champion = _playerManager.GetPeerInfo(peer).Champion;
+                var random = new Random();
+
+                const int range = 400;
+                var x = champion.X + random.Next(-range, range);
+                var y = champion.Y + random.Next(-range, range);
+
+                var poro = new Monster(x, y, 0, 0, "HA_AP_Poro", "Poro", gameScriptInformation: 
+                    new GameScriptInformation() { Namespace ="Behavior", Name ="Poro"});
+           
+
+                //caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
+
+                //caster.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
+
+                _game.Map.AddObject(poro);
             }
         }
     }

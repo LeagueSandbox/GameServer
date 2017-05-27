@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
 
-        public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
+        public List<GameScriptBuffController> BuffGameScriptControllers { get; private set; }
 
         /// <summary>
         /// Unit we want to attack as soon as in range
@@ -108,7 +108,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
         private bool _isNextAutoCrit;
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         protected Logger _logger = Program.ResolveDependency<Logger>();
 
         public int KillDeathCounter { get; protected set; }
@@ -121,6 +121,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         private List<UnitCrowdControl> crowdControlList = new List<UnitCrowdControl>();
 
+        private GameScriptInformation _gameScriptInformation;
+        private IGameScript _behaviorGameScript = null;
+
         public Unit(
             string model,
             Stats stats,
@@ -128,11 +131,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float x = 0,
             float y = 0,
             int visionRadius = 0,
-            uint netId = 0
+            uint netId = 0,
+            GameScriptInformation gameScriptInformation = null
         ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
-            BuffGameScriptControllers = new List<BuffGameScriptController>();
+            BuffGameScriptControllers = new List<GameScriptBuffController>();
             this.stats = stats;
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(model);
@@ -144,7 +148,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.CurrentMana = stats.ManaPoints.Total;
             stats.CurrentHealth = stats.HealthPoints.Total;
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
+
+            if (gameScriptInformation != null)
+            {
+                _gameScriptInformation = gameScriptInformation;
+                //Create script
+                _behaviorGameScript = _scriptEngine.GetGameScript(_gameScriptInformation.Namespace, _gameScriptInformation.Name);
+            }
         }
+
+        public void Activate()
+        {
+            //Called when unit is placed in the map
+            _behaviorGameScript?.OnActivate(_gameScriptInformation);
+        }
+
+        public void Deactivate()
+        {
+            //Called when the unit is removed from the map
+            _behaviorGameScript?.OnDeactivate();
+        }
+
         public Stats GetStats()
         {
             return stats;
@@ -181,28 +205,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.RemoveModifier(statModifier);
         }
 
-        public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        public GameScriptBuffController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false, Unit ownerUnit = null)
         {
             if (isUnique)
             {
                 RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
             }
+            if (ownerUnit == null) ownerUnit = this;
 
-            BuffGameScriptController buffController = 
-                new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
+            GameScriptBuffController buffController = 
+                new GameScriptBuffController(ownerUnit, this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
             return buffController;
         }
-        public void RemoveBuffGameScript(BuffGameScriptController buffController)
+        public void RemoveBuffGameScript(GameScriptBuffController buffController)
         {
             buffController.DeactivateBuff();
             BuffGameScriptControllers.Remove(buffController);
         }
         public bool HasBuffGameScriptActive(String buffNamespace, String buffClass)
         {
-            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            foreach (GameScriptBuffController b in BuffGameScriptControllers)
             {
                 if (b.IsBuffSame(buffNamespace, buffClass)) return true;
             }
@@ -210,7 +235,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void RemoveBuffGameScriptsWithName(String buffNamespace, String buffClass)
         {
-            foreach (BuffGameScriptController b in BuffGameScriptControllers)
+            foreach (GameScriptBuffController b in BuffGameScriptControllers)
             {
                 if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
             }
@@ -232,9 +257,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             crowdControlList.RemoveAll((cc)=>cc.IsDead());
 
             BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
-
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<Unit, double>>(Model, "Passive", "OnUpdate");
-            onUpdate?.Invoke(this, diff);
 
             UpdateAutoAttackTarget(diff);
 
@@ -398,13 +420,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.onCollision(collider);
             if (collider == null)
             {
-                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
-                onCollideWithTerrain?.Invoke(this);
+                // Useless - Remove and Replace
+                //var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<Unit>>(Model, "Passive", "onCollideWithTerrain");
+                //onCollideWithTerrain?.Invoke(this);
             }
             else
             {
-                var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
-                onCollide?.Invoke(this, collider as Unit);
+                // Useless - Remove and Replace
+                //var onCollide = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "onCollide");
+                //onCollide?.Invoke(this, collider as Unit);
             }
         }
 
@@ -426,8 +450,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 damage *= stats.getCritDamagePct();
             }
 
-            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
-            onAutoAttack?.Invoke(this, target);
+            // Useless - Remove and Replace
+            //var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
+            //onAutoAttack?.Invoke(this, target);
 
             DealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
@@ -510,8 +535,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
-            onDie?.Invoke(this, killer);
+            // Useless - Remove and Replace
+            //var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
+            //onDie?.Invoke(this, killer);
 
             var exp = _game.Map.GetExperienceFor(this);
             var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);

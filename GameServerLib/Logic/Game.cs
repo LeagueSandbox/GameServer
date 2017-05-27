@@ -115,8 +115,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public bool LoadScripts()
         {
-            var scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
-            return scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
+            var scriptEngine = Program.ResolveDependency<GameScriptEngine>();
+            return scriptEngine.LoadScripts(Config.GameConfig.GameMode);
         }
 
         public void RegisterMap(byte mapId)

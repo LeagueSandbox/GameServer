@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -26,8 +27,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte campId = 0x01,
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
-            uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+            uint netId = 0,
+            GameScriptInformation gameScriptInformation = null
+        ) : base(model, new Stats(), 40, x, y, 0, netId, gameScriptInformation)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 

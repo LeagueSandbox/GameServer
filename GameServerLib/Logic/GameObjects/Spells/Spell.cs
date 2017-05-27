@@ -40,11 +40,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float X2 { get; private set; }
         public float Y2 { get; private set; }
 
-        private CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        private GameScriptEngine _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
         private Logger _logger = Program.ResolveDependency<Logger>();
         private Game _game = Program.ResolveDependency<Game>();
 
-        private GameScript spellGameScript;
+        private IGameScript spellGameScript;
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
@@ -55,16 +55,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SpellName = spellName;
             Slot = slot;
             SpellData = _game.Config.ContentManager.GetSpellData(spellName);
-            _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            _scriptEngine = Program.ResolveDependency<GameScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
-            if(spellGameScript == null)
-            {
-                spellGameScript = new GameScriptEmpty();
-            }
+            spellGameScript = _scriptEngine.GetGameScript("Spells", spellName);
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            spellGameScript.OnActivate(owner);
+            spellGameScript.OnActivate(
+                new GameScriptInformation {
+                    Namespace = "Spells",
+                    Name = spellName,
+                    OwnerUnit = owner,
+                    OwnerSpell = this});
         }
 
         /// <summary>
@@ -90,7 +91,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return false;
             }
 
-            spellGameScript.OnStartCasting(Owner, this, Target);
+            //spellGameScript.OnStartCasting(Owner, this, Target);
+            ApiEventManager.OnSpellCast.Publish(this, Target);
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
@@ -106,13 +108,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }
-        
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
         public virtual void finishCasting()
         {
-            spellGameScript.OnFinishCasting(Owner, this, Target);
+            //TODO: make new system finish casting doesn't need to be handled by the Spell
+            ApiEventManager.OnSpellFinishCast.Publish(this, Target);
             if (SpellData.ChannelDuration[Level] == 0)
             {
                 state = SpellState.STATE_COOLDOWN;
@@ -202,7 +204,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 ApiFunctionManager.AddParticleTarget(Owner, SpellData.HitEffectName, u);
             }
 
-            spellGameScript.ApplyEffects(Owner, u, this, p);
+            //TODO : Replace, don't handle here. Handle in GameScripts on projectile creation
+            ApiEventManager.OnSpellApplyEffects.Publish(this, u, p);
         }
 
         public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)

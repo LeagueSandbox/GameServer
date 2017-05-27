@@ -73,8 +73,95 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
+        public static EventOnSpellCast OnSpellCast = new EventOnSpellCast();
+        public static EventOnSpellFinishCast OnSpellFinishCast = new EventOnSpellFinishCast();
+        public static EventOnSpellApplyEffects OnSpellApplyEffects = new EventOnSpellApplyEffects();
     }
 
+    public class EventOnSpellApplyEffects
+    {
+        private List<Tuple<object, Spell, Action<Unit, Projectile>>> listeners =
+            new List<Tuple<object, Spell, Action<Unit, Projectile>>>();
+        public void AddListener(object owner, Spell spell, Action<Unit, Projectile> callback)
+        {
+            var listenerTuple = new Tuple<object, Spell, Action<Unit, Projectile>>(owner, spell, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Spell spell)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(Spell spell, Unit unit, Projectile projectile)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == spell)
+                {
+                    listener.Item3(unit, projectile);
+                }
+            });
+        }
+    }
+    public class EventOnSpellFinishCast
+    {
+        private List<Tuple<object, Spell, Action<Unit>>> listeners =
+            new List<Tuple<object, Spell, Action<Unit>>>();
+        public void AddListener(object owner, Spell spell, Action<Unit> callback)
+        {
+            var listenerTuple = new Tuple<object, Spell, Action<Unit>>(owner, spell, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Spell spell)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(Spell spell, Unit unit)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == spell)
+                {
+                    listener.Item3(unit);
+                }
+            });
+        }
+    }
+    public class EventOnSpellCast
+    {
+        private List<Tuple<object, Spell, Action<Unit>>> listeners = 
+            new List<Tuple<object, Spell, Action<Unit>>>();
+        public void AddListener(object owner, Spell spell, Action<Unit> callback)
+        {
+            var listenerTuple = new Tuple<object, Spell, Action<Unit>>(owner, spell, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Spell spell)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(Spell spell, Unit unit)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == spell)
+                {
+                    listener.Item3(unit);
+                }
+            });
+        }
+    }
 
     public class EventOnUpdate
     {

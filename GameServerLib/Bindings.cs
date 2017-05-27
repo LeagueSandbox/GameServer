@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer
             Bind<PlayerManager>().To<PlayerManager>().InSingletonScope();
             Bind<NetworkIdManager>().To<NetworkIdManager>().InSingletonScope();
 
-            Bind<CSharpScriptEngine>().To<CSharpScriptEngine>().InSingletonScope();
+            Bind<GameScriptEngine>().To<GameScriptEngine>().InSingletonScope();
         }
     }
 }
