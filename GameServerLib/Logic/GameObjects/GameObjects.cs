@@ -174,6 +174,11 @@ namespace LeagueSandbox.GameServer.Logic
             return 0;
         }
 
+        public virtual Vector2 getDirection()
+        {
+            return _direction;
+        }
+
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
