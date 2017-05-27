@@ -233,6 +233,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public void Load(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
             ContentFile file = new ContentFile();
             try
             {

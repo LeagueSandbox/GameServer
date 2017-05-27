@@ -64,10 +64,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public void Load(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
             ContentFile file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetUnitStatPath (name);
+                var path = _game.Config.ContentManager.GetUnitStatPath(name);
                 _logger.LogCoreInfo($"Loading {name}'s stats  from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
