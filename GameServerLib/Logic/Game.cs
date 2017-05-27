@@ -147,58 +147,56 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
-            using (PreciseTimer.SetResolution(1))
+
+            while (!Program.IsSetToExit)
             {
-                while (!Program.IsSetToExit)
+                while (_server.Service(0, out enetEvent) > 0)
                 {
-                    while (_server.Service(0, out enetEvent) > 0)
+                    switch (enetEvent.Type)
                     {
-                        switch (enetEvent.Type)
-                        {
-                            case EventType.Connect:
-                                // Set some defaults
-                                enetEvent.Peer.Mtu = PEER_MTU;
-                                enetEvent.Data = 0;
-                                break;
+                        case EventType.Connect:
+                            // Set some defaults
+                            enetEvent.Peer.Mtu = PEER_MTU;
+                            enetEvent.Data = 0;
+                            break;
 
-                            case EventType.Receive:
-                                PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID);
-                                // Clean up the packet now that we're done using it.
-                                enetEvent.Packet.Dispose();
-                                break;
+                        case EventType.Receive:
+                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID);
+                            // Clean up the packet now that we're done using it.
+                            enetEvent.Packet.Dispose();
+                            break;
 
-                            case EventType.Disconnect:
-                                HandleDisconnect(enetEvent.Peer);
-                                break;
-                        }
+                        case EventType.Disconnect:
+                            HandleDisconnect(enetEvent.Peer);
+                            break;
                     }
-
-                    if (IsPaused)
-                    {
-                        _lastMapDurationWatch.Stop();
-                        _pauseTimer.Enabled = true;
-                        if (PauseTimeLeft <= 0 && !_autoResumeCheck)
-                        {
-                            PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
-                                .HandlePacket(null, new byte[0]);
-                            _autoResumeCheck = true;
-                        }
-                        continue;
-                    }
-
-                    if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
-                    {
-                        var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                        _lastMapDurationWatch.Restart();
-                        if (IsRunning)
-                        {
-                            Map.Update((float)sinceLastMapTime);
-                            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
-                            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
-                        }
-                    }
-                    Thread.Sleep(1);
                 }
+
+                if (IsPaused)
+                {
+                    _lastMapDurationWatch.Stop();
+                    _pauseTimer.Enabled = true;
+                    if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                    {
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
+                            .HandlePacket(null, new byte[0]);
+                        _autoResumeCheck = true;
+                    }
+                    continue;
+                }
+
+                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                {
+                    var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                    _lastMapDurationWatch.Restart();
+                    if (IsRunning)
+                    {
+                        Map.Update((float)sinceLastMapTime);
+                        _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
+                        _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+                    }
+                }
+                Thread.Sleep(1);
             }
         }
 
