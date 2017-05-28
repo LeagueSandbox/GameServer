@@ -280,7 +280,6 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleScoreboard.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleUnpauseReq.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
-    <Compile Include="Logic\PreciseTimer.cs" />
     <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
     <Compile Include="Logic\Scripting\CSharp\BuffGameScriptController.cs" />

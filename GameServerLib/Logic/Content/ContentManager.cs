@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var contentDirectories = Directory.GetDirectories(folderPath);
                 foreach (var directory in contentDirectories)
                 {
-                    contents.Add(directory.Split('\\').Last());
+                    contents.Add(directory.Replace('\\', '/').Split('/').Last());
                 }
             }
             return contents.ToArray();
