@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
 
-            var u = _game.Map.GetObjectById(request.targetNetId) as Unit;
+            var u = _game.ObjectManager.GetObjectById(request.targetNetId) as Unit;
             if (u == null)
             {
                 peerInfo.Champion.TargetUnit = null;

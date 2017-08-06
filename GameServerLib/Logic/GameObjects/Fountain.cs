@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _healTickTimer = 0;
 
-            var champions = _game.Map.GetChampionsInRange(_x, _y, _fountainSize, true);
+            var champions = _game.ObjectManager.GetChampionsInRange(_x, _y, _fountainSize, true);
             foreach (var champion in champions)
             {
                 if (champion.Team != _team)

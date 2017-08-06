@@ -218,7 +218,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 nameMissile,
                 SpellData.Flags
             );
-            _game.Map.AddObject(p);
+            _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyProjectileSpawn(p);
@@ -238,7 +238,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 nameMissile,
                 SpellData.Flags
             );
-            _game.Map.AddObject(p);
+            _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyProjectileSpawn(p);
@@ -257,7 +257,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 SpellData.Flags,
                 affectAsCastIsOver
             );
-            _game.Map.AddObject(l);
+            _game.ObjectManager.AddObject(l);
         }
 
         public void spellAnimation(string animName, Unit target)

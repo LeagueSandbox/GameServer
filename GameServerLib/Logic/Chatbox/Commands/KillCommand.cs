@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "minions")
             {
-                var objects = _game.Map.GetObjects();
+                var objects = _game.ObjectManager.GetObjects();
                 foreach (var o in objects)
                 {
                     if (o.Value is Minion)

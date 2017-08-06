@@ -210,7 +210,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 if (team == TeamId.TEAM_NEUTRAL)
                     continue;
 
-                if (game.Map.TeamHasVisionOn(team, o))
+                if (game.ObjectManager.TeamHasVisionOn(team, o))
                 {
                     broadcastPacketTeam(team, data, channelNo, flag);
                 }

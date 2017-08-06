@@ -269,7 +269,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (TargetUnit != null)
             {
-                if (TargetUnit.IsDead || !_game.Map.TeamHasVisionOn(Team, TargetUnit))
+                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit))
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;
@@ -296,7 +296,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 0,
                                 _autoAttackProjId
                             );
-                            _game.Map.AddObject(p);
+                            _game.ObjectManager.AddObject(p);
                             _game.PacketNotifier.NotifyShowProjectile(p);
                         }
                         else
@@ -356,7 +356,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (AutoAttackTarget == null
                     || AutoAttackTarget.IsDead
-                    || !_game.Map.TeamHasVisionOn(Team, AutoAttackTarget)
+                    || !_game.ObjectManager.TeamHasVisionOn(Team, AutoAttackTarget)
                 )
                 {
                     IsAttacking = false;
@@ -506,7 +506,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void die(Unit killer)
         {
             setToRemove();
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
@@ -514,7 +514,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             onDie?.Invoke(this, killer);
 
             var exp = _game.Map.GetExperienceFor(this);
-            var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
+            var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
 

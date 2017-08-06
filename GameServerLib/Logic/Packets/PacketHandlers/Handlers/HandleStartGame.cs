@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                 foreach (var p in _playerManager.GetPlayers())
                 {
-                    map.AddObject(p.Item2.Champion);
+                    _game.ObjectManager.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
                     float gameTime = map.GameTime / 1000.0f;

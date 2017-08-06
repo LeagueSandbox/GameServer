@@ -72,20 +72,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
         }
 
-        public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
-        {
-            List<TeamId> teams = GetTeams();
-            foreach (TeamId id in teams)
-            {
-                gameObject.SetVisibleByTeam(id, visibility);
-            }
-        }
-
-        public static List<TeamId> GetTeams()
-        {
-            return _game.Map.GetTeams();
-        }
-
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
@@ -139,12 +125,12 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static List<Unit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
-            return _game.Map.GetUnitsInRange(target, range, isAlive);
+            return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
         }
 
         public static List<Champion> GetChampionsInRange(Target target, float range, bool isAlive)
         {
-            return _game.Map.GetChampionsInRange(target, range, isAlive);
+            return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
         }
 
         public static void SetChampionModel(Champion champion, string model)

@@ -217,7 +217,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
-                var objects = _game.Map.GetObjects();
+                var objects = _game.ObjectManager.GetObjects();
                 var distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 var range = Math.Max(stats.Range.Total, DETECT_RANGE);
@@ -362,7 +362,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void die(Unit killer)
         {
             RespawnTimer = 5000 + GetStats().Level * 2500;
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
 
@@ -370,7 +370,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null && _championHitFlagTimer > 0)
             {
-                cKiller = _game.Map.GetObjectById(_playerHitId) as Champion;
+                cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
                 _logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
@@ -427,7 +427,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
         }
 
         public override void onCollision(GameObject collider)

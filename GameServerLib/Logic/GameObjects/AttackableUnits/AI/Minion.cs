@@ -159,7 +159,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Unit nextTarget = null;
             var nextTargetPriority = 14;
 
-            var objects = _game.Map.GetObjects();
+            var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
                 var u = it.Value as Unit;
@@ -169,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     u.IsDead ||                          // alive
                     u.Team == Team ||                    // not on our team
                     GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.Map.TeamHasVisionOn(Team, u)) // visible to this minion
+                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
                     continue;                             // If not, look for something else
 
                 var priority = (int)ClassifyTarget(u);  // get the priority.

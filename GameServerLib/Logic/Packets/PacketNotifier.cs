@@ -422,7 +422,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAnnounceEvent(Announces messageId, bool isMapSpecific)
         {
-            var announce = new Announce(messageId, isMapSpecific ? _game.Map.GetMapId() : 0);
+            var announce = new Announce(messageId, isMapSpecific ? _game.Map.Id : 0);
             _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
         }
 

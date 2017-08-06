@@ -11,6 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     class Pathfinder
     {
         private static Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game = Program.ResolveDependency<Game>();
 
         protected static Map chart;
         private const int GRID_SIZE = 1024;
@@ -175,6 +176,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public List<PathNode> openList, closedList;
         public Grid[,] map = new Grid[GRID_WIDTH, GRID_HEIGHT];
         public Vector2 start, destination;
+        private Game _game = Program.ResolveDependency<Game>();
 
         public PathJob()
         {
@@ -406,7 +408,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (chart != null)
             {
-                var objects = chart.GetObjects();
+                var objects = _game.ObjectManager.GetObjects();
                 foreach (var i in objects) // For every object
                 {
                     if (!(i.Value is Minion) && !(i.Value is Champion))

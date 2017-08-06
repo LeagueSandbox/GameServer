@@ -33,6 +33,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public int PlayersReady { get; private set; }
 
+        public CollisionHandler CollisionHandler { get; private set; }
+        public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
         public PacketNotifier PacketNotifier { get; private set; }
         public PacketHandlerManager PacketHandlerManager { get; private set; }
@@ -63,6 +65,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _networkIdManager = networkIdManager;
             _playerManager = playerManager;
             _logger = logger;
+            CollisionHandler = new CollisionHandler(Map);
+            ObjectManager = new ObjectManager(this);
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
@@ -124,12 +128,13 @@ namespace LeagueSandbox.GameServer.Core.Logic
             var mapName = $"{Config.ContentManager.GameModeName}-Map{mapId}";
             var dic = new Dictionary<string, Type>
             {
-                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) },
-                { "LeagueSandbox-Default-Map4", typeof(OriginalTwistedTreeline) },
+                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) }
+                //,
+                //{ "LeagueSandbox-Default-Map4", typeof(OriginalTwistedTreeline) },
                 // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
-                { "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
+                //{ "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
                 // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
-                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
+                //{ "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
             };
 
             if (!dic.ContainsKey(mapName))
@@ -191,6 +196,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
                     {
+                        ObjectManager.Update((float)sinceLastMapTime);
+                        CollisionHandler.Update();
                         Map.Update((float)sinceLastMapTime);
                         _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
                         _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());

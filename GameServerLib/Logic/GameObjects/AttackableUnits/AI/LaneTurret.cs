@@ -47,12 +47,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var blueTeam = new List<Champion>();
             var purpTeam = new List<Champion>();
-            foreach (var player in _game.Map.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
             {
                 blueTeam.Add(player);
             }
 
-            foreach (var player in _game.Map.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
             {
                 purpTeam.Add(player);
             }

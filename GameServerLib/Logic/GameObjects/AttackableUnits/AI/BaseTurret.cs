@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void CheckForTargets()
         {
-            var objects = _game.Map.GetObjects();
+            var objects = _game.ObjectManager.GetObjects();
             Unit nextTarget = null;
             var nextTargetPriority = 14;
 
@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(Unit killer)
         {
-            foreach (var player in _game.Map.GetAllChampionsFromTeam(killer.Team))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
             {
                 var goldEarn = globalGold;
 
