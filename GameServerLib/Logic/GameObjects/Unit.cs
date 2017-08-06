@@ -250,7 +250,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void UpdateAutoAttackTarget(float diff)
         {
-            if (HasCrowdControl(CrowdControlType.Disarm))
+            if (HasCrowdControl(CrowdControlType.Disarm) || HasCrowdControl(CrowdControlType.Stun))
             {
                 return;
             }

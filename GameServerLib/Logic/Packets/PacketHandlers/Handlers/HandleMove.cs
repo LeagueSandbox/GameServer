@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System.IO;
 using System.Collections;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
@@ -22,7 +23,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             if (peerInfo == null ||
                 champion.IsDashing ||
                 champion.IsDead ||
-                champion.IsCastingSpell)
+                champion.IsCastingSpell ||
+                champion.HasCrowdControl(CrowdControlType.Stun) )
                 return true;
 
             var request = new MovementReq(data);
