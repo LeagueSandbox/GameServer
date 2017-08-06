@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null)
                 return false;
-            if (owner.HasCrowdControl(CrowdControlType.Stun) || owner.HasCrowdControl(CrowdControlType.Silence))
+            if (!owner.CanCast())
                 return false;
             var s = owner.GetSpell(spell.spellSlot);
             if (s == null)

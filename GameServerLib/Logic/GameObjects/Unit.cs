@@ -152,6 +152,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void ApplyCrowdControl(UnitCrowdControl cc)
         {
+            if (cc.IsTypeOf(CrowdControlType.Stun) || cc.IsTypeOf(CrowdControlType.Root))
+                this.StopMovement();
             crowdControlList.Add(cc);
         }
         public void RemoveCrowdControl(UnitCrowdControl cc)
@@ -215,6 +217,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
             }
             BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
+        }
+        public void StopMovement()
+        {
+            this.SetWaypoints(new List<Vector2> { this.GetPosition(), this.GetPosition() });
         }
 
         public override void update(float diff)
