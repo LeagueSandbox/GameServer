@@ -153,7 +153,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void ApplyCrowdControl(UnitCrowdControl cc)
         {
             if (cc.IsTypeOf(CrowdControlType.Stun) || cc.IsTypeOf(CrowdControlType.Root))
+            {
                 this.StopMovement();
+            }
             crowdControlList.Add(cc);
         }
         public void RemoveCrowdControl(UnitCrowdControl cc)

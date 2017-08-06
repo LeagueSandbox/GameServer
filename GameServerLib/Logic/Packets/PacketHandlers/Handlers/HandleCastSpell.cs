@@ -20,12 +20,18 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             var TargetUnit = targetObj as Unit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null)
+            {
                 return false;
+            }
             if (!owner.CanCast())
+            {
                 return false;
+            }
             var s = owner.GetSpell(spell.spellSlot);
             if (s == null)
+            {
                 return false;
+            }
             return s.cast(spell.x, spell.y, spell.x2, spell.y2, TargetUnit);
         }
     }
