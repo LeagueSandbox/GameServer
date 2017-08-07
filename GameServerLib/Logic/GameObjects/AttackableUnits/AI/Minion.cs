@@ -44,11 +44,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             curMainWaypoint = 0;
             _AIPaused = false;
 
-            var spawnSpecifics = _game.Map.GetMinionSpawnPosition(SpawnPosition);
+            var spawnSpecifics = _game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            _game.Map.SetMinionStats(this); // Let the map decide how strong this minion has to be.
+            _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             var minionModel = "";
             if (spawnSpecifics.Item1 == Enet.TeamId.TEAM_BLUE) // If we're the blue side

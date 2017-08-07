@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = _game.Map.GoldPerSecond;
+            stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
             stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -185,8 +185,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             var coords = new Vector2
             {
-                X = _game.Map.GetRespawnLocation(Team).X,
-                Y = _game.Map.GetRespawnLocation(Team).Y
+                X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
+                Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
             };
             return new Vector2(coords.X, coords.Y);
         }
@@ -256,7 +256,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.IsGeneratingGold() && _game.GameTime >= _game.Map.FirstGoldTime)
+            if (!stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
                 stats.SetGeneratingGold(true);
                 _logger.LogCoreInfo("Generating Gold!");
@@ -352,7 +352,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool LevelUp()
         {
             var stats = GetStats();
-            var expMap = _game.Map.ExpToLevelUp;
+            var expMap = _game.Map.MapGameScript.ExpToLevelUp;
             if (stats.GetLevel() >= expMap.Count)
                 return false;
             if (stats.Experience < expMap[stats.Level])
@@ -395,7 +395,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             cKiller.ChampionGoldFromMinions = 0;
 
-            float gold = _game.Map.GetGoldFor(this);
+            float gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
                 "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
                 gold,
@@ -421,16 +421,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (_game.Map.IsKillGoldRewardReductionActive && _game.Map.HasFirstBloodHappened)
+            if (_game.Map.MapGameScript.IsKillGoldRewardReductionActive
+                && _game.Map.MapGameScript.HasFirstBloodHappened)
             {
                 gold -= gold * 0.25f;
                 //CORE_INFO("Still some minutes for full gold reward on champion kills");
             }
 
-            if (!_game.Map.HasFirstBloodHappened)
+            if (!_game.Map.MapGameScript.HasFirstBloodHappened)
             {
                 gold += 100;
-                _game.Map.HasFirstBloodHappened = true;
+                _game.Map.MapGameScript.HasFirstBloodHappened = true;
             }
 
             _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);

@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
 
             ObjectManager = new ObjectManager(this);
-            RegisterMap((byte)Config.GameConfig.Map);
+            Map = new Map(this);
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
@@ -127,12 +127,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             var scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
             return scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
-        }
-
-        public void RegisterMap(byte mapId)
-        {
-            Map = new SummonersRift(this);
-            return;
         }
 
         public void NetLoop()

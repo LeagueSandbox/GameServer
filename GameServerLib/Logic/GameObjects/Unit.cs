@@ -526,7 +526,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
 
-            var exp = _game.Map.GetExperienceFor(this);
+            var exp = _game.Map.MapGameScript.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
@@ -548,7 +548,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                var gold = _game.Map.GetGoldFor(this);
+                var gold = _game.Map.MapGameScript.GetGoldFor(this);
                 if (gold <= 0)
                 {
                     return;

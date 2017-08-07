@@ -1,6 +1,7 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,14 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public RAF.AIMesh AIMesh { get; private set; }
         public CollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; } = 0;
-
-        public List<int> ExpToLevelUp { get; set; }
-        public float GoldPerSecond { get; set; }
-        public bool HasFirstBloodHappened { get; set; }
-        public bool IsKillGoldRewardReductionActive { get; set; }
-        public int BluePillId { get; set; } = 0;
-        public long FirstGoldTime { get;  set; } 
-        public bool SpawnEnabled { get; set; }
+        public MapGameScript MapGameScript { get; private set; }
 
         public Map(Game game)
         {
@@ -54,13 +48,14 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             AnnouncerEvents = new List<Announce>();
             CollisionHandler = new CollisionHandler(this);
+            MapGameScript = new SummonersRift();
         }
-        public virtual void Init()
+        public void Init()
         {
-
+            MapGameScript.Init();
         }
 
-        public virtual void Update(float diff)
+        public void Update(float diff)
         {
             CollisionHandler.Update();
             foreach (var announce in AnnouncerEvents)
@@ -73,36 +68,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     }
                 }
             }
-        }
-
-        public virtual Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
-        {
-            return null;
-        }
- 
-        public virtual void SetMinionStats(Minion m)
-        {
-
-        }
-
-        public virtual Target GetRespawnLocation(TeamId team)
-        {
-            return null;
-        }
-
-        public virtual float GetGoldFor(Unit u)
-        {
-            return 0;
-        }
-
-        public virtual float GetExperienceFor(Unit u)
-        {
-            return 0;
-        }
-
-        public virtual float[] GetEndGameCameraPosition(TeamId team)
-        {
-            return new float[] { 0, 0, 0 };
+            MapGameScript.Update(diff);
         }
     }
 }

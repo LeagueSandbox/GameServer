@@ -1,14 +1,14 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
-    class SummonersRift : Map
+    class SummonersRift : MapGameScript
     {
         private static readonly List<Vector2> BLUE_TOP_WAYPOINTS = new List<Vector2>
         {
@@ -143,53 +143,49 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         };
 
 
-        private int _cannonMinionCount;
-        private int _minionNumber;
-        private long _firstSpawnTime;
-        private long _nextSpawnTime;
-        private long _spawnInterval;
-        protected Dictionary<TeamId, Fountain> _fountains;
-
-
-        public SummonersRift(Game game) : base(game)
+        private Game _game;
+        private int _cannonMinionCount = 0;
+        private int _minionNumber = 0;
+        private long _firstSpawnTime = 90 * 1000;
+        private long _nextSpawnTime = 90 * 1000;
+        private long _spawnInterval = 30 * 1000;
+        private Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>
         {
-            // Set first minion spawn and first gold time to be 1:30
-            _nextSpawnTime = 90 * 1000;
-            _firstSpawnTime = 90 * 1000;
-            FirstGoldTime = _firstSpawnTime;
-            _minionNumber = 0;
-            _spawnInterval = 30 * 1000;
-            _fountains = new Dictionary<TeamId, Fountain>
-            {
-                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
-                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
-            };
-            BluePillId = 2001;
-            HasFirstBloodHappened = false;
-            IsKillGoldRewardReductionActive = true;
+            { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
+            { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
+        };
+
+        public List<int> ExpToLevelUp { get; set; } = new List<int>
+        {
+            0,
+            280,
+            660,
+            1140,
+            1720,
+            2400,
+            3180,
+            4060,
+            5040,
+            6120,
+            7300,
+            8580,
+            9960,
+            11440,
+            13020,
+            14700,
+            16480,
+            18360
+        };
+        public float GoldPerSecond { get; set; } = 1.9f;
+        public bool HasFirstBloodHappened { get; set; } = false;
+        public bool IsKillGoldRewardReductionActive { get; set; } = true;
+        public int BluePillId { get; set; } = 2001;
+        public long FirstGoldTime { get; set; } = 90 * 1000;
+        public bool SpawnEnabled { get; set; }
+        public SummonersRift()
+        {
+            _game = Program.ResolveDependency<Game>();
             SpawnEnabled = _game.Config.MinionSpawnsEnabled;
-            GoldPerSecond = 1.9f;
-            ExpToLevelUp = new List<int>
-            {
-                0,
-                280,
-                660,
-                1140,
-                1720,
-                2400,
-                3180,
-                4060,
-                5040,
-                6120,
-                7300,
-                8580,
-                9960,
-                11440,
-                13020,
-                14700,
-                16480,
-                18360
-            };
         }
 
         public int[] GetTurretItems(TurretType type)
@@ -202,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _turretItems[type];
         }
 
-        public override void Init()
+        public void Init()
         {
             // Announcer events
             _game.Map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
@@ -280,10 +276,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game.ObjectManager.AddObject(new Nexus("ChaosNexus", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 12800, 13100, SIGHT_RANGE, 0xfff02c0f));
         }
 
-        public override void Update(float diff)
+        public void Update(float diff)
         {
-            base.Update(diff);
-
             if (_game.GameTime >= 120 * 1000)
             {
                 IsKillGoldRewardReductionActive = false;
@@ -317,7 +311,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 fountain.Update(diff);
         }
 
-        public override Target GetRespawnLocation(TeamId team)
+        public Target GetRespawnLocation(TeamId team)
         {
             if (!_spawnsByTeam.ContainsKey(team))
             {
@@ -327,7 +321,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _spawnsByTeam[team];
         }
 
-        public override float GetGoldFor(Unit u)
+        public float GetGoldFor(Unit u)
         {
             var m = u as Minion;
             if (m == null)
@@ -385,7 +379,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return dic[m.getType()];
         }
 
-        public override float GetExperienceFor(Unit u)
+        public float GetExperienceFor(Unit u)
         {
             var m = u as Minion;
 
@@ -407,7 +401,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return dic[m.getType()];
         }
 
-        public override Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             switch (spawnPosition)
             {
@@ -427,7 +421,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
 
-        public override void SetMinionStats(Minion m)
+        public void SetMinionStats(Minion m)
         {
             // Same for all minions
             m.GetStats().MoveSpeed.BaseValue = 325.0f;
@@ -575,7 +569,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return true;
         }
 
-        public override float[] GetEndGameCameraPosition(TeamId team)
+        public float[] GetEndGameCameraPosition(TeamId team)
         {
             if (!_endGameCameraPosition.ContainsKey(team))
                 return new float[] { 0, 0, 0 };

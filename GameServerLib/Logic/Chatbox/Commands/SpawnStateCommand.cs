@@ -21,11 +21,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "1")
             {
-                _game.Map.SpawnEnabled = true;
+                _game.Map.MapGameScript.SpawnEnabled = true;
             }
             else if (split[1] == "0")
             {
-                _game.Map.SpawnEnabled = true;
+                _game.Map.MapGameScript.SpawnEnabled = true;
             }
             else
             {
