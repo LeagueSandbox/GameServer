@@ -72,6 +72,20 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
         }
 
+        public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
+        {		
+            List<TeamId> teams = GetTeams();		
+            foreach (TeamId id in teams)		
+            {		
+                gameObject.SetVisibleByTeam(id, visibility);		
+            }		
+        }		
+		
+        public static List<TeamId> GetTeams()
+        {		
+            return _game.ObjectManager.Teams;		
+        }
+
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);

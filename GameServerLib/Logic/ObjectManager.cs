@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic
         private object _championsLock = new object();
         private object _visionLock = new object();
 
-        private readonly List<TeamId> _teamsIterator;
+        public List<TeamId> Teams { get; private set; }
 
         public ObjectManager(Game game)
         {
@@ -33,9 +33,9 @@ namespace LeagueSandbox.GameServer.Logic
             _champions = new Dictionary<uint, Champion>();
             _visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
 
-            _teamsIterator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+            Teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
-            foreach (var team in _teamsIterator)
+            foreach (var team in Teams)
                 _visionUnits.Add(team, new Dictionary<uint, Unit>());
         }
 
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic
                     continue;
 
                 var u = obj as Unit;
-                foreach (var team in _teamsIterator)
+                foreach (var team in Teams)
                 {
                     if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
                         continue;
