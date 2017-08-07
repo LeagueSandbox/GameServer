@@ -73,14 +73,14 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
-        {		
-            List<TeamId> teams = GetTeams();		
-            foreach (TeamId id in teams)		
-            {		
-                gameObject.SetVisibleByTeam(id, visibility);		
-            }		
-        }		
-		
+        {
+            List<TeamId> teams = GetTeams();
+            foreach (TeamId id in teams)
+            {
+                gameObject.SetVisibleByTeam(id, visibility);
+            }
+        }
+
         public static List<TeamId> GetTeams()
         {		
             return _game.ObjectManager.Teams;		
