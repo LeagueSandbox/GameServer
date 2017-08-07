@@ -82,8 +82,8 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
 
         public static List<TeamId> GetTeams()
-        {		
-            return _game.ObjectManager.Teams;		
+        {
+            return _game.ObjectManager.Teams;
         }
 
         public static void TeleportTo(Unit unit, float x, float y)
