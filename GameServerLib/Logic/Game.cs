@@ -65,8 +65,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _networkIdManager = networkIdManager;
             _playerManager = playerManager;
             _logger = logger;
-            CollisionHandler = new CollisionHandler(Map);
-            ObjectManager = new ObjectManager(this);
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
@@ -89,7 +87,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
 
+            ObjectManager = new ObjectManager(this);
             RegisterMap((byte)Config.GameConfig.Map);
+            CollisionHandler = new CollisionHandler(Map);
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
@@ -99,6 +99,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger.LogCoreInfo("Loading C# Scripts");
 
             LoadScripts();
+
+            Map.Init();
 
             foreach (var p in Config.Players)
             {
@@ -125,25 +127,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void RegisterMap(byte mapId)
         {
-            var mapName = $"{Config.ContentManager.GameModeName}-Map{mapId}";
-            var dic = new Dictionary<string, Type>
-            {
-                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) }
-                //,
-                //{ "LeagueSandbox-Default-Map4", typeof(OriginalTwistedTreeline) },
-                // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
-                //{ "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
-                // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
-                //{ "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
-            };
-
-            if (!dic.ContainsKey(mapName))
-            {
-                Map = new SummonersRift(this);
-                return;
-            }
-
-            Map = (Map)Activator.CreateInstance(dic[mapName], this);
+            Map = new SummonersRift(this);
+            return;
         }
 
         public void NetLoop()

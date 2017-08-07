@@ -143,11 +143,74 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         };
 
         private int _cannonMinionCount;
+        private int _minionNumber;
+        private long _firstSpawnTime;
+        private long _nextSpawnTime;
+        private long _spawnInterval;
+        protected Dictionary<TeamId, Fountain> _fountains;
 
-        public SummonersRift(Game game) : base(game, 90 * 1000, 30 * 1000, 90 * 1000, true, 1)
+
+        public SummonersRift(Game game) : base(game, 1)
+        {
+            // Start at xp to reach level 1
+            ExpToLevelUp = new List<int>
+            {
+                0,
+                280,
+                660,
+                1140,
+                1720,
+                2400,
+                3180,
+                4060,
+                5040,
+                6120,
+                7300,
+                8580,
+                9960,
+                11440,
+                13020,
+                14700,
+                16480,
+                18360
+            };
+
+            // Set first minion spawn and first gold time to be 1:30
+            _nextSpawnTime = 90 * 1000;
+            _firstSpawnTime = 90 * 1000;
+            FirstGoldTime = _firstSpawnTime;
+            _minionNumber = 0;
+            _spawnInterval = 30 * 1000;
+            _fountains = new Dictionary<TeamId, Fountain>
+            {
+                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
+                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
+            };
+
+            // Announcer events
+            _announcerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
+            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
+                _announcerEvents.Add(new Announce(game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
+            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
+            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
+
+            BluePillId = 2001;
+        }
+
+        public int[] GetTurretItems(TurretType type)
+        {
+            if (!_turretItems.ContainsKey(type))
+            {
+                return null;
+            }
+
+            return _turretItems[type];
+        }
+
+        public override void Init()
         {
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE,
-                TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
+    TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE,
                 TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_C_07_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE,
@@ -178,11 +241,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 TurretType.NexusTurret, GetTurretItems(TurretType.NexusTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_C_02_A", 12118.0f, 12876.0f, TeamId.TEAM_PURPLE,
                 TurretType.NexusTurret, GetTurretItems(TurretType.NexusTurret)));
-            _game.ObjectManager.AddObject(new LaneTurret("Turret_OrderTurretShrine_A", -236.05f, -53.32f,TeamId.TEAM_BLUE,
+            _game.ObjectManager.AddObject(new LaneTurret("Turret_OrderTurretShrine_A", -236.05f, -53.32f, TeamId.TEAM_BLUE,
                 TurretType.FountainTurret, GetTurretItems(TurretType.FountainTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_ChaosTurretShrine_A", 14157.0f, 14456.0f, TeamId.TEAM_PURPLE,
                 TurretType.FountainTurret, GetTurretItems(TurretType.FountainTurret)));
-            _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_L_03_A", 574.66f, 10220.47f, TeamId.TEAM_BLUE, 
+            _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_L_03_A", 574.66f, 10220.47f, TeamId.TEAM_BLUE,
                 TurretType.OuterTurret, _turretItems[TurretType.OuterTurret]));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_L_02_A", 1106.26f, 6485.25f, TeamId.TEAM_BLUE,
                 TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
@@ -190,9 +253,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 TurretType.InhibitorTurret, GetTurretItems(TurretType.InhibitorTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_03_A", 3911.0f, 13654.0f, TeamId.TEAM_PURPLE,
                 TurretType.OuterTurret, _turretItems[TurretType.OuterTurret]));
-            _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_02_A", 7536.0f, 13190.0f, TeamId.TEAM_PURPLE, 
+            _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_02_A", 7536.0f, 13190.0f, TeamId.TEAM_PURPLE,
                 TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
-            _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_01_A", 10261.0f, 13465.0f, TeamId.TEAM_PURPLE, 
+            _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_01_A", 10261.0f, 13465.0f, TeamId.TEAM_PURPLE,
                 TurretType.InhibitorTurret, GetTurretItems(TurretType.InhibitorTurret)));
 
             _game.ObjectManager.AddObject(new LevelProp(12465.0f, 14422.257f, 101.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey"));
@@ -213,52 +276,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             _game.ObjectManager.AddObject(new Nexus("OrderNexus", TeamId.TEAM_BLUE, COLLISION_RADIUS, 1170, 1470, SIGHT_RANGE, 0xfff97db5));
             _game.ObjectManager.AddObject(new Nexus("ChaosNexus", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 12800, 13100, SIGHT_RANGE, 0xfff02c0f));
-
-            // Start at xp to reach level 1
-            ExpToLevelUp = new List<int>
-            {
-                0,
-                280,
-                660,
-                1140,
-                1720,
-                2400,
-                3180,
-                4060,
-                5040,
-                6120,
-                7300,
-                8580,
-                9960,
-                11440,
-                13020,
-                14700,
-                16480,
-                18360
-            };
-
-            // Set first minion spawn and first gold time to be 1:30
-            _firstSpawnTime = 90 * 1000;
-            FirstGoldTime = _firstSpawnTime;
-
-            // Announcer events
-            _announcerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
-            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
-                _announcerEvents.Add(new Announce(game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
-            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
-            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
-
-            BluePillId = 2001;
-        }
-
-        public int[] GetTurretItems(TurretType type)
-        {
-            if (!_turretItems.ContainsKey(type))
-            {
-                return null;
-            }
-
-            return _turretItems[type];
         }
 
         public override void Update(float diff)
@@ -269,6 +286,33 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 IsKillGoldRewardReductionActive = false;
             }
+
+            if (SpawnEnabled)
+            {
+                if (_minionNumber > 0)
+                {
+                    if (GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
+                    { // Spawn new wave every 0.8s
+                        if (Spawn())
+                        {
+                            _minionNumber = 0;
+                            _nextSpawnTime += _spawnInterval;
+                        }
+                        else
+                        {
+                            _minionNumber++;
+                        }
+                    }
+                }
+                else if (GameTime >= _nextSpawnTime)
+                {
+                    Spawn();
+                    _minionNumber++;
+                }
+            }
+
+            foreach (var fountain in _fountains.Values)
+                fountain.Update(diff);
         }
 
         public override float GetGoldPerSecond()
@@ -445,7 +489,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game.ObjectManager.AddObject(m);
         }
 
-        public override bool Spawn()
+        public bool Spawn()
         {
             var positions = new List<MinionSpawnPosition>
             {

@@ -13,16 +13,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     public class Map
     {
         public List<int> ExpToLevelUp { get; protected set; }
-        protected int _minionNumber;
-        protected long _firstSpawnTime;
-        protected long _spawnInterval;
-        protected long _nextSpawnTime;
         protected float _nextSyncTime;
         protected List<Announce> _announcerEvents;
         protected bool _hasFountainHeal;
-        protected bool _spawnEnabled;
+        
         protected Game _game;
-        protected Logger _logger = Program.ResolveDependency<Logger>();
+        static protected Logger _logger = Program.ResolveDependency<Logger>();
         public bool HasFirstBloodHappened { get; set; }
         public bool IsKillGoldRewardReductionActive { get; set; }
         public RAF.AIMesh AIMesh { get; protected set; }
@@ -30,33 +26,20 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public int BluePillId { get; protected set; } = 0;
         public long FirstGoldTime { get; protected set; } // Time that gold should begin to generate
         public float GameTime { get; private set; }
-
-        protected CollisionHandler _collisionHandler;
-        protected Dictionary<TeamId, Fountain> _fountains;
+        public bool SpawnEnabled { get; set; }
 
 
-        public Map(Game game, long firstSpawnTime, long spawnInterval, long firstGoldTime, bool hasFountainHeal, int id)
+
+        public Map(Game game, int id)
         {
             ExpToLevelUp = new List<int>();
-            _minionNumber = 0;
-            _firstSpawnTime = firstSpawnTime;
-            FirstGoldTime = firstGoldTime;
-            _spawnInterval = spawnInterval;
             GameTime = 0;
-            _nextSpawnTime = firstSpawnTime;
             _nextSyncTime = 10 * 1000;
             _announcerEvents = new List<Announce>();
             _game = game;
             HasFirstBloodHappened = false;
             IsKillGoldRewardReductionActive = true;
-            _spawnEnabled = _game.Config.MinionSpawnsEnabled;
-            _hasFountainHeal = hasFountainHeal;
-            _collisionHandler = new CollisionHandler(this);
-            _fountains = new Dictionary<TeamId, Fountain>
-            {
-                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
-                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
-            };
+            SpawnEnabled = _game.Config.MinionSpawnsEnabled;
             Id = id;
             var path = System.IO.Path.Combine(
                 Program.ExecutingDirectory,
@@ -94,11 +77,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return new Vector2(GetWidth() / 2, GetHeight() / 2);
         }
 
-        public void SetSpawnState(bool state)
-        {
-            _spawnEnabled = state;
-        }
-
         public float GetHeightAtLocation(float x, float y)
         {
             return AIMesh.getY(x, y);
@@ -108,10 +86,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             return AIMesh.getY(loc.X, loc.Y);
         }
-
+    
         public bool IsWalkable(float x, float y)
         {
             return AIMesh.isWalkable(x, y);
+        }
+
+        public virtual void Init()
+        {
+
         }
 
         public virtual void Update(float diff)
@@ -136,48 +119,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _game.PacketNotifier.NotifyGameTimer();
                 _nextSyncTime = 0;
             }
-
-            if (_spawnEnabled)
-            {
-                if (_minionNumber > 0)
-                {
-                    if (GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
-                    { // Spawn new wave every 0.8s
-                        if (Spawn())
-                        {
-                            _minionNumber = 0;
-                            _nextSpawnTime += _spawnInterval;
-                        }
-                        else
-                        {
-                            _minionNumber++;
-                        }
-                    }
-                }
-                else if (GameTime >= _nextSpawnTime)
-                {
-                    Spawn();
-                    _minionNumber++;
-                }
-            }
-
-            if (_hasFountainHeal)
-            {
-                foreach (var fountain in _fountains.Values)
-                    fountain.Update(diff);
-            }
         }
 
         public virtual float GetGoldPerSecond()
         {
             return 0;
         }
-
-        public virtual bool Spawn()
-        {
-            return false;
-        }
-
         public virtual Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             return null;
