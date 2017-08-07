@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = _game.Map.GetGoldPerSecond();
+            stats.GoldPerSecond.BaseValue = _game.Map.GoldPerSecond;
             stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.IsGeneratingGold() && _game.Map.GameTime >= _game.Map.FirstGoldTime)
+            if (!stats.IsGeneratingGold() && _game.GameTime >= _game.Map.FirstGoldTime)
             {
                 stats.SetGeneratingGold(true);
                 _logger.LogCoreInfo("Generating Gold!");

@@ -175,7 +175,7 @@ namespace LeagueSandbox.GameServer.Logic
                 }
             }
 
-            _game.CollisionHandler.AddObject(o);
+            _game.Map.CollisionHandler.AddObject(o);
 
             if (!(o is Unit))
                 return;
@@ -207,7 +207,7 @@ namespace LeagueSandbox.GameServer.Logic
                 }
             }
             //collisionHandler.stackChanged(o);
-            _game.CollisionHandler.RemoveObject(o);
+            _game.Map.CollisionHandler.RemoveObject(o);
 
             if (o is Unit)
                 RemoveVisionUnit(o as Unit);

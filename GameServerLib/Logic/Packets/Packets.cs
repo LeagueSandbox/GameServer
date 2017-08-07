@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public static byte[] EncodeWaypoints(List<Vector2> waypoints)
         {
             var game = Program.ResolveDependency<Game>();
-            var mapSize = game.Map.GetSize();
+            var mapSize = game.Map.AIMesh.GetSize();
             var numCoords = waypoints.Count * 2;
 
             var maskBytes = new byte[((numCoords - 3) / 8) + 1];
@@ -397,7 +397,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)_game.Map.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));
@@ -525,7 +525,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)_game.Map.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));
@@ -2472,10 +2472,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((int)s.Owner.getChampionHash());
             buffer.Write((uint)futureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)x);
-            buffer.Write((float)m.GetHeightAtLocation(x, y));
+            buffer.Write((float)m.AIMesh.GetHeightAtLocation(x, y));
             buffer.Write((float)y);
             buffer.Write((float)xDragEnd);
-            buffer.Write((float)m.GetHeightAtLocation(xDragEnd, yDragEnd));
+            buffer.Write((float)m.AIMesh.GetHeightAtLocation(xDragEnd, yDragEnd));
             buffer.Write((float)yDragEnd);
             buffer.Write((byte)0); // numTargets (if >0, what follows is a list of {uint32 targetNetId, uint8 hitResult})
             buffer.Write((float)s.SpellData.GetCastTime()); // designerCastTime
@@ -2539,7 +2539,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public SpawnProjectile(Projectile p) : base(PacketCmd.PKT_S2C_SpawnProjectile, p.NetId)
         {
-            float targetZ = _game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y);
+            float targetZ = _game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ()+100.0f);
@@ -2557,7 +2557,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)p.GetZ()+100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
@@ -2595,10 +2595,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)_game.Map.GetHeightAtLocation(p.Target.X, p.Target.Y)+100.0f);
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y)+100.0f);
             buffer.Write((float)p.Target.Y);
             if (!p.Target.IsSimpleTarget)
             {
@@ -2681,12 +2681,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             for (var i = 0; i < 3; ++i)
             {
                 var map = _game.Map;
-                var ownerHeight = map.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
-                var particleHeight = map.GetHeightAtLocation(particle.X, particle.Y);
+                var ownerHeight = map.AIMesh.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
+                var particleHeight = map.AIMesh.GetHeightAtLocation(particle.X, particle.Y);
                 var higherValue = Math.Max(ownerHeight, particleHeight);
-                buffer.Write((short)((particle.Target.X - _game.Map.GetWidth() / 2) / 2));
+                buffer.Write((short)((particle.Target.X - _game.Map.AIMesh.getWidth() / 2) / 2));
                 buffer.Write((float)higherValue);
-                buffer.Write((short)((particle.Target.Y - _game.Map.GetHeight() / 2) / 2));
+                buffer.Write((short)((particle.Target.Y - _game.Map.AIMesh.getHeight() / 2) / 2));
             }
 
             buffer.Write((uint)0); // unk

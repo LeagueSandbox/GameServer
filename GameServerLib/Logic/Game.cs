@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
+using System.IO;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -33,7 +34,10 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public int PlayersReady { get; private set; }
 
-        public CollisionHandler CollisionHandler { get; private set; }
+        public float GameTime { get; private set; } = 0;
+        private float _nextSyncTime = 10 * 1000;
+
+
         public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
         public PacketNotifier PacketNotifier { get; private set; }
@@ -87,9 +91,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
 
+
             ObjectManager = new ObjectManager(this);
             RegisterMap((byte)Config.GameConfig.Map);
-            CollisionHandler = new CollisionHandler(Map);
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
@@ -181,14 +185,27 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
                     {
-                        ObjectManager.Update((float)sinceLastMapTime);
-                        CollisionHandler.Update();
-                        Map.Update((float)sinceLastMapTime);
-                        _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
-                        _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+                        Update((float)sinceLastMapTime);
+
                     }
                 }
                 Thread.Sleep(1);
+            }
+        }
+        public void Update(float diff)
+        {
+            GameTime += diff;
+            ObjectManager.Update(diff);
+            Map.Update(diff);
+            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
+            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+
+            // By default, synchronize the game time every 10 seconds
+            _nextSyncTime += diff;
+            if (_nextSyncTime >= 10 * 1000)
+            {
+                PacketNotifier.NotifyGameTimer();
+                _nextSyncTime = 0;
             }
         }
 

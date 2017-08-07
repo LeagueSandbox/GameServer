@@ -142,6 +142,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TurretType.NexusTurret, new[] { 1501, 1502, 1503, 1505 } }
         };
 
+
         private int _cannonMinionCount;
         private int _minionNumber;
         private long _firstSpawnTime;
@@ -150,9 +151,32 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         protected Dictionary<TeamId, Fountain> _fountains;
 
 
-        public SummonersRift(Game game) : base(game, 1)
+        public SummonersRift(Game game) : base(game)
         {
-            // Start at xp to reach level 1
+            // Set first minion spawn and first gold time to be 1:30
+            _nextSpawnTime = 90 * 1000;
+            _firstSpawnTime = 90 * 1000;
+            FirstGoldTime = _firstSpawnTime;
+            _minionNumber = 0;
+            _spawnInterval = 30 * 1000;
+            _fountains = new Dictionary<TeamId, Fountain>
+            {
+                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
+                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
+            };
+
+            // Announcer events
+            _game.Map.AnnouncerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
+            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
+                _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
+            _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
+            _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
+
+            BluePillId = 2001;
+            HasFirstBloodHappened = false;
+            IsKillGoldRewardReductionActive = true;
+            SpawnEnabled = _game.Config.MinionSpawnsEnabled;
+            GoldPerSecond = 1.9f;
             ExpToLevelUp = new List<int>
             {
                 0,
@@ -174,27 +198,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 16480,
                 18360
             };
-
-            // Set first minion spawn and first gold time to be 1:30
-            _nextSpawnTime = 90 * 1000;
-            _firstSpawnTime = 90 * 1000;
-            FirstGoldTime = _firstSpawnTime;
-            _minionNumber = 0;
-            _spawnInterval = 30 * 1000;
-            _fountains = new Dictionary<TeamId, Fountain>
-            {
-                { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
-                { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
-            };
-
-            // Announcer events
-            _announcerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
-            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
-                _announcerEvents.Add(new Announce(game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
-            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
-            _announcerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
-
-            BluePillId = 2001;
         }
 
         public int[] GetTurretItems(TurretType type)
@@ -282,7 +285,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         {
             base.Update(diff);
 
-            if (GameTime >= 120 * 1000)
+            if (_game.GameTime >= 120 * 1000)
             {
                 IsKillGoldRewardReductionActive = false;
             }
@@ -291,7 +294,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 if (_minionNumber > 0)
                 {
-                    if (GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
+                    if (_game.GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
                     { // Spawn new wave every 0.8s
                         if (Spawn())
                         {
@@ -304,7 +307,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                         }
                     }
                 }
-                else if (GameTime >= _nextSpawnTime)
+                else if (_game.GameTime >= _nextSpawnTime)
                 {
                     Spawn();
                     _minionNumber++;
@@ -313,11 +316,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             foreach (var fountain in _fountains.Values)
                 fountain.Update(diff);
-        }
-
-        public override float GetGoldPerSecond()
-        {
-            return 1.9f;
         }
 
         public override Target GetRespawnLocation(TeamId team)
@@ -374,10 +372,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             var dic = new Dictionary<MinionSpawnType, float>
             {
-                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(GameTime / (180 * 1000)) }
+                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(_game.GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(_game.GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(_game.GameTime / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(_game.GameTime / (180 * 1000)) }
             };
 
             if (!dic.ContainsKey(m.getType()))
@@ -438,36 +436,36 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    m.GetStats().CurrentHealth = 475.0f + 20.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(GameTime / (float)(180 * 1000));
+                    m.GetStats().CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (float)(180 * 1000));
                     m.GetStats().Range.BaseValue = 180.0f;
                     m.GetStats().AttackSpeedFlat = 1.250f;
                     m.AutoAttackDelay = 11.8f / 30.0f;
                     m.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    m.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(GameTime / (float)(90 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 279.0f + 7.5f * (int)(GameTime / (float)(90 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(GameTime / (float)(90 * 1000));
+                    m.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
+                    m.GetStats().HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
+                    m.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (float)(90 * 1000));
                     m.GetStats().Range.BaseValue = 600.0f;
                     m.GetStats().AttackSpeedFlat = 0.670f;
                     m.AutoAttackDelay = 14.1f / 30.0f;
                     m.AutoAttackProjectileSpeed = 650.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    m.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(GameTime / (float)(180 * 1000));
+                    m.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (float)(180 * 1000));
                     m.GetStats().Range.BaseValue = 450.0f;
                     m.GetStats().AttackSpeedFlat = 1.0f;
                     m.AutoAttackDelay = 9.0f / 30.0f;
                     m.AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
-                    m.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(GameTime / (float)(180 * 1000));
+                    m.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_game.GameTime / (float)(180 * 1000));
                     m.GetStats().Range.BaseValue = 170.0f;
                     m.GetStats().AttackSpeedFlat = 0.694f;
                     m.GetStats().Armor.BaseValue = 30.0f;
@@ -521,7 +519,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             foreach (var timestamp in cannonMinionTimestamps)
             {
-                if (GameTime >= timestamp.Item1)
+                if (_game.GameTime >= timestamp.Item1)
                 {
                     cannonMinionCap = timestamp.Item2;
                 }

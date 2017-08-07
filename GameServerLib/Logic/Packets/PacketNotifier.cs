@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyFaceDirection(Unit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
         {
-            var fd = new FaceDirection(u, direction.X, direction.Y, _game.Map.GetHeightAtLocation(direction), isInstant, turnTime);
+            var fd = new FaceDirection(u, direction.X, direction.Y, _game.Map.AIMesh.GetHeightAtLocation(direction), isInstant, turnTime);
             _game.PacketHandlerManager.broadcastPacketVision(u, fd, Channel.CHL_S2C);
         }
 
@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void NotifyTeleport(Unit u, float _x, float _y)
         {
             // Can't teleport to this point of the map
-            if (!_game.Map.IsWalkable(_x, _y))
+            if (!_game.Map.AIMesh.isWalkable(_x, _y))
             {
                 _x = MovementVector.TargetXToNormalFormat(u.X);
                 _y = MovementVector.TargetYToNormalFormat(u.Y);
@@ -410,7 +410,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyGameTimer()
         {
-            var gameTimer = new GameTimer(_game.Map.GameTime / 1000.0f);
+            var gameTimer = new GameTimer(_game.GameTime / 1000.0f);
             _game.PacketHandlerManager.broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
 

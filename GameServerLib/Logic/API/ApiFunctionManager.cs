@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static bool IsWalkable(float x, float y)
         {
-            return _game.Map.IsWalkable(x, y);
+            return _game.Map.AIMesh.isWalkable(x, y);
         }
 
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)

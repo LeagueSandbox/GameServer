@@ -12,35 +12,26 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     public class Map
     {
-        public List<int> ExpToLevelUp { get; protected set; }
-        protected float _nextSyncTime;
-        protected List<Announce> _announcerEvents;
-        protected bool _hasFountainHeal;
-        
         protected Game _game;
-        static protected Logger _logger = Program.ResolveDependency<Logger>();
+        protected static Logger _logger = Program.ResolveDependency<Logger>();
+
+        public List<Announce> AnnouncerEvents { get; private set; }
+        public RAF.AIMesh AIMesh { get; private set; }
+        public CollisionHandler CollisionHandler { get; private set; }
+        public int Id { get; private set; } = 0;
+
+        public List<int> ExpToLevelUp { get; set; }
+        public float GoldPerSecond { get; set; }
         public bool HasFirstBloodHappened { get; set; }
         public bool IsKillGoldRewardReductionActive { get; set; }
-        public RAF.AIMesh AIMesh { get; protected set; }
-        public int Id { get; private set; } = 0;
-        public int BluePillId { get; protected set; } = 0;
-        public long FirstGoldTime { get; protected set; } // Time that gold should begin to generate
-        public float GameTime { get; private set; }
+        public int BluePillId { get; set; } = 0;
+        public long FirstGoldTime { get;  set; } 
         public bool SpawnEnabled { get; set; }
 
-
-
-        public Map(Game game, int id)
+        public Map(Game game)
         {
-            ExpToLevelUp = new List<int>();
-            GameTime = 0;
-            _nextSyncTime = 10 * 1000;
-            _announcerEvents = new List<Announce>();
+            Id = _game.Config.GameConfig.Map;
             _game = game;
-            HasFirstBloodHappened = false;
-            IsKillGoldRewardReductionActive = true;
-            SpawnEnabled = _game.Config.MinionSpawnsEnabled;
-            Id = id;
             var path = System.IO.Path.Combine(
                 Program.ExecutingDirectory,
                 "Content",
@@ -60,38 +51,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 _logger.LogCoreError("Failed to load Summoner's Rift data.");
                 return;
             }
-        }
 
-        public float GetWidth()
-        {
-            return AIMesh.getWidth();
+            AnnouncerEvents = new List<Announce>();
+            CollisionHandler = new CollisionHandler(this);
         }
-
-        public float GetHeight()
-        {
-            return AIMesh.getHeight();
-        }
-
-        public Vector2 GetSize()
-        {
-            return new Vector2(GetWidth() / 2, GetHeight() / 2);
-        }
-
-        public float GetHeightAtLocation(float x, float y)
-        {
-            return AIMesh.getY(x, y);
-        }
-
-        public float GetHeightAtLocation(Vector2 loc)
-        {
-            return AIMesh.getY(loc.X, loc.Y);
-        }
-    
-        public bool IsWalkable(float x, float y)
-        {
-            return AIMesh.isWalkable(x, y);
-        }
-
         public virtual void Init()
         {
 
@@ -99,37 +62,24 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public virtual void Update(float diff)
         {
-            foreach (var announce in _announcerEvents)
+            CollisionHandler.Update();
+            foreach (var announce in AnnouncerEvents)
             {
                 if (!announce.IsAnnounced)
                 {
-                    if (GameTime >= announce.EventTime)
+                    if (_game.GameTime >= announce.EventTime)
                     {
                         announce.Execute();
                     }
                 }
             }
-
-            GameTime += diff;
-            _nextSyncTime += diff;
-
-            // By default, synchronize the game time every 10 seconds
-            if (_nextSyncTime >= 10 * 1000)
-            {
-                _game.PacketNotifier.NotifyGameTimer();
-                _nextSyncTime = 0;
-            }
         }
 
-        public virtual float GetGoldPerSecond()
-        {
-            return 0;
-        }
         public virtual Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
         {
             return null;
         }
-
+ 
         public virtual void SetMinionStats(Minion m)
         {
 

@@ -95,6 +95,22 @@ namespace LeagueSandbox.GameServer.Logic.RAF
             loaded = true;
         }
 
+
+        public Vector2 GetSize()
+        {
+            return new Vector2(getWidth() / 2, getHeight() / 2);
+        }
+
+        public float GetHeightAtLocation(float x, float y)
+        {
+            return getY(x, y);
+        }
+
+        public float GetHeightAtLocation(Vector2 loc)
+        {
+            return getY(loc.X, loc.Y);
+        }
+
         bool outputMesh(int width, int height)
         {
             mapHeight = mapWidth = 0;
