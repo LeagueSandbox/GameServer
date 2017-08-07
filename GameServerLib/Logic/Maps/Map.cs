@@ -30,8 +30,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public Map(Game game)
         {
-            Id = _game.Config.GameConfig.Map;
             _game = game;
+            Id = _game.Config.GameConfig.Map;
             var path = System.IO.Path.Combine(
                 Program.ExecutingDirectory,
                 "Content",

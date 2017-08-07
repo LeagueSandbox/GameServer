@@ -164,14 +164,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 { TeamId.TEAM_BLUE, new Fountain(TeamId.TEAM_BLUE, 11, 250, 1000) },
                 { TeamId.TEAM_PURPLE, new Fountain(TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
             };
-
-            // Announcer events
-            _game.Map.AnnouncerEvents.Add(new Announce(game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
-            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
-                _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
-            _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
-            _game.Map.AnnouncerEvents.Add(new Announce(game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
-
             BluePillId = 2001;
             HasFirstBloodHappened = false;
             IsKillGoldRewardReductionActive = true;
@@ -212,8 +204,15 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public override void Init()
         {
+            // Announcer events
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
+            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
+                _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
+
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE,
-    TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
+                TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE,
                 TurretType.InnerTurret, GetTurretItems(TurretType.InnerTurret)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_C_07_A", 3747.26f, 1041.04f, TeamId.TEAM_BLUE,
