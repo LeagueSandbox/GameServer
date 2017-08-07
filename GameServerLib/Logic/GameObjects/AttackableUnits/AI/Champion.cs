@@ -134,7 +134,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             stats.RemoveModifier(statModifier);
         }
-
+        public bool CanMove()
+        {
+            return !this.HasCrowdControl(CrowdControlType.Stun) &&
+                !this.IsDashing &&
+                !this.IsCastingSpell &&
+                !this.IsDead &&
+                !this.HasCrowdControl(CrowdControlType.Root);
+        }
+        public bool CanCast()
+        {
+            return !this.HasCrowdControl(CrowdControlType.Stun) &&
+                !this.HasCrowdControl(CrowdControlType.Silence);
+        }
         public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
