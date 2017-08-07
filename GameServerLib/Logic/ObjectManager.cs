@@ -162,7 +162,7 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 _objects.Add(o.NetId, o);
             }
-            o.onAdded();
+            o.OnAdded();
         }
 
         public void AddInhibitor(Inhibitor inhib)
@@ -187,7 +187,7 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 _objects.Remove(o.NetId);
             }
-            o.onRemoved();             
+            o.OnRemoved();             
         }
 
         public void AddChampion(Champion champion)

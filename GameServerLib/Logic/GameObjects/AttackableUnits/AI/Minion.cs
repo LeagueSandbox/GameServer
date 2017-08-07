@@ -115,9 +115,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _AIPaused = b;
         }
-        public override void onAdded()
+        public override void OnAdded()
         {
-            base.onAdded();
+            base.OnAdded();
             _game.PacketNotifier.NotifyMinionSpawned(this, Team);
         }
         public override void update(float diff)

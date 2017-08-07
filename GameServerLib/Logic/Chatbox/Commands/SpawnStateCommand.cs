@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "0")
             {
-                _game.Map.MapGameScript.SpawnEnabled = true;
+                _game.Map.MapGameScript.SpawnEnabled = false;
             }
             else
             {

@@ -77,12 +77,12 @@ namespace LeagueSandbox.GameServer.Logic
             IsDashing = false;
         }
 
-        public virtual void onAdded()
+        public virtual void OnAdded()
         {
             _game.Map.CollisionHandler.AddObject(this);
         }
 
-        public virtual void onRemoved()
+        public virtual void OnRemoved()
         {
             _game.Map.CollisionHandler.RemoveObject(this);
         }

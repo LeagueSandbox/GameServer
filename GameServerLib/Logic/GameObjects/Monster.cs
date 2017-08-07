@@ -44,9 +44,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SpawnAnimationTime = spawnAnimationTime;
         }
 
-        public override void onAdded()
+        public override void OnAdded()
         {
-            base.onAdded();
+            base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
         }
     }

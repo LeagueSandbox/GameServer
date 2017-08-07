@@ -146,15 +146,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
 
-        public override void onAdded()
+        public override void OnAdded()
         {
-            base.onAdded();
+            base.OnAdded();
             _game.ObjectManager.AddVisionUnit(this);
         }
 
-        public override void onRemoved()
+        public override void OnRemoved()
         {
-            base.onRemoved();
+            base.OnRemoved();
             _game.ObjectManager.RemoveVisionUnit(this);
         }
 

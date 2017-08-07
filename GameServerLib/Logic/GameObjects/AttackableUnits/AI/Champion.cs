@@ -88,16 +88,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return $"player{_playerId}";
         }
 
-        public override void onAdded()
+        public override void OnAdded()
         {
-            base.onAdded();
+            base.OnAdded();
             _game.ObjectManager.AddChampion(this);
             _game.PacketNotifier.NotifyChampionSpawned(this, Team);
         }
 
-        public override void onRemoved()
+        public override void OnRemoved()
         {
-            base.onRemoved();
+            base.OnRemoved();
             _game.ObjectManager.RemoveChampion(this);
         }
 
