@@ -29,6 +29,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             State = InhibitorState.Alive;
             SetTeam(team);
         }
+        public override void onAdded()
+        {
+            base.onAdded();
+            _game.ObjectManager.AddInhibitor(this);
+        }
 
         public override void die(Unit killer)
         {

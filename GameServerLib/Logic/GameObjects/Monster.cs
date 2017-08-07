@@ -43,5 +43,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             CampUnk = campUnk;
             SpawnAnimationTime = spawnAnimationTime;
         }
+
+        public override void onAdded()
+        {
+            base.onAdded();
+            _game.PacketNotifier.NotifySpawn(this);
+        }
     }
 }

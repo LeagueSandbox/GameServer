@@ -77,6 +77,16 @@ namespace LeagueSandbox.GameServer.Logic
             IsDashing = false;
         }
 
+        public virtual void onAdded()
+        {
+            _game.Map.CollisionHandler.AddObject(this);
+        }
+
+        public virtual void onRemoved()
+        {
+            _game.Map.CollisionHandler.RemoveObject(this);
+        }
+
         public virtual void onCollision(GameObject collider) { }
 
         /// <summary>

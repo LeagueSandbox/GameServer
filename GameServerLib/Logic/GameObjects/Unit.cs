@@ -145,6 +145,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.CurrentHealth = stats.HealthPoints.Total;
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
+
+        public override void onAdded()
+        {
+            base.onAdded();
+            _game.ObjectManager.AddVisionUnit(this);
+        }
+
+        public override void onRemoved()
+        {
+            base.onRemoved();
+            _game.ObjectManager.RemoveVisionUnit(this);
+        }
+
         public Stats GetStats()
         {
             return stats;

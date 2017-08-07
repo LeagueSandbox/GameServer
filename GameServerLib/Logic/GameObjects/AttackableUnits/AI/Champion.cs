@@ -88,6 +88,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return $"player{_playerId}";
         }
 
+        public override void onAdded()
+        {
+            base.onAdded();
+            _game.ObjectManager.AddChampion(this);
+            _game.PacketNotifier.NotifyChampionSpawned(this, Team);
+        }
+
+        public override void onRemoved()
+        {
+            base.onRemoved();
+            _game.ObjectManager.RemoveChampion(this);
+        }
+
         public int GetTeamSize()
         {
             var blueTeamSize = 0;

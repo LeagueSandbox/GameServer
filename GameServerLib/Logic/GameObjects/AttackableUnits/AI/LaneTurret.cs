@@ -43,6 +43,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             BuildTurret(type);
         }
 
+        public override void onAdded()
+        {
+            base.onAdded();
+
+        }
+
         public int GetEnemyChampionsCount()
         {
             var blueTeam = new List<Champion>();

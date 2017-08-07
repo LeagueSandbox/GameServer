@@ -160,68 +160,40 @@ namespace LeagueSandbox.GameServer.Logic
             // If it crashes here the problem is most likely somewhere else
             lock (_objectsLock)
             {
-                // (_objects.ContainsKey(o.NetId))
-                //    _objects[o.NetId] = o;
-                //else
                 _objects.Add(o.NetId, o);
             }
+            o.onAdded();
+        }
 
-            if (o is Inhibitor)
+        public void AddInhibitor(Inhibitor inhib)
+        {
+            lock (_inhibitorsLock)
             {
-                var i = o as Inhibitor;
-                lock (_inhibitorsLock)
-                {
-                    _inhibitors.Add(i.NetId, i);
-                }
+                _inhibitors.Add(inhib.NetId, inhib);
             }
+        }
 
-            _game.Map.CollisionHandler.AddObject(o);
-
-            if (!(o is Unit))
-                return;
-
-            AddVisionUnit(o as Unit);
-
-            if (o is Minion)
-                _game.PacketNotifier.NotifyMinionSpawned(o as Minion, o.Team);
-            else if (o is Monster)
-                _game.PacketNotifier.NotifySpawn(o as Monster);
-            else if (o is Champion)
-                AddChampion(o as Champion);
-            else if (o is Placeable)
-                _game.PacketNotifier.NotifySpawn(o as Placeable);
-            else if (o is AzirTurret)
-                _game.PacketNotifier.NotifySpawn(o as AzirTurret);
+        public void RemoveInhibitor(Inhibitor inhib)
+        {
+            lock (_inhibitorsLock)
+            {
+                _inhibitors.Remove(inhib.NetId);
+            }
         }
 
         public void RemoveObject(GameObject o)
         {
             lock (_objectsLock)
-                _objects.Remove(o.NetId);
-
-            if (o is Inhibitor)
             {
-                lock (_inhibitorsLock)
-                {
-                    _inhibitors.Remove(o.NetId);
-                }
+                _objects.Remove(o.NetId);
             }
-            //collisionHandler.stackChanged(o);
-            _game.Map.CollisionHandler.RemoveObject(o);
-
-            if (o is Unit)
-                RemoveVisionUnit(o as Unit);
-
-            if (o is Champion)
-                RemoveChampion(o as Champion);
+            o.onRemoved();             
         }
 
         public void AddChampion(Champion champion)
         {
             lock (_championsLock)
                 _champions.Add(champion.NetId, champion);
-
-            _game.PacketNotifier.NotifyChampionSpawned(champion, champion.Team);
         }
 
         public void RemoveChampion(Champion champion)
