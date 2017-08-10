@@ -1,13 +1,22 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleQueryStatus : IPacketHandler
+    public class HandleQueryStatus : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
+        private readonly Game _game;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_QueryStatusReq;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleQueryStatus(Game game)
+        {
+            _game = game;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var response = new QueryStatus();
             return _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_S2C);

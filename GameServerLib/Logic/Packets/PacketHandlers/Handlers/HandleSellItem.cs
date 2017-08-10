@@ -1,15 +1,25 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleSellItem : IPacketHandler
+    public class HandleSellItem : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SellItem;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleSellItem(Game game, PlayerManager playerManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var sell = new SellItem(data);
             var client = _playerManager.GetPeerInfo(peer);

@@ -1,13 +1,22 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleView : IPacketHandler
+    public class HandleView : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
+        private readonly Game _game;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_ViewReq;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleView(Game game)
+        {
+            _game = game;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new ViewRequest(data);
             var answer = new ViewAnswer(request);

@@ -1,18 +1,28 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
-using LeagueSandbox.GameServer.Logic.API;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleCastSpell : IPacketHandler
+    public class HandleCastSpell : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly NetworkIdManager _networkIdManager;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CastSpell;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleCastSpell(Game game, NetworkIdManager networkIdManager, PlayerManager playerManager)
+        {
+            _game = game;
+            _networkIdManager = networkIdManager;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var spell = new CastSpell(data);
 

@@ -1,23 +1,30 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleUseObject : IPacketHandler
+    public class HandleUseObject : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly Logger _logger;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_UseObject;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleUseObject(Game game, Logger logger, PlayerManager playerManager)
+        {
+            _game = game;
+            _logger = logger;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var parsedData = new UseObject(data);
-            _logger.LogCoreInfo(string.Format(
-                "Object {0} is trying to use (right clicked) {1}",
-                _playerManager.GetPeerInfo(peer).Champion.NetId,
-                parsedData.targetNetId
-            ));
+            _logger.LogCoreInfo($"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} is trying to use (right clicked) {parsedData.targetNetId}");
 
             return true;
         }

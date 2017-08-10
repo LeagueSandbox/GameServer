@@ -3,6 +3,7 @@ using Ninject;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.DependencyInjection;
 
 namespace LeagueSandbox.GameServer
 {
@@ -34,6 +35,7 @@ namespace LeagueSandbox.GameServer
 
             _kernel = new StandardKernel();
             _kernel.Load(new Bindings());
+            DI.Container = _kernel;
 
             var context = _kernel.Get<ServerContext>();
             var server = _kernel.Get<Server>();
@@ -61,7 +63,7 @@ namespace LeagueSandbox.GameServer
             timer.Start();
         }
 
-        //[Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
+        [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
         public static T ResolveDependency<T>()
         {
             return _kernel.Get<T>();

@@ -1,15 +1,25 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleLoadPing : IPacketHandler
+    public class HandleLoadPing : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Ping_Load_Info;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleLoadPing(Game game, PlayerManager playerManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var loadInfo = new PingLoadInfo(data);
             var peerInfo = _playerManager.GetPeerInfo(peer);

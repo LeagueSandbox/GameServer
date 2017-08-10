@@ -1,15 +1,25 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleMap : IPacketHandler
+    public class HandleMap : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_ClientReady;
+        public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
+
+        public HandleMap(Game game, PlayerManager playerManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player

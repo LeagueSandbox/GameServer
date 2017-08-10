@@ -1,16 +1,27 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleEmotion : IPacketHandler
+    public class HandleEmotion : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
+        private readonly Logger _logger;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Emotion;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleEmotion(Game game, PlayerManager playerManager, Logger logger)
+        {
+            _game = game;
+            _playerManager = playerManager;
+            _logger = logger;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var emotion = new EmotionPacket(data);
             //for later use -> tracking, etc.
@@ -36,6 +47,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         }
     }
 
+    //TODO: move to separate file
     public enum Emotions : byte
     {
         Dance = 0,

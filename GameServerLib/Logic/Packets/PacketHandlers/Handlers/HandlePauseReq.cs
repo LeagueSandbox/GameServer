@@ -1,15 +1,25 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandlePauseReq : IPacketHandler
+    public class HandlePauseReq : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_PauseGame;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandlePauseReq(Game game, PlayerManager playerManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             _game.Pause();
             return true;

@@ -1,20 +1,30 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 using LeagueSandbox.GameServer.Logic.Players;
-using System;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleChatBoxMessage : IPacketHandler
+    public class HandleChatBoxMessage : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private readonly Game _game;
+        private readonly ChatCommandManager _chatCommandManager;
+        private readonly PlayerManager _playerManager;
+        private readonly Logger _logger;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_ChatBoxMessage;
+        public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
+
+        public HandleChatBoxMessage(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager, Logger logger)
+        {
+            _game = game;
+            _chatCommandManager = chatCommandManager;
+            _playerManager = playerManager;
+            _logger = logger;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var message = new ChatMessage(data);
             var split = message.msg.Split(' ');
@@ -61,8 +71,8 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 }
                 else
                 {
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> for a list of available commands");
+                    _chatCommandManager.SendDebugMsgFormatted(ChatCommandManager.DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> is not a valid command.");
+                    _chatCommandManager.SendDebugMsgFormatted(ChatCommandManager.DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>" + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> for a list of available commands");
                     return true;
                 }
             }

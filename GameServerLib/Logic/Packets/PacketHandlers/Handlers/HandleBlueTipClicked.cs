@@ -1,17 +1,28 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleBlueTipClicked : IPacketHandler
+    public class HandleBlueTipClicked : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private ChatCommandManager _chatCommandManager = Program.ResolveDependency<ChatCommandManager>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly ChatCommandManager _chatCommandManager;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BlueTipClicked;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleBlueTipClicked(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager)
+        {
+            _game = game;
+            _chatCommandManager = chatCommandManager;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var blueTipClicked = new BlueTipClicked(data);
             var removeBlueTip = new BlueTip(
@@ -20,14 +31,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 "",
                 0,
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
-                blueTipClicked.netid
-            );
-            _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
+                blueTipClicked.netid);
 
-            _chatCommandManager.SendDebugMsgFormatted(
-                ChatCommandManager.DebugMsgType.NORMAL,
-                string.Format("Clicked blue tip with netid: {0}", blueTipClicked.netid)
-            );
+            _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
+            _chatCommandManager.SendDebugMsgFormatted(ChatCommandManager.DebugMsgType.NORMAL, $"Clicked blue tip with netid: {blueTipClicked.netid}");
             return true;
         }
     }

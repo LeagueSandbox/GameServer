@@ -1,6 +1,7 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Interfaces;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
@@ -25,6 +26,7 @@ namespace LeagueSandbox.GameServer
             Bind<NetworkIdManager>().To<NetworkIdManager>().InSingletonScope();
 
             Bind<CSharpScriptEngine>().To<CSharpScriptEngine>().InSingletonScope();
+            Bind<IPacketHandlerProvider>().To<PacketHandlerProvider>();
         }
     }
 }

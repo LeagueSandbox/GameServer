@@ -1,23 +1,31 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleClick : IPacketHandler
+    [Disabled]
+    public class HandleClick : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly Logger _logger;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Click;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleClick(Game game, Logger logger, PlayerManager playerManager)
+        {
+            _game = game;
+            _logger = logger;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var click = new Click(data);
-            _logger.LogCoreInfo(string.Format(
-                "Object {0} clicked on {1}",
-                _playerManager.GetPeerInfo(peer).Champion.NetId,
-                click.targetNetId
-            ));
+            _logger.LogCoreInfo($"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.targetNetId}");
 
             return true;
         }

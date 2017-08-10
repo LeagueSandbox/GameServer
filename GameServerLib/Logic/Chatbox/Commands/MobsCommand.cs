@@ -1,16 +1,16 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class MobsCommand : ChatCommand
+    public class MobsCommand : ChatCommand
     {
         public MobsCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
 
@@ -36,7 +36,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 var response = new AttentionPingAns(
                     playerManager.GetPeerInfo(peer),
-                    new AttentionPing {
+                    new AttentionPing
+                    {
                         x = unit.Value.X,
                         y = unit.Value.Y,
                         targetNetId = 0,

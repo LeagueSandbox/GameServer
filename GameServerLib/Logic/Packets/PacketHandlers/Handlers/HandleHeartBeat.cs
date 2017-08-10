@@ -1,30 +1,36 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleHeartBeat : IPacketHandler
+    public class HandleHeartBeat : PacketHandlerBase
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Logger _logger;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_HeartBeat;
+        public override Channel PacketChannel => Channel.CHL_GAMEPLAY;
+
+        public HandleHeartBeat(Logger logger, PlayerManager playerManager)
+        {
+            _logger = logger;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var heartbeat = new HeartBeat(data);
 
-            float diff = heartbeat.ackTime - heartbeat.receiveTime;
+            var diff = heartbeat.ackTime - heartbeat.receiveTime;
             if (heartbeat.receiveTime > heartbeat.ackTime)
             {
-                _logger.LogCoreWarning(string.Format(
-                    "Player {0} sent an invalid heartbeat - Timestamp error (diff: {1})",
-                    _playerManager.GetPeerInfo(peer).UserId,
-                    diff
-                ));
+                _logger.LogCoreWarning($"Player {_playerManager.GetPeerInfo(peer).UserId} sent an invalid heartbeat - Timestamp error (diff: {diff})");
             }
             else
             {
-              //  Logger.LogCoreInfo("Player %d sent heartbeat (diff: %.f)", peerInfo(peer)->userId, diff);
+                //  Logger.LogCoreInfo("Player %d sent heartbeat (diff: %.f)", peerInfo(peer)->userId, diff);
             }
 
             return true;

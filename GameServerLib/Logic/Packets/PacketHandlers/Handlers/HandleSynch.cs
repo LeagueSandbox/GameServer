@@ -1,17 +1,27 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleSynch : IPacketHandler
+    public class HandleSynch : PacketHandlerBase
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Logger _logger;
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SynchVersion;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleSynch(Logger logger, Game game, PlayerManager playerManager)
+        {
+            _logger = logger;
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var version = new SynchVersion(data);
             //Logging->writeLine("Client version: %s", version->version);

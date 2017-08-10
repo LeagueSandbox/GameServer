@@ -1,27 +1,35 @@
-﻿using System.Collections.Generic;
-using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
+using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
-using System.IO;
-using System.Collections;
-using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleMove : IPacketHandler
+    public class HandleMove : PacketHandlerBase
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_MoveReq;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleMove(Game game, PlayerManager playerManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
-            var champion = peerInfo.Champion;
-            if (peerInfo == null ||
-                !champion.CanMove())
+            var champion = peerInfo?.Champion;
+            if (peerInfo == null || !champion.CanMove())
                 return true;
 
             var request = new MovementReq(data);

@@ -8,8 +8,8 @@ using System.IO;
 using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {

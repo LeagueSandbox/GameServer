@@ -1,20 +1,32 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
 {
-    class HandleSpawn : IPacketHandler
+    public class HandleSpawn : PacketHandlerBase
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private Game _game = Program.ResolveDependency<Game>();
-        private ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
-        private PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
+        private readonly Logger _logger;
+        private readonly Game _game;
+        private readonly ItemManager _itemManager;
+        private readonly PlayerManager _playerManager;
 
-        public bool HandlePacket(Peer peer, byte[] data)
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CharLoaded;
+        public override Channel PacketChannel => Channel.CHL_C2S;
+
+        public HandleSpawn(Logger logger, Game game, ItemManager itemManager, PlayerManager playerManager)
+        {
+            _logger = logger;
+            _game = game;
+            _itemManager = itemManager;
+            _playerManager = playerManager;
+        }
+
+        public override bool HandlePacket(Peer peer, byte[] data)
         {
             var start = new StatePacket2(PacketCmd.PKT_S2C_StartSpawn);
             _game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
@@ -94,7 +106,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                 else if (kv.Value is Champion)
                 {
                     var champion = kv.Value as Champion;
-                    if(champion.IsVisibleByTeam(peerInfo.Champion.Team))
+                    if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
                         var enterVisionPacket = new EnterVisionAgain(champion);
                         _game.PacketHandlerManager.sendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
@@ -111,10 +123,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                     continue;
                 }
-                else if(kv.Value is Projectile)
+                else if (kv.Value is Projectile)
                 {
                     var projectile = kv.Value as Projectile;
-                    if(projectile.IsVisibleByTeam(peerInfo.Champion.Team))
+                    if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
                         var spawnProjectilePacket = new SpawnProjectile(projectile);
                         _game.PacketHandlerManager.sendPacket(peer, spawnProjectilePacket, Channel.CHL_S2C);
