@@ -6,20 +6,27 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class KillCommand : ChatCommand
+    public class KillCommand : ChatCommandBase
     {
-        public KillCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "kill";
+        public override string Syntax => $"{Command} minions";
+
+        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
 
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (split[1] == "minions")
@@ -35,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
         }

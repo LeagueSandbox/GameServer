@@ -4,15 +4,22 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class JunglespawnCommand : ChatCommand
+    public class JunglespawnCommand : ChatCommandBase
     {
-        public JunglespawnCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Logger _logger;
+
+        public override string Command => "junglespawn";
+        public override string Syntax => "";
+
+        public JunglespawnCommand(ChatCommandManager chatCommandManager, Logger logger) : base(chatCommandManager)
+        {
+            _logger = logger;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger _logger = Program.ResolveDependency<Logger>();
-            _logger.LogCoreInfo(".junglespawn command not implemented");
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
+            _logger.LogCoreInfo($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
         }
     }
 }

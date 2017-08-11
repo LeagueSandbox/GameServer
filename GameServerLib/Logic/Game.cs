@@ -53,12 +53,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
-        private readonly IPacketHandlerProvider _packetHandlerProvider;
+        private readonly IHandlerProvider _packetHandlerProvider;
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager, PlayerManager playerManager, Logger logger, IPacketHandlerProvider handlersProvider)
+        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager, PlayerManager playerManager, Logger logger, IHandlerProvider handlersProvider)
         {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;

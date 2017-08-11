@@ -5,32 +5,25 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class CoordsCommand : ChatCommand
+    public class CoordsCommand : ChatCommandBase
     {
-        public CoordsCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Logger _logger;
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "coords";
+        public override string Syntax => "";
+
+        public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _logger = logger;
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Logger logger = Program.ResolveDependency<Logger>();
-            PlayerManager playerManager = Program.ResolveDependency<PlayerManager>();
-
-            var champion = playerManager.GetPeerInfo(peer).Champion;
-
-            logger.LogCoreInfo(string.Format(
-                "At {0}; {1}",
-                champion.X,
-                champion.Y
-            ));
-
-            _owner.SendDebugMsgFormatted(
-                DebugMsgType.NORMAL,
-                string.Format(
-                    "At Coords - X: {0} Y: {1} Z: {2}",
-                    champion.X,
-                    champion.Y,
-                    champion.GetZ()
-                )
-            );
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            _logger.LogCoreInfo($"At {champion.X}; {champion.Y}");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()}");
         }
     }
 }

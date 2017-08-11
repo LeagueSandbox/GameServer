@@ -3,14 +3,19 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class NewCommand : ChatCommand
+    public class NewCommand : ChatCommandBase
     {
-        public NewCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        public override string Command => "newcommand";
+        public override string Syntax => "";
+
+        public NewCommand(ChatCommandManager chatCommandManager) : base(chatCommandManager)
+        {
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "The new command added by " + _owner.CommandStarterCharacter + "help has been executed");
-            _owner.RemoveCommand(Command);
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "The new command added by " + ChatCommandManager.CommandStarterCharacter + "help has been executed");
+            ChatCommandManager.RemoveCommand(Command);
         }
     }
 }

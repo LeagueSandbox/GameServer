@@ -5,20 +5,27 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class ManaCommand : ChatCommand
+    public class ManaCommand : ChatCommandBase
     {
-        public ManaCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "mana";
+        public override string Syntax => $"{Command} maxMana";
+
+        public ManaCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
             float mp;
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (float.TryParse(split[1], out mp))

@@ -4,19 +4,25 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class GoldCommand : ChatCommand
+    public class GoldCommand : ChatCommandBase
     {
-        public GoldCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "gold";
+        public override string Syntax => $"{Command} goldAmount";
+
+        public GoldCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
             float gold;
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (float.TryParse(split[1], out gold))

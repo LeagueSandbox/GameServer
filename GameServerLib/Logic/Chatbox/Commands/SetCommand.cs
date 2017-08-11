@@ -1,18 +1,27 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class SetCommand : ChatCommand
+    public class SetCommand : ChatCommandBase
     {
-        public SetCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+
+        public override string Command => "set";
+        public override string Syntax => $"{Command} masterMask fieldMask";
+
+        public SetCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        {
+            _game = game;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 4)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
@@ -22,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 if (int.TryParse(split[2], out fieldNo))
                     if (float.TryParse(split[3], out value))
                     {
-                        //game.GetPeerInfo(peer).Champion.GetStats().setStat((MasterMask)blockNo, (FieldMask)fieldNo, value);
+                        //_game.GetPeerInfo(peer).Champion.GetStats().setStat((MasterMask)blockNo, (FieldMask)fieldNo, value);
                     }
         }
     }

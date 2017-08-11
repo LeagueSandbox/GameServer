@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Chatbox;
 
 namespace LeagueSandbox.GameServer.Logic.Interfaces
 {
-    public interface IPacketHandlerProvider
+    public interface IHandlerProvider
     {
-        Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllHandlers(IEnumerable<Assembly> loadFrom);
+        Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(IEnumerable<Assembly> loadFrom);
+        SortedDictionary<string, IChatCommand> GetAllChatCommandHandlers(IEnumerable<Assembly> loadFrom);
     }
 }

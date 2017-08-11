@@ -5,34 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Interfaces;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public class ChatCommandManager
     {
+        private readonly IHandlerProvider _handlersProvider;
+
         public string CommandStarterCharacter = ".";
 
-        private SortedDictionary<string, ChatCommand> _chatCommandsDictionary = new SortedDictionary<string, ChatCommand>
-        {
-            /*
-            {".gold",  new GoldCommand(".gold", ".gold goldAmount")},
-            {".health",  new HealthCommand(".health", ".health maxHealth")},
-            {".help",  new HelpCommand(".help", "")},
-            {".inhib",  new InhibCommand(".inhib", "")},
-            {".junglespawn",  new JunglespawnCommand(".junglespawn", "")},
-            {".level",  new LevelCommand(".level", ".level level")},
-            {".mana",  new ManaCommand(".mana", ".mana maxMana")},
-            {".mobs",  new MobsCommand(".mobs", ".mobs teamNumber")},
-            {".model",  new ModelCommand(".model", ".model modelName")},
-            {".packet",  new PacketCommand(".packet", "No idea, too lazy to read the code")},
-            {".set",  new SetCommand(".set", ".set masterMask fieldMask")},
-            {".size",  new SizeCommand(".size", ".size size")},
-            {".skillpoints",  new SkillpointsCommand(".skillpoints", "") },
-            {".spawn",  new SpawnCommand(".spawn", "")},
-            {".speed",  new SpeedCommand(".speed", ".speed speed")},
-            {".tp",  new TpCommand(".tp", ".tp x y")},
-            {".xp",  new XpCommand(".xp", ".xp xp")}*/
-        };
+        private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
 
         public enum DebugMsgType
         {
@@ -78,48 +61,22 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public ChatCommandManager()
+        public ChatCommandManager(IHandlerProvider handlersProvider)
         {
-            AddCommand(new HelpCommand("help", "", this));
+            _handlersProvider = handlersProvider;
         }
 
         public void LoadCommands()
         {
+            //TODO: cyclic dependency
             var _game = Program.ResolveDependency<Game>();
             if (!_game.Config.ChatCheatsEnabled)
-            {
                 return;
-            }
 
-            AddCommand(new AdCommand("ad", "ad bonusAd", this));
-            AddCommand(new ApCommand("ap", "ap bonusAp", this));
-            AddCommand(new ChangeTeamCommand("changeteam", "changeteam teamNumber", this));
-            AddCommand(new ChCommand("ch", "ch championName", this));
-            AddCommand(new CoordsCommand("coords", "", this));
-            AddCommand(new GoldCommand("gold", "gold goldAmount", this));
-            AddCommand(new HealthCommand("health", "health maxHealth", this));
-            AddCommand(new InhibCommand("inhib", "", this));
-            AddCommand(new JunglespawnCommand("junglespawn", "", this));
-            AddCommand(new KillCommand("kill", "kill minions", this));
-            AddCommand(new LevelCommand("level", "level level", this));
-            AddCommand(new ManaCommand("mana", "mana maxMana", this));
-            AddCommand(new MobsCommand("mobs", "mobs teamNumber", this));
-            AddCommand(new ModelCommand("model", "model modelName", this));
-            AddCommand(new PacketCommand("packet", "packet XX XX XX...", this));
-            AddCommand(new RainbowCommand("rainbow", "rainbow alpha speed", this));
-            AddCommand(new ReloadScriptsCommand("reloadscripts", "", this));
-            AddCommand(new ReviveCommand("revive", "", this));
-            AddCommand(new SetCommand("set", "set masterMask fieldMask", this));
-            AddCommand(new SizeCommand("size", "size size", this));
-            AddCommand(new SkillpointsCommand("skillpoints", "", this));
-            AddCommand(new SpawnCommand("spawn", "spawn minionsblue, minionspurple", this));
-            AddCommand(new SpawnStateCommand("spawnstate", "spawnstate 0 (disable) / 1 (enable)", this));
-            AddCommand(new SpeedCommand("speed", "speed speed", this));
-            AddCommand(new TpCommand("tp", "tp x y", this));
-            AddCommand(new XpCommand("xp", "xp xp", this));
+            _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
         }
 
-        public bool AddCommand(ChatCommand command)
+        public bool AddCommand(ChatCommandBase command)
         {
             if (_chatCommandsDictionary.ContainsKey(command.Command))
             {
@@ -130,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             return true;
         }
 
-        public bool RemoveCommand(ChatCommand command)
+        public bool RemoveCommand(ChatCommandBase command)
         {
             if (_chatCommandsDictionary.ContainsValue(command))
             {
@@ -152,7 +109,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             return false;
         }
 
-        public List<ChatCommand> GetCommands()
+        public List<IChatCommand> GetCommands()
         {
             return _chatCommandsDictionary.Values.ToList();
         }
@@ -162,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             return _chatCommandsDictionary.Keys.ToList();
         }
 
-        public ChatCommand GetCommand(string commandString)
+        public IChatCommand GetCommand(string commandString)
         {
             if (_chatCommandsDictionary.ContainsKey(commandString))
             {

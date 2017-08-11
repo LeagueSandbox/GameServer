@@ -4,19 +4,25 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class SizeCommand : ChatCommand
+    public class SizeCommand : ChatCommandBase
     {
-        public SizeCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "size";
+        public override string Syntax => $"{Command} size";
+
+        public SizeCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
             float size;
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }

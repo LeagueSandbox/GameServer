@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer
             Bind<NetworkIdManager>().To<NetworkIdManager>().InSingletonScope();
 
             Bind<CSharpScriptEngine>().To<CSharpScriptEngine>().InSingletonScope();
-            Bind<IPacketHandlerProvider>().To<PacketHandlerProvider>();
+            Bind<IHandlerProvider>().To<PacketHandlerProvider>();
         }
     }
 }

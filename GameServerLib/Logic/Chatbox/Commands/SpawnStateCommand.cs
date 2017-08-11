@@ -4,19 +4,25 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class SpawnStateCommand : ChatCommand
+    public class SpawnStateCommand : ChatCommandBase
     {
-        public SpawnStateCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+
+        public override string Command => "spawnstate";
+        public override string Syntax => $"{Command} 0 (disable) / 1 (enable)";
+
+        public SpawnStateCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        {
+            _game = game;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var _game = Program.ResolveDependency<Game>();
-
             var split = arguments.ToLower().Split(' ');
 
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (split[1] == "1")
@@ -29,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
         }

@@ -4,20 +4,26 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class ModelCommand : ChatCommand
+    public class ModelCommand : ChatCommandBase
     {
-        public ModelCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "model";
+        public override string Syntax => $"{Command} modelName";
+
+        public ModelCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.Split(' ');
             if (split.Length >= 2)
                 _playerManager.GetPeerInfo(peer).Champion.Model = split[1];
             else
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
         }

@@ -187,7 +187,7 @@
     <Compile Include="Logic\API\UnitCrowdControl.cs" />
     <Compile Include="Logic\Blowfish.cs" />
     <Compile Include="Logic\Chatbox\ChatCommandManager.cs" />
-    <Compile Include="Logic\Chatbox\ChatCommand.cs" />
+    <Compile Include="Logic\Chatbox\ChatCommandBase.cs" />
     <Compile Include="Logic\Chatbox\Commands\KillCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\ChangeTeamCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\RainbowCommand.cs" />
@@ -259,7 +259,8 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\BaseTurret.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\LaneTurret.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
-    <Compile Include="Logic\Interfaces\IPacketHandlerProvider.cs" />
+    <Compile Include="Logic\Interfaces\IChatCommand.cs" />
+    <Compile Include="Logic\Interfaces\IHandlerProvider.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />

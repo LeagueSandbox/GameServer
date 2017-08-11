@@ -7,21 +7,28 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class PacketCommand : ChatCommand
+    public class PacketCommand : ChatCommandBase
     {
-        public PacketCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "packet";
+        public override string Syntax => $"{Command} XX XX XX...";
+
+        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             try
             {
                 var s = arguments.Split(' ');
                 if (s.Length < 2)
                 {
-                    _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }

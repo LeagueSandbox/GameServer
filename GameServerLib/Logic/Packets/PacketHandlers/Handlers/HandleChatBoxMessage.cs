@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers
                 message.msg = message.msg.Remove(0, 1);
                 split = message.msg.ToLower().Split(' ');
 
-                ChatCommand command = _chatCommandManager.GetCommand(split[0]);
+                var command = _chatCommandManager.GetCommand(split[0]);
                 if (command != null)
                 {
                     try

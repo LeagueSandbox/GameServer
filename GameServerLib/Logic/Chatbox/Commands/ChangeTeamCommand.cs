@@ -4,18 +4,24 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class ChangeTeamCommand : ChatCommand
+    public class ChangeTeamCommand : ChatCommandBase
     {
-        public ChangeTeamCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "changeteam";
+        public override string Syntax => $"{Command} teamNumber";
+
+        public ChangeTeamCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        {
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
@@ -27,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
 
             var team = CustomConvert.ToTeamId(t);
-            playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
+            _playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
         }
     }
 }

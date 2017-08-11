@@ -5,19 +5,27 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    public class ReloadScriptsCommand : ChatCommand
+    public class ReloadScriptsCommand : ChatCommandBase
     {
-        public ReloadScriptsCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+
+        public override string Command => "reloadscripts";
+        public override string Syntax => "";
+
+        public ReloadScriptsCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        {
+            _game = game;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var game = Program.ResolveDependency<Game>();
-            if (game.LoadScripts())
+            if (_game.LoadScripts())
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts reloaded.");
-            } else
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts reloaded.");
+            }
+            else
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts failed to reload.");
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts failed to reload.");
             }
         }
     }

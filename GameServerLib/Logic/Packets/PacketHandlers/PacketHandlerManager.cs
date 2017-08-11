@@ -21,9 +21,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly BlowFish _blowfish;
         private readonly Host _server;
         private readonly PlayerManager _playerManager;
-        private readonly IPacketHandlerProvider _packetHandlerProvider;
+        private readonly IHandlerProvider _packetHandlerProvider;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager, IPacketHandlerProvider handlersProvider)
+        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager, IHandlerProvider handlersProvider)
         {
             _logger = logger;
             _blowfish = blowfish;
@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _packetHandlerProvider = handlersProvider;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
-            _handlerTable = _packetHandlerProvider.GetAllHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
+            _handlerTable = _packetHandlerProvider.GetAllPacketHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
         }
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelID)

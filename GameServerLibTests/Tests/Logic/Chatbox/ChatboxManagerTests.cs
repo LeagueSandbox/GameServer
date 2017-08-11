@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServerTests.Tests.Logic.Chatbox;
 
 namespace LeagueSandbox.GameServerTests.Tests
 {
@@ -10,9 +12,8 @@ namespace LeagueSandbox.GameServerTests.Tests
         [TestMethod]
         public void AddCommandTest()
         {
-            var chatboxManager = new ChatCommandManager();
-
-            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
+            var chatboxManager = new ChatCommandManager(new PacketHandlerProvider());
+            var command = new TestCommand(chatboxManager, "ChatboxManagerTestsTestCommand", "");
             var result = chatboxManager.AddCommand(command);
             Assert.AreEqual(true, result);
             result = chatboxManager.AddCommand(command);
@@ -22,9 +23,9 @@ namespace LeagueSandbox.GameServerTests.Tests
         [TestMethod]
         public void RemoveCommandTest()
         {
-            var chatboxManager = new ChatCommandManager();
+            var chatboxManager = new ChatCommandManager(new PacketHandlerProvider());
 
-            var command = new HelpCommand("ChatboxManagerTestsTestCommand", "", chatboxManager);
+            var command = new TestCommand(chatboxManager, "ChatboxManagerTestsTestCommand", "");
             var result = chatboxManager.AddCommand(command);
             Assert.AreEqual(true, result);
 
