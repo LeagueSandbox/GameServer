@@ -77,6 +77,16 @@ namespace LeagueSandbox.GameServer.Logic
             IsDashing = false;
         }
 
+        public virtual void OnAdded()
+        {
+            _game.Map.CollisionHandler.AddObject(this);
+        }
+
+        public virtual void OnRemoved()
+        {
+            _game.Map.CollisionHandler.RemoveObject(this);
+        }
+
         public virtual void onCollision(GameObject collider) { }
 
         /// <summary>
@@ -227,7 +237,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public virtual float GetZ()
         {
-            return _game.Map.GetHeightAtLocation(X, Y);
+            return _game.Map.AIMesh.GetHeightAtLocation(X, Y);
         }
 
         public bool IsCollidingWith(GameObject o)

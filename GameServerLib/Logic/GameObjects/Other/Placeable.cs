@@ -27,6 +27,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Name = name;
         }
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.PacketNotifier.NotifySpawn(this);
+        }
+
         public override bool isInDistress()
         {
             return DistressCause != null;

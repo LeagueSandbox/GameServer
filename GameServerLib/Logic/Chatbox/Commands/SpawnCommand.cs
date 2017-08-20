@@ -57,10 +57,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
                 super.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
 
-                _game.Map.AddObject(caster);
-                _game.Map.AddObject(cannon);
-                _game.Map.AddObject(melee);
-                _game.Map.AddObject(super);
+                _game.ObjectManager.AddObject(caster);
+                _game.ObjectManager.AddObject(cannon);
+                _game.ObjectManager.AddObject(melee);
+                _game.ObjectManager.AddObject(super);
             }
             else if (split[1] == "minionspurple")
             {
@@ -93,10 +93,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
                 super.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
 
-                _game.Map.AddObject(caster);
-                _game.Map.AddObject(cannon);
-                _game.Map.AddObject(melee);
-                _game.Map.AddObject(super);
+                _game.ObjectManager.AddObject(caster);
+                _game.ObjectManager.AddObject(cannon);
+                _game.ObjectManager.AddObject(melee);
+                _game.ObjectManager.AddObject(super);
             }
         }
     }

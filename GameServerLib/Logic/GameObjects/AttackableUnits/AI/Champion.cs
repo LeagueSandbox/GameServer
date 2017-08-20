@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Shop = Shop.CreateShop(this);
 
             stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = _game.Map.GetGoldPerSecond();
+            stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
             stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -86,6 +86,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
+        }
+
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.ObjectManager.AddChampion(this);
+            _game.PacketNotifier.NotifyChampionSpawned(this, Team);
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.ObjectManager.RemoveChampion(this);
         }
 
         public int GetTeamSize()
@@ -184,8 +197,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             var coords = new Vector2
             {
-                X = _game.Map.GetRespawnLocation(Team).X,
-                Y = _game.Map.GetRespawnLocation(Team).Y
+                X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
+                Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
             };
             return new Vector2(coords.X, coords.Y);
         }
@@ -229,7 +242,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
-                var objects = _game.Map.GetObjects();
+                var objects = _game.ObjectManager.GetObjects();
                 var distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
                 var range = Math.Max(stats.Range.Total, DETECT_RANGE);
@@ -255,7 +268,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.IsGeneratingGold() && _game.Map.GameTime >= _game.Map.FirstGoldTime)
+            if (!stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
                 stats.SetGeneratingGold(true);
                 _logger.LogCoreInfo("Generating Gold!");
@@ -351,7 +364,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool LevelUp()
         {
             var stats = GetStats();
-            var expMap = _game.Map.ExpToLevelUp;
+            var expMap = _game.Map.MapGameScript.ExpToLevelUp;
             if (stats.GetLevel() >= expMap.Count)
                 return false;
             if (stats.Experience < expMap[stats.Level])
@@ -374,7 +387,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void die(Unit killer)
         {
             RespawnTimer = 5000 + GetStats().Level * 2500;
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
 
@@ -382,7 +395,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (cKiller == null && _championHitFlagTimer > 0)
             {
-                cKiller = _game.Map.GetObjectById(_playerHitId) as Champion;
+                cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
                 _logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
@@ -394,7 +407,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             cKiller.ChampionGoldFromMinions = 0;
 
-            float gold = _game.Map.GetGoldFor(this);
+            float gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
                 "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
                 gold,
@@ -420,16 +433,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (_game.Map.IsKillGoldRewardReductionActive && _game.Map.HasFirstBloodHappened)
+            if (_game.Map.MapGameScript.IsKillGoldRewardReductionActive
+                && _game.Map.MapGameScript.HasFirstBloodHappened)
             {
                 gold -= gold * 0.25f;
                 //CORE_INFO("Still some minutes for full gold reward on champion kills");
             }
 
-            if (!_game.Map.HasFirstBloodHappened)
+            if (!_game.Map.MapGameScript.HasFirstBloodHappened)
             {
                 gold += 100;
-                _game.Map.HasFirstBloodHappened = true;
+                _game.Map.MapGameScript.HasFirstBloodHappened = true;
             }
 
             _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);
@@ -439,7 +453,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
         }
 
         public override void onCollision(GameObject collider)

@@ -29,10 +29,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             State = InhibitorState.Alive;
             SetTeam(team);
         }
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.ObjectManager.AddInhibitor(this);
+        }
 
         public override void die(Unit killer)
         {
-            var objects = _game.Map.GetObjects().Values;
+            var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
                 var u = obj as Unit;

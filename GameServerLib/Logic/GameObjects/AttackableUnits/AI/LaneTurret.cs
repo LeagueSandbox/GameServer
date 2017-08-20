@@ -47,12 +47,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var blueTeam = new List<Champion>();
             var purpTeam = new List<Champion>();
-            foreach (var player in _game.Map.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
             {
                 blueTeam.Add(player);
             }
 
-            foreach (var player in _game.Map.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
             {
                 purpTeam.Add(player);
             }
@@ -169,13 +169,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 250;
                     }
 
-                    if (_game.Map.GameTime > 40000 - (GetEnemyChampionsCount() * 2000) &&
-                        _game.Map.GameTime < 400000 - (GetEnemyChampionsCount() * 2000))
+                    if (_game.GameTime > 40000 - (GetEnemyChampionsCount() * 2000) &&
+                        _game.GameTime < 400000 - (GetEnemyChampionsCount() * 2000))
                     {
-                        stats.MagicResist.BaseValue = 100.0f + ((_game.Map.GameTime - 30000) / 60000);
-                        stats.AttackDamage.BaseValue = 152.0f + ((_game.Map.GameTime - 30000) / 60000) * 4;
+                        stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 30000) / 60000);
+                        stats.AttackDamage.BaseValue = 152.0f + ((_game.GameTime - 30000) / 60000) * 4;
                     }
-                    else if (_game.Map.GameTime < 30000)
+                    else if (_game.GameTime < 30000)
                     {
                         stats.MagicResist.BaseValue = 100.0f;
                         stats.AttackDamage.BaseValue = 152.0f;
@@ -192,13 +192,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         stats.CurrentHealth = 1300.0f + GetEnemyChampionsCount() * 250.0f;
                         stats.HealthPoints.BaseValue = 1300.0f + GetEnemyChampionsCount() * 250.0f;
                     }
-                    if (_game.Map.GameTime > 480000 && _game.Map.GameTime < 1620000)
+                    if (_game.GameTime > 480000 && _game.GameTime < 1620000)
                     {
-                        stats.Armor.BaseValue = 60.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.MagicResist.BaseValue = 100.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.AttackDamage.BaseValue = 170.0f + ((_game.Map.GameTime - 480000) / 60000) * 4;
+                        stats.Armor.BaseValue = 60.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.AttackDamage.BaseValue = 170.0f + ((_game.GameTime - 480000) / 60000) * 4;
                     }
-                    else if (_game.Map.GameTime < 480000)
+                    else if (_game.GameTime < 480000)
                     {
                         stats.Armor.BaseValue = 60.0f;
                         stats.MagicResist.BaseValue = 100.0f;
@@ -218,13 +218,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 250;
                     }
 
-                    if (_game.Map.GameTime > 480000 && _game.Map.GameTime < 2220000)
+                    if (_game.GameTime > 480000 && _game.GameTime < 2220000)
                     {
-                        stats.Armor.BaseValue = 67.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.MagicResist.BaseValue = 100.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.AttackDamage.BaseValue = 190.0f + ((_game.Map.GameTime - 480000) / 60000) * 4;
+                        stats.Armor.BaseValue = 67.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.AttackDamage.BaseValue = 190.0f + ((_game.GameTime - 480000) / 60000) * 4;
                     }
-                    else if (_game.Map.GameTime < 480000)
+                    else if (_game.GameTime < 480000)
                     {
                         stats.Armor.BaseValue = 67.0f;
                         stats.MagicResist.BaseValue = 100.0f;
@@ -244,19 +244,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 125;
                     }
 
-                    if (_game.Map.GameTime < 1)
+                    if (_game.GameTime < 1)
                     {
                         stats.Armor.BaseValue = 65.0f;
                         stats.MagicResist.BaseValue = 100.0f;
                         stats.AttackDamage.BaseValue = 180.0f;
                     }
-                    else if (_game.Map.GameTime > 480000 && _game.Map.GameTime < 2220000)
+                    else if (_game.GameTime > 480000 && _game.GameTime < 2220000)
                     {
-                        stats.Armor.BaseValue = 65.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.MagicResist.BaseValue = 100.0f + ((_game.Map.GameTime - 480000) / 60000);
-                        stats.AttackDamage.BaseValue = 180.0f + ((_game.Map.GameTime - 480000) / 60000) * 4;
+                        stats.Armor.BaseValue = 65.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
+                        stats.AttackDamage.BaseValue = 180.0f + ((_game.GameTime - 480000) / 60000) * 4;
                     }
-                    else if (_game.Map.GameTime < 480000)
+                    else if (_game.GameTime < 480000)
                     {
                         stats.Armor.BaseValue = 65.0f;
                         stats.MagicResist.BaseValue = 100.0f;

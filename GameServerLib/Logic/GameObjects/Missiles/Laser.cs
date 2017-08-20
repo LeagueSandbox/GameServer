@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (_originSpell.state != SpellState.STATE_CASTING)
             {
-                var objects = _game.Map.GetObjects().Values;
+                var objects = _game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
                 {
                     var u = obj as Unit;

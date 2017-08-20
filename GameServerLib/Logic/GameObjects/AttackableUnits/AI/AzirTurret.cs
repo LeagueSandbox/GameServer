@@ -22,7 +22,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SetTeam(team);
             stats.Range.BaseValue = 905.0f;
         }
-
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.PacketNotifier.NotifySpawn(this);
+        }
         public override void refreshWaypoints()
         {
         }

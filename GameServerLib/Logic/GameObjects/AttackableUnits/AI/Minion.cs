@@ -44,11 +44,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             curMainWaypoint = 0;
             _AIPaused = false;
 
-            var spawnSpecifics = _game.Map.GetMinionSpawnPosition(SpawnPosition);
+            var spawnSpecifics = _game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
             setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            _game.Map.SetMinionStats(this); // Let the map decide how strong this minion has to be.
+            _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             var minionModel = "";
             if (spawnSpecifics.Item1 == Enet.TeamId.TEAM_BLUE) // If we're the blue side
@@ -115,7 +115,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _AIPaused = b;
         }
-
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.PacketNotifier.NotifyMinionSpawned(this, Team);
+        }
         public override void update(float diff)
         {
             base.update(diff);
@@ -159,7 +163,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Unit nextTarget = null;
             var nextTargetPriority = 14;
 
-            var objects = _game.Map.GetObjects();
+            var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
                 var u = it.Value as Unit;
@@ -169,7 +173,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     u.IsDead ||                          // alive
                     u.Team == Team ||                    // not on our team
                     GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.Map.TeamHasVisionOn(Team, u)) // visible to this minion
+                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
                     continue;                             // If not, look for something else
 
                 var priority = (int)ClassifyTarget(u);  // get the priority.

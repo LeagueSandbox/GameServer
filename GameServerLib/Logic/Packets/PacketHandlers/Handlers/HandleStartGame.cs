@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
                     _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerReconnected, peerInfo.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    float gameTime = map.GameTime / 1000.0f;
+                    float gameTime = _game.GameTime / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
                     _game.PacketHandlerManager.sendPacket(peer, timer, Channel.CHL_S2C);
@@ -81,10 +81,10 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
 
                 foreach (var p in _playerManager.GetPlayers())
                 {
-                    map.AddObject(p.Item2.Champion);
+                    _game.ObjectManager.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    float gameTime = map.GameTime / 1000.0f;
+                    float gameTime = _game.GameTime / 1000.0f;
 
                     var timer = new GameTimer(gameTime); // 0xC1
                     _game.PacketHandlerManager.sendPacket(p.Item2.Peer, timer, Channel.CHL_S2C);

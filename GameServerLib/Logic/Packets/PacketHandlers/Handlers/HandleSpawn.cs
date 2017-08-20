@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             }
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
-            var bluePill = _itemManager.GetItemType(_game.Map.GetBluePillId());
+            var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
             var itemInstance = peerInfo.Champion.getInventory().SetExtraItem(7, bluePill);
             var buyItem = new BuyItemAns(peerInfo.Champion, itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
             peerInfo.Champion.GetStats().setSummonerSpellEnabled(0, true);
             peerInfo.Champion.GetStats().setSummonerSpellEnabled(1, true);
 
-            var objects = _game.Map.GetObjects();
+            var objects = _game.ObjectManager.GetObjects();
             foreach (var kv in objects)
             {
                 if (kv.Value is LaneTurret)

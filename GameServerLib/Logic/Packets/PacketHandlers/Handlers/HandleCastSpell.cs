@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets
         {
             var spell = new CastSpell(data);
 
-            var targetObj = _game.Map.GetObjectById(spell.targetNetId);
+            var targetObj = _game.ObjectManager.GetObjectById(spell.targetNetId);
             var TargetUnit = targetObj as Unit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null)

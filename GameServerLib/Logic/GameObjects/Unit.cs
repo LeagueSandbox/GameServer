@@ -145,6 +145,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             stats.CurrentHealth = stats.HealthPoints.Total;
             stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
+
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            _game.ObjectManager.AddVisionUnit(this);
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.ObjectManager.RemoveVisionUnit(this);
+        }
+
         public Stats GetStats()
         {
             return stats;
@@ -277,7 +290,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (TargetUnit != null)
             {
-                if (TargetUnit.IsDead || !_game.Map.TeamHasVisionOn(Team, TargetUnit))
+                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit))
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;
@@ -304,7 +317,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                                 0,
                                 _autoAttackProjId
                             );
-                            _game.Map.AddObject(p);
+                            _game.ObjectManager.AddObject(p);
                             _game.PacketNotifier.NotifyShowProjectile(p);
                         }
                         else
@@ -364,7 +377,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (AutoAttackTarget == null
                     || AutoAttackTarget.IsDead
-                    || !_game.Map.TeamHasVisionOn(Team, AutoAttackTarget)
+                    || !_game.ObjectManager.TeamHasVisionOn(Team, AutoAttackTarget)
                 )
                 {
                     IsAttacking = false;
@@ -514,15 +527,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void die(Unit killer)
         {
             setToRemove();
-            _game.Map.StopTargeting(this);
+            _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
             var onDie = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
 
-            var exp = _game.Map.GetExperienceFor(this);
-            var champs = _game.Map.GetChampionsInRange(this, EXP_RANGE, true);
+            var exp = _game.Map.MapGameScript.GetExperienceFor(this);
+            var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
 
@@ -543,7 +556,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (cKiller == null)
                     return;
 
-                var gold = _game.Map.GetGoldFor(this);
+                var gold = _game.Map.MapGameScript.GetGoldFor(this);
                 if (gold <= 0)
                 {
                     return;

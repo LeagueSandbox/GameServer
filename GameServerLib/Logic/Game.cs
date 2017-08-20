@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Threading;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
+using System.IO;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -33,6 +34,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public int PlayersReady { get; private set; }
 
+        public float GameTime { get; private set; } = 0;
+        private float _nextSyncTime = 10 * 1000;
+
+
+        public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
         public PacketNotifier PacketNotifier { get; private set; }
         public PacketHandlerManager PacketHandlerManager { get; private set; }
@@ -85,7 +91,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager);
 
-            RegisterMap((byte)Config.GameConfig.Map);
+
+            ObjectManager = new ObjectManager(this);
+            Map = new Map(this);
 
             PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
@@ -95,6 +103,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger.LogCoreInfo("Loading C# Scripts");
 
             LoadScripts();
+
+            Map.Init();
 
             foreach (var p in Config.Players)
             {
@@ -117,28 +127,6 @@ namespace LeagueSandbox.GameServer.Core.Logic
         {
             var scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
             return scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
-        }
-
-        public void RegisterMap(byte mapId)
-        {
-            var mapName = $"{Config.ContentManager.GameModeName}-Map{mapId}";
-            var dic = new Dictionary<string, Type>
-            {
-                { "LeagueSandbox-Default-Map1", typeof(SummonersRift) },
-                { "LeagueSandbox-Default-Map4", typeof(OriginalTwistedTreeline) },
-                // { "LeagueSandbox-Default-Map8", typeof(CrystalScar) },
-                { "LeagueSandbox-Default-Map10", typeof(TwistedTreeline) },
-                // { "LeagueSandbox-Default-Map11", typeof(NewSummonersRift) },
-                { "LeagueSandbox-Default-Map12", typeof(HowlingAbyss) },
-            };
-
-            if (!dic.ContainsKey(mapName))
-            {
-                Map = new SummonersRift(this);
-                return;
-            }
-
-            Map = (Map)Activator.CreateInstance(dic[mapName], this);
         }
 
         public void NetLoop()
@@ -191,12 +179,27 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
                     {
-                        Map.Update((float)sinceLastMapTime);
-                        _gameScriptTimers.ForEach(gsTimer => gsTimer.Update((float)sinceLastMapTime));
-                        _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+                        Update((float)sinceLastMapTime);
+
                     }
                 }
                 Thread.Sleep(1);
+            }
+        }
+        public void Update(float diff)
+        {
+            GameTime += diff;
+            ObjectManager.Update(diff);
+            Map.Update(diff);
+            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
+            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+
+            // By default, synchronize the game time every 10 seconds
+            _nextSyncTime += diff;
+            if (_nextSyncTime >= 10 * 1000)
+            {
+                PacketNotifier.NotifyGameTimer();
+                _nextSyncTime = 0;
             }
         }
 
