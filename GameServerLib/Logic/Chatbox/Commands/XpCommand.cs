@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "xp";
-        public override string Syntax => $"{Command} xp";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} xp";
 
         public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
         {

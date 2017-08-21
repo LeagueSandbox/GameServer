@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly Game _game;
 
         public override string Command => "set";
-        public override string Syntax => $"{Command} masterMask fieldMask";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} masterMask fieldMask";
 
         public SetCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
         {

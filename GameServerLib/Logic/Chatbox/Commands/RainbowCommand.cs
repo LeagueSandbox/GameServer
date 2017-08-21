@@ -20,8 +20,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private float _speed = 0.25f;
         private int _delay = 250;
 
-        public override string Command => $"rainbow";
-        public override string Syntax => $"{Command} alpha speed";
+        public override string Command => "rainbow";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} alpha speed";
 
         public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
         {

@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "coords";
-        public override string Syntax => "";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
 
         public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager) : base(chatCommandManager)
         {

@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly Game _game;
 
         public override string Command => "spawnstate";
-        public override string Syntax => $"{Command} 0 (disable) / 1 (enable)";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} 0 (disable) / 1 (enable)";
 
         public SpawnStateCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
         {

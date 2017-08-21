@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "ch";
-        public override string Syntax => $"{Command} championName";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} championName";
 
         public ChCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
         {

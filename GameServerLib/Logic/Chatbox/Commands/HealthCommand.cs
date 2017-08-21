@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "health";
-        public override string Syntax => $"{Command} maxHealth";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} maxHealth";
 
         public HealthCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
         {

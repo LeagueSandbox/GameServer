@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "mobs";
-        public override string Syntax => $"{Command} teamNumber";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} teamNumber";
 
         public MobsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
         {

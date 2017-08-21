@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "inhib";
-        public override string Syntax => "";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
 
         public InhibCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
         {

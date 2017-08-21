@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly Game _game;
 
         public override string Command => "help";
-        public override string Syntax => "";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
 
         public HelpCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
         {

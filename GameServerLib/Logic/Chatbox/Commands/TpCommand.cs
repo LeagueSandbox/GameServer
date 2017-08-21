@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "tp";
-        public override string Syntax => $"{Command} x y";
+        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} x y";
 
         public TpCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
         {
