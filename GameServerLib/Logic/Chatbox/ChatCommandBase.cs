@@ -1,5 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Interfaces;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {

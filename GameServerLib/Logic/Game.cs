@@ -14,10 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using LeagueSandbox.GameServer.Logic.Interfaces;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 using System.IO;
+using LeagueSandbox.GameServer.Logic.Handlers;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -53,12 +53,12 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
-        private readonly IHandlerProvider _packetHandlerProvider;
+        private readonly IHandlersProvider _packetHandlerProvider;
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager, PlayerManager playerManager, Logger logger, IHandlerProvider handlersProvider)
+        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager, PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider)
         {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;

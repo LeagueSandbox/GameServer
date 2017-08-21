@@ -7,7 +7,8 @@ using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic;
 using BlowFishCS;
-using LeagueSandbox.GameServer.Logic.Interfaces;
+using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -21,9 +22,9 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly BlowFish _blowfish;
         private readonly Host _server;
         private readonly PlayerManager _playerManager;
-        private readonly IHandlerProvider _packetHandlerProvider;
+        private readonly IHandlersProvider _packetHandlerProvider;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager, IHandlerProvider handlersProvider)
+        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager, IHandlersProvider handlersProvider)
         {
             _logger = logger;
             _blowfish = blowfish;

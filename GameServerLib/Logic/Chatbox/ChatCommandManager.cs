@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.Interfaces;
+using LeagueSandbox.GameServer.Logic.Handlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public class ChatCommandManager
     {
-        private readonly IHandlerProvider _handlersProvider;
+        private readonly IHandlersProvider _handlersProvider;
 
         public string CommandStarterCharacter = ".";
 
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public ChatCommandManager(IHandlerProvider handlersProvider)
+        public ChatCommandManager(IHandlersProvider handlersProvider)
         {
             _handlersProvider = handlersProvider;
         }

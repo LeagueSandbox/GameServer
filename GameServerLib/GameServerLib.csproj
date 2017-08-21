@@ -259,8 +259,8 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\BaseTurret.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\LaneTurret.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
-    <Compile Include="Logic\Interfaces\IChatCommand.cs" />
-    <Compile Include="Logic\Interfaces\IHandlerProvider.cs" />
+    <Compile Include="Logic\Chatbox\IChatCommand.cs" />
+    <Compile Include="Logic\Handlers\IHandlersProvider.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />
@@ -276,7 +276,7 @@
     <Compile Include="Logic\ObjectManager.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Attributes\DisabledAttribute.cs" />
-    <Compile Include="Logic\Packets\PacketHandlerProvider.cs" />
+    <Compile Include="Logic\Handlers\HandlersProvider.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleExit.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleLockCamera.cs" />
@@ -298,7 +298,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleBlueTipClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleSurrender.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
-    <Compile Include="Logic\Interfaces\IPacketHandler.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandler.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleAttentionPing.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Handlers\HandleBuyItem.cs" />

@@ -2,20 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.DependencyInjection;
-using LeagueSandbox.GameServer.Logic.Interfaces;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 using Ninject;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Handlers
 {
-    public class PacketHandlerProvider : IHandlerProvider
+    public class HandlersProvider : IHandlersProvider
     {
         public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(IEnumerable<Assembly> loadFrom)
         {

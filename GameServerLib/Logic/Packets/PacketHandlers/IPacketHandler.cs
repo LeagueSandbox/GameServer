@@ -1,6 +1,6 @@
 ﻿using ENet;
 
-namespace LeagueSandbox.GameServer.Core.Logic
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public interface IPacketHandler
     {

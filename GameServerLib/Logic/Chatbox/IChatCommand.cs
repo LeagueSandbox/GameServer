@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 
-namespace LeagueSandbox.GameServer.Logic.Interfaces
+namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public interface IChatCommand
     {
