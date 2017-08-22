@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using System.Runtime.InteropServices;
-using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic;
 using BlowFishCS;
+using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Handlers;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
-namespace LeagueSandbox.GameServer.Core.Logic
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class PacketHandlerManager
     {
@@ -24,7 +21,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly PlayerManager _playerManager;
         private readonly IHandlersProvider _packetHandlerProvider;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager, IHandlersProvider handlersProvider)
+        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager,
+            IHandlersProvider handlersProvider)
         {
             _logger = logger;
             _blowfish = blowfish;
@@ -33,7 +31,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _packetHandlerProvider = handlersProvider;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
-            _handlerTable = _packetHandlerProvider.GetAllPacketHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
+            var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
+            _handlerTable = _packetHandlerProvider.GetAllPacketHandlers(loadFrom);
         }
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelID)
@@ -65,7 +64,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
             return null;
         }
-        public bool sendPacket(Peer peer, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool sendPacket(Peer peer, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             return sendPacket(peer, packet.GetBytes(), channelNo, flag);
         }
@@ -120,19 +120,21 @@ namespace LeagueSandbox.GameServer.Core.Logic
             else
                 temp = data;
 
-            var packet = new Packet();
+            var packet = new ENet.Packet();
             packet.Create(temp);
             _server.Broadcast((byte)channelNo, ref packet);
             return true;
         }
 
-        public bool broadcastPacket(GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacket(GameServer.Logic.Packets.Packet packet, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacket(packet.GetBytes(), channelNo, flag);
         }
 
 
-        public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var ci in _playerManager.GetPlayers())
                 if (ci.Item2.Peer != null && ci.Item2.Team == team)
@@ -140,17 +142,20 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return true;
         }
 
-        public bool broadcastPacketTeam(TeamId team, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketTeam(TeamId team, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool broadcastPacketVision(GameObject o, GameServer.Logic.Packets.Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketVision(GameObject o, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             return broadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
+            PacketFlags flag = PacketFlags.Reliable)
         {
             var game = Program.ResolveDependency<Game>();
             foreach (var team in _teamsEnumerator)
@@ -193,7 +198,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             return false;
         }
 
-        public bool handlePacket(Peer peer, Packet packet, Channel channelID)
+        public bool handlePacket(Peer peer, ENet.Packet packet, Channel channelID)
         {
             var data = new byte[(int)packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);

@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Attributes;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.DependencyInjection;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers.Handlers;
 using Ninject;
 
 namespace LeagueSandbox.GameServer.Logic.Handlers
@@ -27,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                 foreach (var handler in handlers)
                 {
                     // Check if handler is disabled
-                    if (handler.GetCustomAttribute<DisabledAttribute>() != null)
+                    if (handler.GetCustomAttribute<DisabledHandlerAttribute>() != null)
                         continue;
 
                     var instance = DI.Container.Get(handler) as PacketHandlerBase;
@@ -60,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                 foreach (var handler in handlers)
                 {
                     // Check if handler is disabled
-                    if (handler.GetCustomAttribute<DisabledAttribute>() != null)
+                    if (handler.GetCustomAttribute<DisabledHandlerAttribute>() != null)
                         continue;
 
                     var instance = DI.Container.Get(handler) as IChatCommand;

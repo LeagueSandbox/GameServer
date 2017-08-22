@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using ENet;
 
 namespace LeagueSandbox.GameServer.Logic.Enet

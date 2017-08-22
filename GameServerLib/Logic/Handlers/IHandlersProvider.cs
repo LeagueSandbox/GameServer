@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 

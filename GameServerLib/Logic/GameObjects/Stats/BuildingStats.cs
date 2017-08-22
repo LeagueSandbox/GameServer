@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

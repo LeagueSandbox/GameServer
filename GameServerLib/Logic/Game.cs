@@ -1,6 +1,5 @@
 ﻿using BlowFishCS;
 using ENet;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.API;
@@ -18,6 +17,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {

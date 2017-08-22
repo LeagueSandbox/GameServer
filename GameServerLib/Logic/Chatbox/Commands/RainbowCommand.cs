@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -70,7 +71,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             Game _game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            _game.PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(tint, Channel.CHL_S2C);
         }
     }
 }

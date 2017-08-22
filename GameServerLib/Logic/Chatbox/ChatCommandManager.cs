@@ -17,15 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
 
-        public enum DebugMsgType
-        {
-            ERROR,
-            INFO,
-            SYNTAX,
-            SYNTAXERROR,
-            NORMAL
-        }
-
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
         {
@@ -76,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
         }
 
-        public bool AddCommand(ChatCommandBase command)
+        public bool AddCommand(IChatCommand command)
         {
             if (_chatCommandsDictionary.ContainsKey(command.Command))
             {
@@ -87,7 +78,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             return true;
         }
 
-        public bool RemoveCommand(ChatCommandBase command)
+        public bool RemoveCommand(IChatCommand command)
         {
             if (_chatCommandsDictionary.ContainsValue(command))
             {
