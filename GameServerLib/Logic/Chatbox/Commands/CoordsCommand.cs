@@ -11,9 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "coords";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
+        public override string Syntax => $"{Command}";
 
-        public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager) : base(chatCommandManager)
+        public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _logger = logger;
             _playerManager = playerManager;
@@ -23,7 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             _logger.LogCoreInfo($"At {champion.X}; {champion.Y}");
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()}");
+            var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()}";
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
         }
     }
 }

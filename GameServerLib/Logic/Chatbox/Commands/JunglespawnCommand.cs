@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly Logger _logger;
 
         public override string Command => "junglespawn";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
+        public override string Syntax => $"{Command}";
 
         public JunglespawnCommand(ChatCommandManager chatCommandManager, Logger logger) : base(chatCommandManager)
         {

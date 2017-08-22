@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public string CommandStarterCharacter = ".";
 
-        private SortedDictionary<string, IChatCommand> _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
+        private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
 
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
@@ -55,6 +55,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         public ChatCommandManager(IHandlersProvider handlersProvider)
         {
             _handlersProvider = handlersProvider;
+            _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
         }
 
         public void LoadCommands()
@@ -64,7 +65,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             if (!_game.Config.ChatCheatsEnabled)
                 return;
 
-            _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(new[] { ServerLibAssemblyDefiningType.Assembly });
+            var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
+            _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(loadFrom);
         }
 
         public bool AddCommand(IChatCommand command)

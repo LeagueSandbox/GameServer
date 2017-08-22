@@ -11,9 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "level";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} level";
+        public override string Syntax => $"{Command} level";
 
-        public LevelCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        public LevelCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _game = game;
             _playerManager = playerManager;

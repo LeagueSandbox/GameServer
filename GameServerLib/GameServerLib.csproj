@@ -210,7 +210,6 @@
     <Compile Include="Logic\Chatbox\Commands\ModelCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\NewCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\PacketCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SetCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\SizeCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\SkillpointsCommand.cs" />
     <Compile Include="Logic\Chatbox\Commands\SpawnCommand.cs" />

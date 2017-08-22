@@ -1,6 +1,5 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -9,9 +8,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "xp";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} xp";
+        public override string Syntax => $"{Command} xp";
 
-        public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _playerManager = playerManager;
         }

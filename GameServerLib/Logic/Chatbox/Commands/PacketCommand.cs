@@ -13,9 +13,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "packet";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} XX XX XX...";
+        public override string Syntax => $"{Command} XX XX XX...";
 
-        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _game = game;
             _playerManager = playerManager;

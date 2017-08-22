@@ -15,9 +15,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "mobs";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} teamNumber";
+        public override string Syntax => $"{Command} teamNumber";
 
-        public MobsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        public MobsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _game = game;
             _playerManager = playerManager;
@@ -43,8 +44,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             foreach (var unit in units)
             {
                 var ping = new AttentionPing(unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
-                var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), ping);
-                _game.PacketHandlerManager.broadcastPacketTeam(_playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C);
+                var client = _playerManager.GetPeerInfo(peer);
+                var response = new AttentionPingAns(client, ping);
+                _game.PacketHandlerManager.broadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
             }
         }
     }

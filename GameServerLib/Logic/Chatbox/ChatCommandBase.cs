@@ -20,7 +20,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public void ShowSyntax()
         {
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAX, Syntax);
+            var msg = $"{ChatCommandManager.CommandStarterCharacter}{Syntax}";
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAX, msg);
         }
     }
 }

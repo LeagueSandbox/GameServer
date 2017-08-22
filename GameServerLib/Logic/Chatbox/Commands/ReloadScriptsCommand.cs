@@ -10,9 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly Game _game;
 
         public override string Command => "reloadscripts";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
+        public override string Syntax => $"{Command}";
 
-        public ReloadScriptsCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        public ReloadScriptsCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager)
         {
             _game = game;
         }

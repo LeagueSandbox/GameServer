@@ -12,9 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "skillpoints";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
+        public override string Syntax => $"{Command}";
 
-        public SkillpointsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        public SkillpointsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
             _game = game;
             _playerManager = playerManager;

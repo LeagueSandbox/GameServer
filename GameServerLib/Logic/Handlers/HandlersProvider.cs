@@ -42,7 +42,8 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                     if (!handlersMap.ContainsKey(instance.PacketType))
                         handlersMap.Add(instance.PacketType, new Dictionary<Channel, IPacketHandler>());
                     if (handlersMap[instance.PacketType].ContainsKey(instance.PacketChannel))
-                        throw new InvalidOperationException($"Handler for packet {instance.PacketType} and channel {instance.PacketChannel} already exists.");
+                        throw new InvalidOperationException($"Handler for packet {instance.PacketType} " +
+                                                            $"and channel {instance.PacketChannel} already exists.");
 
                     handlersMap[instance.PacketType].Add(instance.PacketChannel, instance);
                 }
@@ -72,7 +73,9 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                     if (instance == null) //??
                         continue;
                     if (handlersMap.ContainsKey(instance.Command))
-                        throw new InvalidOperationException($"Handler for command {instance.Command} already exists. ({handlersMap[instance.Command]}/{instance})");
+                        throw new InvalidOperationException($"Handler for command {instance.Command}" +
+                                                            $" already exists. " +
+                                                            $"({handlersMap[instance.Command]}/{instance})");
 
                     handlersMap.Add(instance.Command, instance);
                 }

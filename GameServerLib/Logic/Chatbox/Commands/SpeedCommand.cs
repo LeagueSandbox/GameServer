@@ -9,9 +9,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "speed";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} speed";
+        public override string Syntax => $"{Command} speed";
 
-        public SpeedCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        public SpeedCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+            : base(chatCommandManager)
         {
             _playerManager = playerManager;
         }

@@ -9,9 +9,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "size";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} size";
+        public override string Syntax => $"{Command} size";
 
-        public SizeCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) : base(chatCommandManager)
+        public SizeCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+            : base(chatCommandManager)
         {
             _playerManager = playerManager;
         }

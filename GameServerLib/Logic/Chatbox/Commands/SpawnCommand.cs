@@ -16,9 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         public override string Command => "spawn";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command} minionsblue minionspurple";
+        public override string Syntax => $"{Command} minionsblue minionspurple";
 
-        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) : base(chatCommandManager)
+        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+            : base(chatCommandManager)
         {
             _game = game;
             _playerManager = playerManager;

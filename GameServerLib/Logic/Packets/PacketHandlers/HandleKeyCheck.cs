@@ -49,19 +49,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
                     var response = new KeyCheck(keyCheck.userId, playerNo);
-                    bool bRet = _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
-                    //HandleGameNumber(player, peer, _game);//Send 0x91 Packet?
+                    _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
                     return true;
                 }
                 ++playerNo;
             }
             return false;
-        }
-
-        bool HandleGameNumber(ClientInfo client, Peer peer, Game game)
-        {
-            var world = new WorldSendGameNumber(1, client.Name);
-            return _game.PacketHandlerManager.sendPacket(peer, world, Channel.CHL_S2C);
         }
     }
 }

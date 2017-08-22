@@ -58,7 +58,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager, PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider)
+        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager,
+            PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider)
         {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;
@@ -86,7 +87,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
             }
 
             Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager, _packetHandlerProvider);
+            PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager,
+                _packetHandlerProvider);
 
 
             ObjectManager = new ObjectManager(this);
@@ -146,7 +148,8 @@ namespace LeagueSandbox.GameServer.Core.Logic
                             break;
 
                         case EventType.Receive:
-                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, (Channel)enetEvent.ChannelID);
+                            var channel = (Channel)enetEvent.ChannelID;
+                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;

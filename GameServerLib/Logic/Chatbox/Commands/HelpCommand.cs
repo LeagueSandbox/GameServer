@@ -6,10 +6,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class HelpCommand : ChatCommandBase
     {
+        private const string COMMAND_PREFIX = "<font color =\"#E175FF\"><b>";
+        private const string COMMAND_SUFFIX = "</b></font>, ";
         private readonly Game _game;
 
         public override string Command => "help";
-        public override string Syntax => $"{ChatCommandManager.CommandStarterCharacter}{Command}";
+        public override string Syntax => $"{Command}";
 
         public HelpCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
         {
@@ -20,24 +22,23 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             if (!_game.Config.ChatCheatsEnabled)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Chat commands are disabled in this game.");
+                var msg = "Chat commands are disabled in this game.";
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);
                 return;
             }
 
-            var commands = "";
-            var count = 0;
-            foreach (var command in ChatCommandManager.GetCommandsStrings())
+            var commands = ChatCommandManager.GetCommandsStrings();
+            var commandsString = "";
+            foreach (var command in commands)
             {
-                count++;
-                commands = commands
-                           + "<font color =\"#E175FF\"><b>"
-                           + ChatCommandManager.CommandStarterCharacter + command
-                           + "</b><font color =\"#FFB145\">, ";
+                commandsString = $"{commandsString}{COMMAND_PREFIX}" +
+                                 $"{ChatCommandManager.CommandStarterCharacter}{command}" +
+                                 $"{COMMAND_SUFFIX}";
             }
 
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, commands);
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count + " commands");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, commandsString);
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + commands.Count + " commands");
         }
     }
 }
