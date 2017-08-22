@@ -9,7 +9,7 @@ using Ninject.Modules;
 
 namespace LeagueSandbox.GameServer
 {
-    class Bindings : NinjectModule
+    public class Bindings : NinjectModule
     {
         public override void Load()
         {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using LeagueSandbox.GameServer.Logic.Attributes;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.DependencyInjection;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using Ninject;
 
@@ -12,6 +11,13 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
 {
     public class HandlersProvider : IHandlersProvider
     {
+        private IKernel _kernel;
+
+        public HandlersProvider(IKernel kernel)
+        {
+            _kernel = kernel;
+        }
+
         public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(IEnumerable<Assembly> loadFrom)
         {
             var handlersMap = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
@@ -29,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                     if (handler.GetCustomAttribute<DisabledHandlerAttribute>() != null)
                         continue;
 
-                    var instance = DI.Container.Get(handler) as PacketHandlerBase;
+                    var instance = _kernel.Get(handler) as PacketHandlerBase;
                     if (instance == null) //??
                         continue;
 
@@ -62,7 +68,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                     if (handler.GetCustomAttribute<DisabledHandlerAttribute>() != null)
                         continue;
 
-                    var instance = DI.Container.Get(handler) as IChatCommand;
+                    var instance = _kernel.Get(handler) as IChatCommand;
                     if (instance == null) //??
                         continue;
                     if (handlersMap.ContainsKey(instance.Command))

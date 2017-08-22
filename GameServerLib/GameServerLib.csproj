@@ -226,7 +226,6 @@
     <Compile Include="Logic\Content\ItemCollection.cs" />
     <Compile Include="Logic\Content\RuneCollection.cs" />
     <Compile Include="Logic\Content\SpellData.cs" />
-    <Compile Include="Logic\DependencyInjection\DI.cs" />
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\ObjAIBase.cs" />

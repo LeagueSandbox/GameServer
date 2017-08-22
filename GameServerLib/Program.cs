@@ -3,7 +3,6 @@ using Ninject;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.DependencyInjection;
 
 namespace LeagueSandbox.GameServer
 {
@@ -35,7 +34,6 @@ namespace LeagueSandbox.GameServer
 
             _kernel = new StandardKernel();
             _kernel.Load(new Bindings());
-            DI.Container = _kernel;
 
             var context = _kernel.Get<ServerContext>();
             var server = _kernel.Get<Server>();

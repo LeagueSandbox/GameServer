@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public string CommandStarterCharacter = ".";
 
-        private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
+        private SortedDictionary<string, IChatCommand> _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
 
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
