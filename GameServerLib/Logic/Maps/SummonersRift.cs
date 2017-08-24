@@ -122,10 +122,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             MinionSpawnType.MINION_TYPE_CASTER
         };
 
-        private static readonly Dictionary<TeamId, float[]> _endGameCameraPosition = new Dictionary<TeamId, float[]>
+        private static readonly Dictionary<TeamId, Vector3> _endGameCameraPosition = new Dictionary<TeamId, Vector3>
         {
-            { TeamId.TEAM_BLUE, new float[] { 1170, 1470, 188 } },
-            { TeamId.TEAM_PURPLE, new float[] { 12800, 13100, 110 } }
+            { TeamId.TEAM_BLUE, new Vector3(1170, 1470, 188) },
+            { TeamId.TEAM_PURPLE, new Vector3(12800, 13100, 110) }
         };
 
         private static readonly Dictionary<TeamId, Target> _spawnsByTeam = new Dictionary<TeamId, Target>
@@ -321,6 +321,38 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return _spawnsByTeam[team];
         }
 
+        public string GetMinionModel(TeamId team, MinionSpawnType type)
+        {
+            var toRet = "";
+            switch (team)
+            {
+                case TeamId.TEAM_BLUE:
+                    toRet += "Blue_Minion_";
+                    break;
+                case TeamId.TEAM_PURPLE:
+                    toRet += "Red_Minion_";
+                    break;
+            }
+
+            switch (type)
+            {
+                case MinionSpawnType.MINION_TYPE_MELEE:
+                    toRet += "Basic";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CASTER:
+                    toRet += "Wizard";
+                    break;
+                case MinionSpawnType.MINION_TYPE_CANNON:
+                    toRet += "MechCannon";
+                    break;
+                case MinionSpawnType.MINION_TYPE_SUPER:
+                    toRet += "MechMelee";
+                    break;
+            }
+
+            return toRet;
+        }
+
         public float GetGoldFor(Unit u)
         {
             var m = u as Minion;
@@ -328,7 +360,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             {
                 var c = u as Champion;
                 if (c == null)
+                {
                     return 0.0f;
+                }
 
                 float gold = 300.0f; //normal gold for a kill
                 if (c.KillDeathCounter < 5 && c.KillDeathCounter >= 0)
@@ -569,10 +603,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return true;
         }
 
-        public float[] GetEndGameCameraPosition(TeamId team)
+        public Vector3 GetEndGameCameraPosition(TeamId team)
         {
             if (!_endGameCameraPosition.ContainsKey(team))
-                return new float[] { 0, 0, 0 };
+            {
+                return new Vector3(0, 0, 0);
+            }
 
             return _endGameCameraPosition[team];
         }

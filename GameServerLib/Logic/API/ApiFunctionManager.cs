@@ -5,7 +5,6 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
-using LeagueSandbox.GameServer.Logic.Scripting;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
@@ -44,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static GameScriptTimer CreateTimer(float duration, Action callback)
         {
-            GameScriptTimer newTimer = new GameScriptTimer(duration, callback);
+            var newTimer = new GameScriptTimer(duration, callback);
             _game.AddGameScriptTimer(newTimer);
             return newTimer;
         }
@@ -89,13 +88,13 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = _game.Map.AIMesh.getClosestTerrainExit(coords);
+            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(x, y));
             _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
         {
-            return _game.Map.AIMesh.isWalkable(x, y);
+            return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
         public static void AddBuff(string buffName, float duration, int stacks, Unit onto, Unit from)
@@ -171,7 +170,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.AIMesh.getClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(

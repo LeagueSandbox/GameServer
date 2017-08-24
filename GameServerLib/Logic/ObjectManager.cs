@@ -4,8 +4,6 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -121,7 +119,6 @@ namespace LeagueSandbox.GameServer.Logic
                     obj.clearMovementUpdated();
                 }
             }
-
         }
 
         public GameObject GetObjectById(uint id)
@@ -187,7 +184,7 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 _objects.Remove(o.NetId);
             }
-            o.OnRemoved();             
+            o.OnRemoved();
         }
 
         public void AddChampion(Champion champion)
@@ -221,7 +218,6 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 _visionUnits[unit.Team].Add(unit.NetId, unit);
             }
-
         }
 
         public void RemoveVisionUnit(Unit unit)
@@ -322,26 +318,33 @@ namespace LeagueSandbox.GameServer.Logic
         public bool TeamHasVisionOn(TeamId team, GameObject o)
         {
             if (o == null)
+            {
                 return false;
+            }
 
             if (o.Team == team)
+            {
                 return true;
+            }
 
             lock (_objectsLock)
             {
                 foreach (var kv in _objects)
-                {//TODO: enable mesh as soon as it works again
-                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius /*&& !mesh.isAnythingBetween(kv.Value, o)*/)
+                {
+                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
+                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as Unit;
                         if (unit != null && unit.IsDead)
+                        {
                             continue;
+                        }
+
                         return true;
                     }
                 }
             }
             return false;
         }
-
     }
 }

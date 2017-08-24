@@ -181,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logic\Chatbox\DebugMsgType.cs" />
+    <Compile Include="Logic\Content\NavGrid.cs" />
     <Compile Include="Logic\DependencyInjection\Bindings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
@@ -240,7 +241,7 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\Champion.cs" />
     <Compile Include="Logic\GameObjects\Other\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
-    <Compile Include="Logic\GameObjects\GameObjects.cs" />
+    <Compile Include="Logic\GameObjects\GameObject.cs" />
     <Compile Include="Logic\GameObjects\Stats\BuildingStats.cs" />
     <Compile Include="Logic\GameObjects\Missiles\Laser.cs" />
     <Compile Include="Logic\GameObjects\Particle.cs" />
@@ -263,7 +264,6 @@
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />
-    <Compile Include="Logic\GameObjects\Other\Pathfinder.cs" />
     <Compile Include="Logic\GameObjects\Spells\Spell.cs" />
     <Compile Include="Logic\GameObjects\Stats\Stats.cs" />
     <Compile Include="Logic\GameObjects\Other\Target.cs" />
@@ -322,7 +322,6 @@
     <Compile Include="Logic\Packets\Packets.cs" />
     <Compile Include="Logic\Packets\PacketNotifier.cs" />
     <Compile Include="Logic\Pair.cs" />
-    <Compile Include="Logic\RAF\AIMesh.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />

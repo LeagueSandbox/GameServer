@@ -20,19 +20,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public class Spell
     {
+        public static bool CooldownsEnabled;
+        public static bool ManaCostsEnabled;
         public Champion Owner { get; private set; }
-        public short Level { get; private set; } = 0;
+        public short Level { get; private set; }
         public byte Slot { get; set; }
         public float CastTime { get; private set; } = 0;
 
-        public string SpellName { get; private set; } = "";
+        public string SpellName { get; private set; }
 
         public SpellState state { get; protected set; } = SpellState.STATE_READY;
-        public float CurrentCooldown { get; protected set; } = 0.0f;
-        public float CurrentCastTime { get; protected set; } = 0.0f;
-        public float CurrentChannelDuration { get; protected set; } = 0.0f;
-        public uint FutureProjNetId { get; protected set; } = 0;
-        public uint SpellNetId { get; protected set; } = 0;
+        public float CurrentCooldown { get; protected set; }
+        public float CurrentCastTime { get; protected set; }
+        public float CurrentChannelDuration { get; protected set; }
+        public uint FutureProjNetId { get; protected set; }
+        public uint SpellNetId { get; protected set; }
 
         public Unit Target { get; private set; }
         public float X { get; private set; }
@@ -40,14 +42,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float X2 { get; private set; }
         public float Y2 { get; private set; }
 
-        private CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
-        private Game _game = Program.ResolveDependency<Game>();
+        private static CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        private static Logger _logger = Program.ResolveDependency<Logger>();
+        private static Game _game = Program.ResolveDependency<Game>();
 
         private GameScript spellGameScript;
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
+
+        static Spell()
+        {
+            CooldownsEnabled = _game.Config.CooldownsEnabled;
+            ManaCostsEnabled = _game.Config.ManaCostsEnabled;
+        }
 
         public Spell(Champion owner, string spellName, byte slot)
         {
@@ -59,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             //Set the game script for the spell
             spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
-            if(spellGameScript == null)
+            if (spellGameScript == null)
             {
                 spellGameScript = new GameScriptEmpty();
             }
