@@ -1,9 +1,9 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/7olahkndcs3r295p/branch/master?svg=true)](https://ci.appveyor.com/project/MythicManiac/gameserver/branch/master)
-[![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=master)](https://travis-ci.org/LeagueSandbox/GameServer)
-[![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=master)](https://codecov.io/github/LeagueSandbox/GameServer?branch=master)
+[![Build status](https://ci.appveyor.com/api/projects/status/7olahkndcs3r295p/branch/indev?svg=true)](https://ci.appveyor.com/project/MythicManiac/gameserver/branch/indev)
+[![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=indev)](https://travis-ci.org/LeagueSandbox/GameServer)
+[![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=indev)](https://codecov.io/github/LeagueSandbox/GameServer?branch=indev)
 # The League Sandbox project's game server
 Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
-Project chat on Discord: https://discord.gg/G6mcg5u 
+Project chat on Discord: https://discord.gg/Bz3znAM
 Project board on Waffle: https://waffle.io/LeagueSandbox/leaguesandbox.github.io
 
 # Contributing
@@ -71,9 +71,9 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 * Interpolated strings with embedded logic should not be used
 
 # Development flow and how to use git shell
-1. Pull latest version of master
+1. Pull latest version of indev
     * `git fetch -p`
-    * `git pull origin master`
+    * `git pull origin indev`
 2. Checkout to a new branch
     * `git checkout -b <branch_name>`
 3. Make changes, do commits
@@ -85,6 +85,6 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 4. Push to github
     * `git push origin <branch_name>`
 5. Create pull request
-6. Checkout back to master
-    * `git checkout master`
+6. Checkout back to indev
+    * `git checkout indev`
 7. Repeat
