@@ -1,4 +1,4 @@
-﻿namespace LeagueSandbox.GameServer.Core.Logic.PacketHandlers
+﻿namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public enum PacketCmd : short
     {

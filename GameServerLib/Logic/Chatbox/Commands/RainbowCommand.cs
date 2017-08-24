@@ -7,42 +7,48 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class RainbowCommand : ChatCommand
+    public class RainbowCommand : ChatCommandBase
     {
-        public RainbowCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly PlayerManager _playerManager;
 
-        private static Champion me;
-        private static ChatCommandManager owner;
-        private static bool run = false;
-        private static float a = 0.5f;
-        private static float speed = 0.25f;
-        private static int delay = 250;
+        private Champion _me;
+        private bool _run = false;
+        private float _a = 0.5f;
+        private float _speed = 0.25f;
+        private int _delay = 250;
+
+        public override string Command => "rainbow";
+        public override string Syntax => $"{Command} alpha speed";
+
+        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+            : base(chatCommandManager)
+        {
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
 
-            me = _playerManager.GetPeerInfo(peer).Champion;
-            owner = _owner;
+            _me = _playerManager.GetPeerInfo(peer).Champion;
 
             if (split.Length > 1)
             {
-                float.TryParse(split[1], out a);
+                float.TryParse(split[1], out _a);
             }
 
-            if(split.Length > 2)
+            if (split.Length > 2)
             {
-                float.TryParse(split[2], out speed);
-                delay = (int)(speed * 1000);
+                float.TryParse(split[2], out _speed);
+                _delay = (int)(_speed * 1000);
             }
 
-            run = !run;
-            if (run)
+            _run = !_run;
+            if (_run)
             {
                 Task.Run(() => TaskRainbow());
             }
@@ -50,23 +56,23 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void TaskRainbow()
         {
-            while (run)
+            while (_run)
             {
                 byte[] rainbow = new byte[4];
                 new Random().NextBytes(rainbow);
-                Thread.Sleep(delay);
-                BroadcastTint(me.Team, false, 0.0f, 0, 0, 0, 1f);
-                BroadcastTint(me.Team, true, speed, rainbow[1], rainbow[2], rainbow[3], a);
+                Thread.Sleep(_delay);
+                BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
+                BroadcastTint(_me.Team, true, _speed, rainbow[1], rainbow[2], rainbow[3], _a);
             }
-            Thread.Sleep(delay);
-            BroadcastTint(me.Team, false, 0.0f, 0, 0, 0, 1f);
+            Thread.Sleep(_delay);
+            BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
         }
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
             Game _game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            _game.PacketHandlerManager.broadcastPacket(tint, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(tint, Channel.CHL_S2C);
         }
     }
 }

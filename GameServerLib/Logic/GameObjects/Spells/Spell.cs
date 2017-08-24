@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

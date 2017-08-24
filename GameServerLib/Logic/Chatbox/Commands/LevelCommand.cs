@@ -5,27 +5,35 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    class LevelCommand : ChatCommand
+    public class LevelCommand : ChatCommandBase
     {
-        public LevelCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private readonly Game _game;
+        private readonly PlayerManager _playerManager;
+
+        public override string Command => "level";
+        public override string Syntax => $"{Command} level";
+
+        public LevelCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
+        {
+            _game = game;
+            _playerManager = playerManager;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            Game _game = Program.ResolveDependency<Game>();
-            PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
-
             var split = arguments.ToLower().Split(' ');
             byte lvl;
             if (split.Length < 2)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (byte.TryParse(split[1], out lvl))
             {
                 if (lvl < 1 || lvl > 18)
                     return;
-
+                
                 var experienceToLevelUp = _game.Map.MapGameScript.ExpToLevelUp[lvl-1];
                 _playerManager.GetPeerInfo(peer).Champion.GetStats().Experience = experienceToLevelUp;
             }

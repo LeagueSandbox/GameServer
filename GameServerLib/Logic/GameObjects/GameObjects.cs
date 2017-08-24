@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -31,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic
             if (_game.IsRunning)
             {
                 var p = new SetTeam(this as Unit, team);
-                _game.PacketHandlerManager.broadcastPacket(p, Core.Logic.PacketHandlers.Channel.CHL_S2C);
+                _game.PacketHandlerManager.broadcastPacket(p, Channel.CHL_S2C);
             }
         }
 

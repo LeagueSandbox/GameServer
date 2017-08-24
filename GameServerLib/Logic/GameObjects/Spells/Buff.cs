@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects

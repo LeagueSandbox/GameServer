@@ -4,37 +4,41 @@ using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
-    public class HelpCommand : ChatCommand
+    public class HelpCommand : ChatCommandBase
     {
-        public HelpCommand(string command, string syntax, ChatCommandManager owner) : base(command, syntax, owner) { }
+        private const string COMMAND_PREFIX = "<font color =\"#E175FF\"><b>";
+        private const string COMMAND_SUFFIX = "</b></font>, ";
+        private readonly Game _game;
+
+        public override string Command => "help";
+        public override string Syntax => $"{Command}";
+
+        public HelpCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        {
+            _game = game;
+        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            var _game = Program.ResolveDependency<Game>();
             if (!_game.Config.ChatCheatsEnabled)
             {
-                _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "Chat commands are disabled in this game.");
+                var msg = "Chat commands are disabled in this game.";
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);
                 return;
             }
 
-            var _chatboxManager = Program.ResolveDependency<ChatCommandManager>();
-
-            var commands = "";
-            var count = 0;
-            foreach (var command in _owner.GetCommandsStrings())
+            var commands = ChatCommandManager.GetCommandsStrings();
+            var commandsString = "";
+            foreach (var command in commands)
             {
-                count++;
-                commands = commands
-                           + "<font color =\"#E175FF\"><b>"
-                           + _chatboxManager.CommandStarterCharacter + command
-                           + "</b><font color =\"#FFB145\">, ";
+                commandsString = $"{commandsString}{COMMAND_PREFIX}" +
+                                 $"{ChatCommandManager.CommandStarterCharacter}{command}" +
+                                 $"{COMMAND_SUFFIX}";
             }
 
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, commands);
-            _owner.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + count + " commands");
-
-            _owner.AddCommand(new NewCommand("newcommand", "", _owner));
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, commandsString);
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + commands.Count + " commands");
         }
     }
 }

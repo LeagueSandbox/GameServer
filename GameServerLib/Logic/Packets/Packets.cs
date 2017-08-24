@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,8 @@ using System.IO;
 using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Core.Logic.PacketHandlers.Packets;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -1940,7 +1939,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((byte)stacks); // stacks
             buffer.Write((byte)0x00); // Visible was (byte)0x00
             buffer.Write(HashFunctions.HashString(name)); //Buff id
-            
+
             buffer.Write((int)0); // <-- Probably runningTime
 
             buffer.Write((float)0); // <- ProgressStartPercent
@@ -2038,9 +2037,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             targetNetId = reader.ReadInt32();
             type = (Pings)reader.ReadByte();
         }
+
         public AttentionPing()
         {
 
+        }
+
+        public AttentionPing(float x, float y, int netId, Pings type)
+        {
+            this.x = x;
+            this.y = y;
+            this.targetNetId = netId;
+            this.type = type;
         }
     }
 
@@ -2542,7 +2550,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             float targetZ = _game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ()+100.0f);
+            buffer.Write((float)p.GetZ() + 100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
@@ -2554,7 +2562,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)-166.666656f); // Unk
             buffer.Write((float)-245.531418f); // Unk
             buffer.Write((float)p.X);
-            buffer.Write((float)p.GetZ()+100.0f);
+            buffer.Write((float)p.GetZ() + 100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.Target.X);
             buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
@@ -2598,7 +2606,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y)+100.0f);
+            buffer.Write((float)_game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
             buffer.Write((float)p.Target.Y);
             if (!p.Target.IsSimpleTarget)
             {
