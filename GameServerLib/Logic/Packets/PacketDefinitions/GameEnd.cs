@@ -1,0 +1,12 @@
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+
+namespace LeagueSandbox.GameServer.Logic.Packets
+{
+    public class GameEnd : BasePacket
+    {
+        public GameEnd(bool winningTeamIsBlue) : base(PacketCmd.PKT_S2C_GameEnd)
+        {
+            buffer.Write(winningTeamIsBlue ? (byte)1 : (byte)0);
+        }
+    }
+}
