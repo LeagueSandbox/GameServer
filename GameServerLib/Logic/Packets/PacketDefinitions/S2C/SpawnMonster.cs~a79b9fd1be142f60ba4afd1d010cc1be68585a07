@@ -2,13 +2,13 @@ using System.Text;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnMonster : Packet
     {
-        public SpawnMonster(Monster m) : base(PacketCmd.PKT_S2C_ObjectSpawn)
+        public SpawnMonster(Monster m)
+            : base(PacketCmd.PKT_S2C_ObjectSpawn)
         {
-
             buffer.Write(m.NetId);
             buffer.Write((short)345);
             buffer.Write((short)343);
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)Game.Map.AIMesh.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));
