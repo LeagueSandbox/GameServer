@@ -2,17 +2,22 @@ using System.IO;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class AutoAttackOption : ClientPacketBase
+    public class AutoAttackOption
     {
-        public byte Activated { get; private set; }
+        public byte cmd;
+        public int netid;
+        public byte activated;
 
-        public AutoAttackOption(byte[] data) : base(data)
+        public AutoAttackOption(byte[] data)
         {
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            netid = reader.ReadInt32();
+            activated = reader.ReadByte();
         }
-
-        protected override void ParseInternal(BinaryReader reader)
+        public AutoAttackOption()
         {
-            Activated = reader.ReadByte();
+
         }
     }
 }

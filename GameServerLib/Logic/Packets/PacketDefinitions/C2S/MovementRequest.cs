@@ -3,30 +3,32 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class MovementRequest : ClientPacketBase
+    public class MovementRequest
     {
-        public MoveType MovementType { get; private set; } //byte
-        public float X { get; private set; }
-        public float Y { get; private set; }
-        public uint TargetNetId { get; private set; }
-        public byte CoordCount { get; private set; }
-        public int NetIdPacket { get; private set; }
-        public byte[] moveData { get; private set; }
+        public PacketCmd cmd;
+        public int netIdHeader;
+        public MoveType type; //byte
+        public float x;
+        public float y;
+        public uint targetNetId;
+        public byte coordCount;
+        public int netId;
+        public byte[] moveData;
 
-        public MovementRequest(byte[] data) : base(data)
+        public MovementRequest(byte[] data)
         {
-
-        }
-
-        protected override void ParseInternal(BinaryReader reader)
-        {
-            MovementType = (MoveType)reader.ReadByte();
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            TargetNetId = reader.ReadUInt32();
-            CoordCount = reader.ReadByte();
-            NetIdPacket = reader.ReadInt32();
+            var baseStream = new MemoryStream(data);
+            var reader = new BinaryReader(baseStream);
+            cmd = (PacketCmd)reader.ReadByte();
+            netIdHeader = reader.ReadInt32();
+            type = (MoveType)reader.ReadByte();
+            x = reader.ReadSingle();
+            y = reader.ReadSingle();
+            targetNetId = reader.ReadUInt32();
+            coordCount = reader.ReadByte();
+            netId = reader.ReadInt32();
             moveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            reader.Close();
         }
     }
 }

@@ -5,34 +5,35 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class ChatMessage : ClientPacketBase
+    public class ChatMessage
     {
-        public int BotNetId { get; private set; }
-        public byte IsBotMessage { get; private set; }
-        public ChatType Type { get; private set; }
-        public int Unk1 { get; private set; } // playerNo?
-        public int Length { get; private set; }
-        public byte[] Unk2 { get; private set; } = new byte[32];
-        public string Msg { get; private set; }
+        public PacketCmd cmd;
+        public int playerId;
+        public int botNetId;
+        public byte isBotMessage;
 
-        public ChatMessage(byte[] data) : base(data)
+        public ChatType type;
+        public int unk1; // playerNo?
+        public int length;
+        public byte[] unk2 = new byte[32];
+        public string msg;
+
+        public ChatMessage(byte[] data)
         {
-
-        }
-
-        protected override void ParseInternal(BinaryReader reader)
-        {
-            BotNetId = reader.ReadInt32();
-            IsBotMessage = reader.ReadByte();
-            Type = (ChatType)reader.ReadInt32();
-            Unk1 = reader.ReadInt32();
-            Length = reader.ReadInt32();
-            Unk2 = reader.ReadBytes(32);
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            playerId = reader.ReadInt32();
+            botNetId = reader.ReadInt32();
+            isBotMessage = reader.ReadByte();
+            type = (ChatType)reader.ReadInt32();
+            unk1 = reader.ReadInt32();
+            length = reader.ReadInt32();
+            unk2 = reader.ReadBytes(32);
 
             var bytes = new List<byte>();
-            for (var i = 0; i < Length; i++)
+            for (var i = 0; i < length; i++)
                 bytes.Add(reader.ReadByte());
-            Msg = Encoding.Default.GetString(bytes.ToArray());
+            msg = Encoding.Default.GetString(bytes.ToArray());
         }
     }
 }

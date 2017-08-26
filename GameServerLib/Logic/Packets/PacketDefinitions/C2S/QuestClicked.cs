@@ -2,20 +2,24 @@ using System.IO;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class QuestClicked : ClientPacketBase
+    public class QuestClicked
     {
-        public byte Unk { get; private set; }
-        public uint QuestNetId { get; private set; }
+        public byte cmd;
+        public uint playernetid;
+        public byte unk;
+        public uint netid;
 
-        public QuestClicked(byte[] data) : base(data)
+        public QuestClicked(byte[] data)
         {
-
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            playernetid = reader.ReadUInt32();
+            unk = reader.ReadByte();
+            netid = reader.ReadUInt32();
         }
-
-        protected override void ParseInternal(BinaryReader reader)
+        public QuestClicked()
         {
-            Unk = reader.ReadByte();
-            QuestNetId = reader.ReadUInt32();
+
         }
     }
 }

@@ -3,20 +3,20 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class Click : ClientPacketBase
+    public class Click
     {
-        public int Zero { get; private set; }
-        public uint TargetNetId { get; private set; } // netId on which the player clicked
+        PacketCmd cmd;
+        int netId;
+        public int zero;
+        public uint targetNetId; // netId on which the player clicked
 
-        public Click(byte[] data) : base(data)
+        public Click(byte[] data)
         {
-
-        }
-
-        protected override void ParseInternal(BinaryReader reader)
-        {
-            Zero = reader.ReadInt32();
-            TargetNetId = reader.ReadUInt32();
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            zero = reader.ReadInt32();
+            targetNetId = reader.ReadUInt32();
         }
     }
 }

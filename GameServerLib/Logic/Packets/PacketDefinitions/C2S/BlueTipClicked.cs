@@ -2,20 +2,24 @@ using System.IO;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class BlueTipClicked : ClientPacketBase
+    public class BlueTipClicked
     {
-        public byte Unk { get; private set; }
-        public uint TargetNetId { get; private set; }
+        public byte cmd;
+        public uint playernetid;
+        public byte unk;
+        public uint netid;
 
-        public BlueTipClicked(byte[] data) : base(data)
+        public BlueTipClicked(byte[] data)
         {
-
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            playernetid = reader.ReadUInt32();
+            unk = reader.ReadByte();
+            netid = reader.ReadUInt32();
         }
-
-        protected override void ParseInternal(BinaryReader reader)
+        public BlueTipClicked()
         {
-            Unk = reader.ReadByte();
-            TargetNetId = reader.ReadUInt32();
+
         }
     }
 }

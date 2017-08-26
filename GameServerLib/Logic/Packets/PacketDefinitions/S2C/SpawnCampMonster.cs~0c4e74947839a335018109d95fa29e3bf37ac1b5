@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             buffer.Write((float)m.GetZ()); //z
             buffer.Write((float)m.Y); //y
             buffer.Write((float)m.Facing.X); //facing x
-            buffer.Write((float)Game.Map.AIMesh.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             buffer.Write((float)m.Facing.Y); //facing y
 
             buffer.Write(Encoding.Default.GetBytes(m.Name));

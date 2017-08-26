@@ -26,7 +26,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacketInternal(Peer peer, KeyCheckRequest data)
         {
             var userId = _game.Blowfish.Decrypt(data.CheckId);
-
             if (userId != data.UserId)
                 return false;
 
