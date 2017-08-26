@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -18,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new ViewRequest(data);
-            var answer = new ViewAnswer(request);
+            var answer = new ViewResponse(request);
             if (request.requestNo == 0xFE)
             {
                 answer.setRequestNo(0xFF);

@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -20,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = new SwapItems(data);
+            var request = new SwapItemsRequest(data);
             if (request.slotFrom > 6 || request.slotTo > 6)
                 return false;
 

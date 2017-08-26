@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -20,11 +22,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var loadInfo = new PingLoadInfo(data);
+            var loadInfo = new PingLoadInfoRequest(data);
             var peerInfo = _playerManager.GetPeerInfo(peer);
             if (peerInfo == null)
                 return false;
-            var response = new PingLoadInfo(loadInfo, peerInfo.UserId);
+            var response = new PingLoadInfoResponse(loadInfo, peerInfo.UserId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);

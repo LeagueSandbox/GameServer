@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -110,7 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 finishCasting();
             }
-            var response = new CastSpellAns(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
             return true;
         }

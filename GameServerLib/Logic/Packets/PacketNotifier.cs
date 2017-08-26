@@ -5,7 +5,9 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -137,7 +139,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyMovement(GameObject o)
         {
-            var answer = new MovementAns(o);
+            var answer = new MovementResponse(o);
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
@@ -204,19 +206,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyItemBought(Unit u, Item i)
         {
-            var response = new BuyItemAns(u, i);
+            var response = new BuyItemResponse(u, i);
             _game.PacketHandlerManager.broadcastPacketVision(u, response, Channel.CHL_S2C);
         }
 
         public void NotifyFogUpdate2(Unit u)
         {
-            var fog = new FogUpdate2(u);
+            var fog = new FogUpdate2(u, _networkIdManager);
             _game.PacketHandlerManager.broadcastPacketTeam(u.Team, fog, Channel.CHL_S2C);
         }
 
         public void NotifyItemsSwapped(Champion c, byte fromSlot, byte toSlot)
         {
-            var sia = new SwapItems(c, fromSlot, toSlot);
+            var sia = new SwapItemsResponse(c, fromSlot, toSlot);
             _game.PacketHandlerManager.broadcastPacketVision(c, sia, Channel.CHL_S2C);
         }
 

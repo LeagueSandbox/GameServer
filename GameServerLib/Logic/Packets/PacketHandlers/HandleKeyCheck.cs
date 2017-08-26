@@ -1,6 +1,8 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -23,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var keyCheck = new KeyCheck(data);
+            var keyCheck = new KeyCheckRequest(data);
             var userId = _game.Blowfish.Decrypt(keyCheck.checkId);
 
             if (userId != keyCheck.userId)
@@ -48,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO: add at least port or smth
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
-                    var response = new KeyCheck(keyCheck.userId, playerNo);
+                    var response = new KeyCheckResponse(keyCheck.userId, playerNo);
                     _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
                     return true;
                 }

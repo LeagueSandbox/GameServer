@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -20,14 +22,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var skillUpPacket = new SkillUpPacket(data);
+            var skillUpPacket = new SkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
             var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.skill);
             if (s == null)
                 return false;
 
-            var skillUpResponse = new SkillUpPacket(
+            var skillUpResponse = new SkillUpResponse(
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
                 skillUpPacket.skill,
                 (byte)s.Level,

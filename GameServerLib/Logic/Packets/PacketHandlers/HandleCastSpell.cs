@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -23,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var spell = new CastSpell(data);
+            var spell = new CastSpellRequest(data);
 
             var targetObj = _game.ObjectManager.GetObjectById(spell.targetNetId);
             var TargetUnit = targetObj as Unit;

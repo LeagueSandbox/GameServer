@@ -4,6 +4,8 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
@@ -43,9 +45,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             foreach (var unit in units)
             {
-                var ping = new AttentionPing(unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
+                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
                 var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingAns(client, ping);
+                var response = new AttentionPingResponse(client, ping);
                 _game.PacketHandlerManager.broadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
             }
         }

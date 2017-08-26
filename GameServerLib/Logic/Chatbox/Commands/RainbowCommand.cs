@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands

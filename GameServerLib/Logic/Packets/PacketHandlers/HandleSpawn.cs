@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -13,16 +14,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
+        private readonly NetworkIdManager _networkIdManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CharLoaded;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleSpawn(Logger logger, Game game, ItemManager itemManager, PlayerManager playerManager)
+        public HandleSpawn(Logger logger, Game game, ItemManager itemManager, PlayerManager playerManager,
+            NetworkIdManager networkIdManager)
         {
             _logger = logger;
             _game = game;
             _itemManager = itemManager;
             _playerManager = playerManager;
+            _networkIdManager = networkIdManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -44,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
             var itemInstance = peerInfo.Champion.getInventory().SetExtraItem(7, bluePill);
-            var buyItem = new BuyItemAns(peerInfo.Champion, itemInstance);
+            var buyItem = new BuyItemResponse(peerInfo.Champion, itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Runes
@@ -58,9 +62,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
-            var skillUp = new SkillUpPacket(peerInfo.Champion.NetId, 7, 1, (byte)peerInfo.Champion.getSkillPoints());
+            var skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 7, 1, (byte)peerInfo.Champion.getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
-            skillUp = new SkillUpPacket(peerInfo.Champion.NetId, 14, 1, (byte)peerInfo.Champion.getSkillPoints());
+            skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 14, 1, (byte)peerInfo.Champion.getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
             peerInfo.Champion.GetStats().setSpellEnabled(7, true);
@@ -78,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketHandlerManager.sendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
                     // Fog Of War
-                    var fogOfWarPacket = new FogUpdate2(turret);
+                    var fogOfWarPacket = new FogUpdate2(turret, _networkIdManager);
                     _game.PacketHandlerManager.broadcastPacketTeam(turret.Team, fogOfWarPacket, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision

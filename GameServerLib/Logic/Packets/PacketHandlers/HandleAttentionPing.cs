@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -20,8 +22,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var ping = new AttentionPing(data);
-            var response = new AttentionPingAns(_playerManager.GetPeerInfo(peer), ping);
+            var ping = new AttentionPingRequest(data);
+            var response = new AttentionPingResponse(_playerManager.GetPeerInfo(peer), ping);
             var team = _playerManager.GetPeerInfo(peer).Team;
             return _game.PacketHandlerManager.broadcastPacketTeam(team, response, Channel.CHL_S2C);
         }
