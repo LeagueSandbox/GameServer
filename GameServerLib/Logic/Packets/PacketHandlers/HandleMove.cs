@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
                 return true;
-            
+
             var vMoves = readWaypoints(data.moveData, data.CoordCount, _game.Map);
             switch (data.MovementType)
             {

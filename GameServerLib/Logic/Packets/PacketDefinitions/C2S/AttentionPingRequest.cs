@@ -3,32 +3,24 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class AttentionPingRequest
+    public class AttentionPingRequest : ClientPacketBase
     {
-        public byte cmd;
-        public int unk1;
-        public float x;
-        public float y;
-        public int targetNetId;
-        public Pings type;
+        public float X { get; private set; }
+        public float Y { get; private set; }
+        public int TargetNetId { get; private set; }
+        public Pings Type { get; private set; }
 
-        public AttentionPingRequest(byte[] data)
+        public AttentionPingRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = reader.ReadByte();
-            unk1 = reader.ReadInt32();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            targetNetId = reader.ReadInt32();
-            type = (Pings)reader.ReadByte();
+
         }
-        
-        public AttentionPingRequest(float x, float y, int netId, Pings type)
+
+        protected override void ParseInternal(BinaryReader reader)
         {
-            this.x = x;
-            this.y = y;
-            this.targetNetId = netId;
-            this.type = type;
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            TargetNetId = reader.ReadInt32();
+            Type = (Pings)reader.ReadByte();
         }
     }
 }

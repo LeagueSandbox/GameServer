@@ -3,30 +3,30 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class CastSpellRequest
+    public class CastSpellRequest : ClientPacketBase
     {
-        public PacketCmd cmd;
-        public int netId;
-        public byte spellSlotType; // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
-        public byte spellSlot; // 0-3 [0-1 if spellSlotType has summoner spell bits set]
-        public float x; // Initial point
-        public float y; // (e.g. Viktor E laser starting point)
-        public float x2; // Final point
-        public float y2; // (e.g. Viktor E laser final point)
-        public uint targetNetId; // If 0, use coordinates, else use target net id
+        public byte SpellSlotType { get; private set; } // 4.18 [deprecated? . 2 first(highest) bits: 10 - ability or item, 01 - summoner spell]
+        public byte SpellSlot { get; private set; } // 0-3 [0-1 if spellSlotType has summoner spell bits set]
+        public float X { get; private set; } // Initial point
+        public float Y { get; private set; } // (e.g. Viktor E laser starting point)
+        public float X2 { get; private set; } // Final point
+        public float Y2 { get; private set; } // (e.g. Viktor E laser final point)
+        public uint TargetNetId { get; private set; } // If 0, use coordinates, else use target net id
 
-        public CastSpellRequest(byte[] data)
+        public CastSpellRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            spellSlotType = reader.ReadByte();
-            spellSlot = reader.ReadByte();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            x2 = reader.ReadSingle();
-            y2 = reader.ReadSingle();
-            targetNetId = reader.ReadUInt32();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            SpellSlotType = reader.ReadByte();
+            SpellSlot = reader.ReadByte();
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            X2 = reader.ReadSingle();
+            Y2 = reader.ReadSingle();
+            TargetNetId = reader.ReadUInt32();
         }
     }
 }

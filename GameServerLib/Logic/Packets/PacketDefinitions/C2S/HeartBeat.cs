@@ -3,20 +3,20 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class HeartBeat
+    public class HeartBeat : ClientPacketBase
     {
-        public PacketCmd cmd;
-        public int netId;
-        public float receiveTime;
-        public float ackTime;
-        public HeartBeat(byte[] data)
+        public float ReceiveTime { get; private set; }
+        public float AckTime { get; private set; }
+
+        public HeartBeat(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            receiveTime = reader.ReadSingle();
-            ackTime = reader.ReadSingle();
-            reader.Close();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            ReceiveTime = reader.ReadSingle();
+            AckTime = reader.ReadSingle();
         }
     }
 }

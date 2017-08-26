@@ -41,7 +41,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _logger.LogCoreInfo("Player " + playerName + " is joking.");
                     break;
             }
-            
             var response = new EmotionPacketResponse(data.EmoteId, data.NetId);
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }

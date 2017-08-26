@@ -3,18 +3,18 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class UseObject
+    public class UseObject : ClientPacketBase
     {
-        PacketCmd cmd;
-        int netId;
-        public uint targetNetId; // netId of the object used
+        public uint TargetNetId { get; private set; } // netId of the object used
 
-        public UseObject(byte[] data)
+        public UseObject(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            targetNetId = reader.ReadUInt32();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            TargetNetId = reader.ReadUInt32();
         }
     }
 }
