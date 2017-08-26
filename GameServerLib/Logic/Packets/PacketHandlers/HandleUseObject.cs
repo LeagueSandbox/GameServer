@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleUseObject : PacketHandlerBase
+    public class HandleUseObject : PacketHandlerBase<UseObject>
     {
         private readonly Game _game;
         private readonly Logger _logger;
@@ -21,11 +21,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, UseObject data)
         {
-            var parsedData = new UseObject(data);
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            var msg = $"Object {champion.NetId} is trying to use (right clicked) {parsedData.targetNetId}";
+            var msg = $"Object {champion.NetId} is trying to use (right clicked) {data.TargetNetId}";
             _logger.LogCoreInfo(msg);
 
             return true;

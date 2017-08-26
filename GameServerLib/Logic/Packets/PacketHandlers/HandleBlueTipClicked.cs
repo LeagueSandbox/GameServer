@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleBlueTipClicked : PacketHandlerBase
+    public class HandleBlueTipClicked : PacketHandlerBase<BlueTipClicked>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -23,19 +23,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, BlueTipClicked data)
         {
-            var blueTipClicked = new BlueTipClicked(data);
             var removeBlueTip = new BlueTip(
                 "",
                 "",
                 "",
                 0,
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
-                blueTipClicked.netid);
+                data.TargetNetId);
 
             _game.PacketHandlerManager.sendPacket(peer, removeBlueTip, Channel.CHL_S2C);
-            var msg = $"Clicked blue tip with netid: {blueTipClicked.netid}";
+            var msg = $"Clicked blue tip with netid: {data.TargetNetId}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

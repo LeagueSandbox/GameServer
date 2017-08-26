@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleHeartBeat : PacketHandlerBase
+    public class HandleHeartBeat : PacketHandlerBase<HeartBeat>
     {
         private readonly Logger _logger;
         private readonly PlayerManager _playerManager;
@@ -19,12 +19,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, HeartBeat data)
         {
-            var heartbeat = new HeartBeat(data);
-
-            var diff = heartbeat.ackTime - heartbeat.receiveTime;
-            if (heartbeat.receiveTime > heartbeat.ackTime)
+            var diff = data.AckTime - data.ReceiveTime;
+            if (data.ReceiveTime > data.AckTime)
             {
                 var peerInfo = _playerManager.GetPeerInfo(peer);
                 var msg = $"Player {peerInfo.UserId} sent an invalid heartbeat - Timestamp error (diff: {diff})";

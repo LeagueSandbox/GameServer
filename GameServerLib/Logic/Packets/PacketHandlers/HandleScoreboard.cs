@@ -1,10 +1,11 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleScoreboard : PacketHandlerBase
+    public class HandleScoreboard : PacketHandlerBase<EmptyClientPacket>
     {
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _logger = logger;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
         {
             _logger.LogCoreInfo($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
             return true;

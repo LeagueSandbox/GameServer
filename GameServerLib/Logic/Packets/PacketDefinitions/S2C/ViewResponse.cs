@@ -5,10 +5,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ViewResponse : Packet
     {
-        public ViewResponse(ViewRequest request)
+        public ViewResponse(uint senderNetId)
             : base(PacketCmd.PKT_S2C_ViewAns)
         {
-            buffer.Write(request.netId);
+            buffer.Write(senderNetId);
         }
 
         public void setRequestNo(byte requestNo)

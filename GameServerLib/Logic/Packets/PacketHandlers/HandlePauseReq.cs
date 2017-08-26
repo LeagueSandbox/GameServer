@@ -1,10 +1,11 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandlePauseReq : PacketHandlerBase
+    public class HandlePauseReq : PacketHandlerBase<EmptyClientPacket>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
         {
             _game.Pause();
             return true;

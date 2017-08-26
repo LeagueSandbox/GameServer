@@ -7,6 +7,8 @@ using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
+using LeagueSandbox.GameServer.Logic.Packets.Providers;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -20,15 +22,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Host _server;
         private readonly PlayerManager _playerManager;
         private readonly IHandlersProvider _packetHandlerProvider;
+        private readonly IClientPacketProvider _clientPacketProvider;
 
         public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager,
-            IHandlersProvider handlersProvider)
+            IHandlersProvider handlersProvider, IClientPacketProvider clientPacketProvider)
         {
             _logger = logger;
             _blowfish = blowfish;
             _server = server;
             _playerManager = playerManager;
             _packetHandlerProvider = handlersProvider;
+            _clientPacketProvider = clientPacketProvider;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
@@ -174,10 +178,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public bool handlePacket(Peer peer, byte[] data, Channel channelID)
         {
-            var header = new GameServer.Logic.Packets.PacketHeader(data);
-            var handler = GetHandler(header.cmd, channelID);
+            if (data.Length < 1)
+                return false;
 
-            switch (header.cmd)
+            var cmd = (PacketCmd)data[0];
+            var handler = GetHandler(cmd, channelID);
+            var packet = _clientPacketProvider.ProvideClientPacket(handler, data);
+            if (packet == null)
+                return false;
+
+            //TODO: ??
+            switch (cmd)
             {
                 case PacketCmd.PKT_C2S_StatsConfirm:
                 case PacketCmd.PKT_C2S_MoveConfirm:
@@ -187,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (handler != null)
             {
-                if (!handler.HandlePacket(peer, data))
+                if (!handler.HandlePacket(peer, packet))
                 {
                     return false;
                 }
@@ -211,3 +222,4 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         }
     }
 }
+

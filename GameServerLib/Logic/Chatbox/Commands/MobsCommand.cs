@@ -45,9 +45,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             foreach (var unit in units)
             {
-                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
                 var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingResponse(client, ping);
+                var response = new AttentionPingResponse(client, unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
                 _game.PacketHandlerManager.broadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
             }
         }

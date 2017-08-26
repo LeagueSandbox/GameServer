@@ -3,18 +3,18 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class EmotionPacketRequest
+    public class EmotionPacketRequest : ClientPacketBase
     {
-        public PacketCmd cmd;
-        public uint netId;
-        public byte id;
+        public Emotions EmoteId { get; private set; }
 
-        public EmotionPacketRequest(byte[] data)
+        public EmotionPacketRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadUInt32();
-            id = reader.ReadByte();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            EmoteId = (Emotions)reader.ReadByte();
         }
     }
 }

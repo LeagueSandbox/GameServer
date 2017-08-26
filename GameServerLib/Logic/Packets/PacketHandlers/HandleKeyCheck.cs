@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleKeyCheck : PacketHandlerBase
+    public class HandleKeyCheck : PacketHandlerBase<KeyCheckRequest>
     {
         private readonly Logger _logger;
         private readonly Game _game;
@@ -23,12 +23,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, KeyCheckRequest data)
         {
-            var keyCheck = new KeyCheckRequest(data);
-            var userId = _game.Blowfish.Decrypt(keyCheck.checkId);
+            var userId = _game.Blowfish.Decrypt(data.CheckId);
 
-            if (userId != keyCheck.userId)
+            if (userId != data.UserId)
                 return false;
 
             var playerNo = 0;
@@ -50,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO: add at least port or smth
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
-                    var response = new KeyCheckResponse(keyCheck.userId, playerNo);
+                    var response = new KeyCheckResponse(data.UserId, playerNo);
                     _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
                     return true;
                 }

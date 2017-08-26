@@ -17,7 +17,10 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Packets.Providers;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -54,12 +57,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly PlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
         private readonly IHandlersProvider _packetHandlerProvider;
+        private readonly IClientPacketProvider _clientPacketProvider;
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
 
         public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager,
-            PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider)
+            PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider,
+            IClientPacketProvider clientPacketProvider)
         {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;
@@ -67,6 +72,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _playerManager = playerManager;
             _logger = logger;
             _packetHandlerProvider = handlersProvider;
+            _clientPacketProvider = clientPacketProvider;
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
@@ -88,7 +94,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager,
-                _packetHandlerProvider);
+                _packetHandlerProvider, _clientPacketProvider);
 
 
             ObjectManager = new ObjectManager(this);
@@ -167,7 +173,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
                         PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
-                            .HandlePacket(null, new byte[0]);
+                            .HandlePacket<ClientPacketBase>(null, null);
                         _autoResumeCheck = true;
                     }
                     continue;

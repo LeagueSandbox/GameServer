@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSellItem : PacketHandlerBase
+    public class HandleSellItem : PacketHandlerBase<SellItem>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -19,12 +19,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, SellItem data)
         {
-            var sell = new SellItem(data);
             var client = _playerManager.GetPeerInfo(peer);
 
-            var i = _playerManager.GetPeerInfo(peer).Champion.getInventory().GetItem(sell.slotId);
+            var i = _playerManager.GetPeerInfo(peer).Champion.getInventory().GetItem(data.SlotId);
             if (i == null)
                 return false;
 
@@ -34,16 +33,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, i.StackSize);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, data.SlotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
-                    client.Champion.getInventory().RemoveItem(sell.slotId);
+                    client.Champion.getInventory().RemoveItem(data.SlotId);
                 }
             }
             else
             {
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, 0);
-                client.Champion.getInventory().RemoveItem(sell.slotId);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, data.SlotId, 0);
+                client.Champion.getInventory().RemoveItem(data.SlotId);
             }
 
             client.Champion.GetStats().RemoveModifier(i.ItemType);

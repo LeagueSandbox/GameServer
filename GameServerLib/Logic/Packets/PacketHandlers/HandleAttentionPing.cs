@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleAttentionPing : PacketHandlerBase
+    public class HandleAttentionPing : PacketHandlerBase<AttentionPingRequest>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -20,10 +20,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, AttentionPingRequest data)
         {
-            var ping = new AttentionPingRequest(data);
-            var response = new AttentionPingResponse(_playerManager.GetPeerInfo(peer), ping);
+            var response = new AttentionPingResponse
+            (
+                _playerManager.GetPeerInfo(peer),
+                data.X,
+                data.Y,
+                data.TargetNetId,
+                data.Type
+            );
             var team = _playerManager.GetPeerInfo(peer).Team;
             return _game.PacketHandlerManager.broadcastPacketTeam(team, response, Channel.CHL_S2C);
         }

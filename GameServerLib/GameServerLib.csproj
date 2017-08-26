@@ -274,10 +274,12 @@
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\ObjectManager.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
+    <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmptyClientPacket.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\PingLoadInfoRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\SkillUpRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\SwapItemsRequest.cs" />
+    <Compile Include="Logic\Packets\PacketDefinitions\ClientPacketBase.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddBuff.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddGold.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddUnitFOW.cs" />
@@ -370,6 +372,7 @@
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NextAutoAttack.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NpcDie.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\OnAttack.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\Emotions.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleExit.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleLockCamera.cs" />
@@ -378,6 +381,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleScoreboard.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleStatsConfirm.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleUnpauseReq.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandler.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerBase.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Pings.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\PacketHeader.cs" />
@@ -444,6 +448,8 @@
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\ViewResponse.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\ViewRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\WorldSendGameNumber.cs" />
+    <Compile Include="Logic\Packets\Providers\ClientPacketProvider.cs" />
+    <Compile Include="Logic\Packets\Providers\IClientPacketProvider.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
@@ -456,7 +462,6 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleBlueTipClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleSurrender.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandler.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleAttentionPing.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleBuyItem.cs" />

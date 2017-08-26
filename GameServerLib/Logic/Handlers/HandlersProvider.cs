@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
 
             foreach (var assembly in assemblies)
             {
-                var possibleHandlers = assembly.GetTypes().Where(x => typeof(PacketHandlerBase).IsAssignableFrom(x));
+                var possibleHandlers = assembly.GetTypes().Where(x => typeof(IPacketHandler).IsAssignableFrom(x));
                 var handlers = possibleHandlers.Where(x => !x.IsAbstract && !x.IsInterface);
                 foreach (var handler in handlers)
                 {
@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Handlers
                     if (handler.GetCustomAttribute<DisabledHandlerAttribute>() != null)
                         continue;
 
-                    var instance = _kernel.Get(handler) as PacketHandlerBase;
+                    var instance = _kernel.Get(handler) as IPacketHandler;
                     if (instance == null) //??
                         continue;
 

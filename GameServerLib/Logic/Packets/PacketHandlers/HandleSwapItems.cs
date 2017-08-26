@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSwapItems : PacketHandlerBase
+    public class HandleSwapItems : PacketHandlerBase<SwapItemsRequest>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -20,18 +20,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, SwapItemsRequest data)
         {
-            var request = new SwapItemsRequest(data);
-            if (request.slotFrom > 6 || request.slotTo > 6)
+            if (data.SlotFrom > 6 || data.SlotTo > 6)
                 return false;
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            _playerManager.GetPeerInfo(peer).Champion.getInventory().SwapItems(request.slotFrom, request.slotTo);
+            _playerManager.GetPeerInfo(peer).Champion.getInventory().SwapItems(data.SlotFrom, data.SlotTo);
             _game.PacketNotifier.NotifyItemsSwapped(
                 _playerManager.GetPeerInfo(peer).Champion,
-                request.slotFrom,
-                request.slotTo
+                data.SlotFrom,
+                data.SlotTo
             );
 
             return true;

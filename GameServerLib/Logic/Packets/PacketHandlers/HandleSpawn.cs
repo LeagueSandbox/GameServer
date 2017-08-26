@@ -3,12 +3,13 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSpawn : PacketHandlerBase
+    public class HandleSpawn : PacketHandlerBase<EmptyClientPacket>
     {
         private readonly Logger _logger;
         private readonly Game _game;
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _networkIdManager = networkIdManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
         {
             var start = new StatePacket2(PacketCmd.PKT_S2C_StartSpawn);
             _game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
