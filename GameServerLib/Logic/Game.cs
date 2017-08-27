@@ -17,6 +17,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -58,13 +59,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
         private readonly NetworkIdManager _networkIdManager;
         private readonly IHandlersProvider _packetHandlerProvider;
         private readonly IClientPacketProvider _clientPacketProvider;
+        private readonly IPacketArgsTranslationService _translationService;
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
 
         public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager,
             PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider,
-            IClientPacketProvider clientPacketProvider)
+            IClientPacketProvider clientPacketProvider, IPacketArgsTranslationService translationService)
         {
             _itemManager = itemManager;
             _chatCommandManager = chatCommandManager;
@@ -73,6 +75,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             _logger = logger;
             _packetHandlerProvider = handlersProvider;
             _clientPacketProvider = clientPacketProvider;
+            _translationService = translationService;
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
@@ -100,7 +103,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
+            PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager, _translationService);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;

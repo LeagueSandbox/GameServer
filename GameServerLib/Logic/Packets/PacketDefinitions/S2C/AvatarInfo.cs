@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AvatarInfo : BasePacket
     {
-        public AvatarInfo(ClientInfo player)
-            : base(PacketCmd.PKT_S2C_AvatarInfo, player.Champion.NetId)
+        public AvatarInfo(AvatarInfoArgs args)
+            : base(PacketCmd.PKT_S2C_AvatarInfo, args.PlayerNetId)
         {
             int runesRequired = 30;
-            foreach (var rune in player.Champion.RuneList._runes)
+            foreach (var rune in args.Runes)
             {
                 buffer.Write((short)rune.Value);
                 buffer.Write((short)0x00);
@@ -23,9 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 buffer.Write((short)0);
             }
 
-            var summonerSpells = player.SummonerSkills;
-            buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
-            buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
+            buffer.Write((uint)HashFunctions.HashString(args.SummonerSpell1));
+            buffer.Write((uint)HashFunctions.HashString(args.SummonerSpell2));
 
             int talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>(){

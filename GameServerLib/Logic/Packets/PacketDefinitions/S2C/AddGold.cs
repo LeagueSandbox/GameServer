@@ -1,23 +1,17 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AddGold : BasePacket
     {
-        public AddGold(Champion richMan, Unit died, float gold)
-            : base(PacketCmd.PKT_S2C_AddGold, richMan.NetId)
+        public AddGold(AddGoldArgs args)
+            : base(PacketCmd.PKT_S2C_AddGold, args.AcceptorNetId)
         {
-            buffer.Write(richMan.NetId);
-            if (died != null)
-            {
-                buffer.Write(died.NetId);
-            }
-            else
-            {
-                buffer.Write((int)0);
-            }
-            buffer.Write(gold);
+            buffer.Write((uint)args.AcceptorNetId);
+            buffer.Write((uint)args.DonorNetId);
+            buffer.Write((float)args.Amount);
         }
     }
 }

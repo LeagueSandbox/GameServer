@@ -6,31 +6,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         public bool IsAnnounced { get; private set; }
         public long EventTime { get; private set; }
-        private Announces _messageId;
-        private bool _isMapSpecific;
-        private Game _game;
+        private readonly Announces _messageId;
+        private readonly int _mapId;
+        private readonly Game _game;
 
-        public Announce(Game game, long eventTime, Announces id, bool isMapSpecific)
+        public Announce(Game game, long eventTime, Announces id, int mapId)
         {
             IsAnnounced = false;
             EventTime = eventTime;
             _messageId = id;
-            _isMapSpecific = isMapSpecific;
+            _mapId = mapId;
             _game = game;
         }
 
         public void Execute()
         {
-            _game.PacketNotifier.NotifyAnnounceEvent(_messageId, _isMapSpecific);
+            _game.PacketNotifier.NotifyAnnounceEvent(_messageId, _mapId);
             IsAnnounced = true;
         }
-    }
-
-    public enum Announces : byte
-    {
-        WelcomeToSR = 0x77,
-        ThirySecondsToMinionsSpawn = 0x78,
-        MinionsHaveSpawned = 0x7F,
-        MinionsHaveSpawned2 = 0x76
     }
 }

@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
-    class SummonersRift : MapGameScript
+    public class SummonersRift : MapGameScript
     {
         private static readonly List<Vector2> BLUE_TOP_WAYPOINTS = new List<Vector2>
         {
@@ -201,11 +201,11 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void Init()
         {
             // Announcer events
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WelcomeToSR, true)); // Welcome to SR
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WelcomeToSR, _game.Map.Id)); // Welcome to SR
             if (_firstSpawnTime - 30 * 1000 >= 0.0f)
-                _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, true)); // 30 seconds until minions spawn
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned, false)); // Minions have spawned (90 * 1000)
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned2, false)); // Minions have spawned [2] (90 * 1000)
+                _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime - 30 * 1000, Announces.ThirySecondsToMinionsSpawn, _game.Map.Id)); // 30 seconds until minions spawn
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned, 0)); // Minions have spawned (90 * 1000)
+            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MinionsHaveSpawned2, 0)); // Minions have spawned [2] (90 * 1000)
 
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE,
                 TurretType.OuterTurret, GetTurretItems(TurretType.OuterTurret)));

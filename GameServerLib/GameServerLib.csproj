@@ -234,6 +234,7 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\ObjBuilding.cs" />
     <Compile Include="Logic\GameObjects\Missiles\ObjMissile.cs" />
     <Compile Include="Logic\GameObjects\Other\Announce.cs" />
+    <Compile Include="Logic\GameObjects\Other\Announces.cs" />
     <Compile Include="Logic\GameObjects\Spells\Buff.cs" />
     <Compile Include="Logic\GameObjects\Stats\ChampionStatModifier.cs" />
     <Compile Include="Logic\GameObjects\Stats\IStatsModifier.cs" />
@@ -273,6 +274,16 @@
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\ObjectManager.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AddBuffArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AddGoldArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AddUnitFOWArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AddXpArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AnnounceArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AttachMinimapIconArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AttentionPingResponseArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\AvatarInfoArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\IPacketArgsTranslationService.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\PacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmptyClientPacket.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />

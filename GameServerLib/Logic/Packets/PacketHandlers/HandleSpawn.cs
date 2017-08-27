@@ -3,6 +3,7 @@ using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -16,18 +17,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
+        private readonly IPacketArgsTranslationService _translationService;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CharLoaded;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSpawn(Logger logger, Game game, ItemManager itemManager, PlayerManager playerManager,
-            NetworkIdManager networkIdManager)
+            NetworkIdManager networkIdManager, IPacketArgsTranslationService translationService)
         {
             _logger = logger;
             _game = game;
             _itemManager = itemManager;
             _playerManager = playerManager;
             _networkIdManager = networkIdManager;
+            _translationService = translationService;
         }
 
         public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
@@ -42,7 +45,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 var spawn = new HeroSpawn(p.Item2, playerId++);
                 _game.PacketHandlerManager.sendPacket(peer, spawn, Channel.CHL_S2C);
 
-                var info = new AvatarInfo(p.Item2);
+                var avatarArgs = _translationService.TranslateAvatarInfo(p.Item2);
+                var info = new AvatarInfo(avatarArgs);
                 _game.PacketHandlerManager.sendPacket(peer, info, Channel.CHL_S2C);
             }
 
@@ -54,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             // Runes
             byte runeItemSlot = 14;
-            foreach (var rune in peerInfo.Champion.RuneList._runes)
+            foreach (var rune in peerInfo.Champion.RuneList)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.Champion.getInventory().SetExtraItem(runeItemSlot, runeItem);

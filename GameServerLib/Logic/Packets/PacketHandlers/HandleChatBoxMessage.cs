@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -13,17 +14,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
+        private readonly IPacketArgsTranslationService _translationService;
 
         public override PacketCmd PacketType => PacketCmd.PKT_ChatBoxMessage;
         public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
 
         public HandleChatBoxMessage(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager,
-            Logger logger)
+            Logger logger, IPacketArgsTranslationService translationService)
         {
             _game = game;
             _chatCommandManager = chatCommandManager;
             _playerManager = playerManager;
             _logger = logger;
+            _translationService = translationService;
         }
 
         public override bool HandlePacketInternal(Peer peer, ChatMessage data)
@@ -117,16 +120,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (!int.TryParse(split[1], out y))
                 return;
 
-            var response = new AttentionPingResponse
-            (
-                _playerManager.GetPeerInfo(peer),
-                x,
-                y,
-                0,
-                Pings.Ping_Default
-            );
-            _game.PacketHandlerManager.broadcastPacketTeam(
-                _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C);
+            var client = _playerManager.GetPeerInfo(peer);
+            var args = _translationService.TranslateAttentionPingResponse(client, x, y, 0, Pings.Ping_Default);
+            var response = new AttentionPingResponse(args);
+
+            _game.PacketHandlerManager.broadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
         }
     }
 }

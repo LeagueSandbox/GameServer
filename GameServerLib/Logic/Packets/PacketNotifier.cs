@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce;
@@ -16,12 +17,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         private Game _game;
         private PlayerManager _playerManager;
         private NetworkIdManager _networkIdManager;
+        private IPacketArgsTranslationService _translationService;
 
-        public PacketNotifier(Game game, PlayerManager playerManager, NetworkIdManager networkIdManager)
+        public PacketNotifier(Game game, PlayerManager playerManager, NetworkIdManager networkIdManager,
+            IPacketArgsTranslationService translationService)
         {
             _game = game;
             _playerManager = playerManager;
             _networkIdManager = networkIdManager;
+            _translationService = translationService;
         }
 
         public void NotifyMinionSpawned(Minion m, TeamId team)
@@ -104,7 +108,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAddBuff(Buff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, b.BuffType, b.Name, b.Slot);
+            var args = _translationService.TranslateAddBuff(b);
+            var add = new AddBuff(args);
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -277,13 +282,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAddGold(Champion c, Unit died, float gold)
         {
-            var ag = new AddGold(c, died, gold);
+            var args = _translationService.TranslateAddGold(c, died, gold);
+            var ag = new AddGold(args);
             _game.PacketHandlerManager.broadcastPacket(ag, Channel.CHL_S2C);
         }
 
         public void NotifyAddXP(Champion champion, float experience)
         {
-            var xp = new AddXP(champion, experience);
+            var args = _translationService.TranslateAddXp(champion, experience);
+            var xp = new AddXP(args);
             _game.PacketHandlerManager.broadcastPacket(xp, Channel.CHL_S2C);
         }
 
@@ -426,9 +433,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
         }
 
-        public void NotifyAnnounceEvent(Announces messageId, bool isMapSpecific)
+        public void NotifyAnnounceEvent(Announces messageId, int mapId)
         {
-            var announce = new Announce(messageId, isMapSpecific ? _game.Map.Id : 0);
+            var args = _translationService.TranslateAnnounce(messageId, mapId);
+            var announce = new Announce(args);
             _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
         }
 
