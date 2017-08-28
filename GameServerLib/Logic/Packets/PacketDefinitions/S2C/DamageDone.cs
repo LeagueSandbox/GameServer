@@ -1,18 +1,19 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class DamageDone : BasePacket
     {
-        public DamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damageText)
-            : base(PacketCmd.PKT_S2C_DamageDone, target.NetId)
+        public DamageDone(DamageDoneArgs args)
+            : base(PacketCmd.PKT_S2C_DamageDone, args.DamageTargetNetId)
         {
-            buffer.Write((byte)damageText);
-            buffer.Write((short)((short)type << 8));
-            buffer.Write((float)amount);
-            buffer.Write((int)target.NetId);
-            buffer.Write((int)source.NetId);
+            buffer.Write((byte)args.DamageText);
+            buffer.Write((short)((short)args.Type << 8));
+            buffer.Write((float)args.Amount);
+            buffer.Write((uint)args.DamageTargetNetId);
+            buffer.Write((uint)args.DamageSourceNetId);
         }
     }
 }

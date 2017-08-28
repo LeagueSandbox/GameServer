@@ -282,6 +282,13 @@
     <Compile Include="Logic\Packets\PacketArgs\AttachMinimapIconArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\AttentionPingResponseArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\AvatarInfoArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\BasicTutorialMessageWindowArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\BeginAutoAttackArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\BuyItemResponseArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\CastSpellResponseArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DamageDoneArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DTO\ChampionAtLocation.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DTO\UnitAtLocation.cs" />
     <Compile Include="Logic\Packets\PacketArgs\IPacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketArgs\PacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
@@ -358,6 +365,7 @@
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\HighlightUnit.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\InhibitorDeathAnimation.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\InhibitorStateUpdate.cs" />
+    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ItemOwnerType.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\KeyCheckResponse.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\LeaveVision.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\LevelPropAnimation.cs" />

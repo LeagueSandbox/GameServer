@@ -150,7 +150,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyDamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damagetext)
         {
-            var dd = new DamageDone(source, target, amount, type, damagetext);
+            var args = _translationService.TranslateDamageDone(source, target, amount, type, damagetext);
+            var dd = new DamageDone(args);
             _game.PacketHandlerManager.broadcastPacket(dd, Channel.CHL_S2C);
         }
 
@@ -162,7 +163,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyBeginAutoAttack(Unit attacker, Unit victim, uint futureProjNetId, bool isCritical)
         {
-            var aa = new BeginAutoAttack(attacker, victim, futureProjNetId, isCritical);
+            var args = _translationService.TranslateBeginAutoAttack(attacker, victim, futureProjNetId, isCritical);
+            var aa = new BeginAutoAttack(args);
             _game.PacketHandlerManager.broadcastPacket(aa, Channel.CHL_S2C);
         }
 
@@ -211,7 +213,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyItemBought(Unit u, Item i)
         {
-            var response = new BuyItemResponse(u, i);
+            var args = _translationService.TranslateBuyItemResponse(u, i);
+            var response = new BuyItemResponse(args);
             _game.PacketHandlerManager.broadcastPacketVision(u, response, Channel.CHL_S2C);
         }
 
@@ -470,6 +473,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                                 backDistance,
                                 travelTime);
             _game.PacketHandlerManager.broadcastPacketVision(u, dash, Channel.CHL_S2C);
+        }
+
+        public void NotifyCastSpell(Spell spell, float x, float y, float x2, float y2, uint futureProjNetId, uint spellNetId)
+        {
+            var args = _translationService.TranslateCastSpellResponse(spell, x, y, x2, y2, futureProjNetId, spellNetId);
+            var response = new CastSpellResponse(args);
+            //TODO: broadcast to visible only?
+            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }
     }
 }

@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
         {
             var stats = Owner.GetStats();
-            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
+            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana ||
                 state != SpellState.STATE_READY)
                 return false;
             stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
@@ -111,11 +111,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 finishCasting();
             }
-            var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
-            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
+            _game.PacketNotifier.NotifyCastSpell(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             return true;
         }
-        
+
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
@@ -178,7 +177,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     if (CurrentCastTime <= 0)
                     {
                         finishCasting();
-                        if(SpellData.ChannelDuration[Level] > 0)
+                        if (SpellData.ChannelDuration[Level] > 0)
                         {
                             channel();
                         }
@@ -193,7 +192,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     break;
                 case SpellState.STATE_CHANNELING:
                     CurrentChannelDuration -= diff / 1000.0f;
-                    if(CurrentChannelDuration <= 0)
+                    if (CurrentChannelDuration <= 0)
                     {
                         finishChanneling();
                     }
@@ -219,7 +218,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var p = new Projectile(
                 Owner.X,
                 Owner.Y,
-                (int) SpellData.LineWidth,
+                (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),
                 this,
@@ -275,7 +274,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
         /// <returns>spell's unique ID</returns>
-        public int getId()
+        public int GetHash()
         {
             return (int)HashFunctions.HashString(SpellName);
         }

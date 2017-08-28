@@ -53,7 +53,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
             var itemInstance = peerInfo.Champion.getInventory().SetExtraItem(7, bluePill);
-            var buyItem = new BuyItemResponse(peerInfo.Champion, itemInstance);
+            var args = _translationService.TranslateBuyItemResponse(peerInfo.Champion, itemInstance);
+            var buyItem = new BuyItemResponse(args);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Runes
