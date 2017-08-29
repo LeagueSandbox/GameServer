@@ -308,7 +308,9 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             foreach (var fountain in _fountains.Values)
+            {
                 fountain.Update(diff);
+            }
         }
 
         public Target GetRespawnLocation(TeamId team)
@@ -323,34 +325,26 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public string GetMinionModel(TeamId team, MinionSpawnType type)
         {
-            var toRet = "";
-            switch (team)
+            var teamDictionary = new Dictionary<TeamId, string>
             {
-                case TeamId.TEAM_BLUE:
-                    toRet += "Blue_Minion_";
-                    break;
-                case TeamId.TEAM_PURPLE:
-                    toRet += "Red_Minion_";
-                    break;
+                {TeamId.TEAM_BLUE, "Blue"},
+                {TeamId.TEAM_PURPLE, "Red"}
+            };
+
+            var typeDictionary = new Dictionary<MinionSpawnType, string>
+            {
+                {MinionSpawnType.MINION_TYPE_MELEE, "Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "MechMelee"}
+            };
+
+            if (!teamDictionary.ContainsKey(team) || !typeDictionary.ContainsKey(type))
+            {
+                return string.Empty;
             }
 
-            switch (type)
-            {
-                case MinionSpawnType.MINION_TYPE_MELEE:
-                    toRet += "Basic";
-                    break;
-                case MinionSpawnType.MINION_TYPE_CASTER:
-                    toRet += "Wizard";
-                    break;
-                case MinionSpawnType.MINION_TYPE_CANNON:
-                    toRet += "MechCannon";
-                    break;
-                case MinionSpawnType.MINION_TYPE_SUPER:
-                    toRet += "MechMelee";
-                    break;
-            }
-
-            return toRet;
+            return $"{teamDictionary[team]}_Minion_{typeDictionary[type]}";
         }
 
         public float GetGoldFor(Unit u)

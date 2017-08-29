@@ -24,6 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float OffsetZ;
         public float MapWidth;
         public float MapHeight;
+        public Vector2 MiddleOfMap;
         public const float Scale = 2f;
 
         public void CreateTranslation()
@@ -658,6 +659,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var asdf = grid.TranslateFromNavGrid(new Vector<float> { X = highestX, Y = highestY });
             grid.MapWidth = asdf.X;
             grid.MapHeight = asdf.Y;
+            grid.MiddleOfMap = new Vector2(asdf.X / 2, asdf.Y / 2);
 
             return grid;
         }
