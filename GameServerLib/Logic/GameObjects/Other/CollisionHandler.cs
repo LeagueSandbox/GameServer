@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public CollisionHandler(Map map)
         {
-            Pathfinder.setMap(map);
+            //Pathfinder.setMap(map);
             // Initialise the pathfinder.
         }
 
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     continue;
                 }
 
-                if (!_game.Map.AIMesh.isWalkable(obj.X, obj.Y))
+                if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
                 {
                     obj.onCollision(null);
                 }

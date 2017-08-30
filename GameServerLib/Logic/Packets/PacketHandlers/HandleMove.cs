@@ -40,8 +40,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.setPosition(request.x, request.y);
-                    float x = ((request.x) - _game.Map.AIMesh.getWidth()) / 2;
-                    float y = ((request.y) - _game.Map.AIMesh.getHeight()) / 2;
+                    float x = ((request.x) - _game.Map.NavGrid.MapWidth) / 2;
+                    float y = ((request.y) - _game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
@@ -81,29 +81,43 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (coordCount % 2 > 0)
                 coordCount++;
 
-            var mapSize = map.AIMesh.GetSize();
+            var mapSize = map.NavGrid.GetSize();
             var reader = new BinaryReader(new MemoryStream(buffer));
 
             BitArray mask = null;
             if (coordCount > 2)
-                mask = new BitArray(reader.ReadBytes(((coordCount - 3) / 8) + 1));
+            {
+                mask = new BitArray(reader.ReadBytes((coordCount - 3) / 8 + 1));
+            }
+
             var lastCoord = new Vector2(reader.ReadInt16(), reader.ReadInt16());
             var vMoves = new List<Vector2> { TranslateCoordinates(lastCoord, mapSize) };
 
             if (coordCount < 3)
+            {
                 return vMoves;
+            }
 
-            for (int i = 0; i < coordCount - 2; i += 2)
+            for (var i = 0; i < coordCount - 2; i += 2)
             {
                 if (mask[i])
+                {
                     lastCoord.X += reader.ReadSByte();
+                }
                 else
+                {
                     lastCoord.X = reader.ReadInt16();
+                }
 
                 if (mask[i + 1])
+                {
                     lastCoord.Y += reader.ReadSByte();
+                }
                 else
+                {
                     lastCoord.Y = reader.ReadInt16();
+                }
+
                 vMoves.Add(TranslateCoordinates(lastCoord, mapSize));
             }
             return vMoves;

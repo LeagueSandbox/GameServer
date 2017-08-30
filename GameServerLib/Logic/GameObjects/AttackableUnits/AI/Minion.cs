@@ -50,36 +50,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
-            var minionModel = "";
-            if (spawnSpecifics.Item1 == Enet.TeamId.TEAM_BLUE) // If we're the blue side
-            {
-                minionModel += "Blue_Minion_"; // make it a blue minion
-            }
-            else
-            {
-                minionModel += "Red_Minion_"; // otherwise make it a red minion
-            }
-
-            // Finish model name with type
-            if (type == MinionSpawnType.MINION_TYPE_MELEE)
-            {
-                minionModel += "Basic";
-            }
-            else if (type == MinionSpawnType.MINION_TYPE_CASTER)
-            {
-                minionModel += "Wizard";
-            }
-            else if (type == MinionSpawnType.MINION_TYPE_CANNON)
-            {
-                minionModel += "MechCannon";
-            }
-            else
-            {
-                minionModel += "MechMelee";
-            }
-
             // Set model
-            Model = minionModel;
+            Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, type);
 
 
             // If we have lane path instructions from the map

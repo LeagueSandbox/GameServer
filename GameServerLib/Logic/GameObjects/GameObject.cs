@@ -238,7 +238,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public virtual float GetZ()
         {
-            return _game.Map.AIMesh.GetHeightAtLocation(X, Y);
+            return _game.Map.NavGrid.GetHeightAtLocation(X, Y);
         }
 
         public bool IsCollidingWith(GameObject o)
@@ -263,7 +263,7 @@ namespace LeagueSandbox.GameServer.Logic
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-            if(this is Unit)
+            if (this is Unit)
             {
                 _game.PacketNotifier.NotifyUpdatedStats(this as Unit, false);
             }

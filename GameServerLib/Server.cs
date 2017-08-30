@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer
 
         public void Dispose()
         {
-            PathNode.DestroyTable();
+            // PathNode.DestroyTable();
         }
     }
 }

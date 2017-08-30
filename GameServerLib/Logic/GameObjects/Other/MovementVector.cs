@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     {
         public short x;
         public short y;
-        private Game _game = Program.ResolveDependency<Game>();
+        private static Game _game = Program.ResolveDependency<Game>();
 
         public MovementVector() { }
 
@@ -18,13 +18,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public MovementVector(float x, float y)
         {
-            this.x = FormatCoordinate(x, _game.Map.AIMesh.getHeight() / 2);
-            this.y = FormatCoordinate(y, _game.Map.AIMesh.getWidth() / 2);
+            this.x = FormatCoordinate(x, _game.Map.NavGrid.MiddleOfMap.Y);
+            this.y = FormatCoordinate(y, _game.Map.NavGrid.MiddleOfMap.X);
         }
 
         public Target ToTarget()
         {
-            return new Target(2.0f * x + _game.Map.AIMesh.getWidth() / 2, 2.0f * y + _game.Map.AIMesh.getHeight() / 2);
+            return new Target(2.0f * x + _game.Map.NavGrid.MiddleOfMap.X, 2.0f * y + _game.Map.NavGrid.MiddleOfMap.Y);
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -34,14 +34,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public static short TargetXToNormalFormat(float value)
         {
-            var game = Program.ResolveDependency<Game>();
-            return FormatCoordinate(value, game.Map.AIMesh.getWidth() / 2);
+            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.X);
         }
 
         public static short TargetYToNormalFormat(float value)
         {
-            var game = Program.ResolveDependency<Game>();
-            return FormatCoordinate(value, game.Map.AIMesh.getHeight() / 2);
+            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.Y);
         }
     }
 }
