@@ -189,7 +189,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyProjectileDestroy(Projectile p)
         {
-            var dp = new DestroyProjectile(p);
+            var args = _translationService.TranslatePacketObject(p);
+            var dp = new DestroyProjectile(args);
             _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
         }
 
@@ -201,7 +202,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyParticleDestroy(Particle particle)
         {
-            var dp = new DestroyParticle(particle);
+            var args = _translationService.TranslatePacketObject(particle);
+            var dp = new DestroyParticle(args);
             _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
         }
 
@@ -385,7 +387,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var c = o as Champion;
             if (o == null)
             {
-                var deleteObj = new DeleteObjectFromVision(o);
+                var args = _translationService.TranslatePacketObject(o);
+                var deleteObj = new DeleteObjectFromVision(args);
                 _game.PacketHandlerManager.broadcastPacketTeam(team, deleteObj, Channel.CHL_S2C);
             }
         }
@@ -395,7 +398,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var m = o as Minion;
             if (m != null)
             {
-                var eva = new EnterVisionAgain(m);
+                var args = _translationService.TranslateEnterVisionAgain(m);
+                var eva = new EnterVisionAgain(args);
                 _game.PacketHandlerManager.broadcastPacketTeam(team, eva, Channel.CHL_S2C);
                 NotifySetHealth(m);
                 return;
@@ -405,7 +409,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             // TODO: Fix bug where enemy champion is not visible to user when vision is acquired until the enemy champion moves
             if (c != null)
             {
-                var eva = new EnterVisionAgain(c);
+                var args = _translationService.TranslateEnterVisionAgain(c);
+                var eva = new EnterVisionAgain(args);
                 _game.PacketHandlerManager.broadcastPacketTeam(team, eva, Channel.CHL_S2C);
                 NotifySetHealth(c);
             }
@@ -455,23 +460,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
         }
 
-        public void NotifyDash(Unit u,
-                               Target t,
-                               float dashSpeed,
-                               bool keepFacingLastDirection,
-                               float leapHeight,
-                               float followTargetMaxDistance,
-                               float backDistance,
-                               float travelTime)
+        public void NotifyDash(Unit u, Target t, float dashSpeed, bool keepFacingLastDirection, float leapHeight,
+            float followTargetMaxDistance, float backDistance, float travelTime)
         {
-            var dash = new Dash(u,
-                                t,
-                                dashSpeed,
-                                keepFacingLastDirection,
-                                leapHeight,
-                                followTargetMaxDistance,
-                                backDistance,
-                                travelTime);
+            var args = _translationService.TranslateDash(u, t, dashSpeed, keepFacingLastDirection, leapHeight,
+                followTargetMaxDistance, backDistance, travelTime);
+            var dash = new Dash(args);
             _game.PacketHandlerManager.broadcastPacketVision(u, dash, Channel.CHL_S2C);
         }
 

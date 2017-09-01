@@ -117,7 +117,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     var champion = kv.Value as Champion;
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        var enterVisionPacket = new EnterVisionAgain(champion);
+                        var visionArgs = _translationService.TranslateEnterVisionAgain(champion);
+                        var enterVisionPacket = new EnterVisionAgain(visionArgs);
                         _game.PacketHandlerManager.sendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
                     }
                 }

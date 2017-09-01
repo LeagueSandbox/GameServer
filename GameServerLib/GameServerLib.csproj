@@ -287,8 +287,13 @@
     <Compile Include="Logic\Packets\PacketArgs\BuyItemResponseArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\CastSpellResponseArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\DamageDoneArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DashArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DestroyObjectArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\DTO\ChampionAtLocation.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\DTO\PacketObject.cs" />
     <Compile Include="Logic\Packets\PacketArgs\DTO\UnitAtLocation.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\EditBuffArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\EnterVisionAgainArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\IPacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketArgs\PacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />

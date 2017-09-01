@@ -1,21 +1,22 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class EditBuff : BasePacket
     {
-        public EditBuff(Unit u, byte slot, byte stacks) 
-            : base(PacketCmd.PKT_S2C_EditBuff, u.NetId)
+        public EditBuff(EditBuffArgs args)
+            : base(PacketCmd.PKT_S2C_EditBuff, args.Unit.ObjectNetId)
         {
-            buffer.Write(slot);//slot
-            buffer.Write(stacks);//stacks
+            buffer.Write(args.Slot);//slot
+            buffer.Write(args.Stacks);//stacks
             buffer.Write((byte)0x00);
             buffer.Write((byte)0x50);
             buffer.Write((byte)0xC3);
             buffer.Write((byte)0x46);
             buffer.Write(0);
-            buffer.Write(u.NetId);
+            buffer.Write(args.Unit.ObjectNetId);
 
         }
     }

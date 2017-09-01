@@ -146,5 +146,53 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
             var targetNetId = target.NetId;
             return new DamageDoneArgs(sourceNetId, targetNetId, amount, type, damageText);
         }
+
+        public DashArgs TranslateDash(Unit u, Target t, float dashSpeed, bool keepFacingLastDirection,
+            float leapHeight = 0, float followTargetMaxDistance = 0, float backDistance = 0, float travelTime = 0)
+        {
+            if (u == null || t == null)
+                return new DashArgs();
+
+            var unit = new UnitAtLocation(u.NetId, u.X, u.Y);
+            var target = new UnitAtLocation(t.IsSimpleTarget ? 0u : ((GameObject)t).NetId, t.X, t.Y);
+            return new DashArgs(unit, target, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance,
+                backDistance, travelTime);
+        }
+
+        public PacketObject TranslatePacketObject(GameObject obj)
+        {
+            if (obj == null)
+                return new PacketObject();
+
+            return new PacketObject(obj.NetId);
+        }
+
+        public DestroyObjectArgs TranslateDestroyObjectArgs(Unit destroyer, Unit destroyed)
+        {
+            if (destroyer == null || destroyed == null)
+                return new DestroyObjectArgs();
+
+            var destroyerUnit = TranslatePacketObject(destroyer);
+            var destroyedUnit = TranslatePacketObject(destroyed);
+            return new DestroyObjectArgs(destroyerUnit, destroyedUnit);
+        }
+
+        public EditBuffArgs TranslateEditBuff(Unit unit, byte slot, byte stacks)
+        {
+            if (unit == null)
+                return new EditBuffArgs();
+
+            var packetObject = new PacketObject(unit.NetId);
+            return new EditBuffArgs(packetObject, slot, stacks);
+        }
+
+        public EnterVisionAgainArgs TranslateEnterVisionAgain(ObjAIBase m)
+        {
+            if (m == null)
+                return new EnterVisionAgainArgs();
+
+            var obj = new UnitAtLocation(m.NetId, m.X, m.Y);
+            return new EnterVisionAgainArgs(obj, m.Waypoints.ToList(), m.CurWaypoint);
+        }
     }
 }

@@ -1,14 +1,15 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs.DTO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class DestroyParticle : BasePacket
     {
-        public DestroyParticle(Particle p)
-            : base(PacketCmd.PKT_S2C_DestroyObject, p.NetId)
+        public DestroyParticle(PacketObject args)
+            : base(PacketCmd.PKT_S2C_DestroyObject, args.ObjectNetId)
         {
-            buffer.Write((uint)p.NetId);
+            buffer.Write((uint)args.ObjectNetId);
         }
     }
 }

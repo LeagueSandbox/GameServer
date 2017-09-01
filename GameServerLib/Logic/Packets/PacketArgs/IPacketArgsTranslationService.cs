@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs.DTO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -26,5 +27,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
         BuyItemResponseArgs TranslateBuyItemResponse(Unit actor, Item item, ItemOwnerType owner = ItemOwnerType.Champion);
         CastSpellResponseArgs TranslateCastSpellResponse(Spell spell, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId);
         DamageDoneArgs TranslateDamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damageText);
+        DashArgs TranslateDash(Unit u, Target t, float dashSpeed, bool keepFacingLastDirection, float leapHeight = 0.0f, float followTargetMaxDistance = 0.0f, float backDistance = 0.0f, float travelTime = 0.0f);
+        PacketObject TranslatePacketObject(GameObject obj);
+        DestroyObjectArgs TranslateDestroyObjectArgs(Unit destroyer, Unit destroyed);
+        EditBuffArgs TranslateEditBuff(Unit unit, byte slot, byte stacks);
+        EnterVisionAgainArgs TranslateEnterVisionAgain(ObjAIBase m);
     }
 }
