@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {

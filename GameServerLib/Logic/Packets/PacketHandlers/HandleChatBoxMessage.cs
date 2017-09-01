@@ -1,6 +1,8 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -35,9 +37,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 {
                     if (int.TryParse(split[1], out y))
                     {
-                        var response = new AttentionPingAns(
+                        var response = new AttentionPingResponse(
                             _playerManager.GetPeerInfo(peer),
-                            new AttentionPing { x = x, y = y, targetNetId = 0, type = 0 }
+                            new AttentionPingRequest(x, y, 0, Pings.Ping_Default)
                         );
                         _game.PacketHandlerManager.broadcastPacketTeam(
                             _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C

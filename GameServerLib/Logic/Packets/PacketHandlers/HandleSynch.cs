@@ -1,5 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -22,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var version = new SynchVersion(data);
+            var version = new SynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
@@ -48,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
                 }
             }
-            var answer = new SynchVersionAns(_playerManager.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
+            var answer = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
 
             return _game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C);
         }

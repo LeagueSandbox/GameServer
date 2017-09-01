@@ -6,6 +6,7 @@ using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -31,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (peerInfo == null || !champion.CanMove())
                 return true;
 
-            var request = new MovementReq(data);
+            var request = new MovementRequest(data);
             var vMoves = readWaypoints(request.moveData, request.coordCount, _game.Map);
 
             switch (request.type)
