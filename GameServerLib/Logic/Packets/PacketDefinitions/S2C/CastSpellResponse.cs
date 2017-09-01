@@ -24,10 +24,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             buffer.Write((int)args.Owner.UnitHash);
             buffer.Write((uint)args.FutureProjNetId); // The projectile ID that will be spawned
             buffer.Write((float)args.X);
-            buffer.Write((float)m.AIMesh.GetHeightAtLocation(args.X, args.Y));
+            buffer.Write((float)m.NavGrid.GetHeightAtLocation(args.X, args.Y));
             buffer.Write((float)args.Y);
             buffer.Write((float)args.XDragEnd);
-            buffer.Write((float)m.AIMesh.GetHeightAtLocation(args.XDragEnd, args.YDragEnd));
+            buffer.Write((float)m.NavGrid.GetHeightAtLocation(args.XDragEnd, args.YDragEnd));
             buffer.Write((float)args.YDragEnd);
             buffer.Write((byte)0); // numTargets (if >0, what follows is a list of {uint32 targetNetId, uint8 hitResult})
             buffer.Write((float)args.CastTime); // designerCastTime

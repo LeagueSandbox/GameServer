@@ -5,10 +5,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnProjectile : BasePacket
     {
-        public SpawnProjectile(Projectile p) 
+        public SpawnProjectile(Projectile p)
             : base(PacketCmd.PKT_S2C_SpawnProjectile, p.NetId)
         {
-            float targetZ = Game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y);
+            float targetZ = Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ() + 100.0f);
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             buffer.Write((float)p.GetZ() + 100.0f);
             buffer.Write((float)p.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)Game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.X);
             buffer.Write((float)p.GetZ());
@@ -64,10 +64,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             buffer.Write((int)p.NetId);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)Game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
             buffer.Write((float)p.Target.Y);
             buffer.Write((float)p.Target.X);
-            buffer.Write((float)Game.Map.AIMesh.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
+            buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
             buffer.Write((float)p.Target.Y);
             if (!p.Target.IsSimpleTarget)
             {
