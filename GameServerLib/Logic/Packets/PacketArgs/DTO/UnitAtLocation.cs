@@ -11,12 +11,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs.DTO
         public uint UnitNetId { get; }
         public float X { get; }
         public float Y { get; }
+        public float Z { get; }
 
-        public UnitAtLocation(uint unitNetId, float x, float y)
+        public UnitAtLocation(uint unitNetId, float x, float y, float z)
         {
             UnitNetId = unitNetId;
             X = x;
             Y = y;
+            Z = z;
         }
     }
 }

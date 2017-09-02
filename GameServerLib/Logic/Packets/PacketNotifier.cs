@@ -183,7 +183,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyProjectileSpawn(Projectile p)
         {
-            var sp = new SpawnProjectile(p);
+            var args = _translationService.TranslateSpawnProjectile(p);
+            var sp = new SpawnProjectile(args);
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
         }
 

@@ -138,7 +138,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     var projectile = kv.Value as Projectile;
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        var spawnProjectilePacket = new SpawnProjectile(projectile);
+                        var projectileArgs = _translationService.TranslateSpawnProjectile(projectile);
+                        var spawnProjectilePacket = new SpawnProjectile(projectileArgs);
                         _game.PacketHandlerManager.sendPacket(peer, spawnProjectilePacket, Channel.CHL_S2C);
                     }
 

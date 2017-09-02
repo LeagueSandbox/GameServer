@@ -296,6 +296,7 @@
     <Compile Include="Logic\Packets\PacketArgs\EnterVisionAgainArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\IPacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketArgs\PacketArgsTranslationService.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\SpawnProjectileArgs.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmptyClientPacket.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets.PacketArgs.DTO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -14,6 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
 {
     public class PacketArgsTranslationService : IPacketArgsTranslationService
     {
+        //TODO: constructor injection when possible
+        private Game _game;
+        private Game Game => _game ?? (_game = Program.ResolveDependency<Game>());
+
         public AddBuffArgs TranslateAddBuff(Buff buff)
         {
             if (buff == null)
@@ -105,8 +111,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
             if (attacker == null || attacked == null)
                 return default(BeginAutoAttackArgs);
 
-            var attackerUnit = new UnitAtLocation(attacker.NetId, attacker.X, attacker.Y);
-            var attackedUnit = new UnitAtLocation(attacked.NetId, attacked.X, attacked.Y);
+            var attackerUnit = new UnitAtLocation(attacker.NetId, attacker.X, attacker.Y, attacker.GetZ());
+            var attackedUnit = new UnitAtLocation(attacked.NetId, attacked.X, attacked.Y, attacked.GetZ());
             return new BeginAutoAttackArgs(attackerUnit, attackedUnit, futureProjNetId, isCritical);
         }
 
@@ -153,8 +159,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
             if (u == null || t == null)
                 return new DashArgs();
 
-            var unit = new UnitAtLocation(u.NetId, u.X, u.Y);
-            var target = new UnitAtLocation(t.IsSimpleTarget ? 0u : ((GameObject)t).NetId, t.X, t.Y);
+            var unit = new UnitAtLocation(u.NetId, u.X, u.Y, u.GetZ());
+            var target = new UnitAtLocation(t.IsSimpleTarget ? 0u : ((GameObject)t).NetId, t.X, t.Y, 0f);
             return new DashArgs(unit, target, dashSpeed, keepFacingLastDirection, leapHeight, followTargetMaxDistance,
                 backDistance, travelTime);
         }
@@ -191,8 +197,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
             if (m == null)
                 return new EnterVisionAgainArgs();
 
-            var obj = new UnitAtLocation(m.NetId, m.X, m.Y);
+            var obj = new UnitAtLocation(m.NetId, m.X, m.Y, m.GetZ());
             return new EnterVisionAgainArgs(obj, m.Waypoints.ToList(), m.CurWaypoint);
+        }
+
+        public SpawnProjectileArgs TranslateSpawnProjectile(Projectile p)
+        {
+            if (p == null)
+                return new SpawnProjectileArgs();
+
+            var projectile = new UnitAtLocation(p.NetId, p.X, p.Y, p.GetZ());
+
+            var targetZ = Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
+            var targetNetId = p.Target.IsSimpleTarget ? 0u : ((GameObject)p.Target).NetId;
+            var target = new UnitAtLocation(targetNetId, p.Target.X, p.Target.Y, targetZ);
+
+            var ownerChampion = p.Owner as Champion;
+            var ownerHash = ownerChampion?.getChampionHash() ?? 0;
+            var owner = new ChampionAtLocation(p.Owner.NetId, ownerHash, p.Owner.X, p.Owner.Y, p.Owner.GetZ());
+
+            return new SpawnProjectileArgs(projectile, target, p.Target.IsSimpleTarget, p.getMoveSpeed(),
+                p.ProjectileId, owner);
         }
     }
 }

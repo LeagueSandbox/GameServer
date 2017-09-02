@@ -32,5 +32,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
         DestroyObjectArgs TranslateDestroyObjectArgs(Unit destroyer, Unit destroyed);
         EditBuffArgs TranslateEditBuff(Unit unit, byte slot, byte stacks);
         EnterVisionAgainArgs TranslateEnterVisionAgain(ObjAIBase m);
+        SpawnProjectileArgs TranslateSpawnProjectile(Projectile p);
     }
 }
