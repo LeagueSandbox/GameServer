@@ -137,7 +137,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             while (!Program.IsSetToExit)
             {
-                while (_server.Service(0, out enetEvent) > 0)
+                while (_server.Service(1, out enetEvent) > 0)
                 {
                     switch (enetEvent.Type)
                     {

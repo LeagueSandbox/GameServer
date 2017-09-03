@@ -3,6 +3,7 @@
     public enum PacketCmd : short
     {
         PKT_KeyCheck = 0x00,
+        PKT_RESPONSE = 0x02,
         PKT_S2C_RestrictCameraMovement = 0x06,
         PKT_C2S_HeartBeat = 0x08,
         PKT_C2S_SellItem = 0x09,
@@ -16,7 +17,7 @@
         PKT_S2C_GameSpeed = 0x12,
         PKT_C2S_QueryStatusReq = 0x14,
         PKT_S2C_SkillUp = 0x15,
-        PKT_C2S_Ping_Load_Info = 0x16,
+        PKT_C2S_Ping_Load_Info = 0x8E,
         PKT_S2C_ChangeSpell = 0x17,
         PKT_S2C_FloatingText = 0x18,
         PKT_S2C_FloatingTextWithValue = 0x19,
