@@ -219,5 +219,32 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
             return new SpawnProjectileArgs(projectile, target, p.Target.IsSimpleTarget, p.getMoveSpeed(),
                 p.ProjectileId, owner);
         }
+
+        public FogUpdate2Args TranslateFogUpdate2(Unit unit, uint fogNetId)
+        {
+            if (unit == null)
+                return new FogUpdate2Args();
+
+            var u = new UnitAtLocation(unit.NetId, unit.X, unit.Y, unit.GetZ());
+            return new FogUpdate2Args(u, unit.Team, unit.VisionRadius, fogNetId);
+        }
+
+        public HeroSpawnArgs TranslateHeroSpawn(ClientInfo player, int playerId)
+        {
+            if (player?.Champion == null)
+                return new HeroSpawnArgs();
+
+
+            return new HeroSpawnArgs(player.Champion.NetId, playerId, player.Team, player.SkinNo, player.Name,
+                player.Champion.Model);
+        }
+
+        public HeroSpawn2Args TranslateHeroSpawn2(Champion champion)
+        {
+            if (champion == null)
+                return new HeroSpawn2Args();
+
+            return new HeroSpawn2Args(new UnitAtLocation(champion.NetId, champion.X, champion.Y, champion.GetZ()));
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Packets.PacketArgs;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -11,14 +12,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
+        private readonly IPacketArgsTranslationService _translationService;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_StartGame;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleStartGame(Game game, PlayerManager playerManager)
+        public HandleStartGame(Game game, PlayerManager playerManager, IPacketArgsTranslationService translationService)
         {
             _game = game;
             _playerManager = playerManager;
+            _translationService = translationService;
         }
 
         public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
@@ -63,7 +66,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                            var heroSpawnPacket = new HeroSpawn2(player.Item2.Champion);
+                            var args = _translationService.TranslateHeroSpawn2(player.Item2.Champion);
+                            var heroSpawnPacket = new HeroSpawn2(args);
                             _game.PacketHandlerManager.sendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
 
                             /* This is probably not the best way

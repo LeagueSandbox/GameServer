@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FreezeUnitAnimation : BasePacket
     {
-        public FreezeUnitAnimation(Unit u, bool freeze)
-            : base(PacketCmd.PKT_S2C_FreezeUnitAnimation, u.NetId)
+        public FreezeUnitAnimation(uint unitNetId, bool freeze)
+            : base(PacketCmd.PKT_S2C_FreezeUnitAnimation, unitNetId)
         {
             byte flag = 0xDE;
             if (freeze)

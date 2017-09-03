@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FloatingText2 : BasePacket
     {
-        public FloatingText2(Unit u, string text, byte type, int unk) : base(PacketCmd.PKT_S2C_FloatingText, u.NetId)
+        public FloatingText2(uint unitNetId, string text, byte type, int unk) : base(PacketCmd.PKT_S2C_FloatingText, unitNetId)
         {
             buffer.fill(0, 10);
             buffer.Write((byte)type); // From 0x00 to 0x1B, 0x1C shows nothing and 0x1D bugsplats

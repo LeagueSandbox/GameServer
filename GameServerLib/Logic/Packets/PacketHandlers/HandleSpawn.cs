@@ -39,10 +39,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _game.PacketHandlerManager.sendPacket(peer, start, Channel.CHL_S2C);
             _logger.LogCoreInfo("Spawning map");
 
-            int playerId = 0;
+            var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())
             {
-                var spawn = new HeroSpawn(p.Item2, playerId++);
+                var spawnArgs = _translationService.TranslateHeroSpawn(p.Item2, playerId++);
+                var spawn = new HeroSpawn(spawnArgs);
                 _game.PacketHandlerManager.sendPacket(peer, spawn, Channel.CHL_S2C);
 
                 var avatarArgs = _translationService.TranslateAvatarInfo(p.Item2);
@@ -88,7 +89,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketHandlerManager.sendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
                     // Fog Of War
-                    var fogOfWarPacket = new FogUpdate2(turret, _networkIdManager);
+                    var fogArgs = _translationService.TranslateFogUpdate2(turret, _networkIdManager.GetNewNetID());
+                    var fogOfWarPacket = new FogUpdate2(fogArgs);
                     _game.PacketHandlerManager.broadcastPacketTeam(turret.Team, fogOfWarPacket, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision

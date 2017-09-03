@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FloatingText : BasePacket
     {
-        public FloatingText(Unit u, string text)
-            : base(PacketCmd.PKT_S2C_FloatingText, u.NetId)
+        public FloatingText(uint unitNetid, string text)
+            : base(PacketCmd.PKT_S2C_FloatingText, unitNetid)
         {
             buffer.Write((int)0); // netid?
             buffer.fill(0, 10);

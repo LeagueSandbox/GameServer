@@ -33,5 +33,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketArgs
         EditBuffArgs TranslateEditBuff(Unit unit, byte slot, byte stacks);
         EnterVisionAgainArgs TranslateEnterVisionAgain(ObjAIBase m);
         SpawnProjectileArgs TranslateSpawnProjectile(Projectile p);
+        FogUpdate2Args TranslateFogUpdate2(Unit unit, uint fogNetId);
+        HeroSpawnArgs TranslateHeroSpawn(ClientInfo player, int playerId);
+        HeroSpawn2Args TranslateHeroSpawn2(Champion champion);
     }
 }

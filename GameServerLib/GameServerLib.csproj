@@ -294,6 +294,9 @@
     <Compile Include="Logic\Packets\PacketArgs\DTO\UnitAtLocation.cs" />
     <Compile Include="Logic\Packets\PacketArgs\EditBuffArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\EnterVisionAgainArgs.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\FogUpdate2Args.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\HeroSpawn2Args.cs" />
+    <Compile Include="Logic\Packets\PacketArgs\HeroSpawnArgs.cs" />
     <Compile Include="Logic\Packets\PacketArgs\IPacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketArgs\PacketArgsTranslationService.cs" />
     <Compile Include="Logic\Packets\PacketArgs\SpawnProjectileArgs.cs" />

@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 _game.PacketHandlerManager.sendPacket(p.Item2.Peer, new HideUi(), Channel.CHL_S2C);
             }
 
-            _game.PacketHandlerManager.broadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
+            _game.PacketHandlerManager.broadcastPacket(new ExplodeNexus(nexus.NetId), Channel.CHL_S2C);
 
             var timer = new System.Timers.Timer(5000) { AutoReset = false };
             timer.Elapsed += (a, b) =>
@@ -75,7 +75,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void NotifyFaceDirection(Unit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
         {
             var height = _game.Map.NavGrid.GetHeightAtLocation(direction);
-            var fd = new FaceDirection(u, direction.X, direction.Y, height, isInstant, turnTime);
+            var fd = new FaceDirection(u.NetId, direction.X, direction.Y, height, isInstant, turnTime);
             _game.PacketHandlerManager.broadcastPacketVision(u, fd, Channel.CHL_S2C);
         }
 
@@ -223,7 +223,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyFogUpdate2(Unit u)
         {
-            var fog = new FogUpdate2(u, _networkIdManager);
+            var args = _translationService.TranslateFogUpdate2(u, _networkIdManager.GetNewNetID());
+            var fog = new FogUpdate2(args);
             _game.PacketHandlerManager.broadcastPacketTeam(u.Team, fog, Channel.CHL_S2C);
         }
 
@@ -419,7 +420,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyChampionSpawned(Champion c, TeamId team)
         {
-            var hs = new HeroSpawn2(c);
+            var args = _translationService.TranslateHeroSpawn2(c);
+            var hs = new HeroSpawn2(args);
             _game.PacketHandlerManager.broadcastPacketTeam(team, hs, Channel.CHL_S2C);
         }
 
