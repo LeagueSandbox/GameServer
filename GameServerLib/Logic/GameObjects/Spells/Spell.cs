@@ -81,10 +81,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
         {
+            if (!IsExist()) return false;
+
             var stats = Owner.GetStats();
             if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
                 state != SpellState.STATE_READY)
                 return false;
+
             stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
             X = x;
             Y = y;
@@ -340,6 +343,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void LowerCooldown(byte slot, float lowerValue)
         {
             SetCooldown(slot, Owner.Spells[slot].CurrentCooldown - lowerValue);
+        }
+
+        public bool IsExist()
+        {
+            return spellGameScript.GetType() != typeof(GameScriptEmpty);
         }
     }
 }
