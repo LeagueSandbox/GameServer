@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
-        public bool HasEmptyScript { get { return spellGameScript.GetType() != typeof(GameScriptEmpty); } }
+        public bool HasEmptyScript { get { return spellGameScript.GetType() == typeof(GameScriptEmpty); } }
 
         public SpellState state { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
