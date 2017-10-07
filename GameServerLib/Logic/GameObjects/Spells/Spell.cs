@@ -29,6 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
+        public bool HasEmptyScript { get { return spellGameScript.GetType() != typeof(GameScriptEmpty); } }
 
         public SpellState state { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
@@ -81,7 +82,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
         {
-            if (!IsExist()) return false;
+            if (HasEmptyScript) return false;
 
             var stats = Owner.GetStats();
             if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
@@ -343,11 +344,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void LowerCooldown(byte slot, float lowerValue)
         {
             SetCooldown(slot, Owner.Spells[slot].CurrentCooldown - lowerValue);
-        }
-
-        public bool IsExist()
-        {
-            return spellGameScript.GetType() != typeof(GameScriptEmpty);
         }
     }
 }
