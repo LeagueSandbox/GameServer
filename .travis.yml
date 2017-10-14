@@ -1,6 +1,12 @@
 sudo: true
-mono: none
+dist: xenial
+language: csharp
+solution: GameServer.sln
+mono: latest
+install:
+    - sudo nuget update -self
+    - sudo nuget restore GameServer.sln
 script:
-    - exit 0
+    - xbuild /p:Configuration=Debug GameServer.sln
 notifications:
     email: false
