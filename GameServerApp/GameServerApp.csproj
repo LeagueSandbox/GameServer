@@ -63,11 +63,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <_ContentSourceDirectory>$(SolutionDir)GameServerApp\Content</_ContentSourceDirectory>
+    <_ContentSourceDirectory>$(SolutionDir)GameServerApp\Content\.</_ContentSourceDirectory>
     <_ContentTargetDirectory>$(TargetDir)Content\</_ContentTargetDirectory>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings</_SettingsSourceDirectory>
+    <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings\.</_SettingsSourceDirectory>
     <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-    <_LibSourceDirectory>$(SolutionDir)lib</_LibSourceDirectory>
+    <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
     <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
     <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
     <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
