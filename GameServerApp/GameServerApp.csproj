@@ -71,12 +71,15 @@
     <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
     <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
     <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
+    <_IsMac>false</_IsMac>
+    <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Unix'">
     <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand>cp -r -u</_CopyCommand>
+    <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
+    <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
   </PropertyGroup>
   <Target Name="AfterBuild">
     <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(_ContentTargetDirectory)&quot;" />
