@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logic.Maps;
-using System.Collections.Generic;
-using System.Diagnostics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class CollisionHandler
     {

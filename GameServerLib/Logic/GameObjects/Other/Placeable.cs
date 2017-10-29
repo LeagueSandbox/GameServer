@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.Statistics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Placeable : Unit
     {

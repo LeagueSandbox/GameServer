@@ -1,7 +1,8 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.Statistics;
 using LeagueSandbox.GameServer.Logic.Items;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class BaseTurret : ObjAIBase
     {

@@ -5,6 +5,9 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {

@@ -1,9 +1,9 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Statistics
 {
     public enum FieldMask : uint
     {

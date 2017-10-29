@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.Statistics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public enum MinionSpawnPosition : uint
     {
