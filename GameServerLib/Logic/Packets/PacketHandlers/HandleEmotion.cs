@@ -1,8 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
+using System;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -25,8 +29,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var emotion = new EmotionPacketRequest(data);
+            Champion champion = _playerManager.GetPeerInfo(peer).Champion;
             //for later use -> tracking, etc.
-            var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
+            var playerName = champion.Model;
             switch (emotion.id)
             {
                 case (byte)Emotions.Dance:
@@ -44,6 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             var response = new EmotionPacketResponse(emotion.id, emotion.netId);
+            ApiFunctionManager.StopChampionMovement(champion);                
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }
     }
