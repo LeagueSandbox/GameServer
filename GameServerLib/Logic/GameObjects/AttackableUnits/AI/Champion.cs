@@ -32,6 +32,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
+        public bool isRecalling { get; set; }
+        public Buff RecallBuff { get; set; }
+        public Particle RecallParticle { get; set; }
+        public int RecallTime { get; set; }
+
         public Champion(string model,
                         uint playerId,
                         uint playerTeamSpecialId,
@@ -301,6 +306,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _championHitFlagTimer = 0;
                 }
             }
+            
+            if (isRecalling && Target != null)
+            {
+                    ApiFunctionManager.RemoveBuffHUDVisual(RecallBuff);
+                    ApiFunctionManager.RemoveParticle(RecallParticle);
+                    isRecalling = false;
+            }
+
+            if (isRecalling && Environment.TickCount - RecallTime > 8000)
+            {
+                isRecalling = false;
+                Recall(this);
+            }
+
         }
 
         public void Respawn()
