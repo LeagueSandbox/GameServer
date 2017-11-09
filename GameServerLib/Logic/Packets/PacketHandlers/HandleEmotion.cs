@@ -5,8 +5,6 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
-using System;
-using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
