@@ -226,12 +226,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public NavGridCell GetCell(short x, short y)
         {
-            if (x < 0 || x > XCellCount || y < 0 || y > YCellCount)
+            var index = y * XCellCount + x;
+            if (x < 0 || x > XCellCount || y < 0 || y > YCellCount || index >= Cells.Length)
             {
                 return null;
             }
 
-            return Cells[y * XCellCount + x];
+            return Cells[index];
         }
 
         public bool HasFlag(int index, NavigationGridCellFlags flag)
