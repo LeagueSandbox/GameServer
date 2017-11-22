@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands

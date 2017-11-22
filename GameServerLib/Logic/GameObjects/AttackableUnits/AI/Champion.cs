@@ -1,14 +1,14 @@
-﻿using LeagueSandbox.GameServer.Logic.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
-using Newtonsoft.Json.Linq;
-using LeagueSandbox.GameServer.Logic.Scripting;
-using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Statistics;
+using LeagueSandbox.GameServer.Logic.Items;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class Champion : ObjAIBase
     {

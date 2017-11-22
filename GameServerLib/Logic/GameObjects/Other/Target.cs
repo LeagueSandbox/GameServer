@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Target
     {

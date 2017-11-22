@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Statistics
 {
-    public enum TurretFieldMask : uint
+    public enum BuildingFieldMask : uint
     {
-        Turret_FM4_CurrentHp = 0x00000001,
-        Turret_FM4_MaxHp = 0x00000002,
+        Building_FM2_CurrentHp = 0x00000001,
     };
 
-    public class TurretStats : Stats
+    public class BuildingStats : Stats
     {
         public override float CurrentHealth
         {
@@ -20,12 +19,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             set
             {
                 _currentHealth = value;
-                appendStat(_updatedStats, MasterMask.MM_Four, (FieldMask) TurretFieldMask.Turret_FM4_CurrentHp, CurrentHealth);
+                appendStat(_updatedStats, MasterMask.MM_Two, (FieldMask) BuildingFieldMask.Building_FM2_CurrentHp, CurrentHealth);
             }
         }
 
         protected float range;
-        public TurretStats()
+        public BuildingStats()
         {
             range = 0;
         }
@@ -39,8 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var toReturn = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
             Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-            appendStat(stats, MasterMask.MM_Four, (FieldMask)TurretFieldMask.Turret_FM4_CurrentHp, CurrentHealth);
-            appendStat(stats, MasterMask.MM_Four, (FieldMask)TurretFieldMask.Turret_FM4_MaxHp, HealthPoints.Total);
+            appendStat(stats, MasterMask.MM_Two, (FieldMask)BuildingFieldMask.Building_FM2_CurrentHp, CurrentHealth);
 
             foreach (var block in stats)
             {
@@ -54,25 +52,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override float GetStat(MasterMask blockId, FieldMask stat)
         {
-            TurretFieldMask turretStat = (TurretFieldMask) stat;
+            BuildingFieldMask minionStat = (BuildingFieldMask) stat;
             if (blockId == MasterMask.MM_One)
             {
             }
             else if (blockId == MasterMask.MM_Two)
             {
+                switch (minionStat)
+                {
+                    case BuildingFieldMask.Building_FM2_CurrentHp:
+                        return CurrentHealth;
+                }
             }
             else if (blockId == MasterMask.MM_Three)
             {
             }
             else if (blockId == MasterMask.MM_Four)
             {
-                switch (turretStat)
-                {
-                    case TurretFieldMask.Turret_FM4_CurrentHp:
-                        return CurrentHealth;
-                    case TurretFieldMask.Turret_FM4_MaxHp:
-                        return HealthPoints.Total;
-                }
             }
             return 0;
         }

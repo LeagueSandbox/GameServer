@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic;
-using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 {
     public class Projectile : ObjMissile
     {

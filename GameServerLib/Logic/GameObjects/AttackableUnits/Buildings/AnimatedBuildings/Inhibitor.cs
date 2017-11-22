@@ -1,7 +1,9 @@
 ﻿using System;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Statistics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
     public class Inhibitor : ObjAnimatedBuilding
     {

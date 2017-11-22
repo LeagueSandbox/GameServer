@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.Enet
 {

@@ -1,15 +1,15 @@
 ﻿using LeagueSandbox.GameServer.Core.Logic;
-using System;
-using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 {
     public enum SpellState
     {
