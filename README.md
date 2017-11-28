@@ -48,7 +48,7 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
 * Pull requests must be approved before they can be merged
 * Pull requests should not be merged before the build has passed
-    * If the build fails, ping the pull request creator and tell him to fix it
+    * If the build fails, ping the pull request creator and tell them to fix it
 * Files and folders in `PascalCase`
 * JSON dictionary keys in `PascalCase`
 * Keep the code as simple and clear to read as possible
