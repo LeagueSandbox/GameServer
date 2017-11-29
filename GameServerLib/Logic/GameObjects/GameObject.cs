@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic
         public float CollisionRadius { get; set; }
         protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
-        public bool IsDashing { get; protected set; }
+        public bool IsDashing { get; internal set; }
         public override bool IsSimpleTarget { get { return false; } }
         protected float _dashSpeed;
         private Dictionary<TeamId, bool> _visibleByTeam;
