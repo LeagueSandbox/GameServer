@@ -154,7 +154,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void CancelDash(Unit unit) {
             // Allow the user to move the champion
-            unit.IsDashing = false;
+            unit.SetDashingState(false);
 
             // Reset the default run animation
             var animList = new List<string> {"RUN", ""};
