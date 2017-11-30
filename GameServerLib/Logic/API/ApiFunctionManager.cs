@@ -152,6 +152,15 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.Model = model;
         }
 
+        public static void CancelDash(Unit unit) {
+            // Allow the user to move the champion
+            unit.SetDashingState(false);
+
+            // Reset the default run animation
+            var animList = new List<string> {"RUN", ""};
+            _game.PacketNotifier.NotifySetAnimation(unit, animList);
+        }
+
         public static void DashToUnit(Unit unit,
                                   Target target,
                                   float dashSpeed,

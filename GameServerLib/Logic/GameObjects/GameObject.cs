@@ -278,5 +278,9 @@ namespace LeagueSandbox.GameServer.Logic
             Target = t;
             Waypoints.Clear();
         }
+
+        public void SetDashingState(bool state) {
+            IsDashing = state;
+        }
     }
 }
