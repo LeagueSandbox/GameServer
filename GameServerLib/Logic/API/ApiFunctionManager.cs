@@ -89,7 +89,9 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void TeleportTo(Unit unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(x, y));
+            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
+
+            CancelDash(unit);
             _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
         }
 
