@@ -751,22 +751,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (!AppliedBuffs.Values.Contains(buff))
                     continue;
 
-                for (var i = 1; i <= AppliedBuffs.Count + 1; i++)
+                for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
                 {
-                    if (!AppliedBuffs.ContainsKey((byte) i))
+                    if (!AppliedBuffs.ContainsKey(i))
                         continue;
-                    if (AppliedBuffs[(byte) i].Equals(buff))
-                    {
-                        AppliedBuffs.Remove((byte) i);
-                    }
+                    if (AppliedBuffs[i].Equals(buff))
+                        AppliedBuffs.Remove(i);
                 }
             }
-            for (var i = 1; i <= AppliedBuffs.Count + 1; i++)
+            for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
             {
-                if (AppliedBuffs.ContainsKey((byte) i))
+                if (AppliedBuffs.ContainsKey(i))
                     continue;
-                AppliedBuffs.Add((byte) i, b);
-                return (byte) i;
+                AppliedBuffs.Add(i, b);
+                return i;
             }
 
             return 0x01;
