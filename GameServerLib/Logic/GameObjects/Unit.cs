@@ -85,6 +85,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _statUpdateTimer;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
+        public Dictionary<byte, Buff> AppliedBuffs { get; private set; }
+        public List<Buff> BuffSlotToRemove { get; private set; }
 
         public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
 
@@ -133,6 +135,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
+            AppliedBuffs = new Dictionary<byte, Buff>();
+            BuffSlotToRemove = new List<Buff>();
             this.stats = stats;
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(model);
@@ -603,6 +607,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             //TODO add every stat
             RemoveBuff(b.Name);
+            RemoveBuffSlot(b);
         }
 
         public void RemoveBuff(string b)
@@ -739,6 +744,38 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return ClassifyUnit.Default;
         }
 
+        public byte GetBuffSlot(Buff b)
+        {
+            foreach (var buff in BuffSlotToRemove)
+            {
+                if (!AppliedBuffs.Values.Contains(buff))
+                    continue;
+
+                for (var i = 1; i <= AppliedBuffs.Count + 1; i++)
+                {
+                    if (!AppliedBuffs.ContainsKey((byte) i))
+                        continue;
+                    if (AppliedBuffs[(byte) i].Equals(buff))
+                    {
+                        AppliedBuffs.Remove((byte) i);
+                    }
+                }
+            }
+            for (var i = 1; i <= AppliedBuffs.Count + 1; i++)
+            {
+                if (AppliedBuffs.ContainsKey((byte) i))
+                    continue;
+                AppliedBuffs.Add((byte) i, b);
+                return (byte) i;
+            }
+
+            return 0x01;
+        }
+
+        public void RemoveBuffSlot(Buff b)
+        {
+            BuffSlotToRemove.Add(b);
+        }
     }
 
     public enum UnitAnnounces : byte
