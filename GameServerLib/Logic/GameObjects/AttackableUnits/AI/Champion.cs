@@ -47,9 +47,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
 
-            stats.Gold = 475.0f;
-            stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
-            stats.SetGeneratingGold(false);
+            Stats.Gold = 475.0f;
+            Stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
+            Stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
             for(short i = 0; i<CharData.SpellNames.Length;i++)
@@ -135,17 +135,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddModifier(statModifier);
+            Stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateModifier(statModifier);
+            Stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveModifier(statModifier);
+            Stats.RemoveModifier(statModifier);
         }
         public bool CanMove()
         {
@@ -245,7 +245,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var objects = _game.ObjectManager.GetObjects();
                 var distanceToTarget = 9000000.0f;
                 Unit nextTarget = null;
-                var range = Math.Max(stats.Range.Total, DETECT_RANGE);
+                var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
@@ -268,9 +268,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
+            if (!Stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
-                stats.SetGeneratingGold(true);
+                Stats.SetGeneratingGold(true);
                 _logger.LogCoreInfo("Generating Gold!");
             }
 

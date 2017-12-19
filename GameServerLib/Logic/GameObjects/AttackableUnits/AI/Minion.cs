@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // Fix issues induced by having an empty model string
             CharData = _game.Config.ContentManager.GetCharData(Model);
             CollisionRadius = CharData.PathfindingCollisionRadius;
-            stats.LoadStats(CharData);
+            Stats.LoadStats(CharData);
             IsMelee = CharData.IsMelee;
 
             // If we have lane path instructions from the map
@@ -185,7 +185,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         protected void keepFocussingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyStopAutoAttack(this);

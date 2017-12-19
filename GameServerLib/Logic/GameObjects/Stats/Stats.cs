@@ -182,7 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        protected bool generatingGold; // Used to determine if the stats update should include generating gold. Changed in Champion.h
+        protected bool generatingGold; // Used to determine if the Stats update should include generating gold. Changed in Champion.h
         protected float spellCostReduction; //URF Buff/Lissandra's passive
         protected float critDamagePct; //Default = 2... add with runes/items (change with yasuo's passive)
 

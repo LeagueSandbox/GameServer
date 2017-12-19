@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var u = it.Value as Unit;
 
-                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > stats.Range.Total)
+                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
                     continue;
 
                 // Note: this method means that if there are two champions within turret range,
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                             var enemyChampTarget = enemyChamp.TargetUnit as Champion;
                             if (enemyChampTarget != null && // Enemy Champion is targeting an ally
                                 enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
-                                GetDistanceTo(enemyChampTarget) <= stats.Range.Total) // Enemy within range of this turret
+                                GetDistanceTo(enemyChampTarget) <= Stats.Range.Total) // Enemy within range of this turret
                             {
                                 nextTarget = enemyChamp; // No priority required
                                 break;
@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && GetDistanceTo(TargetUnit) > stats.Range.Total)
+            if (TargetUnit != null && GetDistanceTo(TargetUnit) > Stats.Range.Total)
             {
                 TargetUnit = null;
                 _game.PacketNotifier.NotifySetTarget(this, null);
@@ -101,7 +101,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 var goldEarn = globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
-                if (player.GetDistanceTo(this) <= stats.Range.Total * 1.5f && !player.IsDead)
+                if (player.GetDistanceTo(this) <= Stats.Range.Total * 1.5f && !player.IsDead)
                 {
                     goldEarn = globalGold * 2.5f;
                     if(globalExp > 0)
