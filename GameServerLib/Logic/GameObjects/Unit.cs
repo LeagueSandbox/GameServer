@@ -85,8 +85,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _statUpdateTimer;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
-        public Dictionary<byte, Buff> AppliedBuffs { get; private set; }
-        public List<Buff> BuffSlotToRemove { get; private set; }
+        private Dictionary<byte, Buff> AppliedBuffs { get; }
 
         public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
 
@@ -136,7 +135,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             AppliedBuffs = new Dictionary<byte, Buff>();
-            BuffSlotToRemove = new List<Buff>();
             this.stats = stats;
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(model);
@@ -746,19 +744,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public byte GetBuffSlot(Buff b)
         {
-            foreach (var buff in BuffSlotToRemove)
-            {
-                if (!AppliedBuffs.Values.Contains(buff))
-                    continue;
-
-                for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
-                {
-                    if (!AppliedBuffs.ContainsKey(i))
-                        continue;
-                    if (AppliedBuffs[i].Equals(buff))
-                        AppliedBuffs.Remove(i);
-                }
-            }
             for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
             {
                 if (AppliedBuffs.ContainsKey(i))
@@ -772,7 +757,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void RemoveBuffSlot(Buff b)
         {
-            BuffSlotToRemove.Add(b);
+            if (!AppliedBuffs.Values.Contains(b))
+                return;
+
+            for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
+            {
+                if (!AppliedBuffs.ContainsKey(i))
+                    continue;
+                if (AppliedBuffs[i].Equals(b))
+                    AppliedBuffs.Remove(i);
+            }
         }
     }
 
