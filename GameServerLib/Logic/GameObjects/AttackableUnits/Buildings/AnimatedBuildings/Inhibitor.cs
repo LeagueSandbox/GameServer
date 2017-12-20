@@ -24,8 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
         {
-            stats.CurrentHealth = 4000;
-            stats.HealthPoints.BaseValue = 4000;
+            Stats.CurrentHealth = 4000;
+            Stats.HealthPoints.BaseValue = 4000;
             State = InhibitorState.Alive;
             SetTeam(team);
         }

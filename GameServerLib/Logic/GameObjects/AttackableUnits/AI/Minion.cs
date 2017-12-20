@@ -52,7 +52,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             // Set model
             Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, type);
-
+            
+            // Fix issues induced by having an empty model string
+            CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 
             // If we have lane path instructions from the map
             if (mainWaypoints.Count > 0)
@@ -180,7 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         protected void keepFocussingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyStopAutoAttack(this);

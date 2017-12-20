@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Owner = owner;
 
             SetTeam(team);
-            stats.Range.BaseValue = 905.0f;
+            Stats.Range.BaseValue = 905.0f;
         }
         public override void OnAdded()
         {
