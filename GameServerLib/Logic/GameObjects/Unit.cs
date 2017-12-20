@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         internal const int EXP_RANGE = 1400;
         internal const long UPDATE_TIME = 500;
 
-        protected Stats stats;
+        protected Stats Stats { get; }
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
         protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
@@ -135,17 +135,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             AppliedBuffs = new Dictionary<byte, Buff>();
-            this.stats = stats;
+            Stats = stats;
             Model = model;
-            CharData = _game.Config.ContentManager.GetCharData(model);
-            stats.LoadStats(CharData);
+            CharData = _game.Config.ContentManager.GetCharData(Model);
+            Stats.LoadStats(CharData);
             AutoAttackDelay = 0;
             AutoAttackProjectileSpeed = 500;
             IsMelee = CharData.IsMelee;
-            CollisionRadius = CharData.PathfindingCollisionRadius;
-            stats.CurrentMana = stats.ManaPoints.Total;
-            stats.CurrentHealth = stats.HealthPoints.Total;
-            stats.AttackSpeedMultiplier.BaseValue = 1.0f;
+            Stats.CurrentMana = stats.ManaPoints.Total;
+            Stats.CurrentHealth = stats.HealthPoints.Total;
+            Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
+
+            if (CharData.PathfindingCollisionRadius > 0)
+            {
+                CollisionRadius = CharData.PathfindingCollisionRadius;
+            }
+            else if (collisionRadius > 0)
+            {
+                CollisionRadius = collisionRadius;
+            }
+            else
+            {
+                CollisionRadius = 40;
+            }
         }
 
         public override void OnAdded()
@@ -162,7 +174,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Stats GetStats()
         {
-            return stats;
+            return Stats;
         }
 
         public void ApplyCrowdControl(UnitCrowdControl cc)
@@ -187,17 +199,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            stats.AddModifier(statModifier);
+            Stats.AddModifier(statModifier);
         }
 
         public void UpdateStatModifier(ChampionStatModifier statModifier)
         {
-            stats.UpdateModifier(statModifier);
+            Stats.UpdateModifier(statModifier);
         }
 
         public void RemoveStatModifier(ChampionStatModifier statModifier)
         {
-            stats.RemoveModifier(statModifier);
+            Stats.RemoveModifier(statModifier);
         }
 
         public BuffGameScriptController AddBuffGameScript(String buffNamespace, String buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
@@ -265,8 +277,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _statUpdateTimer += diff;
             if (_statUpdateTimer >= 500)
-            { // update stats (hpregen, manaregen) every 0.5 seconds
-                stats.update(_statUpdateTimer);
+            { // update Stats (hpregen, manaregen) every 0.5 seconds
+                Stats.update(_statUpdateTimer);
                 _statUpdateTimer = 0;
             }
         }
@@ -303,7 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 else if (IsAttacking && AutoAttackTarget != null)
                 {
                     _autoAttackCurrentDelay += diff / 1000.0f;
-                    if (_autoAttackCurrentDelay >= AutoAttackDelay / stats.AttackSpeedMultiplier.Total)
+                    if (_autoAttackCurrentDelay >= AutoAttackDelay / Stats.AttackSpeedMultiplier.Total)
                     {
                         if (!IsMelee)
                         {
@@ -326,15 +338,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         {
                             AutoAttackHit(AutoAttackTarget);
                         }
-                        _autoAttackCurrentCooldown = 1.0f / (stats.GetTotalAttackSpeed());
+                        _autoAttackCurrentCooldown = 1.0f / (Stats.GetTotalAttackSpeed());
                         IsAttacking = false;
                     }
 
                 }
-                else if (GetDistanceTo(TargetUnit) <= stats.Range.Total)
+                else if (GetDistanceTo(TargetUnit) <= Stats.Range.Total)
                 {
                     refreshWaypoints();
-                    _isNextAutoCrit = random.Next(0, 100) < stats.CriticalChance.Total * 100;
+                    _isNextAutoCrit = random.Next(0, 100) < Stats.CriticalChance.Total * 100;
                     if (_autoAttackCurrentCooldown <= 0)
                     {
                         IsAttacking = true;
@@ -396,7 +408,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override float getMoveSpeed()
         {
-            return stats.MoveSpeed.Total;
+            return Stats.MoveSpeed.Total;
         }
 
         public Dictionary<string, Buff> GetBuffs()
@@ -443,10 +455,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            var damage = stats.AttackDamage.Total;
+            var damage = Stats.AttackDamage.Total;
             if (_isNextAutoCrit)
             {
-                damage *= stats.getCritDamagePct();
+                damage *= Stats.getCritDamagePct();
             }
 
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
@@ -465,22 +477,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
                     defense = target.GetStats().Armor.Total;
-                    defense = (1 - stats.ArmorPenetration.PercentBonus) * defense - stats.ArmorPenetration.FlatBonus;
+                    defense = (1 - Stats.ArmorPenetration.PercentBonus) * defense - Stats.ArmorPenetration.FlatBonus;
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = target.GetStats().MagicPenetration.Total;
-                    defense = (1 - stats.MagicPenetration.PercentBonus) * defense - stats.MagicPenetration.FlatBonus;
+                    defense = (1 - Stats.MagicPenetration.PercentBonus) * defense - Stats.MagicPenetration.FlatBonus;
                     break;
             }
 
             switch (source)
             {
                 case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = stats.SpellVamp.Total;
+                    regain = Stats.SpellVamp.Total;
                     break;
                 case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = stats.LifeSteal.Total;
+                    regain = Stats.LifeSteal.Total;
                     break;
             }
 
@@ -510,7 +522,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             //Get health from lifesteal/spellvamp
             if (regain != 0)
             {
-                stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
+                Stats.CurrentHealth = Math.Min(Stats.HealthPoints.Total, Stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
         }
@@ -651,10 +663,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void refreshWaypoints()
         {
-            if (TargetUnit == null || (GetDistanceTo(TargetUnit) <= stats.Range.Total && Waypoints.Count == 1))
+            if (TargetUnit == null || (GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1))
                 return;
 
-            if (GetDistanceTo(TargetUnit) <= stats.Range.Total - 2.0f)
+            if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2.0f)
             {
                 SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
             }
