@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         internal const int EXP_RANGE = 1400;
         internal const long UPDATE_TIME = 500;
 
-        protected Stats Stats;
+        protected Stats Stats { get; }
         public InventoryManager Inventory { get; protected set; }
         protected ItemManager _itemManager = Program.ResolveDependency<ItemManager>();
         protected PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
@@ -144,11 +144,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Stats.CurrentHealth = stats.HealthPoints.Total;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
-            if (!CharData.PathfindingCollisionRadius.Equals(-1))
+            if (CharData.PathfindingCollisionRadius > 0)
             {
                 CollisionRadius = CharData.PathfindingCollisionRadius;
             }
-            else if (collisionRadius != 0)
+            else if (collisionRadius > 0)
             {
                 CollisionRadius = collisionRadius;
             }
