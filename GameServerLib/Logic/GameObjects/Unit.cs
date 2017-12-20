@@ -754,7 +754,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return ClassifyUnit.Default;
         }
 
-        public byte GetBuffSlot(Buff b)
+        public byte GetNewBuffSlot(Buff b)
         {
             for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
             {
@@ -769,16 +769,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void RemoveBuffSlot(Buff b)
         {
-            if (!AppliedBuffs.Values.Contains(b))
-                return;
-
-            for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
+            byte slot = GetBuffSlot(b);
+            if (slot != 0x00)
             {
-                if (!AppliedBuffs.ContainsKey(i))
-                    continue;
-                if (AppliedBuffs[i].Equals(b))
-                    AppliedBuffs.Remove(i);
+                AppliedBuffs.Remove(slot);
             }
+        }
+
+        private byte GetBuffSlot(Buff b)
+        {
+            foreach (var kvp in AppliedBuffs)
+            {
+                if (!kvp.Value.Equals(b)) continue;
+                byte slot = kvp.Key; // For sake of clarity
+                return slot;
+            }
+
+            return 0x00; // Buff isn't applied
         }
     }
 

@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             TargetUnit = onto;
             SourceUnit = from;
             BuffType = BuffType.Aura;
-            Slot = onto.GetBuffSlot(this);
+            Slot = onto.GetNewBuffSlot(this);
         }
 
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto)
