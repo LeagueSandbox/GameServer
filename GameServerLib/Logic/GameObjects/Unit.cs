@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
 using System.Linq;
 
@@ -55,6 +53,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         GreenShield = 0x01,
         MagicShield = 0x02,
         NormalShield = 0x03
+    }
+
+    public enum BuffSlotFlag
+    {
+        NEW,
+        EXISTING
     }
 
     public class Unit : GameObject
@@ -756,36 +760,43 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public byte GetNewBuffSlot(Buff b)
         {
-            for (byte i = 1; i <= AppliedBuffs.Count + 1; i++)
-            {
-                if (AppliedBuffs.ContainsKey(i))
-                    continue;
-                AppliedBuffs.Add(i, b);
-                return i;
-            }
-
-            return 0x01;
+            byte slot = GetBuffSlot(b, BuffSlotFlag.NEW);
+            AppliedBuffs.Add(slot, b);
+            return slot;
         }
 
         public void RemoveBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b);
-            if (slot != 0x00)
+            byte slot = GetBuffSlot(b, BuffSlotFlag.EXISTING);
+            if (slot != 0x00) // Only remove the buff if it's already been applied
             {
                 AppliedBuffs.Remove(slot);
             }
         }
 
-        private byte GetBuffSlot(Buff b)
+        private byte GetBuffSlot(Buff b, BuffSlotFlag flag)
         {
-            foreach (var kvp in AppliedBuffs)
+            switch (flag)
             {
-                if (!kvp.Value.Equals(b)) continue;
-                byte slot = kvp.Key; // For sake of clarity
-                return slot;
+                case BuffSlotFlag.NEW:
+                    for (byte i = 1; i <= AppliedBuffs.Count + 1; i++) // Find the first open slot
+                    {
+                        if (AppliedBuffs.ContainsKey(i)) // If the slot is already used, continue
+                            continue;
+                        return i; // If the slot is open, return this slot
+                    }
+                    throw new Exception("No open slot found.");
+                case BuffSlotFlag.EXISTING:
+                    foreach (var kvp in AppliedBuffs) // Iterate through each element in AppliedBuffs
+                    {
+                        if (!kvp.Value.Equals(b))
+                            continue;
+                        return kvp.Key; // Returns the slot corresponding to the buff
+                    }
+                    return 0x00; // Buff isn't applied
+                default:
+                    throw new ArgumentException("Invalid flag given.", nameof(flag));
             }
-
-            return 0x00; // Buff isn't applied
         }
     }
 
