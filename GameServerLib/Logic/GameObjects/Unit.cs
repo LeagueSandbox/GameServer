@@ -54,11 +54,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         MagicShield = 0x02,
         NormalShield = 0x03
     }
-
-    public enum BuffSlotFlag
+    
+    public enum BuffSlotType
     {
-        NEW,
-        EXISTING
+        New,
+        Existing
     }
 
     public class Unit : GameObject
@@ -760,25 +760,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public byte GetNewBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b, BuffSlotFlag.NEW);
+            byte slot = GetBuffSlot(b, BuffSlotType.New);
             AppliedBuffs.Add(slot, b);
             return slot;
         }
 
         public void RemoveBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b, BuffSlotFlag.EXISTING);
+            byte slot = GetBuffSlot(b, BuffSlotType.Existing);
             if (slot != 0x00) // Only remove the buff if it's already been applied
             {
                 AppliedBuffs.Remove(slot);
             }
         }
 
-        private byte GetBuffSlot(Buff b, BuffSlotFlag flag)
+        private byte GetBuffSlot(Buff b, BuffSlotType type)
         {
-            switch (flag)
+            switch (type)
             {
-                case BuffSlotFlag.NEW:
+                case BuffSlotType.New:
                     for (byte i = 1; i <= AppliedBuffs.Count + 1; i++) // Find the first open slot
                     {
                         if (AppliedBuffs.ContainsKey(i)) // If the slot is already used, continue
@@ -786,7 +786,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         return i; // If the slot is open, return this slot
                     }
                     throw new Exception("No open slot found.");
-                case BuffSlotFlag.EXISTING:
+                case BuffSlotType.Existing:
                     foreach (var kvp in AppliedBuffs) // Iterate through each element in AppliedBuffs
                     {
                         if (!kvp.Value.Equals(b))
@@ -795,7 +795,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     return 0x00; // Buff isn't applied
                 default:
-                    throw new ArgumentException("Invalid flag given.", nameof(flag));
+                    throw new ArgumentException("Invalid flag given.", nameof(type));
             }
         }
     }
