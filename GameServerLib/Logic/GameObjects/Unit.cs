@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _statUpdateTimer;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
-        private Dictionary<byte, Buff> AppliedBuffs { get; }
+        private Buff[] AppliedBuffs { get; }
 
         public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
 
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
-            AppliedBuffs = new Dictionary<byte, Buff>();
+            AppliedBuffs = new Buff[256];
             Stats = stats;
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(Model);
@@ -761,7 +761,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public byte GetNewBuffSlot(Buff b)
         {
             byte slot = GetBuffSlot(b, BuffSlotType.New);
-            AppliedBuffs.Add(slot, b);
+            AppliedBuffs[slot] = b;
             return slot;
         }
 
@@ -770,7 +770,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte slot = GetBuffSlot(b, BuffSlotType.Existing);
             if (slot != 0x00) // Only remove the buff if it's already been applied
             {
-                AppliedBuffs.Remove(slot);
+                AppliedBuffs[slot] = null;
             }
         }
 
@@ -779,19 +779,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             switch (type)
             {
                 case BuffSlotType.New:
-                    for (byte i = 1; i <= AppliedBuffs.Count + 1; i++) // Find the first open slot
+                    for (byte i = 0; i < AppliedBuffs.Length; i++) // Find the first open slot
                     {
-                        if (AppliedBuffs.ContainsKey(i)) // If the slot is already used, continue
+                        if (AppliedBuffs[i] != null) // If the slot is already used, continue
                             continue;
                         return i; // If the slot is open, return this slot
                     }
                     throw new Exception("No open slot found.");
                 case BuffSlotType.Existing:
-                    foreach (var kvp in AppliedBuffs) // Iterate through each element in AppliedBuffs
+                    foreach (var buff in AppliedBuffs) // Iterate through each buff in AppliedBuffs
                     {
-                        if (!kvp.Value.Equals(b))
+                        if (!buff.Equals(b))
                             continue;
-                        return kvp.Key; // Returns the slot corresponding to the buff
+                        return buff.Slot; // Returns the slot corresponding to the buff
                     }
                     return 0x00; // Buff isn't applied
                 default:
