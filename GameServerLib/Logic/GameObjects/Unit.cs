@@ -54,12 +54,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         MagicShield = 0x02,
         NormalShield = 0x03
     }
-    
-    public enum BuffSlotType
-    {
-        New,
-        Existing
-    }
 
     public class Unit : GameObject
     {
@@ -760,43 +754,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public byte GetNewBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b, BuffSlotType.New);
+            byte slot = GetBuffSlot();
             AppliedBuffs[slot] = b;
             return slot;
         }
 
         public void RemoveBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b, BuffSlotType.Existing);
-            if (slot != 0x00) // Only remove the buff if it's already been applied
-            {
-                AppliedBuffs[slot] = null;
-            }
+            byte slot = GetBuffSlot(b);
+            AppliedBuffs[slot] = null;
         }
 
-        private byte GetBuffSlot(Buff b, BuffSlotType type)
+        private byte GetBuffSlot(Buff buffToLookFor = null)
         {
-            switch (type)
+            for (byte i = 1; i < AppliedBuffs.Length; i++) // Find the first open slot or the slot corresponding to buff
             {
-                case BuffSlotType.New:
-                    for (byte i = 0; i < AppliedBuffs.Length; i++) // Find the first open slot
-                    {
-                        if (AppliedBuffs[i] != null) // If the slot is already used, continue
-                            continue;
-                        return i; // If the slot is open, return this slot
-                    }
-                    throw new Exception("No open slot found.");
-                case BuffSlotType.Existing:
-                    foreach (var buff in AppliedBuffs) // Iterate through each buff in AppliedBuffs
-                    {
-                        if (!buff.Equals(b))
-                            continue;
-                        return buff.Slot; // Returns the slot corresponding to the buff
-                    }
-                    return 0x00; // Buff isn't applied
-                default:
-                    throw new ArgumentException("Invalid flag given.", nameof(type));
+                if (AppliedBuffs[i] == buffToLookFor)
+                {
+                    return i;
+                }
             }
+            throw new Exception("No slot found with requested value"); // If no open slot or no corresponding slot
         }
     }
 
