@@ -134,11 +134,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return;
 
                 ObjectsHit.Add(unit);
-                _originSpell.applyEffects(unit, this);
+                _originSpell.applyEffects(unit as ObjAIBase, this);
             }
             else
             {
-                var u = Target as Unit;
+                var u = Target as ObjAIBase;
                 if (u != null)
                 { // Autoguided spell
                     if (_originSpell != null)

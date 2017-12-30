@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic
                 if (!(obj is Unit))
                     continue;
 
-                var u = obj as Unit;
+                var u = obj as ObjAIBase;
                 foreach (var team in Teams)
                 {
                     if (u.Team == team || team == TeamId.TEAM_NEUTRAL)

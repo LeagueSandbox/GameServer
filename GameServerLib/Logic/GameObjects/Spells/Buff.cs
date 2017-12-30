@@ -48,8 +48,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; set; }
         protected bool _remove;
-        public Unit TargetUnit { get; private set; }
-        public Unit SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public ObjAIBase TargetUnit { get; private set; }
+        public ObjAIBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         public string Name { get; private set; }
@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto, Unit from)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto, ObjAIBase from)
         {
             _game = game;
             Duration = dur;
@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, Unit onto)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto)
                : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }

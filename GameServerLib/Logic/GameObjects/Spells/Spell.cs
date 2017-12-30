@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public uint FutureProjNetId { get; protected set; }
         public uint SpellNetId { get; protected set; }
 
-        public Unit Target { get; private set; }
+        public ObjAIBase Target { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
         public float X2 { get; private set; }
@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool cast(float x, float y, float x2, float y2, Unit u = null)
+        public virtual bool cast(float x, float y, float x2, float y2, ObjAIBase u = null)
         {
             if (HasEmptyScript) return false;
 
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        public void applyEffects(Unit u, Projectile p = null)
+        public void applyEffects(ObjAIBase u, Projectile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
