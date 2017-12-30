@@ -68,13 +68,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game = game;
             Duration = dur;
             Stacks = stacks;
-            Slot = 0x01;
             Name = buffName;
             TimeElapsed = 0;
             _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
             BuffType = BuffType.Aura;
+            Slot = onto.GetNewBuffSlot(this);
         }
 
         public Buff(Game game, string buffName, float dur, int stacks, Unit onto)
@@ -91,6 +91,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _remove = true;
                 }
             }
+        }
+
+        public void SetStacks(int newStacks)
+        {
+            Stacks = newStacks;
         }
     }
 }

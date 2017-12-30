@@ -70,6 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void RemoveBuffHUDVisual(Buff b)
         {
             _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
+            b.TargetUnit.RemoveBuffSlot(b);
         }
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
@@ -105,6 +106,12 @@ namespace LeagueSandbox.GameServer.Logic.API
             var buff = new Buff(_game, buffName, duration, stacks, onto, from);
             onto.AddBuff(buff);
             _game.PacketNotifier.NotifyAddBuff(buff);
+        }
+
+        public static void EditBuff(Buff b, int newStacks)
+        {
+            b.SetStacks(newStacks);
+            _game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
         public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")

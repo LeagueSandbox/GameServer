@@ -108,6 +108,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(add, Channel.CHL_S2C);
         }
 
+        public void NotifyEditBuff(Buff b, int stacks)
+        {
+            var edit = new EditBuff(b.TargetUnit, b.Slot, (byte)b.Stacks);
+            _game.PacketHandlerManager.broadcastPacket(edit, Channel.CHL_S2C);
+        }
+
         public void NotifyRemoveBuff(Unit u, string buffName, byte slot = 0x01)
         {
             var remove = new RemoveBuff(u, buffName, slot);

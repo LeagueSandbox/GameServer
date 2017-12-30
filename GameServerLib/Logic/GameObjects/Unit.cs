@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
 using System.Linq;
 
@@ -85,6 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _statUpdateTimer;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
+        private Buff[] AppliedBuffs { get; }
 
         public List<BuffGameScriptController> BuffGameScriptControllers { get; private set; }
 
@@ -133,6 +132,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         {
             BuffGameScriptControllers = new List<BuffGameScriptController>();
+            AppliedBuffs = new Buff[256];
             Stats = stats;
             Model = model;
             CharData = _game.Config.ContentManager.GetCharData(Model);
@@ -615,6 +615,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             //TODO add every stat
             RemoveBuff(b.Name);
+            RemoveBuffSlot(b);
         }
 
         public void RemoveBuff(string b)
@@ -751,6 +752,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return ClassifyUnit.Default;
         }
 
+        public byte GetNewBuffSlot(Buff b)
+        {
+            byte slot = GetBuffSlot();
+            AppliedBuffs[slot] = b;
+            return slot;
+        }
+
+        public void RemoveBuffSlot(Buff b)
+        {
+            byte slot = GetBuffSlot(b);
+            AppliedBuffs[slot] = null;
+        }
+
+        private byte GetBuffSlot(Buff buffToLookFor = null)
+        {
+            for (byte i = 1; i < AppliedBuffs.Length; i++) // Find the first open slot or the slot corresponding to buff
+            {
+                if (AppliedBuffs[i] == buffToLookFor)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("No slot found with requested value"); // If no open slot or no corresponding slot
+        }
     }
 
     public enum UnitAnnounces : byte
