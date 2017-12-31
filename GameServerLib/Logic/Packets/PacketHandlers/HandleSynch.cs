@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSynch : PacketHandlerBase
+    public class HandleSynch : PacketHandlerBase<SynchVersionRequest>
     {
         private readonly Logger _logger;
         private readonly Game _game;
@@ -22,24 +22,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, SynchVersionRequest data)
         {
-            var version = new SynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
             _logger.LogCoreInfo("Current map: " + mapId);
 
-            bool versionMatch = true;
+            var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
-            if (version.version != Config.VERSION)
+            if (data.Version != Config.VERSION)
             {
                 versionMatch = false;
-                _logger.LogCoreWarning("Client " + version.version + " does not match Server " + Config.VERSION);
+                _logger.LogCoreWarning("Client " + data.Version + " does not match Server " + Config.VERSION);
             }
             else
             {
-                _logger.LogCoreInfo("Accepted client version (" + version.version + ")");
+                _logger.LogCoreInfo("Accepted client version (" + data.Version + ")");
             }
 
             foreach (var player in _playerManager.GetPlayers())

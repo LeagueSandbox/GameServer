@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleCastSpell : PacketHandlerBase
+    public class HandleCastSpell : PacketHandlerBase<CastSpellRequest>
     {
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
@@ -22,11 +22,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, CastSpellRequest data)
         {
-            var spell = new CastSpellRequest(data);
-
-            var targetObj = _game.ObjectManager.GetObjectById(spell.targetNetId);
+            var targetObj = _game.ObjectManager.GetObjectById(data.TargetNetId);
             var TargetUnit = targetObj as Unit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null)
@@ -37,12 +35,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 return false;
             }
-            var s = owner.GetSpell(spell.spellSlot);
+
+            var s = owner.GetSpell(data.SpellSlot);
             if (s == null)
             {
                 return false;
             }
-            return s.cast(spell.x, spell.y, spell.x2, spell.y2, TargetUnit);
+            return s.cast(data.X, data.Y, data.X2, data.Y2, TargetUnit);
         }
     }
 }

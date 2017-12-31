@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleLoadPing : PacketHandlerBase
+    public class HandleLoadPing : PacketHandlerBase<PingLoadInfoRequest>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -20,14 +20,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, PingLoadInfoRequest data)
         {
-            var loadInfo = new PingLoadInfoRequest(data);
             var peerInfo = _playerManager.GetPeerInfo(peer);
             if (peerInfo == null)
                 return false;
-            var response = new PingLoadInfoResponse(loadInfo, peerInfo.UserId);
 
+            var response = new PingLoadInfoResponse(data, peerInfo.UserId);
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }

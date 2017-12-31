@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleAutoAttackOption : PacketHandlerBase
+    public class HandleAutoAttackOption : PacketHandlerBase<AutoAttackOption>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -19,12 +19,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _chatCommandManager = chatCommandManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, AutoAttackOption data)
         {
             //TODO: implement this
-            var autoAttackOption = new AutoAttackOption(data);
             var state = "Deactivated";
-            if (autoAttackOption.activated == 1)
+            if (data.Activated == 1)
                 state = "Activated";
 
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");

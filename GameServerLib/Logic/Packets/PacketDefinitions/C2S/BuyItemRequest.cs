@@ -3,17 +3,18 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class BuyItemRequest
+    public class BuyItemRequest : ClientPacketBase
     {
-        PacketCmd cmd;
-        int netId;
-        public int id;
-        public BuyItemRequest(byte[] data)
+        public int ItemId { get; private set; }
+
+        public BuyItemRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            id = reader.ReadInt32();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            ItemId = reader.ReadInt32();
         }
     }
 }

@@ -3,18 +3,18 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class SkillUpRequest
+    public class SkillUpRequest : ClientPacketBase
     {
-        public PacketCmd cmd;
-        public uint netId;
-        public byte skill;
+        public byte Skill { get; private set; }
 
-        public SkillUpRequest(byte[] data)
+        public SkillUpRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadUInt32();
-            skill = reader.ReadByte();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            Skill = reader.ReadByte();
         }
     }
 }

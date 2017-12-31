@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSkillUp : PacketHandlerBase
+    public class HandleSkillUp : PacketHandlerBase<SkillUpRequest>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -20,23 +20,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, SkillUpRequest data)
         {
-            var skillUpPacket = new SkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.skill);
+            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(data.Skill);
             if (s == null)
                 return false;
 
             var skillUpResponse = new SkillUpResponse(
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
-                skillUpPacket.skill,
+                data.Skill,
                 (byte)s.Level,
                 (byte)s.Owner.getSkillPoints()
             );
             _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).Champion.GetStats().setSpellEnabled(skillUpPacket.skill, true);
+            _playerManager.GetPeerInfo(peer).Champion.GetStats().setSpellEnabled(data.Skill, true);
 
             return true;
         }

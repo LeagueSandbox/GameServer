@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleCursorPositionOnWorld : PacketHandlerBase
+    public class HandleCursorPositionOnWorld : PacketHandlerBase<CursorPositionOnWorld>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -20,11 +20,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, CursorPositionOnWorld data)
         {
-            var cursorPosition = new CursorPositionOnWorld(data);
-            var response = new DebugMessage($"X: {cursorPosition.X} Y: {cursorPosition.Y}");
-
+            var response = new DebugMessage($"X: {data.X} Y: {data.Y}");
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }
     }

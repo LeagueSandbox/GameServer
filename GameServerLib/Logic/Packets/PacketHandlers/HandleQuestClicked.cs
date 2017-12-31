@@ -4,7 +4,7 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleQuestClicked : PacketHandlerBase
+    public class HandleQuestClicked : PacketHandlerBase<QuestClicked>
     {
         private readonly ChatCommandManager _chatCommandManager;
 
@@ -16,10 +16,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _chatCommandManager = chatCommandManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, QuestClicked data)
         {
-            var questClicked = new QuestClicked(data);
-            var msg = $"Clicked quest with netid: {questClicked.netid}";
+            var msg = $"Clicked quest with netid: {data.QuestNetId}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

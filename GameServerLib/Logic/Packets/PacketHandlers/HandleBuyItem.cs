@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleBuyItem : PacketHandlerBase
+    public class HandleBuyItem : PacketHandlerBase<BuyItemRequest>
     {
         private readonly Game _game;
         private readonly ItemManager _itemManager;
@@ -22,11 +22,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, BuyItemRequest data)
         {
-            var request = new BuyItemRequest(data);
-
-            var itemTemplate = _itemManager.SafeGetItemType(request.id);
+            var itemTemplate = _itemManager.SafeGetItemType(data.ItemId);
             if (itemTemplate == null)
                 return false;
 

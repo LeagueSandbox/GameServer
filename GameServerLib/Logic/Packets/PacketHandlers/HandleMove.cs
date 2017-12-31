@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleMove : PacketHandlerBase
+    public class HandleMove : PacketHandlerBase<MovementRequest>
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -25,30 +25,28 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, MovementRequest data)
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
                 return true;
 
-            var request = new MovementRequest(data);
-            var vMoves = readWaypoints(request.moveData, request.coordCount, _game.Map);
-
-            switch (request.type)
+            var vMoves = readWaypoints(data.moveData, data.CoordCount, _game.Map);
+            switch (data.MovementType)
             {
                 case MoveType.STOP:
                     //TODO anticheat, currently it trusts client 100%
 
-                    peerInfo.Champion.setPosition(request.x, request.y);
-                    float x = ((request.x) - _game.Map.NavGrid.MapWidth) / 2;
-                    float y = ((request.y) - _game.Map.NavGrid.MapHeight) / 2;
+                    peerInfo.Champion.setPosition(data.X, data.Y);
+                    float x = ((data.X) - _game.Map.NavGrid.MapWidth) / 2;
+                    float y = ((data.Y) - _game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
                         var v = vMoves[i];
-                        v.X = (short)request.x;
-                        v.Y = (short)request.y;
+                        v.X = (short)data.X;
+                        v.Y = (short)data.Y;
                     }
                     break;
                 case MoveType.EMOTE:
@@ -65,7 +63,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
 
-            var u = _game.ObjectManager.GetObjectById(request.targetNetId) as Unit;
+            var u = _game.ObjectManager.GetObjectById(data.TargetNetId) as Unit;
             if (u == null)
             {
                 peerInfo.Champion.TargetUnit = null;

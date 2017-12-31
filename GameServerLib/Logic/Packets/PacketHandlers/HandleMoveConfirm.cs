@@ -1,13 +1,14 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleMoveConfirm : PacketHandlerBase
+    public class HandleMoveConfirm : PacketHandlerBase<EmptyClientPacket>
     {
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_MoveConfirm;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, EmptyClientPacket data)
         {
             return true;
         }

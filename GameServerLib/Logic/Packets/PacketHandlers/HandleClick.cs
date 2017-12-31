@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     [DisabledHandler]
-    public class HandleClick : PacketHandlerBase
+    public class HandleClick : PacketHandlerBase<Click>
     {
         private readonly Game _game;
         private readonly Logger _logger;
@@ -23,10 +23,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _playerManager = playerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, Click data)
         {
-            var click = new Click(data);
-            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.targetNetId}";
+            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {data.TargetNetId}";
             _logger.LogCoreInfo(msg);
 
             return true;

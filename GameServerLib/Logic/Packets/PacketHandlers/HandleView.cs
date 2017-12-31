@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleView : PacketHandlerBase
+    public class HandleView : PacketHandlerBase<ViewRequest>
     {
         private readonly Game _game;
 
@@ -17,17 +17,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, ViewRequest data)
         {
-            var request = new ViewRequest(data);
-            var answer = new ViewResponse(request);
-            if (request.requestNo == 0xFE)
+            var answer = new ViewResponse(data.NetId);
+            if (data.RequestNo == 0xFE)
             {
                 answer.setRequestNo(0xFF);
             }
             else
             {
-                answer.setRequestNo(request.requestNo);
+                answer.setRequestNo(data.RequestNo);
             }
             _game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
             return true;

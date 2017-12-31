@@ -3,20 +3,20 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
-    public class SwapItemsRequest
+    public class SwapItemsRequest : ClientPacketBase
     {
-        public PacketCmd cmd;
-        public int netId;
-        public byte slotFrom;
-        public byte slotTo;
+        public byte SlotFrom { get; private set; }
+        public byte SlotTo { get; private set; }
 
-        public SwapItemsRequest(byte[] data)
+        public SwapItemsRequest(byte[] data) : base(data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            slotFrom = reader.ReadByte();
-            slotTo = reader.ReadByte();
+
+        }
+
+        protected override void ParseInternal(BinaryReader reader)
+        {
+            SlotFrom = reader.ReadByte();
+            SlotTo = reader.ReadByte();
         }
     }
 }

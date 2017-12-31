@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleChatBoxMessage : PacketHandlerBase
+    public class HandleChatBoxMessage : PacketHandlerBase<ChatMessage>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -26,68 +26,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _logger = logger;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacketInternal(Peer peer, ChatMessage data)
         {
-            var message = new ChatMessage(data);
-            var split = message.msg.Split(' ');
-            if (split.Length > 1)
-            {
-                int x, y = 0;
-                if (int.TryParse(split[0], out x))
-                {
-                    if (int.TryParse(split[1], out y))
-                    {
-                        var response = new AttentionPingResponse(
-                            _playerManager.GetPeerInfo(peer),
-                            new AttentionPingRequest(x, y, 0, Pings.Ping_Default)
-                        );
-                        _game.PacketHandlerManager.broadcastPacketTeam(
-                            _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C
-                        );
-                    }
-                }
-            }
+            var split = data.Msg.Split(' ');
+            TryParsePingRequest(peer, split);
 
             #region Commands
             // Execute commands
-            var CommandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
-            if (message.msg.StartsWith(CommandStarterCharacter))
+            var commandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
+            if (data.Msg.StartsWith(commandStarterCharacter))
             {
-                message.msg = message.msg.Remove(0, 1);
-                split = message.msg.ToLower().Split(' ');
-
-                var command = _chatCommandManager.GetCommand(split[0]);
-                if (command != null)
-                {
-                    try
-                    {
-                        command.Execute(peer, true, message.msg);
-                    }
-                    catch
-                    {
-                        _logger.LogCoreWarning(command + " sent an exception.");
-                        var dm = new DebugMessage("Something went wrong...Did you wrote the command well ? ");
-                        _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
-                    }
-                    return true;
-                }
-                else
-                {
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>"
-                        + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> " +
-                                                                                  "is not a valid command.");
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>"
-                        + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> " +
-                                                                                 "for a list of available commands");
-                    return true;
-                }
+                return HandleChatCommand(peer, data, split);
             }
             #endregion
 
             var debugMessage = string.Format("{0} ({1}): </font><font color=\"#FFFFFF\">{2}",
                 _playerManager.GetPeerInfo(peer).Name,
                 _playerManager.GetPeerInfo(peer).Champion.Model,
-                message.msg);
+                data.Msg);
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = new DebugMessage(teamChatColor + "[All] " + debugMessage);
@@ -102,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return true;
             }
 
-            switch (message.type)
+            switch (data.Type)
             {
                 case ChatType.CHAT_ALL:
                     _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
@@ -114,8 +70,63 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     return true;
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");
-                    return _game.PacketHandlerManager.sendPacket(peer, data, Channel.CHL_COMMUNICATION);
+                    return _game.PacketHandlerManager.sendPacket(peer, data.OriginalData, Channel.CHL_COMMUNICATION);
             }
+        }
+
+        private bool HandleChatCommand(Peer peer, ChatMessage data, string[] split)
+        {
+            var commandString = data.Msg.Remove(0, 1);
+            split = commandString.ToLower().Split(' ');
+
+            var command = _chatCommandManager.GetCommand(split[0]);
+            if (command != null)
+            {
+                try
+                {
+                    command.Execute(peer, true, commandString);
+                }
+                catch
+                {
+                    _logger.LogCoreWarning(command + " sent an exception.");
+                    var dm = new DebugMessage("Something went wrong...Did you wrote the command well ? ");
+                    _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
+                }
+                return true;
+            }
+            else
+            {
+                _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>"
+                    + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> " +
+                                                                              "is not a valid command.");
+                _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>"
+                    + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> " +
+                                                                             "for a list of available commands");
+                return true;
+            }
+        }
+
+        private void TryParsePingRequest(Peer peer, string[] split)
+        {
+            if (split.Length < 2)
+                return;
+
+            int x, y;
+            if (!int.TryParse(split[0], out x))
+                return;
+            if (!int.TryParse(split[1], out y))
+                return;
+
+            var response = new AttentionPingResponse
+            (
+                _playerManager.GetPeerInfo(peer),
+                x,
+                y,
+                0,
+                Pings.Ping_Default
+            );
+            _game.PacketHandlerManager.broadcastPacketTeam(
+                _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C);
         }
     }
 }
