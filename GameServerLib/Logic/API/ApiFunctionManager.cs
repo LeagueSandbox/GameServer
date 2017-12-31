@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.ObjectManager.Teams;
         }
 
-        public static void TeleportTo(Unit unit, float x, float y)
+        public static void TeleportTo(ObjAIBase unit, float x, float y)
         {
             var coords = new Vector2(x, y);
             var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
@@ -161,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.Model = model;
         }
 
-        public static void CancelDash(Unit unit) {
+        public static void CancelDash(ObjAIBase unit) {
             // Allow the user to move the champion
             unit.SetDashingState(false);
 
@@ -170,7 +170,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
-        public static void DashToUnit(Unit unit,
+        public static void DashToUnit(ObjAIBase unit,
                                   Target target,
                                   float dashSpeed,
                                   bool keepFacingLastDirection,
@@ -220,7 +220,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             unit.TargetUnit = null;
         }
 
-        public static void DashToLocation(Unit unit,
+        public static void DashToLocation(ObjAIBase unit,
                                  float x,
                                  float y,
                                  float dashSpeed,
