@@ -244,12 +244,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var objects = _game.ObjectManager.GetObjects();
                 var distanceToTarget = 9000000.0f;
-                Unit nextTarget = null;
+                AttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
-                    var u = it.Value as Unit;
+                    var u = it.Value as AttackableUnit;
 
                     if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
                         continue;

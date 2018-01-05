@@ -283,7 +283,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public override void AutoAttackHit(Unit target)
+        public override void AutoAttackHit(AttackableUnit target)
         {
             if (Type == TurretType.FountainTurret)
             {
