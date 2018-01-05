@@ -469,16 +469,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        public override void TakeDamage(Unit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            base.DealDamageTo(target, damage, type, source, isCrit);
+            base.TakeDamage(attacker, damage, type, source, isCrit);
 
-            var cTarget = target as Champion;
-            if (cTarget == null)
-                return;
-
-            cTarget._championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            cTarget._playerHitId = NetId;
+            _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
+            _playerHitId = NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

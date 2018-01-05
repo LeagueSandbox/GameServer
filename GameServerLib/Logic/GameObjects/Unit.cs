@@ -447,7 +447,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void AutoAttackHit(Unit target)
         {
             if (HasCrowdControl(CrowdControlType.Blind)) {
-                DealDamageTo(target, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
+                target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
                                              DamageText.DAMAGE_TEXT_MISS);
                 return;
@@ -462,78 +462,91 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
-            DealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                                             DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             _isNextAutoCrit);
+            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+                DamageSource.DAMAGE_SOURCE_ATTACK,
+                _isNextAutoCrit);
         }
 
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
+        public virtual void TakeDamage(Unit attacker, float damage, DamageType type, DamageSource source, DamageText damageText)
         {
             float defense = 0;
             float regain = 0;
+            
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = target.GetStats().Armor.Total;
-                    defense = (1 - Stats.ArmorPenetration.PercentBonus) * defense - Stats.ArmorPenetration.FlatBonus;
+                    defense = GetStats().Armor.Total;
+                    defense = (1 - attacker.Stats.ArmorPenetration.PercentBonus) * defense - attacker.Stats.ArmorPenetration.FlatBonus;
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = target.GetStats().MagicPenetration.Total;
-                    defense = (1 - Stats.MagicPenetration.PercentBonus) * defense - Stats.MagicPenetration.FlatBonus;
+                    defense = GetStats().MagicPenetration.Total;
+                    defense = (1 - attacker.Stats.MagicPenetration.PercentBonus) * defense - attacker.Stats.MagicPenetration.FlatBonus;
                     break;
             }
-
             switch (source)
             {
                 case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = Stats.SpellVamp.Total;
+                    regain = attacker.Stats.SpellVamp.Total;
                     break;
                 case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = Stats.LifeSteal.Total;
+                    regain = attacker.Stats.LifeSteal.Total;
                     break;
             }
-
+            
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
-
-            if (target.HasCrowdControl(CrowdControlType.Invulnerable))
+            
+            if (HasCrowdControl(CrowdControlType.Invulnerable))
             {
-                bool attackerIsFountainTurret = this is LaneTurret && (this as LaneTurret).Type == TurretType.FountainTurret;
+                bool attackerIsFountainTurret;
+                var checkLaneTurret = attacker as LaneTurret;
+                
+                if (checkLaneTurret != null)
+                {
+                    attackerIsFountainTurret = checkLaneTurret.Type == TurretType.FountainTurret;
+                }
+                else
+                {
+                    attackerIsFountainTurret = false;
+                }
+                
                 if (attackerIsFountainTurret == false)
                 {
                     damage = 0;
                     damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
                 }
             }
-            ApiEventManager.OnUnitDamageTaken.Publish(target);
 
-            target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
-            if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
+            ApiEventManager.OnUnitDamageTaken.Publish(this);
+            
+            GetStats().CurrentHealth = Math.Max(0.0f, GetStats().CurrentHealth - damage);
+            if (!IsDead && GetStats().CurrentHealth <= 0)
             {
-                target.IsDead = true;
-                target.die(this);
+                IsDead = true;
+                die(attacker);
             }
-            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, damageText);
-            _game.PacketNotifier.NotifyUpdatedStats(target, false);
-
-            //Get health from lifesteal/spellvamp
-            if (regain != 0)
+            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
+            _game.PacketNotifier.NotifyUpdatedStats(this, false);
+            
+            // Get health from lifesteal/spellvamp
+            if (regain > 0)
             {
-                Stats.CurrentHealth = Math.Min(Stats.HealthPoints.Total, Stats.CurrentHealth + regain * damage);
-                _game.PacketNotifier.NotifyUpdatedStats(this, false);
+                var attackerStats = attacker.GetStats();
+                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total, attackerStats.CurrentHealth + regain * damage);
+                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
 
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void TakeDamage(Unit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             var text = DamageText.DAMAGE_TEXT_NORMAL;
-
+            
             if (isCrit)
             {
                 text = DamageText.DAMAGE_TEXT_CRITICAL;
             }
-            DealDamageTo(target, damage, type, source, text);
+            TakeDamage(attacker, damage, type, source, text);
         }
 
         public virtual void die(Unit killer)
