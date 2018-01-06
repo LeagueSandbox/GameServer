@@ -314,7 +314,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(Unit owner)
+	    public void Recall(ObjAIBase owner)
         {
             var spawnPos = GetRespawnPosition();
             _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);

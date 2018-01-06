@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Scripting
     {
         void OnUpdate(double diff);
 
-        void OnActivate(Unit unit, Spell ownerSpell);
+        void OnActivate(ObjAIBase unit, Spell ownerSpell);
 
-        void OnDeactivate(Unit unit);
+        void OnDeactivate(ObjAIBase unit);
     }
 }

@@ -13,10 +13,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         void OnDeactivate(Champion owner);
 
-        void OnStartCasting(Champion owner, Spell spell, Unit target);
+        void OnStartCasting(Champion owner, Spell spell, ObjAIBase target);
 
-        void OnFinishCasting(Champion owner, Spell spell, Unit target);
+        void OnFinishCasting(Champion owner, Spell spell, ObjAIBase target);
 
-        void ApplyEffects(Champion owner, Unit target, Spell spell, Projectile projectile);
+        void ApplyEffects(Champion owner, ObjAIBase target, Spell spell, Projectile projectile);
     }
 }

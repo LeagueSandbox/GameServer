@@ -86,19 +86,23 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
 
-                var tempBuffs = u.GetBuffs();
-                foreach (var buff in tempBuffs.Values)
+                if (u is ObjAIBase)
                 {
-                    if (buff.NeedsToRemove())
+                    var uo = u as ObjAIBase;
+                    var tempBuffs = uo.GetBuffs();
+                    foreach (var buff in tempBuffs.Values)
                     {
-                        if (buff.Name != "")
+                        if (buff.NeedsToRemove())
                         {
-                            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+                            if (buff.Name != "")
+                            {
+                                _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+                            }
+                            uo.RemoveBuff(buff);
+                            continue;
                         }
-                        u.RemoveBuff(buff);
-                        continue;
+                        buff.Update(diff);
                     }
-                    buff.Update(diff);
                 }
 
                 if (u.GetStats().GetUpdatedStats().Count > 0)
