@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
     public class BuffGameScriptController
     {
-        Unit _unit;
+        ObjAIBase _unit;
         BuffGameScript _gameScript;
         String _buffNamespace;
         String _buffClass;
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         float _duration = -1f;
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
-        public BuffGameScriptController(Unit unit, String buffNamespace, String buffClass, Spell ownerSpell, float duration = -1f)
+        public BuffGameScriptController(ObjAIBase unit, String buffNamespace, String buffClass, Spell ownerSpell, float duration = -1f)
         {
             _buffNamespace = buffNamespace;
             _buffClass = buffClass;
