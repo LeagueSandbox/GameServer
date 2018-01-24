@@ -134,13 +134,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         // AI tasks
         protected bool scanForTargets()
         {
-            Unit nextTarget = null;
+            AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
-                var u = it.Value as Unit;
+                var u = it.Value as AttackableUnit;
 
                 // Targets have to be:
                 if (u == null ||                          // a unit

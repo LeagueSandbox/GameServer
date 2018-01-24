@@ -283,11 +283,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public override void AutoAttackHit(Unit target)
+        public override void AutoAttackHit(AttackableUnit target)
         {
             if (Type == TurretType.FountainTurret)
             {
-                DealDamageTo(target, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                target.TakeDamage(this, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             }
             else
             {

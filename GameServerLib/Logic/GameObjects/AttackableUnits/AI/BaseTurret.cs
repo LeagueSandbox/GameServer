@@ -26,12 +26,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void CheckForTargets()
         {
             var objects = _game.ObjectManager.GetObjects();
-            Unit nextTarget = null;
+            AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             foreach (var it in objects)
             {
-                var u = it.Value as Unit;
+                var u = it.Value as AttackableUnit;
 
                 if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
                     continue;

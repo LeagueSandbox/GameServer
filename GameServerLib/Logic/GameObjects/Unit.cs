@@ -87,8 +87,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
-        public Unit TargetUnit { get; set; }
-        public Unit AutoAttackTarget { get; set; }
+        public AttackableUnit TargetUnit { get; set; }
+        public AttackableUnit AutoAttackTarget { get; set; }
 
         public bool IsDead { get; protected set; }
 
@@ -383,10 +383,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// This is called by the AA projectile when it hits its target
         /// </summary>
-        public virtual void AutoAttackHit(Unit target)
+        public virtual void AutoAttackHit(AttackableUnit target)
         {
             if (HasCrowdControl(CrowdControlType.Blind)) {
-                DealDamageTo(target, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
+                target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
                                              DamageText.DAMAGE_TEXT_MISS);
                 return;
@@ -401,80 +401,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<Unit, Unit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
-            DealDamageTo(target, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                                             DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             _isNextAutoCrit);
+            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+                DamageSource.DAMAGE_SOURCE_ATTACK,
+                _isNextAutoCrit);
         }
-
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, DamageText damageText)
-        {
-            float defense = 0;
-            float regain = 0;
-            switch (type)
-            {
-                case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = target.GetStats().Armor.Total;
-                    defense = (1 - Stats.ArmorPenetration.PercentBonus) * defense - Stats.ArmorPenetration.FlatBonus;
-
-                    break;
-                case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = target.GetStats().MagicPenetration.Total;
-                    defense = (1 - Stats.MagicPenetration.PercentBonus) * defense - Stats.MagicPenetration.FlatBonus;
-                    break;
-            }
-
-            switch (source)
-            {
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = Stats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = Stats.LifeSteal.Total;
-                    break;
-            }
-
-            //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
-
-            if (target.HasCrowdControl(CrowdControlType.Invulnerable))
-            {
-                bool attackerIsFountainTurret = this is LaneTurret && (this as LaneTurret).Type == TurretType.FountainTurret;
-                if (attackerIsFountainTurret == false)
-                {
-                    damage = 0;
-                    damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
-                }
-            }
-            ApiEventManager.OnUnitDamageTaken.Publish(target);
-
-            target.GetStats().CurrentHealth = Math.Max(0.0f, target.GetStats().CurrentHealth - damage);
-            if (!target.IsDead && target.GetStats().CurrentHealth <= 0)
-            {
-                target.IsDead = true;
-                target.die(this);
-            }
-            _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, damageText);
-            _game.PacketNotifier.NotifyUpdatedStats(target, false);
-
-            //Get health from lifesteal/spellvamp
-            if (regain != 0)
-            {
-                Stats.CurrentHealth = Math.Min(Stats.HealthPoints.Total, Stats.CurrentHealth + regain * damage);
-                _game.PacketNotifier.NotifyUpdatedStats(this, false);
-            }
-        }
-
-        public virtual void DealDamageTo(Unit target, float damage, DamageType type, DamageSource source, bool isCrit)
-        {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
-            }
-            DealDamageTo(target, damage, type, source, text);
-        }
-
+        
         public virtual void die(Unit killer)
         {
             setToRemove();
@@ -540,7 +471,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return false; //return DistressCause;
         }
 
-        public void SetTargetUnit(Unit target)
+        public void SetTargetUnit(AttackableUnit target)
         {
             if (target == null) // If we are unsetting the target (moving around)
             {

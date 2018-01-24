@@ -17,15 +17,15 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         {
         }
 
-        public void OnStartCasting(Champion owner, Spell spell, ObjAIBase target)
+        public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(Champion owner, Spell spell, ObjAIBase target)
+        public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
         }
 
-        public void ApplyEffects(Champion owner, ObjAIBase target, Spell spell, Projectile projectile)
+        public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
         }
     }

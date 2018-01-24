@@ -108,7 +108,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
 
             ObjectsHit.Add(unit);
-            _originSpell.applyEffects(unit as ObjAIBase, this);
+            var attackableUnit = unit as AttackableUnit;
+            if (attackableUnit != null)
+            {
+                _originSpell.applyEffects(attackableUnit, this);
+            }
         }
 
         /* WARNING!
