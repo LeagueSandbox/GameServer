@@ -1,12 +1,13 @@
 using System.Text;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FloatingTextWithValue : BasePacket
     {
-        public FloatingTextWithValue(Unit u, int value, string text)
+        public FloatingTextWithValue(AttackableUnit u, int value, string text)
             : base(PacketCmd.PKT_S2C_FloatingTextWithValue)
         {
             buffer.Write(u.NetId);

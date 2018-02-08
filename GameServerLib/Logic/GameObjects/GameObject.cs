@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -32,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                var p = new SetTeam(this as Unit, team);
+                var p = new SetTeam(this as AttackableUnit, team);
                 _game.PacketHandlerManager.broadcastPacket(p, Channel.CHL_S2C);
             }
         }
@@ -138,9 +139,9 @@ namespace LeagueSandbox.GameServer.Logic
 
                 if (IsDashing)
                 {
-                    if (this is Unit)
+                    if (this is AttackableUnit)
                     {
-                        var u = this as Unit;
+                        var u = this as AttackableUnit;
 
                         var animList = new List<string>();
                         _game.PacketNotifier.NotifySetAnimation(u, animList);
@@ -264,9 +265,9 @@ namespace LeagueSandbox.GameServer.Logic
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-            if (this is Unit)
+            if (this is AttackableUnit)
             {
-                _game.PacketNotifier.NotifyUpdatedStats(this as Unit, false);
+                _game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
             }
         }
 

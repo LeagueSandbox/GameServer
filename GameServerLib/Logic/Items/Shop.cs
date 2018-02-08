@@ -1,13 +1,14 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Items
 {
     public class Shop
     {
-        private Unit _owner;
+        private AttackableUnit _owner;
         private InventoryManager _inventory;
 
-        private Shop(Unit owner)
+        private Shop(AttackableUnit owner)
         {
             _owner = owner;
             _inventory = _owner.Inventory;

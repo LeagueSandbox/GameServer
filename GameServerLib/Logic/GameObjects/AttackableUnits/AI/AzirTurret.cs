@@ -1,14 +1,15 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class AzirTurret : BaseTurret
     {
-        public Unit Owner { get; private set; }
+        public AttackableUnit Owner { get; private set; }
 
         public AzirTurret(
-            Unit owner,
+            AttackableUnit owner,
             string name,
             string model,
             float x = 0,

@@ -4,6 +4,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic
         private Dictionary<uint, GameObject> _objects;
         private Dictionary<uint, Champion> _champions;
         private Dictionary<uint, Inhibitor> _inhibitors;
-        private Dictionary<TeamId, Dictionary<uint, Unit>> _visionUnits;
+        private Dictionary<TeamId, Dictionary<uint, AttackableUnit>> _visionUnits;
 
         private object _objectsLock = new object();
         private object _inhibitorsLock = new object();
@@ -29,12 +30,12 @@ namespace LeagueSandbox.GameServer.Logic
             _objects = new Dictionary<uint, GameObject>();
             _inhibitors = new Dictionary<uint, Inhibitor>();
             _champions = new Dictionary<uint, Champion>();
-            _visionUnits = new Dictionary<TeamId, Dictionary<uint, Unit>>();
+            _visionUnits = new Dictionary<TeamId, Dictionary<uint, AttackableUnit>>();
 
             Teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             foreach (var team in Teams)
-                _visionUnits.Add(team, new Dictionary<uint, Unit>());
+                _visionUnits.Add(team, new Dictionary<uint, AttackableUnit>());
         }
 
         public void Update(float diff)
@@ -51,10 +52,10 @@ namespace LeagueSandbox.GameServer.Logic
 
                 obj.update(diff);
 
-                if (!(obj is Unit))
+                if (!(obj is AttackableUnit))
                     continue;
 
-                var u = obj as Unit;
+                var u = obj as AttackableUnit;
                 foreach (var team in Teams)
                 {
                     if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
@@ -203,9 +204,9 @@ namespace LeagueSandbox.GameServer.Logic
                 _champions.Remove(champion.NetId);
         }
 
-        public Dictionary<uint, Unit> GetVisionUnits(TeamId team)
+        public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
         {
-            var ret = new Dictionary<uint, Unit>();
+            var ret = new Dictionary<uint, AttackableUnit>();
             lock (_visionLock)
             {
                 var visionUnitsTeam = _visionUnits[team];
@@ -216,7 +217,7 @@ namespace LeagueSandbox.GameServer.Logic
             }
         }
 
-        public void AddVisionUnit(Unit unit)
+        public void AddVisionUnit(AttackableUnit unit)
         {
             lock (_visionLock)
             {
@@ -224,7 +225,7 @@ namespace LeagueSandbox.GameServer.Logic
             }
         }
 
-        public void RemoveVisionUnit(Unit unit)
+        public void RemoveVisionUnit(AttackableUnit unit)
         {
             RemoveVisionUnit(unit.Team, unit.NetId);
         }
@@ -245,13 +246,13 @@ namespace LeagueSandbox.GameServer.Logic
             return ret;
         }
 
-        public void StopTargeting(Unit target)
+        public void StopTargeting(AttackableUnit target)
         {
             lock (_objectsLock)
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as Unit;
+                    var u = kv.Value as AttackableUnit;
                     if (u == null)
                         continue;
 
@@ -298,19 +299,19 @@ namespace LeagueSandbox.GameServer.Logic
             return champs;
         }
 
-        public List<Unit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false)
+        public List<AttackableUnit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false)
         {
             return GetUnitsInRange(new Target(x, y), range, onlyAlive);
         }
 
-        public List<Unit> GetUnitsInRange(Target t, float range, bool onlyAlive = false)
+        public List<AttackableUnit> GetUnitsInRange(Target t, float range, bool onlyAlive = false)
         {
-            var units = new List<Unit>();
+            var units = new List<AttackableUnit>();
             lock (_objectsLock)
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as Unit;
+                    var u = kv.Value as AttackableUnit;
                     if (u != null && t.GetDistanceTo(u) <= range)
                         if ((onlyAlive && !u.IsDead) || !onlyAlive)
                             units.Add(u);
@@ -338,7 +339,7 @@ namespace LeagueSandbox.GameServer.Logic
                     if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
                         !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
-                        var unit = kv.Value as Unit;
+                        var unit = kv.Value as AttackableUnit;
                         if (unit != null && unit.IsDead)
                         {
                             continue;

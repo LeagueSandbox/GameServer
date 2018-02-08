@@ -1,11 +1,12 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class NpcDie : BasePacket
     {
-        public NpcDie(Unit die, Unit killer) 
+        public NpcDie(AttackableUnit die, AttackableUnit killer) 
             : base(PacketCmd.PKT_S2C_NPC_Die, die.NetId)
         {
             buffer.Write((int)0);

@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
@@ -140,13 +141,13 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
         }
 
-        public static void FaceDirection(Unit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
+        public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
         {
             _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime);
             // todo change units direction
         }
 
-        public static List<Unit> GetUnitsInRange(Target target, float range, bool isAlive)
+        public static List<AttackableUnit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
         }
@@ -251,7 +252,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
         
 
-        public static bool IsDead(Unit unit)
+        public static bool IsDead(AttackableUnit unit)
         {
             return unit.IsDead;
         }

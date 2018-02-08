@@ -228,7 +228,6 @@
     <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AttackableUnit.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\ObjBuilding.cs" />
     <Compile Include="Logic\GameObjects\Missiles\ObjMissile.cs" />
@@ -266,7 +265,7 @@
     <Compile Include="Logic\GameObjects\Spells\Spell.cs" />
     <Compile Include="Logic\GameObjects\Stats\Stats.cs" />
     <Compile Include="Logic\GameObjects\Other\Target.cs" />
-    <Compile Include="Logic\GameObjects\Unit.cs" />
+    <Compile Include="Logic\GameObjects\AttackableUnits\AttackableUnit.cs" />
     <Compile Include="Logic\Content\ItemManager.cs" />
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />

@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(Unit u,
+        public Dash(AttackableUnit u,
             Target t,
             float dashSpeed,
             bool keepFacingLastDirection,

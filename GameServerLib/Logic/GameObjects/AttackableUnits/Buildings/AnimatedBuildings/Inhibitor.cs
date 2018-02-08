@@ -1,5 +1,6 @@
 ﻿using System;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -35,12 +36,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.ObjectManager.AddInhibitor(this);
         }
 
-        public override void die(Unit killer)
+        public override void die(AttackableUnit killer)
         {
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
-                var u = obj as Unit;
+                var u = obj as AttackableUnit;
                 if (u != null && u.TargetUnit == this)
                 {
                     u.SetTargetUnit(null);

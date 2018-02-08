@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 /*
  * Possible Events:
@@ -99,14 +100,14 @@ namespace LeagueSandbox.GameServer.Logic.API
 
     public class EventOnUnitDamageTaken
     {
-        private List<Tuple<object, Unit, Action>> listeners = new List<Tuple<object, Unit, Action>>();
-        public void AddListener(object owner, Unit unit, Action callback)
+        private List<Tuple<object, AttackableUnit, Action>> listeners = new List<Tuple<object, AttackableUnit, Action>>();
+        public void AddListener(object owner, AttackableUnit unit, Action callback)
         {
-            var listenerTuple = new Tuple<object, Unit, Action>(owner, unit, callback);
+            var listenerTuple = new Tuple<object, AttackableUnit, Action>(owner, unit, callback);
             listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(object owner, Unit unit)
+        public void RemoveListener(object owner, AttackableUnit unit)
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
         }
@@ -114,7 +115,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
-        public void Publish(Unit unit)
+        public void Publish(AttackableUnit unit)
         {
             listeners.ForEach((listener) => {
                 listener.Item3();
