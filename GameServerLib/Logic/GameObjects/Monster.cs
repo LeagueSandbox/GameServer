@@ -2,11 +2,12 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Monster : Unit
+    public class Monster : AttackableUnit
     {
         public Vector2 Facing { get; private set; }
         public string Name { get; private set; }

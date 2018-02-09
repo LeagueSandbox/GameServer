@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -273,7 +274,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.ObjectManager.AddObject(l);
         }
 
-        public void spellAnimation(string animName, Unit target)
+        public void spellAnimation(string animName, AttackableUnit target)
         {
             _game.PacketNotifier.NotifySpellAnimation(target, animName);
         }

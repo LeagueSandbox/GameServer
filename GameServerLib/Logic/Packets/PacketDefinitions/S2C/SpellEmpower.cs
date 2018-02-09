@@ -1,11 +1,12 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpellEmpower : BasePacket
     {
-        public SpellEmpower(Unit unit, byte slot, byte empowerLevel)
+        public SpellEmpower(AttackableUnit unit, byte slot, byte empowerLevel)
             : base(PacketCmd.PKT_S2C_SpellEmpower, unit.NetId)
         {
             buffer.Write((byte)slot);

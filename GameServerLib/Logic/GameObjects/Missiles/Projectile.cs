@@ -3,13 +3,14 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Projectile : ObjMissile
     {
         public List<GameObject> ObjectsHit { get; private set; }
-        public Unit Owner { get; private set; }
+        public AttackableUnit Owner { get; private set; }
         public int ProjectileId { get; private set; }
         public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float x,
             float y,
             int collisionRadius,
-            Unit owner,
+            AttackableUnit owner,
             Target target,
             Spell originSpell,
             float moveSpeed,
@@ -67,13 +68,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.onCollision(collider);
             if (Target != null && Target.IsSimpleTarget && !isToRemove())
             {
-                CheckFlagsForUnit(collider as Unit);
+                CheckFlagsForUnit(collider as AttackableUnit);
             }
             else
             {
                 if (Target == collider)
                 {
-                    CheckFlagsForUnit(collider as Unit);
+                    CheckFlagsForUnit(collider as AttackableUnit);
                 }
             }
         }
@@ -83,7 +84,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _moveSpeed;
         }
 
-        protected virtual void CheckFlagsForUnit(Unit unit)
+        protected virtual void CheckFlagsForUnit(AttackableUnit unit)
         {
             if (Target == null)
             {

@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -347,7 +348,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return $"{teamDictionary[team]}_Minion_{typeDictionary[type]}";
         }
 
-        public float GetGoldFor(Unit u)
+        public float GetGoldFor(AttackableUnit u)
         {
             var m = u as Minion;
             if (m == null)
@@ -407,7 +408,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             return dic[m.getType()];
         }
 
-        public float GetExperienceFor(Unit u)
+        public float GetExperienceFor(AttackableUnit u)
         {
             var m = u as Minion;
 

@@ -1,11 +1,12 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FaceDirection : BasePacket
     {
-        public FaceDirection(Unit u,
+        public FaceDirection(AttackableUnit u,
             float relativeX,
             float relativeY,
             float relativeZ,

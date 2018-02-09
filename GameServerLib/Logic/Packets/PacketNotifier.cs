@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce;
@@ -31,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             NotifySetHealth(m);
         }
 
-        public void NotifySetHealth(Unit u)
+        public void NotifySetHealth(AttackableUnit u)
         {
             var sh = new SetHealth(u);
             _game.PacketHandlerManager.broadcastPacketVision(u, sh, Channel.CHL_S2C);
@@ -61,14 +62,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             Program.SetToExit();
         }
 
-        public void NotifyUpdatedStats(Unit u, bool partial = true)
+        public void NotifyUpdatedStats(AttackableUnit u, bool partial = true)
         {
             var us = new UpdateStats(u, partial);
             var channel = Channel.CHL_LOW_PRIORITY;
             _game.PacketHandlerManager.broadcastPacketVision(u, us, channel, ENet.PacketFlags.Unsequenced);
         }
 
-        public void NotifyFaceDirection(Unit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
+        public void NotifyFaceDirection(AttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
         {
             var height = _game.Map.NavGrid.GetHeightAtLocation(direction);
             var fd = new FaceDirection(u, direction.X, direction.Y, height, isInstant, turnTime);
@@ -114,13 +115,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(edit, Channel.CHL_S2C);
         }
 
-        public void NotifyRemoveBuff(Unit u, string buffName, byte slot = 0x01)
+        public void NotifyRemoveBuff(AttackableUnit u, string buffName, byte slot = 0x01)
         {
             var remove = new RemoveBuff(u, buffName, slot);
             _game.PacketHandlerManager.broadcastPacket(remove, Channel.CHL_S2C);
         }
 
-        public void NotifyTeleport(Unit u, float _x, float _y)
+        public void NotifyTeleport(AttackableUnit u, float _x, float _y)
         {
             // Can't teleport to this point of the map
             if (!_game.Map.NavGrid.IsWalkable(_x, _y))
@@ -149,32 +150,32 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(Unit source, Unit target, float amount, DamageType type, DamageText damagetext)
+        public void NotifyDamageDone(AttackableUnit source, AttackableUnit target, float amount, DamageType type, DamageText damagetext)
         {
             var dd = new DamageDone(source, target, amount, type, damagetext);
             _game.PacketHandlerManager.broadcastPacket(dd, Channel.CHL_S2C);
         }
 
-        public void NotifyModifyShield(Unit unit, float amount, ShieldType type)
+        public void NotifyModifyShield(AttackableUnit unit, float amount, ShieldType type)
         {
             var ms = new ModifyShield(unit, amount, type);
             _game.PacketHandlerManager.broadcastPacket(ms, Channel.CHL_S2C);
         }
 
-        public void NotifyBeginAutoAttack(Unit attacker, Unit victim, uint futureProjNetId, bool isCritical)
+        public void NotifyBeginAutoAttack(AttackableUnit attacker, AttackableUnit victim, uint futureProjNetId, bool isCritical)
         {
             var aa = new BeginAutoAttack(attacker, victim, futureProjNetId, isCritical);
             _game.PacketHandlerManager.broadcastPacket(aa, Channel.CHL_S2C);
         }
 
-        public void NotifyNextAutoAttack(Unit attacker, Unit target, uint futureProjNetId, bool isCritical,
+        public void NotifyNextAutoAttack(AttackableUnit attacker, AttackableUnit target, uint futureProjNetId, bool isCritical,
             bool nextAttackFlag)
         {
             var aa = new NextAutoAttack(attacker, target, futureProjNetId, isCritical, nextAttackFlag);
             _game.PacketHandlerManager.broadcastPacket(aa, Channel.CHL_S2C);
         }
 
-        public void NotifyOnAttack(Unit attacker, Unit attacked, AttackType attackType)
+        public void NotifyOnAttack(AttackableUnit attacker, AttackableUnit attacked, AttackType attackType)
         {
             var oa = new OnAttack(attacker, attacked, attackType);
             _game.PacketHandlerManager.broadcastPacket(oa, Channel.CHL_S2C);
@@ -204,19 +205,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(dp, Channel.CHL_S2C);
         }
 
-        public void NotifyModelUpdate(Unit obj)
+        public void NotifyModelUpdate(AttackableUnit obj)
         {
             var mp = new UpdateModel(obj.NetId, obj.Model);
             _game.PacketHandlerManager.broadcastPacket(mp, Channel.CHL_S2C);
         }
 
-        public void NotifyItemBought(Unit u, Item i)
+        public void NotifyItemBought(AttackableUnit u, Item i)
         {
             var response = new BuyItemResponse(u, i);
             _game.PacketHandlerManager.broadcastPacketVision(u, response, Channel.CHL_S2C);
         }
 
-        public void NotifyFogUpdate2(Unit u)
+        public void NotifyFogUpdate2(AttackableUnit u)
         {
             var fog = new FogUpdate2(u, _networkIdManager);
             _game.PacketHandlerManager.broadcastPacketTeam(u.Team, fog, Channel.CHL_S2C);
@@ -240,7 +241,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(c, ri, Channel.CHL_S2C);
         }
 
-        public void NotifySetTarget(Unit attacker, Unit target)
+        public void NotifySetTarget(AttackableUnit attacker, AttackableUnit target)
         {
             var st = new SetTarget(attacker, target);
             _game.PacketHandlerManager.broadcastPacket(st, Channel.CHL_S2C);
@@ -249,7 +250,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(st2, Channel.CHL_S2C);
         }
 
-        public void NotifyChampionDie(Champion die, Unit killer, int goldFromKill)
+        public void NotifyChampionDie(Champion die, AttackableUnit killer, int goldFromKill)
         {
             var cd = new ChampionDie(die, killer, goldFromKill);
             _game.PacketHandlerManager.broadcastPacket(cd, Channel.CHL_S2C);
@@ -275,13 +276,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(sp, Channel.CHL_S2C);
         }
 
-        public void NotifyNpcDie(Unit die, Unit killer)
+        public void NotifyNpcDie(AttackableUnit die, AttackableUnit killer)
         {
             var nd = new NpcDie(die, killer);
             _game.PacketHandlerManager.broadcastPacket(nd, Channel.CHL_S2C);
         }
 
-        public void NotifyAddGold(Champion c, Unit died, float gold)
+        public void NotifyAddGold(Champion c, AttackableUnit died, float gold)
         {
             var ag = new AddGold(c, died, gold);
             _game.PacketHandlerManager.broadcastPacket(ag, Channel.CHL_S2C);
@@ -293,7 +294,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(xp, Channel.CHL_S2C);
         }
 
-        public void NotifyStopAutoAttack(Unit attacker)
+        public void NotifyStopAutoAttack(AttackableUnit attacker)
         {
             var saa = new StopAutoAttack(attacker);
             _game.PacketHandlerManager.broadcastPacket(saa, Channel.CHL_S2C);
@@ -311,7 +312,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(pg, Channel.CHL_S2C);
         }
 
-        public void NotifyResumeGame(Unit unpauser, bool showWindow)
+        public void NotifyResumeGame(AttackableUnit unpauser, bool showWindow)
         {
             UnpauseGame upg;
             if (unpauser == null)
@@ -325,7 +326,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(upg, Channel.CHL_S2C);
         }
 
-        public void NotifySpawn(Unit u)
+        public void NotifySpawn(AttackableUnit u)
         {
             var m = u as Minion;
             if (m != null)
@@ -425,7 +426,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(gameTimer, Channel.CHL_S2C);
         }
 
-        public void NotifyUnitAnnounceEvent(UnitAnnounces messageId, Unit target, GameObject killer = null,
+        public void NotifyUnitAnnounceEvent(UnitAnnounces messageId, AttackableUnit target, GameObject killer = null,
             List<Champion> assists = null)
         {
             var announce = new UnitAnnounce(messageId, target, killer, assists);
@@ -438,19 +439,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacket(announce, Channel.CHL_S2C);
         }
 
-        public void NotifySpellAnimation(Unit u, string animation)
+        public void NotifySpellAnimation(AttackableUnit u, string animation)
         {
             var sa = new SpellAnimation(u, animation);
             _game.PacketHandlerManager.broadcastPacketVision(u, sa, Channel.CHL_S2C);
         }
 
-        public void NotifySetAnimation(Unit u, List<string> animationPairs)
+        public void NotifySetAnimation(AttackableUnit u, List<string> animationPairs)
         {
             var setAnimation = new SetAnimation(u, animationPairs);
             _game.PacketHandlerManager.broadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
         }
 
-        public void NotifyDash(Unit u,
+        public void NotifyDash(AttackableUnit u,
                                Target t,
                                float dashSpeed,
                                bool keepFacingLastDirection,

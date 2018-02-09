@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SetTeam(team);
         }
 
-        public override void die(Unit killer)
+        public override void die(AttackableUnit killer)
         {
             _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(this);

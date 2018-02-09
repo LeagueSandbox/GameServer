@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -94,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.update(diff);
         }
 
-        public override void die(Unit killer)
+        public override void die(AttackableUnit killer)
         {
             foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
             {

@@ -1,4 +1,5 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
@@ -72,7 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (!p.Target.IsSimpleTarget)
             {
                 buffer.Write((byte)0x01); // numTargets
-                buffer.Write((p.Target as Unit).NetId);
+                buffer.Write((p.Target as AttackableUnit).NetId);
                 buffer.Write((byte)0); // hitResult
             }
             else

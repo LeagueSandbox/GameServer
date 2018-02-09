@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -384,7 +385,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return Inventory;
         }
 
-        public override void die(Unit killer)
+        public override void die(AttackableUnit killer)
         {
             RespawnTimer = 5000 + GetStats().Level * 2500;
             _game.ObjectManager.StopTargeting(this);
@@ -469,7 +470,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void TakeDamage(Unit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public override void TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             base.TakeDamage(attacker, damage, type, source, isCrit);
 
