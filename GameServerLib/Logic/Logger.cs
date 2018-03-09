@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 
-namespace LeagueSandbox.GameServer.Core.Logic
+namespace LeagueSandbox.GameServer.Logic
 {
     public class Logger
     {
@@ -25,8 +22,11 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (e.Exception is InvalidCastException || e.Exception is System.Collections.Generic.KeyNotFoundException)
+            if (e.Exception is InvalidCastException || e.Exception is KeyNotFoundException)
+            {
                 return;
+            }
+
             _logWriter.Log("A first chance exception was thrown", "EXCEPTION");
             _logWriter.Log(e.Exception.Message, "EXCEPTION");
             _logWriter.Log(e.ToString(), "EXCEPTION");
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             public string _logFileName;
             private FileStream _logFile;
             private StringBuilder _stringBuilder;
-            private const double REFRESH_RATE = 1000.0 / 10.0; //10fps
+            private const double REFRESH_RATE = 1000.0 / 10.0; // 10fps
             private System.Timers.Timer _refreshTimer;
 
             public LogWriter(string executingDirectory, string logFileName)
@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
             public void Log(string lines, string type = "LOG")
             {
-                var text = $"({DateTime.Now:MM/dd/yyyy hh:mm:ss.fff}) [{type.ToUpper()}]: {lines}";
+                var text = $"({DateTime.Now:MM/dd/yyyy HH:mm:ss.fff}) [{type.ToUpper()}]: {lines}";
                 lock (_stringBuilder)
                 {
                     _stringBuilder.AppendLine(text);
@@ -172,21 +172,16 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     Directory.CreateDirectory(path);
                 }
 
-                var logName = string.Format(
-                    "{0}-{1}",
-                    DateTime.Now.ToString("yyyyMMdd-HHMM"),
-                    name
-                );
+                var logName = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}";
                 _logFileName = Path.Combine(path, logName);
 
                 _logFile = File.Create(_logFileName);
             }
 
-            #region IDisposable Support
-            private bool disposedValue = false; // To detect redundant calls
+            private bool _disposedValue; // To detect redundant dispose calls
             protected virtual void Dispose(bool disposing)
             {
-                if (!disposedValue)
+                if (!_disposedValue)
                 {
                     if (disposing)
                     {
@@ -194,16 +189,14 @@ namespace LeagueSandbox.GameServer.Core.Logic
                         _logFile.Flush();
                         _logFile.Close();
                     }
-                    disposedValue = true;
+                    _disposedValue = true;
                 }
             }
 
-            // This code added to correctly implement the disposable pattern.
             public void Dispose()
             {
                 Dispose(true);
             }
-            #endregion
         }
     }
 }
