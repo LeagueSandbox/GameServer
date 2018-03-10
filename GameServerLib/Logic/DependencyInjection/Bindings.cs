@@ -1,4 +1,5 @@
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Handlers;
