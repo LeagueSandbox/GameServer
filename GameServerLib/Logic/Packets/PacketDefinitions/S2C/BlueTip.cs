@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             byte tipCommand,
             uint playernetid,
             uint netid)
-            : base(PacketCmd.PKT_S2C_BlueTip, playernetid)
+            : base(PacketCmd.PKT_S2C_BlueTipUpdate, playernetid)
         {
             foreach (var b in Encoding.Default.GetBytes(text))
                 buffer.Write(b);

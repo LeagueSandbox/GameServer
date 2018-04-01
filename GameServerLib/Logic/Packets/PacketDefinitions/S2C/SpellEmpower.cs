@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpellEmpower : BasePacket
     {
         public SpellEmpower(AttackableUnit unit, byte slot, byte empowerLevel)
-            : base(PacketCmd.PKT_S2C_SpellEmpower, unit.NetId)
+            : base(PacketCmd.PKT_S2C_ChangeSpell_OwnerOnly, unit.NetId)
         {
             buffer.Write((byte)slot);
             buffer.Write((byte)0x00);

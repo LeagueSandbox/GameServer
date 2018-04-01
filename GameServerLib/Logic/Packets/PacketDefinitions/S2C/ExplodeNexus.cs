@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ExplodeNexus : BasePacket
     {
         public ExplodeNexus(Nexus nexus)
-            : base(PacketCmd.PKT_S2C_ExplodeNexus, nexus.NetId)
+            : base(PacketCmd.PKT_S2C_BuildingDie, nexus.NetId)
         {
             // animation ID?
             buffer.Write((byte)0xE7);

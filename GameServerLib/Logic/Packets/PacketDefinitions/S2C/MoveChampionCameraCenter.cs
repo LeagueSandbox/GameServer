@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class MoveChampionCameraCenter : BasePacket
     {
         public MoveChampionCameraCenter(Champion c, bool enable, byte mode, float distance)
-            : base(PacketCmd.PKT_S2C_MoveChampionCameraCenter, c.NetId)
+            : base(PacketCmd.PKT_S2C_LockCamera, c.NetId)
         {
             byte state = 0x00;
             if (enable)

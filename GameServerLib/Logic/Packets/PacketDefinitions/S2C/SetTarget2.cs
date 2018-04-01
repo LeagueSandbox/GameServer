@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SetTarget2 : BasePacket
     {
         public SetTarget2(AttackableUnit attacker, AttackableUnit attacked) 
-            : base(PacketCmd.PKT_S2C_SetTarget2, attacker.NetId)
+            : base(PacketCmd.PKT_S2C_SetTargetChampion, attacker.NetId)
         {
             if (attacked != null)
             {
