@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("League Sandbox")]
 [assembly: AssemblyProduct("GameServerApp")]
-[assembly: AssemblyCopyright("Copyright © League Sandbox 2016")]
+[assembly: AssemblyCopyright("Copyright © League Sandbox 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
