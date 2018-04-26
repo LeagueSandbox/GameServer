@@ -33,6 +33,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
+        public bool canRecall = true;
+        private Buff visualBuff;
+        private Particle addParticle;
+        public bool isRecalling = false;
+        private bool wasInterrupted = false;
+
         public Champion(string model,
                         uint playerId,
                         uint playerTeamSpecialId,
@@ -241,6 +247,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             base.update(diff);
 
+            if (this.isMovementUpdated()) {
+                if (isRecalling)
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                    ApiFunctionManager.RemoveParticle(addParticle);
+                    isRecalling = false;
+                    wasInterrupted = true;
+                }
+                canRecall = false;
+            }
+
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
@@ -315,10 +332,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAIBase owner)
+	    public void Recall(ObjAIBase owner,float timer)
         {
             var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+            isRecalling = true;
+            visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
+            addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+
+            ApiFunctionManager.CreateTimer(timer, () =>
+            {
+                if (canRecall && !wasInterrupted)
+                _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+                isRecalling = false;
+                wasInterrupted = false;
+            });
         }
 
         public void setSkillPoints(int _skillPoints)
