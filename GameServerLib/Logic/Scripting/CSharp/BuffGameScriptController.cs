@@ -36,6 +36,13 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 });
             }
         }
+
+        ///  !!!!!!!!!!!!
+        public void UpdateBuff(double diff)
+        {
+        }
+
+
         public void ActivateBuff()
         {
             _gameScript.OnActivate(_unit, _ownerSpell);

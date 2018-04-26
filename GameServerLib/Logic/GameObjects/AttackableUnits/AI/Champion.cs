@@ -36,7 +36,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool canRecall = true;
         private Buff visualBuff;
         private Particle addParticle;
-        private bool isRecalling = false;
+        public bool isRecalling = false;
+        private bool wasInterrupted = false;
 
         public Champion(string model,
                         uint playerId,
@@ -245,12 +246,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(float diff)
         {
             base.update(diff);
+
             if (this.isMovementUpdated()) {
                 if (isRecalling)
                 {
                     ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
                     ApiFunctionManager.RemoveParticle(addParticle);
                     isRecalling = false;
+                    wasInterrupted = true;
                 }
                 canRecall = false;
             }
@@ -333,14 +336,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var spawnPos = GetRespawnPosition();
             isRecalling = true;
-            visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", 8.0f, 1, this);
+            visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
             addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
 
-            ApiFunctionManager.CreateTimer(8.0f, () =>
+            ApiFunctionManager.CreateTimer(timer, () =>
             {
-                if (canRecall)
+                if (canRecall && !wasInterrupted)
                 _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
                 isRecalling = false;
+                wasInterrupted = false;
             });
         }
 
