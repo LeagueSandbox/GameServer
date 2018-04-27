@@ -33,6 +33,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
+        public bool canRecall = true;
+        private Buff visualBuff;
+        private Particle addParticle;
+        private bool isRecalling = false;
+
         public Champion(string model,
                         uint playerId,
                         uint playerTeamSpecialId,
@@ -240,6 +245,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(float diff)
         {
             base.update(diff);
+            if (this.isMovementUpdated()) {
+                if (isRecalling)
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                    ApiFunctionManager.RemoveParticle(addParticle);
+                    isRecalling = false;
+                }
+                canRecall = false;
+            }
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
@@ -315,10 +329,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAIBase owner)
+	    public void Recall(ObjAIBase owner,float timer)
         {
             var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+            isRecalling = true;
+            visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", 8.0f, 1, this);
+            addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+
+            ApiFunctionManager.CreateTimer(8.0f, () =>
+            {
+                if (canRecall)
+                _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+                isRecalling = false;
+            });
         }
 
         public void setSkillPoints(int _skillPoints)
