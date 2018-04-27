@@ -60,5 +60,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         {
             return buffNamespace == _buffNamespace && buffClass == _buffClass;
         }
+
+        public void UpdateBuff(double diff)
+        {
+            _gameScript.OnUpdate(diff);
+        }
     }
 }
