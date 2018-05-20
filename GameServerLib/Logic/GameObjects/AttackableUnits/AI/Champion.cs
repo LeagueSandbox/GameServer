@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool canRecall = true;
         private Buff visualBuff;
         private Particle addParticle;
-        private bool isRecalling = false;
+        public bool isRecalling = false;
 
         public Champion(string model,
                         uint playerId,
