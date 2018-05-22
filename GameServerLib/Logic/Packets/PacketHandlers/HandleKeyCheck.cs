@@ -50,8 +50,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO: add at least port or smth
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
+                    player.PlayerNo = playerNo;
                     var response = new KeyCheckResponse(keyCheck.userId, playerNo);
-                    _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_HANDSHAKE);
+                    _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_HANDSHAKE);
+
+                    
+                    foreach(var p2 in _playerManager.GetPlayers())
+                    {
+                        if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
+                        {
+                            var response2 = new KeyCheckResponse(p2.Item2.UserId, p2.Item2.PlayerNo);
+                            _game.PacketHandlerManager.sendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
+                        }
+                    }
+
                     return true;
                 }
                 ++playerNo;

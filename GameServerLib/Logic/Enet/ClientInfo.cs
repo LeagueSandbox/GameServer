@@ -6,6 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
     public class ClientInfo
     {
         public long UserId { get; private set; }
+        public int PlayerNo { get; set; }
         public bool IsMatchingVersion { get; set; }
         public bool IsDisconnected { get; set; }
         public int SkinNo { get; private set; }
