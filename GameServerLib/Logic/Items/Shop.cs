@@ -5,10 +5,10 @@ namespace LeagueSandbox.GameServer.Logic.Items
 {
     public class Shop
     {
-        private AttackableUnit _owner;
+        private Champion _owner;
         private InventoryManager _inventory;
 
-        private Shop(AttackableUnit owner)
+        private Shop(Champion owner)
         {
             _owner = owner;
             _inventory = _owner.Inventory;

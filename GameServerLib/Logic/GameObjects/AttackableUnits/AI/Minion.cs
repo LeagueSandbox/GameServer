@@ -127,11 +127,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.onCollision(collider);
         }
 
-        public override bool isInDistress()
-        {
-            return DistressCause != null;
-        }
-
         // AI tasks
         protected bool scanForTargets()
         {

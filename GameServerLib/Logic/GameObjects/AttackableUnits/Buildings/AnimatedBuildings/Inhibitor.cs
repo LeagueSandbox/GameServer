@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
-                var u = obj as AttackableUnit;
+                var u = obj as ObjAIBase;
                 if (u != null && u.TargetUnit == this)
                 {
                     u.SetTargetUnit(null);
@@ -110,10 +110,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.update(diff);
         }
 
-        public override void refreshWaypoints()
-        {
-
-        }
 
         public override void setToRemove()
         {

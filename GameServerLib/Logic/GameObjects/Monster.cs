@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Monster : AttackableUnit
+    public class Monster : ObjAIBase
     {
         public Vector2 Facing { get; private set; }
         public string Name { get; private set; }
