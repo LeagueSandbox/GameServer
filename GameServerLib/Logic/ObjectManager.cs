@@ -86,11 +86,11 @@ namespace LeagueSandbox.GameServer.Logic
                         _game.PacketNotifier.NotifyLeaveVision(u, team);
                     }
                 }
-
-                if (u is ObjAIBase)
+                
+                var ai = u as ObjAIBase;
+                if (ai != null)
                 {
-                    var uo = u as ObjAIBase;
-                    var tempBuffs = uo.GetBuffs();
+                    var tempBuffs = ai.GetBuffs();
                     foreach (var buff in tempBuffs.Values)
                     {
                         if (buff.NeedsToRemove())
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic
                             {
                                 _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
                             }
-                            uo.RemoveBuff(buff);
+                            ai.RemoveBuff(buff);
                             continue;
                         }
                         buff.Update(diff);
@@ -255,12 +255,15 @@ namespace LeagueSandbox.GameServer.Logic
                     var u = kv.Value as AttackableUnit;
                     if (u == null)
                         continue;
-
-                    if (u.TargetUnit == target)
+                    var ai = u as ObjAIBase;
+                    if (ai != null)
                     {
-                        u.TargetUnit = null;
-                        u.AutoAttackTarget = null;
-                        _game.PacketNotifier.NotifySetTarget(u, null);
+                        if (ai.TargetUnit == target)
+                        {
+                            ai.TargetUnit = null;
+                            ai.AutoAttackTarget = null;
+                            _game.PacketNotifier.NotifySetTarget(u, null);
+                        }
                     }
                 }
             }
