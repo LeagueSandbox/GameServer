@@ -375,11 +375,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return hash;
         }
 
-        public override bool isInDistress()
-        {
-            return DistressCause != null;
-        }
-
         public short getSkillPoints()
         {
             return _skillPoints;

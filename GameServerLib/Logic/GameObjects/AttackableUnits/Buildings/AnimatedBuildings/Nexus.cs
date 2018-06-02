@@ -27,11 +27,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.PacketNotifier.NotifyGameEnd(this);
         }
 
-        public override void refreshWaypoints()
-        {
-
-        }
-
         public override void setToRemove()
         {
 

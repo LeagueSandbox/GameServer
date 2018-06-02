@@ -3,13 +3,13 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Placeable : AttackableUnit
+    public class Placeable : ObjAIBase
     {
         public string Name { get; private set; }
-        public AttackableUnit Owner { get; private set; } // We'll probably want to change this in the future
+        public ObjAIBase Owner { get; private set; } // We'll probably want to change this in the future
 
         public Placeable(
-            AttackableUnit owner,
+            ObjAIBase owner,
             float x,
             float y,
             string model,
@@ -32,11 +32,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
-        }
-
-        public override bool isInDistress()
-        {
-            return DistressCause != null;
         }
     }
 }
