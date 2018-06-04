@@ -72,8 +72,12 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
         
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
+        public static EventOnLevelUpSpell OnLevelUpSpell = new EventOnLevelUpSpell();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
+        public static EventOnChampionDamageDealt OnChampionDamageDealt = new EventOnChampionDamageDealt();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
+        public static EventOnUnitDamageDealt OnUnitDamageDealt = new EventOnUnitDamageDealt();
+        public static EventOnAutoAttackHit OnAutoAttackHit = new EventOnAutoAttackHit();
     }
 
 
@@ -127,6 +131,67 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
     }
 
+    public class EventOnUnitDamageDealt
+    {
+        private List<Tuple<object, AttackableUnit, Action<AttackableUnit>>> listeners = new List<Tuple<object, AttackableUnit, Action<AttackableUnit>>>();
+        public void AddListener(object owner, AttackableUnit unit, Action<AttackableUnit> callback)
+        {
+            var listenerTuple = new Tuple<object, AttackableUnit, Action<AttackableUnit>>(owner, unit, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, AttackableUnit unit)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(AttackableUnit attacker, AttackableUnit target)
+        {
+            listeners.ForEach((listener) => {
+                listener.Item3(target);
+            });
+            if (target is Champion)
+            {
+                ApiEventManager.OnChampionDamageDealt.Publish(attacker,(Champion)target);
+            }
+        }
+    }
+
+    public class EventOnLevelUpSpell
+    {
+        private List<Tuple<object, Spell, Action<Champion>>> listeners = new List<Tuple<object, Spell, Action<Champion>>>();
+
+        public void AddListener(object owner, Spell spell, Action<Champion> callback)
+        {
+            var listenerTuple = new Tuple<object, Spell, Action<Champion>>(owner, spell, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Spell spell)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+
+        public void Publish(Spell spell, Champion champion)
+        {
+            listeners.ForEach((listener) =>
+            {
+                if (listener.Item2 == spell)
+                {
+                    listener.Item3(champion);
+                }
+            });
+        }
+    }
+
     public class EventOnChampionDamageTaken
     {
         private List<Tuple<object, Champion, Action>> listeners = new List<Tuple<object, Champion, Action>>();
@@ -144,12 +209,73 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
+
         public void Publish(Champion champion)
         {
             listeners.ForEach((listener) => {
                 if (listener.Item2 == champion)
                 {
                     listener.Item3();
+                }
+            });
+        }
+    }
+
+    public class EventOnChampionDamageDealt
+    {
+        private List<Tuple<object, Champion, Action<Champion>>> listeners = new List<Tuple<object, Champion, Action<Champion>>>();
+        public void AddListener(object owner, Champion champion, Action<Champion> callback)
+        {
+            var listenerTuple = new Tuple<object, Champion, Action<Champion>>(owner, champion, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Champion champion)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+
+        public void Publish(AttackableUnit attacker, Champion target)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == attacker)
+                {
+                    listener.Item3(target);
+                }
+            });
+        }
+    }
+
+    public class EventOnAutoAttackHit
+    {
+        private List<Tuple<object, ObjAIBase, Action<AttackableUnit,bool>>> listeners = new List<Tuple<object, ObjAIBase, Action<AttackableUnit,bool>>>();
+
+        public void AddListener(object owner, ObjAIBase unit, Action<AttackableUnit,bool> callback)
+        {
+            var listenerTuple = new Tuple<object, ObjAIBase, Action<AttackableUnit,bool>>(owner, unit, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, ObjAIBase unit)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+
+        public void Publish(ObjAIBase unit, AttackableUnit target, bool isCrit)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == unit)
+                {
+                    listener.Item3(target, isCrit);
                 }
             });
         }
