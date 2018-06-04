@@ -26,8 +26,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (request.slotFrom > 6 || request.slotTo > 6)
                 return false;
 
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            _playerManager.GetPeerInfo(peer).Champion.getInventory().SwapItems(request.slotFrom, request.slotTo);
+            champion.getInventory().SwapItems(request.slotFrom, request.slotTo);
+            champion.SwapSpells((byte)(request.slotFrom + 6),(byte)(request.slotTo + 6));
             _game.PacketNotifier.NotifyItemsSwapped(
                 _playerManager.GetPeerInfo(peer).Champion,
                 request.slotFrom,

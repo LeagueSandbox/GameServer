@@ -51,6 +51,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         {
             return _remove;
         }
+        public void UpdateBuff(double diff)
+        {
+            _gameScript.OnUpdate(diff);
+        }
         public AttackableUnit GetUnit() { return _unit; }
         public Spell GetOwnerSpell() { return _ownerSpell; }
         public BuffGameScript GetBuffGameScript() { return _gameScript; }
@@ -59,11 +63,6 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         public bool IsBuffSame(String buffNamespace, String buffClass)
         {
             return buffNamespace == _buffNamespace && buffClass == _buffClass;
-        }
-
-        public void UpdateBuff(double diff)
-        {
-            _gameScript.OnUpdate(diff);
         }
     }
 }

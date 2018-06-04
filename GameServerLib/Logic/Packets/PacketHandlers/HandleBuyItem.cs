@@ -1,6 +1,7 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -36,6 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
+            short itemSlot = 0;
 
             if (recipeParts.Count == 0)
             {
@@ -49,6 +51,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 if (i == null)
                 { // Slots full
                     return false;
+                }
+                else
+                {
+                    itemSlot = inventory.GetItemSlot(i);
                 }
             }
             else
@@ -67,7 +73,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 }
 
                 i = inventory.AddItem(itemTemplate);
+                itemSlot = inventory.GetItemSlot(i);
             }
+
+            short spellSlot = (short)(itemSlot + 6);
+
+            champion.Spells[spellSlot] = new Spell(champion,i.ItemType.SpellName, (byte)spellSlot);
+
+            API.ApiFunctionManager.LogInfo("This item's spell name is: " + champion.Spells[spellSlot].SpellName + " with slot: " + spellSlot);
 
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
