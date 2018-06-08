@@ -238,6 +238,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void NotifyRemoveItem(Champion c, byte slot, byte remaining)
         {
             var ri = new RemoveItem(c, slot, remaining);
+            c.Spells[(byte)(slot + 6)].DeactivateSpell();
+            c.Spells[(byte)(slot + 6)] = new GameObjects.Spell(c, "", (byte)(slot + 6));
             _game.PacketHandlerManager.broadcastPacketVision(c, ri, Channel.CHL_S2C);
         }
 

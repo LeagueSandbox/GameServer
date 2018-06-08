@@ -69,13 +69,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
+            if (spellName != "")
+            {
+                spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
+            }
             if (spellGameScript == null)
             {
                 spellGameScript = new GameScriptEmpty();
             }
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             spellGameScript.OnActivate(owner);
+        }
+
+        // TODO: Make a better way to deactivate spells; this is placeholder for activated items.
+        public void DeactivateSpell()
+        {
+            spellGameScript.OnDeactivate(Owner);
         }
 
         /// <summary>
@@ -173,6 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void update(float diff)
         {
+            spellGameScript.OnUpdate(diff);
             switch (state)
             {
                 case SpellState.STATE_READY:
@@ -322,6 +332,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 Owner.GetStats().ManaCost[Slot] = SpellData.ManaCost[Level];
             }
+            ApiEventManager.OnLevelUpSpell.Publish(this, Owner);
         }
 
         public void SetCooldown(byte slot, float newCd)

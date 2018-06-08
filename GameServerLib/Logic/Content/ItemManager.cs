@@ -83,6 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public StatModifcator Range { get; set; }
         public StatModifcator MoveSpeed { get; set; }
         public StatModifcator GoldPerSecond { get; set; }
+        public string SpellName { get; private set; }
 
         // Recipes
         public int RecipeItem1 { get; private set; }
@@ -164,6 +165,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             result.MoveSpeed.PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod");
             result.AttackDamage.PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod");
             result.MagicResist.PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod");
+            result.SpellName = itemInfo.GetString("Data", "SpellName");
 
             result.CreateRecipe(owner);
             return result;

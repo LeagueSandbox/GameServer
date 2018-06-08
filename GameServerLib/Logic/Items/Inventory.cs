@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 
 namespace LeagueSandbox.GameServer.Logic.Items
@@ -42,6 +43,12 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public Item GetItem(int slot)
         {
             return _items[slot];
+        }
+
+        public string GetItemSpellName(int slot)
+        {
+            Item theItem = GetItem(slot);
+            return theItem.ItemType.SpellName;
         }
 
         public void RemoveItem(int slot)
