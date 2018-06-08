@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     else
                     { // auto attack
-                        var ai = u as ObjAIBase;
+                        var ai = Owner as ObjAIBase;
                         if (ai != null)
                         {
                             ai.AutoAttackHit(u);

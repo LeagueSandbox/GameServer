@@ -33,6 +33,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
+        public bool _canRecall = true;
+        private Buff _visualBuff;
+        private Particle _addParticle;
+        public bool _isRecalling = false;
+
         public Champion(string model,
                         uint playerId,
                         uint playerTeamSpecialId,
@@ -62,6 +67,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
+
+            for(short i = 0; i < 6; i++)
+            {
+                Spells[(byte)(i + 6)] = new Spell(this, "", (byte)(i + 6));
+            }
+
             Spells[13] = new Spell(this, "Recall", 13);
 
             for(short i = 0; i<CharData.Passives.Length; i++)
@@ -161,6 +172,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return !this.HasCrowdControl(CrowdControlType.Stun) &&
                 !this.HasCrowdControl(CrowdControlType.Silence);
         }
+
+        public void SwapSpells(byte slot1,byte slot2)
+        {
+            var buffer = Spells[slot1];
+            Spells[slot1] = Spells[slot2];
+            Spells[slot2] = buffer;
+        }
+
         public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
@@ -206,7 +225,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public Spell GetSpell(byte slot)
         {
-            return Spells[slot];
+            if (Spells.ContainsKey(slot))
+            {
+                return Spells[slot];
+            }
+            else
+            {
+                ApiFunctionManager.LogInfo("There is no spell in slot " + slot + ". Using empty spell in its place.");
+                return new Spell(this, "", slot);
+            }
         }
 
         public Spell GetSpellByName(string name)
@@ -240,6 +267,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(float diff)
         {
             base.update(diff);
+			
+			if (this.isMovementUpdated()) {
+                if (_isRecalling)
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    _isRecalling = false;
+                }
+                _canRecall = false;
+            }
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
@@ -292,7 +329,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             foreach (var s in Spells.Values)
+            {
                 s.update(diff);
+            }
 
             if (_championHitFlagTimer > 0)
             {
@@ -315,10 +354,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAIBase owner)
+	    public void Recall(ObjAIBase owner,float timer=8.0f)
         {
-            var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+			var spawnPos = GetRespawnPosition();
+            _isRecalling = true;
+            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
+            _addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+
+            ApiFunctionManager.CreateTimer(timer, () =>
+            {
+                if (_canRecall)
+				{
+					_game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+					_isRecalling = false;
+				}
+            });
         }
 
         public void setSkillPoints(int _skillPoints)
