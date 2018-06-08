@@ -179,6 +179,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\Chatbox\Commands\Class1.cs" />
     <Compile Include="Logic\Chatbox\DebugMsgType.cs" />
     <Compile Include="Logic\Helpers.cs" />
     <Compile Include="Logic\Content\NavGrid.cs" />

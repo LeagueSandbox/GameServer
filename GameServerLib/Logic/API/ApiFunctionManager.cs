@@ -297,5 +297,11 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             return unit is Monster;
         }
+
+        public static bool WillKill(AttackableUnit unit, float damage)
+        {
+            //TODO: Add shields
+            return unit.GetStats().CurrentHealth - damage <= 0;
+        }
     }
 }
