@@ -31,8 +31,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            var stats = champion.GetStats();
-            var inventory = champion.getInventory();
+            var stats = champion.Stats;
+            var inventory = champion.Inventory;
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
@@ -54,14 +54,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             else
             {
                 foreach (var instance in recipeParts)
+                {
                     price -= instance.ItemType.TotalPrice;
+                }
 
                 if (stats.Gold < price)
+                {
                     return false;
+                }
 
                 foreach (var instance in recipeParts)
                 {
-                    stats.RemoveModifier(instance.ItemType);
+                    stats.RemoveItemValues(instance.ItemType);
                     _game.PacketNotifier.NotifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
@@ -70,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             stats.Gold -= price;
-            stats.AddModifier(itemTemplate);
+            stats.ApplyItemValues(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(champion, i);
 
             return true;

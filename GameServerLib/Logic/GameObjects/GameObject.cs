@@ -21,9 +21,6 @@ namespace LeagueSandbox.GameServer.Logic
         /// Current target the object running to (can be coordinates or an object)
         /// </summary>
         public Target Target { get; set; }
-
-        public List<Vector2> Waypoints { get; private set; }
-        public int CurWaypoint { get; private set; }
         public TeamId Team { get; protected set; }
 
         public void SetTeam(TeamId team)
@@ -38,13 +35,11 @@ namespace LeagueSandbox.GameServer.Logic
             }
         }
 
-        protected bool movementUpdated;
         protected bool toRemove;
         public int AttackerCount { get; private set; }
         public float CollisionRadius { get; set; }
         protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
-        public bool IsDashing { get; protected set; }
         public override bool IsSimpleTarget { get { return false; } }
         protected float _dashSpeed;
         private Dictionary<TeamId, bool> _visibleByTeam;
@@ -64,7 +59,6 @@ namespace LeagueSandbox.GameServer.Logic
             Target = null;
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
-            Waypoints = new List<Vector2>();
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
@@ -74,10 +68,8 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             Team = TeamId.TEAM_NEUTRAL;
-            movementUpdated = false;
             toRemove = false;
             AttackerCount = 0;
-            IsDashing = false;
         }
 
         public virtual void OnAdded()
@@ -96,73 +88,9 @@ namespace LeagueSandbox.GameServer.Logic
         /// Moves the object depending on its target, updating its coordinate.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
-        public void Move(float diff)
+        public virtual void Move(float diff)
         {
-            if (Target == null)
-            {
-                _direction = new Vector2();
-                return;
-            }
 
-            var to = new Vector2(Target.X, Target.Y);
-            var cur = new Vector2(X, Y); //?
-
-            var goingTo = to - cur;
-            _direction = Vector2.Normalize(goingTo);
-            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
-            {
-                _direction = new Vector2(0, 0);
-            }
-
-            var moveSpeed = getMoveSpeed();
-            if (IsDashing)
-            {
-                moveSpeed = _dashSpeed;
-            }
-
-            var deltaMovement = (moveSpeed) * 0.001f * diff;
-
-            var xx = _direction.X * deltaMovement;
-            var yy = _direction.Y * deltaMovement;
-
-            X += xx;
-            Y += yy;
-
-            // If the target was a simple point, stop when it is reached
-
-            if (GetDistanceTo(Target) < deltaMovement * 2)
-            {
-                if (this is Projectile && !Target.IsSimpleTarget)
-                {
-                    return;
-                }
-
-                if (IsDashing)
-                {
-                    if (this is AttackableUnit)
-                    {
-                        var u = this as AttackableUnit;
-
-                        var animList = new List<string>();
-                        _game.PacketNotifier.NotifySetAnimation(u, animList);
-                    }
-
-                    Target = null;
-                }
-                else if (++CurWaypoint >= Waypoints.Count)
-                {
-                    Target = null;
-                }
-                else
-                {
-                    Target = new Target(Waypoints[CurWaypoint]);
-                }
-
-                if (IsDashing)
-                {
-                    IsDashing = false;
-                }
-            }
         }
 
         public void CalculateVector(float xtarget, float ytarget)
@@ -181,36 +109,6 @@ namespace LeagueSandbox.GameServer.Logic
         public virtual void update(float diff)
         {
             Move(diff);
-        }
-        public virtual float getMoveSpeed()
-        {
-            return 0;
-        }
-
-        public void SetWaypoints(List<Vector2> newWaypoints)
-        {
-            Waypoints = newWaypoints;
-
-            setPosition(Waypoints[0].X, Waypoints[0].Y);
-            movementUpdated = true;
-            if (Waypoints.Count == 1)
-            {
-                Target = null;
-                return;
-            }
-
-            Target = new Target(Waypoints[1]);
-            CurWaypoint = 1;
-        }
-
-        public bool isMovementUpdated()
-        {
-            return movementUpdated;
-        }
-
-        public void clearMovementUpdated()
-        {
-            movementUpdated = false;
         }
 
         public bool isToRemove()
@@ -269,19 +167,6 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 _game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
             }
-        }
-
-        public void DashToTarget(Target t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
-        {
-            // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            _dashSpeed = dashSpeed;
-            Target = t;
-            Waypoints.Clear();
-        }
-
-        public void SetDashingState(bool state) {
-            IsDashing = state;
         }
     }
 }

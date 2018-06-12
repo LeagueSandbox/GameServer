@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Content;
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
             }
 
-            if (_originSpell.state != SpellState.STATE_CASTING)
+            if (_originSpell.State != SpellState.STATE_CASTING)
             {
                 var objects = _game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
@@ -109,8 +110,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return;
 
             ObjectsHit.Add(unit);
-            var attackableUnit = unit as AttackableUnit;
-            if (attackableUnit != null)
+            if (unit is AttackableUnit attackableUnit)
             {
                 _originSpell.applyEffects(attackableUnit, this);
             }
@@ -157,12 +157,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             var totalArea = longSide * shortSide;
 
-            var triangle1Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
-            var triangle2Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
-            var triangle3Area = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
-            var triangle4Area = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
+            var triangleAreas = new double[4];
 
-            return totalArea >= triangle1Area + triangle2Area + triangle3Area + triangle4Area;
+            triangleAreas[0] = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
+            triangleAreas[1] = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
+            triangleAreas[2] = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
+            triangleAreas[3] = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
+
+            return Math.Abs(totalArea - triangleAreas.Sum()) < 0.0001;
         }
 
         /// <summary>
@@ -172,15 +174,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <param name="second">Second corner of the triangle</param>
         /// <param name="third">Third corner of the triangle.</param>
         /// <returns>the area of the triangle.</returns>
-        private float GetTriangleArea(Vector2 first, Vector2 second, Vector2 third)
+        private double GetTriangleArea(Vector2 first, Vector2 second, Vector2 third)
         {
             var line1Length = Vector2.Distance(first, second);
             var line2Length = Vector2.Distance(second, third);
             var line3Length = Vector2.Distance(third, first);
 
-            var s = (line1Length + line2Length + line3Length) / 2;
+            var s = (line1Length + line2Length + line3Length) / 2d;
 
-            return (float)Math.Sqrt(s * (s - line1Length) * (s - line2Length) * (s - line3Length));
+            return Math.Sqrt(s * (s - line1Length) * (s - line2Length) * (s - line3Length));
         }
     }
 }

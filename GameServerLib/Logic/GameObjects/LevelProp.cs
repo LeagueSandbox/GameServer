@@ -38,10 +38,5 @@
             SkinId = skin;
             SetTeam(Enet.TeamId.TEAM_NEUTRAL);
         }
-
-        public override float getMoveSpeed()
-        {
-            return 0.0f;
-        }
     }
 }

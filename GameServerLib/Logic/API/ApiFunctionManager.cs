@@ -50,18 +50,18 @@ namespace LeagueSandbox.GameServer.Logic.API
             return newTimer;
         }
 
-        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, ObjAIBase onto, float removeAfter = -1.0f)
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, BuffType type, ObjAIBase onto, float removeAfter = -1.0f)
         {
-            return AddBuffHUDVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
+            return AddBuffHUDVisual(buffName, duration, stacks, type, onto, onto, removeAfter);
         }
 
-        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, ObjAIBase onto, ObjAIBase from, float removeAfter = -1.0f)
+        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, BuffType type, ObjAIBase onto, ObjAIBase from, float removeAfter = -1.0f)
         {
-            Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
+            var b = new Buff(_game, buffName, duration, stacks, type, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
-                ApiFunctionManager.CreateTimer(removeAfter, () => {
+                CreateTimer(removeAfter, () => {
                     RemoveBuffHUDVisual(b);
                 });
             }
@@ -76,8 +76,8 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
         {
-            List<TeamId> teams = GetTeams();
-            foreach (TeamId id in teams)
+            var teams = GetTeams();
+            foreach (var id in teams)
             {
                 gameObject.SetVisibleByTeam(id, visibility);
             }
@@ -102,9 +102,9 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, int stacks, ObjAIBase onto, ObjAIBase from)
+        public static void AddBuff(string buffName, float duration, int stacks, BuffType type, ObjAIBase onto, ObjAIBase from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, onto, from);
+            var buff = new Buff(_game, buffName, duration, stacks, type, onto, from);
             onto.AddBuff(buff);
             _game.PacketNotifier.NotifyAddBuff(buff);
         }
@@ -118,14 +118,14 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            Particle p = new Particle(champion, t, particle, size, bone);
+            var p = new Particle(champion, t, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
 
         public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            Particle p = new Particle(champion, target, particle, size, bone);
+            var p = new Particle(champion, target, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
@@ -164,7 +164,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void CancelDash(ObjAIBase unit) {
             // Allow the user to move the champion
-            unit.SetDashingState(false);
+            unit.IsDashing = false;
 
             // Reset the default run animation
             var animList = new List<string> {"RUN", ""};

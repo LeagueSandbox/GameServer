@@ -21,7 +21,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Owner = owner;
 
             SetTeam(team);
-            Stats.Range.BaseValue = 905.0f;
         }
         public override void OnAdded()
         {
@@ -30,11 +29,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public override void refreshWaypoints()
         {
-        }
-
-        public override float getMoveSpeed()
-        {
-            return 0;
         }
     }
 }

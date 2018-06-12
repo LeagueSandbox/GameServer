@@ -26,8 +26,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
+
             if (float.TryParse(split[1], out xp))
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().Experience = xp;
+            {
+                _playerManager.GetPeerInfo(peer).Champion.Stats.Experience += xp;
+            }
         }
     }
 }

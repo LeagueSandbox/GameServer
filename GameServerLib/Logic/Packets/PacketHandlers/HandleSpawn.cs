@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
-            var itemInstance = peerInfo.Champion.getInventory().SetExtraItem(7, bluePill);
+            var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
             var buyItem = new BuyItemResponse(peerInfo.Champion, itemInstance);
             _game.PacketHandlerManager.sendPacket(peer, buyItem, Channel.CHL_S2C);
 
@@ -57,21 +57,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             foreach (var rune in peerInfo.Champion.RuneList._runes)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
-                var newRune = peerInfo.Champion.getInventory().SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().AddModifier(runeItem);
+                var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
+                _playerManager.GetPeerInfo(peer).Champion.Stats.ApplyItemValues(runeItem);
                 runeItemSlot++;
             }
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
-            var skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 7, 1, (byte)peerInfo.Champion.getSkillPoints());
+            var skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 7, 1, peerInfo.Champion.SkillPoints);
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
-            skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 14, 1, (byte)peerInfo.Champion.getSkillPoints());
+            skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 14, 1, peerInfo.Champion.SkillPoints);
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
-            peerInfo.Champion.GetStats().setSpellEnabled(7, true);
-            peerInfo.Champion.GetStats().setSpellEnabled(14, true);
-            peerInfo.Champion.GetStats().setSummonerSpellEnabled(0, true);
-            peerInfo.Champion.GetStats().setSummonerSpellEnabled(1, true);
+            peerInfo.Champion.Stats.SetSpellEnabled(7, true);
+            peerInfo.Champion.Stats.SetSpellEnabled(14, true);
+            peerInfo.Champion.Stats.SetSummonerSpellEnabled(0, true);
+            peerInfo.Champion.Stats.SetSummonerSpellEnabled(1, true);
 
             var objects = _game.ObjectManager.GetObjects();
             foreach (var kv in objects)

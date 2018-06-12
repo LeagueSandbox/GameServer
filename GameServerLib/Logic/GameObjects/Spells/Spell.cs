@@ -25,19 +25,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public static bool CooldownsEnabled;
         public static bool ManaCostsEnabled;
         public Champion Owner { get; private set; }
-        public short Level { get; private set; }
+        public byte Level { get; private set; }
         public byte Slot { get; set; }
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
         public bool HasEmptyScript { get { return spellGameScript.GetType() == typeof(GameScriptEmpty); } }
 
-        public SpellState state { get; protected set; } = SpellState.STATE_READY;
+        public SpellState State { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
         public uint FutureProjNetId { get; protected set; }
         public uint SpellNetId { get; protected set; }
+
+        public float CurrentManaCost
+        {
+            get
+            {
+                if (Level == 0)
+                {
+                    return 0;
+                }
+
+                return SpellData.ManaCost[Level - 1] * (1 - Owner.Stats.PercentSpellCostReduction);
+            }
+        }
 
         public AttackableUnit Target { get; private set; }
         public float X { get; private set; }
@@ -83,14 +96,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual bool cast(float x, float y, float x2, float y2, AttackableUnit u = null)
         {
-            if (HasEmptyScript) return false;
-
-            var stats = Owner.GetStats();
-            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
-                state != SpellState.STATE_READY)
+            if (HasEmptyScript)
+            {
                 return false;
+            }
 
-            stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
+            if (SpellData.ManaCost[Level] * (1 - Owner.Stats.PercentSpellCostReduction) >= Owner.Stats.CurrentPar ||
+                State != SpellState.STATE_READY)
+            {
+                return false;
+            }
+
+            Owner.Stats.CurrentPar -= SpellData.ManaCost[Level] * (1 - Owner.Stats.PercentSpellCostReduction);
             X = x;
             Y = y;
             X2 = x2;
@@ -109,7 +126,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
             {
                 Owner.setPosition(Owner.X, Owner.Y);//stop moving serverside too. TODO: check for each spell if they stop movement or not
-                state = SpellState.STATE_CASTING;
+                State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
             }
             else
@@ -129,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             spellGameScript.OnFinishCasting(Owner, this, Target);
             if (SpellData.ChannelDuration[Level] == 0)
             {
-                state = SpellState.STATE_COOLDOWN;
+                State = SpellState.STATE_COOLDOWN;
 
                 CurrentCooldown = getCooldown();
 
@@ -147,7 +164,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void channel()
         {
-            state = SpellState.STATE_CHANNELING;
+            State = SpellState.STATE_CHANNELING;
             CurrentChannelDuration = SpellData.ChannelDuration[Level];
         }
 
@@ -156,7 +173,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void finishChanneling()
         {
-            state = SpellState.STATE_COOLDOWN;
+            State = SpellState.STATE_COOLDOWN;
 
             CurrentCooldown = getCooldown();
 
@@ -173,7 +190,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// </summary>
         public virtual void update(float diff)
         {
-            switch (state)
+            switch (State)
             {
                 case SpellState.STATE_READY:
                     break;
@@ -193,7 +210,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     CurrentCooldown -= diff / 1000.0f;
                     if (CurrentCooldown < 0)
                     {
-                        state = SpellState.STATE_READY;
+                        State = SpellState.STATE_READY;
                     }
                     break;
                 case SpellState.STATE_CHANNELING:
@@ -285,42 +302,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return (int)HashFunctions.HashString(SpellName);
         }
 
-        public string getStringForSlot()
-        {
-            switch (Slot)
-            {
-                case 0:
-                    return "Q";
-                case 1:
-                    return "W";
-                case 2:
-                    return "E";
-                case 3:
-                    return "R";
-                case 14:
-                    return "Passive";
-            }
-
-            return "undefined";
-        }
-
-        /**
-         * TODO : Add in CDR % from champion's stat
-         */
         public float getCooldown()
         {
-            return SpellData.Cooldown[Level];
+            return SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction);
         }
 
         public virtual void levelUp()
         {
-            if (Level <= 5)
+            if (Slot > 3 || Owner.CharData.MaxLevels[Slot] > Level)
             {
                 ++Level;
-            }
-            if (Slot < 4)
-            {
-                Owner.GetStats().ManaCost[Slot] = SpellData.ManaCost[Level];
             }
         }
 
@@ -331,13 +322,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (newCd <= 0)
             {
                 _game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
-                targetSpell.state = SpellState.STATE_READY;
+                targetSpell.State = SpellState.STATE_READY;
                 targetSpell.CurrentCooldown = 0;
             }
             else
             {
                 _game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.getCooldown());
-                targetSpell.state = SpellState.STATE_COOLDOWN;
+                targetSpell.State = SpellState.STATE_COOLDOWN;
                 targetSpell.CurrentCooldown = newCd;
             }
         }

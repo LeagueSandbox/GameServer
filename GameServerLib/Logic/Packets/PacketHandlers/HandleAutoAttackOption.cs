@@ -25,7 +25,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var autoAttackOption = new AutoAttackOption(data);
             var state = "Deactivated";
             if (autoAttackOption.activated == 1)
+            {
                 state = "Activated";
+            }
 
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");
             return true;

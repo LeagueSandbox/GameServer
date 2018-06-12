@@ -26,23 +26,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var emotion = new EmotionPacketRequest(data);
             //for later use -> tracking, etc.
-            var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
+            var player = _playerManager.GetPeerInfo(peer).Champion;
             switch (emotion.id)
             {
                 case (byte)Emotions.Dance:
-                    _logger.LogCoreInfo("Player " + playerName + " is dancing.");
+                    _logger.LogCoreInfo("Player " + player.Model + " is dancing.");
                     break;
                 case (byte)Emotions.Taunt:
-                    _logger.LogCoreInfo("Player " + playerName + " is taunting.");
+                    _logger.LogCoreInfo("Player " + player.Model + " is taunting.");
                     break;
                 case (byte)Emotions.Laugh:
-                    _logger.LogCoreInfo("Player " + playerName + " is laughing.");
+                    _logger.LogCoreInfo("Player " + player.Model + " is laughing.");
                     break;
                 case (byte)Emotions.Joke:
-                    _logger.LogCoreInfo("Player " + playerName + " is joking.");
+                    _logger.LogCoreInfo("Player " + player.Model + " is joking.");
                     break;
             }
 
+            player.StopMovement();
             var response = new EmotionPacketResponse(emotion.id, emotion.netId);
             return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }

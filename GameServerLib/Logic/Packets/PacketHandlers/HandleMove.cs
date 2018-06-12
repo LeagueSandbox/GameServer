@@ -6,6 +6,7 @@ using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -30,14 +31,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo?.Champion;
-            if (peerInfo == null || !champion.CanMove())
+            if (peerInfo == null || !champion.Stats.GetActionState(ActionState.CanMove) ||
+                champion.Stats.GetActionState(ActionState.CanNotMove))
+            {
                 return true;
+            }
 
             var request = new MovementRequest(data);
             var vMoves = readWaypoints(request.moveData, request.coordCount, _game.Map);
 
             switch (request.type)
             {
+                case MoveType.EMOTE:
                 case MoveType.STOP:
                     //TODO anticheat, currently it trusts client 100%
 
@@ -51,10 +56,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                         v.X = (short)request.x;
                         v.Y = (short)request.y;
                     }
+
+                    peerInfo.Champion.AutoAttackTarget = null;
                     break;
-                case MoveType.EMOTE:
-                    //Logging->writeLine("Emotion");
-                    return true;
                 case MoveType.ATTACKMOVE:
                     peerInfo.Champion.MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
                     break;
@@ -67,14 +71,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             peerInfo.Champion.SetWaypoints(vMoves);
 
             var u = _game.ObjectManager.GetObjectById(request.targetNetId) as AttackableUnit;
-            if (u == null)
+            
+            if (!champion.Stats.GetActionState(ActionState.CanAttack) ||
+                champion.Stats.GetActionState(ActionState.CanNotAttack))
             {
-                peerInfo.Champion.TargetUnit = null;
-                return true;
+                u = null;
             }
 
             peerInfo.Champion.TargetUnit = u;
-
+            peerInfo.Champion.AutoAttackTarget = null;
             return true;
         }
 

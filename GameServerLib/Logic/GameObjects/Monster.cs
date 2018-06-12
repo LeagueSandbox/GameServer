@@ -28,13 +28,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+        ) : base(model, 40, x, y, 0, netId)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
+            {
                 SetVisibleByTeam(team, true);
+            }
 
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
             Facing = new Vector2(facingX, facingY);

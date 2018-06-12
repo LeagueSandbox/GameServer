@@ -24,12 +24,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var sell = new SellItem(data);
             var client = _playerManager.GetPeerInfo(peer);
 
-            var i = _playerManager.GetPeerInfo(peer).Champion.getInventory().GetItem(sell.slotId);
+            var i = _playerManager.GetPeerInfo(peer).Champion.Inventory.GetItem(sell.slotId);
             if (i == null)
                 return false;
 
             float sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
-            client.Champion.GetStats().Gold += sellPrice;
+            client.Champion.Stats.Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)
             {
@@ -37,16 +37,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
-                    client.Champion.getInventory().RemoveItem(sell.slotId);
+                    client.Champion.Inventory.RemoveItem(sell.slotId);
                 }
             }
             else
             {
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.slotId, 0);
-                client.Champion.getInventory().RemoveItem(sell.slotId);
+                client.Champion.Inventory.RemoveItem(sell.slotId);
             }
 
-            client.Champion.GetStats().RemoveModifier(i.ItemType);
+            client.Champion.Stats.RemoveItemValues(i.ItemType);
 
             return true;
         }
