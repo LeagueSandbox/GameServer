@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using Ninject.Planning.Targets;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -55,7 +57,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
-        protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
         public bool NeedsToRemove()
@@ -63,7 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto, ObjAIBase from)
+        public Buff(Game game, string buffName, float dur, int stacks, BuffType type, ObjAIBase onto, ObjAIBase from)
         {
             _game = game;
             Duration = dur;
@@ -73,17 +74,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
-            BuffType = BuffType.Aura;
+            BuffType = type;
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto)
-               : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, int stacks, BuffType type, ObjAIBase onto)
+               : this(game, buffName, dur, stacks, type, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
+
+        
+
         public void Update(float diff)
         {
-            TimeElapsed += (float)diff / 1000.0f;
+            TimeElapsed += diff / 1000.0f;
             if (Duration != 0.0f)
             {
                 if (TimeElapsed >= Duration)

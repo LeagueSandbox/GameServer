@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -263,18 +264,33 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game.ObjectManager.AddObject(new LevelProp(-99.5613f, 855.6632f, 191.4039f, 158.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
 
             //TODO
-            var COLLISION_RADIUS = 0;
-            var SIGHT_RANGE = 1700;
+            var SIGHT_RANGE = 1350;
 
-            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 835, 3400, SIGHT_RANGE, 0xffd23c3e)); //top
-            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 2785, 3000, SIGHT_RANGE, 0xff4a20f1)); //mid
-            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, COLLISION_RADIUS, 3044, 1070, SIGHT_RANGE, 0xff9303e1)); //bot
-            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 10960, 13450, SIGHT_RANGE, 0xff6793d0)); //top
-            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 11240, 11490, SIGHT_RANGE, 0xffff8f1f)); //mid
-            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 13200, 11200, SIGHT_RANGE, 0xff26ac0f)); //bot
+            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, 187, 835, 3400, SIGHT_RANGE, 0xffd23c3e)); //top
+            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, 187, 2785, 3000, SIGHT_RANGE, 0xff4a20f1)); //mid
+            _game.ObjectManager.AddObject(new Inhibitor("OrderInhibitor", TeamId.TEAM_BLUE, 185, 3044, 1070, SIGHT_RANGE, 0xff9303e1)); //bot
+            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, 214, 10960, 13450, SIGHT_RANGE, 0xff6793d0)); //top
+            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, 214, 11240, 11490, SIGHT_RANGE, 0xffff8f1f)); //mid
+            _game.ObjectManager.AddObject(new Inhibitor("ChaosInhibitor", TeamId.TEAM_PURPLE, 214, 13200, 11200, SIGHT_RANGE, 0xff26ac0f)); //bot
 
-            _game.ObjectManager.AddObject(new Nexus("OrderNexus", TeamId.TEAM_BLUE, COLLISION_RADIUS, 1170, 1470, SIGHT_RANGE, 0xfff97db5));
-            _game.ObjectManager.AddObject(new Nexus("ChaosNexus", TeamId.TEAM_PURPLE, COLLISION_RADIUS, 12800, 13100, SIGHT_RANGE, 0xfff02c0f));
+            _game.ObjectManager.AddObject(new Nexus("OrderNexus", TeamId.TEAM_BLUE, 353, 1170, 1470, SIGHT_RANGE, 0xfff97db5));
+            _game.ObjectManager.AddObject(new Nexus("ChaosNexus", TeamId.TEAM_PURPLE, 353, 12800, 13100, SIGHT_RANGE, 0xfff02c0f));
+
+            foreach (var obj in _game.ObjectManager.GetObjects())
+            {
+                if (obj.Value is Inhibitor i)
+                {
+                    i.Stats.Level1Health = 5500;
+                    i.Stats.CurrentHealth = 5500;
+                    i.Stats.Level1HealthRegen = 15;
+                }
+                else if (obj.Value is Nexus n)
+                {
+                    n.Stats.Level1Health = 5500;
+                    n.Stats.CurrentHealth = 5500;
+                    n.Stats.Level1HealthRegen = 20;
+                }
+            }
         }
 
         public void Update(float diff)
@@ -453,46 +469,45 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void SetMinionStats(Minion m)
         {
             // Same for all minions
-            m.GetStats().MoveSpeed.BaseValue = 325.0f;
+            m.Stats.BaseMovementSpeed = 325;
 
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    m.GetStats().CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 180.0f;
-                    m.GetStats().AttackSpeedFlat = 1.250f;
+                    m.Stats.Level1Health = 475f + 20f * (int)_game.GameTime / (180 * 1000);
+                    m.Stats.Level1AttackDamage = 12.0f + 1.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.BaseAttackRange = 180.0f;
+                    m.Stats.AttackDelay = -0.5f;
                     m.AutoAttackDelay = 11.8f / 30.0f;
-                    m.IsMelee = true;
+                    m.Stats.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    m.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().Range.BaseValue = 600.0f;
-                    m.GetStats().AttackSpeedFlat = 0.670f;
+                    m.Stats.CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (90 * 1000));
+                    m.Stats.Level1Health = 279.0f + 7.5f * (int)(_game.GameTime / (90 * 1000));
+                    m.Stats.Level1AttackDamage = 23.0f + 1.0f * (int)(_game.GameTime / (90 * 1000));
+                    m.Stats.BaseAttackRange = 600.0f;
+                    m.Stats.AttackDelay = -0.067f;
                     m.AutoAttackDelay = 14.1f / 30.0f;
                     m.AutoAttackProjectileSpeed = 650.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    m.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 450.0f;
-                    m.GetStats().AttackSpeedFlat = 1.0f;
+                    m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.Level1Health = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.Level1AttackDamage = 40.0f + 3.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.BaseAttackRange = 450.0f;
+                    m.Stats.AttackDelay = -0.375f;
                     m.AutoAttackDelay = 9.0f / 30.0f;
                     m.AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
-                    m.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 170.0f;
-                    m.GetStats().AttackSpeedFlat = 0.694f;
-                    m.GetStats().Armor.BaseValue = 30.0f;
-                    m.GetStats().MagicResist.BaseValue = -30.0f;
-                    m.IsMelee = true;
+                    m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.Level1Health = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.Level1AttackDamage = 190.0f + 10.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.BaseAttackRange = 170.0f;
+                    m.Stats.AttackDelay = -0.099f;
+                    m.Stats.Level1Armor = 30.0f;
+                    m.Stats.Level1MagicResist = -30.0f;
+                    m.Stats.IsMelee = true;
                     m.AutoAttackDelay = 15.0f / 30.0f;
                     break;
             }

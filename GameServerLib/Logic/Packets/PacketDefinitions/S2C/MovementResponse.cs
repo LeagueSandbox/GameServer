@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(GameObject obj)
-            : this(new List<GameObject> { obj })
+        public MovementResponse(ObjAIBase obj)
+            : this(new List<ObjAIBase> { obj })
         {
 
         }
 
-        public MovementResponse(List<GameObject> actors)
+        public MovementResponse(List<ObjAIBase> actors)
             : base(PacketCmd.PKT_S2C_MoveAns)
         {
             buffer.Write(Environment.TickCount); // syncID

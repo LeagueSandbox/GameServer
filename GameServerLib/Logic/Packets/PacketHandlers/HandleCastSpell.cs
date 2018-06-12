@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -34,15 +35,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 return false;
             }
-            if (!owner.CanCast())
+
+            if (!owner.Stats.GetActionState(ActionState.CanCast))
             {
                 return false;
             }
+
             var s = owner.GetSpell(spell.spellSlot);
             if (s == null)
             {
                 return false;
             }
+
             return s.cast(spell.x, spell.y, spell.x2, spell.y2, TargetUnit);
         }
     }

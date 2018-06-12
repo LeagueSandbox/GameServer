@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -13,15 +14,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(model, collisionRadius, x, y, visionRadius, netId)
         {
-            Stats.CurrentHealth = 5500;
-            Stats.HealthPoints.BaseValue = 5500;
+            Stats.Level1Health = 5500;
+            Stats.IsTargetable = false;
+            Stats.IsInvulnerable = true;
 
             SetTeam(team);
         }
 
-        public override void die(AttackableUnit killer)
+        public override void die(ObjAIBase killer)
         {
             _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(this);
@@ -32,9 +34,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         }
 
-        public override float getMoveSpeed()
+        public override void UpdateReplication()
         {
-            return 0;
+            ReplicationManager.UpdateFloat(Stats.CurrentHealth, 1, 0);
+            ReplicationManager.UpdateBool(Stats.IsInvulnerable, 1, 1);
+            ReplicationManager.UpdateBool(Stats.IsTargetable, 5, 0);
+            ReplicationManager.UpdateUint((uint)Stats.IsTargetableToTeam, 5, 1);
         }
     }
 }

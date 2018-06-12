@@ -28,6 +28,11 @@ namespace LeagueSandbox.GameServer
             return watch.ElapsedTicks * 1000000 / Stopwatch.Frequency;
         }
 
+        public static float Clamp(this float value, float minValue, float maxValue)
+        {
+            return value < minValue ? minValue : Math.Min(value, maxValue);
+        }
+
         public static void Add(this List<byte> list, int val)
         {
             list.AddRange(PacketHelper.intToByteArray(val));
@@ -46,12 +51,12 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public static Vector2 Rotate(this Vector2 v, Vector2 origin, float angle)
+        public static Vector2 Rotate(this Vector2 v, Vector2 origin, double angle)
         {
             // Rotating (px,py) around (ox, oy) with angle a
             // p'x = cos(a) * (px-ox) - sin(a) * (py-oy) + ox
             // p'y = sin(a) * (px-ox) + cos(a) * (py-oy) + oy
-            angle = (float)-DegreeToRadian(angle);
+            angle = -DegreeToRadian(angle);
             var x = (float)(Math.Cos(angle) * (v.X - origin.X) - Math.Sin(angle) * (v.Y - origin.Y) + origin.X);
             var y = (float)(Math.Sin(angle) * (v.X - origin.X) + Math.Cos(angle) * (v.Y - origin.Y) + origin.Y);
             return new Vector2(x, y);
@@ -62,7 +67,7 @@ namespace LeagueSandbox.GameServer
             return v.Rotate(new Vector2(0, 0), angle);
         }
 
-        public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle, Vector2 origin)
+        public static double AngleBetween(this Vector2 v, Vector2 vectorToGetAngle, Vector2 origin)
         {
             // Make other vectors relative to the origin
             v.X -= origin.X;
@@ -85,7 +90,7 @@ namespace LeagueSandbox.GameServer
             return returnVal;
         }
 
-        public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
+        public static double AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
         {
             return v.AngleBetween(vectorToGetAngle, new Vector2(0, 0));
         }

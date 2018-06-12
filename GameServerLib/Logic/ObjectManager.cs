@@ -104,24 +104,23 @@ namespace LeagueSandbox.GameServer.Logic
                         }
                         buff.Update(diff);
                     }
+
+                    if (ai.MovementUpdated)
+                    {
+                        _game.PacketNotifier.NotifyMovement(ai);
+                        ai.MovementUpdated = false;
+                    }
                 }
 
-                if (u.GetStats().GetUpdatedStats().Count > 0)
+                if (u.ReplicationManager.Changed)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
-                    u.GetStats().ClearUpdatedStats();
+                    _game.PacketNotifier.NotifyUpdatedStats(u);
                 }
 
                 if (u.IsModelUpdated)
                 {
                     _game.PacketNotifier.NotifyModelUpdate(u);
                     u.IsModelUpdated = false;
-                }
-
-                if (obj.isMovementUpdated())
-                {
-                    _game.PacketNotifier.NotifyMovement(obj);
-                    obj.clearMovementUpdated();
                 }
             }
         }
@@ -142,16 +141,23 @@ namespace LeagueSandbox.GameServer.Logic
             return _inhibitors[id];
         }
 
-        public bool AllInhibitorsDestroyedFromTeam(TeamId team)
+        public IEnumerable<Inhibitor> GetAllInhibitorsOfTeam(TeamId team)
         {
+            var ret = new List<Inhibitor>();
             foreach (var inhibitor in _inhibitors.Values)
             {
-                if (inhibitor.Team == team && inhibitor.getState() == InhibitorState.Alive)
+                if (inhibitor.Team == team)
                 {
-                    return false;
+                    ret.Add(inhibitor);
                 }
             }
-            return true;
+
+            return ret;
+        }
+
+        public bool AllInhibitorsDestroyedFromTeam(TeamId team)
+        {
+            return GetAllInhibitorsOfTeam(team).All(x => x.State == InhibitorState.Dead);
         }
 
         public void AddObject(GameObject o)
@@ -323,6 +329,7 @@ namespace LeagueSandbox.GameServer.Logic
             return units;
         }
 
+        // todo make this work properly
         public bool TeamHasVisionOn(TeamId team, GameObject o)
         {
             if (o == null)
@@ -339,11 +346,10 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
+                    if (kv.Value is AttackableUnit unit && unit.Team == team && !unit.IsDead &&
+                        unit.GetDistanceTo(o) < unit.VisionRadius && !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
-                        var unit = kv.Value as AttackableUnit;
-                        if (unit != null && unit.IsDead)
+                        if (unit is ObjAIBase ai && !ai.HasBuffOfType(BuffType.NearSight))
                         {
                             continue;
                         }
@@ -352,6 +358,7 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
             }
+
             return false;
         }
     }

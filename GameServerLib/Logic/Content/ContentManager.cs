@@ -180,6 +180,22 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
+        public string GetUnitSkinPath(string model, int skinId)
+        {
+            var contentType = "Stats";
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(model))
+            {
+                throw new ContentNotFoundException($"{model} folder was not found.");
+            }
+
+            var contentPackages = _content[contentType][model];
+            var fileName = skinId == 0 ? "Base" : $"Skin{skinId:D2}";
+            var filePath = $"{model}/Skins/{fileName}/{fileName}.json";
+
+            return GetContentPath(contentPackages, contentType, filePath);
+        }
+
         public string GetSpellDataPath(string spellName)
         {
             var contentType = "Spells";

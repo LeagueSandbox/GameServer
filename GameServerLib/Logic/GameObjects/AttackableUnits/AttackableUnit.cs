@@ -4,6 +4,8 @@ using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
@@ -13,39 +15,39 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        protected Stats Stats { get; }
+        private float _healthUpdateTimer;
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
         private string _model;
         public string Model
         {
-            get { return _model; }
+            get => _model;
             set
             {
                 _model = value;
                 IsModelUpdated = true;
             }
         }
+        public ReplicationManager ReplicationManager { get; private set; }
         protected Logger _logger = Program.ResolveDependency<Logger>();
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
+        public Stats.Stats Stats { get; protected set; }
 
         public AttackableUnit(
             string model,
-            Stats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
         ) : base(x, y, collisionRadius, visionRadius, netId)
-
         {
-            Stats = stats;
+            Stats = new Stats.Stats();
             Model = model;
             CollisionRadius = 40;
-            Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
+            ReplicationManager = new ReplicationManager();
         }
 
         public override void OnAdded()
@@ -60,29 +62,97 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             _game.ObjectManager.RemoveVisionUnit(this);
         }
 
-        public Stats GetStats()
-        {
-            return Stats;
-        }
-
         public override void update(float diff)
         {
             base.update(diff);
 
+            _healthUpdateTimer += diff;
             _statUpdateTimer += diff;
-            while (_statUpdateTimer >= 500)
-            { // update Stats (hpregen, manaregen) every 0.5 seconds
-                Stats.update(_statUpdateTimer);
-                _statUpdateTimer -= 500;
+            if (_healthUpdateTimer >= 500)
+            {
+                if (Stats.TotalHealthRegen > 0 && Stats.CurrentHealth < Stats.TotalHealth && Stats.CurrentHealth > 0)
+                {
+                    Stats.CurrentHealth = Math.Min(Stats.TotalHealth,
+                        Stats.CurrentHealth + Stats.TotalHealthRegen * diff * 0.001f);
+                }
+
+                if (Stats.TotalParRegen > 0 && Stats.CurrentPar < Stats.TotalPar && Stats.CurrentPar > 0)
+                {
+                    Stats.CurrentPar = Math.Min(Stats.TotalPar,
+                        Stats.CurrentPar + Stats.TotalParRegen * diff * 0.001f);
+                }
+
+                UpdateReplication();
+                _healthUpdateTimer = 0;
+            }
+
+            if (_statUpdateTimer >= 100)
+            {
+                UpdateReplication();
+                _statUpdateTimer = 0;
             }
         }
 
-        public override float getMoveSpeed()
+        public virtual void UpdateReplication()
         {
-            return Stats.MoveSpeed.Total;
+
         }
 
-        public virtual void die(AttackableUnit killer)
+        public virtual bool GetTargetableToTeam(TeamId team)
+        {
+            if (Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.TargetableToAll))
+            {
+                return true;
+            }
+
+            if (team == TeamId.TEAM_NEUTRAL)
+            {
+                return true;
+            }
+
+            if (!Stats.IsTargetable)
+            {
+                return false;
+            }
+
+            if (team == Team)
+            {
+                return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NonTargetableAlly);
+            }
+
+            return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NonTargetableEnemy);
+        }
+
+        public virtual void SetTargetableToTeam(TeamId team, bool targetable)
+        {
+            var dictionary = new Dictionary<TeamId, bool>
+            {
+                {TeamId.TEAM_NEUTRAL, true},
+                {TeamId.TEAM_BLUE, GetTargetableToTeam(TeamId.TEAM_BLUE)},
+                {TeamId.TEAM_PURPLE, GetTargetableToTeam(TeamId.TEAM_PURPLE)}
+            };
+
+            dictionary[team] = targetable;
+
+            Stats.IsTargetableToTeam = 0;
+            if (dictionary[TeamId.TEAM_BLUE] && dictionary[TeamId.TEAM_PURPLE])
+            {
+                Stats.IsTargetableToTeam = IsTargetableToTeamFlags.TargetableToAll;
+                return;
+            }
+
+            if (!dictionary[Team])
+            {
+                Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NonTargetableAlly;
+            }
+
+            if (!dictionary[CustomConvert.GetEnemyTeam(Team)])
+            {
+                Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NonTargetableEnemy;
+            }
+        }
+
+        public virtual void die(ObjAIBase killer)
         {
             setToRemove();
             _game.ObjectManager.StopTargeting(this);
@@ -99,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 float expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
                 {
-                    c.GetStats().Experience += expPerChamp;
+                    c.Stats.Experience += expPerChamp;
                     _game.PacketNotifier.NotifyAddXP(c, expPerChamp);
                 }
             }
@@ -109,7 +179,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 var cKiller = killer as Champion;
 
                 if (cKiller == null)
+                {
                     return;
+                }
 
                 var gold = _game.Map.MapGameScript.GetGoldFor(this);
                 if (gold <= 0)
@@ -117,7 +189,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     return;
                 }
 
-                cKiller.GetStats().Gold += gold;
+                cKiller.Stats.Gold += gold;
+                if (gold > 0)
+                {
+                    cKiller.Stats.TotalGold += gold;
+                }
+
                 _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
                 if (cKiller.KillDeathCounter < 0)
@@ -132,11 +209,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     cKiller.KillDeathCounter += 1;
                 }
             }
-
-            if (IsDashing)
-            {
-                IsDashing = false;
-            }
         }
 
         public virtual bool isInDistress()
@@ -144,73 +216,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             return false; //return DistressCause;
         }
 
-        public virtual void TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source,
+        public virtual void TakeDamage(ObjAIBase attacker, float damage, DamageType type, DamageSource source,
             DamageText damageText)
         {
-            float defense = 0;
-            float regain = 0;
-            var attackerStats = attacker.GetStats();
-
-            switch (type)
+            if (Stats.IsInvulnerable)
             {
-                case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = GetStats().Armor.Total;
-                    defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
-                              attackerStats.ArmorPenetration.FlatBonus;
-
-                    break;
-                case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = GetStats().MagicPenetration.Total;
-                    defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
-                              attackerStats.MagicPenetration.FlatBonus;
-                    break;
-                case DamageType.DAMAGE_TYPE_TRUE:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                damage = 0;
+                damageText = DamageText.DAMAGE_TEXT_INVULNERABLE;
             }
-
-            switch (source)
-            {
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = attackerStats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = attackerStats.LifeSteal.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PASSIVE:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
-            }
-
-            //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
-            GetStats().CurrentHealth = Math.Max(0.0f, GetStats().CurrentHealth - damage);
-            if (!IsDead && GetStats().CurrentHealth <= 0)
+            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
+
+            if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
                 die(attacker);
             }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
-
-            // Get health from lifesteal/spellvamp
-            if (regain > 0)
-            {
-                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * damage);
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
-            }
         }
 
-        public virtual void TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void TakeDamage(ObjAIBase attacker, float damage, DamageType type, DamageSource source,
+            bool isCrit)
         {
             var text = DamageText.DAMAGE_TEXT_NORMAL;
 
@@ -270,10 +299,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
     public enum DamageSource
     {
-        DAMAGE_SOURCE_ATTACK,
+        DAMAGE_SOURCE_RAW,
+        DAMAGE_SOURCE_INTERNALRAW,
+        DAMAGE_SOURCE_PERIODIC,
+        DAMAGE_SOURCE_PROC,
+        DAMAGE_SOURCE_REACTIVE,
+        DAMAGE_SOURCE_ON_DEATH,
         DAMAGE_SOURCE_SPELL,
-        DAMAGE_SOURCE_SUMMONER_SPELL, // Ignite shouldn't destroy Banshee's
-        DAMAGE_SOURCE_PASSIVE // Red/Thornmail shouldn't as well
+        DAMAGE_SOURCE_ATTACK,
+        DAMAGE_SOURCE_SPELL_AOE,
+        DAMAGE_SOURCE_SPELL_PERSIST
     }
 
     public enum AttackType : byte

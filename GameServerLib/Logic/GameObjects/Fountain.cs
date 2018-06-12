@@ -40,19 +40,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if (champion.Team != _team)
                     continue;
 
-                var hp = champion.GetStats().CurrentHealth;
-                var maxHP = champion.GetStats().HealthPoints.Total;
+                var hp = champion.Stats.CurrentHealth;
+                var maxHP = champion.Stats.TotalHealth;
                 if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                    champion.GetStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
+                {
+                    champion.Stats.CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
+                }
                 else
-                    champion.GetStats().CurrentHealth = maxHP;
+                {
+                    champion.Stats.CurrentHealth = maxHP;
+                }
 
-                var mp = champion.GetStats().CurrentMana;
-                var maxMp = champion.GetStats().ManaPoints.Total;
+                var mp = champion.Stats.CurrentPar;
+                var maxMp = champion.Stats.TotalPar;
                 if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                    champion.GetStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
+                {
+                    champion.Stats.CurrentPar = mp + maxMp * PERCENT_MAX_MANA_HEAL;
+                }
                 else
-                    champion.GetStats().CurrentMana = maxMp;
+                {
+                    champion.Stats.CurrentPar = maxMp;
+                }
             }
         }
     }

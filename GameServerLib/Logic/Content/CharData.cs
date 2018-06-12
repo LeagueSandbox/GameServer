@@ -46,10 +46,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public int[] MaxLevels { get; private set; } = { 5, 5, 5, 3 };
         public int[][] SpellsUpLevels { get; private set; } =
         {
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99}
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {6, 11, 16, 99, 99, 99}
         };
         public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
         public PassiveData[] Passives { get; private set; } = 

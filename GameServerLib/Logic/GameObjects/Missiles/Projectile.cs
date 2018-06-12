@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public AttackableUnit Owner { get; private set; }
         public int ProjectileId { get; private set; }
         public SpellData SpellData { get; private set; }
-        protected float _moveSpeed;
+        public float ProjectileSpeed { get; protected set; }
         protected Spell _originSpell;
         private Logger _logger = Program.ResolveDependency<Logger>();
         
@@ -24,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AttackableUnit owner,
             Target target,
             Spell originSpell,
-            float moveSpeed,
+            float projectileSpeed,
             string projectileName,
             int flags = 0,
             uint netId = 0
@@ -32,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
-            _moveSpeed = moveSpeed;
+            ProjectileSpeed = projectileSpeed;
             Owner = owner;
             Team = owner.Team;
             ProjectileId = (int)HashFunctions.HashString(projectileName);
@@ -79,9 +80,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override float getMoveSpeed()
+        public override void Move(float diff)
         {
-            return _moveSpeed;
+            if (Target == null)
+            {
+                return;
+            }
+
+            var to = new Vector2(Target.X, Target.Y);
+            var cur = new Vector2(X, Y);
+
+            var goingTo = to - cur;
+            _direction = Vector2.Normalize(goingTo);
+            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            {
+                _direction = new Vector2(0, 0);
+            }
+
+            var deltaMovement = ProjectileSpeed * 0.001f * diff;
+
+            var xx = _direction.X * deltaMovement;
+            var yy = _direction.Y * deltaMovement;
+
+            X += xx;
+            Y += yy;
         }
 
         protected virtual void CheckFlagsForUnit(AttackableUnit unit)
@@ -152,11 +174,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                     else
                     { // auto attack
-                        var ai = u as ObjAIBase;
-                        if (ai != null)
+                        if (Owner is ObjAIBase ai)
                         {
                             ai.AutoAttackHit(u);
                         }
+
                         setToRemove();
                     }
                 }

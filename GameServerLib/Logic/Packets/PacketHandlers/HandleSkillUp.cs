@@ -23,20 +23,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var skillUpPacket = new SkillUpRequest(data);
-            //!TODO Check if can up skill? :)
 
             var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.skill);
             if (s == null)
+            {
                 return false;
+            }
 
             var skillUpResponse = new SkillUpResponse(
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
                 skillUpPacket.skill,
-                (byte)s.Level,
-                (byte)s.Owner.getSkillPoints()
+                s.Level,
+                s.Owner.SkillPoints
             );
             _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).Champion.GetStats().setSpellEnabled(skillUpPacket.skill, true);
+            _playerManager.GetPeerInfo(peer).Champion.Stats.SetSpellEnabled(skillUpPacket.skill, true);
 
             return true;
         }

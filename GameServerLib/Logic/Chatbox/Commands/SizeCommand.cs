@@ -27,8 +27,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            else if (float.TryParse(split[1], out size))
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().Size.BaseValue = size;
+
+            if (float.TryParse(split[1], out size))
+            {
+                _playerManager.GetPeerInfo(peer).Champion.Stats.FlatSizeMod += size;
+            }
         }
     }
 }

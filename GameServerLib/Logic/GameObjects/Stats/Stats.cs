@@ -1,709 +1,583 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using System.IO;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
+using Newtonsoft.Json;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
-    public enum FieldMask : uint
-    {
-        FM1_Gold = 0x00000001,
-        FM1_Gold_Total = 0x00000002,
-        FM1_Spells_Enabled = 0x00000004, // Lower bits. Bits: 0-3 -> Q-R, 4-9 -> Items, 10 -> Trinket
-        FM1_Spells_Enabled2 = 0x00000008, // Upper bits
-        FM1_SummonerSpells_Enabled = 0x00000010, // Lower bits. Bits: 0 -> D, 1 -> F
-        FM1_SummonerSpells_Enabled2 = 0x00000020, // Upper bits
-        FM1_EvolvePoints = 0x00000040,
-        FM1_EvolveFlags = 0x00000080,
-        FM1_ManaCost0 = 0x00000100,
-        FM1_ManaCost1 = 0x00000200,
-        FM1_ManaCost2 = 0x00000400,
-        FM1_ManaCost3 = 0x00000800,
-        FM1_ManaCostEx0 = 0x00001000,
-        FM1_ManaCostEx1 = 0x00002000,
-        FM1_ManaCostEx2 = 0x00004000,
-        FM1_ManaCostEx3 = 0x00008000,
-        FM1_ManaCostEx4 = 0x00010000,
-        FM1_ManaCostEx5 = 0x00020000,
-        FM1_ManaCostEx6 = 0x00040000,
-        FM1_ManaCostEx7 = 0x00080000,
-        FM1_ManaCostEx8 = 0x00100000,
-        FM1_ManaCostEx9 = 0x00200000,
-        FM1_ManaCostEx10 = 0x00400000,
-        FM1_ManaCostEx11 = 0x00800000,
-        FM1_ManaCostEx12 = 0x01000000,
-        FM1_ManaCostEx13 = 0x02000000,
-        FM1_ManaCostEx14 = 0x04000000,
-        FM1_ManaCostEx15 = 0x08000000,
-
-        FM2_Base_Ad = 0x00000020, // champ's base ad that increase every level. No item bonus should be added here
-        FM2_Base_Ap = 0x00000040,
-        FM2_Crit_Chance = 0x00000100, // 0.5 = 50%
-        FM2_Armor = 0x00000200,
-        FM2_Magic_Armor = 0x00000400,
-        FM2_Hp5 = 0x00000800,
-        FM2_Mp5 = 0x00001000,
-        FM2_Range = 0x00002000,
-        FM2_Bonus_Ad_Flat = 0x00004000, // AD flat bonuses
-        FM2_Bonus_Ad_Pct = 0x00008000, // AD percentage bonuses. 0.5 = 50%
-        FM2_Bonus_Ap_Flat = 0x00010000, // AP flat bonuses
-        FM2_Bonus_Ap_Pct = 0x00020000, // AP flat bonuses
-        FM2_Atks_multiplier = 0x00080000, // Attack speed multiplier. If set to 2 and champ's base attack speed is 0.600, then his new AtkSpeed becomes 1.200
-        FM2_cdr = 0x00400000, // Cooldown reduction. 0.5 = 50%
-        FM2_Armor_Pen_Flat = 0x01000000,
-        FM2_Armor_Pen_Pct = 0x02000000, // Armor pen. 0.5 = 50%
-        FM2_Magic_Pen_Flat = 0x04000000,
-        FM2_Magic_Pen_Pct = 0x08000000,
-        FM2_LifeSteal = 0x10000000, //Life Steal. 0.5 = 50%
-        FM2_SpellVamp = 0x20000000, //Spell Vamp. 0.5 = 50%
-        FM2_Tenacity = 0x40000000, //Tenacity. 0.5 = 50%
-
-        FM3_Armor_Pen_Pct = 0x00000001, //Armor pen. 1.7 = 30% -- These are probably consequence of some bit ops
-        FM3_Magic_Pen_Pct = 0x00000002, //Magic pen. 1.7 = 30%
-
-        FM4_CurrentHp = 0x00000001,
-        FM4_CurrentMana = 0x00000002,
-        FM4_MaxHp = 0x00000004,
-        FM4_MaxMp = 0x00000008,
-        FM4_exp = 0x00000010,
-        FM4_Vision1 = 0x00000100,
-        FM4_Vision2 = 0x00000200,
-        FM4_Speed = 0x00000400,
-        FM4_ModelSize = 0x00000800,
-        FM4_Level = 0x00004000, //Champion Level
-        FM4_Unk = 0x00010000 //Unk -> Transparent-ish Life bar when changed:: MAYBE IF UNIT IS TARGETABLE
-    }
-
-    public class StatMod
-    {
-        public MasterMask BlockId { get; set; }
-        public FieldMask Mask { get; set; }
-        public float Value { get; set; }
-
-        public static StatMod FromValues(MasterMask blockId, FieldMask mask, float value)
-        {
-            return new StatMod
-            {
-                BlockId = blockId,
-                Mask = mask,
-                Value = value
-            };
-        }
-    }
-
     public class Stats
     {
-        protected Dictionary<MasterMask, Dictionary<FieldMask, float>> _updatedStats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-
-        protected float _gold;
-        protected float _level;
-        protected float _experience;
-        protected float _currentHealth;
-        protected float _currentMana;
-        protected float _spellsEnabled;
-        protected float _summonerSpellsEnabled;
-
-        public float AttackSpeedFlat { get; set; }
-        public float HealthPerLevel { get; set; }
-        public float ManaPerLevel { get; set; }
-        public float AdPerLevel { get; set; }
-        public float ArmorPerLevel { get; set; }
-        public float MagicResistPerLevel { get; set; }
-        public float HealthRegenerationPerLevel { get; set; }
-        public float ManaRegenerationPerLevel { get; set; }
-        public float GrowthAttackSpeed { get; set; }
-        public float[] ManaCost { get; set; }
-
-        public Stat AbilityPower { get; }
-        public Stat Armor { get; }
-        public Stat ArmorPenetration { get; }
-        public Stat AttackDamage { get; }
-        public Stat AttackSpeedMultiplier { get; }
-        public Stat CooldownReduction { get; }
-        public Stat CriticalChance { get; }
-        public Stat GoldPerSecond { get; }
-        public Stat HealthPoints { get; }
-        public Stat HealthRegeneration { get; }
-        public Stat LifeSteal { get; }
-        public Stat MagicResist { get; }
-        public Stat MagicPenetration { get; }
-        public Stat ManaPoints { get; }
-        public Stat ManaRegeneration { get; }
-        public Stat MoveSpeed { get; }
-        public Stat Range { get; }
-        public Stat Size { get; }
-        public Stat SpellVamp { get; }
-        public Stat Tenacity { get; }
-
-        public virtual float Gold {
-            get { return _gold; }
+        // Derived from AttackableUnit
+        private float _currentHealth;
+        public float Level1Health { get; set; }
+        public float HealthGrowth { get; set; }
+        private float _flatHealthBonus;
+        private float _percentHealthBonus;
+        public float CurrentHealth
+        {
+            get => _currentHealth.Clamp(0, TotalHealth);
+            set => _currentHealth = value;
+        }
+        public float FlatHealthBonus
+        {
+            get => _flatHealthBonus;
             set
             {
-                _gold = value;
-                appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Gold, _gold);
+                if (value == _flatHealthBonus)
+                {
+                    return;
+                }
+
+                var percentHp = CurrentHealthPercent;
+                _flatHealthBonus = value;
+                CurrentHealth = TotalHealth * percentHp;
             }
         }
 
-        public virtual byte Level {
-            get { return (byte)(Math.Floor(_level) + 0.5f); }
+        public float PercentHealthBonus
+        {
+            get => _percentHealthBonus;
             set
             {
-                _level = value;
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Level, _level);
+                if (value == _percentHealthBonus)
+                {
+                    return;
+                }
+
+                var percentHp = CurrentHealthPercent;
+                _percentHealthBonus = value;
+                CurrentHealth = TotalHealth * percentHp;
             }
         }
 
-        public virtual float Experience
+        public float BaseHealth => Level1Health + (Level - 1) * HealthGrowth;
+        public float TotalHealth => (BaseHealth + FlatHealthBonus) * (1 + PercentHealthBonus);
+        public float CurrentHealthPercent => CurrentHealth / TotalHealth;
+
+        public PrimaryAbilityResourceType PrimaryAbilityResourceType { get; set; } = PrimaryAbilityResourceType.Mana;
+        private float _currentPar;
+        public float Level1Par { get; set; }
+        public float ParGrowth { get; set; }
+        private float _flatParBonus;
+        private float _percentParBonus;
+        public float CurrentPar
         {
-            get { return _experience; }
+            get => _currentPar.Clamp(0, TotalPar);
+            set => _currentPar = value;
+        }
+
+        public float FlatParBonus
+        {
+            get => _flatParBonus;
             set
             {
-                _experience = value;
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_exp, _experience);
+                if (value == _flatParBonus)
+                {
+                    return;
+                }
+
+                var percentHp = CurrentParPercent;
+                _flatParBonus = value;
+                CurrentPar = TotalPar * percentHp;
             }
         }
-
-        public virtual float CurrentHealth
+        public float PercentParBonus
         {
-            get { return _currentHealth; }
+            get => _percentParBonus;
             set
             {
-                _currentHealth = value;
-            }
-        }
-
-        public virtual float CurrentMana
-        {
-            get { return _currentMana; }
-            set
-            {
-                _currentMana = value;
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_CurrentMana, CurrentMana);
-            }
-        }
-
-        protected bool generatingGold; // Used to determine if the Stats update should include generating gold. Changed in Champion.h
-        protected float spellCostReduction; //URF Buff/Lissandra's passive
-        protected float critDamagePct; //Default = 2... add with runes/items (change with yasuo's passive)
-
-        public Stats()
-        {
-            spellCostReduction = 0;
-            critDamagePct = 2;
-            ManaCost = new float[4];
-
-            AbilityPower = new Stat();
-            Armor = new Stat();
-            ArmorPenetration = new Stat();
-            AttackDamage = new Stat();
-            AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
-            CooldownReduction = new Stat();
-            CriticalChance = new Stat();
-            GoldPerSecond = new Stat();
-            HealthPoints = new Stat();
-            HealthRegeneration = new Stat();
-            LifeSteal = new Stat();
-            MagicResist = new Stat();
-            MagicPenetration = new Stat();
-            ManaPoints = new Stat();
-            ManaRegeneration = new Stat();
-            MoveSpeed = new Stat();
-            Range = new Stat();
-            Size = new Stat(1.0f, 0, 0, 0, 0);
-            SpellVamp = new Stat();
-            Tenacity = new Stat();
-        }
-        public void LoadStats(CharData charData)
-        {
-            HealthPoints.BaseValue = charData.BaseHP;
-            ManaPoints.BaseValue = charData.BaseMP;
-            AttackDamage.BaseValue = charData.BaseDamage;
-            Range.BaseValue = charData.AttackRange;
-            MoveSpeed.BaseValue = charData.MoveSpeed;
-            Armor.BaseValue = charData.Armor;
-            MagicResist.BaseValue = charData.SpellBlock;
-            HealthRegeneration.BaseValue = charData.BaseStaticHPRegen;
-            ManaRegeneration.BaseValue = charData.BaseStaticMPRegen;
-            AttackSpeedFlat = 0.625f / (1 + charData.AttackDelayOffsetPercent);
-            HealthPerLevel = charData.HPPerLevel;
-            ManaPerLevel = charData.MPPerLevel;
-            AdPerLevel = charData.DamagePerLevel;
-            ArmorPerLevel = charData.ArmorPerLevel;
-            MagicResistPerLevel = charData.SpellBlockPerLevel;
-            HealthRegenerationPerLevel = charData.HPRegenPerLevel;
-            ManaRegenerationPerLevel = charData.MPRegenPerLevel;
-            GrowthAttackSpeed = charData.AttackSpeedPerLevel;
-        }
-        public void UpdateModifier(IStatsModifier modifier)
-        {
-            RemoveModifier(modifier);
-            AddModifier(modifier);
-        }
-
-        public void AddModifier(IStatsModifier modifier)
-        {
-            if (AbilityPower.ApplyStatModificator(modifier.AbilityPower))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
-            }
-            if (Armor.ApplyStatModificator(modifier.Armor))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
-            }
-            if (ArmorPenetration.ApplyStatModificator(modifier.ArmorPenetration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
-            }
-            if (AttackDamage.ApplyStatModificator(modifier.AttackDamage))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
-            }
-            if (AttackSpeedMultiplier.ApplyStatModificator(modifier.AttackSpeed))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
-            }
-            if (CriticalChance.ApplyStatModificator(modifier.CriticalChance))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
-            }
-            GoldPerSecond.ApplyStatModificator(modifier.GoldPerSecond);
-            if (HealthPoints.ApplyStatModificator(modifier.HealthPoints))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
-            }
-            if (HealthRegeneration.ApplyStatModificator(modifier.HealthRegeneration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Hp5, HealthRegeneration.Total);
-            }
-            if (LifeSteal.ApplyStatModificator(modifier.LifeSteel))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
-            }
-            if (MagicResist.ApplyStatModificator(modifier.MagicResist))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
-            }
-            if (MagicPenetration.ApplyStatModificator(modifier.MagicPenetration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
-            }
-            if (ManaPoints.ApplyStatModificator(modifier.ManaPoints))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
-            }
-            if (ManaRegeneration.ApplyStatModificator(modifier.ManaRegeneration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Mp5, ManaRegeneration.Total);
-            }
-            if (MoveSpeed.ApplyStatModificator(modifier.MoveSpeed))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
-            }
-            if (Range.ApplyStatModificator(modifier.Range))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Range, Range.Total);
-            }
-            if (Size.ApplyStatModificator(modifier.Size))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
-            }
-            if (SpellVamp.ApplyStatModificator(modifier.SpellVamp))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
-            }
-            if (Tenacity.ApplyStatModificator(modifier.Tenacity))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
-            }
-        }
-
-        public void RemoveModifier(IStatsModifier modifier)
-        {
-            if (AbilityPower.RemoveStatModificator(modifier.AbilityPower))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
-            }
-            if (Armor.RemoveStatModificator(modifier.Armor))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
-            }
-            if (ArmorPenetration.RemoveStatModificator(modifier.ArmorPenetration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
-            }
-            if (AttackDamage.RemoveStatModificator(modifier.AttackDamage))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
-            }
-            if (AttackSpeedMultiplier.RemoveStatModificator(modifier.AttackSpeed))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
-            }
-            if (CriticalChance.RemoveStatModificator(modifier.CriticalChance))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
-            }
-            GoldPerSecond.RemoveStatModificator(modifier.GoldPerSecond);
-            if (HealthPoints.RemoveStatModificator(modifier.HealthPoints))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
-            }
-            if (HealthRegeneration.RemoveStatModificator(modifier.HealthRegeneration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Hp5, HealthRegeneration.Total);
-            }
-            if (LifeSteal.RemoveStatModificator(modifier.LifeSteel))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
-            }
-            if (MagicResist.RemoveStatModificator(modifier.MagicResist))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
-            }
-            if (MagicPenetration.RemoveStatModificator(modifier.MagicPenetration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
-            }
-            if (ManaPoints.RemoveStatModificator(modifier.ManaPoints))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
-            }
-            if (ManaRegeneration.RemoveStatModificator(modifier.ManaRegeneration))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Mp5, ManaRegeneration.Total);
-            }
-            if (MoveSpeed.RemoveStatModificator(modifier.MoveSpeed))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
-            }
-            if (Range.RemoveStatModificator(modifier.Range))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Range, Range.Total);
-            }
-            if (Size.RemoveStatModificator(modifier.Size))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
-            }
-            if (SpellVamp.RemoveStatModificator(modifier.SpellVamp))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
-            }
-            if (Tenacity.RemoveStatModificator(modifier.Tenacity))
-            {
-                appendStat(_updatedStats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
-            }
-        }
-
-        public virtual float GetStat(MasterMask blockId, FieldMask stat)
-        {
-            if (blockId == MasterMask.MM_One)
-            {
-                switch (stat)
+                if (value == _percentParBonus)
                 {
-                    case FieldMask.FM1_Gold:
-                        return Gold;
-                    case FieldMask.FM1_Spells_Enabled:
-                        return _spellsEnabled;
-                    case FieldMask.FM1_SummonerSpells_Enabled:
-                        return _summonerSpellsEnabled;
+                    return;
                 }
+
+                var percentHp = CurrentParPercent;
+                _percentParBonus = value;
+                CurrentPar = TotalPar * percentHp;
             }
-            else if (blockId == MasterMask.MM_Two)
+        }
+
+        public float BasePar => Level1Par + (Level - 1) * ParGrowth;
+        public float TotalPar => (BasePar + FlatParBonus) * (1 + PercentParBonus);
+        public float CurrentParPercent => CurrentPar / TotalPar;
+
+        public bool IsInvulnerable { get; set; }
+        public bool IsPhysicalImmune { get; set; }
+        public bool IsMagicImmune { get; set; }
+        public bool IsTargetable { get; set; } = true;
+        public bool IsLifestealImmune { get; set; }
+        public IsTargetableToTeamFlags IsTargetableToTeam { get; set; } = (IsTargetableToTeamFlags)0x2000000;
+        
+        // Derived from ObjAIBase
+        public ActionState ActionState { get; set; } = (ActionState)0x800007;
+        public float LifeTime { get; set; }
+        public float MaxLifeTime { get; set; }
+        public float LifeTimeTicks { get; set; }
+        public bool IsMelee { get; set; }
+        public Multiplicative PhysicalDamageReductionPercent { get; set; } = new Multiplicative();
+        public Multiplicative MagicalDamageReductionPercent { get; set; } = new Multiplicative();
+
+        // Derived from Champion
+        public float Gold { get; set; }
+        public float TotalGold { get; set; }
+        public uint SpellEnabledBitFieldLower1 { get; set; } = uint.MaxValue;
+        public uint SpellEnabledBitFieldUpper1 { get; set; } = uint.MaxValue;
+        public uint SpellEnabledBitFieldLower2 { get; set; } = uint.MaxValue;
+        public uint SpellEnabledBitFieldUpper2 { get; set; } = uint.MaxValue;
+        public uint EvolvePoints { get; set; }
+        public uint EvolveFlags { get; set; }
+        public uint Level { get; set; }
+        public uint NumberOfNeutralMinionsKilled { get; set; }
+        public float PassiveCooldownEndTime { get; set; }
+        public float PassiveCooldownTotalTime { get; set; }
+        public float Experience { get; set; }
+        public float PercentSpellCostReduction { get; set; }
+
+        // General stat data
+
+        // Movement Speed
+        public float BaseMovementSpeed { get; set; }
+        public float FlatMovementSpeedBonus { get; set; }
+        public float AdditiveMovementSpeedBonus { get; set; }
+        
+        /// <summary>
+        /// Only Galio E, Hecarim E, Master Yi R, Rammus Q, Kennen E, Quicksilver, Revive, Distortion + Flash and Heal are multiplicative.
+        /// Everything else is additive.
+        /// </summary>
+        public Multiplicative MultiplicativeMovementSpeedBonus { get; set; } = new Multiplicative();
+        public List<float> SlowsApplied { get; set; } = new List<float>();
+        public float SlowResistPercent { get; set; }
+        public float RawMovementSpeed
+        {
+            get
             {
-                switch (stat)
+                var total = (BaseMovementSpeed + FlatMovementSpeedBonus) * (1 + AdditiveMovementSpeedBonus) *
+                            MultiplicativeMovementSpeedBonus;
+
+                var slowRatio = 0f;
+                if (SlowsApplied.Count > 0)
                 {
-                    case FieldMask.FM2_Base_Ad:
-                        return AttackDamage.BaseValue;
-                    case FieldMask.FM2_Armor:
-                        return Armor.Total;
-                    case FieldMask.FM2_Armor_Pen_Flat:
-                        return ArmorPenetration.FlatBonus;
-                    case FieldMask.FM2_Atks_multiplier:
-                        return AttackSpeedMultiplier.Total;
-                    case FieldMask.FM2_Base_Ap:
-                        return AbilityPower.BaseValue;
-                    case FieldMask.FM2_Armor_Pen_Pct:
-                        return ArmorPenetration.PercentBonus;
-                    case FieldMask.FM2_Bonus_Ad_Flat:
-                        return AttackDamage.FlatBonus;
-                    case FieldMask.FM2_Bonus_Ad_Pct:
-                        return AttackDamage.PercentBonus;
-                    case FieldMask.FM2_Bonus_Ap_Flat:
-                        return AbilityPower.FlatBonus;
-                    case FieldMask.FM2_Bonus_Ap_Pct:
-                        return AbilityPower.PercentBonus;
-                    case FieldMask.FM2_Crit_Chance:
-                        return CriticalChance.Total;
-                    case FieldMask.FM2_Hp5:
-                        return HealthRegeneration.Total;
-                    case FieldMask.FM2_Mp5:
-                        return ManaRegeneration.Total;
-                    case FieldMask.FM2_LifeSteal:
-                        return LifeSteal.Total;
-                    case FieldMask.FM2_Magic_Pen_Flat:
-                        return MagicPenetration.FlatBonus;
-                    case FieldMask.FM2_Magic_Pen_Pct:
-                        return MagicPenetration.PercentBonus;
-                    case FieldMask.FM2_Magic_Armor:
-                        return MagicResist.Total;
-                    case FieldMask.FM2_Tenacity:
-                        return Tenacity.Total;
-                    case FieldMask.FM2_SpellVamp:
-                        return SpellVamp.Total;
-
-                }
-            }
-            else if (blockId == MasterMask.MM_Three)
-            {
-                switch (stat)
-                {
-                    case FieldMask.FM3_Armor_Pen_Pct:
-                        return ArmorPenetration.PercentBonus;
-                    case FieldMask.FM3_Magic_Pen_Pct:
-                        return MagicPenetration.PercentBonus;
-                }
-            }
-            else if (blockId == MasterMask.MM_Four)
-            {
-                switch (stat)
-                {
-                    case FieldMask.FM4_Level:
-                        return Level + 0.5f;
-                    case FieldMask.FM4_exp:
-                        return Experience;
-                    case FieldMask.FM4_CurrentHp:
-                        return CurrentHealth;
-                    case FieldMask.FM4_CurrentMana:
-                        return CurrentMana;
-                    case FieldMask.FM4_ModelSize:
-                        return Size.Total;
-                    case FieldMask.FM4_Speed:
-                        return MoveSpeed.Total;
-                }
-            }
-
-            return 0;
-        }
-
-        protected void appendStat(Dictionary<MasterMask, Dictionary<FieldMask, float>> collection, MasterMask blockId, FieldMask stat, float value)
-        {
-            if (!collection.ContainsKey(blockId))
-                collection.Add(blockId, new Dictionary<FieldMask, float>());
-
-            if (!collection[blockId].ContainsKey(stat))
-                collection[blockId].Add(stat, value);
-            else
-                collection[blockId][stat] = value;
-        }
-
-        public bool IsGeneratingGold()
-        {
-            return generatingGold;
-        }
-
-        public void SetGeneratingGold(bool b)
-        {
-            generatingGold = b;
-        }
-
-        public Dictionary<MasterMask, Dictionary<FieldMask, float>> GetUpdatedStats()
-        {
-            var ret = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-            lock (_updatedStats)
-            {
-                foreach (var blocks in _updatedStats)
-                {
-                    if (!ret.ContainsKey(blocks.Key))
-                        ret.Add(blocks.Key, new Dictionary<FieldMask, float>());
-                    foreach (var stat in blocks.Value)
-                        ret[blocks.Key].Add(stat.Key, stat.Value);
-                }
-            }
-            return ret;
-        }
-
-        public virtual Dictionary<MasterMask, Dictionary<FieldMask, float>> GetAllStats()
-        {
-            var toReturn = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-            Dictionary<MasterMask, Dictionary<FieldMask, float>> stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
-            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_Gold, Gold);
-            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
-            appendStat(stats, MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, _summonerSpellsEnabled);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_SpellVamp, SpellVamp.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Tenacity, Tenacity.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ap, AbilityPower.BaseValue);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Flat, AbilityPower.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ap_Pct, AbilityPower.PercentBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor, Armor.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Flat, ArmorPenetration.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Armor_Pen_Pct, ArmorPenetration.PercentBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Base_Ad, AttackDamage.BaseValue);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Flat, AttackDamage.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Bonus_Ad_Pct, AttackDamage.PercentBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Atks_multiplier, AttackSpeedMultiplier.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Crit_Chance, CriticalChance.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_LifeSteal, LifeSteal.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Armor, MagicResist.Total);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Flat, MagicPenetration.FlatBonus);
-            appendStat(stats, MasterMask.MM_Two, FieldMask.FM2_Magic_Pen_Pct, MagicPenetration.PercentBonus);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxMp, ManaPoints.Total);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_exp, Experience);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_Speed, MoveSpeed.Total);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_ModelSize, Size.Total);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_MaxHp, HealthPoints.Total);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_CurrentHp, CurrentHealth);
-            appendStat(stats, MasterMask.MM_Four, FieldMask.FM4_CurrentMana, CurrentMana);
-
-            foreach (var block in stats)
-            {
-                if (!toReturn.ContainsKey(block.Key))
-                    toReturn.Add(block.Key, new Dictionary<FieldMask, float>());
-                foreach (var stat in block.Value)
-                    toReturn[block.Key].Add(stat.Key, stat.Value);
-            }
-            return toReturn;
-        }
-
-        public void ClearUpdatedStats()
-        {
-            _updatedStats.Clear();
-        }
-
-        public float GetTotalAttackSpeed()
-        {
-            return AttackSpeedFlat*AttackSpeedMultiplier.Total;
-        }
-
-        public void update(float diff)
-        {
-            if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total && CurrentHealth > 0)
-            {
-                var newHealth = CurrentHealth + HealthRegeneration.Total * diff * 0.001f;
-                newHealth = Math.Min(HealthPoints.Total, newHealth);
-                CurrentHealth = newHealth;
-            }
-
-            if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
-            {
-                var newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
-                newMana = Math.Min(ManaPoints.Total, newMana);
-                CurrentMana = newMana;
-            }
-            if (generatingGold && GoldPerSecond.Total > 0)
-            {
-                var newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
-                Gold = newGold;
-            }
-        }
-
-        public void LevelUp()
-        {
-            Level++;
-
-            HealthPoints.BaseValue += HealthPerLevel;
-            CurrentHealth = (HealthPoints.Total / (HealthPoints.Total - HealthPerLevel)) * CurrentHealth;
-            ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
-            CurrentMana = (ManaPoints.Total / (ManaPoints.Total - ManaPerLevel)) * CurrentMana;
-            AttackDamage.BaseValue = AttackDamage.BaseValue + AdPerLevel;
-            Armor.BaseValue = Armor.BaseValue + ArmorPerLevel;
-            MagicResist.BaseValue = MagicResist.Total + MagicResistPerLevel;
-            HealthRegeneration.BaseValue = HealthRegeneration.BaseValue + HealthRegenerationPerLevel;
-            ManaRegeneration.BaseValue = ManaRegeneration.BaseValue + ManaRegenerationPerLevel;
-        }
-
-        public float GetLevel()
-        {
-            return Level;
-        }
-
-        public virtual byte getSize(MasterMask blockId, FieldMask stat)
-        {
-            switch (blockId)
-            {
-                case MasterMask.MM_One:
-                    switch (stat)
+                    SlowsApplied.Sort();
+                    SlowsApplied.Reverse();
+                    slowRatio = SlowsApplied[0];
+                    for (var i = 1; i < SlowsApplied.Count; i++)
                     {
-                        case FieldMask.FM1_Spells_Enabled:
-                            return 2;
-                        case FieldMask.FM1_SummonerSpells_Enabled:
-                            return 2; // not 100% sure
+                        slowRatio *= 1 - SlowsApplied[i] * 0.35f;
                     }
-                    break;
-                case MasterMask.MM_Four:
-                    switch (stat)
-                    {
-                        case FieldMask.FM4_Level:
-                            return 1;
-                    }
-                    break;
+                }
+
+                total *= 1 - slowRatio * (1 - SlowResistPercent);
+
+                return total;
             }
-            return 4;
         }
 
-        public virtual float getSpellCostReduction()
+        public float TotalMovementSpeed
         {
-            return spellCostReduction;
+            get
+            {
+                var raw = RawMovementSpeed;
+                
+                // soft caps
+                if (raw > 490)
+                {
+                    raw = raw * 0.5f + 230;
+                }
+                else if (raw > 415)
+                {
+                    raw = raw * 0.8f + 83;
+                }
+                else if (raw < 220)
+                {
+                    raw = raw * 0.5f + 110;
+                }
+
+                return raw;
+            }
         }
 
-        public virtual void setSpellCostReduction(float scr)
+        // Attack Speed
+        public float AttackDelay { get; set; }
+        public float BaseAttackSpeed => 0.625f / (1 + AttackDelay);
+        public float PercentAttackSpeedMod { get; set; }
+        public float AttackSpeedGrowth { get; set; }
+
+        // seems like this gets affected by tenacity
+        public Multiplicative PercentAttackSpeedDebuff { get; set; } = new Multiplicative();
+        public float TotalAttackSpeed
         {
-            spellCostReduction = scr;
+            get
+            {
+                var total = BaseAttackSpeed * (1 + (Level - 1) * AttackSpeedGrowth + PercentAttackSpeedMod) *
+                            PercentAttackSpeedDebuff;
+
+                return total.Clamp(0.2f, 2.5f);
+            }
         }
 
-        public virtual float getCritDamagePct()
+        // Attack Range
+        public float BaseAttackRange { get; set; }
+        public float FlatAttackRangeMod { get; set; }
+        public float PercentAttackRangeMod { get; set; }
+        public float FlatAttackRangeDebuff { get; set; }
+        public float PercentAttackRangeDebuff { get; set; }
+        public float TotalAttackRange
         {
-            return critDamagePct;
+            get
+            {
+                var total = BaseAttackRange + FlatAttackRangeMod;
+                total = total * 1 + PercentAttackRangeMod - FlatAttackRangeDebuff;
+                return Math.Max(0, total * 1 - PercentAttackRangeDebuff);
+            }
         }
 
-        public virtual void setCritDamagePct(float critDmg)
+        // Critical Chance
+        public float FlatCriticalChanceMod { get; set; }
+        public float CriticalChance => ((float)FlatCriticalChanceMod).Clamp(0, 1);
+
+        // Critical Damage
+        public float BaseCriticalDamage { get; set; } = 2;
+        public float FlatCriticalDamageMod { get; set; }
+        public Multiplicative PercentCriticalDamageMod { get; set; } = new Multiplicative();
+        public float TotalCriticalDamage => (BaseCriticalDamage + FlatCriticalDamageMod) * PercentCriticalDamageMod;
+
+        // Attack Damage
+        public float Level1AttackDamage { get; set; }
+        public float AttackDamageGrowth { get; set; }
+        public float FlatAttackDamageMod { get; set; }
+        public float PercentAttackDamageMod { get; set; }
+
+        public float BaseAttackDamage => Level1AttackDamage + AttackDamageGrowth * (Level - 1);
+        public float TotalAttackDamage => (BaseAttackDamage + FlatAttackDamageMod) * (1 + PercentAttackDamageMod);
+        public float BonusAttackDamage => TotalAttackDamage - BaseAttackDamage;
+
+        // Armor
+        public float Level1Armor { get; set; }
+        public float ArmorGrowth { get; set; }
+        public float FlatArmorMod { get; set; }
+        public float PercentArmorMod { get; set; }
+
+        public float BaseArmor => Level1Armor + ArmorGrowth * (Level - 1);
+        public float BonusArmor => TotalArmor - BaseArmor;
+        public float TotalArmor
         {
-            critDamagePct = critDmg;
+            get
+            {
+                var total = (BaseArmor + FlatArmorMod) * (1 + PercentArmorMod) - FlatArmorReduction;
+                if (total > 0)
+                {
+                    total *= PercentArmorReduction;
+                }
+
+                return total;
+            }
         }
 
-        public virtual bool getSpellEnabled(byte id)
+        // Armor Penetration
+        public float FlatArmorReduction { get; set; }
+        public Multiplicative PercentArmorReduction { get; set; } = new Multiplicative();
+        public Multiplicative PercentArmorPenetration { get; set; } = new Multiplicative();
+        public Multiplicative PercentBonusArmorPenetration { get; set; } = new Multiplicative();
+        public float FlatArmorPenetration { get; set; }
+
+        // Magic Resist
+        public float Level1MagicResist { get; set; }
+        public float MagicResistGrowth { get; set; }
+        public float FlatMagicResistMod { get; set; }
+        public float PercentMagicResistMod { get; set; }
+
+        public float BaseMagicResist => Level1MagicResist + (Level - 1) * MagicResistGrowth;
+        public float BonusMagicResist => TotalMagicResist - BaseMagicResist;
+        public float TotalMagicResist
         {
-            short mask = (short)Math.Floor(_spellsEnabled + 0.5f);
-            return (mask & (1 << id)) != 0;
+            get
+            {
+                var total = (BaseMagicResist + FlatMagicResistMod) * (1 + PercentMagicResistMod) - FlatMagicReduction;
+                if (total > 0)
+                {
+                    total *= PercentMagicReduction;
+                }
+
+                return total;
+            }
         }
 
-        public virtual void setSpellEnabled(byte id, bool enabled)
+        // Magic Penetration
+        public float FlatMagicReduction { get; set; }
+        public Multiplicative PercentMagicReduction { get; set; } = new Multiplicative();
+        public Multiplicative PercentMagicPenetration { get; set; } = new Multiplicative();
+        public Multiplicative PercentBonusMagicPenetration { get; set; } = new Multiplicative();
+        public float FlatMagicPenetration { get; set; }
+
+        // Life Steal
+        public float LifeSteal { get; set; }
+
+        // Spell Vamp
+        public float SpellVamp { get; set; }
+        
+        // Ability Power
+        public float FlatAbilityPower { get; set; }
+        public float PercentAbilityPower { get; set; }
+        public float TotalAbilityPower => FlatAbilityPower * (1 + PercentAbilityPower);
+
+        // Dodge Chance
+        private float _dodgeChance;
+        public float DodgeChance
         {
-            short mask = (short)Math.Floor(_spellsEnabled + 0.5f);
-            if (enabled)
-                mask |= (short)(1 << id);
+            get => _dodgeChance.Clamp(0, 1);
+            set => _dodgeChance = value;
+        }
+
+        // Health Regeneration
+        public float Level1HealthRegen { get; set; }
+        public float HealthRegenGrowth { get; set; }
+        public float FlatHealthRegenMod { get; set; }
+        public float PercentBaseHealthRegenMod { get; set; }
+        public float BaseHealthRegen => Level1HealthRegen + (Level - 1) * HealthRegenGrowth;
+        public float TotalHealthRegen => BaseHealthRegen + FlatHealthRegenMod + PercentBaseHealthRegenMod * BaseHealthRegen;
+
+        // Mana Regeneration
+        public float Level1ParRegen { get; set; }
+        public float ParRegenGrowth { get; set; }
+        public float FlatParRegenMod { get; set; }
+        public float PercentBaseParRegenMod { get; set; }
+        public float BaseParRegen => Level1ParRegen + (Level - 1) * ParRegenGrowth;
+        public float TotalParRegen => BaseParRegen + FlatParRegenMod + PercentBaseParRegenMod * BaseParRegen;
+
+        // Cooldown Reduction
+        public float CooldownReductionCap { get; set; } = 0.4f;
+        public float FlatCooldownReduction { get; set; }
+        public float CooldownReduction => Math.Min(CooldownReductionCap, FlatCooldownReduction);
+
+        // Tenacity
+        public Multiplicative Tenacity { get; set; } = new Multiplicative();
+
+        // Pathfinding Radius
+        public float FlatPathfindingRadiusMod { get; set; }
+
+        // Size
+        public float BaseSize { get; set; } = 1;
+        public float FlatSizeMod { get; set; }
+        public float PercentSizeMod { get; set; }
+        public float TotalSize => (BaseSize + FlatSizeMod) * (1 + PercentSizeMod);
+
+        public bool GetActionState(ActionState state)
+        {
+            return ActionState.HasFlag(state);
+        }
+
+        public void SetActionState(ActionState state, bool value)
+        {
+            if (value)
+            {
+                ActionState |= state;
+            }
             else
-                mask &= (short)(~(1 << id));
-            _spellsEnabled = mask;
-            appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_Spells_Enabled, _spellsEnabled);
+            {
+                ActionState &= ~state;
+            }
         }
 
-        public virtual bool getSummonerSpellEnabled(byte id)
+        public bool GetSpellEnabled(byte slot)
         {
-            short mask = (short)Math.Floor(_summonerSpellsEnabled + 0.5f);
-            return (mask & (1 << id)) != 0;
+            return (SpellEnabledBitFieldLower1 & (1 << slot)) != 0;
         }
 
-        public virtual void setSummonerSpellEnabled(byte id, bool enabled)
+        public void SetSpellEnabled(byte slot, bool enabled)
         {
-            short mask = (short)Math.Floor(_summonerSpellsEnabled + 0.5f);
             if (enabled)
-                mask |= (short)(16 << id);
+            {
+                SpellEnabledBitFieldLower1 |= (uint)(1 << slot);
+            }
             else
-                mask &= (short)(~(16 << id));
-            _summonerSpellsEnabled = (float) mask;
-            appendStat(_updatedStats, MasterMask.MM_One, FieldMask.FM1_SummonerSpells_Enabled, _summonerSpellsEnabled);
+            {
+                SpellEnabledBitFieldLower1 &= (uint)~(1 << slot);
+            }
         }
+
+        public bool GetSummonerSpellEnabled(byte slot)
+        {
+            return (SpellEnabledBitFieldLower2 & (1 << slot)) != 0;
+        }
+
+        public void SetSummonerSpellEnabled(byte slot, bool enabled)
+        {
+            if (enabled)
+            {
+                SpellEnabledBitFieldLower2 |= (uint)(16 << slot);
+            }
+            else
+            {
+                SpellEnabledBitFieldLower2 &= (uint)~(16 << slot);
+            }
+        }
+
+        public void LoadStats(string model, CharData charData, int skinId = 0)
+        {
+            Level1Health = charData.BaseHP;
+            Level1Par = charData.BaseMP;
+            Level1AttackDamage = charData.BaseDamage;
+            BaseAttackRange = charData.AttackRange;
+            BaseMovementSpeed = charData.MoveSpeed;
+            Level1Armor = charData.Armor;
+            Level1MagicResist = charData.SpellBlock;
+            Level1HealthRegen = charData.BaseStaticHPRegen;
+            Level1ParRegen = charData.BaseStaticMPRegen;
+            AttackDelay = charData.AttackDelayOffsetPercent;
+            HealthGrowth = charData.HPPerLevel;
+            ParGrowth = charData.MPPerLevel;
+            AttackDamageGrowth = charData.DamagePerLevel;
+            ArmorGrowth = charData.ArmorPerLevel;
+            MagicResistGrowth = charData.SpellBlockPerLevel;
+            HealthRegenGrowth = charData.HPRegenPerLevel;
+            ParRegenGrowth = charData.MPRegenPerLevel;
+            AttackSpeedGrowth = charData.AttackSpeedPerLevel;
+
+            CurrentHealth = TotalHealth;
+            CurrentPar = TotalPar;
+
+            var game = Program.ResolveDependency<Game>();
+            var logger = Program.ResolveDependency<Logger>();
+            var file = new ContentFile();
+            try
+            {
+                var path = game.Config.ContentManager.GetUnitStatPath(model);
+                logger.LogCoreInfo($"Loading {model}'s stats from path: {Path.GetFullPath(path)}!");
+                var text = File.ReadAllText(Path.GetFullPath(path));
+                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                if (file.Values.ContainsKey($"MeshSkin{(skinId == 0 ? "" : skinId.ToString())}"))
+                {
+                    BaseSize = file.GetFloat("MeshSkin", "SkinScale", 1);
+                    return;
+                }
+
+                path = game.Config.ContentManager.GetUnitSkinPath(model, skinId);
+                text = File.ReadAllText(Path.GetFullPath(path));
+                file = JsonConvert.DeserializeObject<ContentFile>(text);
+            }
+            catch (ContentNotFoundException notfound)
+            {
+                logger.LogCoreWarning($"Stats for {model} was not found: {notfound.Message}");
+                return;
+            }
+
+            BaseSize = file.GetFloat("MeshSkin", "SkinScale", 1);
+        }
+
+        public void ApplyItemValues(ItemType item)
+        {
+            FlatArmorMod += item.FlatArmorMod;
+            PercentArmorMod += item.PercentArmorMod;
+            FlatCriticalChanceMod += item.FlatCritChanceMod;
+            FlatCriticalDamageMod += item.FlatCritDamageMod;
+            PercentCriticalDamageMod.Add(item.PercentCritDamageMod);
+            FlatHealthBonus += item.FlatHPPoolMod;
+            PercentHealthBonus += item.PercentHPPoolMod;
+            FlatAbilityPower += item.FlatMagicDamageMod;
+            PercentAbilityPower += item.PercentMagicDamageMod;
+            FlatMagicPenetration += item.FlatMagicPenetrationMod;
+            FlatMovementSpeedBonus += item.FlatMovementSpeedMod;
+            AdditiveMovementSpeedBonus += item.PercentMovementSpeedMod;
+            FlatAttackDamageMod += item.FlatPhysicalDamageMod;
+            PercentAttackDamageMod += item.PercentPhysicalDamageMod;
+            FlatMagicResistMod += item.FlatSpellBlockMod;
+            PercentMagicResistMod += item.PercentSpellBlockMod;
+            PercentAttackSpeedMod += item.PercentAttackSpeedMod;
+            PercentBaseHealthRegenMod += item.PercentBaseHPRegenMod;
+
+            if (PrimaryAbilityResourceType == PrimaryAbilityResourceType.Mana)
+            {
+                FlatParBonus += item.FlatMPPoolMod;
+                PercentParBonus += item.PercentMPPoolMod;
+                PercentBaseParRegenMod += item.PercentBaseMPRegenMod;
+            }
+            else if (PrimaryAbilityResourceType == PrimaryAbilityResourceType.Energy)
+            {
+                PercentBaseParRegenMod += item.PercentBaseMPRegenMod;
+            }
+        }
+
+        public void RemoveItemValues(ItemType item)
+        {
+            FlatArmorMod -= item.FlatArmorMod;
+            PercentArmorMod -= item.PercentArmorMod;
+            FlatCriticalChanceMod -= item.FlatCritChanceMod;
+            FlatCriticalDamageMod -= item.FlatCritDamageMod;
+            PercentCriticalDamageMod.Add(item.PercentCritDamageMod);
+            FlatHealthBonus -= item.FlatHPPoolMod;
+            PercentHealthBonus -= item.PercentHPPoolMod;
+            FlatAbilityPower -= item.FlatMagicDamageMod;
+            PercentAbilityPower -= item.PercentMagicDamageMod;
+            FlatMagicPenetration -= item.FlatMagicPenetrationMod;
+            FlatMovementSpeedBonus -= item.FlatMovementSpeedMod;
+            AdditiveMovementSpeedBonus -= item.PercentMovementSpeedMod;
+            FlatAttackDamageMod -= item.FlatPhysicalDamageMod;
+            PercentAttackDamageMod -= item.PercentPhysicalDamageMod;
+            FlatMagicResistMod -= item.FlatSpellBlockMod;
+            PercentMagicResistMod -= item.PercentSpellBlockMod;
+            PercentAttackSpeedMod -= item.PercentAttackSpeedMod;
+            PercentBaseHealthRegenMod -= item.PercentBaseHPRegenMod;
+
+            if (PrimaryAbilityResourceType == PrimaryAbilityResourceType.Mana)
+            {
+                FlatParBonus -= item.FlatMPPoolMod;
+                PercentParBonus -= item.PercentMPPoolMod;
+                PercentBaseParRegenMod -= item.PercentBaseMPRegenMod;
+            }
+            else if (PrimaryAbilityResourceType == PrimaryAbilityResourceType.Energy)
+            {
+                PercentBaseParRegenMod -= item.PercentBaseMPRegenMod;
+            }
+        }
+    }
+
+    [Flags]
+    public enum ActionState : uint
+    {
+        CanAttack = 1 << 0,
+        CanCast = 1 << 1,
+        CanMove = 1 << 2,
+        CanNotMove = 1 << 3,
+        Stealthed = 1 << 4,
+        RevealSpecificUnit = 1 << 5,
+        Taunted = 1 << 6,
+        Feared = 1 << 7,
+        IsFleeing = 1 << 8,
+        CanNotAttack = 1 << 9,
+        IsAsleep = 1 << 10,
+        IsNearSighted = 1 << 11,
+        IsGhosted = 1 << 12,
+
+        Charmed = 1 << 15,
+        NoRender = 1 << 16,
+        ForceRenderParticles = 1 << 17,
+
+        Unknown = 1 << 23 // set to 1 by default
+    }
+
+    [Flags]
+    public enum IsTargetableToTeamFlags : uint
+    {
+        NonTargetableAlly = 0x800000,
+        NonTargetableEnemy = 0x1000000,
+        TargetableToAll = 0x2000000
+    }
+
+    public enum PrimaryAbilityResourceType : byte
+    {
+        Mana = 0,
+        Energy = 1,
+        None = 2,
+        Shield = 3,
+        BattleFury = 4,
+        DragonFury = 5,
+        Rage = 6,
+        Heat = 7,
+        Ferocity = 8,
+        BloodWell = 9,
+        Wind = 10,
+        Other = 11
     }
 }

@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using System.Collections.Generic;
 using System.Numerics;
+using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -144,16 +145,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             _game.PacketHandlerManager.broadcastPacketVision(u, second, Channel.CHL_S2C);
         }
 
-        public void NotifyMovement(GameObject o)
+        public void NotifyMovement(ObjAIBase o)
         {
             var answer = new MovementResponse(o);
             _game.PacketHandlerManager.broadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(AttackableUnit source, AttackableUnit target, float amount, DamageType type, DamageText damagetext)
+        public void NotifyDamageDone(ObjAIBase source, AttackableUnit target, float amount, DamageType type, DamageText damagetext)
         {
             var dd = new DamageDone(source, target, amount, type, damagetext);
-            _game.PacketHandlerManager.broadcastPacket(dd, Channel.CHL_S2C);
+            if (source is Champion s)
+            {
+                _game.PacketHandlerManager.sendPacket(_playerManager.GetClientInfoByChampion(s).Peer, dd,
+                    Channel.CHL_S2C);
+            }
+
+            if (target is Champion t)
+            {
+                _game.PacketHandlerManager.sendPacket(_playerManager.GetClientInfoByChampion(t).Peer, dd,
+                    Channel.CHL_S2C);
+            }
         }
 
         public void NotifyModifyShield(AttackableUnit unit, float amount, ShieldType type)
