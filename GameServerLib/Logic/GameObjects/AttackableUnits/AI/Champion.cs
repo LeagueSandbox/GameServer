@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool _canRecall = true;
         private Buff _visualBuff;
         private Particle _addParticle;
-        public bool _isRecalling = false;
+        public bool IsRecalling { get; private set; } = false;
 
         public Champion(string model,
                         uint playerId,
@@ -58,9 +58,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-            for(short i = 0; i<CharData.SpellNames.Length;i++)
+            for (short i = 0; i < CharData.SpellNames.Length; i++)
             {
-                if(CharData.SpellNames[i] != "")
+                if (CharData.SpellNames[i] != "")
                 {
                     Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
                 }
@@ -68,14 +68,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
 
-            for(short i = 0; i < 6; i++)
+            for (short i = 0; i < 6; i++)
             {
-                Spells[(byte)(i + 6)] = new Spell(this, "", (byte)(i + 6));
+                Spells[(byte)(i + 6)] = new Spell(this, "BaseSpell", (byte)(i + 6));
             }
 
             Spells[13] = new Spell(this, "Recall", 13);
 
-            for(short i = 0; i<CharData.Passives.Length; i++)
+            for (short i = 0; i < CharData.Passives.Length; i++)
             {
                 if (CharData.Passives[i].PassiveLuaName != "")
                 {
@@ -173,7 +173,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 !this.HasCrowdControl(CrowdControlType.Silence);
         }
 
-        public void SwapSpells(byte slot1,byte slot2)
+        public void SwapSpells(byte slot1, byte slot2)
         {
             var buffer = Spells[slot1];
             Spells[slot1] = Spells[slot2];
@@ -232,13 +232,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
             {
                 ApiFunctionManager.LogInfo("There is no spell in slot " + slot + ". Using empty spell in its place.");
-                return new Spell(this, "", slot);
+                return new Spell(this, "BaseSpell", slot);
             }
         }
 
         public Spell GetSpellByName(string name)
         {
-            foreach(var s in Spells.Values)
+            foreach (var s in Spells.Values)
             {
                 if (s == null)
                     continue;
@@ -253,7 +253,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (_skillPoints == 0)
                 return null;
 
-            var s = GetSpell((byte) slot);
+            var s = GetSpell((byte)slot);
 
             if (s == null)
                 return null;
@@ -267,13 +267,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void update(float diff)
         {
             base.update(diff);
-			
-			if (this.isMovementUpdated()) {
-                if (_isRecalling)
+
+            if (this.isMovementUpdated())
+            {
+                if (IsRecalling)
                 {
                     ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
                     ApiFunctionManager.RemoveParticle(_addParticle);
-                    _isRecalling = false;
+                    IsRecalling = false;
                 }
                 _canRecall = false;
             }
@@ -354,20 +355,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAIBase owner,float timer=8.0f)
+        public void Recall(ObjAIBase owner, float timer = 8.0f)
         {
-			var spawnPos = GetRespawnPosition();
-            _isRecalling = true;
+            var spawnPos = GetRespawnPosition();
+            IsRecalling = true;
             _visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
             _addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+            _canRecall = true;
 
             ApiFunctionManager.CreateTimer(timer, () =>
             {
                 if (_canRecall)
-				{
-					_game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
-					_isRecalling = false;
-				}
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    ApiFunctionManager.TeleportTo(owner, spawnPos.X, spawnPos.Y);
+                    IsRecalling = false;
+                }
             });
         }
 
@@ -419,6 +423,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 GetStats().LevelUp();
+                ApiEventManager.OnLevelUp.Publish(this);
                 _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
                 _skillPoints++;
             }
@@ -521,6 +526,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             _playerHitId = NetId;
+
+            if (IsRecalling)
+            {
+                ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                ApiFunctionManager.RemoveParticle(_addParticle);
+                IsRecalling = false;
+            }
+            _canRecall = false;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

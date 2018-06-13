@@ -73,6 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnLevelUpSpell OnLevelUpSpell = new EventOnLevelUpSpell();
+        public static EventOnLevelUp OnLevelUp = new EventOnLevelUp();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnChampionDamageDealt OnChampionDamageDealt = new EventOnChampionDamageDealt();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
@@ -187,6 +188,35 @@ namespace LeagueSandbox.GameServer.Logic.API
                 if (listener.Item2 == spell)
                 {
                     listener.Item3(champion);
+                }
+            });
+        }
+    }
+
+    public class EventOnLevelUp
+    {
+        private List<Tuple<object, Champion, Action>> listeners = new List<Tuple<object, Champion, Action>>();
+        public void AddListener(object owner, Champion champion, Action callback)
+        {
+            var listenerTuple = new Tuple<object, Champion, Action>(owner, champion, callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, Champion champion)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+
+        public void Publish(Champion champion)
+        {
+            listeners.ForEach((listener) => {
+                if (listener.Item2 == champion)
+                {
+                    listener.Item3();
                 }
             });
         }

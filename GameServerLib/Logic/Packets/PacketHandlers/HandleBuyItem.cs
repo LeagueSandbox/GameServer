@@ -80,8 +80,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             champion.Spells[spellSlot] = new Spell(champion,i.ItemType.SpellName, (byte)spellSlot);
 
-            API.ApiFunctionManager.LogInfo("This item's spell name is: " + champion.Spells[spellSlot].SpellName + " with slot: " + spellSlot);
-
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(champion, i);

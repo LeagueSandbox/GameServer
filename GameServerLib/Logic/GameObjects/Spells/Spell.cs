@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
             //Set the game script for the spell
-            if (spellName != "")
+            if (!string.IsNullOrWhiteSpace(spellName))
             {
                 spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName);
             }
