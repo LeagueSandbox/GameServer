@@ -20,13 +20,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public LaneTurret(
             string name,
+            string model,
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OuterTurret,
             int[] items = null,
             uint netId = 0
-        ) : base(name, "", x, y, team, netId)
+        ) : base(name, model, x, y, team, netId)
         {
             Type = type;
             if (items != null)
