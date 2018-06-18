@@ -233,8 +233,12 @@
     <Compile Include="Logic\GameObjects\Missiles\ObjMissile.cs" />
     <Compile Include="Logic\GameObjects\Other\Announce.cs" />
     <Compile Include="Logic\GameObjects\Spells\Buff.cs" />
-    <Compile Include="Logic\GameObjects\Stats\StatModifier.cs" />
-    <Compile Include="Logic\GameObjects\Stats\IStatsModifier.cs" />
+    <Compile Include="Logic\GameObjects\Stats\Replication.cs" />
+    <Compile Include="Logic\GameObjects\Stats\ReplicationAiTurret.cs" />
+    <Compile Include="Logic\GameObjects\Stats\ReplicationAnimatedBuilding.cs" />
+    <Compile Include="Logic\GameObjects\Stats\ReplicationHero.cs" />
+    <Compile Include="Logic\GameObjects\Stats\ReplicationMinion.cs" />
+    <Compile Include="Logic\GameObjects\Stats\StatsModifier.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\Champion.cs" />
     <Compile Include="Logic\GameObjects\Other\CollisionHandler.cs" />
     <Compile Include="Logic\GameObjects\Fountain.cs" />
@@ -249,7 +253,7 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\Minion.cs" />
     <Compile Include="Logic\GameObjects\Missiles\Projectile.cs" />
     <Compile Include="Logic\GameObjects\Stats\Stat.cs" />
-    <Compile Include="Logic\GameObjects\Stats\StatModifcator.cs" />
+    <Compile Include="Logic\GameObjects\Stats\StatModifier.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\AzirTurret.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\BaseTurret.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\LaneTurret.cs" />

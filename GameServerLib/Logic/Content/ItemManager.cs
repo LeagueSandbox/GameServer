@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType : IStatsModifier
+    public class ItemType : StatsModifier
     {
         //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
@@ -63,27 +63,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string ItemGroup { get; private set; }
         public float SellBackModifier { get; private set; }
 
-        // Stats
-        public StatModifcator HealthPoints { get; set; }
-        public StatModifcator HealthRegeneration { get; set; }
-        public StatModifcator AttackDamage { get; set; }
-        public StatModifcator AbilityPower { get; set; }
-        public StatModifcator CriticalChance { get; set; }
-        public StatModifcator Armor { get; set; }
-        public StatModifcator MagicResist { get; set; }
-        public StatModifcator AttackSpeed { get; set; }
-        public StatModifcator ArmorPenetration { get; set; }
-        public StatModifcator MagicPenetration { get; set; }
-        public StatModifcator ManaPoints { get; set; }
-        public StatModifcator ManaRegeneration { get; set; }
-        public StatModifcator LifeSteel { get; set; }
-        public StatModifcator SpellVamp { get; set; }
-        public StatModifcator Tenacity { get; set; }
-        public StatModifcator Size { get; set; }
-        public StatModifcator Range { get; set; }
-        public StatModifcator MoveSpeed { get; set; }
-        public StatModifcator GoldPerSecond { get; set; }
-
         // Recipes
         public int RecipeItem1 { get; private set; }
         public int RecipeItem2 { get; private set; }
@@ -97,26 +76,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ItemType(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             _itemInfo = itemInfo;
-
-            HealthPoints = new StatModifcator();
-            HealthRegeneration = new StatModifcator();
-            AttackDamage = new StatModifcator();
-            AbilityPower = new StatModifcator();
-            CriticalChance = new StatModifcator();
-            Armor = new StatModifcator();
-            MagicResist = new StatModifcator();
-            AttackSpeed = new StatModifcator();
-            ArmorPenetration = new StatModifcator();
-            MagicPenetration = new StatModifcator();
-            ManaPoints = new StatModifcator();
-            ManaRegeneration = new StatModifcator();
-            LifeSteel = new StatModifcator();
-            SpellVamp = new StatModifcator();
-            Tenacity = new StatModifcator();
-            Size = new StatModifcator();
-            Range = new StatModifcator();
-            MoveSpeed = new StatModifcator();
-            GoldPerSecond = new StatModifcator();
         }
 
         private void CreateRecipe(ItemManager manager)

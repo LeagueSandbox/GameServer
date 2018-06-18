@@ -153,17 +153,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public void AddStatModifier(StatModifier statModifier)
+        public void AddStatModifier(StatsModifier statModifier)
         {
             Stats.AddModifier(statModifier);
         }
 
-        public void UpdateStatModifier(StatModifier statModifier)
+        public void UpdateStatModifier(StatsModifier statModifier)
         {
             Stats.UpdateModifier(statModifier);
         }
 
-        public void RemoveStatModifier(StatModifier statModifier)
+        public void RemoveStatModifier(StatsModifier statModifier)
         {
             Stats.RemoveModifier(statModifier);
         }

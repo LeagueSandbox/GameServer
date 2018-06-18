@@ -22,6 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
+            Replication = new ReplicationAiTurret(this);
         }
 
         public void CheckForTargets()

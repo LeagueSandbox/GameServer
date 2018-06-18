@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         public void TestStatModificator1()
         {
             //Create new stat modificator with all value to 0
-            var statModificator = new StatModifcator();
+            var statModificator = new StatModifier();
             //Test if not modificated
             Assert.IsFalse(statModificator.StatModified);
 

@@ -107,13 +107,7 @@ namespace LeagueSandbox.GameServer.Logic
                 }
 
                 // TODO: replication
-                /*
-                if (u.GetStats().GetUpdatedStats().Count > 0)
-                {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
-                    u.GetStats().ClearUpdatedStats();
-                }
-                */
+                _game.PacketNotifier.NotifyUpdatedStats(u, false);
 
                 if (u.IsModelUpdated)
                 {

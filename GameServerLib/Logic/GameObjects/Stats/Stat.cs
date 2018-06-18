@@ -38,7 +38,7 @@
 
         }
 
-        public bool ApplyStatModificator(StatModifcator statModifcator)
+        public bool ApplyStatModificator(StatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
                 return false;
@@ -49,7 +49,7 @@
             return true;
         }
 
-        public bool RemoveStatModificator(StatModifcator statModifcator)
+        public bool RemoveStatModificator(StatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
                 return false;

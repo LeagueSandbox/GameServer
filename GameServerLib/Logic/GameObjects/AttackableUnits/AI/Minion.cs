@@ -70,6 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
+            Replication = new ReplicationMinion(this);
         }
 
         public Minion(

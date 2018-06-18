@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Stats
     {
-        protected UInt32 _spellsEnabled;
-        protected UInt32 _summonerSpellsEnabled;
+        public UInt64 SpellsEnabled { get; set; }
+        public UInt64 SummonerSpellsEnabled { get; set; }
 
         public float AttackSpeedFlat { get; set; }
         public float HealthPerLevel { get; set; }
@@ -105,13 +105,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
         }
 
-        public void UpdateModifier(IStatsModifier modifier)
+        public void UpdateModifier(StatsModifier modifier)
         {
             RemoveModifier(modifier);
             AddModifier(modifier);
         }
 
-        public void AddModifier(IStatsModifier modifier)
+        public void AddModifier(StatsModifier modifier)
         {
             AbilityPower.ApplyStatModificator(modifier.AbilityPower);
             Armor.ApplyStatModificator(modifier.Armor);
@@ -134,7 +134,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Tenacity.ApplyStatModificator(modifier.Tenacity);
         }
 
-        public void RemoveModifier(IStatsModifier modifier)
+        public void RemoveModifier(StatsModifier modifier)
         {
             AbilityPower.RemoveStatModificator(modifier.AbilityPower);
             Armor.RemoveStatModificator(modifier.Armor);
@@ -237,28 +237,28 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool getSpellEnabled(byte id)
         {
-            return (_spellsEnabled & (1 << id)) != 0;
+            return (SpellsEnabled & (UInt64)(1u << id)) != 0;
         }
 
         public void setSpellEnabled(byte id, bool enabled)
         {
             if (enabled)
-                _spellsEnabled |= (UInt32)(1 << id);
+                SpellsEnabled |= (UInt64)(1u << id);
             else
-                _spellsEnabled &= (UInt32)(~(1 << id));
+                SpellsEnabled &= ~(UInt64)((1u << id));
         }
 
         public bool getSummonerSpellEnabled(byte id)
         {
-            return (_summonerSpellsEnabled & (1 << id)) != 0;
+            return (SummonerSpellsEnabled & (UInt64)(1u << id)) != 0;
         }
 
         public void setSummonerSpellEnabled(byte id, bool enabled)
         { 
             if (enabled)
-                _summonerSpellsEnabled |= (UInt32)(16 << id);
+                SummonerSpellsEnabled |= (UInt64)(16u << id);
             else
-                _summonerSpellsEnabled &= (UInt32)(~(16 << id));
+                SummonerSpellsEnabled &= ~(UInt64)((16u << id));
         }
     }
 }

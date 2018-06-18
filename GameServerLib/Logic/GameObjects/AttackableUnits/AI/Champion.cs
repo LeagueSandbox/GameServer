@@ -83,6 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             Spells[4].levelUp();
             Spells[5].levelUp();
+            Replication = new ReplicationHero(this);
         }
         private string GetPlayerIndex()
         {
@@ -134,17 +135,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public void AddStatModifier(StatModifier statModifier)
+        public void AddStatModifier(StatsModifier statModifier)
         {
             Stats.AddModifier(statModifier);
         }
 
-        public void UpdateStatModifier(StatModifier statModifier)
+        public void UpdateStatModifier(StatsModifier statModifier)
         {
             Stats.UpdateModifier(statModifier);
         }
 
-        public void RemoveStatModifier(StatModifier statModifier)
+        public void RemoveStatModifier(StatsModifier statModifier)
         {
             Stats.RemoveModifier(statModifier);
         }
