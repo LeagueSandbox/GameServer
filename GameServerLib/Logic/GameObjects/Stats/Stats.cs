@@ -48,9 +48,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public float Experience { get; set; }
 
-        public float CurrentHealth { get; set; }
+        private float _currentHealth;
+        public float CurrentHealth
+        {
+            get => Math.Min(HealthPoints.Total, _currentHealth);
+            set => _currentHealth = value;
+        }
 
-        public float CurrentMana { get; set; }
+        private float _currentMana;
+        public float CurrentMana
+        {
+            get => Math.Min(ManaPoints.Total, _currentMana);
+            set => _currentMana = value;
+        }
 
         protected bool generatingGold; // Used to determine if the Stats update should include generating gold. Changed in Champion.h
         protected float spellCostReduction; //URF Buff/Lissandra's passive

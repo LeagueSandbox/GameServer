@@ -267,6 +267,7 @@ namespace LeagueSandbox.GameServer.Logic
             _visibleByTeam[team] = visible;
             if (this is AttackableUnit)
             {
+                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
             }
         }

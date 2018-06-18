@@ -69,6 +69,7 @@ namespace LeagueSandbox.GameServer.Logic
                             u.SetVisibleByTeam(team, true);
                             _game.PacketNotifier.NotifySpawn(u);
                             RemoveVisionUnit(u);
+                            // TODO: send this in one place only
                             _game.PacketNotifier.NotifyUpdatedStats(u, false);
                             continue;
                         }
@@ -78,6 +79,7 @@ namespace LeagueSandbox.GameServer.Logic
                     {
                         u.SetVisibleByTeam(team, true);
                         _game.PacketNotifier.NotifyEnterVision(u, team);
+                        // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
                     else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u))
@@ -106,7 +108,7 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
 
-                // TODO: replication
+                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(u, false);
 
                 if (u.IsModelUpdated)

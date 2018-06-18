@@ -289,6 +289,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (isLevelup)
             {
                 _game.PacketNotifier.NotifyLevelUp(this);
+                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
@@ -303,6 +304,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _championHitFlagTimer = 0;
                 }
             }
+            Replication.Update();
         }
 
         public void Respawn()

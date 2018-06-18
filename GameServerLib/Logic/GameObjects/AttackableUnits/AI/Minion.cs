@@ -116,6 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     walkToDestination(); // walk to destination (or target)
                 }
             }
+            Replication.Update();
         }
 
         public override void onCollision(GameObject collider)

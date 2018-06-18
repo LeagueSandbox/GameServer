@@ -1,6 +1,8 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Items;
+using System;
+using System.Text;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -9,6 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public string Name { get; private set; }
         protected float globalGold = 250.0f;
         protected float globalExp = 0.0f;
+
+        public UInt32 ParentNetID { get; private set; }
 
         public BaseTurret(
             string name,
@@ -19,6 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
+            ParentNetID = Force.Crc32.Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
@@ -94,6 +99,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             base.update(diff);
+            Replication.Update();
         }
 
         public override void die(AttackableUnit killer)

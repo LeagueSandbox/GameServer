@@ -19,6 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Replication(AttackableUnit owner)
         {
             _owner = owner;
+            Update();
         }
 
         protected readonly AttackableUnit _owner;

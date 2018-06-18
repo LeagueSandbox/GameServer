@@ -200,6 +200,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
+            // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
 
             // Get health from lifesteal/spellvamp
@@ -207,6 +208,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             {
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * damage);
+                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
