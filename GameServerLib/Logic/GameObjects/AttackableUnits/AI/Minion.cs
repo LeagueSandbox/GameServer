@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             MinionSpawnPosition position,
             List<Vector2> mainWaypoints,
             uint netId = 0
-        ) : base("", new MinionStats(), 40, 0, 0, 1100, netId)
+        ) : base("", new Stats(), 40, 0, 0, 1100, netId)
         {
             minionType = type;
             SpawnPosition = position;
