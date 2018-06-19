@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -191,7 +191,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
-
             GetStats().CurrentHealth = Math.Max(0.0f, GetStats().CurrentHealth - damage);
             if (!IsDead && GetStats().CurrentHealth <= 0)
             {
@@ -219,20 +218,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             {
                 text = DamageText.DAMAGE_TEXT_CRITICAL;
             }
-
-            TakeDamage(attacker, damage, type, source, text);
-        }
-
-        public virtual void TakeDamageBySpell(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, Spell spell)
-        {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
-            }
-
-            ApiEventManager.OnSpellHit.Publish(this, spell);
 
             TakeDamage(attacker, damage, type, source, text);
         }
