@@ -1,4 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic;
 using System;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.API;
@@ -98,8 +98,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
                 state != SpellState.STATE_READY)
                 return false;
-
-            stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
+            if(ManaCostsEnabled)
+                stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction());
             X = x;
             Y = y;
             X2 = x2;
@@ -136,6 +136,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public virtual void finishCasting()
         {
             spellGameScript.OnFinishCasting(Owner, this, Target);
+
             if (SpellData.ChannelDuration[Level] == 0)
             {
                 state = SpellState.STATE_COOLDOWN;
@@ -227,6 +228,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             spellGameScript.ApplyEffects(Owner, u, this, p);
+            ApiEventManager.OnSpellHit.Publish(u, this);
         }
 
         public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
@@ -319,7 +321,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
          */
         public float getCooldown()
         {
-            return SpellData.Cooldown[Level];
+            if (CooldownsEnabled)
+                return SpellData.Cooldown[Level];
+            else
+                return 0f;
         }
 
         public virtual void levelUp()

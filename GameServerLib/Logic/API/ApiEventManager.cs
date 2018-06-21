@@ -1,4 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -79,6 +79,8 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
         public static EventOnUnitDamageDealt OnUnitDamageDealt = new EventOnUnitDamageDealt();
         public static EventOnAutoAttackHit OnAutoAttackHit = new EventOnAutoAttackHit();
+        public static EventOnSpellHit OnSpellHit = new EventOnSpellHit();
+        public static EventOnMoveSuccess OnMoveSuccess = new EventOnMoveSuccess();
     }
 
 
@@ -307,6 +309,48 @@ namespace LeagueSandbox.GameServer.Logic.API
                 {
                     listener.Item3(target, isCrit);
                 }
+            });
+        }
+    }
+
+    public class EventOnSpellHit
+    {
+        private List<Tuple<Action<AttackableUnit, Spell>>> listeners = new List<Tuple<Action<AttackableUnit, Spell>>>();
+        public void AddListener(Action<AttackableUnit, Spell> callback)
+        {
+            var listenerTuple = new Tuple<Action<AttackableUnit, Spell>>(callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(Action<AttackableUnit, Spell> callback)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == callback);
+        }
+        public void Publish(AttackableUnit target, Spell spell)
+        {
+            listeners.ForEach((listener) => {
+                listener.Item1(target, spell);
+            });
+        }
+    }
+
+    public class EventOnMoveSuccess
+    {
+        private List<Tuple<Action<Champion, float, float>>> listeners = new List<Tuple<Action<Champion, float, float>>>();
+        public void AddListener(Action<Champion, float, float> callback)
+        {
+            var listenerTuple = new Tuple<Action<Champion, float, float>>(callback);
+            listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(Action<Champion, float, float> callback)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == callback);
+        }
+        public void Publish(Champion movingChampion, float x, float y)
+        {
+            listeners.ForEach((listener) => {
+                listener.Item1(movingChampion, x, y);
             });
         }
     }
