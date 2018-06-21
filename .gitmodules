@@ -1,9 +1,6 @@
-[submodule "GameServerApp/Content/Data/LeagueSandbox-Default"]
-	path = GameServerApp/Content/Data/LeagueSandbox-Default
-	url = https://github.com/LeagueofMemories/LeagueOfMemories-Spells.git
-	branch = indev
-
-[submodule "GameServerApp/Content/Data/LeagueSandbox-Default"]
-	path = GameServerApp/Content/Data/LeagueSandbox-Default
-	url = https://github.com/LeagueofMemories/LeagueOfMemories-Data.git
-	branch = indev
+[submodule "GameServerApp/Content/Data/LeagueOfMemories-Spells"]
+	path = GameServerApp/Content/Data/LeagueOfMemories-Spells
+	url = https://github.com/LeagueofMemories/LeagueOfMemories-Spells
+[submodule "GameServerApp/Content/Data/LeagueOfMemories-Data"]
+	path = GameServerApp/Content/Data/LeagueOfMemories-Data
+	url = https://github.com/LeagueofMemories/LeagueOfMemories-Data
