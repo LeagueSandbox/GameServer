@@ -33,8 +33,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 TranslationMaxGridPos = new Vector<float>
                 {
-                    X = XCellCount / MaxGridPos.X,
-                    Z = YCellCount / MaxGridPos.Z
+                    X = XCellCount / (MaxGridPos.X - MinGridPos.X),
+                    Z = YCellCount / (MaxGridPos.Z - MinGridPos.Z)
                 };
             }
         }
@@ -641,26 +641,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 throw new Exception($"Magic number at the start is unsupported! Value: {grid.MajorVersion:X}");
             }
-
-            var highestX = 0;
-            var highestY = 0;
-            foreach (var cell in grid.Cells)
-            {
-                if (cell.X > highestX)
-                {
-                    highestX = cell.X;
-                }
-                if (cell.Y > highestY)
-                {
-                    highestY = cell.Y;
-                }
-            }
-
-            // Quality variable naming Kappa
-            var asdf = grid.TranslateFromNavGrid(new Vector<float> { X = highestX, Y = highestY });
-            grid.MapWidth = asdf.X;
-            grid.MapHeight = asdf.Y;
-            grid.MiddleOfMap = new Vector2(asdf.X / 2, asdf.Y / 2);
+            
+            grid.MapWidth = grid.MaxGridPos.X + grid.MinGridPos.X;
+            grid.MapHeight = grid.MaxGridPos.Z + grid.MinGridPos.Z;
+            grid.MiddleOfMap = new Vector2(grid.MapWidth / 2, grid.MapHeight / 2);
 
             return grid;
         }
