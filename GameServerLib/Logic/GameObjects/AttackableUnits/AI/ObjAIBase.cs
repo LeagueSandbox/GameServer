@@ -371,7 +371,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 damage *= Stats.getCritDamagePct();
             }
 
-            ApiEventManager.OnAutoAttackHit.Publish(this, target, _isNextAutoCrit);
+            ApiEventManager.OnHitUnit.Publish(this, target, _isNextAutoCrit);
 
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);

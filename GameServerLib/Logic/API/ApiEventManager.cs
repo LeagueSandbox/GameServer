@@ -67,18 +67,16 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void removeAllListenersForOwner(object owner)
         {
-            OnChampionDamageTaken.RemoveListener(owner);
+            OnDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
         }
         
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnLevelUpSpell OnLevelUpSpell = new EventOnLevelUpSpell();
         public static EventOnLevelUp OnLevelUp = new EventOnLevelUp();
-        public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
-        public static EventOnChampionDamageDealt OnChampionDamageDealt = new EventOnChampionDamageDealt();
-        public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
-        public static EventOnUnitDamageDealt OnUnitDamageDealt = new EventOnUnitDamageDealt();
-        public static EventOnAutoAttackHit OnAutoAttackHit = new EventOnAutoAttackHit();
+        public static EventOnDamageTaken OnDamageTaken = new EventOnDamageTaken();
+        public static EventOnDealDamage OnDealDamage = new EventOnDealDamage();
+        public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
         public static EventOnSpellHit OnSpellHit = new EventOnSpellHit();
         public static EventOnMoveSuccess OnMoveSuccess = new EventOnMoveSuccess();
     }
@@ -105,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
     }
 
-    public class EventOnUnitDamageTaken
+    public class EventOnDamageTaken
     {
         private List<Tuple<object, AttackableUnit, Action>> listeners = new List<Tuple<object, AttackableUnit, Action>>();
         public void AddListener(object owner, AttackableUnit unit, Action callback)
@@ -127,14 +125,10 @@ namespace LeagueSandbox.GameServer.Logic.API
             listeners.ForEach((listener) => {
                 listener.Item3();
             });
-            if (unit is Champion)
-            {
-                ApiEventManager.OnChampionDamageTaken.Publish((Champion)unit);
-            }
         }
     }
 
-    public class EventOnUnitDamageDealt
+    public class EventOnDealDamage
     {
         private List<Tuple<object, AttackableUnit, Action<AttackableUnit>>> listeners = new List<Tuple<object, AttackableUnit, Action<AttackableUnit>>>();
         public void AddListener(object owner, AttackableUnit unit, Action<AttackableUnit> callback)
@@ -156,10 +150,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             listeners.ForEach((listener) => {
                 listener.Item3(target);
             });
-            if (target is Champion)
-            {
-                ApiEventManager.OnChampionDamageDealt.Publish(attacker,(Champion)target);
-            }
         }
     }
 
@@ -253,36 +243,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         }
     }
 
-    public class EventOnChampionDamageDealt
-    {
-        private List<Tuple<object, Champion, Action<Champion>>> listeners = new List<Tuple<object, Champion, Action<Champion>>>();
-        public void AddListener(object owner, Champion champion, Action<Champion> callback)
-        {
-            var listenerTuple = new Tuple<object, Champion, Action<Champion>>(owner, champion, callback);
-            listeners.Add(listenerTuple);
-        }
-
-        public void RemoveListener(object owner, Champion champion)
-        {
-            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
-        }
-        public void RemoveListener(object owner)
-        {
-            listeners.RemoveAll((listener) => listener.Item1 == owner);
-        }
-
-        public void Publish(AttackableUnit attacker, Champion target)
-        {
-            listeners.ForEach((listener) => {
-                if (listener.Item2 == attacker)
-                {
-                    listener.Item3(target);
-                }
-            });
-        }
-    }
-
-    public class EventOnAutoAttackHit
+    public class EventOnHitUnit
     {
         private List<Tuple<object, ObjAIBase, Action<AttackableUnit,bool>>> listeners = new List<Tuple<object, ObjAIBase, Action<AttackableUnit,bool>>>();
 

@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (HasEmptyScript) return false;
 
             var stats = Owner.GetStats();
-            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) >= stats.CurrentMana || 
+            if ((SpellData.ManaCost[Level] * (1 - stats.getSpellCostReduction())) > stats.CurrentMana || 
                 state != SpellState.STATE_READY)
                 return false;
             if(ManaCostsEnabled)
