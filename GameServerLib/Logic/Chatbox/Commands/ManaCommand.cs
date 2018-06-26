@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
@@ -31,8 +32,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out mp))
             {
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().ManaPoints.FlatBonus = mp;
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().CurrentMana = mp;
+                _playerManager.GetPeerInfo(peer).Champion.Stats.ManaPoints.FlatBonus += mp;
+                _playerManager.GetPeerInfo(peer).Champion.Stats.CurrentMana += mp;
             }
         }
     }

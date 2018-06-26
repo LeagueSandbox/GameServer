@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             buffer.Write((float)s.SpellData.GetCastTime()); // designerCastTime
             buffer.Write((float)0.0f); // extraTimeForCast
             buffer.Write((float)s.SpellData.GetCastTime() /*+ s.ChannelTime*/); // designerTotalTime
-            buffer.Write((float)s.getCooldown());
+            buffer.Write((float)s.GetCooldown());
             buffer.Write((float)0.0f); // startCastTime
             buffer.Write((byte)0); // flags (isAutoAttack, secondAttack, forceCastingOrChannelling, mShouldOverrideCastPosition)
             buffer.Write((byte)s.Slot);

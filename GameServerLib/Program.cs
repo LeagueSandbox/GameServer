@@ -49,6 +49,9 @@ namespace LeagueSandbox.GameServer
             catch (Exception e)
             {
                 logger.LogFatalError("Error: {0}", e.ToString());
+#if DEBUG
+                throw;
+#endif
             }
         }
 

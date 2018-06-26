@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -13,46 +14,51 @@ namespace LeagueSandbox.GameServer.Logic.Content
     {
         public string PassiveNameStr { get; set; } = "";
         public string PassiveLuaName { get; set; } = "";
-        public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
+        public int[] PassiveLevels { get; set; } = {-1, -1, -1, -1, -1, -1};
     }
+
     public class CharData
     {
         private Game _game = Program.ResolveDependency<Game>();
         private Logger _logger = Program.ResolveDependency<Logger>();
 
-        public float BaseHP { get; private set;  } = 100.0f;
-        public float BaseMP { get; private set;  } = 100.0f;
-        public float BaseDamage { get; private set;  } = 10.0f;
-        public float AttackRange { get; private set;  } = 100.0f;
-        public int MoveSpeed { get; private set;  } = 100;
-        public float Armor { get; private set;  } = 1.0f;
-        public float SpellBlock { get; private set;  } = 0.0f;
-        public float BaseStaticHPRegen { get; private set;  } = 0.30000001f;
-        public float BaseStaticMPRegen { get; private set;  } = 0.30000001f;
-        public float AttackDelayOffsetPercent { get; private set;  } = 0.0f;
-        public float HPPerLevel { get; private set;  } = 10.0f;
-        public float MPPerLevel { get; private set;  } = 10.0f;
-        public float DamagePerLevel { get; private set;  } = 10.0f;
-        public float ArmorPerLevel { get; private set;  } = 1.0f;
-        public float SpellBlockPerLevel { get; private set;  } = 0.0f;
-        public float HPRegenPerLevel { get; private set;  } = 0.0f;
-        public float MPRegenPerLevel { get; private set;  } = 0.0f;
-        public float AttackSpeedPerLevel { get; private set;  } = 0.0f;
-        public bool IsMelee { get; private set; } = false; //Yes or no
-        public float PathfindingCollisionRadius { get; private set;  } = -1.0f;
-        public float GameplayCollisionRadius { get; private set;  } = 65.0f;
+        public float BaseHP { get; private set; } = 100.0f;
+        public float BaseMP { get; private set; } = 100.0f;
+        public float BaseDamage { get; private set; } = 10.0f;
+        public float AttackRange { get; private set; } = 100.0f;
+        public int MoveSpeed { get; private set; } = 100;
+        public float Armor { get; private set; } = 1.0f;
+        public float SpellBlock { get; private set; }
+        public float BaseStaticHPRegen { get; private set; } = 0.30000001f;
+        public float BaseStaticMPRegen { get; private set; } = 0.30000001f;
+        public float AttackDelayOffsetPercent { get; private set; }
+        public float HPPerLevel { get; private set; } = 10.0f;
+        public float MPPerLevel { get; private set; } = 10.0f;
+        public float DamagePerLevel { get; private set; } = 10.0f;
+        public float ArmorPerLevel { get; private set; } = 1.0f;
+        public float SpellBlockPerLevel { get; private set; }
+        public float HPRegenPerLevel { get; private set; }
+        public float MPRegenPerLevel { get; private set; }
+        public float AttackSpeedPerLevel { get; private set; }
+        public bool IsMelee { get; private set; } //Yes or no
+        public float PathfindingCollisionRadius { get; private set; } = -1.0f;
+        public float GameplayCollisionRadius { get; private set; } = 65.0f;
+        public PrimaryAbilityResourceType PARType { get; private set; } = PrimaryAbilityResourceType.Mana;
 
-        public string[] SpellNames { get; private set; } = { "", "", "", "" };
-        public int[] MaxLevels { get; private set; } = { 5, 5, 5, 3 };
+        public string[] SpellNames { get; private set; } = {"", "", "", ""};
+        public int[] MaxLevels { get; private set; } = {5, 5, 5, 3};
+
         public int[][] SpellsUpLevels { get; private set; } =
         {
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99},
-            new int[] {1, 3, 5, 7, 9, 99}
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {1, 3, 5, 7, 9, 99},
+            new[] {1, 3, 5, 7, 9, 99}
         };
-        public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
-        public PassiveData[] Passives { get; private set; } = 
+
+        public string[] ExtraSpells { get; private set; } = {"", "", "", "", "", "", "", ""};
+
+        public PassiveData[] Passives { get; private set; } =
         {
             new PassiveData(),
             new PassiveData(),
@@ -68,6 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return;
             }
+
             ContentFile file = new ContentFile();
             try
             {
@@ -101,27 +108,34 @@ namespace LeagueSandbox.GameServer.Logic.Content
             MPRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MPRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").Equals("yes");
-            PathfindingCollisionRadius = file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
+            PathfindingCollisionRadius =
+                file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
+            Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", PARType.ToString()),
+                out var tempPar);
+            PARType = tempPar;
 
             for (int i = 0; i < 4; i++)
             {
                 SpellNames[i] = file.GetString("Data", $"Spell{i + 1}", SpellNames[i]);
-                
             }
+
             for (int i = 0; i < 4; i++)
             {
-                SpellsUpLevels[i] = file.GetIntArray("Data", $"SpellsUpLevels{i+1}", SpellsUpLevels[i]);
+                SpellsUpLevels[i] = file.GetIntArray("Data", $"SpellsUpLevels{i + 1}", SpellsUpLevels[i]);
             }
+
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
             for (int i = 0; i < 8; i++)
             {
                 ExtraSpells[i] = file.GetString("Data", $"ExtraSpell{i + 1}", ExtraSpells[i]);
             }
+
             for (int i = 0; i < 6; i++)
             {
                 Passives[i].PassiveNameStr = file.GetString("Data", $"Passive{i + 1}Name", Passives[i].PassiveNameStr);
-                Passives[i].PassiveLuaName = file.GetString("Data", $"Passive{i + 1}LuaName", Passives[i].PassiveLuaName);
+                Passives[i].PassiveLuaName =
+                    file.GetString("Data", $"Passive{i + 1}LuaName", Passives[i].PassiveLuaName);
                 Passives[i].PassiveLevels = file.GetMultiInt("Data", $"Passive{i + 1}Level", 6, -1);
             }
         }

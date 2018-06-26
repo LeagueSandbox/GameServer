@@ -85,6 +85,11 @@ namespace LeagueSandbox.GameServer
             return returnVal;
         }
 
+        public static float Clamp(this float value, float minValue, float maxValue)
+        {
+            return value < minValue ? minValue : Math.Min(value, maxValue);
+        }
+
         public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
         {
             return v.AngleBetween(vectorToGetAngle, new Vector2(0, 0));

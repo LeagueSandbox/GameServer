@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.AreEqual(0, stats.GetLevel());
+            Assert.AreEqual(0, stats.Level);
 
             stats.LevelUp();
 
@@ -74,11 +74,11 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.IsFalse(stats.IsGeneratingGold());
+            Assert.IsFalse(stats.IsGeneratingGold);
 
-            stats.SetGeneratingGold(true);
+            stats.IsGeneratingGold = true;
 
-            Assert.IsTrue(stats.IsGeneratingGold());
+            Assert.IsTrue(stats.IsGeneratingGold);
         }
     }
 }

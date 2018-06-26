@@ -64,9 +64,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyUpdatedStats(AttackableUnit u, bool partial = true)
         {
-            var us = new UpdateStats(u, partial);
-            var channel = Channel.CHL_LOW_PRIORITY;
-            _game.PacketHandlerManager.broadcastPacketVision(u, us, channel, ENet.PacketFlags.Unsequenced);
+            if (u.Replication != null)
+            {
+                var us = new UpdateStats(u.Replication, partial);
+                var channel = Channel.CHL_LOW_PRIORITY;
+                _game.PacketHandlerManager.broadcastPacketVision(u, us, channel, ENet.PacketFlags.Unsequenced);
+                if (partial)
+                {
+                    foreach (var x in u.Replication.Values)
+                    {
+                        if (x != null)
+                        {
+                            x.Changed = false;
+                        }
+                    }
+                    u.Replication.Changed = false;
+                }
+            }
         }
 
         public void NotifyFaceDirection(AttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)

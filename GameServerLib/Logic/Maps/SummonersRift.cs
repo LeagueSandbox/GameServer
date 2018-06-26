@@ -453,45 +453,45 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public void SetMinionStats(Minion m)
         {
             // Same for all minions
-            m.GetStats().MoveSpeed.BaseValue = 325.0f;
+            m.Stats.MoveSpeed.BaseValue = 325.0f;
 
             switch (m.getType())
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    m.GetStats().CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 180.0f;
-                    m.GetStats().AttackSpeedFlat = 1.250f;
+                    m.Stats.CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.Range.BaseValue = 180.0f;
+                    m.Stats.AttackSpeedFlat = 1.250f;
                     m.AutoAttackDelay = 11.8f / 30.0f;
                     m.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    m.GetStats().CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (float)(90 * 1000));
-                    m.GetStats().Range.BaseValue = 600.0f;
-                    m.GetStats().AttackSpeedFlat = 0.670f;
+                    m.Stats.CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_game.GameTime / (float)(90 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (float)(90 * 1000));
+                    m.Stats.Range.BaseValue = 600.0f;
+                    m.Stats.AttackSpeedFlat = 0.670f;
                     m.AutoAttackDelay = 14.1f / 30.0f;
                     m.AutoAttackProjectileSpeed = 650.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    m.GetStats().CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 450.0f;
-                    m.GetStats().AttackSpeedFlat = 1.0f;
+                    m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.Range.BaseValue = 450.0f;
+                    m.Stats.AttackSpeedFlat = 1.0f;
                     m.AutoAttackDelay = 9.0f / 30.0f;
                     m.AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
-                    m.GetStats().CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_game.GameTime / (float)(180 * 1000));
-                    m.GetStats().Range.BaseValue = 170.0f;
-                    m.GetStats().AttackSpeedFlat = 0.694f;
-                    m.GetStats().Armor.BaseValue = 30.0f;
-                    m.GetStats().MagicResist.BaseValue = -30.0f;
+                    m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_game.GameTime / (float)(180 * 1000));
+                    m.Stats.Range.BaseValue = 170.0f;
+                    m.Stats.AttackSpeedFlat = 0.694f;
+                    m.Stats.Armor.BaseValue = 30.0f;
+                    m.Stats.MagicResist.BaseValue = -30.0f;
                     m.IsMelee = true;
                     m.AutoAttackDelay = 15.0f / 30.0f;
                     break;

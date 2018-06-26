@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
@@ -27,7 +28,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
             }
             else if (float.TryParse(split[1], out gold))
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().Gold = gold;
+            {
+                _playerManager.GetPeerInfo(peer).Champion.Stats.Gold += gold;
+            }
         }
     }
 }

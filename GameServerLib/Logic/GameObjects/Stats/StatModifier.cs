@@ -1,6 +1,6 @@
 ﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class StatModifcator
+    public class StatModifier
     {
         public float BaseBonus { get; set; }
         public float PercentBaseBonus { get; set; }

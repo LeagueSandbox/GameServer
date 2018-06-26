@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             Stats.Gold = 475.0f;
             Stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
-            Stats.SetGeneratingGold(false);
+            Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
             for(short i = 0; i<CharData.SpellNames.Length;i++)
@@ -83,6 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
             Spells[4].levelUp();
             Spells[5].levelUp();
+            Replication = new ReplicationHero(this);
         }
         private string GetPlayerIndex()
         {
@@ -134,20 +135,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return 0;
         }
 
-        public void AddStatModifier(ChampionStatModifier statModifier)
-        {
-            Stats.AddModifier(statModifier);
-        }
-
-        public void UpdateStatModifier(ChampionStatModifier statModifier)
-        {
-            Stats.UpdateModifier(statModifier);
-        }
-
-        public void RemoveStatModifier(ChampionStatModifier statModifier)
-        {
-            Stats.RemoveModifier(statModifier);
-        }
         public bool CanMove()
         {
             return !this.HasCrowdControl(CrowdControlType.Stun) &&
@@ -156,11 +143,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 !this.IsDead &&
                 !this.HasCrowdControl(CrowdControlType.Root);
         }
+
         public bool CanCast()
         {
             return !this.HasCrowdControl(CrowdControlType.Stun) &&
                 !this.HasCrowdControl(CrowdControlType.Silence);
         }
+
         public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
@@ -269,9 +258,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (!Stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
+            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
-                Stats.SetGeneratingGold(true);
+                Stats.IsGeneratingGold = true;
                 _logger.LogCoreInfo("Generating Gold!");
             }
 
@@ -288,6 +277,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (isLevelup)
             {
                 _game.PacketNotifier.NotifyLevelUp(this);
+                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
@@ -302,6 +292,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     _championHitFlagTimer = 0;
                 }
             }
+            Replication.Update();
         }
 
         public void Respawn()
@@ -309,8 +300,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var spawnPos = GetRespawnPosition();
             setPosition(spawnPos.X, spawnPos.Y);
             _game.PacketNotifier.NotifyChampionRespawn(this);
-            GetStats().CurrentHealth = GetStats().HealthPoints.Total;
-            GetStats().CurrentMana = GetStats().HealthPoints.Total;
+            Stats.CurrentHealth = Stats.HealthPoints.Total;
+            Stats.CurrentMana = Stats.HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
         }
@@ -359,19 +350,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool LevelUp()
         {
-            var stats = GetStats();
+            var stats = Stats;
             var expMap = _game.Map.MapGameScript.ExpToLevelUp;
-            if (stats.GetLevel() >= expMap.Count)
+            if (stats.Level >= expMap.Count)
+            {
                 return false;
+            }
+
             if (stats.Experience < expMap[stats.Level])
+            {
                 return false;
+            }
 
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
-                GetStats().LevelUp();
+                Stats.LevelUp();
                 _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
                 _skillPoints++;
             }
+
             return true;
         }
 
@@ -382,7 +379,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void die(AttackableUnit killer)
         {
-            RespawnTimer = 5000 + GetStats().Level * 2500;
+            RespawnTimer = 5000 + Stats.Level * 2500;
             _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
@@ -444,7 +441,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);
 
-            cKiller.GetStats().Gold = cKiller.GetStats().Gold + gold;
+            cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

@@ -4,6 +4,8 @@ before_build:
 install:
   - git submodule update --init --recursive
 
+image: Visual Studio 2017
+
 build:
   project: GameServer.sln
   verbosity: minimal

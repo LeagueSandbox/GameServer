@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class TurretSpawn : BasePacket //TODO: check
     {
         public TurretSpawn(BaseTurret t)
-            : base(PacketCmd.PKT_S2C_TurretSpawn)
+            : base(PacketCmd.PKT_S2C_TurretSpawn, t.ParentNetID)
         {
             buffer.Write((int)t.NetId);
             buffer.Write((byte)0x40);

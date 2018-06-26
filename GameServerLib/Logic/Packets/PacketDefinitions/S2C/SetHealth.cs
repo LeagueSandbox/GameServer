@@ -10,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_SetHealth, u.NetId)
         {
             buffer.Write((short)0x0000); // unk,maybe flags for physical/magical/true dmg
-            buffer.Write((float)u.GetStats().HealthPoints.Total);
-            buffer.Write((float)u.GetStats().CurrentHealth);
+            buffer.Write((float)u.Stats.HealthPoints.Total);
+            buffer.Write((float)u.Stats.CurrentHealth);
         }
 
         public SetHealth(uint itemHash) 

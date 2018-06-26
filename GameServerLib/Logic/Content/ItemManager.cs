@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType : IStatsModifier
+    public class ItemType : StatsModifier
     {
         //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
@@ -63,27 +63,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string ItemGroup { get; private set; }
         public float SellBackModifier { get; private set; }
 
-        // Stats
-        public StatModifcator HealthPoints { get; set; }
-        public StatModifcator HealthRegeneration { get; set; }
-        public StatModifcator AttackDamage { get; set; }
-        public StatModifcator AbilityPower { get; set; }
-        public StatModifcator CriticalChance { get; set; }
-        public StatModifcator Armor { get; set; }
-        public StatModifcator MagicResist { get; set; }
-        public StatModifcator AttackSpeed { get; set; }
-        public StatModifcator ArmorPenetration { get; set; }
-        public StatModifcator MagicPenetration { get; set; }
-        public StatModifcator ManaPoints { get; set; }
-        public StatModifcator ManaRegeneration { get; set; }
-        public StatModifcator LifeSteel { get; set; }
-        public StatModifcator SpellVamp { get; set; }
-        public StatModifcator Tenacity { get; set; }
-        public StatModifcator Size { get; set; }
-        public StatModifcator Range { get; set; }
-        public StatModifcator MoveSpeed { get; set; }
-        public StatModifcator GoldPerSecond { get; set; }
-
         // Recipes
         public int RecipeItem1 { get; private set; }
         public int RecipeItem2 { get; private set; }
@@ -97,26 +76,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ItemType(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             _itemInfo = itemInfo;
-
-            HealthPoints = new StatModifcator();
-            HealthRegeneration = new StatModifcator();
-            AttackDamage = new StatModifcator();
-            AbilityPower = new StatModifcator();
-            CriticalChance = new StatModifcator();
-            Armor = new StatModifcator();
-            MagicResist = new StatModifcator();
-            AttackSpeed = new StatModifcator();
-            ArmorPenetration = new StatModifcator();
-            MagicPenetration = new StatModifcator();
-            ManaPoints = new StatModifcator();
-            ManaRegeneration = new StatModifcator();
-            LifeSteel = new StatModifcator();
-            SpellVamp = new StatModifcator();
-            Tenacity = new StatModifcator();
-            Size = new StatModifcator();
-            Range = new StatModifcator();
-            MoveSpeed = new StatModifcator();
-            GoldPerSecond = new StatModifcator();
         }
 
         private void CreateRecipe(ItemManager manager)
@@ -139,31 +98,70 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 RecipeItem1 = itemInfo.GetInt("Data", "RecipeItem1", -1),
                 RecipeItem2 = itemInfo.GetInt("Data", "RecipeItem2", -1),
                 RecipeItem3 = itemInfo.GetInt("Data", "RecipeItem3", -1),
-                RecipeItem4 = itemInfo.GetInt("Data", "RecipeItem4", -1)
+                RecipeItem4 = itemInfo.GetInt("Data", "RecipeItem4", -1),
+                Armor =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatArmorMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentArmorMod")
+                },
+                CriticalChance =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatCritChanceMod")
+                },
+                HealthPoints =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatHPPoolMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentHPPoolMod")
+                },
+                ManaPoints =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatMPPoolMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentMPPoolMod")
+                },
+                AbilityPower =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatMagicDamageMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentMagicDamageMod")
+                },
+                MagicPenetration =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatMagicPenetrationMod")
+                },
+                MoveSpeed =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatMovementSpeedMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod")
+                },
+                AttackDamage =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatPhysicalDamageMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod")
+                },
+                MagicResist =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatSpellBlockMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod")
+                },
+                AttackSpeed =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "PercentAttackSpeedMod")
+                },
+                HealthRegeneration =
+                {
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentBaseHPRegenMod")
+                },
+                ManaRegeneration =
+                {
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod")
+                },
+                CriticalDamage =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatCritDamageMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentCritDamageMod")
+                }
             };
 
-            result.Armor.FlatBonus = itemInfo.GetFloat("Data", "FlatArmorMod");
-            result.CriticalChance.FlatBonus = itemInfo.GetFloat("Data", "FlatCritChanceMod");
-            //itemInfo.SafeGetFloat("Data", "FlatCritDamageMod"); // TODO
-            result.HealthPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatHPPoolMod");
-            result.ManaPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatMPPoolMod");
-            result.AbilityPower.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicDamageMod");
-            result.MagicPenetration.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicPenetrationMod");
-            result.MoveSpeed.FlatBonus = itemInfo.GetFloat("Data", "FlatMovementSpeedMod");
-            result.AttackDamage.FlatBonus = itemInfo.GetFloat("Data", "FlatPhysicalDamageMod");
-            result.MagicResist.FlatBonus = itemInfo.GetFloat("Data", "FlatSpellBlockMod");
-            result.Armor.PercentBonus = itemInfo.GetFloat("Data", "PercentArmorMod");
-            result.AttackSpeed.FlatBonus = itemInfo.GetFloat("Data", "PercentAttackSpeedMod");
-            //itemInfo.SafeGetFloat("Data", "PercentCritDamageMod"); // TODO
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
-            result.HealthPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentHPPoolMod");
-            result.HealthRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseHPRegenMod");
-            result.ManaPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentMPPoolMod");
-            result.ManaRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod");
-            result.AbilityPower.PercentBonus = itemInfo.GetFloat("Data", "PercentMagicDamageMod");
-            result.MoveSpeed.PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod");
-            result.AttackDamage.PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod");
-            result.MagicResist.PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod");
 
             result.CreateRecipe(owner);
             return result;
@@ -171,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool GetIsTrinket()
         {
-            return ItemGroup.ToLower() == "relicbase";
+            return ItemGroup.ToLower().Equals("relicbase");
         }
     }
 

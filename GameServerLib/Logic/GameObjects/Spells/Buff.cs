@@ -55,7 +55,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
-        protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
         public bool NeedsToRemove()

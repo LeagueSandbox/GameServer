@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(model, new Stats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;

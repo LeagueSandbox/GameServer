@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.Champion.getInventory().SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().AddModifier(runeItem);
+                _playerManager.GetPeerInfo(peer).Champion.Stats.AddModifier(runeItem);
                 runeItemSlot++;
             }
 
@@ -68,10 +68,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             skillUp = new SkillUpResponse(peerInfo.Champion.NetId, 14, 1, (byte)peerInfo.Champion.getSkillPoints());
             _game.PacketHandlerManager.sendPacket(peer, skillUp, Channel.CHL_GAMEPLAY);
 
-            peerInfo.Champion.GetStats().setSpellEnabled(7, true);
-            peerInfo.Champion.GetStats().setSpellEnabled(14, true);
-            peerInfo.Champion.GetStats().setSummonerSpellEnabled(0, true);
-            peerInfo.Champion.GetStats().setSummonerSpellEnabled(1, true);
+            peerInfo.Champion.Stats.SetSpellEnabled(7, true);
+            peerInfo.Champion.Stats.SetSpellEnabled(14, true);
+            peerInfo.Champion.Stats.SetSummonerSpellEnabled(0, true);
+            peerInfo.Champion.Stats.SetSummonerSpellEnabled(1, true);
 
             var objects = _game.ObjectManager.GetObjects();
             foreach (var kv in objects)

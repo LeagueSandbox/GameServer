@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
@@ -25,10 +26,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
-                return;
             }
             else if (float.TryParse(split[1], out size))
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().Size.BaseValue = size;
+            {
+                _playerManager.GetPeerInfo(peer).Champion.Stats.Size.BaseValue += size;
+            }
         }
     }
 }

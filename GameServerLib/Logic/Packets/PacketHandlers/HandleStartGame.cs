@@ -48,6 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                         _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
+                    // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
                 }
 
