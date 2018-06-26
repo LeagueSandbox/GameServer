@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game = game;
             _logger = Program.ResolveDependency<Logger>();
         }
-
+        
         public static void LogInfo(string format)
         {
             _logger.LogCoreInfo(format);
@@ -81,6 +81,13 @@ namespace LeagueSandbox.GameServer.Logic.API
             {
                 gameObject.SetVisibleByTeam(id, visibility);
             }
+        }
+
+        public static void StopChampionMovement(Champion champion) {
+           List<Vector2> l = new List<Vector2>();
+            l.Add(new Vector2(champion.X, champion.Y));
+            champion.SetWaypoints(l);
+            _game.PacketNotifier.NotifyMovement(champion);
         }
 
         public static List<TeamId> GetTeams()
