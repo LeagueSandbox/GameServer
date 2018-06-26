@@ -16,10 +16,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             UpdateFloat(Stats.Gold, 0, 0); //mGold
             // UpdateFloat(Stats.TotalGold, 0, 1); //mGoldTotal
-            UpdateUint((UInt32)(Stats.SpellsEnabled), 0, 2); //mReplicatedSpellCanCastBitsLower1
-            UpdateUint((UInt32)(Stats.SpellsEnabled >> 32), 0, 3); //mReplicatedSpellCanCastBitsUpper1
-            UpdateUint((UInt32)(Stats.SummonerSpellsEnabled), 0, 4); //mReplicatedSpellCanCastBitsLower2
-            UpdateUint((UInt32)(Stats.SummonerSpellsEnabled >> 32), 0, 5); //mReplicatedSpellCanCastBitsUpper2
+            UpdateUint((uint)Stats.SpellsEnabled, 0, 2); //mReplicatedSpellCanCastBitsLower1
+            UpdateUint((uint)(Stats.SpellsEnabled >> 32), 0, 3); //mReplicatedSpellCanCastBitsUpper1
+            UpdateUint((uint)Stats.SummonerSpellsEnabled, 0, 4); //mReplicatedSpellCanCastBitsLower2
+            UpdateUint((uint)(Stats.SummonerSpellsEnabled >> 32), 0, 5); //mReplicatedSpellCanCastBitsUpper2
             // UpdateUint(Stats.EvolvePoints, 0, 6); //mEvolvePoints
             // UpdateUint(Stats.EvolveFlags, 0, 7); //mEvolveFlag
             for (var i = 0; i < 4; i++)
@@ -30,11 +30,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 UpdateFloat(Stats.ManaCost[45 + i], 0, 12 + i); //ManaCost_Ex{i}
             }
-            // UpdateUint((uint)Stats.ActionState, 1, 0); //ActionState
-            // UpdateBool(Stats.IsMagicImmune, 1, 1); //MagicImmune
-            // UpdateBool(Stats.IsInvulnerable, 1, 2); //IsInvulnerable
-            // UpdateBool(Stats.IsPhysicalImmune, 1, 3); //IsPhysicalImmune
-            // UpdateBool(Stats.IsLifestealImmune, 1, 4); //IsLifestealImmune
+            UpdateUint((uint)Stats.ActionState, 1, 0); //ActionState
+            UpdateBool(Stats.IsMagicImmune, 1, 1); //MagicImmune
+            UpdateBool(Stats.IsInvulnerable, 1, 2); //IsInvulnerable
+            UpdateBool(Stats.IsPhysicalImmune, 1, 3); //IsPhysicalImmune
+            UpdateBool(Stats.IsLifestealImmune, 1, 4); //IsLifestealImmune
             UpdateFloat(Stats.AttackDamage.BaseValue, 1, 5); //mBaseAttackDamage
             UpdateFloat(Stats.AbilityPower.BaseValue, 1, 6); //mBaseAbilityDamage
             // UpdateFloat(Stats.DodgeChance, 1, 7); //mDodge
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             UpdateFloat(Stats.AbilityPower.FlatBonus, 1, 16); //mFlatMagicDamageMod
             // UpdateFloat(Stats.MagicResist.FlatBonus, 1, 17); //mFlatMagicReduction
             // UpdateFloat(Stats.MagicResist.PercentBonus, 1, 18); //mPercentMagicReduction
-            UpdateFloat(Stats.GetTotalAttackSpeed(), 1, 19); //mAttackSpeedMod
+            UpdateFloat(Stats.AttackSpeedMultiplier.Total, 1, 19); //mAttackSpeedMod
             UpdateFloat(Stats.Range.FlatBonus, 1, 20); //mFlatCastRangeMod
             UpdateFloat(Stats.CooldownReduction.Total, 1, 21); //mPercentCooldownMod
             // UpdateFloat(Stats.PassiveCooldownEndTime, 1, 22); //mPassiveCooldownEndTime
@@ -80,8 +80,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // UpdateFloat(Stats.FlatPathfindingRadiusMod, 3, 12); //mPathfindingRadiusMod
             UpdateUint(Stats.Level, 3, 13); //mLevelRef
             // UpdateUint(Stats.NumberOfNeutralMinionsKilled, 3, 14); //mNumNeutralMinionsKilled
-            // UpdateBool(Stats.IsTargetable, 3, 15); //mIsTargetable
-            // UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags
+            UpdateBool(Stats.IsTargetable, 3, 15); //mIsTargetable
+            UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags
         }
     }
 }

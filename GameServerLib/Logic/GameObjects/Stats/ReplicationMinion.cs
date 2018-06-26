@@ -21,11 +21,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // UpdateFloat(Stats.LifeTimeTicks, 1, 4); //mLifetimeTicks
             // UpdateFloat(Stats.ManaPoints.Total, 1, 5); //mMaxMP
             // UpdateFloat(Stats.CurrentMana, 1, 6); //mMP
-            // UpdateUint((uint)Stats.ActionState, 1, 7); //ActionState
-            // UpdateBool(Stats.IsMagicImmune, 1, 8); //MagicImmune
-            // UpdateBool(Stats.IsInvulnerable, 1, 9); //IsInvulnerable
-            // UpdateBool(Stats.IsPhysicalImmune, 1, 10); //IsPhysicalImmune
-            // UpdateBool(Stats.IsLifestealImmune, 1, 11); //IsLifestealImmune
+            UpdateUint((uint)Stats.ActionState, 1, 7); //ActionState
+            UpdateBool(Stats.IsMagicImmune, 1, 8); //MagicImmune
+            UpdateBool(Stats.IsInvulnerable, 1, 9); //IsInvulnerable
+            UpdateBool(Stats.IsPhysicalImmune, 1, 10); //IsPhysicalImmune
+            UpdateBool(Stats.IsLifestealImmune, 1, 11); //IsLifestealImmune
             UpdateFloat(Stats.AttackDamage.BaseValue, 1, 12); //mBaseAttackDamage
             UpdateFloat(Stats.Armor.Total, 1, 13); //mArmor
             UpdateFloat(Stats.MagicResist.Total, 1, 14); //mSpellBlock
@@ -41,8 +41,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             // UpdateFloat(Stats.PerceptionRange.PercentBonus, 3, 1); //mPercentBubbleRadiusMod
             UpdateFloat(Stats.MoveSpeed.Total, 3, 2); //mMoveSpeed
             UpdateFloat(Stats.Size.Total, 3, 3); //mSkinScaleCoef(mistyped as mCrit)
-            // UpdateBool(Stats.IsTargetable, 3, 4); //mIsTargetable
-            // UpdateUint((uint)Stats.IsTargetableToTeam, 3, 5); //mIsTargetableToTeamFlags
+            UpdateBool(Stats.IsTargetable, 3, 4); //mIsTargetable
+            UpdateUint((uint)Stats.IsTargetableToTeam, 3, 5); //mIsTargetableToTeamFlags
         }
     }
 }

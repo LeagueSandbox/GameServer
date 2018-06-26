@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             RespawnTimer.Elapsed += (a, b) =>
             {
-                GetStats().CurrentHealth = GetStats().HealthPoints.Total;
+                Stats.CurrentHealth = Stats.HealthPoints.Total;
                 setState(InhibitorState.Alive);
                 IsDead = false;
             };
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (killer != null && killer is Champion)
             {
                 var c = (Champion)killer;
-                c.GetStats().Gold += GOLD_WORTH;
+                c.Stats.Gold += GOLD_WORTH;
                 _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
             }
 

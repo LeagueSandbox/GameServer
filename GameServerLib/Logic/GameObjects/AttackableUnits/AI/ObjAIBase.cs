@@ -158,11 +158,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Stats.AddModifier(statModifier);
         }
 
-        public void UpdateStatModifier(StatsModifier statModifier)
-        {
-            Stats.UpdateModifier(statModifier);
-        }
-
         public void RemoveStatModifier(StatsModifier statModifier)
         {
             Stats.RemoveModifier(statModifier);
@@ -368,7 +363,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var damage = Stats.AttackDamage.Total;
             if (_isNextAutoCrit)
             {
-                damage *= Stats.getCritDamagePct();
+                damage *= Stats.CriticalDamage.Total;
             }
 
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");

@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
 using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     return;
                 
                 var experienceToLevelUp = _game.Map.MapGameScript.ExpToLevelUp[lvl-1];
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().Experience = experienceToLevelUp;
+                _playerManager.GetPeerInfo(peer).Champion.Stats.Experience = experienceToLevelUp;
             }
         }
     }

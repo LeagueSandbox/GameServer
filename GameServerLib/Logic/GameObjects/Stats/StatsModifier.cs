@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public StatModifier AttackDamage { get; set; } = new StatModifier();
         public StatModifier AbilityPower { get; set; } = new StatModifier();
         public StatModifier CriticalChance { get; set; } = new StatModifier();
+        public StatModifier CriticalDamage { get; set; } = new StatModifier();
         public StatModifier Armor { get; set; } = new StatModifier();
         public StatModifier MagicResist { get; set; } = new StatModifier();
         public StatModifier AttackSpeed { get; set; } = new StatModifier();

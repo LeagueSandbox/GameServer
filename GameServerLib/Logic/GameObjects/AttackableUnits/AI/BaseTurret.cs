@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         {
                             var enemyChampTarget = enemyChamp.TargetUnit as Champion;
                             if (enemyChampTarget != null && // Enemy Champion is targeting an ally
-                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
+                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.Stats.Range.Total && // Enemy within range of ally
                                 GetDistanceTo(enemyChampTarget) <= Stats.Range.Total) // Enemy within range of this turret
                             {
                                 nextTarget = enemyChamp; // No priority required
@@ -113,11 +113,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 {
                     goldEarn = globalGold * 2.5f;
                     if(globalExp > 0)
-                        player.GetStats().Experience += globalExp;
+                        player.Stats.Experience += globalExp;
                 }
 
 
-                player.GetStats().Gold += goldEarn;
+                player.Stats.Gold += goldEarn;
                 _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);

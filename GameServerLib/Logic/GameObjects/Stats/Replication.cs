@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
 
         protected readonly AttackableUnit _owner;
-        protected Stats Stats => _owner.GetStats();
+        protected Stats Stats => _owner.Stats;
 
         public UInt32 NetID => _owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];

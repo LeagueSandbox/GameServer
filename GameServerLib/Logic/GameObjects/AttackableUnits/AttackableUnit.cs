@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
@@ -13,14 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        protected Stats Stats { get; }
+        public Stats Stats { get; protected set; }
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
         private string _model;
         public string Model
         {
-            get { return _model; }
+            get => _model;
             set
             {
                 _model = value;
@@ -61,11 +62,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             _game.ObjectManager.RemoveVisionUnit(this);
         }
 
-        public Stats GetStats()
-        {
-            return Stats;
-        }
-
         public override void update(float diff)
         {
             base.update(diff);
@@ -73,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
             { // update Stats (hpregen, manaregen) every 0.5 seconds
-                Stats.update(_statUpdateTimer);
+                Stats.Update(_statUpdateTimer);
                 _statUpdateTimer -= 500;
             }
         }
@@ -100,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 float expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
                 {
-                    c.GetStats().Experience += expPerChamp;
+                    c.Stats.Experience += expPerChamp;
                     _game.PacketNotifier.NotifyAddXP(c, expPerChamp);
                 }
             }
@@ -118,7 +114,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     return;
                 }
 
-                cKiller.GetStats().Gold += gold;
+                cKiller.Stats.Gold += gold;
                 _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
                 if (cKiller.KillDeathCounter < 0)
@@ -150,18 +146,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         {
             float defense = 0;
             float regain = 0;
-            var attackerStats = attacker.GetStats();
+            var attackerStats = attacker.Stats;
 
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = GetStats().Armor.Total;
+                    defense = Stats.Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
                               attackerStats.ArmorPenetration.FlatBonus;
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = GetStats().MagicPenetration.Total;
+                    defense = Stats.MagicPenetration.Total;
                     defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
                               attackerStats.MagicPenetration.FlatBonus;
                     break;
@@ -192,8 +188,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
-            GetStats().CurrentHealth = Math.Max(0.0f, GetStats().CurrentHealth - damage);
-            if (!IsDead && GetStats().CurrentHealth <= 0)
+            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
+            if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
                 die(attacker);
@@ -223,6 +219,47 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
 
             TakeDamage(attacker, damage, type, source, text);
+        }
+
+        public bool GetIsTargetableToTeam(TeamId team)
+        {
+            if (!Stats.IsTargetable)
+            {
+                return false;
+            }
+
+            if (Team == team)
+            {
+                return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NonTargetableAlly);
+            }
+
+            return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NonTargetableEnemy);
+        }
+
+        public void SetIsTargetableToTeam(TeamId team, bool targetable)
+        {
+            if (team == Team)
+            {
+                if (!targetable)
+                {
+                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NonTargetableAlly;
+                }
+                else
+                {
+                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NonTargetableAlly;
+                }
+            }
+            else
+            {
+                if (!targetable)
+                {
+                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NonTargetableEnemy;
+                }
+                else
+                {
+                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NonTargetableEnemy;
+                }
+            }
         }
     }
 

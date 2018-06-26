@@ -74,11 +74,11 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.IsFalse(stats.IsGeneratingGold());
+            Assert.IsFalse(stats.IsGeneratingGold);
 
-            stats.SetGeneratingGold(true);
+            stats.IsGeneratingGold = true;
 
-            Assert.IsTrue(stats.IsGeneratingGold());
+            Assert.IsTrue(stats.IsGeneratingGold);
         }
     }
 }

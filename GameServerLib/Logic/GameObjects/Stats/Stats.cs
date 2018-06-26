@@ -1,14 +1,23 @@
 ﻿using LeagueSandbox.GameServer.Logic.Content;
 using System;
-using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Stats
     {
-        public UInt64 SpellsEnabled { get; set; }
-        public UInt64 SummonerSpellsEnabled { get; set; }
+        public ulong SpellsEnabled { get; private set; }
+        public ulong SummonerSpellsEnabled { get; private set; }
+
+        public ActionState ActionState { get; private set; }
+        public PrimaryAbilityResourceType ParType { get; private set; }
+
+        public bool IsMagicImmune { get; set; }
+        public bool IsInvulnerable { get; set; }
+        public bool IsPhysicalImmune { get; set; }
+        public bool IsLifestealImmune { get; set; }
+        public bool IsTargetable { get; set; }
+        public IsTargetableToTeamFlags IsTargetableToTeam { get; set; }
 
         public float AttackSpeedFlat { get; set; }
         public float HealthPerLevel { get; set; }
@@ -28,6 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Stat AttackSpeedMultiplier { get; }
         public Stat CooldownReduction { get; }
         public Stat CriticalChance { get; }
+        public Stat CriticalDamage { get; }
         public Stat GoldPerSecond { get; }
         public Stat HealthPoints { get; }
         public Stat HealthRegeneration { get; }
@@ -43,9 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public Stat Tenacity { get; }
 
         public float Gold { get; set; }
-
         public byte Level { get; set; }
-
         public float Experience { get; set; }
 
         private float _currentHealth;
@@ -62,15 +70,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             set => _currentMana = value;
         }
 
-        protected bool generatingGold; // Used to determine if the Stats update should include generating gold. Changed in Champion.h
-        protected float spellCostReduction; //URF Buff/Lissandra's passive
-        protected float critDamagePct; //Default = 2... add with runes/items (change with yasuo's passive)
+        public bool IsGeneratingGold { get; set; }// Used to determine if the Stats update should include generating gold. Changed in Champion.h
+        protected float _spellCostReduction; //URF Buff/Lissandra's passive
+        public float SpellCostReduction
+        {
+            get => Spell.ManaCostsEnabled ? _spellCostReduction : 1;
+            set => _spellCostReduction = value;
+        }
 
         public Stats()
         {
-            spellCostReduction = 0;
-            critDamagePct = 2;
+            _spellCostReduction = 0;
             ManaCost = new float[64];
+            ActionState = ActionState.CanAttack | ActionState.CanCast | ActionState.CanMove | ActionState.Unknown;
+            IsTargetable = true;
+            IsTargetableToTeam = IsTargetableToTeamFlags.TargetableToAll;
 
             AbilityPower = new Stat();
             Armor = new Stat();
@@ -79,6 +93,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
+            CriticalDamage = new Stat(2, 0, 0, 0, 0);
             GoldPerSecond = new Stat();
             HealthPoints = new Stat();
             HealthRegeneration = new Stat();
@@ -93,6 +108,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SpellVamp = new Stat();
             Tenacity = new Stat();
         }
+
         public void LoadStats(CharData charData)
         {
             HealthPoints.BaseValue = charData.BaseHP;
@@ -113,12 +129,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             HealthRegenerationPerLevel = charData.HPRegenPerLevel;
             ManaRegenerationPerLevel = charData.MPRegenPerLevel;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
-        }
-
-        public void UpdateModifier(StatsModifier modifier)
-        {
-            RemoveModifier(modifier);
-            AddModifier(modifier);
+            ParType = charData.PARType;
         }
 
         public void AddModifier(StatsModifier modifier)
@@ -129,6 +140,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AttackDamage.ApplyStatModificator(modifier.AttackDamage);
             AttackSpeedMultiplier.ApplyStatModificator(modifier.AttackSpeed);
             CriticalChance.ApplyStatModificator(modifier.CriticalChance);
+            CriticalDamage.ApplyStatModificator(modifier.CriticalDamage);
             GoldPerSecond.ApplyStatModificator(modifier.GoldPerSecond);
             HealthPoints.ApplyStatModificator(modifier.HealthPoints);
             HealthRegeneration.ApplyStatModificator(modifier.HealthRegeneration);
@@ -152,6 +164,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             AttackDamage.RemoveStatModificator(modifier.AttackDamage);
             AttackSpeedMultiplier.RemoveStatModificator(modifier.AttackSpeed);
             CriticalChance.RemoveStatModificator(modifier.CriticalChance);
+            CriticalDamage.RemoveStatModificator(modifier.CriticalDamage);
             GoldPerSecond.RemoveStatModificator(modifier.GoldPerSecond);
             HealthPoints.RemoveStatModificator(modifier.HealthPoints);
             HealthRegeneration.RemoveStatModificator(modifier.HealthRegeneration);
@@ -167,23 +180,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Tenacity.RemoveStatModificator(modifier.Tenacity);
         }
 
-
-        public bool IsGeneratingGold()
-        {
-            return generatingGold;
-        }
-
-        public void SetGeneratingGold(bool b)
-        {
-            generatingGold = b;
-        }
-
         public float GetTotalAttackSpeed()
         {
             return AttackSpeedFlat*AttackSpeedMultiplier.Total;
         }
 
-        public void update(float diff)
+        public void Update(float diff)
         {
             if (HealthRegeneration.Total > 0 && CurrentHealth < HealthPoints.Total && CurrentHealth > 0)
             {
@@ -192,16 +194,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 CurrentHealth = newHealth;
             }
 
-            if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
-            {
-                var newMana = CurrentMana + (ManaRegeneration.Total * diff * 0.001f);
-                newMana = Math.Min(ManaPoints.Total, newMana);
-                CurrentMana = newMana;
-            }
-            if (generatingGold && GoldPerSecond.Total > 0)
+            if (IsGeneratingGold && GoldPerSecond.Total > 0)
             {
                 var newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
                 Gold = newGold;
+            }
+
+            if ((byte)ParType > 1)
+            {
+                return;
+            }
+
+            if (ManaRegeneration.Total > 0 && CurrentMana < ManaPoints.Total)
+            {
+                var newMana = CurrentMana + ManaRegeneration.Total * diff * 0.001f;
+                newMana = Math.Min(ManaPoints.Total, newMana);
+                CurrentMana = newMana;
             }
         }
 
@@ -210,9 +218,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Level++;
 
             HealthPoints.BaseValue += HealthPerLevel;
-            CurrentHealth = (HealthPoints.Total / (HealthPoints.Total - HealthPerLevel)) * CurrentHealth;
+            CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
             ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
-            CurrentMana = (ManaPoints.Total / (ManaPoints.Total - ManaPerLevel)) * CurrentMana;
+            CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
             AttackDamage.BaseValue = AttackDamage.BaseValue + AdPerLevel;
             Armor.BaseValue = Armor.BaseValue + ArmorPerLevel;
             MagicResist.BaseValue = MagicResist.Total + MagicResistPerLevel;
@@ -225,50 +233,103 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return Level;
         }
 
-        public float getSpellCostReduction()
+        public bool GetSpellEnabled(byte id)
         {
-            return spellCostReduction;
+            return (SpellsEnabled & 1u << id) != 0;
         }
 
-        public void setSpellCostReduction(float scr)
-        {
-            spellCostReduction = scr;
-        }
-
-        public float getCritDamagePct()
-        {
-            return critDamagePct;
-        }
-
-        public void setCritDamagePct(float critDmg)
-        {
-            critDamagePct = critDmg;
-        }
-
-        public bool getSpellEnabled(byte id)
-        {
-            return (SpellsEnabled & (UInt64)(1u << id)) != 0;
-        }
-
-        public void setSpellEnabled(byte id, bool enabled)
+        public void SetSpellEnabled(byte id, bool enabled)
         {
             if (enabled)
-                SpellsEnabled |= (UInt64)(1u << id);
+            {
+                SpellsEnabled |= 1u << id;
+            }
             else
-                SpellsEnabled &= ~(UInt64)((1u << id));
+            {
+                SpellsEnabled &= ~(1u << id);
+            }
         }
 
-        public bool getSummonerSpellEnabled(byte id)
+        public bool GetSummonerSpellEnabled(byte id)
         {
-            return (SummonerSpellsEnabled & (UInt64)(1u << id)) != 0;
+            return (SummonerSpellsEnabled & 1u << id) != 0;
         }
 
-        public void setSummonerSpellEnabled(byte id, bool enabled)
-        { 
+        public void SetSummonerSpellEnabled(byte id, bool enabled)
+        {
             if (enabled)
-                SummonerSpellsEnabled |= (UInt64)(16u << id);
+            {
+                SummonerSpellsEnabled |= 16u << id;
+            }
             else
-                SummonerSpellsEnabled &= ~(UInt64)((16u << id));
+            {
+                SummonerSpellsEnabled &= ~(16u << id);
+            }
         }
+
+        public bool GetActionState(ActionState state)
+        {
+            return ActionState.HasFlag(state);
+        }
+
+        public void SetActionState(ActionState state, bool enabled)
+        {
+            if (enabled)
+            {
+                ActionState |= state;
+            }
+            else
+            {
+                ActionState &= ~state;
+            }
+        }
+    }
+
+    [Flags]
+    public enum ActionState : uint
+    {
+        CanAttack = 1 << 0,
+        CanCast = 1 << 1,
+        CanMove = 1 << 2,
+        CanNotMove = 1 << 3,
+        Stealthed = 1 << 4,
+        RevealSpecificUnit = 1 << 5,
+        Taunted = 1 << 6,
+        Feared = 1 << 7,
+        IsFleeing = 1 << 8,
+        CanNotAttack = 1 << 9,
+        IsAsleep = 1 << 10,
+        IsNearSighted = 1 << 11,
+        IsGhosted = 1 << 12,
+
+        Charmed = 1 << 15,
+        NoRender = 1 << 16,
+        ForceRenderParticles = 1 << 17,
+        
+        Unknown = 1 << 23 // set to 1 by default, interferes with targetability
+    }
+
+    [Flags]
+    public enum IsTargetableToTeamFlags : uint
+    {
+        NonTargetableAlly = 0x800000,
+        NonTargetableEnemy = 0x1000000,
+        TargetableToAll = 0x2000000
+    }
+
+    public enum PrimaryAbilityResourceType : byte
+    {
+        Mana = 0,
+        Energy = 1,
+        None = 2,
+        Shield = 3,
+        BattleFury = 4,
+        DragonFury = 5,
+        Rage = 6,
+        Heat = 7,
+        Ferocity = 8,
+        BloodWell = 9,
+        Wind = 10,
+        Other = 11
     }
 }

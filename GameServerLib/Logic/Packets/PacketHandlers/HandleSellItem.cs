@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
 
             float sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
-            client.Champion.GetStats().Gold += sellPrice;
+            client.Champion.Stats.Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)
             {
@@ -46,7 +47,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 client.Champion.getInventory().RemoveItem(sell.slotId);
             }
 
-            client.Champion.GetStats().RemoveModifier(i.ItemType);
+            client.Champion.Stats.RemoveModifier(i.ItemType);
 
             return true;
         }
