@@ -70,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             set => _currentMana = value;
         }
 
-        public bool IsGeneratingGold { get; set; }// Used to determine if the Stats update should include generating gold. Changed in Champion.h
+        public bool IsGeneratingGold { get; set; } // Used to determine if the Stats update should include generating gold. Changed in Champion.h
         protected float _spellCostReduction; //URF Buff/Lissandra's passive
         public float SpellCostReduction
         {
@@ -182,7 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public float GetTotalAttackSpeed()
         {
-            return AttackSpeedFlat*AttackSpeedMultiplier.Total;
+            return AttackSpeedFlat * AttackSpeedMultiplier.Total;
         }
 
         public void Update(float diff)
@@ -228,11 +228,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             ManaRegeneration.BaseValue = ManaRegeneration.BaseValue + ManaRegenerationPerLevel;
         }
 
-        public float GetLevel()
-        {
-            return Level;
-        }
-
         public bool GetSpellEnabled(byte id)
         {
             return (SpellsEnabled & 1u << id) != 0;
@@ -252,7 +247,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool GetSummonerSpellEnabled(byte id)
         {
-            return (SummonerSpellsEnabled & 1u << id) != 0;
+            return (SummonerSpellsEnabled & 16u << id) != 0;
         }
 
         public void SetSummonerSpellEnabled(byte id, bool enabled)

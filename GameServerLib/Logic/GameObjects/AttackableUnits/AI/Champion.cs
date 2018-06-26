@@ -352,10 +352,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             var stats = Stats;
             var expMap = _game.Map.MapGameScript.ExpToLevelUp;
-            if (stats.GetLevel() >= expMap.Count)
+            if (stats.Level >= expMap.Count)
+            {
                 return false;
+            }
+
             if (stats.Experience < expMap[stats.Level])
+            {
                 return false;
+            }
 
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
@@ -363,6 +368,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
                 _skillPoints++;
             }
+
             return true;
         }
 
