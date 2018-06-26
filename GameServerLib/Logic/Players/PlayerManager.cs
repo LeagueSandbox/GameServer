@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();
-            c.setPosition(pos.X, pos.Y);
+            c.SetPosition(pos.X, pos.Y);
             c.LevelUp();
 
             player.Champion = c;

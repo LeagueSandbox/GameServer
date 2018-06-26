@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 {
     public static class PacketHelper
     {
-        public static byte[] intToByteArray(int i)
+        public static byte[] IntToByteArray(int i)
         {
             var ret = BitConverter.GetBytes(i);
             if (BitConverter.IsLittleEndian)

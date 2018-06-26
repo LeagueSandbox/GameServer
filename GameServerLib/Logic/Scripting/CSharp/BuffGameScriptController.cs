@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
     public class BuffGameScriptController
     {
-        ObjAIBase _unit;
-        BuffGameScript _gameScript;
+        ObjAiBase _unit;
+        IBuffGameScript _gameScript;
         String _buffNamespace;
         String _buffClass;
         Spell _ownerSpell;
@@ -20,14 +20,14 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         float _duration = -1f;
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
-        public BuffGameScriptController(ObjAIBase unit, String buffNamespace, String buffClass, Spell ownerSpell, float duration = -1f)
+        public BuffGameScriptController(ObjAiBase unit, String buffNamespace, String buffClass, Spell ownerSpell, float duration = -1f)
         {
             _buffNamespace = buffNamespace;
             _buffClass = buffClass;
             _ownerSpell = ownerSpell;
             _unit = unit;
             _duration = duration;
-            _gameScript = _scriptEngine.CreateObject<BuffGameScript>(buffNamespace, buffClass);
+            _gameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffNamespace, buffClass);
 
             if (_duration >= 0)
             {
@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         }
         public AttackableUnit GetUnit() { return _unit; }
         public Spell GetOwnerSpell() { return _ownerSpell; }
-        public BuffGameScript GetBuffGameScript() { return _gameScript; }
+        public IBuffGameScript GetBuffGameScript() { return _gameScript; }
         public String GetBuffNamespace() { return _buffNamespace; }
         public String GetBuffClass() { return _buffClass; }
         public bool IsBuffSame(String buffNamespace, String buffClass)

@@ -11,10 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UpdateStats : BasePacket
     {
         public UpdateStats(Replication r, bool partial = true)
-            : base(PacketCmd.PKT_S2C_CharStats)
+            : base(PacketCmd.PKT_S2_C_CHAR_STATS)
         {
-            buffer.Write(Environment.TickCount); // syncID
-            buffer.Write((byte)1); // updating 1 unit
+            _buffer.Write(Environment.TickCount); // syncID
+            _buffer.Write((byte)1); // updating 1 unit
 
             var values = r.Values;
 
@@ -34,8 +34,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 }
             }
 
-            buffer.Write((byte)masterMask);
-            buffer.Write((uint)r.NetID);
+            _buffer.Write((byte)masterMask);
+            _buffer.Write((uint)r.NetId);
 
             for (var i = 0; i < 6; i++)
             {
@@ -78,9 +78,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var data = stream.ToArray();
                 if (data.Length > 0)
                 {
-                    buffer.Write(fieldMask);
-                    buffer.Write((byte)data.Length);
-                    buffer.Write(data);
+                    _buffer.Write(fieldMask);
+                    _buffer.Write((byte)data.Length);
+                    _buffer.Write(data);
                 }
             }
         }

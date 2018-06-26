@@ -44,16 +44,16 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_BLUE_BOT);
                 var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_BLUE_BOT);
 
-                const int x = 400;
-                caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                cannon.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                melee.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                super.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+                const int X = 400;
+                caster.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                cannon.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                melee.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                super.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
 
-                caster.PauseAI(true);
-                cannon.PauseAI(true);
-                melee.PauseAI(true);
-                super.PauseAI(true);
+                caster.PauseAi(true);
+                cannon.PauseAi(true);
+                melee.PauseAi(true);
+                super.PauseAi(true);
 
                 caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
                 cannon.SetWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
@@ -80,16 +80,16 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_BOT);
                 var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_BOT);
 
-                const int x = 400;
-                caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                cannon.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                melee.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                super.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+                const int X = 400;
+                caster.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                cannon.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                melee.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                super.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
 
-                caster.PauseAI(true);
-                cannon.PauseAI(true);
-                melee.PauseAI(true);
-                super.PauseAI(true);
+                caster.PauseAi(true);
+                cannon.PauseAi(true);
+                melee.PauseAi(true);
+                super.PauseAi(true);
 
                 caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
                 cannon.SetWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });

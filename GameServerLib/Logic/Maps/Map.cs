@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public NavGrid NavGrid { get; private set; }
         public CollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; } = 0;
-        public MapGameScript MapGameScript { get; private set; }
+        public IMapGameScript MapGameScript { get; private set; }
 
         public Map(Game game)
         {
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             MapGameScript = GetMapScript(Id);
         }
 
-        public MapGameScript GetMapScript(int mapId)
+        public IMapGameScript GetMapScript(int mapId)
         {
             var dict = new Dictionary<int, Type>
             {
@@ -70,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return new SummonersRift();
             }
 
-            return (MapGameScript)Activator.CreateInstance(dict[mapId]);
+            return (IMapGameScript)Activator.CreateInstance(dict[mapId]);
         }
 
         public void Init()

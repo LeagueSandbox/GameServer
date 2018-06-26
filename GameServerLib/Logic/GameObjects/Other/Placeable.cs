@@ -3,13 +3,13 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Placeable : ObjAIBase
+    public class Placeable : ObjAiBase
     {
         public string Name { get; private set; }
-        public ObjAIBase Owner { get; private set; } // We'll probably want to change this in the future
+        public ObjAiBase Owner { get; private set; } // We'll probably want to change this in the future
 
         public Placeable(
-            ObjAIBase owner,
+            ObjAiBase owner,
             float x,
             float y,
             string model,

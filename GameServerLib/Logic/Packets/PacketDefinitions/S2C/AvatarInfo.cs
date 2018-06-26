@@ -8,24 +8,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class AvatarInfo : BasePacket
     {
         public AvatarInfo(ClientInfo player)
-            : base(PacketCmd.PKT_S2C_AvatarInfo, player.Champion.NetId)
+            : base(PacketCmd.PKT_S2_C_AVATAR_INFO, player.Champion.NetId)
         {
             int runesRequired = 30;
-            foreach (var rune in player.Champion.RuneList._runes)
+            foreach (var rune in player.Champion.RuneList.Runes)
             {
-                buffer.Write((short)rune.Value);
-                buffer.Write((short)0x00);
+                _buffer.Write((short)rune.Value);
+                _buffer.Write((short)0x00);
                 runesRequired--;
             }
             for (int i = 1; i <= runesRequired; i++)
             {
-                buffer.Write((short)0);
-                buffer.Write((short)0);
+                _buffer.Write((short)0);
+                _buffer.Write((short)0);
             }
 
             var summonerSpells = player.SummonerSkills;
-            buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
-            buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
+            _buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
+            _buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
 
             int talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>(){
@@ -34,17 +34,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             foreach (var talent in talentsHashes)
             {
-                buffer.Write((int)talent.Key); // hash
-                buffer.Write((byte)talent.Value); // level
+                _buffer.Write((int)talent.Key); // hash
+                _buffer.Write((byte)talent.Value); // level
                 talentsRequired--;
             }
             for (int i = 1; i <= talentsRequired; i++)
             {
-                buffer.Write((int)0);
-                buffer.Write((byte)0);
+                _buffer.Write((int)0);
+                _buffer.Write((byte)0);
             }
 
-            buffer.Write((short)30); // avatarLevel
+            _buffer.Write((short)30); // avatarLevel
         }
     }
 }

@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 _playerManager.GetClientInfoByChampion(currentChampion),
                 currentChampion.NetId
             );
-            c.setPosition(
+            c.SetPosition(
                 _playerManager.GetPeerInfo(peer).Champion.X,
                 _playerManager.GetPeerInfo(peer).Champion.Y
             );

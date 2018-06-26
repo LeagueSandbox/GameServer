@@ -71,9 +71,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            Game _game = Program.ResolveDependency<Game>();
+            Game game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            _game.PacketHandlerManager.broadcastPacket(tint, Channel.CHL_S2C);
+            game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2_C);
         }
     }
 }

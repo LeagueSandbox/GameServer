@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
                 {
-                    obj.onCollision(null);
+                    obj.OnCollision(null);
                 }
 
                 foreach (var obj2 in _objects)
@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                     if (obj.IsCollidingWith(obj2))
                     {
-                        obj.onCollision(obj2);
+                        obj.OnCollision(obj2);
                     }
                 }
             }

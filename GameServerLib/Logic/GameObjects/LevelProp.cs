@@ -39,7 +39,7 @@
             SetTeam(Enet.TeamId.TEAM_NEUTRAL);
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0.0f;
         }

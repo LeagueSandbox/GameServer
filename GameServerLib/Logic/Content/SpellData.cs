@@ -12,40 +12,40 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public enum SpellFlag : uint
     {
-        SPELL_FLAG_AutoCast = 0x00000002,
-        SPELL_FLAG_InstantCast = 0x00000004,
-        SPELL_FLAG_PersistThroughDeath = 0x00000008,
-        SPELL_FLAG_NonDispellable = 0x00000010,
-        SPELL_FLAG_NoClick = 0x00000020,
-        SPELL_FLAG_AffectImportantBotTargets = 0x00000040,
-        SPELL_FLAG_AllowWhileTaunted = 0x00000080,
-        SPELL_FLAG_NotAffectZombie = 0x00000100,
-        SPELL_FLAG_AffectUntargetable = 0x00000200,
-        SPELL_FLAG_AffectEnemies = 0x00000400,
-        SPELL_FLAG_AffectFriends = 0x00000800,
-        SPELL_FLAG_AffectBuildings = 0x00001000,
-        SPELL_FLAG_NotAffectSelf = 0x00002000,
-        SPELL_FLAG_AffectNeutral = 0x00004000,
-        SPELL_FLAG_AffectAllSides = 0x00004C00,
-        SPELL_FLAG_AffectMinions = 0x00008000,
-        SPELL_FLAG_AffectHeroes = 0x00010000,
-        SPELL_FLAG_AffectTurrets = 0x00020000,
-        SPELL_FLAG_AffectAllUnitTypes = 0x00038000,
-        SPELL_FLAG_AlwaysSelf = 0x00040000,
-        SPELL_FLAG_AffectDead = 0x00080000,
-        SPELL_FLAG_AffectNotPet = 0x00100000,
-        SPELL_FLAG_AffectBarracksOnly = 0x00200000,
-        SPELL_FLAG_IgnoreVisibilityCheck = 0x00400000,
-        SPELL_FLAG_NonTargetableAlly = 0x00800000,
-        SPELL_FLAG_NonTargetableEnemy = 0x01000000,
-        SPELL_FLAG_NonTargetableAll = 0x01800000,
-        SPELL_FLAG_TargetableToAll = 0x02000000,
-        SPELL_FLAG_AffectWards = 0x04000000,
-        SPELL_FLAG_AffectUseable = 0x08000000,
-        SPELL_FLAG_IgnoreAllyMinion = 0x10000000,
-        SPELL_FLAG_IgnoreEnemyMinion = 0x20000000,
-        SPELL_FLAG_IgnoreLaneMinion = 0x40000000,
-        SPELL_FLAG_IgnoreClones = 0x80000000
+        SPELL_FLAG_AUTO_CAST = 0x00000002,
+        SPELL_FLAG_INSTANT_CAST = 0x00000004,
+        SPELL_FLAG_PERSIST_THROUGH_DEATH = 0x00000008,
+        SPELL_FLAG_NON_DISPELLABLE = 0x00000010,
+        SPELL_FLAG_NO_CLICK = 0x00000020,
+        SPELL_FLAG_AFFECT_IMPORTANT_BOT_TARGETS = 0x00000040,
+        SPELL_FLAG_ALLOW_WHILE_TAUNTED = 0x00000080,
+        SPELL_FLAG_NOT_AFFECT_ZOMBIE = 0x00000100,
+        SPELL_FLAG_AFFECT_UNTARGETABLE = 0x00000200,
+        SPELL_FLAG_AFFECT_ENEMIES = 0x00000400,
+        SPELL_FLAG_AFFECT_FRIENDS = 0x00000800,
+        SPELL_FLAG_AFFECT_BUILDINGS = 0x00001000,
+        SPELL_FLAG_NOT_AFFECT_SELF = 0x00002000,
+        SPELL_FLAG_AFFECT_NEUTRAL = 0x00004000,
+        SPELL_FLAG_AFFECT_ALL_SIDES = 0x00004C00,
+        SPELL_FLAG_AFFECT_MINIONS = 0x00008000,
+        SPELL_FLAG_AFFECT_HEROES = 0x00010000,
+        SPELL_FLAG_AFFECT_TURRETS = 0x00020000,
+        SPELL_FLAG_AFFECT_ALL_UNIT_TYPES = 0x00038000,
+        SPELL_FLAG_ALWAYS_SELF = 0x00040000,
+        SPELL_FLAG_AFFECT_DEAD = 0x00080000,
+        SPELL_FLAG_AFFECT_NOT_PET = 0x00100000,
+        SPELL_FLAG_AFFECT_BARRACKS_ONLY = 0x00200000,
+        SPELL_FLAG_IGNORE_VISIBILITY_CHECK = 0x00400000,
+        SPELL_FLAG_NON_TARGETABLE_ALLY = 0x00800000,
+        SPELL_FLAG_NON_TARGETABLE_ENEMY = 0x01000000,
+        SPELL_FLAG_NON_TARGETABLE_ALL = 0x01800000,
+        SPELL_FLAG_TARGETABLE_TO_ALL = 0x02000000,
+        SPELL_FLAG_AFFECT_WARDS = 0x04000000,
+        SPELL_FLAG_AFFECT_USEABLE = 0x08000000,
+        SPELL_FLAG_IGNORE_ALLY_MINION = 0x10000000,
+        SPELL_FLAG_IGNORE_ENEMY_MINION = 0x20000000,
+        SPELL_FLAG_IGNORE_LANE_MINION = 0x40000000,
+        SPELL_FLAG_IGNORE_CLONES = 0x80000000
     }
     
     public enum SpellTargetType : int
@@ -386,8 +386,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
             //OrientRangeIndicatorToFacing
             OverrideCastTime = file.GetFloat("SpellData", "OverrideCastTime", OverrideCastTime);
             //public Vector3 ParticleStartOffset { get; set; } = new Vector3(0, 0, 0);
-            var _ParticleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new float[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
-            ParticleStartOffset = new Vector3(_ParticleStartOffset[0], _ParticleStartOffset[1], _ParticleStartOffset[2]);
+            var particleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new float[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
+            ParticleStartOffset = new Vector3(particleStartOffset[0], particleStartOffset[1], particleStartOffset[2]);
             //PlatformEnabled
             PointEffectName = file.GetString("SpellData", "PointEffectName", PointEffectName);
             //RangeIndicatorTextureName

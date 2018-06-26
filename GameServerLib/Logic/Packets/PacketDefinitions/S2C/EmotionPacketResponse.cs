@@ -4,13 +4,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class EmotionPacketResponse : BasePacket
     {
-        public PacketCmd cmd;
-        public uint netId;
-        public byte id;
+        public PacketCmd Cmd;
+        public uint NetId;
+        public byte Id;
 
-        public EmotionPacketResponse(byte id, uint netId) : base(PacketCmd.PKT_S2C_Emotion, netId)
+        public EmotionPacketResponse(byte id, uint netId) : base(PacketCmd.PKT_S2_C_EMOTION, netId)
         {
-            buffer.Write((byte)id);
+            _buffer.Write((byte)id);
         }
     }
 }

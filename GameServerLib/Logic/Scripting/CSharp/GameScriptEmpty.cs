@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public class GameScriptEmpty : GameScript
+    public class GameScriptEmpty : IGameScript
     {
         public void OnActivate(Champion owner)
         {

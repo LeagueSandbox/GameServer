@@ -4,16 +4,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 {
     public abstract class BasePacket : Packet
     {
-        protected BasePacket(PacketCmd cmd = PacketCmd.PKT_KeyCheck, uint netId = 0) : base(cmd)
+        protected BasePacket(PacketCmd cmd = PacketCmd.PKT_KEY_CHECK, uint netId = 0) : base(cmd)
         {
-            buffer.Write((uint)netId);
+            _buffer.Write((uint)netId);
             if ((short)cmd > 0xFF) // Make an extended packet instead
             {
-                var oldPosition = buffer.BaseStream.Position;
-                buffer.BaseStream.Position = 0;
-                buffer.BaseStream.Write(new byte[] { (byte)PacketCmd.PKT_S2C_Extended }, 0, 1);
-                buffer.BaseStream.Position = oldPosition;
-                buffer.Write((short)cmd);
+                var oldPosition = _buffer.BaseStream.Position;
+                _buffer.BaseStream.Position = 0;
+                _buffer.BaseStream.Write(new byte[] { (byte)PacketCmd.PKT_S2_C_EXTENDED }, 0, 1);
+                _buffer.BaseStream.Position = oldPosition;
+                _buffer.Write((short)cmd);
             }
         }
     }

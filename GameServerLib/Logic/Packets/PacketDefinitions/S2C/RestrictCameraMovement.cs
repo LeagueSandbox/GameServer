@@ -5,13 +5,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class RestrictCameraMovement : BasePacket
     {
         public RestrictCameraMovement(float x, float y, float z, float radius, bool enable)
-            : base(PacketCmd.PKT_S2C_RestrictCameraMovement)
+            : base(PacketCmd.PKT_S2_C_RESTRICT_CAMERA_MOVEMENT)
         {
-            buffer.Write((float)x);
-            buffer.Write((float)z);
-            buffer.Write((float)y);
-            buffer.Write((float)radius);
-            buffer.Write(enable);
+            _buffer.Write((float)x);
+            _buffer.Write((float)z);
+            _buffer.Write((float)y);
+            _buffer.Write((float)radius);
+            _buffer.Write(enable);
         }
     }
 }

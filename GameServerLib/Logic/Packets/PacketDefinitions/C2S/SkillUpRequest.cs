@@ -5,16 +5,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class SkillUpRequest
     {
-        public PacketCmd cmd;
-        public uint netId;
-        public byte skill;
+        public PacketCmd Cmd;
+        public uint NetId;
+        public byte Skill;
 
         public SkillUpRequest(byte[] data)
         {
             var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadUInt32();
-            skill = reader.ReadByte();
+            Cmd = (PacketCmd)reader.ReadByte();
+            NetId = reader.ReadUInt32();
+            Skill = reader.ReadByte();
         }
     }
 }

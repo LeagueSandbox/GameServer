@@ -28,11 +28,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
         }
-        public override void refreshWaypoints()
+        public override void RefreshWaypoints()
         {
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0;
         }

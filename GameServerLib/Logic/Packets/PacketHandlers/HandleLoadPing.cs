@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Ping_Load_Info;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_PING_LOAD_INFO;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleLoadPing(Game game, PlayerManager playerManager)
         {
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var response = new PingLoadInfoResponse(loadInfo, peerInfo.UserId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-            return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }
     }
 }

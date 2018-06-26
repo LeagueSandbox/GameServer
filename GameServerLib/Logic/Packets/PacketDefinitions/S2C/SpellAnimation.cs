@@ -8,15 +8,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpellAnimation : BasePacket
     {
         public SpellAnimation(AttackableUnit u, string animationName)
-            : base(PacketCmd.PKT_S2C_SpellAnimation, u.NetId)
+            : base(PacketCmd.PKT_S2_C_SPELL_ANIMATION, u.NetId)
         {
-            buffer.Write((byte)0xC4); // unk  <--
-            buffer.Write((uint)0); // unk     <-- One of these bytes is a flag
-            buffer.Write((uint)0); // unk     <--
-            buffer.Write((float)1.0f); // Animation speed scale factor
+            _buffer.Write((byte)0xC4); // unk  <--
+            _buffer.Write((uint)0); // unk     <-- One of these bytes is a flag
+            _buffer.Write((uint)0); // unk     <--
+            _buffer.Write((float)1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
-                buffer.Write(b);
-            buffer.Write((byte)0);
+                _buffer.Write(b);
+            _buffer.Write((byte)0);
         }
     }
 }

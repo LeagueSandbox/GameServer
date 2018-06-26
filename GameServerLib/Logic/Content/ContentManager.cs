@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
-        private static readonly string[] CONTENT_TYPES = new string[]
+        private static readonly string[] ContentTypes = new string[]
         {
             "Champions",
             "Items",
@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
-            foreach(var contentType in CONTENT_TYPES)
+            foreach(var contentType in ContentTypes)
             {
                 _content[contentType] = new Dictionary<string, List<string>>();
             }
@@ -229,7 +229,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
 
-                foreach(var contentType in CONTENT_TYPES)
+                foreach(var contentType in ContentTypes)
                 {
                     var contentSet = dataPackage.Value.SelectToken(contentType);
 

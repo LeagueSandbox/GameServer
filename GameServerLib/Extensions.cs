@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer
 
         public static void Add(this List<byte> list, int val)
         {
-            list.AddRange(PacketHelper.intToByteArray(val));
+            list.AddRange(PacketHelper.IntToByteArray(val));
         }
 
         public static void Add(this List<byte> list, string val)
@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer
             list.AddRange(Encoding.BigEndianUnicode.GetBytes(val));
         }
 
-        public static void fill(this BinaryWriter list, byte data, int length)
+        public static void Fill(this BinaryWriter list, byte data, int length)
         {
             for (var i = 0; i < length; ++i)
             {

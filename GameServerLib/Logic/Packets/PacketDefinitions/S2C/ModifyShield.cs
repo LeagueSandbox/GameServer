@@ -7,10 +7,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ModifyShield : BasePacket
     {
         public ModifyShield(AttackableUnit unit, float amount, ShieldType type)
-            : base(PacketCmd.PKT_S2C_ModifyShield, unit.NetId)
+            : base(PacketCmd.PKT_S2_C_MODIFY_SHIELD, unit.NetId)
         {
-            buffer.Write((byte)type);
-            buffer.Write((float)amount);
+            _buffer.Write((byte)type);
+            _buffer.Write((float)amount);
         }
     }
 }

@@ -7,38 +7,38 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public enum BuffType : byte
     {
-        Internal,
-        Aura,
-        CombatEnchancer,
-        CombatDehancer,
-        SpellShield,
-        Stun,
-        Invisibility,
-        Silence,
-        Taunt,
-        Polymorph,
-        Slow,
-        Snare,
-        Damage,
-        Heal,
-        Haste,
-        SpellImmunity,
-        PhysicalImmunity,
-        Invulnerability,
-        Sleep,
-        NearSight,
-        Frenzy,
-        Fear,
-        Charm,
-        Poison,
-        Suppression,
-        Blind,
-        Counter,
-        Shred,
-        Flee,
-        Knockup,
-        Knockback,
-        Disarm
+        INTERNAL,
+        AURA,
+        COMBAT_ENCHANCER,
+        COMBAT_DEHANCER,
+        SPELL_SHIELD,
+        STUN,
+        INVISIBILITY,
+        SILENCE,
+        TAUNT,
+        POLYMORPH,
+        SLOW,
+        SNARE,
+        DAMAGE,
+        HEAL,
+        HASTE,
+        SPELL_IMMUNITY,
+        PHYSICAL_IMMUNITY,
+        INVULNERABILITY,
+        SLEEP,
+        NEAR_SIGHT,
+        FRENZY,
+        FEAR,
+        CHARM,
+        POISON,
+        SUPPRESSION,
+        BLIND,
+        COUNTER,
+        SHRED,
+        FLEE,
+        KNOCKUP,
+        KNOCKBACK,
+        DISARM
     }
 
     public class Buff
@@ -48,8 +48,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; set; }
         protected bool _remove;
-        public ObjAIBase TargetUnit { get; private set; }
-        public ObjAIBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public ObjAiBase TargetUnit { get; private set; }
+        public ObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         public string Name { get; private set; }
@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto, ObjAIBase from)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
         {
             _game = game;
             Duration = dur;
@@ -72,11 +72,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
-            BuffType = BuffType.Aura;
+            BuffType = BuffType.AURA;
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto)
                : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }

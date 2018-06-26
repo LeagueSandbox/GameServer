@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float MapWidth;
         public float MapHeight;
         public Vector2 MiddleOfMap;
-        public const float Scale = 2f;
+        public const float SCALE = 2f;
 
         public void CreateTranslation()
         {
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var offset = 0;
             for (var i = 0; i < Cells.Length; i++)
             {
-                if (HasFlag(i, NavigationGridCellFlags.NotPassable))
+                if (HasFlag(i, NavigationGridCellFlags.NOT_PASSABLE))
                 {
                     byte red = 0xFF;
                     byte green = 0x00;
@@ -242,36 +242,36 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public ushort CompressX(float positionX)
         {
-            if (Math.Abs((positionX - OffsetX) * (1 / Scale)) >= ushort.MaxValue)
+            if (Math.Abs((positionX - OffsetX) * (1 / SCALE)) >= ushort.MaxValue)
             {
                 throw new Exception("Compressed position reached maximum value.");
             }
 
-            var ret = Convert.ToInt32((positionX - OffsetX) * (1 / Scale));
+            var ret = Convert.ToInt32((positionX - OffsetX) * (1 / SCALE));
 
             return (ushort)ret;
         }
 
         public ushort CompressZ(float positionZ)
         {
-            if (Math.Abs((positionZ - OffsetZ) * (1 / Scale)) >= ushort.MaxValue)
+            if (Math.Abs((positionZ - OffsetZ) * (1 / SCALE)) >= ushort.MaxValue)
             {
                 throw new Exception("Compressed position reached maximum value.");
             }
 
-            var ret = Convert.ToInt32((positionZ - OffsetZ) * (1 / Scale));
+            var ret = Convert.ToInt32((positionZ - OffsetZ) * (1 / SCALE));
 
             return (ushort)ret;
         }
 
         public float UncompressX(short shortX)
         {
-            return Convert.ToSingle(shortX / (1 / Scale) + OffsetX);
+            return Convert.ToSingle(shortX / (1 / SCALE) + OffsetX);
         }
 
         public float UncompressZ(short shortZ)
         {
-            return Convert.ToSingle(shortZ / (1 / Scale) + OffsetZ);
+            return Convert.ToSingle(shortZ / (1 / SCALE) + OffsetZ);
         }
 
         public Vector2 GetSize()
@@ -283,7 +283,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
-            return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NotPassable);
+            return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE);
         }
 
         public bool IsWalkable(float x, float y)
@@ -295,14 +295,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
-            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HasGrass);
+            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GRASS);
         }
 
         public bool HasGlobalVision(Vector2 coords)
         {
             var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
-            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HasGlobalVision);
+            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GLOBAL_VISION);
         }
 
         public float GetHeightAtLocation(Vector2 coords)
@@ -446,43 +446,43 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public enum NavigationGridCellFlags : short
     {
-        HasGrass = 0x1,
-        NotPassable = 0x2,
-        Busy = 0x4,
-        Targetted = 0x8,
-        Marked = 0x10,
-        PathedOn = 0x20,
-        SeeThrough = 0x40,
-        OtherDirectionEndToStart = 0x80,
-        HasGlobalVision = 0x100,
+        HAS_GRASS = 0x1,
+        NOT_PASSABLE = 0x2,
+        BUSY = 0x4,
+        TARGETTED = 0x8,
+        MARKED = 0x10,
+        PATHED_ON = 0x20,
+        SEE_THROUGH = 0x40,
+        OTHER_DIRECTION_END_TO_START = 0x80,
+        HAS_GLOBAL_VISION = 0x100,
         // HasTransparentTerrain = 0x42 // (SeeThrough | NotPassable)
     }
 
     class NavBinaryReader
     {
-        private BinaryReader reader;
+        private BinaryReader _reader;
 
         public NavBinaryReader(Stream stream)
         {
-            reader = new BinaryReader(stream);
+            _reader = new BinaryReader(stream);
         }
 
         public BinaryReader GetBinaryReader()
         {
-            return reader;
+            return _reader;
         }
 
         public long GetReaderPosition()
         {
-            return reader.BaseStream.Position;
+            return _reader.BaseStream.Position;
         }
 
         public Vector<float> ReadVector2()
         {
             var vector = new Vector<float>
             {
-                X = reader.ReadSingle(),
-                Y = reader.ReadSingle()
+                X = _reader.ReadSingle(),
+                Y = _reader.ReadSingle()
             };
 
             return vector;
@@ -492,9 +492,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var vector = new Vector<float>
             {
-                X = reader.ReadSingle(),
-                Y = reader.ReadSingle(),
-                Z = reader.ReadSingle()
+                X = _reader.ReadSingle(),
+                Y = _reader.ReadSingle(),
+                Z = _reader.ReadSingle()
             };
 
             return vector;
@@ -504,26 +504,26 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var result = new NavGridCell
             {
-                CenterHeight = reader.ReadSingle(),
-                SessionId = reader.ReadUInt32(),
-                ArrivalCost = reader.ReadSingle(),
-                IsOpen = reader.ReadUInt32() == 1,
-                Heuristic = reader.ReadSingle(),
-                ActorList = reader.ReadUInt32(),
-                X = reader.ReadInt16(),
-                Y = reader.ReadInt16(),
-                AdditionalCost = reader.ReadSingle(),
-                HintAsGoodCell = reader.ReadSingle(),
-                AdditionalCostRefCount = reader.ReadUInt32(),
-                GoodCellSessionId = reader.ReadUInt32(),
-                RefHintWeight = reader.ReadSingle(),
-                ArrivalDirection = reader.ReadInt16()
+                CenterHeight = _reader.ReadSingle(),
+                SessionId = _reader.ReadUInt32(),
+                ArrivalCost = _reader.ReadSingle(),
+                IsOpen = _reader.ReadUInt32() == 1,
+                Heuristic = _reader.ReadSingle(),
+                ActorList = _reader.ReadUInt32(),
+                X = _reader.ReadInt16(),
+                Y = _reader.ReadInt16(),
+                AdditionalCost = _reader.ReadSingle(),
+                HintAsGoodCell = _reader.ReadSingle(),
+                AdditionalCostRefCount = _reader.ReadUInt32(),
+                GoodCellSessionId = _reader.ReadUInt32(),
+                RefHintWeight = _reader.ReadSingle(),
+                ArrivalDirection = _reader.ReadInt16()
             };
 
-            flag = reader.ReadUInt16();
+            flag = _reader.ReadUInt16();
             result.RefHintNode = new short[2];
-            result.RefHintNode[0] = reader.ReadInt16();
-            result.RefHintNode[1] = reader.ReadInt16();
+            result.RefHintNode[0] = _reader.ReadInt16();
+            result.RefHintNode[1] = _reader.ReadInt16();
 
             return result;
         }
@@ -532,24 +532,24 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var result = new NavGridCell
             {
-                CenterHeight = reader.ReadSingle(),
-                SessionId = reader.ReadUInt32(),
-                ArrivalCost = reader.ReadSingle(),
-                IsOpen = reader.ReadUInt32() == 1,
-                Heuristic = reader.ReadSingle(),
-                X = reader.ReadInt16(),
-                Y = reader.ReadInt16(),
-                ActorList = reader.ReadUInt32()
+                CenterHeight = _reader.ReadSingle(),
+                SessionId = _reader.ReadUInt32(),
+                ArrivalCost = _reader.ReadSingle(),
+                IsOpen = _reader.ReadUInt32() == 1,
+                Heuristic = _reader.ReadSingle(),
+                X = _reader.ReadInt16(),
+                Y = _reader.ReadInt16(),
+                ActorList = _reader.ReadUInt32()
             };
 
-            reader.ReadUInt32(); // <- "Unk1"
-            result.GoodCellSessionId = reader.ReadUInt32();
-            result.RefHintWeight = reader.ReadSingle();
-            reader.ReadUInt16();   // <- "Unk2"
-            result.ArrivalDirection = reader.ReadInt16();
+            _reader.ReadUInt32(); // <- "Unk1"
+            result.GoodCellSessionId = _reader.ReadUInt32();
+            result.RefHintWeight = _reader.ReadSingle();
+            _reader.ReadUInt16();   // <- "Unk2"
+            result.ArrivalDirection = _reader.ReadInt16();
             result.RefHintNode = new short[2];
-            result.RefHintNode[0] = reader.ReadInt16();
-            result.RefHintNode[1] = reader.ReadInt16();
+            result.RefHintNode[0] = _reader.ReadInt16();
+            result.RefHintNode[1] = _reader.ReadInt16();
 
             return result;
         }

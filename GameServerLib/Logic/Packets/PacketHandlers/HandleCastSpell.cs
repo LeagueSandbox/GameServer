@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly NetworkIdManager _networkIdManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CastSpell;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_CAST_SPELL;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleCastSpell(Game game, NetworkIdManager networkIdManager, PlayerManager playerManager)
         {
@@ -27,8 +27,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var spell = new CastSpellRequest(data);
 
-            var targetObj = _game.ObjectManager.GetObjectById(spell.targetNetId);
-            var TargetUnit = targetObj as AttackableUnit;
+            var targetObj = _game.ObjectManager.GetObjectById(spell.TargetNetId);
+            var targetUnit = targetObj as AttackableUnit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null)
             {
@@ -38,12 +38,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 return false;
             }
-            var s = owner.GetSpell(spell.spellSlot);
+            var s = owner.GetSpell(spell.SpellSlot);
             if (s == null)
             {
                 return false;
             }
-            return s.cast(spell.x, spell.y, spell.x2, spell.y2, TargetUnit);
+            return s.Cast(spell.X, spell.Y, spell.X2, spell.Y2, targetUnit);
         }
     }
 }

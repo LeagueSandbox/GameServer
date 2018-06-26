@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting
 {
-    public interface BuffGameScript
+    public interface IBuffGameScript
     {
         void OnUpdate(double diff);
 
-        void OnActivate(ObjAIBase unit, Spell ownerSpell);
+        void OnActivate(ObjAiBase unit, Spell ownerSpell);
 
-        void OnDeactivate(ObjAIBase unit);
+        void OnDeactivate(ObjAiBase unit);
     }
 }

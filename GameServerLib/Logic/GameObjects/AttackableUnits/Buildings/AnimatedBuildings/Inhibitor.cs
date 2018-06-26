@@ -6,12 +6,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Inhibitor : ObjAnimatedBuilding
     {
-        private System.Timers.Timer RespawnTimer;
-        private InhibitorState State;
+        private System.Timers.Timer _respawnTimer;
+        private InhibitorState _state;
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
         private const float GOLD_WORTH = 50.0f;
-        private DateTime TimerStartTime;
+        private DateTime _timerStartTime;
         public bool RespawnAnnounced { get; private set; } = true;
 
         // TODO assists
@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;
-            State = InhibitorState.Alive;
+            _state = InhibitorState.ALIVE;
             SetTeam(team);
         }
         public override void OnAdded()
@@ -36,35 +36,35 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.ObjectManager.AddInhibitor(this);
         }
 
-        public override void die(AttackableUnit killer)
+        public override void Die(AttackableUnit killer)
         {
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
-                var u = obj as ObjAIBase;
+                var u = obj as ObjAiBase;
                 if (u != null && u.TargetUnit == this)
                 {
                     u.SetTargetUnit(null);
                     u.AutoAttackTarget = null;
                     u.IsAttacking = false;
                     _game.PacketNotifier.NotifySetTarget(u, null);
-                    u._hasMadeInitialAttack = false;
+                    u.HasMadeInitialAttack = false;
                 }
             }
 
-            if (RespawnTimer != null) //?
-                RespawnTimer.Stop();
+            if (_respawnTimer != null) //?
+                _respawnTimer.Stop();
 
-            RespawnTimer = new System.Timers.Timer(RESPAWN_TIMER) {AutoReset = false};
+            _respawnTimer = new System.Timers.Timer(RESPAWN_TIMER) {AutoReset = false};
 
-            RespawnTimer.Elapsed += (a, b) =>
+            _respawnTimer.Elapsed += (a, b) =>
             {
                 Stats.CurrentHealth = Stats.HealthPoints.Total;
-                setState(InhibitorState.Alive);
+                SetState(InhibitorState.ALIVE);
                 IsDead = false;
             };
-            RespawnTimer.Start();
-            TimerStartTime = DateTime.Now;
+            _respawnTimer.Start();
+            _timerStartTime = DateTime.Now;
 
             if (killer != null && killer is Champion)
             {
@@ -73,50 +73,50 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
             }
 
-            setState(InhibitorState.Dead, killer);
+            SetState(InhibitorState.DEAD, killer);
             RespawnAnnounced = false;
 
-            base.die(killer);
+            base.Die(killer);
         }
 
-        public void setState(InhibitorState state, GameObject killer = null)
+        public void SetState(InhibitorState state, GameObject killer = null)
         {
-            if (RespawnTimer != null && state == InhibitorState.Alive)
-                RespawnTimer.Stop();
+            if (_respawnTimer != null && state == InhibitorState.ALIVE)
+                _respawnTimer.Stop();
 
-            State = state;
+            _state = state;
             _game.PacketNotifier.NotifyInhibitorState(this, killer);
         }
 
-        public InhibitorState getState()
+        public InhibitorState GetState()
         {
-            return State;
+            return _state;
         }
 
-        public double getRespawnTimer()
+        public double GetRespawnTimer()
         {
-            var diff = DateTime.Now - TimerStartTime;
+            var diff = DateTime.Now - _timerStartTime;
             return RESPAWN_TIMER - diff.TotalMilliseconds;
         }
 
-        public override void update(float diff)
+        public override void Update(float diff)
         {
-            if (!RespawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
+            if (!RespawnAnnounced && GetState() == InhibitorState.DEAD && GetRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
                 _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
                 RespawnAnnounced = true;
             }
 
-            base.update(diff);
+            base.Update(diff);
         }
 
 
-        public override void setToRemove()
+        public override void SetToRemove()
         {
 
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0;
         }
@@ -125,7 +125,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public enum InhibitorState : byte
     {
-        Dead = 0x00,
-        Alive = 0x01
+        DEAD = 0x00,
+        ALIVE = 0x01
     }
 }

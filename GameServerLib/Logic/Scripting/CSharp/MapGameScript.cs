@@ -10,7 +10,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public interface MapGameScript
+    public interface IMapGameScript
     {
         List<int> ExpToLevelUp { get; set; }
         float GoldPerSecond { get; set; }

@@ -43,14 +43,14 @@ namespace LeagueSandbox.GameServer.Logic
             var temp = GetObjects();
             foreach (var obj in temp.Values)
             {
-                if (obj.isToRemove())
+                if (obj.IsToRemove())
                 {
                     if (obj.AttackerCount == 0)
                         RemoveObject(obj);
                     continue;
                 }
 
-                obj.update(diff);
+                obj.Update(diff);
 
                 if (!(obj is AttackableUnit))
                     continue;
@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
                 
-                var ai = u as ObjAIBase;
+                var ai = u as ObjAiBase;
                 if (ai != null)
                 {
                     var tempBuffs = ai.GetBuffs();
@@ -117,10 +117,10 @@ namespace LeagueSandbox.GameServer.Logic
                     u.IsModelUpdated = false;
                 }
 
-                if (obj.isMovementUpdated())
+                if (obj.IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(obj);
-                    obj.clearMovementUpdated();
+                    obj.ClearMovementUpdated();
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.Logic
         {
             foreach (var inhibitor in _inhibitors.Values)
             {
-                if (inhibitor.Team == team && inhibitor.getState() == InhibitorState.Alive)
+                if (inhibitor.Team == team && inhibitor.GetState() == InhibitorState.ALIVE)
                 {
                     return false;
                 }
@@ -254,7 +254,7 @@ namespace LeagueSandbox.GameServer.Logic
                     var u = kv.Value as AttackableUnit;
                     if (u == null)
                         continue;
-                    var ai = u as ObjAIBase;
+                    var ai = u as ObjAiBase;
                     if (ai != null)
                     {
                         if (ai.TargetUnit == target)

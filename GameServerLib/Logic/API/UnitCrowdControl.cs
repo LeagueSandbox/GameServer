@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 {
     public enum CrowdControlType
     {
-        Airbone, Blind, Disarm, Ground, Invulnerable, Nearsight, Root, Silence, Stasis, Stun, Suppression, Snare
+        AIRBONE, BLIND, DISARM, GROUND, INVULNERABLE, NEARSIGHT, ROOT, SILENCE, STASIS, STUN, SUPPRESSION, SNARE
     }
 
     public class UnitCrowdControl

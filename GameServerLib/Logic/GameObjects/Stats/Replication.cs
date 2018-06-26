@@ -18,14 +18,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected Replication(AttackableUnit owner)
         {
-            _owner = owner;
+            Owner = owner;
             Update();
         }
 
-        protected readonly AttackableUnit _owner;
-        protected Stats Stats => _owner.Stats;
+        protected readonly AttackableUnit Owner;
+        protected Stats Stats => Owner.Stats;
 
-        public UInt32 NetID => _owner.NetId;
+        public UInt32 NetId => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
         public bool Changed { get; set; }
 

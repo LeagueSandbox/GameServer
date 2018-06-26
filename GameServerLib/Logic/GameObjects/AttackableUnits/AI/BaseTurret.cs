@@ -6,13 +6,13 @@ using System.Text;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class BaseTurret : ObjAIBase
+    public class BaseTurret : ObjAiBase
     {
         public string Name { get; private set; }
-        protected float globalGold = 250.0f;
-        protected float globalExp = 0.0f;
+        protected float _globalGold = 250.0f;
+        protected float _globalExp = 0.0f;
 
-        public UInt32 ParentNetID { get; private set; }
+        public UInt32 ParentNetId { get; private set; }
 
         public BaseTurret(
             string name,
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
-            ParentNetID = Force.Crc32.Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
+            ParentNetId = Force.Crc32.Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);
@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override void update(float diff)
+        public override void Update(float diff)
         {
             if (!IsAttacking)
             {
@@ -98,37 +98,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
-            base.update(diff);
+            base.Update(diff);
             Replication.Update();
         }
 
-        public override void die(AttackableUnit killer)
+        public override void Die(AttackableUnit killer)
         {
             foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
             {
-                var goldEarn = globalGold;
+                var goldEarn = _globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
                 if (player.GetDistanceTo(this) <= Stats.Range.Total * 1.5f && !player.IsDead)
                 {
-                    goldEarn = globalGold * 2.5f;
-                    if(globalExp > 0)
-                        player.Stats.Experience += globalExp;
+                    goldEarn = _globalGold * 2.5f;
+                    if(_globalExp > 0)
+                        player.Stats.Experience += _globalExp;
                 }
 
 
                 player.Stats.Gold += goldEarn;
                 _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
-            base.die(killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
+            base.Die(killer);
         }
 
-        public override void refreshWaypoints()
+        public override void RefreshWaypoints()
         {
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0;
         }

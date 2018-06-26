@@ -8,20 +8,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UnitAnnounce : BasePacket
     {
         public UnitAnnounce(UnitAnnounces id, AttackableUnit target, GameObject killer = null, List<Champion> assists = null)
-            : base(PacketCmd.PKT_S2C_Announce2, target.NetId)
+            : base(PacketCmd.PKT_S2_C_ANNOUNCE2, target.NetId)
         {
             if (assists == null)
                 assists = new List<Champion>();
 
-            buffer.Write((byte)id);
+            _buffer.Write((byte)id);
             if (killer != null)
             {
-                buffer.Write((long)killer.NetId);
-                buffer.Write((int)assists.Count);
+                _buffer.Write((long)killer.NetId);
+                _buffer.Write((int)assists.Count);
                 foreach (var a in assists)
-                    buffer.Write((uint)a.NetId);
+                    _buffer.Write((uint)a.NetId);
                 for (int i = 0; i < 12 - assists.Count; i++)
-                    buffer.Write((int)0);
+                    _buffer.Write((int)0);
             }
         }
     }

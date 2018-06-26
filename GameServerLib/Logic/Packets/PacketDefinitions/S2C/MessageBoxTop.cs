@@ -6,11 +6,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class MessageBoxTop : BasePacket
     {
         public MessageBoxTop(string message)
-            : base(PacketCmd.PKT_S2C_MessageBoxTop)
+            : base(PacketCmd.PKT_S2_C_MESSAGE_BOX_TOP)
         {
             // The following structure might be incomplete or wrong
-            buffer.Write(Encoding.Default.GetBytes(message));
-            buffer.Write(0x00);
+            _buffer.Write(Encoding.Default.GetBytes(message));
+            _buffer.Write(0x00);
         }
     }
 }

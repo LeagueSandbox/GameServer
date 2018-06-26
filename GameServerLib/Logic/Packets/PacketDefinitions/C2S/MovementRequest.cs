@@ -5,29 +5,29 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class MovementRequest
     {
-        public PacketCmd cmd;
-        public int netIdHeader;
-        public MoveType type; //byte
-        public float x;
-        public float y;
-        public uint targetNetId;
-        public byte coordCount;
-        public int netId;
-        public byte[] moveData;
+        public PacketCmd Cmd;
+        public int NetIdHeader;
+        public MoveType Type; //byte
+        public float X;
+        public float Y;
+        public uint TargetNetId;
+        public byte CoordCount;
+        public int NetId;
+        public byte[] MoveData;
 
         public MovementRequest(byte[] data)
         {
             var baseStream = new MemoryStream(data);
             var reader = new BinaryReader(baseStream);
-            cmd = (PacketCmd)reader.ReadByte();
-            netIdHeader = reader.ReadInt32();
-            type = (MoveType)reader.ReadByte();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            targetNetId = reader.ReadUInt32();
-            coordCount = reader.ReadByte();
-            netId = reader.ReadInt32();
-            moveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            Cmd = (PacketCmd)reader.ReadByte();
+            NetIdHeader = reader.ReadInt32();
+            Type = (MoveType)reader.ReadByte();
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            TargetNetId = reader.ReadUInt32();
+            CoordCount = reader.ReadByte();
+            NetId = reader.ReadInt32();
+            MoveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
             reader.Close();
         }
     }

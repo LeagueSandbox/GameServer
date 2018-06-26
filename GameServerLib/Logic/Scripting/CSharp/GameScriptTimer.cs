@@ -32,12 +32,12 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             }
         }
 
-        public double getPercentageFinished()
+        public double GetPercentageFinished()
         {
             return _currentTime / _duration * 100.0;
         }
 
-        public float getCurrentTime()
+        public float GetCurrentTime()
         {
             return _currentTime;
         }

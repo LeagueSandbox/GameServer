@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_ChatBoxMessage;
+        public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
         public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
 
         public HandleChatBoxMessage(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager,
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var message = new ChatMessage(data);
-            var split = message.msg.Split(' ');
+            var split = message.Msg.Split(' ');
             if (split.Length > 1)
             {
                 int x, y = 0;
@@ -39,10 +39,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         var response = new AttentionPingResponse(
                             _playerManager.GetPeerInfo(peer),
-                            new AttentionPingRequest(x, y, 0, Pings.Ping_Default)
+                            new AttentionPingRequest(x, y, 0, Pings.PING_DEFAULT)
                         );
-                        _game.PacketHandlerManager.broadcastPacketTeam(
-                            _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2C
+                        _game.PacketHandlerManager.BroadcastPacketTeam(
+                            _playerManager.GetPeerInfo(peer).Team, response, Channel.CHL_S2_C
                         );
                     }
                 }
@@ -50,24 +50,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             #region Commands
             // Execute commands
-            var CommandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
-            if (message.msg.StartsWith(CommandStarterCharacter))
+            var commandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
+            if (message.Msg.StartsWith(commandStarterCharacter))
             {
-                message.msg = message.msg.Remove(0, 1);
-                split = message.msg.ToLower().Split(' ');
+                message.Msg = message.Msg.Remove(0, 1);
+                split = message.Msg.ToLower().Split(' ');
 
                 var command = _chatCommandManager.GetCommand(split[0]);
                 if (command != null)
                 {
                     try
                     {
-                        command.Execute(peer, true, message.msg);
+                        command.Execute(peer, true, message.Msg);
                     }
                     catch
                     {
                         _logger.LogCoreWarning(command + " sent an exception.");
                         var dm = new DebugMessage("Something went wrong...Did you wrote the command well ? ");
-                        _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
+                        _game.PacketHandlerManager.SendPacket(peer, dm, Channel.CHL_S2_C);
                     }
                     return true;
                 }
@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var debugMessage = string.Format("{0} ({1}): </font><font color=\"#FFFFFF\">{2}",
                 _playerManager.GetPeerInfo(peer).Name,
                 _playerManager.GetPeerInfo(peer).Champion.Model,
-                message.msg);
+                message.Msg);
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = new DebugMessage(teamChatColor + "[All] " + debugMessage);
@@ -97,24 +97,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.Config.ChatCheatsEnabled)
             {
-                _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
-                _game.PacketHandlerManager.broadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2C);
+                _game.PacketHandlerManager.BroadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.BroadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2_C);
                 return true;
             }
 
-            switch (message.type)
+            switch (message.Type)
             {
                 case ChatType.CHAT_ALL:
-                    _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
-                    _game.PacketHandlerManager.broadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2C);
+                    _game.PacketHandlerManager.BroadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.BroadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2_C);
                     return true;
                 case ChatType.CHAT_TEAM:
                     dmTeam = new DebugMessage(teamChatColor + debugMessage);
-                    _game.PacketHandlerManager.broadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2C);
+                    _game.PacketHandlerManager.BroadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2_C);
                     return true;
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");
-                    return _game.PacketHandlerManager.sendPacket(peer, data, Channel.CHL_COMMUNICATION);
+                    return _game.PacketHandlerManager.SendPacket(peer, data, Channel.CHL_COMMUNICATION);
             }
         }
     }

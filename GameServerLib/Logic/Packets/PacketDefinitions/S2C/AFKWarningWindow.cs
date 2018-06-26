@@ -2,10 +2,10 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
-    public class AFKWarningWindow : Packet
+    public class AfkWarningWindow : Packet
     {
-        public AFKWarningWindow()
-            : base(PacketCmd.PKT_S2C_AFKWarningWindow)
+        public AfkWarningWindow()
+            : base(PacketCmd.PKT_S2_C_AFK_WARNING_WINDOW)
         {
             // The following structure might be incomplete or wrong
         }

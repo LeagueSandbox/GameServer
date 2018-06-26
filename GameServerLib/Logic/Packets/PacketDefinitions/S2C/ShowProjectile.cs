@@ -6,9 +6,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ShowProjectile : BasePacket
     {
         public ShowProjectile(Projectile p) 
-            : base(PacketCmd.PKT_S2C_ShowProjectile, p.Owner.NetId)
+            : base(PacketCmd.PKT_S2_C_SHOW_PROJECTILE, p.Owner.NetId)
         {
-            buffer.Write(p.NetId);
+            _buffer.Write(p.NetId);
         }
     }
 }

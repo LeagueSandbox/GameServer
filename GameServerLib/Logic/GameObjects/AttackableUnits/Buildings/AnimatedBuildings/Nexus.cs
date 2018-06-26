@@ -21,18 +21,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SetTeam(team);
         }
 
-        public override void die(AttackableUnit killer)
+        public override void Die(AttackableUnit killer)
         {
             _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(this);
         }
 
-        public override void setToRemove()
+        public override void SetToRemove()
         {
 
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0;
         }

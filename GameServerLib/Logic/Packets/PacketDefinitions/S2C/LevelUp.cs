@@ -6,10 +6,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class LevelUp : BasePacket
     {
         public LevelUp(Champion c)
-            : base(PacketCmd.PKT_S2C_LevelUp, c.NetId)
+            : base(PacketCmd.PKT_S2_C_LEVEL_UP, c.NetId)
         {
-            buffer.Write(c.Stats.Level);
-            buffer.Write(c.getSkillPoints());
+            _buffer.Write(c.Stats.Level);
+            _buffer.Write(c.GetSkillPoints());
         }
     }
 }

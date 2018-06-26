@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Logger _logger;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Click;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_CLICK;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleClick(Game game, Logger logger, PlayerManager playerManager)
         {
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var click = new Click(data);
-            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.targetNetId}";
+            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.TargetNetId}";
             _logger.LogCoreInfo(msg);
 
             return true;

@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return hash;
         }
 
-        static public UInt32 HashStringSDBM(string section, string name)
+        static public UInt32 HashStringSdbm(string section, string name)
         {
             UInt32 hash = 0;
             foreach (var c in section)

@@ -22,28 +22,28 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Game _game = Program.ResolveDependency<Game>();
         private Logger _logger = Program.ResolveDependency<Logger>();
 
-        public float BaseHP { get; private set; } = 100.0f;
-        public float BaseMP { get; private set; } = 100.0f;
+        public float BaseHp { get; private set; } = 100.0f;
+        public float BaseMp { get; private set; } = 100.0f;
         public float BaseDamage { get; private set; } = 10.0f;
         public float AttackRange { get; private set; } = 100.0f;
         public int MoveSpeed { get; private set; } = 100;
         public float Armor { get; private set; } = 1.0f;
         public float SpellBlock { get; private set; }
-        public float BaseStaticHPRegen { get; private set; } = 0.30000001f;
-        public float BaseStaticMPRegen { get; private set; } = 0.30000001f;
+        public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
+        public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float AttackDelayOffsetPercent { get; private set; }
-        public float HPPerLevel { get; private set; } = 10.0f;
-        public float MPPerLevel { get; private set; } = 10.0f;
+        public float HpPerLevel { get; private set; } = 10.0f;
+        public float MpPerLevel { get; private set; } = 10.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
         public float ArmorPerLevel { get; private set; } = 1.0f;
         public float SpellBlockPerLevel { get; private set; }
-        public float HPRegenPerLevel { get; private set; }
-        public float MPRegenPerLevel { get; private set; }
+        public float HpRegenPerLevel { get; private set; }
+        public float MpRegenPerLevel { get; private set; }
         public float AttackSpeedPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
-        public PrimaryAbilityResourceType PARType { get; private set; } = PrimaryAbilityResourceType.Mana;
+        public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
 
         public string[] SpellNames { get; private set; } = {"", "", "", ""};
         public int[] MaxLevels { get; private set; } = {5, 5, 5, 3};
@@ -89,31 +89,31 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 return;
             }
 
-            BaseHP = file.GetFloat("Data", "BaseHP", BaseHP);
-            BaseMP = file.GetFloat("Data", "BaseMP", BaseMP);
+            BaseHp = file.GetFloat("Data", "BaseHP", BaseHp);
+            BaseMp = file.GetFloat("Data", "BaseMP", BaseMp);
             BaseDamage = file.GetFloat("Data", "BaseDamage", BaseDamage);
             AttackRange = file.GetFloat("Data", "AttackRange", AttackRange);
             MoveSpeed = file.GetInt("Data", "MoveSpeed", MoveSpeed);
             Armor = file.GetFloat("Data", "Armor", Armor);
             SpellBlock = file.GetFloat("Data", "SpellBlock", SpellBlock);
-            BaseStaticHPRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHPRegen);
-            BaseStaticMPRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMPRegen);
+            BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
+            BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
             AttackDelayOffsetPercent = file.GetFloat("Data", "AttackDelayOffsetPercent", AttackDelayOffsetPercent);
-            HPPerLevel = file.GetFloat("Data", "HPPerLevel", HPPerLevel);
-            MPPerLevel = file.GetFloat("Data", "MPPerLevel", MPPerLevel);
+            HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
+            MpPerLevel = file.GetFloat("Data", "MPPerLevel", MpPerLevel);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
             ArmorPerLevel = file.GetFloat("Data", "ArmorPerLevel", ArmorPerLevel);
             SpellBlockPerLevel = file.GetFloat("Data", "SpellBlockPerLevel", SpellBlockPerLevel);
-            HPRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HPRegenPerLevel);
-            MPRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MPRegenPerLevel);
+            HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
+            MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").Equals("yes");
             PathfindingCollisionRadius =
                 file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
-            Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", PARType.ToString()),
+            Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
                 out var tempPar);
-            PARType = tempPar;
+            ParType = tempPar;
 
             for (int i = 0; i < 4; i++)
             {

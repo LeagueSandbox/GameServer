@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
                 var opcode = Convert.ToByte(s[1], 16);
                 var packet = new Packets.Packet((PacketCmd)opcode);
-                var buffer = packet.getBuffer();
+                var buffer = packet.GetBuffer();
 
                 for (int i = 2; i < s.Length; i++)
                 {
@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     }
                 }
 
-                _game.PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);
+                _game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
             }
             catch { }
         }

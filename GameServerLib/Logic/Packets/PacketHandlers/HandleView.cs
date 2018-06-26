@@ -9,8 +9,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Game _game;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_ViewReq;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_VIEW_REQ;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleView(Game game)
         {
@@ -21,15 +21,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var request = new ViewRequest(data);
             var answer = new ViewResponse(request);
-            if (request.requestNo == 0xFE)
+            if (request.RequestNo == 0xFE)
             {
-                answer.setRequestNo(0xFF);
+                answer.SetRequestNo(0xFF);
             }
             else
             {
-                answer.setRequestNo(request.requestNo);
+                answer.SetRequestNo(request.RequestNo);
             }
-            _game.PacketHandlerManager.sendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2_C, PacketFlags.None);
             return true;
         }
     }

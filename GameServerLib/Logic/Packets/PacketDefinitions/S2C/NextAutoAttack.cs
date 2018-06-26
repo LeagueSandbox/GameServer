@@ -7,32 +7,32 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class NextAutoAttack : BasePacket
     {
         public NextAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
-            : base(PacketCmd.PKT_S2C_NextAutoAttack, attacker.NetId)
+            : base(PacketCmd.PKT_S2_C_NEXT_AUTO_ATTACK, attacker.NetId)
         {
-            buffer.Write(attacked.NetId);
+            _buffer.Write(attacked.NetId);
             if (initial)
-                buffer.Write((byte)0x80); // extraTime
+                _buffer.Write((byte)0x80); // extraTime
             else
-                buffer.Write((byte)0x7F); // extraTime
+                _buffer.Write((byte)0x7F); // extraTime
 
-            buffer.Write(futureProjNetId);
+            _buffer.Write(futureProjNetId);
             if (isCritical)
-                buffer.Write((byte)0x49); // attackSlot
+                _buffer.Write((byte)0x49); // attackSlot
             else
-                buffer.Write((byte)0x40); // attackSlot
+                _buffer.Write((byte)0x40); // attackSlot
 
-            buffer.Write((byte)0x40);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x7B);
-            buffer.Write((byte)0xEF);
-            buffer.Write((byte)0xEF);
-            buffer.Write((byte)0x01);
-            buffer.Write((byte)0x2E);
-            buffer.Write((byte)0x55);
-            buffer.Write((byte)0x55);
-            buffer.Write((byte)0x35);
-            buffer.Write((byte)0x94);
-            buffer.Write((byte)0xD3);
+            _buffer.Write((byte)0x40);
+            _buffer.Write((byte)0x01);
+            _buffer.Write((byte)0x7B);
+            _buffer.Write((byte)0xEF);
+            _buffer.Write((byte)0xEF);
+            _buffer.Write((byte)0x01);
+            _buffer.Write((byte)0x2E);
+            _buffer.Write((byte)0x55);
+            _buffer.Write((byte)0x55);
+            _buffer.Write((byte)0x35);
+            _buffer.Write((byte)0x94);
+            _buffer.Write((byte)0xD3);
         }
     }
 }

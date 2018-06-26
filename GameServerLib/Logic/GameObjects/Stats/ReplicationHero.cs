@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             UpdateFloat(Stats.Size.Total, 3, 11); //mSkinScaleCoef(mistyped as mCrit)
             // UpdateFloat(Stats.FlatPathfindingRadiusMod, 3, 12); //mPathfindingRadiusMod
             UpdateUint(Stats.Level, 3, 13); //mLevelRef
-            UpdateUint((uint)_owner.MinionCounter, 3, 14); //mNumNeutralMinionsKilled
+            UpdateUint((uint)Owner.MinionCounter, 3, 14); //mNumNeutralMinionsKilled
             UpdateBool(Stats.IsTargetable, 3, 15); //mIsTargetable
             UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags
         }

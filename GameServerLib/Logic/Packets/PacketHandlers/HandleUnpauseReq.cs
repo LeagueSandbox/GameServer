@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_UnpauseGame;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSE_GAME;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleUnpauseReq(Game game, PlayerManager playerManager)
         {

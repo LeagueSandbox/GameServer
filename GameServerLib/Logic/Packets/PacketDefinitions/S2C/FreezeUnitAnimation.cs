@@ -7,12 +7,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class FreezeUnitAnimation : BasePacket
     {
         public FreezeUnitAnimation(AttackableUnit u, bool freeze)
-            : base(PacketCmd.PKT_S2C_FreezeUnitAnimation, u.NetId)
+            : base(PacketCmd.PKT_S2_C_FREEZE_UNIT_ANIMATION, u.NetId)
         {
             byte flag = 0xDE;
             if (freeze)
                 flag = 0xDD;
-            buffer.Write(flag);
+            _buffer.Write(flag);
         }
     }
 }

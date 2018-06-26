@@ -50,25 +50,25 @@ namespace LeagueSandbox.GameServer.Logic.API
             return newTimer;
         }
 
-        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, ObjAIBase onto, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(String buffName, float duration, int stacks, ObjAiBase onto, float removeAfter = -1.0f)
         {
-            return AddBuffHUDVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
+            return AddBuffHudVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
         }
 
-        public static Buff AddBuffHUDVisual(String buffName, float duration, int stacks, ObjAIBase onto, ObjAIBase from, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(String buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
         {
             Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
                 ApiFunctionManager.CreateTimer(removeAfter, () => {
-                    RemoveBuffHUDVisual(b);
+                    RemoveBuffHudVisual(b);
                 });
             }
             return b;
         }
 
-        public static void RemoveBuffHUDVisual(Buff b)
+        public static void RemoveBuffHudVisual(Buff b)
         {
             _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
             b.TargetUnit.RemoveBuffSlot(b);
@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.ObjectManager.Teams;
         }
 
-        public static void TeleportTo(ObjAIBase unit, float x, float y)
+        public static void TeleportTo(ObjAiBase unit, float x, float y)
         {
             var coords = new Vector2(x, y);
             var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, int stacks, ObjAIBase onto, ObjAIBase from)
+        public static void AddBuff(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from)
         {
             var buff = new Buff(_game, buffName, duration, stacks, onto, from);
             onto.AddBuff(buff);
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void PrintChat(string msg)
         {
             var dm = new DebugMessage(msg);
-            _game.PacketHandlerManager.broadcastPacket(dm, Channel.CHL_S2C);
+            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2_C);
         }
 
         public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
@@ -162,7 +162,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             champion.Model = model;
         }
 
-        public static void CancelDash(ObjAIBase unit) {
+        public static void CancelDash(ObjAiBase unit) {
             // Allow the user to move the champion
             unit.SetDashingState(false);
 
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
-        public static void DashToUnit(ObjAIBase unit,
+        public static void DashToUnit(ObjAiBase unit,
                                   Target target,
                                   float dashSpeed,
                                   bool keepFacingLastDirection,
@@ -221,7 +221,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             unit.TargetUnit = null;
         }
 
-        public static void DashToLocation(ObjAIBase unit,
+        public static void DashToLocation(ObjAiBase unit,
                                  float x,
                                  float y,
                                  float dashSpeed,
@@ -260,7 +260,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void SendPacket(string packetString)
         {
             var packet = StringToByteArray(packetString);
-            _game.PacketHandlerManager.broadcastPacket(packet, Channel.CHL_S2C);
+            _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2_C);
         }
 
         public static bool UnitIsChampion(GameObject unit)

@@ -12,33 +12,33 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class EnterVisionAgain : BasePacket
     {
         public EnterVisionAgain(Minion m) 
-            : base(PacketCmd.PKT_S2C_ObjectSpawn, m.NetId)
+            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, m.NetId)
         {
-            buffer.fill(0, 13);
-            buffer.Write(1.0f);
-            buffer.fill(0, 13);
-            buffer.Write((byte)0x02);
-            buffer.Write((int)Environment.TickCount); // unk
+            _buffer.Fill(0, 13);
+            _buffer.Write(1.0f);
+            _buffer.Fill(0, 13);
+            _buffer.Write((byte)0x02);
+            _buffer.Write((int)Environment.TickCount); // unk
 
             var waypoints = m.Waypoints;
 
-            buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
-            buffer.Write((int)m.NetId);
+            _buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
+            _buffer.Write((int)m.NetId);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
-            buffer.Write((byte)0); // movement mask
-            buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
-            buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
+            _buffer.Write((byte)0); // movement mask
+            _buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
+            _buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
             for (int i = m.CurWaypoint; i < waypoints.Count; i++)
             {
-                buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].X));
-                buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].Y));
+                _buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].X));
+                _buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].Y));
             }
         }
 
-        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_ObjectSpawn, c.NetId)
+        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, c.NetId)
         {
-            buffer.Write((short)0); // extraInfo
-            buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
+            _buffer.Write((short)0); // extraInfo
+            _buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
             //buffer.Write((short)7; // unknown
 
             /*
@@ -57,24 +57,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             */
 
-            buffer.fill(0, 10);
-            buffer.Write((float)1.0f);
-            buffer.fill(0, 13);
+            _buffer.Fill(0, 10);
+            _buffer.Write((float)1.0f);
+            _buffer.Fill(0, 13);
 
-            buffer.Write((byte)2); // Type of data: Waypoints=2
-            buffer.Write((int)Environment.TickCount); // unk
+            _buffer.Write((byte)2); // Type of data: Waypoints=2
+            _buffer.Write((int)Environment.TickCount); // unk
 
             List<Vector2> waypoints = c.Waypoints;
 
-            buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
-            buffer.Write(c.NetId);
-            buffer.Write((byte)0); // movement mask; 1=KeepMoving?
-            buffer.Write(MovementVector.TargetXToNormalFormat(c.X));
-            buffer.Write(MovementVector.TargetYToNormalFormat(c.Y));
+            _buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
+            _buffer.Write(c.NetId);
+            _buffer.Write((byte)0); // movement mask; 1=KeepMoving?
+            _buffer.Write(MovementVector.TargetXToNormalFormat(c.X));
+            _buffer.Write(MovementVector.TargetYToNormalFormat(c.Y));
             for (int i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
-                buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
     }

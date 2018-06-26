@@ -7,13 +7,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ForceTargetSpell : BasePacket
     {
         public ForceTargetSpell(AttackableUnit u, byte slot, float time)
-            : base(PacketCmd.PKT_S2C_ForceTargetSpell, u.NetId)
+            : base(PacketCmd.PKT_S2_C_FORCE_TARGET_SPELL, u.NetId)
         {
-            buffer.Write((byte)slot);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((float)time);
+            _buffer.Write((byte)slot);
+            _buffer.Write((byte)0x00);
+            _buffer.Write((byte)0x00);
+            _buffer.Write((byte)0x00);
+            _buffer.Write((float)time);
         }
     }
 }

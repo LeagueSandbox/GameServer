@@ -7,18 +7,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
     {
         public PacketHeader()
         {
-            netId = 0;
+            NetId = 0;
         }
 
         public PacketHeader(byte[] bytes)
         {
             var reader = new BinaryReader(new MemoryStream(bytes));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
+            Cmd = (PacketCmd)reader.ReadByte();
+            NetId = reader.ReadInt32();
             reader.Close();
         }
 
-        public PacketCmd cmd;
-        public int netId;
+        public PacketCmd Cmd;
+        public int NetId;
     }
 }

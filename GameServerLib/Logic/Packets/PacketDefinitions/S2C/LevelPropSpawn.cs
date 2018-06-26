@@ -7,37 +7,37 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class LevelPropSpawn : BasePacket
     {
         public LevelPropSpawn(LevelProp lp)
-            : base(PacketCmd.PKT_S2C_LevelPropSpawn)
+            : base(PacketCmd.PKT_S2_C_LEVEL_PROP_SPAWN)
         {
-            buffer.Write((int)lp.NetId);
-            buffer.Write((byte)0x40); // unk
-            buffer.Write((byte)lp.SkinId);
-            buffer.Write((byte)0);
-            buffer.Write((byte)0);
-            buffer.Write((byte)0); // Unk
-            buffer.Write((float)lp.X);
-            buffer.Write((float)lp.Z);
-            buffer.Write((float)lp.Y);
-            buffer.Write((float)0.0f); // Rotation Y
+            _buffer.Write((int)lp.NetId);
+            _buffer.Write((byte)0x40); // unk
+            _buffer.Write((byte)lp.SkinId);
+            _buffer.Write((byte)0);
+            _buffer.Write((byte)0);
+            _buffer.Write((byte)0); // Unk
+            _buffer.Write((float)lp.X);
+            _buffer.Write((float)lp.Z);
+            _buffer.Write((float)lp.Y);
+            _buffer.Write((float)0.0f); // Rotation Y
 
-            buffer.Write((float)lp.DirX);
-            buffer.Write((float)lp.DirZ);
-            buffer.Write((float)lp.DirY);
-            buffer.Write((float)lp.Unk1);
-            buffer.Write((float)lp.Unk2);
+            _buffer.Write((float)lp.DirX);
+            _buffer.Write((float)lp.DirZ);
+            _buffer.Write((float)lp.DirY);
+            _buffer.Write((float)lp.Unk1);
+            _buffer.Write((float)lp.Unk2);
 
-            buffer.Write((float)1.0f);
-            buffer.Write((float)1.0f);
-            buffer.Write((float)1.0f); // Scaling
-            buffer.Write((int)lp.Team); // Probably a short
-            buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
+            _buffer.Write((float)1.0f);
+            _buffer.Write((float)1.0f);
+            _buffer.Write((float)1.0f); // Scaling
+            _buffer.Write((int)lp.Team); // Probably a short
+            _buffer.Write((int)2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
             foreach (var b in Encoding.Default.GetBytes(lp.Name))
-                buffer.Write((byte)b);
-            buffer.fill(0, 64 - lp.Name.Length);
+                _buffer.Write((byte)b);
+            _buffer.Fill(0, 64 - lp.Name.Length);
             foreach (var b in Encoding.Default.GetBytes(lp.Model))
-                buffer.Write(b);
-            buffer.fill(0, 64 - lp.Model.Length);
+                _buffer.Write(b);
+            _buffer.Fill(0, 64 - lp.Model.Length);
         }
     }
 }

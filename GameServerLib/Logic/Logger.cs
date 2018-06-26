@@ -9,12 +9,12 @@ namespace LeagueSandbox.GameServer.Logic
     public class Logger
     {
         private LogWriter _logWriter;
-        private const string _logName = "LeagueSandbox.txt";
+        private const string LOG_NAME = "LeagueSandbox.txt";
 
         public Logger(ServerContext serverContext)
         {
             var directory = serverContext.ExecutingDirectory;
-            _logWriter = new LogWriter(directory, _logName);
+            _logWriter = new LogWriter(directory, LOG_NAME);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         private class LogWriter : IDisposable
         {
-            public string _logFileName;
+            public string LogFileName;
             private FileStream _logFile;
             private StringBuilder _stringBuilder;
             private const double REFRESH_RATE = 1000.0 / 10.0; // 10fps
@@ -161,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             public void CreateLogFile(string directory, string name)
             {
-                if (!string.IsNullOrEmpty(_logFileName))
+                if (!string.IsNullOrEmpty(LogFileName))
                 {
                     return;
                 }
@@ -173,9 +173,9 @@ namespace LeagueSandbox.GameServer.Logic
                 }
 
                 var logName = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}";
-                _logFileName = Path.Combine(path, logName);
+                LogFileName = Path.Combine(path, logName);
 
-                _logFile = File.Create(_logFileName);
+                _logFile = File.Create(LogFileName);
             }
 
             private bool _disposedValue; // To detect redundant dispose calls

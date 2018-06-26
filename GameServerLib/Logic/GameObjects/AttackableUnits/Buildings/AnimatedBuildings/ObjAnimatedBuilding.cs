@@ -14,9 +14,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Replication = new ReplicationAnimatedBuilding(this);
         }
-        public override void update(float diff)
+        public override void Update(float diff)
         {
-            base.update(diff);
+            base.Update(diff);
             Replication.Update();
         }
     }

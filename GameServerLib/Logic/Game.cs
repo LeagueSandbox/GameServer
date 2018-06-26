@@ -150,7 +150,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                         case EventType.Receive:
                             var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, channel);
+                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;
@@ -167,7 +167,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2_S)
                             .HandlePacket(null, new byte[0]);
                         _autoResumeCheck = true;
                     }
@@ -253,7 +253,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 if (!peerinfo.IsDisconnected)
                 {
-                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerDisconnected, peerinfo.Champion);
+                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
                 }
                 peerinfo.IsDisconnected = true;
             }

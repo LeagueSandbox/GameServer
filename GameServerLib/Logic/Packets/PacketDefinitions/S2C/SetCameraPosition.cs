@@ -6,11 +6,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SetCameraPosition : BasePacket
     {
         public SetCameraPosition(Champion champ, float x, float y, float z)
-            : base(PacketCmd.PKT_S2C_SetCameraPosition, champ.NetId)
+            : base(PacketCmd.PKT_S2_C_SET_CAMERA_POSITION, champ.NetId)
         {
-            buffer.Write((float)x);
-            buffer.Write((float)z); // Doesn't seem to matter
-            buffer.Write((float)y);
+            _buffer.Write((float)x);
+            _buffer.Write((float)z); // Doesn't seem to matter
+            _buffer.Write((float)y);
         }
     }
 }
