@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             UpdateFloat(Stats.AttackDamage.BaseValue, 1, 7); //mBaseAttackDamage
             UpdateFloat(Stats.Armor.Total, 1, 8); //mArmor
             UpdateFloat(Stats.MagicResist.Total, 1, 9); //mSpellBlock
-            UpdateFloat(Stats.GetTotalAttackSpeed(), 1, 10); //mAttackSpeedMod
+            UpdateFloat(Stats.AttackSpeedMultiplier.Total, 1, 10); //mAttackSpeedMod
             UpdateFloat(Stats.AttackDamage.FlatBonus, 1, 11); //mFlatPhysicalDamageMod
             UpdateFloat(Stats.AttackDamage.PercentBonus, 1, 12); //mPercentPhysicalDamageMod
             UpdateFloat(Stats.AbilityPower.Total, 1, 13); //mFlatMagicDamageMod

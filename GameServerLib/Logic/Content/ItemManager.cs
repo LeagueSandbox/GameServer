@@ -154,11 +154,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod")
                 },
-
+                CriticalDamage =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "FlatCritDamageMod"),
+                    PercentBonus = itemInfo.GetFloat("Data", "PercentCritDamageMod")
+                }
             };
 
-            //itemInfo.SafeGetFloat("Data", "FlatCritDamageMod"); // TODO
-            //itemInfo.SafeGetFloat("Data", "PercentCritDamageMod"); // TODO
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
 
             result.CreateRecipe(owner);
@@ -167,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool GetIsTrinket()
         {
-            return ItemGroup.ToLower() == "relicbase";
+            return ItemGroup.ToLower().Equals("relicbase");
         }
     }
 
