@@ -31,6 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         protected Logger _logger = Program.ResolveDependency<Logger>();
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
+        public int MinionCounter { get; protected set; }
         public Replication Replication { get; protected set; }
 
         public AttackableUnit(
