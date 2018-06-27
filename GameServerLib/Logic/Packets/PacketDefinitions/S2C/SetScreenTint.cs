@@ -9,13 +9,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2_C_SET_SCREEN_TINT)
         {
             _buffer.Write(enable);
-            _buffer.Write((float)transitionTime); // Transition time in seconds
+            _buffer.Write(transitionTime); // Transition time in seconds
             _buffer.Write((int)team);
-            _buffer.Write((byte)blue);
-            _buffer.Write((byte)green);
-            _buffer.Write((byte)red);
+            _buffer.Write(blue);
+            _buffer.Write(green);
+            _buffer.Write(red);
             _buffer.Write((byte)0xFF); // Unk
-            _buffer.Write((float)alpha);
+            _buffer.Write(alpha);
         }
     }
 }

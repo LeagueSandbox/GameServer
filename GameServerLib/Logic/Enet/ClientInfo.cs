@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects;
-using ENet;
+﻿using ENet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 
 namespace LeagueSandbox.GameServer.Logic.Enet
 {
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Enet
             get { return _champion; }
             set
             {
-                this._champion = value;
+                _champion = value;
                 _champion.Skin = SkinNo;
             }
         }

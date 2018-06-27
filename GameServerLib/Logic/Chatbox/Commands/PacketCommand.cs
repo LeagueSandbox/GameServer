@@ -3,6 +3,7 @@ using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
+using Packet = LeagueSandbox.GameServer.Logic.Packets.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -34,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packets.Packet((PacketCmd)opcode);
+                var packet = new Packet((PacketCmd)opcode);
                 var buffer = packet.GetBuffer();
 
                 for (int i = 2; i < s.Length; i++)

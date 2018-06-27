@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 
 namespace LeagueSandbox.GameServer
 {
@@ -8,7 +9,7 @@ namespace LeagueSandbox.GameServer
 
         public ServerContext()
         {
-            ExecutingDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            ExecutingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
     }
 }

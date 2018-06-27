@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SetCapturePoint(AttackableUnit unit, byte capturePointId) 
             : base(PacketCmd.PKT_S2_C_SET_CAPTURE_POINT)
         {
-            _buffer.Write((byte)capturePointId);
+            _buffer.Write(capturePointId);
             _buffer.Write(unit.NetId);
             _buffer.Fill(0, 6);
         }

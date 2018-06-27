@@ -17,11 +17,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (killer != null)
             {
                 _buffer.Write((long)killer.NetId);
-                _buffer.Write((int)assists.Count);
+                _buffer.Write(assists.Count);
                 foreach (var a in assists)
-                    _buffer.Write((uint)a.NetId);
+                    _buffer.Write(a.NetId);
                 for (int i = 0; i < 12 - assists.Count; i++)
-                    _buffer.Write((int)0);
+                    _buffer.Write(0);
             }
         }
     }

@@ -1,11 +1,11 @@
-﻿using LeagueSandbox.GameServer.Logic.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -135,17 +135,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool CanMove()
         {
-            return !this.HasCrowdControl(CrowdControlType.STUN) &&
-                !this.IsDashing &&
-                !this.IsCastingSpell &&
-                !this.IsDead &&
-                !this.HasCrowdControl(CrowdControlType.ROOT);
+            return !HasCrowdControl(CrowdControlType.STUN) &&
+                !IsDashing &&
+                !IsCastingSpell &&
+                !IsDead &&
+                !HasCrowdControl(CrowdControlType.ROOT);
         }
 
         public bool CanCast()
         {
-            return !this.HasCrowdControl(CrowdControlType.STUN) &&
-                !this.HasCrowdControl(CrowdControlType.SILENCE);
+            return !HasCrowdControl(CrowdControlType.STUN) &&
+                !HasCrowdControl(CrowdControlType.SILENCE);
         }
 
         public Vector2 GetSpawnPosition()
@@ -453,10 +453,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (collider == null)
             {
                 //CORE_INFO("I bumped into a wall!");
-            }
-            else
-            {
-                //CORE_INFO("I bumped into someone else!");
             }
         }
 

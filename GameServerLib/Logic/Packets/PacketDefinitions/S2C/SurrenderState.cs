@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SurrenderState(uint playernetid, byte state) 
             : base(PacketCmd.PKT_S2_C_SURRENDER_STATE, playernetid)
         {
-            _buffer.Write((byte)state);
+            _buffer.Write(state);
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LeagueSandbox.GameServer.Logic.API;
+﻿using LeagueSandbox.GameServer.Logic.API;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ApiFunctionManagerTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void StringToByteArrayTest()
         {
             byte[] shouldBe = { 0xC6, 0x00, 0x10, 0x45, 0xF8};

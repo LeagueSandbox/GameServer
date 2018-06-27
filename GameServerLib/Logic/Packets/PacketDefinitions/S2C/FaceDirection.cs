@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(relativeX);
             _buffer.Write(relativeZ);
             _buffer.Write(relativeY);
-            _buffer.Write((float)turnTime);
+            _buffer.Write(turnTime);
         }
-    };
+    }
 }

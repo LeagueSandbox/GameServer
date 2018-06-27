@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public GameTimerUpdate(float fTime)
             : base(PacketCmd.PKT_S2_C_GAME_TIMER_UPDATE, 0)
         {
-            _buffer.Write((float)fTime);
+            _buffer.Write(fTime);
         }
     }
 }

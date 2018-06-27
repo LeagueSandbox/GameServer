@@ -10,17 +10,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public AddBuff(AttackableUnit u, AttackableUnit source, int stacks, float time, BuffType buffType, string name, byte slot)
             : base(PacketCmd.PKT_S2_C_ADD_BUFF, u.NetId)
         {
-            _buffer.Write((byte)slot); //Slot
+            _buffer.Write(slot); //Slot
             _buffer.Write((byte)buffType); //Type
             _buffer.Write((byte)stacks); // stacks
             _buffer.Write((byte)0x00); // Visible was (byte)0x00
             _buffer.Write(HashFunctions.HashString(name)); //Buff id
 
-            _buffer.Write((int)0); // <-- Probably runningTime
+            _buffer.Write(0); // <-- Probably runningTime
 
             _buffer.Write((float)0); // <- ProgressStartPercent
 
-            _buffer.Write((float)time);
+            _buffer.Write(time);
 
             if (source != null)
             {
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             else
             {
-                _buffer.Write((int)0);
+                _buffer.Write(0);
             }
         }
     }

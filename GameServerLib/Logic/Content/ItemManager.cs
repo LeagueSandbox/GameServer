@@ -1,6 +1,6 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -207,7 +207,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private void FindRecipeItems(ItemManager itemManager)
         {
             // TODO: Figure out how to refactor this.
-            _items = new ItemType[]
+            _items = new[]
             {
                 itemManager.SafeGetItemType(_owner.RecipeItem1),
                 itemManager.SafeGetItemType(_owner.RecipeItem2),

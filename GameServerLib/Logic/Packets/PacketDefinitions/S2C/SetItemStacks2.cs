@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2_C_SET_ITEM_STACKS2, unit.NetId)
         {
             _buffer.Write(slot);
-            _buffer.Write((byte)stack); // Needs more research
+            _buffer.Write(stack); // Needs more research
         }
     }
 }

@@ -12,9 +12,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Fill(0, 256 - title.Length);
             _buffer.Write(Encoding.Default.GetBytes(description));
             _buffer.Fill(0, 256 - description.Length);
-            _buffer.Write((byte)type); // 0 : Primary quest, 1 : Secondary quest
-            _buffer.Write((byte)command); // 0 : Activate quest, 1 : Complete quest, 2 : Remove quest
-            _buffer.Write((byte)questEvent); // 0 : Roll over, 1 : Roll out, 2 : Mouse down, 3 : Mouse up
+            _buffer.Write(type); // 0 : Primary quest, 1 : Secondary quest
+            _buffer.Write(command); // 0 : Activate quest, 1 : Complete quest, 2 : Remove quest
+            _buffer.Write(questEvent); // 0 : Roll over, 1 : Roll out, 2 : Mouse down, 3 : Mouse up
             _buffer.Write((int)netid);
         }
     }

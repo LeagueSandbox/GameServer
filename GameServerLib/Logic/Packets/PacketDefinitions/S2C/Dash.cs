@@ -22,11 +22,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(Environment.TickCount); // syncID
             _buffer.Write((short)1); // Number of dashes
             _buffer.Write((byte)4); // Waypoints size * 2
-            _buffer.Write((uint)u.NetId);
-            _buffer.Write((float)dashSpeed);
-            _buffer.Write((float)leapHeight);
-            _buffer.Write((float)u.X);
-            _buffer.Write((float)u.Y);
+            _buffer.Write(u.NetId);
+            _buffer.Write(dashSpeed);
+            _buffer.Write(leapHeight);
+            _buffer.Write(u.X);
+            _buffer.Write(u.Y);
             _buffer.Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
             if (t.IsSimpleTarget)
             {
@@ -34,12 +34,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             else
             {
-                _buffer.Write((uint)(t as GameObject).NetId);
+                _buffer.Write((t as GameObject).NetId);
             }
 
-            _buffer.Write((float)followTargetMaxDistance);
-            _buffer.Write((float)backDistance);
-            _buffer.Write((float)travelTime);
+            _buffer.Write(followTargetMaxDistance);
+            _buffer.Write(backDistance);
+            _buffer.Write(travelTime);
 
             var waypoints = new List<Vector2>
             {

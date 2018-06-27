@@ -9,13 +9,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public Surrender(AttackableUnit starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut)
             : base(PacketCmd.PKT_S2_C_SURRENDER)
         {
-            _buffer.Write((byte)flag); // Flag. 2 bits
-            _buffer.Write((uint)starter.NetId);
-            _buffer.Write((byte)yesVotes);
-            _buffer.Write((byte)noVotes);
-            _buffer.Write((byte)maxVotes);
+            _buffer.Write(flag); // Flag. 2 bits
+            _buffer.Write(starter.NetId);
+            _buffer.Write(yesVotes);
+            _buffer.Write(noVotes);
+            _buffer.Write(maxVotes);
             _buffer.Write((int)team);
-            _buffer.Write((float)timeOut);
+            _buffer.Write(timeOut);
         }
     }
 }

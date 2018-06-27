@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(1.0f);
             _buffer.Fill(0, 13);
             _buffer.Write((byte)0x02);
-            _buffer.Write((int)Environment.TickCount); // unk
+            _buffer.Write(Environment.TickCount); // unk
 
             var waypoints = m.Waypoints;
 
@@ -26,12 +26,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((int)m.NetId);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
             _buffer.Write((byte)0); // movement mask
-            _buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
-            _buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
+            _buffer.Write(MovementVector.TargetXToNormalFormat(m.X));
+            _buffer.Write(MovementVector.TargetYToNormalFormat(m.Y));
             for (int i = m.CurWaypoint; i < waypoints.Count; i++)
             {
-                _buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].X));
-                _buffer.Write(MovementVector.TargetXToNormalFormat((float)waypoints[i].Y));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
 
@@ -58,11 +58,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             */
 
             _buffer.Fill(0, 10);
-            _buffer.Write((float)1.0f);
+            _buffer.Write(1.0f);
             _buffer.Fill(0, 13);
 
             _buffer.Write((byte)2); // Type of data: Waypoints=2
-            _buffer.Write((int)Environment.TickCount); // unk
+            _buffer.Write(Environment.TickCount); // unk
 
             List<Vector2> waypoints = c.Waypoints;
 

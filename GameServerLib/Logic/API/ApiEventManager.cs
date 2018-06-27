@@ -1,7 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 /*
@@ -85,11 +85,11 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public void RemoveListener(object owner)
         {
-            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
         public void Publish(float diff)
         {
-            _listeners.ForEach((listener) => {
+            _listeners.ForEach(listener => {
                 listener.Item2(diff);
             });
         }
@@ -106,15 +106,15 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public void RemoveListener(object owner, AttackableUnit unit)
         {
-            _listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
         }
         public void RemoveListener(object owner)
         {
-            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
         public void Publish(AttackableUnit unit)
         {
-            _listeners.ForEach((listener) => {
+            _listeners.ForEach(listener => {
                 listener.Item3();
             });
             if (unit is Champion)
@@ -135,15 +135,15 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public void RemoveListener(object owner, Champion champion)
         {
-            _listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
         }
         public void RemoveListener(object owner)
         {
-            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
         public void Publish(Champion champion)
         {
-            _listeners.ForEach((listener) => {
+            _listeners.ForEach(listener => {
                 if (listener.Item2 == champion)
                 {
                     listener.Item3();

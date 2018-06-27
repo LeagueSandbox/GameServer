@@ -1,6 +1,6 @@
-﻿using LeagueSandbox.GameServer.Logic.API;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         String _buffNamespace;
         String _buffClass;
         Spell _ownerSpell;
-        bool _remove = false;
+        bool _remove;
         float _duration = -1f;
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         }
         public void DeactivateBuff()
         {
-            if (_remove == true) return;
+            if (_remove) return;
             _gameScript.OnDeactivate(_unit);
             _remove = true;
         }

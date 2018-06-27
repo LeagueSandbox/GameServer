@@ -1,10 +1,11 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Players;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -58,10 +59,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.SetWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
                 super.SetWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
 
-                caster.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                cannon.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                melee.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                super.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
+                caster.SetVisibleByTeam(TeamId.TEAM_BLUE, true);
+                cannon.SetVisibleByTeam(TeamId.TEAM_BLUE, true);
+                melee.SetVisibleByTeam(TeamId.TEAM_BLUE, true);
+                super.SetVisibleByTeam(TeamId.TEAM_BLUE, true);
 
                 _game.ObjectManager.AddObject(caster);
                 _game.ObjectManager.AddObject(cannon);
@@ -94,10 +95,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 melee.SetWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
                 super.SetWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
 
-                caster.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                cannon.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                melee.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                super.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
+                caster.SetVisibleByTeam(TeamId.TEAM_PURPLE, true);
+                cannon.SetVisibleByTeam(TeamId.TEAM_PURPLE, true);
+                melee.SetVisibleByTeam(TeamId.TEAM_PURPLE, true);
+                super.SetVisibleByTeam(TeamId.TEAM_PURPLE, true);
 
                 _game.ObjectManager.AddObject(caster);
                 _game.ObjectManager.AddObject(cannon);

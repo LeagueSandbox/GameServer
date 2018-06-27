@@ -1,7 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Handlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox

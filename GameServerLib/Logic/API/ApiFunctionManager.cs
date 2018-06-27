@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using System.Linq;
-using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
-                ApiFunctionManager.CreateTimer(removeAfter, () => {
+                CreateTimer(removeAfter, () => {
                     RemoveBuffHudVisual(b);
                 });
             }

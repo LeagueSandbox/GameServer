@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
             }
-            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
+            BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
         }
 
         public List<BuffGameScriptController> GetBuffGameScriptController()
@@ -207,7 +207,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             if (cc.IsTypeOf(CrowdControlType.STUN) || cc.IsTypeOf(CrowdControlType.ROOT))
             {
-                this.StopMovement();
+                StopMovement();
             }
             _crowdControlList.Add(cc);
         }
@@ -221,12 +221,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public bool HasCrowdControl(CrowdControlType ccType)
         {
-            return _crowdControlList.FirstOrDefault((cc) => cc.IsTypeOf(ccType)) != null;
+            return _crowdControlList.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
         }
 
         public void StopMovement()
         {
-            this.SetWaypoints(new List<Vector2> { this.GetPosition(), this.GetPosition() });
+            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
         }
 
         public virtual void RefreshWaypoints()
@@ -504,11 +504,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 cc.Update(diff);
             }
-            _crowdControlList.RemoveAll((cc) => cc.IsDead());
+            _crowdControlList.RemoveAll(cc => cc.IsDead());
 
             var onUpdate = _scriptEngine.GetStaticMethod<Action<AttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
-            BuffGameScriptControllers.RemoveAll((b) => b.NeedsRemoved());
+            BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
             base.Update(diff);
             UpdateAutoAttackTarget(diff);
         }

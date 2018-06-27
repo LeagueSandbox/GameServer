@@ -1,8 +1,8 @@
-﻿using ENet;
+﻿using System.Collections.Generic;
+using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
-using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Logic.Players
 {

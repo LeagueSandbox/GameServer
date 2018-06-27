@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         }
         public void Update(float diff)
         {
-            TimeElapsed += (float)diff / 1000.0f;
+            TimeElapsed += diff / 1000.0f;
             if (Duration != 0.0f)
             {
                 if (TimeElapsed >= Duration)

@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
 
             _buffer.Write((byte)masterMask);
-            _buffer.Write((uint)r.NetId);
+            _buffer.Write(r.NetId);
 
             for (var i = 0; i < 6; i++)
             {

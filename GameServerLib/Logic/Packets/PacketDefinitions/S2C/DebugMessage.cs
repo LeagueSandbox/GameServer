@@ -8,9 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public DebugMessage(string message)
             : base(PacketCmd.PKT_S2_C_DEBUG_MESSAGE)
         {
-            _buffer.Write((int)0);
+            _buffer.Write(0);
             foreach (var b in Encoding.Default.GetBytes(message))
-                _buffer.Write((byte)b);
+                _buffer.Write(b);
             _buffer.Fill(0, 512 - message.Length);
         }
     }

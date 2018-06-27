@@ -23,10 +23,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0xA0);
             _buffer.Write((byte)0x96);
 
-            _buffer.Write((float)x);
-            _buffer.Write((float)z); // I think this coordinate is ignored
-            _buffer.Write((float)y);
-            _buffer.Write((float)seconds);
+            _buffer.Write(x);
+            _buffer.Write(z); // I think this coordinate is ignored
+            _buffer.Write(y);
+            _buffer.Write(seconds);
         }
     }
 }

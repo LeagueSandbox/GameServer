@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0xC4); // unk  <--
             _buffer.Write((uint)0); // unk     <-- One of these bytes is a flag
             _buffer.Write((uint)0); // unk     <--
-            _buffer.Write((float)1.0f); // Animation speed scale factor
+            _buffer.Write(1.0f); // Animation speed scale factor
             foreach (var b in Encoding.Default.GetBytes(animationName))
                 _buffer.Write(b);
             _buffer.Write((byte)0);

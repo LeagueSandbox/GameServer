@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2_C_FLOATING_TEXT_WITH_VALUE)
         {
             _buffer.Write(u.NetId);
-            _buffer.Write((int)15); // Unk
+            _buffer.Write(15); // Unk
             _buffer.Write(value); // Example -3
             _buffer.Write(Encoding.Default.GetBytes(text));
             _buffer.Write((byte)0x00);

@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects

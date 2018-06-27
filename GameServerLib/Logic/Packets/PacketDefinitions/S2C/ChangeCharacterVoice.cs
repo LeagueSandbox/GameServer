@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             _buffer.Write(resetOverride); // If this is 1, resets voice to default state and ignores voiceOverride
             foreach (var b in Encoding.Default.GetBytes(voiceOverride))
-                _buffer.Write((byte)b);
+                _buffer.Write(b);
             if (voiceOverride.Length < 32)
                 _buffer.Fill(0, 32 - voiceOverride.Length);
         }

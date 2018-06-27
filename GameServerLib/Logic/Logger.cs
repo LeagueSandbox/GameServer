@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -99,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic
             private FileStream _logFile;
             private StringBuilder _stringBuilder;
             private const double REFRESH_RATE = 1000.0 / 10.0; // 10fps
-            private System.Timers.Timer _refreshTimer;
+            private Timer _refreshTimer;
 
             public LogWriter(string executingDirectory, string logFileName)
             {
@@ -107,7 +108,7 @@ namespace LeagueSandbox.GameServer.Logic
 
                 _stringBuilder = new StringBuilder();
                 //Start refresh loop
-                _refreshTimer = new System.Timers.Timer(REFRESH_RATE)
+                _refreshTimer = new Timer(REFRESH_RATE)
                 {
                     AutoReset = true,
                     Enabled = true

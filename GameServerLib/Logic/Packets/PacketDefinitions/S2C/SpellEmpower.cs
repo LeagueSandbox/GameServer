@@ -8,13 +8,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SpellEmpower(AttackableUnit unit, byte slot, byte empowerLevel)
             : base(PacketCmd.PKT_S2_C_SPELL_EMPOWER, unit.NetId)
         {
-            _buffer.Write((byte)slot);
+            _buffer.Write(slot);
             _buffer.Write((byte)0x00);
             _buffer.Write((byte)0x06); // Unknown
             _buffer.Write((byte)0x00);
             _buffer.Write((byte)0x00);
             _buffer.Write((byte)0x00);
-            _buffer.Write((byte)empowerLevel); // 0 - normal, 1 - empowered (for Rengar)
+            _buffer.Write(empowerLevel); // 0 - normal, 1 - empowered (for Rengar)
         }
     }
 }

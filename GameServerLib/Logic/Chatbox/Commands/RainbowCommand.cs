@@ -1,13 +1,13 @@
-﻿using ENet;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using ENet;
 using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         private Champion _me;
-        private bool _run = false;
+        private bool _run;
         private float _a = 0.5f;
         private float _speed = 0.25f;
         private int _delay = 250;

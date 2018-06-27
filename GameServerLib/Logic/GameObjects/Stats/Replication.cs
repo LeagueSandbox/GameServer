@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using System;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

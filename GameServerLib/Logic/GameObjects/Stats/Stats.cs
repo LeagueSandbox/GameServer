@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
-using System;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

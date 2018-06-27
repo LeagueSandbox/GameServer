@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             for (int i = 0; i < animationPairs.Count; i++)
             {
-                _buffer.Write((int)animationPairs[i].Length);
+                _buffer.Write(animationPairs[i].Length);
                 foreach (var b in Encoding.Default.GetBytes(animationPairs[i]))
                     _buffer.Write(b);
             }

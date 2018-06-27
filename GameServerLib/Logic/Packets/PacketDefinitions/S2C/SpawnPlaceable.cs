@@ -24,9 +24,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Write((byte)0x40);
 
-            _buffer.Write((float)p.X); //x
-            _buffer.Write((float)p.GetZ()); //z
-            _buffer.Write((float)p.Y); //y
+            _buffer.Write(p.X); //x
+            _buffer.Write(p.GetZ()); //z
+            _buffer.Write(p.Y); //y
 
             _buffer.Fill(0, 8);
 
@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Fill(0, 16);
 
-            _buffer.Write((float)1.0f); // Unk
+            _buffer.Write(1.0f); // Unk
 
             _buffer.Fill(0, 13);
 
@@ -63,8 +63,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0x18); //    |
             _buffer.Write((byte)0x00); // <--|
 
-            _buffer.Write((float)p.X);
-            _buffer.Write((float)p.Y);
+            _buffer.Write(p.X);
+            _buffer.Write(p.Y);
 
             _buffer.Write((byte)0x00); // 0.0f
             _buffer.Write((byte)0x00); // Probably a float, see SpawnMonster

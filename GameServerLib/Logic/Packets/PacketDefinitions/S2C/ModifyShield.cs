@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2_C_MODIFY_SHIELD, unit.NetId)
         {
             _buffer.Write((byte)type);
-            _buffer.Write((float)amount);
+            _buffer.Write(amount);
         }
     }
 }

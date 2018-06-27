@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             _buffer.Write((byte)damageText);
             _buffer.Write((short)((short)type << 8));
-            _buffer.Write((float)amount);
+            _buffer.Write(amount);
             _buffer.Write((int)target.NetId);
             _buffer.Write((int)source.NetId);
         }

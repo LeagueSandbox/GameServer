@@ -287,7 +287,7 @@ namespace BlowFishCS
         private uint round(uint a, uint b, uint n)
         {
             uint x1 = (bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)]) ^ bf_s2[wordByte2(b)];
-            uint x2 = x1 + bf_s3[this.wordByte3(b)];
+            uint x2 = x1 + bf_s3[wordByte3(b)];
             uint x3 = x2 ^ bf_P[n];
             return x3 ^ a;
         }

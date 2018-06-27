@@ -9,11 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             _buffer.Write((uint)loadInfo.Position);
             _buffer.Write((ulong)id);
-            _buffer.Write((float)loadInfo.Loaded);
-            _buffer.Write((float)loadInfo.Unk2);
-            _buffer.Write((short)loadInfo.Ping);
-            _buffer.Write((short)loadInfo.Unk3);
-            _buffer.Write((byte)loadInfo.Unk4);
+            _buffer.Write(loadInfo.Loaded);
+            _buffer.Write(loadInfo.Unk2);
+            _buffer.Write(loadInfo.Ping);
+            _buffer.Write(loadInfo.Unk3);
+            _buffer.Write(loadInfo.Unk4);
         }
     }
 }

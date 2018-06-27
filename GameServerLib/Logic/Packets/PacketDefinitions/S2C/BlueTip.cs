@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             foreach (var b in Encoding.Default.GetBytes(imagePath))
                 _buffer.Write(b);
             _buffer.Fill(0, 128 - imagePath.Length);
-            _buffer.Write((byte)tipCommand); /* ACTIVATE_TIP     = 0
+            _buffer.Write(tipCommand); /* ACTIVATE_TIP     = 0
                                                REMOVE_TIP       = 1
                                                ENABLE_TIP_EVENTS  = 2
                                                DISABLE_TIP_EVENTS  = 3

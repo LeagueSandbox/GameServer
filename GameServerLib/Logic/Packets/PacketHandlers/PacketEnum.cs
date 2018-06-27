@@ -166,13 +166,13 @@
         MOVE = 2,
         ATTACK = 3,
         ATTACKMOVE = 7,
-        STOP = 10,
+        STOP = 10
     }
 
     public enum ChatType : uint
     {
         CHAT_ALL = 0,
-        CHAT_TEAM = 1,
+        CHAT_TEAM = 1
     }
 
     //#define CHL_MAX = 7
@@ -184,7 +184,7 @@
         CHL_S2_C = 3,
         CHL_LOW_PRIORITY = 4,
         CHL_COMMUNICATION = 5,
-        CHL_LOADING_SCREEN = 7,
+        CHL_LOADING_SCREEN = 7
     }
 
     public enum SummonerSpellIds : uint
@@ -211,6 +211,6 @@
         MM_TWO = 0x02,
         MM_THREE = 0x04,
         MM_FOUR = 0x08,
-        MM_FIVE = 0x10,
+        MM_FIVE = 0x10
     }
 }

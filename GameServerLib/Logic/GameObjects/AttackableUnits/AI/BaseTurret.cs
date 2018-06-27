@@ -1,8 +1,9 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using System;
+using System.Text;
+using Force.Crc32;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Items;
-using System;
-using System.Text;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -23,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             uint netId = 0
         ) : base(model, new Stats(), 50, x, y, 1200, netId)
         {
-            ParentNetId = Force.Crc32.Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
+            ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(this);

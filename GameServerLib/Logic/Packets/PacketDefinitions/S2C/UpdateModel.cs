@@ -13,9 +13,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0x00); // <-- an int with the useSpells byte, but
             _buffer.Write((byte)0x00); // <-- they don't seem to affect anything
             _buffer.Write((byte)1); // Bit field with bits 1 and 2. Unk
-            _buffer.Write((int)-1); // SkinID (Maybe -1 means keep using current one?)
+            _buffer.Write(-1); // SkinID (Maybe -1 means keep using current one?)
             foreach (var b in Encoding.Default.GetBytes(modelName))
-                _buffer.Write((byte)b);
+                _buffer.Write(b);
             if (modelName.Length < 32)
                 _buffer.Fill(0, 32 - modelName.Length);
         }

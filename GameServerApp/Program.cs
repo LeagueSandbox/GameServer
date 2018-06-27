@@ -1,6 +1,6 @@
-﻿using CommandLine;
+﻿using System.IO;
+using CommandLine;
 using LeagueSandbox.GameServer;
-using System.IO;
 
 namespace LeagueSandbox.GameServerApp
 {

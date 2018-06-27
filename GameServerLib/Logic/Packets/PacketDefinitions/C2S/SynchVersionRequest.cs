@@ -18,8 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
                 var idx = s.IndexOf('\0');
                 if (idx > 0)
                     return s.Substring(0, idx);
-                else
-                    return s;
+                return s;
             }
             private set
             {

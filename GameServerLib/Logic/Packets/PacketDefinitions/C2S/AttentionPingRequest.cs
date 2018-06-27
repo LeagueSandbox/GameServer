@@ -25,10 +25,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
         
         public AttentionPingRequest(float x, float y, int netId, Pings type)
         {
-            this.X = x;
-            this.Y = y;
-            this.TargetNetId = netId;
-            this.Type = type;
+            X = x;
+            Y = y;
+            TargetNetId = netId;
+            Type = type;
         }
     }
 }

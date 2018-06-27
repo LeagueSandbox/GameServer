@@ -29,12 +29,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(Encoding.Default.GetBytes(turret.Model));
             _buffer.Fill(0, 64 - turret.Model.Length);
 
-            _buffer.Write((int)0);
+            _buffer.Write(0);
 
-            _buffer.Write((float)turret.X);
-            _buffer.Write((float)turret.GetZ());
-            _buffer.Write((float)turret.Y);
-            _buffer.Write((float)4.0f);
+            _buffer.Write(turret.X);
+            _buffer.Write(turret.GetZ());
+            _buffer.Write(turret.Y);
+            _buffer.Write(4.0f);
 
             _buffer.Write((byte)0xC1);
             _buffer.Write((short)turret.Team);
@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Fill(0, 11);
 
-            _buffer.Write((float)1.0f); // Unk
+            _buffer.Write(1.0f); // Unk
 
             _buffer.Fill(0, 13);
         }

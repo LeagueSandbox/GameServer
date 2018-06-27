@@ -454,7 +454,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         PATHED_ON = 0x20,
         SEE_THROUGH = 0x40,
         OTHER_DIRECTION_END_TO_START = 0x80,
-        HAS_GLOBAL_VISION = 0x100,
+        HAS_GLOBAL_VISION = 0x100
         // HasTransparentTerrain = 0x42 // (SeeThrough | NotPassable)
     }
 

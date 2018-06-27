@@ -1,7 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Core.Logic;
+using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         SPELL_FLAG_IGNORE_CLONES = 0x80000000
     }
     
-    public enum SpellTargetType : int
+    public enum SpellTargetType
     {
         TARGET_SELF = 0, // teemo W ; xin Q
         TARGET_UNIT = 1, // Taric E ; Annie Q ; teemo Q ; xin E
@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         TARGET_SELF_AOE = 4, // sivir R, Gangplanck E
         TARGET_LOC = 6, // Ez Q, W, E, R ; Mundo Q
         TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
-    };
+    }
 
     public class SpellData
     {
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         //AISendEvent 
         //AISpeed
         public string AlternateName { get; set; } = "";
-        public bool AlwaysSnapFacing { get; set; } = false;
+        public bool AlwaysSnapFacing { get; set; }
         //AmmoCountHiddenInUI
         public float[] AmmoRechargeTime { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public int[] AmmoUsed { get; set; } = { 1, 1, 1, 1, 1, 1, 1 };
@@ -78,20 +78,20 @@ namespace LeagueSandbox.GameServer.Logic.Content
         //ApplyAttackDamage
         //ApplyAttackEffect
         //ApplyMaterialOnHitSound
-        public bool BelongsToAvatar { get; set; } = false;
+        public bool BelongsToAvatar { get; set; }
         public float BounceRadius { get; set; } = 450;
-        public bool CanCastWhileDisabled { get; set; } = false;
-        public float CancelChargeOnRecastTime { get; set; } = 0;
-        public bool CanMoveWhileChanneling { get; set; } = false;
-        public bool CannotBeSuppressed { get; set; } = false;
-        public bool CanOnlyCastWhileDead { get; set; } = false;
-        public bool CanOnlyCastWhileDisabled { get; set; } = false;
-        public bool CantCancelWhileChanneling { get; set; } = false;
-        public bool CantCancelWhileWindingUp { get; set; } = false;
-        public bool CantCastWhileRooted { get; set; } = false;
+        public bool CanCastWhileDisabled { get; set; }
+        public float CancelChargeOnRecastTime { get; set; }
+        public bool CanMoveWhileChanneling { get; set; }
+        public bool CannotBeSuppressed { get; set; }
+        public bool CanOnlyCastWhileDead { get; set; }
+        public bool CanOnlyCastWhileDisabled { get; set; }
+        public bool CantCancelWhileChanneling { get; set; }
+        public bool CantCancelWhileWindingUp { get; set; }
+        public bool CantCastWhileRooted { get; set; }
         public float CastConeAngle { get; set; } = 45;
         public float CastConeDistance { get; set; } = 400;
-        public float CastFrame { get; set; } = 0;
+        public float CastFrame { get; set; }
         public float[] CastRadius { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public float[] CastRadiusSecondary { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //CastRadiusSecondaryTexture
@@ -101,13 +101,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float[] CastRangeGrowthDuration { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public float[] CastRangeGrowthMax { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //CastRangeTextureOverrideName
-        public bool CastRangeUseBoundingBoxes { get; set; } = false;
-        public float CastTargetAdditionalUnitsRadius { get; set; } = 0;
-        public int CastType { get; set; } = 0;
+        public bool CastRangeUseBoundingBoxes { get; set; }
+        public float CastTargetAdditionalUnitsRadius { get; set; }
+        public int CastType { get; set; }
         public float[] ChannelDuration { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
-        public float ChargeUpdateInterval { get; set; } = 0;
-        public float CircleMissileAngularVelocity { get; set; } = 0;
-        public float CircleMissileRadialVelocity { get; set; } = 0;
+        public float ChargeUpdateInterval { get; set; }
+        public float CircleMissileAngularVelocity { get; set; }
+        public float CircleMissileRadialVelocity { get; set; }
         //ClientOnlyMissileTargetBoneName
         //Coefficient
         //Coefficient2
@@ -115,55 +115,55 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float[] Cooldown { get; set; } = { 10, 10, 10, 10, 10, 10, 10 };
         //CursorChangesInGrass
         //CursorChangesInTerrain
-        public int DeathRecapPriority { get; set; } = 0;
-        public float DelayCastOffsetPercent { get; set; } = 0;
-        public float DelayTotalTimePercent { get; set; } = 0;
+        public int DeathRecapPriority { get; set; }
+        public float DelayCastOffsetPercent { get; set; }
+        public float DelayTotalTimePercent { get; set; }
         //Description
         //DisableCastBar
         //DisplayName
-        public bool DoesntBreakChannels { get; set; } = false;
-        public bool DoNotNeedToFaceTarget { get; set; } = false;
+        public bool DoesntBreakChannels { get; set; }
+        public bool DoNotNeedToFaceTarget { get; set; }
         //DrawSecondaryLineIndicator
         //DynamicExtended
         //string DynamicTooltip
         //EffectXLevelYAmmount
-        public int Flags { get; set; } = 0;
+        public int Flags { get; set; }
         //FloatStaticsDecimalsX
         //FloatVarsDecimalsX
-        public bool HaveAfterEffect { get; set; } = false;
-        public bool HaveHitBone { get; set; } = false;
-        public bool HaveHitEffect { get; set; } = false;
-        public bool HavePointEffect { get; set; } = false;
+        public bool HaveAfterEffect { get; set; }
+        public bool HaveHitBone { get; set; }
+        public bool HaveHitEffect { get; set; }
+        public bool HavePointEffect { get; set; }
         //HideRangeIndicatorWhenCasting
         public string HitBoneName { get; set; } = "";
         public string HitEffectName { get; set; } = "";
         public int HitEffectOrientType { get; set; } = 1;
         //HitEffectPlayerName
-        public bool IgnoreAnimContinueUntilCastFrame { get; set; } = false;
-        public bool IgnoreRangeCheck { get; set; } = false;
+        public bool IgnoreAnimContinueUntilCastFrame { get; set; }
+        public bool IgnoreRangeCheck { get; set; }
         //InventoryIconX
         public bool IsDisabledWhileDead { get; set; } = true;
-        public bool IsToggleSpell { get; set; } = false;
+        public bool IsToggleSpell { get; set; }
         //KeywordWhenAcquired
         //LevelXDesc
-        public float LineDragLength { get; set; } = 0;
-        public int LineMissileBounces { get; set; } = 0;
-        public bool LineMissileCollisionFromStartPoint { get; set; } = false;
-        public float LineMissileDelayDestroyAtEndSeconds { get; set; } = 0;
-        public bool LineMissileEndsAtTargetPoint { get; set; } = false;
-        public bool LineMissileFollowsTerrainHeight { get; set; } = false;
+        public float LineDragLength { get; set; }
+        public int LineMissileBounces { get; set; }
+        public bool LineMissileCollisionFromStartPoint { get; set; }
+        public float LineMissileDelayDestroyAtEndSeconds { get; set; }
+        public bool LineMissileEndsAtTargetPoint { get; set; }
+        public bool LineMissileFollowsTerrainHeight { get; set; }
         public float LineMissileTargetHeightAugment { get; set; } = 100;
-        public float LineMissileTimePulseBetweenCollisionSpellHits { get; set; } = 0;
-        public bool LineMissileTrackUnits { get; set; } = false;
-        public bool LineMissileUsesAccelerationForBounce { get; set; } = false;
+        public float LineMissileTimePulseBetweenCollisionSpellHits { get; set; }
+        public bool LineMissileTrackUnits { get; set; }
+        public bool LineMissileUsesAccelerationForBounce { get; set; }
         //LineTargetingBaseTextureOverrideName
         //LineTargetingBaseTextureOverrideName
-        public float LineWidth { get; set; } = 0;
+        public float LineWidth { get; set; }
         public float[] LocationTargettingLength { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public float[] LocationTargettingWidth { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
-        public bool LockConeToPlayer { get; set; } = false;
+        public bool LockConeToPlayer { get; set; }
         //LookAtPolicy 
-        public float LuaOnMissileUpdateDistanceInterval { get; set; } = 0;
+        public float LuaOnMissileUpdateDistanceInterval { get; set; }
         public float[] ManaCost { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //Map_X_EffectYLevelZAmmount
         public int[] MaxAmmo { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
@@ -171,28 +171,28 @@ namespace LeagueSandbox.GameServer.Logic.Content
         //MinimapIcon
         //MinimapIconDisplayFlag
         //MinimapIconRotation
-        public float MissileAccel { get; set; } = 0;
+        public float MissileAccel { get; set; }
         public string MissileBoneName { get; set; } = "";
         public string MissileEffect { get; set; } = "";
         public string MissileEffectPlayer { get; set; } = "";
-        public float MissileFixedTravelTime { get; set; } = 0;
-        public bool MissileFollowsTerrainHeight { get; set; } = false;
-        public float MissileGravity { get; set; } = 0;
-        public float MissileLifetime { get; set; } = 0;
-        public float MissileMaxSpeed { get; set; } = 0;
-        public float MissileMinSpeed { get; set; } = 0;
-        public float MissileMinTravelTime { get; set; } = 0;
-        public float MissilePerceptionBubbleRadius { get; set; } = 0;
-        public bool MissilePerceptionBubbleRevealsStealth { get; set; } = false;
+        public float MissileFixedTravelTime { get; set; }
+        public bool MissileFollowsTerrainHeight { get; set; }
+        public float MissileGravity { get; set; }
+        public float MissileLifetime { get; set; }
+        public float MissileMaxSpeed { get; set; }
+        public float MissileMinSpeed { get; set; }
+        public float MissileMinTravelTime { get; set; }
+        public float MissilePerceptionBubbleRadius { get; set; }
+        public bool MissilePerceptionBubbleRevealsStealth { get; set; }
         public float MissileSpeed { get; set; } = 500;
         public float MissileTargetHeightAugment { get; set; } = 100;
-        public bool MissileUnblockable { get; set; } = false;
-        public bool NoWinddownIfCancelled { get; set; } = false;
+        public bool MissileUnblockable { get; set; }
+        public bool NoWinddownIfCancelled { get; set; }
         //NumSpellTargeters
         //OrientRadiusTextureFromPlayer
         //OrientRangeIndicatorToCursor
         //OrientRangeIndicatorToFacing
-        public float OverrideCastTime { get; set; } = 0;
+        public float OverrideCastTime { get; set; }
         public Vector3 ParticleStartOffset { get; set; } = new Vector3(0, 0, 0);
         //PlatformEnabled
         public string PointEffectName { get; set; } = "";
@@ -202,22 +202,22 @@ namespace LeagueSandbox.GameServer.Logic.Content
         //Sound_CastName
         //Sound_HitName
         //Sound_VOEventCategory
-        public float SpellCastTime { get; set; } = 0;
-        public float SpellRevealsChampion { get; set; } = 0;
-        public float SpellTotalTime { get; set; } = 0;
-        public float StartCooldown { get; set; } = 0;
+        public float SpellCastTime { get; set; }
+        public float SpellRevealsChampion { get; set; }
+        public float SpellTotalTime { get; set; }
+        public float StartCooldown { get; set; }
         public bool SubjectToGlobalCooldown { get; set; } = true;
         //TargeterConstrainedToRange
         public int TargettingType { get; set; } = 1;
         public string TextFlags { get; set; } = "";
         public bool TriggersGlobalCooldown { get; set; } = true;
         public bool UpdateRotationWhenCasting { get; set; } = true;
-        public bool UseAnimatorFramerate { get; set; } = false;
-        public bool UseAutoattackCastTime { get; set; } = false;
-        public bool UseChargeChanneling { get; set; } = false;
-        public bool UseChargeTargeting { get; set; } = false;
-        public bool UseGlobalLineIndicator { get; set; } = false;
-        public bool UseMinimapTargeting { get; set; } = false;
+        public bool UseAnimatorFramerate { get; set; }
+        public bool UseAutoattackCastTime { get; set; }
+        public bool UseChargeChanneling { get; set; }
+        public bool UseChargeTargeting { get; set; }
+        public bool UseGlobalLineIndicator { get; set; }
+        public bool UseMinimapTargeting { get; set; }
         //Version
         //x1,x2,x3,x4,x5
         
@@ -381,7 +381,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             //OrientRangeIndicatorToFacing
             OverrideCastTime = file.GetFloat("SpellData", "OverrideCastTime", OverrideCastTime);
             //public Vector3 ParticleStartOffset { get; set; } = new Vector3(0, 0, 0);
-            var particleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new float[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
+            var particleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
             ParticleStartOffset = new Vector3(particleStartOffset[0], particleStartOffset[1], particleStartOffset[2]);
             //PlatformEnabled
             PointEffectName = file.GetString("SpellData", "PointEffectName", PointEffectName);

@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         SPAWN_RED_TOP = 0xe647d540,
         SPAWN_RED_BOT = 0x5ec9af40,
         SPAWN_RED_MID = 0xba00e840
-    };
+    }
 
     public enum MinionSpawnType : byte
     {
@@ -20,14 +20,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         MINION_TYPE_CASTER = 0x03,
         MINION_TYPE_CANNON = 0x02,
         MINION_TYPE_SUPER = 0x01
-    };
+    }
     public class Minion : ObjAiBase
     {
         /// <summary>
         /// Const waypoints that define the minion's route
         /// </summary>
         protected List<Vector2> _mainWaypoints;
-        protected int _curMainWaypoint = 0;
+        protected int _curMainWaypoint;
         public MinionSpawnPosition SpawnPosition { get; private set; }
         protected MinionSpawnType _minionType;
         protected bool _aiPaused;
@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _minionType = type;
             SpawnPosition = position;
-            this._mainWaypoints = mainWaypoints;
+            _mainWaypoints = mainWaypoints;
             _curMainWaypoint = 0;
             _aiPaused = false;
 

@@ -17,15 +17,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(m.NetId);
             _buffer.Write(m.NetId);
             _buffer.Write((byte)0x40);
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.GetZ()); //z
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.GetZ()); //z
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)m.Facing.X); //facing x
-            _buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
-            _buffer.Write((float)m.Facing.Y); //facing y
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.GetZ()); //z
+            _buffer.Write(m.Y); //y
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.GetZ()); //z
+            _buffer.Write(m.Y); //y
+            _buffer.Write(m.Facing.X); //facing x
+            _buffer.Write(Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            _buffer.Write(m.Facing.Y); //facing y
 
             _buffer.Write(Encoding.Default.GetBytes(m.Name));
             _buffer.Fill(0, 64 - m.Name.Length);
@@ -40,22 +40,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Write((int)m.Team); // Probably a short
             _buffer.Fill(0, 12);
-            _buffer.Write((int)1); //campId 1
-            _buffer.Write((int)100);
-            _buffer.Write((int)74);
+            _buffer.Write(1); //campId 1
+            _buffer.Write(100);
+            _buffer.Write(74);
             _buffer.Write((long)1);
-            _buffer.Write((float)115.0066f);
+            _buffer.Write(115.0066f);
             _buffer.Write((byte)0);
 
             _buffer.Fill(0, 11);
-            _buffer.Write((float)1.0f); // Unk
+            _buffer.Write(1.0f); // Unk
             _buffer.Fill(0, 13);
             _buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
-            _buffer.Write((int)13337);
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
-            _buffer.Write((float)0.5120428f); //rotation2 from -1 to 1
+            _buffer.Write(13337);
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.Y); //y
+            _buffer.Write(-0.8589599f); // rotation1 from -1 to 1
+            _buffer.Write(0.5120428f); //rotation2 from -1 to 1
         }
     }
 }

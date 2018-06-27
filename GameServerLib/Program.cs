@@ -1,7 +1,8 @@
 using System;
-using Ninject;
-using LeagueSandbox.GameServer.Logic.Content;
+using System.Timers;
 using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
+using Ninject;
 
 namespace LeagueSandbox.GameServer
 {
@@ -56,9 +57,9 @@ namespace LeagueSandbox.GameServer
 
         public static void SetToExit()
         {
-            Logger logger = Program.ResolveDependency<Logger>();
+            Logger logger = ResolveDependency<Logger>();
             logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
-            var timer = new System.Timers.Timer(10000) { AutoReset = false };
+            var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => IsSetToExit = true;
             timer.Start();
         }

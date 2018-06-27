@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
@@ -6,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Inhibitor : ObjAnimatedBuilding
     {
-        private System.Timers.Timer _respawnTimer;
+        private Timer _respawnTimer;
         private InhibitorState _state;
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
@@ -55,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (_respawnTimer != null) //?
                 _respawnTimer.Stop();
 
-            _respawnTimer = new System.Timers.Timer(RESPAWN_TIMER) {AutoReset = false};
+            _respawnTimer = new Timer(RESPAWN_TIMER) {AutoReset = false};
 
             _respawnTimer.Elapsed += (a, b) =>
             {

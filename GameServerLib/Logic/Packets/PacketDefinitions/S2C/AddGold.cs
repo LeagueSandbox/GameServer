@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             else
             {
-                _buffer.Write((int)0);
+                _buffer.Write(0);
             }
             _buffer.Write(gold);
         }

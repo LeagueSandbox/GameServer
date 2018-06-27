@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (killer != null)
                 _buffer.Write(killer.NetId);
             else
-                _buffer.Write((int)0);
+                _buffer.Write(0);
 
             _buffer.Write((byte)0);
             _buffer.Write((byte)7);

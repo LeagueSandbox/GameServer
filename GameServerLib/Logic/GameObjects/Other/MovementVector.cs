@@ -12,14 +12,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public MovementVector(short x, short y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public MovementVector(float x, float y)
         {
-            this.X = FormatCoordinate(x, _game.Map.NavGrid.MiddleOfMap.Y);
-            this.Y = FormatCoordinate(y, _game.Map.NavGrid.MiddleOfMap.X);
+            X = FormatCoordinate(x, _game.Map.NavGrid.MiddleOfMap.Y);
+            Y = FormatCoordinate(y, _game.Map.NavGrid.MiddleOfMap.X);
         }
 
         public Target ToTarget()

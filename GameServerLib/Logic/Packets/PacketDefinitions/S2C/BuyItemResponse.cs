@@ -9,11 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public BuyItemResponse(AttackableUnit actor, Item item, byte unk = 0x29)
             : base(PacketCmd.PKT_S2_C_BUY_ITEM_ANS, actor.NetId)
         {
-            _buffer.Write((int)item.ItemType.ItemId);
-            _buffer.Write((byte)actor.Inventory.GetItemSlot(item));
-            _buffer.Write((byte)item.StackSize);
+            _buffer.Write(item.ItemType.ItemId);
+            _buffer.Write(actor.Inventory.GetItemSlot(item));
+            _buffer.Write(item.StackSize);
             _buffer.Write((byte)0); //unk or stacks => short
-            _buffer.Write((byte)unk); //unk (turret 0x01 and champions 0x29)
+            _buffer.Write(unk); //unk (turret 0x01 and champions 0x29)
         }
     }
 }

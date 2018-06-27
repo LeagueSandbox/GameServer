@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -133,7 +133,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     return;
 
                 ObjectsHit.Add(unit);
-                var attackableUnit = unit as AttackableUnit;
+                var attackableUnit = unit;
                 if (attackableUnit != null)
                 {
                     _originSpell.ApplyEffects(attackableUnit, this);

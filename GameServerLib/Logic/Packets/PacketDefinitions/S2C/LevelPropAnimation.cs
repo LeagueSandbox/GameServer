@@ -18,20 +18,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(Encoding.Default.GetBytes(animationName));
             _buffer.Fill(0, 64 - animationName.Length);
 
-            _buffer.Write((float)unk1);
-            _buffer.Write((float)animationTime);
+            _buffer.Write(unk1);
+            _buffer.Write(animationTime);
 
-            _buffer.Write((uint)lp.NetId);
+            _buffer.Write(lp.NetId);
 
-            _buffer.Write((int)unk2);
-            _buffer.Write((int)unk3);
+            _buffer.Write(unk2);
+            _buffer.Write(unk3);
 
             byte delete = 0x00;
             if (deletePropAfterAnimationFinishes)
             {
                 delete = 0x01;
             }
-            _buffer.Write((byte)delete); // Most likely deletes prop after animation ends when set to 1
+            _buffer.Write(delete); // Most likely deletes prop after animation ends when set to 1
             _buffer.Write((byte)0x00);
             _buffer.Write((byte)0x00);
         }

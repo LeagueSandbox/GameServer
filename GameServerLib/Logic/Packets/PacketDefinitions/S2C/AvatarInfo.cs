@@ -24,23 +24,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
 
             var summonerSpells = player.SummonerSkills;
-            _buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
-            _buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
+            _buffer.Write(HashFunctions.HashString(summonerSpells[0]));
+            _buffer.Write(HashFunctions.HashString(summonerSpells[1]));
 
             int talentsRequired = 80;
-            var talentsHashes = new Dictionary<int, byte>(){
+            var talentsHashes = new Dictionary<int, byte>
+            {
                 { 0, 0 } // hash, level
             };
 
             foreach (var talent in talentsHashes)
             {
-                _buffer.Write((int)talent.Key); // hash
-                _buffer.Write((byte)talent.Value); // level
+                _buffer.Write(talent.Key); // hash
+                _buffer.Write(talent.Value); // level
                 talentsRequired--;
             }
             for (int i = 1; i <= talentsRequired; i++)
             {
-                _buffer.Write((int)0);
+                _buffer.Write(0);
                 _buffer.Write((byte)0);
             }
 

@@ -18,15 +18,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write(m.NetId);
             _buffer.Write(m.NetId);
             _buffer.Write((byte)0x40);
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.GetZ()); //z
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.GetZ()); //z
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)m.Facing.X); //facing x
-            _buffer.Write((float)Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
-            _buffer.Write((float)m.Facing.Y); //facing y
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.GetZ()); //z
+            _buffer.Write(m.Y); //y
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.GetZ()); //z
+            _buffer.Write(m.Y); //y
+            _buffer.Write(m.Facing.X); //facing x
+            _buffer.Write(Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            _buffer.Write(m.Facing.Y); //facing y
 
             _buffer.Write(Encoding.Default.GetBytes(m.Name));
             _buffer.Fill(0, 64 - m.Name.Length);
@@ -43,24 +43,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((int)m.Team); // Probably a short
             _buffer.Fill(0, 12); // Unk
             _buffer.Write((int)m.CampId); // Camp id. Camp needs to exist
-            _buffer.Write((int)0); // Unk
+            _buffer.Write(0); // Unk
             _buffer.Write((int)m.CampUnk);
-            _buffer.Write((int)1); // Unk
-            _buffer.Write((float)m.SpawnAnimationTime); // After this many seconds, the camp icon appears in the minimap
-            _buffer.Write((float)1191.533936f); // Unk
-            _buffer.Write((int)1); // Unk
+            _buffer.Write(1); // Unk
+            _buffer.Write(m.SpawnAnimationTime); // After this many seconds, the camp icon appears in the minimap
+            _buffer.Write(1191.533936f); // Unk
+            _buffer.Write(1); // Unk
             _buffer.Fill(0, 40); // Unk
-            _buffer.Write((float)1.0f); // Unk
+            _buffer.Write(1.0f); // Unk
             _buffer.Fill(0, 13); // Unk
             _buffer.Write((byte)3); //type 3=champ/jungle; 2=minion
             _buffer.Write((byte)0xF1); //<-|
             _buffer.Write((byte)0xFB); //  |-> Unk
             _buffer.Write((byte)0x27); //  |
             _buffer.Write((byte)0x00); //<-|
-            _buffer.Write((float)m.X); //x
-            _buffer.Write((float)m.Y); //y
-            _buffer.Write((float)-0.8589599f); // rotation1 from -1 to 1
-            _buffer.Write((float)0.5120428f); // rotation2 from -1 to 1
+            _buffer.Write(m.X); //x
+            _buffer.Write(m.Y); //y
+            _buffer.Write(-0.8589599f); // rotation1 from -1 to 1
+            _buffer.Write(0.5120428f); // rotation2 from -1 to 1
         }
     }
 }

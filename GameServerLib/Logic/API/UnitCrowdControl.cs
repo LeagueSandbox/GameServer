@@ -9,8 +9,8 @@
     {
         CrowdControlType _type;
         float _duration;
-        float _currentTime = 0;
-        bool _remove = false;
+        float _currentTime;
+        bool _remove;
         public UnitCrowdControl(CrowdControlType type, float duration = -1)
         {
             _type = type;

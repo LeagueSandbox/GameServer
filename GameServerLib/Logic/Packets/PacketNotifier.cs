@@ -1,13 +1,15 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+﻿using System.Collections.Generic;
+using System.Numerics;
+using System.Timers;
+using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Players;
-using System.Collections.Generic;
-using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Players;
 using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
@@ -52,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
             _game.PacketHandlerManager.BroadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2_C);
 
-            var timer = new System.Timers.Timer(5000) { AutoReset = false };
+            var timer = new Timer(5000) { AutoReset = false };
             timer.Elapsed += (a, b) =>
             {
                 var gameEndPacket = new GameEnd(losingTeam != TeamId.TEAM_BLUE);
@@ -68,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 var us = new UpdateStats(u.Replication, partial);
                 var channel = Channel.CHL_LOW_PRIORITY;
-                _game.PacketHandlerManager.BroadcastPacketVision(u, us, channel, ENet.PacketFlags.Unsequenced);
+                _game.PacketHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
                 if (partial)
                 {
                     foreach (var x in u.Replication.Values)

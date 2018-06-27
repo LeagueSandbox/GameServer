@@ -9,9 +9,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2_C_WORLD_SEND_GAME_NUMBER)
         {
             var data = Encoding.Default.GetBytes(name);
-            _buffer.Write((long)gameId);
+            _buffer.Write(gameId);
             foreach (var d in data)
-                _buffer.Write((byte)d);
+                _buffer.Write(d);
             _buffer.Fill(0, 128 - data.Length);
         }
     }

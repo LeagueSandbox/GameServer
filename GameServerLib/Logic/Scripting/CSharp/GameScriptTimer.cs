@@ -5,10 +5,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
     //Timer class for GameScripts to be able to trigger events after a duration
     public class GameScriptTimer
     {
-        float _duration = 0;
-        float _currentTime = 0;
-        Action _callback = null;
-        bool _remove = false;
+        float _duration;
+        float _currentTime;
+        Action _callback;
+        bool _remove;
         public GameScriptTimer(float duration, Action callback)
         {
             _duration = duration;

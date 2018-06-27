@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using BlowFishCS;
@@ -64,7 +65,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
             return null;
         }
-        public bool SendPacket(Peer peer, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+        public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return SendPacket(peer, packet.GetBytes(), channelNo, flag);
@@ -88,12 +89,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
             lock (Program.ExecutingDirectory)
             {
-                System.Diagnostics.Debug.Write(str);
+                Debug.Write(str);
                 foreach (var b in buffer)
-                    System.Diagnostics.Debug.Write(b.ToString("X2") + " ");
+                    Debug.Write(b.ToString("X2") + " ");
 
-                System.Diagnostics.Debug.WriteLine("");
-                System.Diagnostics.Debug.WriteLine("--------");
+                Debug.WriteLine("");
+                Debug.WriteLine("--------");
             }
         }
         public bool SendPacket(Peer peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
@@ -126,7 +127,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return true;
         }
 
-        public bool BroadcastPacket(GameServer.Logic.Packets.Packet packet, Channel channelNo,
+        public bool BroadcastPacket(Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return BroadcastPacket(packet.GetBytes(), channelNo, flag);
@@ -142,13 +143,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return true;
         }
 
-        public bool BroadcastPacketTeam(TeamId team, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+        public bool BroadcastPacketTeam(TeamId team, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return BroadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, GameServer.Logic.Packets.Packet packet, Channel channelNo,
+        public bool BroadcastPacketVision(GameObject o, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
@@ -174,7 +175,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public bool HandlePacket(Peer peer, byte[] data, Channel channelId)
         {
-            var header = new GameServer.Logic.Packets.PacketHeader(data);
+            var header = new PacketHeader(data);
             var handler = GetHandler(header.Cmd, channelId);
 
             switch (header.Cmd)
@@ -200,7 +201,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
         {
-            var data = new byte[(int)packet.Length];
+            var data = new byte[packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
             if (data.Length >= 8)

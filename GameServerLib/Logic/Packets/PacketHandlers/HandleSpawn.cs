@@ -95,8 +95,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                         if (item == null) continue;
                         _game.PacketNotifier.NotifyItemBought(turret, item as Item);
                     }
-
-                    continue;
                 }
                 else if (kv.Value is LevelProp)
                 {
@@ -104,8 +102,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
                     var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
                     _game.PacketHandlerManager.SendPacket(peer, levelPropSpawnPacket, Channel.CHL_S2_C);
-
-                    continue;
                 }
                 else if (kv.Value is Champion)
                 {
@@ -124,8 +120,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2_C);
                     var setHealthPacket = new SetHealth(inhibtor.NetId);
                     _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
-
-                    continue;
                 }
                 else if (kv.Value is Projectile)
                 {
@@ -135,8 +129,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                         var spawnProjectilePacket = new SpawnProjectile(projectile);
                         _game.PacketHandlerManager.SendPacket(peer, spawnProjectilePacket, Channel.CHL_S2_C);
                     }
-
-                    continue;
                 }
                 else
                 {

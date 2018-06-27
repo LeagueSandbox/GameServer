@@ -71,16 +71,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     }
                     return true;
                 }
-                else
-                {
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>"
-                        + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> " +
-                                                                                  "is not a valid command.");
-                    _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>"
-                        + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> " +
-                                                                                 "for a list of available commands");
-                    return true;
-                }
+
+                _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "<font color =\"#E175FF\"><b>"
+                                                                              + _chatCommandManager.CommandStarterCharacter + split[0] + "</b><font color =\"#AFBF00\"> " +
+                                                                              "is not a valid command.");
+                _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Type <font color =\"#E175FF\"><b>"
+                                                                             + _chatCommandManager.CommandStarterCharacter + "help</b><font color =\"#AFBF00\"> " +
+                                                                             "for a list of available commands");
+                return true;
             }
             #endregion
 

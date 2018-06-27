@@ -8,9 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_PAUSE_GAME)
         {
             // The following structure might be incomplete or wrong
-            _buffer.Write((int)0);
-            _buffer.Write((int)seconds);
-            _buffer.Write((bool)showWindow);
+            _buffer.Write(0);
+            _buffer.Write(seconds);
+            _buffer.Write(showWindow);
         }
     }
 }

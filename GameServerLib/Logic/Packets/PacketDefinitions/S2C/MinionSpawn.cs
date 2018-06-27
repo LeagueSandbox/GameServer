@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             _buffer.Write((uint)0x00150017); // unk
             _buffer.Write((byte)0x03); // SpawnType - 3 = minion
-            _buffer.Write((uint)m.NetId);
-            _buffer.Write((uint)m.NetId);
+            _buffer.Write(m.NetId);
+            _buffer.Write(m.NetId);
             _buffer.Write((uint)m.SpawnPosition);
             _buffer.Write((byte)0xFF); // unk
             _buffer.Write((byte)1); // wave number ?
@@ -34,41 +34,41 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             if (m.GetType() == MinionSpawnType.MINION_TYPE_CASTER)
             {
-                _buffer.Write((int)0x00010007); // unk
+                _buffer.Write(0x00010007); // unk
             }
             else if (m.GetType() == MinionSpawnType.MINION_TYPE_MELEE)
             {
-                _buffer.Write((int)0x0001000A); // unk
+                _buffer.Write(0x0001000A); // unk
             }
             else if (m.GetType() == MinionSpawnType.MINION_TYPE_CANNON)
             {
-                _buffer.Write((int)0x0001000D);
+                _buffer.Write(0x0001000D);
             }
             else
             {
-                _buffer.Write((int)0x00010007); // unk
+                _buffer.Write(0x00010007); // unk
             }
-            _buffer.Write((int)0x00000000); // unk
-            _buffer.Write((int)0x00000000); // unk
+            _buffer.Write(0x00000000); // unk
+            _buffer.Write(0x00000000); // unk
             _buffer.Write((short)0x0000); // unk
-            _buffer.Write((float)1.0f); // unk
-            _buffer.Write((int)0x00000000); // unk
-            _buffer.Write((int)0x00000000); // unk
-            _buffer.Write((int)0x00000000); // unk
+            _buffer.Write(1.0f); // unk
+            _buffer.Write(0x00000000); // unk
+            _buffer.Write(0x00000000); // unk
+            _buffer.Write(0x00000000); // unk
             _buffer.Write((short)0x0200); // unk
-            _buffer.Write((int)Environment.TickCount); // unk
+            _buffer.Write(Environment.TickCount); // unk
 
             List<Vector2> waypoints = m.Waypoints;
 
             _buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             _buffer.Write((int)m.NetId);
             _buffer.Write((byte)0); // movement mask
-            _buffer.Write((short)MovementVector.TargetXToNormalFormat(m.X));
-            _buffer.Write((short)MovementVector.TargetYToNormalFormat(m.Y));
+            _buffer.Write(MovementVector.TargetXToNormalFormat(m.X));
+            _buffer.Write(MovementVector.TargetYToNormalFormat(m.Y));
             for (int i = m.CurWaypoint; i < waypoints.Count; ++i)
             {
-                _buffer.Write((short)MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                _buffer.Write((short)MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
     }

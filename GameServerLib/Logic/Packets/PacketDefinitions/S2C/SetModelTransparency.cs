@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             // Applied to Teemo's mushrooms for example
             _buffer.Write((byte)0xDB); // Unk
             _buffer.Write((byte)0x00); // Unk
-            _buffer.Write((float)transitionTime);
-            _buffer.Write((float)transparency); // 0.0 : fully transparent, 1.0 : fully visible
+            _buffer.Write(transitionTime);
+            _buffer.Write(transparency); // 0.0 : fully transparent, 1.0 : fully visible
         }
     }
 }

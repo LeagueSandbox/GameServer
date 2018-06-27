@@ -1,22 +1,22 @@
-﻿using BlowFishCS;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using BlowFishCS;
 using ENet;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Players;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using Timer = System.Timers.Timer;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Core.Logic
 {
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public int PlayersReady { get; private set; }
 
-        public float GameTime { get; private set; } = 0;
+        public float GameTime { get; private set; }
         private float _nextSyncTime = 10 * 1000;
 
 

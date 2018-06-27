@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((int)t.NetId);
             _buffer.Write((byte)0x40);
             foreach (var b in Encoding.Default.GetBytes(t.Name))
-                _buffer.Write((byte)b);
+                _buffer.Write(b);
             _buffer.Fill(0, 64 - t.Name.Length);
             _buffer.Write((byte)0x0C);
             _buffer.Write((byte)0x00);
