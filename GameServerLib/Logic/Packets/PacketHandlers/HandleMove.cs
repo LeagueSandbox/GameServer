@@ -41,8 +41,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.SetPosition(request.X, request.Y);
-                    float x = ((request.X) - _game.Map.NavGrid.MapWidth) / 2;
-                    float y = ((request.Y) - _game.Map.NavGrid.MapHeight) / 2;
+                    var x = ((request.X) - _game.Map.NavGrid.MapWidth) / 2;
+                    var y = ((request.Y) - _game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {

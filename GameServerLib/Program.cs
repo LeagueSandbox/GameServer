@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer
         public static string ConfigJson { get; private set; }
         public static ushort ServerPort { get; private set; }
 
-        public static void Run(ushort serverPort, String configJson)
+        public static void Run(ushort serverPort, string configJson)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer
 
         public static void SetToExit()
         {
-            Logger logger = ResolveDependency<Logger>();
+            var logger = ResolveDependency<Logger>();
             logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
             var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => IsSetToExit = true;

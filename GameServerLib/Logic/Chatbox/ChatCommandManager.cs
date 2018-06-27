@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         {
             var game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
-            int fontSize = 20; // Big fonts seem to make the chatbox buggy
+            var fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
             switch (type)
             {

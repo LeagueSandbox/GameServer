@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             while (_run)
             {
-                byte[] rainbow = new byte[4];
+                var rainbow = new byte[4];
                 new Random().NextBytes(rainbow);
                 Thread.Sleep(_delay);
                 BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            Game game = Program.ResolveDependency<Game>();
+            var game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
             game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2_C);
         }

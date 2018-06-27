@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 _buffer.Write(assists.Count);
                 foreach (var a in assists)
                     _buffer.Write(a.NetId);
-                for (int i = 0; i < 12 - assists.Count; i++)
+                for (var i = 0; i < 12 - assists.Count; i++)
                     _buffer.Write(0);
             }
         }

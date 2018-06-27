@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (i == null)
                 return false;
 
-            float sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
+            var sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
             client.Champion.Stats.Gold += sellPrice;
 
             if (i.ItemType.MaxStack > 1)

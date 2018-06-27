@@ -58,14 +58,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((short)0x0200); // unk
             _buffer.Write(Environment.TickCount); // unk
 
-            List<Vector2> waypoints = m.Waypoints;
+            var waypoints = m.Waypoints;
 
             _buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             _buffer.Write((int)m.NetId);
             _buffer.Write((byte)0); // movement mask
             _buffer.Write(MovementVector.TargetXToNormalFormat(m.X));
             _buffer.Write(MovementVector.TargetYToNormalFormat(m.Y));
-            for (int i = m.CurWaypoint; i < waypoints.Count; ++i)
+            for (var i = m.CurWaypoint; i < waypoints.Count; ++i)
             {
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));

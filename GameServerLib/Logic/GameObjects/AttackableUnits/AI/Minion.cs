@@ -173,7 +173,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 if ((Waypoints.Count == 1) || (CurWaypoint == 2 && ++_curMainWaypoint < _mainWaypoints.Count))
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    List<Vector2> newWaypoints = new List<Vector2> { new Vector2(X, Y), _mainWaypoints[_curMainWaypoint] };
+                    var newWaypoints = new List<Vector2> { new Vector2(X, Y), _mainWaypoints[_curMainWaypoint] };
                     SetWaypoints(newWaypoints);
                 }
             }

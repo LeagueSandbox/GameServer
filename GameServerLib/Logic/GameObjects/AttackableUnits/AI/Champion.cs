@@ -324,19 +324,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             else
                 szSkin = Skin.ToString();
 
-            int hash = 0;
+            var hash = 0;
             var gobj = "[Character]";
             for (var i = 0; i < gobj.Length; i++)
             {
-                hash = Char.ToLower(gobj[i]) + (0x1003F * hash);
+                hash = char.ToLower(gobj[i]) + (0x1003F * hash);
             }
             for (var i = 0; i < Model.Length; i++)
             {
-                hash = Char.ToLower(Model[i]) + (0x1003F * hash);
+                hash = char.ToLower(Model[i]) + (0x1003F * hash);
             }
             for (var i = 0; i < szSkin.Length; i++)
             {
-                hash = Char.ToLower(szSkin[i]) + (0x1003F * hash);
+                hash = char.ToLower(szSkin[i]) + (0x1003F * hash);
             }
             return hash;
         }
@@ -398,7 +398,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             cKiller.ChampionGoldFromMinions = 0;
 
-            float gold = _game.Map.MapGameScript.GetGoldFor(this);
+            var gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
                 "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
                 gold,

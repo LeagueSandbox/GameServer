@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 return;
             }
 
-            ContentFile file = new ContentFile();
+            var file = new ContentFile();
             try
             {
                 var path = _game.Config.ContentManager.GetUnitStatPath(name);
@@ -111,23 +111,23 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 out var tempPar);
             ParType = tempPar;
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 SpellNames[i] = file.GetString("Data", $"Spell{i + 1}", SpellNames[i]);
             }
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 SpellsUpLevels[i] = file.GetIntArray("Data", $"SpellsUpLevels{i + 1}", SpellsUpLevels[i]);
             }
 
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
-            for (int i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++)
             {
                 ExtraSpells[i] = file.GetString("Data", $"ExtraSpell{i + 1}", ExtraSpells[i]);
             }
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 Passives[i].PassiveNameStr = file.GetString("Data", $"Passive{i + 1}Name", Passives[i].PassiveNameStr);
                 Passives[i].PassiveLuaName =

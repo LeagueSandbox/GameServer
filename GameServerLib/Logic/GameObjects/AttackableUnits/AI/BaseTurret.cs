@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _globalGold = 250.0f;
         protected float _globalExp = 0.0f;
 
-        public UInt32 ParentNetId { get; private set; }
+        public uint ParentNetId { get; private set; }
 
         public BaseTurret(
             string name,

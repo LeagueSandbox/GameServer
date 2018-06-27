@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.AreEqual(1, item2.StackSize);
 
             // Stack the second item, and make sure the second gets stacked
-            for(int i = 0; i < itemType2.MaxStack - 1; i++)
+            for(var i = 0; i < itemType2.MaxStack - 1; i++)
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);

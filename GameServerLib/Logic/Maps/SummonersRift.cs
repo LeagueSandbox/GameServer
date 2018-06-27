@@ -359,12 +359,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     return 0.0f;
                 }
 
-                float gold = 300.0f; //normal gold for a kill
+                var gold = 300.0f; //normal gold for a kill
                 if (c.KillDeathCounter < 5 && c.KillDeathCounter >= 0)
                 {
                     if (c.KillDeathCounter == 0)
                         return gold;
-                    for (int i = c.KillDeathCounter; i > 1; --i)
+                    for (var i = c.KillDeathCounter; i > 1; --i)
                         gold += gold * 0.165f;
 
                     return gold;
@@ -375,12 +375,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
                 if (c.KillDeathCounter < 0)
                 {
-                    float firstDeathGold = gold - gold * 0.085f;
+                    var firstDeathGold = gold - gold * 0.085f;
 
                     if (c.KillDeathCounter == -1)
                         return firstDeathGold;
 
-                    for (int i = c.KillDeathCounter; i < -1; ++i)
+                    for (var i = c.KillDeathCounter; i < -1; ++i)
                         firstDeathGold -= firstDeathGold * 0.2f;
 
                     if (firstDeathGold < 50)

@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _game.PacketHandlerManager.SendPacket(peer, start, Channel.CHL_S2_C);
             _logger.LogCoreInfo("Spawning map");
 
-            int playerId = 0;
+            var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())
             {
                 var spawn = new HeroSpawn(p.Item2, playerId++);

@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                     }
                     else
                     {
-                        uint num = rep.Value;
+                        var num = rep.Value;
                         while (num >= 0x80)
                         {
                             writer.Write((byte)(num | 0x80));

@@ -281,7 +281,7 @@ namespace LeagueSandbox.GameServer.Logic
             var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
-                Champion c = kv.Value;
+                var c = kv.Value;
                 if (c.Team == team)
                     champs.Add(c);
             }

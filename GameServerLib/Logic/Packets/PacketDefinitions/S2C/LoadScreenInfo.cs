@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((uint)6); // blueMax
             _buffer.Write((uint)6); // redMax
 
-            int currentBlue = 0;
+            var currentBlue = 0;
             foreach (var p in players)
             {
                 var player = p.Item2;
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Fill(0, 144);
 
-            int currentPurple = 0;
+            var currentPurple = 0;
             foreach (var p in players)
             {
                 var player = p.Item2;
@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 }
             }
 
-            for (int i = 0; i < 6 - currentPurple; ++i)
+            for (var i = 0; i < 6 - currentPurple; ++i)
             {
                 _buffer.Write((ulong)0);
             }

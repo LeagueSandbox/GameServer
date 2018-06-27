@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var mapId = _game.Config.GameConfig.Map;
             _logger.LogCoreInfo("Current map: " + mapId);
 
-            bool versionMatch = true;
+            var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
             if (version.Version != Config.VERSION)
             {

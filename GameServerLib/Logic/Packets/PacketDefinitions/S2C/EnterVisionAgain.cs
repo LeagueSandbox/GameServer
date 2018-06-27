@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0); // movement mask
             _buffer.Write(MovementVector.TargetXToNormalFormat(m.X));
             _buffer.Write(MovementVector.TargetYToNormalFormat(m.Y));
-            for (int i = m.CurWaypoint; i < waypoints.Count; i++)
+            for (var i = m.CurWaypoint; i < waypoints.Count; i++)
             {
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
@@ -64,14 +64,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)2); // Type of data: Waypoints=2
             _buffer.Write(Environment.TickCount); // unk
 
-            List<Vector2> waypoints = c.Waypoints;
+            var waypoints = c.Waypoints;
 
             _buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
             _buffer.Write(c.NetId);
             _buffer.Write((byte)0); // movement mask; 1=KeepMoving?
             _buffer.Write(MovementVector.TargetXToNormalFormat(c.X));
             _buffer.Write(MovementVector.TargetYToNormalFormat(c.Y));
-            for (int i = c.CurWaypoint; i < waypoints.Count; ++i)
+            for (var i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
                 _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));

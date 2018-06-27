@@ -144,7 +144,7 @@ namespace LeagueSandbox.GameServer.Logic
             //Can get called by different threads
             private void WriteTextToLogFile(string text)
             {
-                byte[] info = new UTF8Encoding(true).GetBytes(text);
+                var info = new UTF8Encoding(true).GetBytes(text);
                 lock (_logFile)
                 {
                     _logFile.WriteAsync(info, 0, info.Length);

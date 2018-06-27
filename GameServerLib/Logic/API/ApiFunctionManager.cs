@@ -49,14 +49,14 @@ namespace LeagueSandbox.GameServer.Logic.API
             return newTimer;
         }
 
-        public static Buff AddBuffHudVisual(String buffName, float duration, int stacks, ObjAiBase onto, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, float removeAfter = -1.0f)
         {
             return AddBuffHudVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
         }
 
-        public static Buff AddBuffHudVisual(String buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
         {
-            Buff b = new Buff(_game, buffName, duration, stacks, onto, from);
+            var b = new Buff(_game, buffName, duration, stacks, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
@@ -75,8 +75,8 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
         {
-            List<TeamId> teams = GetTeams();
-            foreach (TeamId id in teams)
+            var teams = GetTeams();
+            foreach (var id in teams)
             {
                 gameObject.SetVisibleByTeam(id, visibility);
             }
@@ -117,14 +117,14 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            Particle p = new Particle(champion, t, particle, size, bone);
+            var p = new Particle(champion, t, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
 
         public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            Particle p = new Particle(champion, target, particle, size, bone);
+            var p = new Particle(champion, target, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }

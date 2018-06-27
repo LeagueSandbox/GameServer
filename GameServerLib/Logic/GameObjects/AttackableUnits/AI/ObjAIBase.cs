@@ -194,14 +194,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public byte GetNewBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot();
+            var slot = GetBuffSlot();
             AppliedBuffs[slot] = b;
             return slot;
         }
 
         public void RemoveBuffSlot(Buff b)
         {
-            byte slot = GetBuffSlot(b);
+            var slot = GetBuffSlot(b);
             AppliedBuffs[slot] = null;
         }
 
@@ -502,7 +502,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public override void Update(float diff)
         {
-            foreach (UnitCrowdControl cc in _crowdControlList)
+            foreach (var cc in _crowdControlList)
             {
                 cc.Update(diff);
             }

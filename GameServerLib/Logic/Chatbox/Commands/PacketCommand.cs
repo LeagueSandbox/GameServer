@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var packet = new Packet((PacketCmd)opcode);
                 var buffer = packet.GetBuffer();
 
-                for (int i = 2; i < s.Length; i++)
+                for (var i = 2; i < s.Length; i++)
                 {
                     if (s[i] == "netid")
                     {

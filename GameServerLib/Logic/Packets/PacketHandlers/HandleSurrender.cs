@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var c = _pm.GetPeerInfo(peer).Champion;
-            Surrender surrender = new Surrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
+            var surrender = new Surrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
             _game.PacketHandlerManager.BroadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2_C);
             return true;
         }

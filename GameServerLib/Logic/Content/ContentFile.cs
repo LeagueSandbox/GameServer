@@ -10,9 +10,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             = new Dictionary<string, Dictionary<string, string>>();
         public Dictionary<string, object> MetaData { get; set; }
             = new Dictionary<string, object>();
-        private UInt32 Hash(string section, string name)
+        private uint Hash(string section, string name)
         {
-            UInt32 hash = 0;
+            uint hash = 0;
             foreach (var c in section)
             {
                 hash = char.ToLower(c) + 65599 * hash;
@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var list = obj.Split(' ');
                 if (defaultValue.Length == list.Length)
                 {
-                    for (int i = 0; i<defaultValue.Length; i++)
+                    for (var i = 0; i<defaultValue.Length; i++)
                     {
                         float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var list = obj.Split(' ');
                 if (defaultValue.Length == list.Length)
                 {
-                    for (int i = 0; i < defaultValue.Length; i++)
+                    for (var i = 0; i < defaultValue.Length; i++)
                     {
                         float value;
                         if (float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
@@ -111,9 +111,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public float[] GetMultiFloat(string section, string name, int num = 6, float defaultValue = 0)
         {
-            float[] result = new float[num+1];
+            var result = new float[num+1];
             result[0] = GetFloat(section, name, defaultValue);
-            for (int i = 1; i < num + 1; i++)
+            for (var i = 1; i < num + 1; i++)
             {
                 result[i] = GetFloat(section, string.Format("{0}{1}", name, i), result[0]);
             }
@@ -122,9 +122,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public int[] GetMultiInt(string section, string name, int num = 6, int defaultValue = 0)
         {
-            int[] result = new int[num + 1];
+            var result = new int[num + 1];
             result[0] = GetInt(section, name, defaultValue);
-            for (int i = 1; i < num + 1; i++)
+            for (var i = 1; i < num + 1; i++)
             {
                 result[i] = GetInt(section, string.Format("{0}{1}", name, i), result[0]);
             }

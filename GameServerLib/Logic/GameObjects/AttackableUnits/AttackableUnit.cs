@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
             if (champs.Count > 0)
             {
-                float expPerChamp = exp / champs.Count;
+                var expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
                 {
                     c.Stats.Experience += expPerChamp;

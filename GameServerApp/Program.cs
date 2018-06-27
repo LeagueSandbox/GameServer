@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServerApp
         {
             var options = ArgsOptions.Parse(args);
 
-            string configJson = options.ConfigJson;
+            var configJson = options.ConfigJson;
             if (string.IsNullOrEmpty(configJson))
             {
                 configJson = File.ReadAllText(options.ConfigPath);
