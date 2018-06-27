@@ -43,14 +43,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var packetsHandledWhilePaused = new List<PacketCmd>
             {
                 PacketCmd.PKT_UNPAUSE_GAME,
-                PacketCmd.PKT_C2_S_CHAR_LOADED,
-                PacketCmd.PKT_C2_S_CLICK,
-                PacketCmd.PKT_C2_S_CLIENT_READY,
-                PacketCmd.PKT_C2_S_EXIT,
-                PacketCmd.PKT_C2_S_HEART_BEAT,
-                PacketCmd.PKT_C2_S_QUERY_STATUS_REQ,
-                PacketCmd.PKT_C2_S_START_GAME,
-                PacketCmd.PKT_C2_S_WORLD_SEND_GAME_NUMBER,
+                PacketCmd.PKT_C2S_CHAR_LOADED,
+                PacketCmd.PKT_C2S_CLICK,
+                PacketCmd.PKT_C2S_CLIENT_READY,
+                PacketCmd.PKT_C2S_EXIT,
+                PacketCmd.PKT_C2S_HEART_BEAT,
+                PacketCmd.PKT_C2S_QUERY_STATUS_REQ,
+                PacketCmd.PKT_C2S_START_GAME,
+                PacketCmd.PKT_C2S_WORLD_SEND_GAME_NUMBER,
                 PacketCmd.PKT_CHAT_BOX_MESSAGE,
                 PacketCmd.PKT_KEY_CHECK
             };
@@ -62,8 +62,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 var handlers = _handlerTable[cmd];
                 if (handlers.ContainsKey(channelId))
+                {
                     return handlers[channelId];
+                }
             }
+
             return null;
         }
         public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
@@ -92,12 +95,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 Debug.Write(str);
                 foreach (var b in buffer)
+                {
                     Debug.Write(b.ToString("X2") + " ");
+                }
 
                 Debug.WriteLine("");
                 Debug.WriteLine("--------");
             }
         }
+
         public bool SendPacket(Peer peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
@@ -105,9 +111,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
+            {
                 temp = _blowfish.Encrypt(source);
+            }
             else
+            {
                 temp = source;
+            }
 
             return peer.Send((byte)channelNo, temp);
         }
@@ -118,9 +128,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
+            {
                 temp = _blowfish.Encrypt(data);
+            }
             else
+            {
                 temp = data;
+            }
 
             var packet = new ENet.Packet();
             packet.Create(temp);
@@ -139,8 +153,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var ci in _playerManager.GetPlayers())
+            {
                 if (ci.Item2.Peer != null && ci.Item2.Team == team)
+                {
                     SendPacket(ci.Item2.Peer, data, channelNo, flag);
+                }
+            }
+
             return true;
         }
 
@@ -163,7 +182,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             foreach (var team in _teamsEnumerator)
             {
                 if (team == TeamId.TEAM_NEUTRAL)
+                {
                     continue;
+                }
 
                 if (game.ObjectManager.TeamHasVisionOn(team, o))
                 {
@@ -181,21 +202,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             switch (header.Cmd)
             {
-                case PacketCmd.PKT_C2_S_STATS_CONFIRM:
-                case PacketCmd.PKT_C2_S_MOVE_CONFIRM:
-                case PacketCmd.PKT_C2_S_VIEW_REQ:
+                case PacketCmd.PKT_C2S_STATS_CONFIRM:
+                case PacketCmd.PKT_C2S_MOVE_CONFIRM:
+                case PacketCmd.PKT_C2S_VIEW_REQ:
                     break;
             }
 
             if (handler != null)
             {
-                if (!handler.HandlePacket(peer, data))
-                {
-                    return false;
-                }
-
-                return true;
+                return handler.HandlePacket(peer, data);
             }
+
             PrintPacket(data, "Error: ");
             return false;
         }
@@ -205,9 +222,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var data = new byte[packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
-            if (data.Length >= 8)
-                if (_playerManager.GetPeerInfo(peer) != null)
-                    data = _blowfish.Decrypt(data);
+            if (data.Length >= 8 && _playerManager.GetPeerInfo(peer) != null)
+            {
+                data = _blowfish.Decrypt(data);
+            }
 
             return HandlePacket(peer, data, channelId);
         }

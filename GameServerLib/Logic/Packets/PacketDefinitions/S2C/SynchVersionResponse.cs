@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SynchVersionResponse : BasePacket
     {
         public SynchVersionResponse(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map)
-            : base(PacketCmd.PKT_S2_C_SYNCH_VERSION)
+            : base(PacketCmd.PKT_S2C_SYNCH_VERSION)
         {
             _buffer.Write((byte)1); // Bit field
             // First bit: doVersionsMatch - If set to 0, the client closes

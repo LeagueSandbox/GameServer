@@ -41,7 +41,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 var u = it.Value as AttackableUnit;
 
                 if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
+                {
                     continue;
+                }
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
@@ -77,6 +79,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     }
                 }
             }
+
             if (nextTarget != null)
             {
                 TargetUnit = nextTarget;
@@ -120,6 +123,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 player.Stats.Gold += goldEarn;
                 _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
+
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
             base.Die(killer);
         }
@@ -132,6 +136,5 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             return 0;
         }
-
     }
 }

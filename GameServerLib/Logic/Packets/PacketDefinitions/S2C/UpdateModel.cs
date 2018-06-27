@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UpdateModel : BasePacket
     {
         public UpdateModel(uint netId, string modelName, bool useSpells = true)
-            : base(PacketCmd.PKT_S2_C_UPDATE_MODEL, netId)
+            : base(PacketCmd.PKT_S2C_UPDATE_MODEL, netId)
         {
             _buffer.Write(useSpells); // Use spells from the new model
             _buffer.Write((byte)0x00); // <-- These three bytes most likely form

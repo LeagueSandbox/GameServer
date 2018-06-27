@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Logger _logger;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_USE_OBJECT;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_USE_OBJECT;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleUseObject(Game game, Logger logger, PlayerManager playerManager)

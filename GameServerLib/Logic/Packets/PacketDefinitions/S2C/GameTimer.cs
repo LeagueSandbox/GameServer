@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class GameTimer : BasePacket
     {
         public GameTimer(float fTime)
-            : base(PacketCmd.PKT_S2_C_GAME_TIMER, 0)
+            : base(PacketCmd.PKT_S2C_GAME_TIMER, 0)
         {
             _buffer.Write(fTime);
         }

@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
-    class SummonersRift : IMapGameScript
+    internal class SummonersRift : IMapGameScript
     {
         private static readonly List<Vector2> BlueTopWaypoints = new List<Vector2>
         {
@@ -179,6 +179,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             16480,
             18360
         };
+
         public float GoldPerSecond { get; set; } = 1.9f;
         public bool HasFirstBloodHappened { get; set; } = false;
         public bool IsKillGoldRewardReductionActive { get; set; } = true;
@@ -365,28 +366,41 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 if (c.KillDeathCounter < 5 && c.KillDeathCounter >= 0)
                 {
                     if (c.KillDeathCounter == 0)
+                    {
                         return gold;
+                    }
+
                     for (var i = c.KillDeathCounter; i > 1; --i)
+                    {
                         gold += gold * 0.165f;
+                    }
 
                     return gold;
                 }
 
                 if (c.KillDeathCounter >= 5)
+                {
                     return 500.0f;
+                }
 
                 if (c.KillDeathCounter < 0)
                 {
                     var firstDeathGold = gold - gold * 0.085f;
 
                     if (c.KillDeathCounter == -1)
+                    {
                         return firstDeathGold;
+                    }
 
                     for (var i = c.KillDeathCounter; i < -1; ++i)
+                    {
                         firstDeathGold -= firstDeathGold * 0.2f;
+                    }
 
                     if (firstDeathGold < 50)
+                    {
                         firstDeathGold = 50;
+                    }
 
                     return firstDeathGold;
                 }
@@ -402,12 +416,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(_game.GameTime / (180 * 1000)) }
             };
 
-            if (!dic.ContainsKey(m.GetType()))
+            if (!dic.ContainsKey(m.MinionSpawnType))
             {
                 return 0.0f;
             }
 
-            return dic[m.GetType()];
+            return dic[m.MinionSpawnType];
         }
 
         public float GetExperienceFor(AttackableUnit u)
@@ -415,7 +429,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             var m = u as Minion;
 
             if (m == null)
+            {
                 return 0.0f;
+            }
+
             var dic = new Dictionary<MinionSpawnType, float>
             {
                 { MinionSpawnType.MINION_TYPE_MELEE, 64.0f },
@@ -424,12 +441,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 { MinionSpawnType.MINION_TYPE_SUPER, 97.0f }
             };
 
-            if (!dic.ContainsKey(m.GetType()))
+            if (!dic.ContainsKey(m.MinionSpawnType))
             {
                 return 0.0f;
             }
 
-            return dic[m.GetType()];
+            return dic[m.MinionSpawnType];
         }
 
         public Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
@@ -457,7 +474,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             // Same for all minions
             m.Stats.MoveSpeed.BaseValue = 325.0f;
 
-            switch (m.GetType())
+            switch (m.MinionSpawnType)
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
                     m.Stats.CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (180 * 1000));
@@ -554,7 +571,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 var waypoints = spawnToWaypoints[pos].Item1;
                 var inhibitorId = spawnToWaypoints[pos].Item2;
                 var inhibitor = _game.ObjectManager.GetInhibitorById(inhibitorId);
-                var isInhibitorDead = inhibitor.GetState() == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
+                var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
                 var oppositeTeam = TeamId.TEAM_BLUE;
                 if (inhibitor.Team == TeamId.TEAM_PURPLE)

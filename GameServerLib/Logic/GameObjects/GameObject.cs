@@ -90,7 +90,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.Map.CollisionHandler.RemoveObject(this);
         }
 
-        public virtual void OnCollision(GameObject collider) { }
+        public virtual void OnCollision(GameObject collider)
+        {
+        }
 
         /// <summary>
         /// Moves the object depending on its target, updating its coordinate.
@@ -120,7 +122,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 moveSpeed = _dashSpeed;
             }
 
-            var deltaMovement = (moveSpeed) * 0.001f * diff;
+            var deltaMovement = moveSpeed * 0.001f * diff;
 
             var xx = _direction.X * deltaMovement;
             var yy = _direction.Y * deltaMovement;
@@ -171,7 +173,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _yvector = ytarget - Y;
 
             if (_xvector == 0 && _yvector == 0)
+            {
                 return;
+            }
 
             var toDivide = Math.Abs(_xvector) + Math.Abs(_yvector);
             _xvector /= toDivide;
@@ -182,6 +186,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Move(diff);
         }
+
         public virtual float GetMoveSpeed()
         {
             return 0;
@@ -265,6 +270,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
+
             if (this is AttackableUnit)
             {
                 // TODO: send this in one place only
@@ -281,7 +287,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Waypoints.Clear();
         }
 
-        public void SetDashingState(bool state) {
+        public void SetDashingState(bool state)
+        {
             IsDashing = state;
         }
     }

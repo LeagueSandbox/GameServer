@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_SKILL_UP;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SKILL_UP;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSkillUp(Game game, PlayerManager playerManager)
@@ -26,7 +26,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.Skill);
             if (s == null)
+            {
                 return false;
+            }
 
             var skillUpResponse = new SkillUpResponse(
                 _playerManager.GetPeerInfo(peer).Champion.NetId,

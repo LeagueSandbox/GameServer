@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpellAnimation : BasePacket
     {
         public SpellAnimation(AttackableUnit u, string animationName)
-            : base(PacketCmd.PKT_S2_C_SPELL_ANIMATION, u.NetId)
+            : base(PacketCmd.PKT_S2C_SPELL_ANIMATION, u.NetId)
         {
             _buffer.Write((byte)0xC4); // unk  <--
             _buffer.Write((uint)0); // unk     <-- One of these bytes is a flag

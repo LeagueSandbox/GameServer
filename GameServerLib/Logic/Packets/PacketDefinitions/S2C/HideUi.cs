@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class HideUi : BasePacket
     {
         public HideUi()
-            : base(PacketCmd.PKT_S2_C_HIDE_UI)
+            : base(PacketCmd.PKT_S2C_HIDE_UI)
         {
 
         }

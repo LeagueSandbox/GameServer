@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -14,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class EnterVisionAgain : BasePacket
     {
         public EnterVisionAgain(Minion m)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, m.NetId)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             _buffer.Fill(0, 13);
             _buffer.Write(1.0f);
@@ -37,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
         }
 
-        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, c.NetId)
+        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
         {
             _buffer.Write((short)0); // extraInfo
             _buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?

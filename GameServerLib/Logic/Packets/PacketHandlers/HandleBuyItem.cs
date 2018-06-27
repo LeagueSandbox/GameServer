@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_BUY_ITEM_REQ;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BUY_ITEM_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleBuyItem(Game game, ItemManager itemManager, PlayerManager playerManager)
@@ -27,7 +27,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var itemTemplate = _itemManager.SafeGetItemType(request.Id);
             if (itemTemplate == null)
+            {
                 return false;
+            }
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             var stats = champion.Stats;
@@ -46,17 +48,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 i = inventory.AddItem(itemTemplate);
 
                 if (i == null)
-                { // Slots full
+                {
+                    // Slots full
                     return false;
                 }
             }
             else
             {
                 foreach (var instance in recipeParts)
+                {
                     price -= instance.ItemType.TotalPrice;
+                }
 
                 if (stats.Gold < price)
+                {
                     return false;
+                }
 
                 foreach (var instance in recipeParts)
                 {

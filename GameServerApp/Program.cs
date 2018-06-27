@@ -4,9 +4,9 @@ using LeagueSandbox.GameServer;
 
 namespace LeagueSandbox.GameServerApp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var options = ArgsOptions.Parse(args);
 

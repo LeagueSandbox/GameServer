@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnMonster : Packet
     {
         public SpawnMonster(Monster m)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
             _buffer.Write(m.NetId);
             _buffer.Write((short)345);

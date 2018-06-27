@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class DebugMessage : BasePacket
     {
         public DebugMessage(string message)
-            : base(PacketCmd.PKT_S2_C_DEBUG_MESSAGE)
+            : base(PacketCmd.PKT_S2C_DEBUG_MESSAGE)
         {
             _buffer.Write(0);
             foreach (var b in Encoding.Default.GetBytes(message))

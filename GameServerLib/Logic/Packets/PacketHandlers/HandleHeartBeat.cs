@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Logger _logger;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_HEART_BEAT;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_HEART_BEAT;
         public override Channel PacketChannel => Channel.CHL_GAMEPLAY;
 
         public HandleHeartBeat(Logger logger, PlayerManager playerManager)

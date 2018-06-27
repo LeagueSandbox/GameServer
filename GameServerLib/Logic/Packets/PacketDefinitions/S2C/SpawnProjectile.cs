@@ -1,4 +1,3 @@
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
@@ -9,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnProjectile : BasePacket
     {
         public SpawnProjectile(Projectile p)
-            : base(PacketCmd.PKT_S2_C_SPAWN_PROJECTILE, p.NetId)
+            : base(PacketCmd.PKT_S2C_SPAWN_PROJECTILE, p.NetId)
         {
             var targetZ = Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
 

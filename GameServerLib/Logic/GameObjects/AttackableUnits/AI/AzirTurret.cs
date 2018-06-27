@@ -21,11 +21,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Stats.Range.BaseValue = 905.0f;
         }
+
         public override void OnAdded()
         {
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
         }
+
         public override void RefreshWaypoints()
         {
         }

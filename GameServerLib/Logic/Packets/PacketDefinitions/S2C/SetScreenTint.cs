@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SetScreenTint : BasePacket
     {
         public SetScreenTint(TeamId team, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha)
-            : base(PacketCmd.PKT_S2_C_SET_SCREEN_TINT)
+            : base(PacketCmd.PKT_S2C_SET_SCREEN_TINT)
         {
             _buffer.Write(enable);
             _buffer.Write(transitionTime); // Transition time in seconds

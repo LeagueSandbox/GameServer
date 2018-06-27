@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class LevelPropSpawn : BasePacket
     {
         public LevelPropSpawn(LevelProp lp)
-            : base(PacketCmd.PKT_S2_C_LEVEL_PROP_SPAWN)
+            : base(PacketCmd.PKT_S2C_LEVEL_PROP_SPAWN)
         {
             _buffer.Write((int)lp.NetId);
             _buffer.Write((byte)0x40); // unk

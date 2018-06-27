@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class AddUnitFow : BasePacket
     {
         public AddUnitFow(AttackableUnit u)
-            : base(PacketCmd.PKT_S2_C_ADD_UNIT_FOW)
+            : base(PacketCmd.PKT_S2C_ADD_UNIT_FOW)
         {
             _buffer.Write((int)u.NetId);
         }

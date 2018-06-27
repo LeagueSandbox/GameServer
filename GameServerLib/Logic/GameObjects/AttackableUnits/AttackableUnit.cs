@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
+
         private string _model;
         public string Model
         {
@@ -26,6 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 IsModelUpdated = true;
             }
         }
+
         protected Logger _logger = Program.ResolveDependency<Logger>();
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
@@ -67,7 +69,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
-            { // update Stats (hpregen, manaregen) every 0.5 seconds
+            {
+                // update Stats (hpregen, manaregen) every 0.5 seconds
                 Stats.Update(_statUpdateTimer);
                 _statUpdateTimer -= 500;
             }
@@ -105,7 +108,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 var cKiller = killer as Champion;
 
                 if (cKiller == null)
+                {
                     return;
+                }
 
                 var gold = _game.Map.MapGameScript.GetGoldFor(this);
                 if (gold <= 0)
@@ -183,7 +188,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
 
             //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
+            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 

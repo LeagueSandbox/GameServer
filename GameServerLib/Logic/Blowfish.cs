@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public class BlowFish
     {
-        RNGCryptoServiceProvider randomSource;
+        private RNGCryptoServiceProvider randomSource;
 
         //SBLOCKS
         private uint[] bf_s0;
@@ -154,7 +154,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             Buffer.BlockCopy(text, 0, plainText, 0, text.Length);
 
-            var n = plainText.Length - (plainText.Length % 8);
+            var n = plainText.Length - plainText.Length % 8;
             for (var i = 0; i < n; i += 8)
             {
                 Buffer.BlockCopy(plainText, i, block, 0, 8);
@@ -290,7 +290,7 @@ namespace LeagueSandbox.GameServer.Logic
         /// <returns></returns>
         private uint round(uint a, uint b, uint n)
         {
-            var x1 = (bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)]) ^ bf_s2[wordByte2(b)];
+            var x1 = bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)] ^ bf_s2[wordByte2(b)];
             var x2 = x1 + bf_s3[wordByte3(b)];
             var x3 = x2 ^ bf_P[n];
             return x3 ^ a;

@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_BLUE_TIP_CLICKED;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BLUE_TIP_CLICKED;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleBlueTipClicked(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager)

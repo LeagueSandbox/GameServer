@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_START_GAME;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_START_GAME;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleStartGame(Game game, PlayerManager playerManager)
@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                var start = new StatePacket(PacketCmd.PKT_S2_C_START_GAME);
+                var start = new StatePacket(PacketCmd.PKT_S2C_START_GAME);
                 _game.PacketHandlerManager.BroadcastPacket(start, Channel.CHL_S2_C);
 
                 foreach (var player in _playerManager.GetPlayers())

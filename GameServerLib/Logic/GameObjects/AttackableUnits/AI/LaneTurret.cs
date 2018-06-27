@@ -34,8 +34,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 {
                     var itemTemplate = _ıtemManager.SafeGetItemType(item);
                     if (itemTemplate == null)
+                    {
                         continue;
-                    var i = Inventory.AddItem(itemTemplate);
+                    }
+                    Inventory.AddItem(itemTemplate);
                     Stats.AddModifier(itemTemplate);
                 }
             }
@@ -56,8 +58,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 purpTeam.Add(player);
             }
+
             if (Team == TeamId.TEAM_BLUE)
+            {
                 return purpTeam.Count;
+            }
 
             return blueTeam.Count;
         }
@@ -130,6 +135,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.FOUNTAIN_TURRET:
+                    IsMelee = false;
                     Stats.AttackSpeedFlat = 1.6f;
                     Stats.GrowthAttackSpeed = 2.125f;
                     Stats.CurrentHealth = 9999;
@@ -170,11 +176,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         Stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 250;
                     }
 
-                    if (_game.GameTime > 40000 - (GetEnemyChampionsCount() * 2000) &&
-                        _game.GameTime < 400000 - (GetEnemyChampionsCount() * 2000))
+                    if (_game.GameTime > 40000 - GetEnemyChampionsCount() * 2000 &&
+                        _game.GameTime < 400000 - GetEnemyChampionsCount() * 2000)
                     {
-                        Stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 30000) / 60000);
-                        Stats.AttackDamage.BaseValue = 152.0f + ((_game.GameTime - 30000) / 60000) * 4;
+                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 30000) / 60000;
+                        Stats.AttackDamage.BaseValue = 152.0f + (_game.GameTime - 30000) / 60000 * 4;
                     }
                     else if (_game.GameTime < 30000)
                     {
@@ -195,9 +201,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     }
                     if (_game.GameTime > 480000 && _game.GameTime < 1620000)
                     {
-                        Stats.Armor.BaseValue = 60.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.AttackDamage.BaseValue = 170.0f + ((_game.GameTime - 480000) / 60000) * 4;
+                        Stats.Armor.BaseValue = 60.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 170.0f + (_game.GameTime - 480000) / 60000 * 4;
                     }
                     else if (_game.GameTime < 480000)
                     {
@@ -221,9 +227,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
                     if (_game.GameTime > 480000 && _game.GameTime < 2220000)
                     {
-                        Stats.Armor.BaseValue = 67.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.AttackDamage.BaseValue = 190.0f + ((_game.GameTime - 480000) / 60000) * 4;
+                        Stats.Armor.BaseValue = 67.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 190.0f + (_game.GameTime - 480000) / 60000 * 4;
                     }
                     else if (_game.GameTime < 480000)
                     {
@@ -253,9 +259,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     }
                     else if (_game.GameTime > 480000 && _game.GameTime < 2220000)
                     {
-                        Stats.Armor.BaseValue = 65.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.MagicResist.BaseValue = 100.0f + ((_game.GameTime - 480000) / 60000);
-                        Stats.AttackDamage.BaseValue = 180.0f + ((_game.GameTime - 480000) / 60000) * 4;
+                        Stats.Armor.BaseValue = 65.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 180.0f + (_game.GameTime - 480000) / 60000 * 4;
                     }
                     else if (_game.GameTime < 480000)
                     {
@@ -271,6 +277,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     }
                     break;
             }
+
             _turretHpUpdated = true;
             base.Update(diff);
         }

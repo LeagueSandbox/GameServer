@@ -1,4 +1,3 @@
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -7,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class MoveCamera : BasePacket
     {
         public MoveCamera(Champion champ, float x, float y, float z, float seconds)
-            : base(PacketCmd.PKT_S2_C_MOVE_CAMERA, champ.NetId)
+            : base(PacketCmd.PKT_S2C_MOVE_CAMERA, champ.NetId)
         {
             // Unk, if somebody figures out let @horato know
             _buffer.Write((byte)0x97);

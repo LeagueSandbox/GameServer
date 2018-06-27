@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             int unk2 = 1,
             int unk3 = 1,
             bool deletePropAfterAnimationFinishes = false)
-            : base(PacketCmd.PKT_S2_C_LEVEL_PROP_ANIMATION)
+            : base(PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
         {
             _buffer.Write(Encoding.Default.GetBytes(animationName));
             _buffer.Fill(0, 64 - animationName.Length);

@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_EMOTION;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleEmotion(Game game, PlayerManager playerManager, Logger logger)

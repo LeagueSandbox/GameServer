@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class OnAttack : BasePacket
     {
         public OnAttack(AttackableUnit attacker, AttackableUnit attacked, AttackType attackType)
-            : base(PacketCmd.PKT_S2_C_ON_ATTACK, attacker.NetId)
+            : base(PacketCmd.PKT_S2C_ON_ATTACK, attacker.NetId)
         {
             _buffer.Write((byte)attackType);
             _buffer.Write(attacked.X);

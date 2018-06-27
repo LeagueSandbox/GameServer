@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         }
 
         public MovementResponse(List<GameObject> actors)
-            : base(PacketCmd.PKT_S2_C_MOVE_ANS)
+            : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
             _buffer.Write(Environment.TickCount); // syncID
             _buffer.Write((short)actors.Count);
@@ -39,12 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             return ret;
         }
 
-        static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
+        private static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
         {
             if (val)
-                mask[pos / 8] |= (byte)(1 << (pos % 8));
+                mask[pos / 8] |= (byte)(1 << pos % 8);
             else
-                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
+                mask[pos / 8] &= (byte)~(1 << pos % 8);
         }
     }
 }

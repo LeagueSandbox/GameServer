@@ -4,7 +4,7 @@ using LeagueSandbox.GameServer.Logic;
 
 namespace LeagueSandbox.GameServer
 {
-    class Server : IDisposable
+    internal class Server : IDisposable
     {
         private string _blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
         private uint _serverHost = Address.IPv4HostAny;

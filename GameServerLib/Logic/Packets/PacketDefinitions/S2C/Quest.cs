@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class Quest : BasePacket
     {
         public Quest(string title, string description, byte type, byte command, uint netid, byte questEvent = 0)
-            : base(PacketCmd.PKT_S2_C_QUEST)
+            : base(PacketCmd.PKT_S2C_QUEST)
         {
             _buffer.Write(Encoding.Default.GetBytes(title));
             _buffer.Fill(0, 256 - title.Length);

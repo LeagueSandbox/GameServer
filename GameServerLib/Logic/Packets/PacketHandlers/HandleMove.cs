@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_MOVE_REQ;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleMove(Game game, PlayerManager playerManager)
@@ -29,7 +29,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
+            {
                 return true;
+            }
 
             var request = new MovementRequest(data);
             var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, _game.Map);
@@ -40,8 +42,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.SetPosition(request.X, request.Y);
-                    var x = ((request.X) - _game.Map.NavGrid.MapWidth) / 2;
-                    var y = ((request.Y) - _game.Map.NavGrid.MapHeight) / 2;
+                    var x = (request.X - _game.Map.NavGrid.MapWidth) / 2;
+                    var y = (request.Y - _game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
@@ -79,7 +81,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private List<Vector2> ReadWaypoints(byte[] buffer, int coordCount, Map map)
         {
             if (coordCount % 2 > 0)
+            {
                 coordCount++;
+            }
 
             var mapSize = map.NavGrid.GetSize();
             var reader = new BinaryReader(new MemoryStream(buffer));
@@ -120,6 +124,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
                 vMoves.Add(TranslateCoordinates(lastCoord, mapSize));
             }
+
             return vMoves;
         }
 

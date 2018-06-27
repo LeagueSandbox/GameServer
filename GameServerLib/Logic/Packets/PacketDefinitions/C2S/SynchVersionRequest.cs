@@ -17,14 +17,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
                 var s = Encoding.Default.GetString(_version);
                 var idx = s.IndexOf('\0');
                 if (idx > 0)
+                {
                     return s.Substring(0, idx);
+                }
+
                 return s;
             }
-            private set
-            {
-
-            }
         }
+
         public SynchVersionRequest(byte[] data)
         {
             var reader = new BinaryReader(new MemoryStream(data));

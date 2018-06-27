@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float relativeZ,
             bool instantTurn = true,
             float turnTime = 0.0833f)
-            : base(PacketCmd.PKT_S2_C_FACE_DIRECTION, u.NetId)
+            : base(PacketCmd.PKT_S2C_FACE_DIRECTION, u.NetId)
         {
             _buffer.Write((byte)(instantTurn ? 0x00 : 0x01));
             _buffer.Write(relativeX);

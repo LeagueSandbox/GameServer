@@ -10,6 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
         {
             Replication = new ReplicationAnimatedBuilding(this);
         }
+
         public override void Update(float diff)
         {
             base.Update(diff);

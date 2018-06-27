@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LeagueSandbox.GameServer.Logic.Content
+﻿namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class HashFunctions
     {
@@ -13,9 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 hash = char.ToLower(path[i]) + 0x10 * hash;
                 if ((hash & mask) > 0)
                 {
-                    hash ^= hash & mask ^ ((hash & mask) >> 24);
+                    hash ^= hash & mask ^ (hash & mask) >> 24;
                 }
             }
+
             return hash;
         }
 
@@ -23,10 +22,16 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             uint hash = 0;
             foreach (var c in section)
+            {
                 hash = char.ToLower(c) + 65599 * hash;
+            }
+
             hash = char.ToLower('*') + 65599 * hash;
             foreach (var c in name)
+            {
                 hash = char.ToLower(c) + 65599 * hash;
+            }
+
             return hash;
         }
     }

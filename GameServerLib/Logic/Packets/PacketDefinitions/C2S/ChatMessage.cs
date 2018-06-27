@@ -32,7 +32,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
             var bytes = new List<byte>();
             for (var i = 0; i < Length; i++)
+            {
                 bytes.Add(reader.ReadByte());
+            }
             Msg = Encoding.Default.GetString(bytes.ToArray());
         }
     }

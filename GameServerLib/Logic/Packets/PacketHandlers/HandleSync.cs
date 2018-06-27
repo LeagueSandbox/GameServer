@@ -5,16 +5,16 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class HandleSynch : PacketHandlerBase
+    public class HandleSync : PacketHandlerBase
     {
         private readonly Logger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_SYNCH_VERSION;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SYNCH_VERSION;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleSynch(Logger logger, Game game, PlayerManager playerManager)
+        public HandleSync(Logger logger, Game game, PlayerManager playerManager)
         {
             _logger = logger;
             _game = game;

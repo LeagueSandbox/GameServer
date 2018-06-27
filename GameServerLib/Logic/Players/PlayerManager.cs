@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets;
 
@@ -26,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         private TeamId GetTeamIdFromConfig(PlayerConfig p)
         {
-            if (p.Team.ToLower() == "blue")
+            if (p.Team.ToLower().Equals("blue"))
             {
                 return TeamId.TEAM_BLUE;
             }

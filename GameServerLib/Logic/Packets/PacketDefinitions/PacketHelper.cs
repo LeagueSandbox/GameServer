@@ -9,7 +9,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
         {
             var ret = BitConverter.GetBytes(i);
             if (BitConverter.IsLittleEndian)
+            {
                 return ret.Reverse().ToArray();
+            }
+
             return ret;
         }
     }

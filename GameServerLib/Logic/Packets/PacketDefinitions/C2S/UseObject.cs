@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class UseObject
     {
-        PacketCmd _cmd;
-        int _netId;
+        private PacketCmd _cmd;
+        private int _netId;
         public uint TargetNetId; // netId of the object used
 
         public UseObject(byte[] data)

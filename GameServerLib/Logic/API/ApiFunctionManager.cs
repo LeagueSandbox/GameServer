@@ -48,12 +48,13 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             var newTimer = new GameScriptTimer(duration, callback);
             _game.AddGameScriptTimer(newTimer);
+
             return newTimer;
         }
 
         public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, float removeAfter = -1.0f)
         {
-            return AddBuffHudVisual(buffName, duration, stacks, onto, onto, removeAfter: removeAfter);
+            return AddBuffHudVisual(buffName, duration, stacks, onto, onto, removeAfter);
         }
 
         public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
@@ -62,10 +63,9 @@ namespace LeagueSandbox.GameServer.Logic.API
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
-                CreateTimer(removeAfter, () => {
-                    RemoveBuffHudVisual(b);
-                });
+                CreateTimer(removeAfter, () => RemoveBuffHudVisual(b));
             }
+
             return b;
         }
 
@@ -158,12 +158,8 @@ namespace LeagueSandbox.GameServer.Logic.API
             return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
         }
 
-        public static void SetChampionModel(Champion champion, string model)
+        public static void CancelDash(ObjAiBase unit)
         {
-            champion.Model = model;
-        }
-
-        public static void CancelDash(ObjAiBase unit) {
             // Allow the user to move the champion
             unit.SetDashingState(false);
 
@@ -245,16 +241,6 @@ namespace LeagueSandbox.GameServer.Logic.API
                 backDistance,
                 travelTime
             );
-        }
-
-        public static TeamId GetTeam(GameObject gameObject)
-        {
-            return gameObject.Team;
-        }
-
-        public static bool IsDead(AttackableUnit unit)
-        {
-            return unit.IsDead;
         }
 
         public static void SendPacket(string packetString)

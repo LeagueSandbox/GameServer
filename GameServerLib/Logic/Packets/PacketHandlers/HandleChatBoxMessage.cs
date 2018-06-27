@@ -31,10 +31,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var split = message.Msg.Split(' ');
             if (split.Length > 1)
             {
-                int x, y = 0;
-                if (int.TryParse(split[0], out x))
+                if (int.TryParse(split[0], out var x))
                 {
-                    if (int.TryParse(split[1], out y))
+                    if (int.TryParse(split[1], out var y))
                     {
                         var response = new AttentionPingResponse(
                             _playerManager.GetPeerInfo(peer),
@@ -47,7 +46,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 }
             }
 
-            #region Commands
             // Execute commands
             var commandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
             if (message.Msg.StartsWith(commandStarterCharacter))
@@ -79,12 +77,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                                                                              "for a list of available commands");
                 return true;
             }
-            #endregion
 
-            var debugMessage = string.Format("{0} ({1}): </font><font color=\"#FFFFFF\">{2}",
-                _playerManager.GetPeerInfo(peer).Name,
-                _playerManager.GetPeerInfo(peer).Champion.Model,
-                message.Msg);
+            var debugMessage =
+                $"{_playerManager.GetPeerInfo(peer).Name} ({_playerManager.GetPeerInfo(peer).Champion.Model}): </font><font color=\"#FFFFFF\">{message.Msg}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = new DebugMessage(teamChatColor + "[All] " + debugMessage);

@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class PingLoadInfoResponse : BasePacket
     {
-        public PingLoadInfoResponse(PingLoadInfoRequest loadInfo, long id) : base(PacketCmd.PKT_S2_C_PING_LOAD_INFO, loadInfo.NetId)
+        public PingLoadInfoResponse(PingLoadInfoRequest loadInfo, long id) : base(PacketCmd.PKT_S2C_PING_LOAD_INFO, loadInfo.NetId)
         {
             _buffer.Write((uint)loadInfo.Position);
             _buffer.Write((ulong)id);

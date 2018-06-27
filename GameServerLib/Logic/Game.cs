@@ -183,6 +183,7 @@ namespace LeagueSandbox.GameServer.Logic
                 Thread.Sleep(1);
             }
         }
+
         public void Update(float diff)
         {
             GameTime += diff;

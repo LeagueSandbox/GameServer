@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Game _game;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_QUERY_STATUS_REQ;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUERY_STATUS_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleQueryStatus(Game game)

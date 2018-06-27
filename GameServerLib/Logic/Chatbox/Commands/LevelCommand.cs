@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     return;
                 }
 
-                var experienceToLevelUp = _game.Map.MapGameScript.ExpToLevelUp[lvl-1];
+                var experienceToLevelUp = _game.Map.MapGameScript.ExpToLevelUp[lvl - 1];
                 _playerManager.GetPeerInfo(peer).Champion.Stats.Experience = experienceToLevelUp;
             }
         }

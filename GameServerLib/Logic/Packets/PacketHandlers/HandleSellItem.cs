@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_SELL_ITEM;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SELL_ITEM;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSellItem(Game game, PlayerManager playerManager)
@@ -25,7 +25,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var i = _playerManager.GetPeerInfo(peer).Champion.GetInventory().GetItem(sell.SlotId);
             if (i == null)
+            {
                 return false;
+            }
 
             var sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
             client.Champion.Stats.Gold += sellPrice;

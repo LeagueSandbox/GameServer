@@ -1,5 +1,4 @@
 using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -8,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnPlaceable : Packet
     {
         public SpawnPlaceable(Placeable p)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
             _buffer.Write(p.NetId);

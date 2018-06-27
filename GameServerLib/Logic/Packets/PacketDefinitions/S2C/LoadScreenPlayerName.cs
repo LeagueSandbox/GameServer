@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class LoadScreenPlayerName : Packet
     {
         public LoadScreenPlayerName(Pair<uint, ClientInfo> player)
-            : base(PacketCmd.PKT_S2_C_LOAD_NAME)
+            : base(PacketCmd.PKT_S2C_LOAD_NAME)
         {
             _buffer.Write(player.Item2.UserId);
             _buffer.Write(0);

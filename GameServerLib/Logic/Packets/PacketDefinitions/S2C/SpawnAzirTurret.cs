@@ -1,5 +1,4 @@
 using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -8,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnAzirTurret : BasePacket
     {
         public SpawnAzirTurret(AzirTurret turret)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, turret.NetId)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, turret.NetId)
         {
             _buffer.Write((byte)0xAD);
             _buffer.Write((byte)0x00);

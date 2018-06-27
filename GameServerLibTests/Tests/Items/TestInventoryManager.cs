@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);
-                Assert.AreEqual(1 + (i + 1), item2.StackSize);
+                Assert.AreEqual(1 + i + 1, item2.StackSize);
             }
 
             // Make sure the first item's stack is unchanged
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             // Try to add an extra item to an invalid slot, make sure it fails
             try
             {
-                var fail = manager.SetExtraItem(6, itemManager.GetItemType(2001));
+                manager.SetExtraItem(6, itemManager.GetItemType(2001));
                 Assert.Fail("This should fail");
             }
             catch (Exception e)

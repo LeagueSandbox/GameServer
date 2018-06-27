@@ -6,13 +6,12 @@ using System.Numerics;
 using System.Text;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer
 {
-    static class Extensions
+    internal static class Extensions
     {
         public static float SqrLength(this Vector2 v)
         {
@@ -116,26 +115,39 @@ namespace LeagueSandbox.GameServer
         public bool ContainsKey(TKey key)
         {
             foreach (var v in this)
+            {
                 if (v.Item1.Equals(key))
+                {
                     return true;
+                }
+            }
 
             return false;
         }
+
         public TValue this[TKey key]
         {
             get
             {
                 foreach (var v in this)
+                {
                     if (v.Item1.Equals(key))
+                    {
                         return v.Item2;
+                    }
+                }
 
                 return default(TValue);
             }
             set
             {
                 foreach (var v in this)
+                {
                     if (v.Item1.Equals(key))
+                    {
                         v.Item2 = value;
+                    }
+                }
             }
         }
     }

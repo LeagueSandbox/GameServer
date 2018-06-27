@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public void NotifyInhibitorState(Inhibitor inhibitor, GameObject killer = null, List<Champion> assists = null)
         {
             UnitAnnounce announce;
-            switch (inhibitor.GetState())
+            switch (inhibitor.InhibitorState)
             {
                 case InhibitorState.DEAD:
                     announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_DESTROYED, inhibitor, killer, assists);
@@ -343,6 +343,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             {
                 upg = new UnpauseGame(unpauser.NetId, showWindow);
             }
+
             _game.PacketHandlerManager.BroadcastPacket(upg, Channel.CHL_S2_C);
         }
 
@@ -350,15 +351,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var m = u as Minion;
             if (m != null)
+            {
                 NotifyMinionSpawned(m, CustomConvert.GetEnemyTeam(m.Team));
+            }
 
             var c = u as Champion;
             if (c != null)
+            {
                 NotifyChampionSpawned(c, CustomConvert.GetEnemyTeam(c.Team));
+            }
 
             var monster = u as Monster;
             if (monster != null)
+            {
                 NotifyMonsterSpawned(monster);
+            }
 
             var placeable = u as Placeable;
             if (placeable != null)

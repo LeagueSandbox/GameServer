@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_CHAR_LOADED;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CHAR_LOADED;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSpawn(Logger logger, Game game, ItemManager itemManager, PlayerManager playerManager,
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var start = new StatePacket2(PacketCmd.PKT_S2_C_START_SPAWN);
+            var start = new StatePacket2(PacketCmd.PKT_S2C_START_SPAWN);
             _game.PacketHandlerManager.SendPacket(peer, start, Channel.CHL_S2_C);
             _logger.LogCoreInfo("Spawning map");
 
@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
             }
 
-            var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2_C_END_SPAWN);
+            var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2C_END_SPAWN);
             return _game.PacketHandlerManager.SendPacket(peer, endSpawnPacket, Channel.CHL_S2_C);
         }
     }

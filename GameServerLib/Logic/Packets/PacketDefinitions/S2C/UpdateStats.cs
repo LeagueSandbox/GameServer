@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -9,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UpdateStats : BasePacket
     {
         public UpdateStats(Replication r, bool partial = true)
-            : base(PacketCmd.PKT_S2_C_CHAR_STATS)
+            : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
             _buffer.Write(Environment.TickCount); // syncID
             _buffer.Write((byte)1); // updating 1 unit
@@ -22,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 for (var j = 0; j < 32; j++)
                 {
                     var rep = values[i, j];
-                    if (rep == null || (!rep.Changed && partial))
+                    if (rep == null || !rep.Changed && partial)
                     {
                         continue;
                     }
@@ -43,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 for (var j = 0; j < 32; j++)
                 {
                     var rep = values[i, j];
-                    if (rep == null || (!rep.Changed && partial))
+                    if (rep == null || !rep.Changed && partial)
                     {
                         continue;
                     }

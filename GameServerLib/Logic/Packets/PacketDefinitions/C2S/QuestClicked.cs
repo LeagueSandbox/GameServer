@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             Unk = reader.ReadByte();
             Netid = reader.ReadUInt32();
         }
+
         public QuestClicked()
         {
 

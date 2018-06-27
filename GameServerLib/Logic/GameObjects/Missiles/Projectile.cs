@@ -96,45 +96,65 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             if (Target.IsSimpleTarget)
             { // Skillshot
                 if (unit == null || ObjectsHit.Contains(unit))
+                {
                     return;
+                }
 
                 if (unit.Team == Owner.Team
                     && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_FRIENDS) > 0))
+                {
                     return;
+                }
 
                 if (unit.Team == TeamId.TEAM_NEUTRAL
                     && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NEUTRAL) > 0))
+                {
                     return;
+                }
 
                 if (unit.Team != Owner.Team
                     && unit.Team != TeamId.TEAM_NEUTRAL
                     && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
+                {
                     return;
+                }
 
 
                 if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_DEAD) > 0))
+                {
                     return;
+                }
 
                 var m = unit as Minion;
                 if (m != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
+                {
                     return;
+                }
 
                 var p = unit as Placeable;
                 if (p != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
+                {
                     return;
+                }
 
                 var t = unit as BaseTurret;
                 if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
+                {
                     return;
+                }
 
                 var i = unit as Inhibitor;
                 var n = unit as Nexus;
                 if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
+                {
                     return;
+                }
 
                 var c = unit as Champion;
                 if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
+                {
                     return;
+                }
 
                 ObjectsHit.Add(unit);
                 var attackableUnit = unit;
@@ -168,7 +188,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         public override void SetToRemove()
         {
             if (Target != null && !Target.IsSimpleTarget)
+            {
                 (Target as GameObject).DecrementAttackerCount();
+            }
 
             Owner.DecrementAttackerCount();
             base.SetToRemove();

@@ -52,20 +52,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-            for(short i = 0; i<CharData.SpellNames.Length;i++)
+
+            for (short i = 0; i<CharData.SpellNames.Length;i++)
             {
-                if(CharData.SpellNames[i] != "")
+                if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
-                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
+                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)i);
                 }
             }
+
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
             Spells[13] = new Spell(this, "Recall", 13);
 
-            for(short i = 0; i<CharData.Passives.Length; i++)
+            for (short i = 0; i<CharData.Passives.Length; i++)
             {
-                if (CharData.Passives[i].PassiveLuaName != "")
+                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
                 {
                     Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
                 }
@@ -73,17 +75,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             for (short i = 0; i < CharData.ExtraSpells.Length; i++)
             {
-                if (CharData.ExtraSpells[i] != "")
+                if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                 {
                     var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
                     Spells[(byte)(i + 45)] = spell;
                     spell.LevelUp();
                 }
             }
+
             Spells[4].LevelUp();
             Spells[5].LevelUp();
             Replication = new ReplicationHero(this);
         }
+
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
@@ -109,7 +113,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             foreach (var player in _game.Config.Players.Values)
             {
-                if (player.Team.ToLower() == "blue")
+                if (player.Team.ToLower().Equals("blue"))
                 {
                     blueTeamSize++;
                 }
@@ -157,7 +161,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             var teamSize = GetTeamSize();
 
             if (teamSize > 6) //???
+            {
                 teamSize = 6;
+            }
 
             if (config.Players.ContainsKey(playerIndex))
             {
@@ -184,11 +190,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 var p = config.Players[playerIndex];
             }
+
             var coords = new Vector2
             {
                 X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
                 Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
             };
+
             return new Vector2(coords.X, coords.Y);
         }
 
@@ -202,22 +210,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             foreach(var s in Spells.Values)
             {
                 if (s == null)
+                {
                     continue;
+                }
+
                 if (s.SpellName == name)
+                {
                     return s;
+                }
             }
+
             return null;
         }
 
         public Spell LevelUpSpell(short slot)
         {
             if (_skillPoints == 0)
+            {
                 return null;
+            }
 
-            var s = GetSpell((byte) slot);
+            var s = GetSpell((byte)slot);
 
             if (s == null)
+            {
                 return null;
+            }
 
             s.LevelUp();
             _skillPoints--;
@@ -232,16 +250,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
-                var distanceToTarget = 9000000.0f;
+                var distanceToTarget = 25000f;
                 AttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
-                    var u = it.Value as AttackableUnit;
-
-                    if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
+                    if (!(it.Value is AttackableUnit u) || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
+                    {
                         continue;
+                    }
 
                     if (GetDistanceTo(u) < distanceToTarget)
                     {
@@ -281,7 +299,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             foreach (var s in Spells.Values)
+            {
                 s.Update(diff);
+            }
 
             if (_championHitFlagTimer > 0)
             {
@@ -321,24 +341,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             var szSkin = "";
 
             if (Skin < 10)
+            {
                 szSkin = "0" + Skin;
+            }
             else
+            {
                 szSkin = Skin.ToString();
+            }
 
             var hash = 0;
             var gobj = "[Character]";
+
             for (var i = 0; i < gobj.Length; i++)
             {
-                hash = char.ToLower(gobj[i]) + (0x1003F * hash);
+                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
             }
+
             for (var i = 0; i < Model.Length; i++)
             {
-                hash = char.ToLower(Model[i]) + (0x1003F * hash);
+                hash = char.ToLower(Model[i]) + 0x1003F * hash;
             }
+
             for (var i = 0; i < szSkin.Length; i++)
             {
-                hash = char.ToLower(szSkin[i]) + (0x1003F * hash);
+                hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
             }
+
             return hash;
         }
 

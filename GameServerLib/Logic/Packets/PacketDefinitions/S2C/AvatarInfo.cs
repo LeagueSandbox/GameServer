@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class AvatarInfo : BasePacket
     {
         public AvatarInfo(ClientInfo player)
-            : base(PacketCmd.PKT_S2_C_AVATAR_INFO, player.Champion.NetId)
+            : base(PacketCmd.PKT_S2C_AVATAR_INFO, player.Champion.NetId)
         {
             var runesRequired = 30;
             foreach (var rune in player.Champion.RuneList.Runes)
@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 _buffer.Write((short)0x00);
                 runesRequired--;
             }
+
             for (var i = 1; i <= runesRequired; i++)
             {
                 _buffer.Write((short)0);
@@ -39,6 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 _buffer.Write(talent.Value); // level
                 talentsRequired--;
             }
+
             for (var i = 1; i <= talentsRequired; i++)
             {
                 _buffer.Write(0);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -8,8 +7,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
     {
         public Dictionary<string, Dictionary<string, string>> Values { get; set; }
             = new Dictionary<string, Dictionary<string, string>>();
+
         public Dictionary<string, object> MetaData { get; set; }
             = new Dictionary<string, object>();
+
         private uint Hash(string section, string name)
         {
             uint hash = 0;
@@ -22,6 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 hash = char.ToLower(c) + 65599 * hash;
             }
+
             return hash;
         }
 
@@ -49,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string GetString(string section, string name, string defaultValue = "")
         {
             var obj = GetObject(section, name);
-            return obj == null ? defaultValue : obj;
+            return obj ?? defaultValue;
         }
 
         public float GetFloat(string section, string name, float defaultValue = 0)
@@ -59,6 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return defaultValue;
             }
+
             return value;
         }
 
@@ -102,7 +105,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     {
                         float value;
                         if (float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
-                            defaultValue[i] = (int)(value);
+                            defaultValue[i] = (int)value;
                     }
                 }
             }
@@ -115,7 +118,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             result[0] = GetFloat(section, name, defaultValue);
             for (var i = 1; i < num + 1; i++)
             {
-                result[i] = GetFloat(section, string.Format("{0}{1}", name, i), result[0]);
+                result[i] = GetFloat(section, $"{name}{i}", result[0]);
             }
             return result;
         }
@@ -126,7 +129,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             result[0] = GetInt(section, name, defaultValue);
             for (var i = 1; i < num + 1; i++)
             {
-                result[i] = GetInt(section, string.Format("{0}{1}", name, i), result[0]);
+                result[i] = GetInt(section, $"{name}{i}", result[0]);
             }
             return result;
         }

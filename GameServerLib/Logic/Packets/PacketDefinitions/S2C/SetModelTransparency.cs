@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SetModelTransparency : BasePacket
     {
         public SetModelTransparency(AttackableUnit u, float transparency, float transitionTime)
-            : base(PacketCmd.PKT_S2_C_SET_MODEL_TRANSPARENCY, u.NetId)
+            : base(PacketCmd.PKT_S2C_SET_MODEL_TRANSPARENCY, u.NetId)
         {
             // Applied to Teemo's mushrooms for example
             _buffer.Write((byte)0xDB); // Unk

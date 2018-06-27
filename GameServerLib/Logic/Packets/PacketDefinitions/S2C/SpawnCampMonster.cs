@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnCampMonster : BasePacket
     {
         public SpawnCampMonster(Monster m)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, m.NetId)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             _buffer.Write((byte)0x79);
             _buffer.Write((byte)0x01);

@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float followTargetMaxDistance = 0.0f,
             float backDistance = 0.0f,
             float travelTime = 0.0f
-        ) : base(PacketCmd.PKT_S2_C_DASH)
+        ) : base(PacketCmd.PKT_S2C_DASH)
         {
             _buffer.Write(Environment.TickCount); // syncID
             _buffer.Write((short)1); // Number of dashes

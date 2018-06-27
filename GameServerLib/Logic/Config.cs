@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
         {
-            if (team.ToLower() == "blue")
+            if (team.ToLower().Equals("blue"))
             {
                 Blue[playerCount] = spawns;
             }
@@ -123,8 +123,8 @@ namespace LeagueSandbox.GameServer.Logic
 
     public class GameConfig
     {
-        public int Map { get { return (int)_gameData.SelectToken("map"); } }
-        public string GameMode { get { return (string)_gameData.SelectToken("gameMode"); } }
+        public int Map => (int)_gameData.SelectToken("map");
+        public string GameMode => (string)_gameData.SelectToken("gameMode");
 
         private JToken _gameData;
 
@@ -137,16 +137,16 @@ namespace LeagueSandbox.GameServer.Logic
 
     public class PlayerConfig
     {
-        public string Rank { get { return (string)_playerData.SelectToken("rank"); } }
-        public string Name { get { return (string)_playerData.SelectToken("name"); } }
-        public string Champion { get { return (string)_playerData.SelectToken("champion"); } }
-        public string Team { get { return (string)_playerData.SelectToken("team"); } }
-        public short Skin { get { return (short)_playerData.SelectToken("skin"); } }
-        public string Summoner1 { get { return (string)_playerData.SelectToken("summoner1"); } }
-        public string Summoner2 { get { return (string)_playerData.SelectToken("summoner2"); } }
-        public short Ribbon { get { return (short)_playerData.SelectToken("ribbon"); } }
-        public int Icon { get { return (int)_playerData.SelectToken("icon"); } }
-        public RuneCollection Runes { get { return _runeList; } }
+        public string Rank => (string)_playerData.SelectToken("rank");
+        public string Name => (string)_playerData.SelectToken("name");
+        public string Champion => (string)_playerData.SelectToken("champion");
+        public string Team => (string)_playerData.SelectToken("team");
+        public short Skin => (short)_playerData.SelectToken("skin");
+        public string Summoner1 => (string)_playerData.SelectToken("summoner1");
+        public string Summoner2 => (string)_playerData.SelectToken("summoner2");
+        public short Ribbon => (short)_playerData.SelectToken("ribbon");
+        public int Icon => (int)_playerData.SelectToken("icon");
+        public RuneCollection Runes => _runeList;
 
         private JToken _playerData;
         private RuneCollection _runeList;

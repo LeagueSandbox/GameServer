@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ToggleInputLockingFlag : BasePacket
     {
         public ToggleInputLockingFlag(byte bitField, bool locked)
-            : base(PacketCmd.PKT_S2_C_TOGGLE_INPUT_LOCKING_FLAG)
+            : base(PacketCmd.PKT_S2C_TOGGLE_INPUT_LOCKING_FLAG)
         {
             byte toggle = 0xFE;
             if (locked)

@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class FloatingTextWithValue : BasePacket
     {
         public FloatingTextWithValue(AttackableUnit u, int value, string text)
-            : base(PacketCmd.PKT_S2_C_FLOATING_TEXT_WITH_VALUE)
+            : base(PacketCmd.PKT_S2C_FLOATING_TEXT_WITH_VALUE)
         {
             _buffer.Write(u.NetId);
             _buffer.Write(15); // Unk

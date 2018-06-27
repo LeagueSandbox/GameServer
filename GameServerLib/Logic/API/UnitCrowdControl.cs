@@ -7,39 +7,29 @@
 
     public class UnitCrowdControl
     {
-        CrowdControlType _type;
-        float _duration;
-        float _currentTime;
-        bool _remove;
+        public CrowdControlType Type { get; private set; }
+        public float Duration { get; private set; }
+        public float CurrentTime { get; private set; }
+        public bool IsRemoved { get; private set; }
 
         public UnitCrowdControl(CrowdControlType type, float duration = -1)
         {
-            _type = type;
-            _duration = duration;
+            Type = type;
+            Duration = duration;
         }
 
         public void Update(float diff)
         {
-            _currentTime += diff / 1000.0f;
-            if (_currentTime >= _duration && !_remove && _duration != -1)
+            CurrentTime += diff / 1000.0f;
+            if (CurrentTime >= Duration && !IsRemoved && Duration != -1)
             {
-                _remove = true;
+                IsRemoved = true;
             }
-        }
-
-        public void SetForRemoval()
-        {
-            _remove = true;
-        }
-
-        public bool IsDead()
-        {
-            return _remove;
         }
 
         public bool IsTypeOf(CrowdControlType type)
         {
-            return type == _type;
+            return type == Type;
         }
     }
 }

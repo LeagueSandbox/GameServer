@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             Netid = reader.ReadInt32();
             Activated = reader.ReadByte();
         }
+
         public AutoAttackOption()
         {
 

@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class CreateMonsterCamp : BasePacket
     {
         public CreateMonsterCamp(float x, float y, float z, string iconName, byte campId, byte campUnk, float unk)
-            : base(PacketCmd.PKT_S2_C_CREATE_MONSTER_CAMP)
+            : base(PacketCmd.PKT_S2C_CREATE_MONSTER_CAMP)
         {
             _buffer.Write(x);
             _buffer.Write(z);

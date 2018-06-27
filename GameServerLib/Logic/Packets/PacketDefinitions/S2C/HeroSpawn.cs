@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class HeroSpawn : BasePacket
     {
         public HeroSpawn(ClientInfo player, int playerId)
-            : base(PacketCmd.PKT_S2_C_HERO_SPAWN)
+            : base(PacketCmd.PKT_S2C_HERO_SPAWN)
         {
             _buffer.Write((int)player.Champion.NetId);
             _buffer.Write(playerId); // player Id

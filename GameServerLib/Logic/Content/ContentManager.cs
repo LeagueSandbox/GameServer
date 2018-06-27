@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     _content[contentType][content] = new List<string>();
                 }
+
                 _content[contentType][content].Add(packageName);
             }
         }
@@ -84,21 +85,22 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private string GetPackagePath(string packageName)
         {
-            return string.Format("{0}/Data/{1}", GetContentRootPath(), packageName);
+            return $"{GetContentRootPath()}/Data/{packageName}";
         }
 
         private string GetContentSetPath(string packageName, string contentType)
         {
             if (packageName == "Self")
             {
-                return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), GameModeName, contentType);
+                return $"{GetContentRootPath()}/GameMode/{GameModeName}/Data/{contentType}";
             }
-            return string.Format("{0}/{1}", GetPackagePath(packageName), contentType);
+
+            return $"{GetPackagePath(packageName)}/{contentType}";
         }
 
         private string GetContentPath(string packageName, string contentType, string fileName)
         {
-            return string.Format("{0}/{1}", GetContentSetPath(packageName, contentType), fileName);
+            return $"{GetContentSetPath(packageName, contentType)}/{fileName}";
         }
 
         private string GetContentPath(List<string> contentPackages, string contentType, string fileName)
@@ -198,6 +200,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return _spellData[spellName];
             }
+
             _spellData[spellName] = new SpellData();
             _spellData[spellName].Load(spellName);
             return _spellData[spellName];
@@ -218,11 +221,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var contentManager = new ContentManager(gameModeName);
 
-            var gameModeConfigurationPath = string.Format("Content/GameMode/{0}/GameMode.json", gameModeName);
+            var gameModeConfigurationPath = $"Content/GameMode/{gameModeName}/GameMode.json";
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
             var dataConfiguration = gameModeConfiguration.SelectToken("data");
 
-            foreach(JProperty dataPackage in dataConfiguration)
+            foreach (JProperty dataPackage in dataConfiguration)
             {
                 if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
 
@@ -230,7 +233,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 {
                     var contentSet = dataPackage.Value.SelectToken(contentType);
 
-                    if (contentSet == null) continue;
+                    if (contentSet == null)
+                    {
+                        continue;
+                    }
 
                     contentManager.AddContent(dataPackage.Name, contentType, contentSet);
                 }
@@ -241,14 +247,25 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private static bool ValidatePackageName(string packageName)
         {
-            if (packageName == "Self") return true;
-
-            if (packageName.Count(c => c == '-') < 1) return false;
-            var parts = packageName.Split('-');
-            foreach(var part in parts)
+            if (packageName == "Self")
             {
-                if (part.Length < 2) return false;
+                return true;
             }
+
+            if (packageName.Count(c => c == '-') < 1)
+            {
+                return false;
+            }
+
+            var parts = packageName.Split('-');
+            foreach (var part in parts)
+            {
+                if (part.Length < 2)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
     }

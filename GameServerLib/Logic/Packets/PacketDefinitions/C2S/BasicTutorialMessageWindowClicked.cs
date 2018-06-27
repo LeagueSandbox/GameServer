@@ -13,6 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             Cmd = reader.ReadByte();
             Unk = reader.ReadInt32(); // Seems to be always 0
         }
+
         public BasicTutorialMessageWindowClicked()
         {
 

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -11,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class MinionSpawn : BasePacket
     {
         public MinionSpawn(Minion m)
-            : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, m.NetId)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             _buffer.Write((uint)0x00150017); // unk
             _buffer.Write((byte)0x03); // SpawnType - 3 = minion
@@ -21,9 +18,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             _buffer.Write((byte)0xFF); // unk
             _buffer.Write((byte)1); // wave number ?
 
-            _buffer.Write((byte)m.GetType());
+            _buffer.Write((byte)m.MinionSpawnType);
 
-            if (m.GetType() == MinionSpawnType.MINION_TYPE_MELEE)
+            if (m.MinionSpawnType == MinionSpawnType.MINION_TYPE_MELEE)
             {
                 _buffer.Write((byte)0); // unk
             }
@@ -34,15 +31,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             _buffer.Write((byte)0); // unk
 
-            if (m.GetType() == MinionSpawnType.MINION_TYPE_CASTER)
+            if (m.MinionSpawnType == MinionSpawnType.MINION_TYPE_CASTER)
             {
                 _buffer.Write(0x00010007); // unk
             }
-            else if (m.GetType() == MinionSpawnType.MINION_TYPE_MELEE)
+            else if (m.MinionSpawnType == MinionSpawnType.MINION_TYPE_MELEE)
             {
                 _buffer.Write(0x0001000A); // unk
             }
-            else if (m.GetType() == MinionSpawnType.MINION_TYPE_CANNON)
+            else if (m.MinionSpawnType == MinionSpawnType.MINION_TYPE_CANNON)
             {
                 _buffer.Write(0x0001000D);
             }

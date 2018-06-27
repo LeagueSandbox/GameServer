@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer
         }
     }
 
-    class Program
+    internal class Program
     {
         // TODO: Require consumers of this inject a ServerContext
         public static string ExecutingDirectory { get; private set; }

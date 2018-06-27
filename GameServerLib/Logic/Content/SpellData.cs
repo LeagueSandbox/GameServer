@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Game _game = Program.ResolveDependency<Game>();
         private Logger _logger = Program.ResolveDependency<Logger>();
 
-        public string AffterEffectName { get; set; } = "";
+        public string AfterEffectName { get; set; } = "";
         //AIEndOnly
         //AILifetime
         //AIRadius
@@ -231,6 +231,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return;
             }
+
             var file = new ContentFile();
             try
             {
@@ -239,12 +240,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
-            catch (ContentNotFoundException notfound)
+
+            catch (ContentNotFoundException)
             {
                 _logger.LogCoreWarning($"Spell data for {name} was not found.");
                 return;
             }
-            AffterEffectName = file.GetString("SpellData", "AffterEffectName", AffterEffectName);
+
+            AfterEffectName = file.GetString("SpellData", "AfterEffectName", AfterEffectName);
             //AIEndOnly
             //AILifetime
             //AIRadius

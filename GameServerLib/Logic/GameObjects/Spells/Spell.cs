@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
-        public bool HasEmptyScript { get { return _spellGameScript.GetType() == typeof(GameScriptEmpty); } }
+        public bool HasEmptyScript => _spellGameScript.GetType() == typeof(GameScriptEmpty);
 
         public SpellState State { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
@@ -85,7 +85,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             var stats = Owner.Stats;
             if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana ||
                 State != SpellState.STATE_READY)
+            {
                 return false;
+            }
 
             stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction);
             X = x;
@@ -105,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
-                Owner.SetPosition(Owner.X, Owner.Y);//stop moving serverside too. TODO: check for each spell if they stop movement or not
+                Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
                 State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
             }
@@ -113,6 +115,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             {
                 FinishCasting();
             }
+
             var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
             return true;
@@ -124,7 +127,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public virtual void FinishCasting()
         {
             _spellGameScript.OnFinishCasting(Owner, this, Target);
-            if (SpellData.ChannelDuration[Level] == 0)
+            if (SpellData.ChannelDuration[Level] <= 0)
             {
                 State = SpellState.STATE_COOLDOWN;
 
@@ -180,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                     if (CurrentCastTime <= 0)
                     {
                         FinishCasting();
-                        if(SpellData.ChannelDuration[Level] > 0)
+                        if (SpellData.ChannelDuration[Level] > 0)
                         {
                             Channel();
                         }
@@ -195,7 +198,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                     break;
                 case SpellState.STATE_CHANNELING:
                     CurrentChannelDuration -= diff / 1000.0f;
-                    if(CurrentChannelDuration <= 0)
+                    if (CurrentChannelDuration <= 0)
                     {
                         FinishChanneling();
                     }
@@ -301,9 +304,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             return "undefined";
         }
 
-        /**
-         * TODO : Add in CDR % from champion's stat
-         */
         public float GetCooldown()
         {
             return CooldownsEnabled ? SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction.Total) : 0;
@@ -315,6 +315,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             {
                 ++Level;
             }
+
             if (Slot < 4)
             {
                 Owner.Stats.ManaCost[Slot] = SpellData.ManaCost[Level];

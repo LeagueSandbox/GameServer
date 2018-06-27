@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ChangeSpell : BasePacket
     {
         public ChangeSpell(AttackableUnit unit, int slot, string spell)
-            : base(PacketCmd.PKT_S2_C_CHANGE_SPELL, unit.NetId)
+            : base(PacketCmd.PKT_S2C_CHANGE_SPELL, unit.NetId)
         {
             _buffer.Write((byte)slot);
             _buffer.Write((byte)0x00);

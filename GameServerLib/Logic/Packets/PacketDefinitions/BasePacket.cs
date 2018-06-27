@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
             {
                 var oldPosition = _buffer.BaseStream.Position;
                 _buffer.BaseStream.Position = 0;
-                _buffer.BaseStream.Write(new[] { (byte)PacketCmd.PKT_S2_C_EXTENDED }, 0, 1);
+                _buffer.BaseStream.Write(new[] { (byte)PacketCmd.PKT_S2C_EXTENDED }, 0, 1);
                 _buffer.BaseStream.Position = oldPosition;
                 _buffer.Write((short)cmd);
             }

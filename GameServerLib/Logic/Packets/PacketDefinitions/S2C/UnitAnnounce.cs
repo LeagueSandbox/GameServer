@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UnitAnnounce : BasePacket
     {
         public UnitAnnounce(UnitAnnounces id, AttackableUnit target, GameObject killer = null, List<Champion> assists = null)
-            : base(PacketCmd.PKT_S2_C_ANNOUNCE2, target.NetId)
+            : base(PacketCmd.PKT_S2C_ANNOUNCE2, target.NetId)
         {
             if (assists == null)
                 assists = new List<Champion>();

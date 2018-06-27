@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class BuyItemRequest
     {
-        PacketCmd _cmd;
-        int _netId;
+        private PacketCmd _cmd;
+        private int _netId;
         public int Id;
         public BuyItemRequest(byte[] data)
         {

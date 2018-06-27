@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetTeam : BasePacket
     {
-        public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2_C_SET_TEAM)
+        public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SET_TEAM)
         {
             _buffer.Write(unit.NetId);
             _buffer.Write((int)team);

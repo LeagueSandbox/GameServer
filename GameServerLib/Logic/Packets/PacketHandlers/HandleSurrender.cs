@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _pm;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_SURRENDER;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SURRENDER;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSurrender(Game game, PlayerManager pm)

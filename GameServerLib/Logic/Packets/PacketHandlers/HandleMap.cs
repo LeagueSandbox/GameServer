@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_CLIENT_READY;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLIENT_READY;
         public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
 
         public HandleMap(Game game, PlayerManager playerManager)
@@ -36,13 +36,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 var pName = _game.PacketHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
                 var pHero = _game.PacketHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
 
-                bOk = (pName && pHero);
+                bOk = pName && pHero;
 
                 if (!bOk)
+                {
                     break;
+                }
             }
 
-            return (pInfo && bOk);
+            return pInfo && bOk;
         }
     }
 }

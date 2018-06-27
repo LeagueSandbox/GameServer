@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2_S_EXIT;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_EXIT;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleExit(Game game, PlayerManager playerManager)

@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
     public static class Benchmark
     {
-        static IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
+        private static IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
         private static Logger _logger = Program.ResolveDependency<Logger>();
         public static void StartTiming(string label)
         {
@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             stopwatch.Reset();
             stopwatch.Start();
         }
+
         public static void EndTiming(string label)
         {
             var stopwatch = _map[label];
@@ -25,12 +26,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             });
             _map.Remove(label);
         }
+
         public static void Log(string text)
         {
-            var t = Task.Factory.StartNew(() =>
-            {
-                _logger.LogCoreInfo(text);
-            });
+            var t = Task.Factory.StartNew(() => _logger.LogCoreInfo(text));
         }
     }
 }

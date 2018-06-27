@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class InhibitorDeathAnimation : BasePacket
     {
         public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer)
-            : base(PacketCmd.PKT_S2_C_INHIBITOR_DEATH_ANIMATION, inhi.NetId)
+            : base(PacketCmd.PKT_S2C_INHIBITOR_DEATH_ANIMATION, inhi.NetId)
         {
             if (killer != null)
                 _buffer.Write(killer.NetId);
