@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "ad";
         public override string Syntax => $"{Command} bonusAd";
 
-        public AdCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public AdCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;

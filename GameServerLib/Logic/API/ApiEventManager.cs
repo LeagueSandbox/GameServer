@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
         }
-        
+
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();

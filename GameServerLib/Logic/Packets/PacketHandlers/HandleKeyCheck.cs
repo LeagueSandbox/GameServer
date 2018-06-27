@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     var response = new KeyCheckResponse(keyCheck.UserId, playerNo);
                     _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
-                    
+
                     foreach(var p2 in _playerManager.GetPlayers())
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)

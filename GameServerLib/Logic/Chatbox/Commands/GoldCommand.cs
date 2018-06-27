@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "gold";
         public override string Syntax => $"{Command} goldAmount";
 
-        public GoldCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public GoldCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;

@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _moveSpeed;
         protected Spell _originSpell;
         private Logger _logger = Program.ResolveDependency<Logger>();
-        
+
         public Projectile(
             float x,
             float y,

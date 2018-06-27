@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SurrenderResult : BasePacket
     {
-        public SurrenderResult(bool reason, int yes, int no, TeamId team) 
+        public SurrenderResult(bool reason, int yes, int no, TeamId team)
             : base(PacketCmd.PKT_S2_C_SURRENDER_RESULT)
         {
             _buffer.Write(reason); //surrendererNetworkId

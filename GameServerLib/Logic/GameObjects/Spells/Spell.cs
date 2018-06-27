@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var stats = Owner.Stats;
-            if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana || 
+            if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana ||
                 State != SpellState.STATE_READY)
                 return false;
 
@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
             return true;
         }
-        
+
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>

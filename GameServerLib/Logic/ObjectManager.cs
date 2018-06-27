@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic
                         _game.PacketNotifier.NotifyLeaveVision(u, team);
                     }
                 }
-                
+
                 var ai = u as ObjAiBase;
                 if (ai != null)
                 {

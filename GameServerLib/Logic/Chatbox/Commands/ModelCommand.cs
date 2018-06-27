@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "model";
         public override string Syntax => $"{Command} modelName";
 
-        public ModelCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public ModelCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;

@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnProjectile : BasePacket
     {
-        public SpawnProjectile(Projectile p) 
+        public SpawnProjectile(Projectile p)
             : base(PacketCmd.PKT_S2_C_SPAWN_PROJECTILE, p.NetId)
         {
             float targetZ = Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);

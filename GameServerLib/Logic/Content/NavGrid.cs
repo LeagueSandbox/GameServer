@@ -565,7 +565,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 b = new NavBinaryReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             }
-            catch 
+            catch
             {
                 // Ignored
             }

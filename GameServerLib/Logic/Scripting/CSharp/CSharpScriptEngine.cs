@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 }
             });
             var assemblyName = Path.GetRandomFileName();
-            
+
             var references = new List<MetadataReference>();
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {

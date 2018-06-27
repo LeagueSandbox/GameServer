@@ -238,7 +238,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
-        
+
         private Inventory _owner;
 
         private Item(Inventory owner, ItemType type)

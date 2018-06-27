@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "tp";
         public override string Syntax => $"{Command} x y";
 
-        public TpCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public TpCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;

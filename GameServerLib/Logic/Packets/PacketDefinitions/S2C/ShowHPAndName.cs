@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ShowHpAndName : BasePacket
     {
-        public ShowHpAndName(AttackableUnit unit, bool show) 
+        public ShowHpAndName(AttackableUnit unit, bool show)
             : base(PacketCmd.PKT_S2_C_SHOW_HP_AND_NAME, unit.NetId)
         {
             _buffer.Write(show);

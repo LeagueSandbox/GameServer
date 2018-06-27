@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "rainbow";
         public override string Syntax => $"{Command} alpha speed";
 
-        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;

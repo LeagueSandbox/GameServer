@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "kill";
         public override string Syntax => $"{Command} minions";
 
-        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;

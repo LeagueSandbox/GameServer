@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     /// </summary>
     public class EnterVisionAgain : BasePacket
     {
-        public EnterVisionAgain(Minion m) 
+        public EnterVisionAgain(Minion m)
             : base(PacketCmd.PKT_S2_C_OBJECT_SPAWN, m.NetId)
         {
             _buffer.Fill(0, 13);

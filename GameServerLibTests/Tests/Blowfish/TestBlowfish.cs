@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServerTests.Tests
 
             var decypherText = b.Decrypt(cipherText);
             CollectionAssert.AreEqual(plainText, decypherText);
-            
+
             var encryptedLong = BitConverter.ToUInt64(b.Encrypt(BitConverter.GetBytes((ulong)12345)),0);
             var decryptedLong = b.Decrypt(encryptedLong);
             Assert.AreEqual(12345, decryptedLong);

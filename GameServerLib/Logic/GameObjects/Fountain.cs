@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _fountainSize;
         private float _healTickTimer;
         private TeamId _team;
-        private Game _game = Program.ResolveDependency<Game>(); 
+        private Game _game = Program.ResolveDependency<Game>();
 
         public Fountain(TeamId team, float x, float y, float size)
         {

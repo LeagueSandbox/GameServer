@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentFile
     {
-        public Dictionary<string, Dictionary<string, string>> Values { get; set; } 
+        public Dictionary<string, Dictionary<string, string>> Values { get; set; }
             = new Dictionary<string, Dictionary<string, string>>();
         public Dictionary<string, object> MetaData { get; set; }
             = new Dictionary<string, object>();
@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 hash = char.ToLower(c) + 65599 * hash;
             return hash;
         }
-        
+
         public string GetObject(string section, string name)
         {
             if (Values.ContainsKey(section) && Values[section].ContainsKey(name)
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return Values[section][name];
             }
-            
+
             if (Values.ContainsKey("UNKNOWN_HASHES"))
             {
                 var hash = HashFunctions.HashStringSdbm(section, name).ToString();
@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     return Values["UNKNOWN_HASHES"][hash];
                 }
             }
-            
+
             return null;
         }
 
@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                     }
                 }
             }
-            
+
             return defaultValue;
         }
 

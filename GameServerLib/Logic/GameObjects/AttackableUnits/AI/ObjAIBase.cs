@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private List<BuffGameScriptController> BuffGameScriptControllers { get; }
         private object BuffsLock { get; }
         private Dictionary<string, Buff> Buffs { get; }
-        
+
         private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
         protected ItemManager _ıtemManager = Program.ResolveDependency<ItemManager>();
         protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
@@ -69,20 +69,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
-            } 
+            }
             else
             {
                 AutoAttackDelay = 0;
                 AutoAttackProjectileSpeed = 500;
                 IsMelee = true;
             }
-            
+
             AppliedBuffs = new Buff[256];
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             BuffsLock = new object();
             Buffs = new Dictionary<string, Buff>();
         }
-        
+
         public BuffGameScriptController AddBuffGameScript(string buffNamespace, string buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
         {
             if (isUnique)
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
             }
 
-            var buffController = 
+            var buffController =
                 new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, duration: removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             return BuffGameScriptControllers;
         }
-        
+
         public Dictionary<string, Buff> GetBuffs()
         {
             var toReturn = new Dictionary<string, Buff>();
@@ -135,12 +135,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 return toReturn;
             }
         }
-        
+
         public int GetBuffsCount()
         {
             return Buffs.Count;
         }
-        
+
         //todo: use statmods
         public Buff GetBuff(string name)
         {
@@ -189,7 +189,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             lock (BuffsLock)
                 Buffs.Remove(b);
         }
-        
+
         public byte GetNewBuffSlot(Buff b)
         {
             byte slot = GetBuffSlot();
@@ -281,7 +281,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     }
                 }
             }
-            
+
 
             var p = target as Placeable;
             if (p != null)

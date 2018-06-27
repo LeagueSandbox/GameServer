@@ -191,7 +191,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             return GetContentPath(contentPackages, contentType, fileName);
         }
-        
+
         public SpellData GetSpellData(string spellName)
         {
             if (_spellData.ContainsKey(spellName))

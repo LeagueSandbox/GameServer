@@ -249,7 +249,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             return gameObject.Team;
         }
-        
+
 
         public static bool IsDead(AttackableUnit unit)
         {

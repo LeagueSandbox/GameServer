@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnParticle : BasePacket
     {
-        public SpawnParticle(Particle particle) 
+        public SpawnParticle(Particle particle)
             : base(PacketCmd.PKT_S2_C_SPAWN_PARTICLE, particle.Owner.NetId)
         {
             _buffer.Write((byte)1); // number of particles

@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             // Set model
             Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, type);
-            
+
             // Fix issues induced by having an empty model string
             CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 

@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             TargetNetId = reader.ReadInt32();
             Type = (Pings)reader.ReadByte();
         }
-        
+
         public AttentionPingRequest(float x, float y, int netId, Pings type)
         {
             X = x;

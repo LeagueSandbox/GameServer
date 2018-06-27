@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class LoadScreenInfo : Packet
     {
-        public LoadScreenInfo(List<Pair<uint, ClientInfo>> players) 
+        public LoadScreenInfo(List<Pair<uint, ClientInfo>> players)
             : base(PacketCmd.PKT_S2_C_LOAD_SCREEN_INFO)
         {
             //Zero this complete buffer

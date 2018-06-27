@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         SPELL_FLAG_IGNORE_LANE_MINION = 0x40000000,
         SPELL_FLAG_IGNORE_CLONES = 0x80000000
     }
-    
+
     public enum SpellTargetType
     {
         TARGET_SELF = 0, // teemo W ; xin Q
@@ -60,11 +60,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Logger _logger = Program.ResolveDependency<Logger>();
 
         public string AffterEffectName { get; set; } = "";
-        //AIEndOnly 
-        //AILifetime 
-        //AIRadius 
-        //AIRange 
-        //AISendEvent 
+        //AIEndOnly
+        //AILifetime
+        //AIRadius
+        //AIRange
+        //AISendEvent
         //AISpeed
         public string AlternateName { get; set; } = "";
         public bool AlwaysSnapFacing { get; set; }
@@ -162,12 +162,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float[] LocationTargettingLength { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public float[] LocationTargettingWidth { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public bool LockConeToPlayer { get; set; }
-        //LookAtPolicy 
+        //LookAtPolicy
         public float LuaOnMissileUpdateDistanceInterval { get; set; }
         public float[] ManaCost { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //Map_X_EffectYLevelZAmmount
         public int[] MaxAmmo { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
-        //MaxGrowthRangeTextureName 
+        //MaxGrowthRangeTextureName
         //MinimapIcon
         //MinimapIconDisplayFlag
         //MinimapIconRotation
@@ -220,7 +220,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public bool UseMinimapTargeting { get; set; }
         //Version
         //x1,x2,x3,x4,x5
-        
+
         public float GetCastTime()
         {
             return (1.0f + DelayCastOffsetPercent) / 2.0f;
@@ -246,11 +246,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 return;
             }
             AffterEffectName = file.GetString("SpellData", "AffterEffectName", AffterEffectName);
-            //AIEndOnly 
-            //AILifetime 
-            //AIRadius 
-            //AIRange 
-            //AISendEvent 
+            //AIEndOnly
+            //AILifetime
+            //AIRadius
+            //AIRange
+            //AISendEvent
             //AISpeed
             AlternateName = file.GetString("SpellData", "AlternateName", name);
             AlwaysSnapFacing = file.GetBool("SpellData", "AlwaysSnapFacing", AlwaysSnapFacing);
@@ -348,12 +348,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
             LocationTargettingLength = file.GetMultiFloat("SpellData", "LocationTargettingLength", 6, LocationTargettingLength[0]);
             LocationTargettingWidth = file.GetMultiFloat("SpellData", "LocationTargettingWidth", 6, LocationTargettingWidth[0]);
             LockConeToPlayer = file.GetBool("SpellData", "LockConeToPlayer", LockConeToPlayer);
-            //LookAtPolicy 
+            //LookAtPolicy
             LuaOnMissileUpdateDistanceInterval = file.GetFloat("SpellData", "LuaOnMissileUpdateDistanceInterval", LuaOnMissileUpdateDistanceInterval);
             ManaCost = file.GetMultiFloat("SpellData", "ManaCost",6, ManaCost[0]);
             //Map_X_EffectYLevelZAmmount
             MaxAmmo = file.GetMultiInt("SpellData", "MaxAmmo", 6, MaxAmmo[0]);
-            //MaxGrowthRangeTextureName 
+            //MaxGrowthRangeTextureName
             //MinimapIcon
             //MinimapIconDisplayFlag
             //MinimapIconRotation

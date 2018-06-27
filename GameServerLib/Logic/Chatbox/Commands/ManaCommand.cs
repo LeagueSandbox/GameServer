@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "mana";
         public override string Syntax => $"{Command} maxMana";
 
-        public ManaCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public ManaCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;

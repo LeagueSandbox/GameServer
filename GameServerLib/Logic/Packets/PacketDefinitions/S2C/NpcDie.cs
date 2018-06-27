@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class NpcDie : BasePacket
     {
-        public NpcDie(AttackableUnit die, AttackableUnit killer) 
+        public NpcDie(AttackableUnit die, AttackableUnit killer)
             : base(PacketCmd.PKT_S2_C_NPC_DIE, die.NetId)
         {
             _buffer.Write(0);
