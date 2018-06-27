@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
-            foreach(var contentType in ContentTypes)
+            foreach (var contentType in ContentTypes)
             {
                 _content[contentType] = new Dictionary<string, List<string>>();
             }
@@ -52,10 +52,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 throw new Exception("Invalid content configuration");
             }
 
-            foreach(var content in contents)
+            foreach (var content in contents)
             {
                 _logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
-                if(!_content[contentType].ContainsKey(content))
+                if (!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
                 }
@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private string GetContentSetPath(string packageName, string contentType)
         {
-            if(packageName == "Self")
+            if (packageName == "Self")
             {
                 return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), GameModeName, contentType);
             }

@@ -187,7 +187,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void RemoveBuff(string b)
         {
             lock (BuffsLock)
+            {
                 Buffs.Remove(b);
+            }
         }
 
         public byte GetNewBuffSlot(Buff b)

@@ -19,13 +19,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            float gold;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (float.TryParse(split[1], out gold))
+            else if (float.TryParse(split[1], out var gold))
             {
                 _playerManager.GetPeerInfo(peer).Champion.Stats.Gold += gold;
             }

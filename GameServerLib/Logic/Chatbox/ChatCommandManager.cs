@@ -60,7 +60,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             //TODO: cyclic dependency
             var game = Program.ResolveDependency<Game>();
             if (!game.Config.ChatCheatsEnabled)
+            {
                 return;
+            }
 
             var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
             _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(loadFrom);
@@ -79,24 +81,24 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public bool RemoveCommand(IChatCommand command)
         {
-            if (_chatCommandsDictionary.ContainsValue(command))
+            if (!_chatCommandsDictionary.ContainsValue(command))
             {
-                _chatCommandsDictionary.Remove(command.Command);
-                return true;
+                return false;
             }
 
-            return false;
+            _chatCommandsDictionary.Remove(command.Command);
+            return true;
         }
 
         public bool RemoveCommand(string commandString)
         {
-            if (_chatCommandsDictionary.ContainsKey(commandString))
+            if (!_chatCommandsDictionary.ContainsKey(commandString))
             {
-                _chatCommandsDictionary.Remove(commandString);
-                return true;
+                return false;
             }
 
-            return false;
+            _chatCommandsDictionary.Remove(commandString);
+            return true;
         }
 
         public List<IChatCommand> GetCommands()

@@ -26,8 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
 
-            int t;
-            if (!int.TryParse(split[1], out t))
+            if (!int.TryParse(split[1], out var t))
             {
                 return;
             }

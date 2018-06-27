@@ -30,6 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
             var currentChampion = _playerManager.GetPeerInfo(peer).Champion;
+
             var c = new Champion(
                 split[1],
                 (uint)_playerManager.GetPeerInfo(peer).UserId,
@@ -42,6 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 _playerManager.GetPeerInfo(peer).Champion.X,
                 _playerManager.GetPeerInfo(peer).Champion.Y
             );
+
             c.Model = split[1]; // trigger the "modelUpdate" proc
             c.SetTeam(_playerManager.GetPeerInfo(peer).Champion.Team);
             _game.ObjectManager.RemoveObject(_playerManager.GetPeerInfo(peer).Champion);

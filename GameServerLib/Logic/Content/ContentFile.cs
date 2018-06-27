@@ -14,10 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             UInt32 hash = 0;
             foreach (var c in section)
+            {
                 hash = char.ToLower(c) + 65599 * hash;
+            }
             hash = char.ToLower('*') + 65599 * hash;
             foreach (var c in name)
+            {
                 hash = char.ToLower(c) + 65599 * hash;
+            }
             return hash;
         }
 
@@ -51,15 +55,16 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float GetFloat(string section, string name, float defaultValue = 0)
         {
             var obj = GetObject(section, name);
-            float value;
-            if (!float.TryParse(obj, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+            if (!float.TryParse(obj, NumberStyles.Any, CultureInfo.InvariantCulture, out var value))
+            {
                 return defaultValue;
+            }
             return value;
         }
 
         public int GetInt(string section, string name, int defaultValue = 0)
         {
-            return (int) GetFloat(section, name, defaultValue);
+            return (int)GetFloat(section, name, defaultValue);
         }
 
         public bool GetBool(string section, string name, bool defaultValue = false)

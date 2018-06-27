@@ -64,6 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
                 BroadcastTint(_me.Team, true, _speed, rainbow[1], rainbow[2], rainbow[3], _a);
             }
+
             Thread.Sleep(_delay);
             BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
         }

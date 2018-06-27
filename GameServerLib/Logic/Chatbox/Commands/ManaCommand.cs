@@ -22,13 +22,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            float mp;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (float.TryParse(split[1], out mp))
+            else if (float.TryParse(split[1], out var mp))
             {
                 _playerManager.GetPeerInfo(peer).Champion.Stats.ManaPoints.FlatBonus += mp;
                 _playerManager.GetPeerInfo(peer).Champion.Stats.CurrentMana += mp;

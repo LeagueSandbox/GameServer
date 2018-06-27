@@ -2,7 +2,7 @@
 {
     public enum CrowdControlType
     {
-        AIRBONE, BLIND, DISARM, GROUND, INVULNERABLE, NEARSIGHT, ROOT, SILENCE, STASIS, STUN, SUPPRESSION, SNARE
+        AIRBORNE, BLIND, DISARM, GROUND, INVULNERABLE, NEARSIGHT, ROOT, SILENCE, STASIS, STUN, SUPPRESSION, SNARE
     }
 
     public class UnitCrowdControl
@@ -11,11 +11,13 @@
         float _duration;
         float _currentTime;
         bool _remove;
+
         public UnitCrowdControl(CrowdControlType type, float duration = -1)
         {
             _type = type;
             _duration = duration;
         }
+
         public void Update(float diff)
         {
             _currentTime += diff / 1000.0f;
@@ -24,14 +26,17 @@
                 _remove = true;
             }
         }
+
         public void SetForRemoval()
         {
             _remove = true;
         }
+
         public bool IsDead()
         {
             return _remove;
         }
+
         public bool IsTypeOf(CrowdControlType type)
         {
             return type == _type;

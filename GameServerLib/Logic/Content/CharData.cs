@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             new[] {1, 3, 5, 7, 9, 99},
             new[] {1, 3, 5, 7, 9, 99},
             new[] {1, 3, 5, 7, 9, 99},
-            new[] {1, 3, 5, 7, 9, 99}
+            new[] {6, 11, 16, 99, 99, 99}
         };
 
         public string[] ExtraSpells { get; private set; } = {"", "", "", "", "", "", "", ""};

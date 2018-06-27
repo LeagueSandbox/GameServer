@@ -250,7 +250,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             return gameObject.Team;
         }
 
-
         public static bool IsDead(AttackableUnit unit)
         {
             return unit.IsDead;
@@ -260,41 +259,6 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             var packet = StringToByteArray(packetString);
             _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2_C);
-        }
-
-        public static bool UnitIsChampion(GameObject unit)
-        {
-            return unit is Champion;
-        }
-
-        public static bool UnitIsMinion(GameObject unit)
-        {
-            return unit is Minion;
-        }
-
-        public static bool UnitIsTurret(GameObject unit)
-        {
-            return unit is BaseTurret;
-        }
-
-        public static bool UnitIsInhibitor(GameObject unit)
-        {
-            return unit is Inhibitor;
-        }
-
-        public static bool UnitIsNexus(GameObject unit)
-        {
-            return unit is Nexus;
-        }
-
-        public static bool UnitIsPlaceable(GameObject unit)
-        {
-            return unit is Placeable;
-        }
-
-        public static bool UnitIsMonster(GameObject unit)
-        {
-            return unit is Monster;
         }
     }
 }

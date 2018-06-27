@@ -33,9 +33,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            int team;
-            if (!int.TryParse(split[1], out team))
+
+            if (!int.TryParse(split[1], out var team))
+            {
                 return;
+            }
 
             var units = _game.ObjectManager.GetObjects()
                 .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))

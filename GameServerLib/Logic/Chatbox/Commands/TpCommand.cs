@@ -29,9 +29,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            if (float.TryParse(split[1], out x))
-                if (float.TryParse(split[2], out y))
-                    _game.PacketNotifier.NotifyTeleport(_playerManager.GetPeerInfo(peer).Champion, x, y);
+            if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
+            {
+                _game.PacketNotifier.NotifyTeleport(_playerManager.GetPeerInfo(peer).Champion, x, y);
+            }
         }
     }
 }

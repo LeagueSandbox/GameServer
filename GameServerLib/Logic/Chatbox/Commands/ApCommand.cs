@@ -19,13 +19,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            float ap;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (float.TryParse(split[1], out ap))
+            else if (float.TryParse(split[1], out var ap))
             {
                 _playerManager.GetPeerInfo(peer).Champion.Stats.AbilityPower.FlatBonus += ap;
             }

@@ -194,13 +194,17 @@ namespace LeagueSandbox.GameServer.Logic
         public void AddChampion(Champion champion)
         {
             lock (_championsLock)
+            {
                 _champions.Add(champion.NetId, champion);
+            }
         }
 
         public void RemoveChampion(Champion champion)
         {
             lock (_championsLock)
+            {
                 _champions.Remove(champion.NetId);
+            }
         }
 
         public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
@@ -232,15 +236,19 @@ namespace LeagueSandbox.GameServer.Logic
         public void RemoveVisionUnit(TeamId team, uint netId)
         {
             lock (_visionLock)
+            {
                 _visionUnits[team].Remove(netId);
+            }
         }
 
         public Dictionary<uint, GameObject> GetObjects()
         {
             var ret = new Dictionary<uint, GameObject>();
             lock (_objectsLock)
+            {
                 foreach (var obj in _objects)
                     ret.Add(obj.Key, obj.Value);
+            }
 
             return ret;
         }

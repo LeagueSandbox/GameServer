@@ -58,7 +58,9 @@ namespace BlowFishCS
         public byte[] Encrypt(byte[] pt)
         {
             lock (_blowfishLock)
+            {
                 return Crypt_ECB(pt, false);
+            }
         }
 
         /// <summary>
@@ -69,7 +71,9 @@ namespace BlowFishCS
         public byte[] Decrypt(byte[] ct)
         {
             lock (_blowfishLock)
+            {
                 return Crypt_ECB(ct, true);
+            }
         }
 
         #region Cryptography

@@ -20,7 +20,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             var split = arguments.Split(' ');
             if (split.Length >= 2)
+            {
                 _playerManager.GetPeerInfo(peer).Champion.Model = split[1];
+            }
             else
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
