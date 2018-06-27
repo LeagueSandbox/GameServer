@@ -1,7 +1,7 @@
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public class PacketHeader
     {

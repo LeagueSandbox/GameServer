@@ -1,6 +1,7 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
-namespace LeagueSandbox.GameServer.Logic.Scripting
+namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
     public interface IBuffGameScript
     {

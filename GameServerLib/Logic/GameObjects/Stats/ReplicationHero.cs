@@ -1,4 +1,6 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class ReplicationHero : Replication
     {

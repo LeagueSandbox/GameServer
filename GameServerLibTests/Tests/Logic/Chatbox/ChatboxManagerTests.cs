@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.DependencyInjection;
 using LeagueSandbox.GameServerTests.Tests.Logic.Chatbox;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;

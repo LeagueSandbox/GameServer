@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using LeagueSandbox.GameServer.Core.Logic;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     static class Movement
     {

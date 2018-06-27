@@ -1,6 +1,7 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Placeable : ObjAiBase
     {
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             string model,
             string name,
             uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(owner.Team);
 

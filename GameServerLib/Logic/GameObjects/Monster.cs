@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 

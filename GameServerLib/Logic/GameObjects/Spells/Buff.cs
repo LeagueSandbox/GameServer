@@ -1,7 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 {
     public enum BuffType : byte
     {

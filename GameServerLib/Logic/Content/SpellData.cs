@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Numerics;
-using LeagueSandbox.GameServer.Core.Logic;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content

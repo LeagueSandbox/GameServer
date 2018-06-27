@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Timers;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
     public class Inhibitor : ObjAnimatedBuilding
     {
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(model, new Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;

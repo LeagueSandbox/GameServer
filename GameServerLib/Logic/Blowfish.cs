@@ -16,7 +16,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace BlowFishCS
+namespace LeagueSandbox.GameServer.Logic
 {
     public class BlowFish
     {

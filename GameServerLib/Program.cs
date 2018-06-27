@@ -2,6 +2,7 @@ using System;
 using System.Timers;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.DependencyInjection;
 using Ninject;
 
 namespace LeagueSandbox.GameServer

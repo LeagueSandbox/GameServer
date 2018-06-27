@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public static class PacketHelper
     {

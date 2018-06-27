@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public enum MinionSpawnPosition : uint
     {
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             MinionSpawnPosition position,
             List<Vector2> mainWaypoints,
             uint netId = 0
-        ) : base("", new Stats(), 40, 0, 0, 1100, netId)
+        ) : base("", new Stats.Stats(), 40, 0, 0, 1100, netId)
         {
             _minionType = type;
             SpawnPosition = position;

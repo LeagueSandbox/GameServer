@@ -1,4 +1,4 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class StatModifier
     {

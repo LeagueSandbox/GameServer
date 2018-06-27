@@ -4,10 +4,14 @@ using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class ObjAiBase : AttackableUnit
     {
@@ -42,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public bool IsMelee { get; set; }
         private Random _random = new Random();
 
-        public ObjAiBase(string model, Stats stats, int collisionRadius = 40,
+        public ObjAiBase(string model, Stats.Stats stats, int collisionRadius = 40,
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(model, stats, collisionRadius, x, y, visionRadius, netId)
         {

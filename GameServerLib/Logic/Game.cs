@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using BlowFishCS;
 using ENet;
 using LeagueSandbox.GameServer.Exceptions;
-using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
@@ -18,7 +16,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
 
-namespace LeagueSandbox.GameServer.Core.Logic
+namespace LeagueSandbox.GameServer.Logic
 {
     public class Game
     {

@@ -1,5 +1,3 @@
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Handlers;
@@ -8,7 +6,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Ninject.Modules;
 
-namespace LeagueSandbox.GameServer
+namespace LeagueSandbox.GameServer.Logic.DependencyInjection
 {
     public class Bindings : NinjectModule
     {

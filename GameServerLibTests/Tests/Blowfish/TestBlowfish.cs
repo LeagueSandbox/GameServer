@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using BlowFishCS;
+using LeagueSandbox.GameServer.Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests

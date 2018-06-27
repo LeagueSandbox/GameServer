@@ -1,5 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers

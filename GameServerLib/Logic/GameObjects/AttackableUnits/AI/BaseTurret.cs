@@ -1,11 +1,10 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Force.Crc32;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class BaseTurret : ObjAiBase
     {
@@ -22,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(model, new Stats(), 50, x, y, 1200, netId)
+        ) : base(model, new Stats.Stats(), 50, x, y, 1200, netId)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;

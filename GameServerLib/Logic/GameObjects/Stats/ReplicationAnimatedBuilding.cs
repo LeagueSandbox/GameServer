@@ -1,4 +1,6 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class ReplicationAnimatedBuilding : Replication
     {

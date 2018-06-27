@@ -1,6 +1,8 @@
 ﻿using System;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
@@ -10,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        public Stats Stats { get; protected set; }
+        public Stats.Stats Stats { get; protected set; }
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
@@ -32,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
         public AttackableUnit(
             string model,
-            Stats stats,
+            Stats.Stats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,

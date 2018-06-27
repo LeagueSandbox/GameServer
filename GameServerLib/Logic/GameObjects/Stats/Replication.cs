@@ -1,7 +1,7 @@
 ﻿using System;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public abstract class Replication
     {

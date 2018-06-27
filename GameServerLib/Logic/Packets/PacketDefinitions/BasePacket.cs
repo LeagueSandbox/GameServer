@@ -1,6 +1,6 @@
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public abstract class BasePacket : Packet
     {

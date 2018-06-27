@@ -1,4 +1,4 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 {
     public class ObjMissile : GameObject
     {
