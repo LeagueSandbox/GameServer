@@ -2,7 +2,6 @@ using System;
 using Ninject;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer
 {

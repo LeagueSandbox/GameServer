@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.Logic;
 using System.IO;
 
 namespace LeagueSandbox.GameServerApp

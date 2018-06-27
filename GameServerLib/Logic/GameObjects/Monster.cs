@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

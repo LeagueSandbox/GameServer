@@ -1,8 +1,6 @@
-﻿using System;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

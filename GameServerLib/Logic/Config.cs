@@ -1,5 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
+﻿using LeagueSandbox.GameServer.Logic.Content;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
