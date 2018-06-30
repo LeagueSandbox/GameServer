@@ -5,25 +5,25 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class TeleportRequest : BasePacket
     {
-        static short a = 0x01;
-        public TeleportRequest(uint netId, float x, float y, bool first) 
-            : base(PacketCmd.PKT_S2C_MoveAns)
+        private static short _a = 0x01;
+        public TeleportRequest(uint netId, float x, float y, bool first)
+            : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
-            buffer.Write((int)Environment.TickCount); // syncID
-            buffer.Write((byte)0x01); // Unk
-            buffer.Write((byte)0x00); // Unk
-            if (first == true) //seems to be id, 02 = before teleporting, 03 = do teleport
-                buffer.Write((byte)0x02);
+            _buffer.Write(Environment.TickCount); // syncID
+            _buffer.Write((byte)0x01); // Unk
+            _buffer.Write((byte)0x00); // Unk
+            if (first) //seems to be id, 02 = before teleporting, 03 = do teleport
+                _buffer.Write((byte)0x02);
             else
-                buffer.Write((byte)0x03);
-            buffer.Write((int)netId);
+                _buffer.Write((byte)0x03);
+            _buffer.Write((int)netId);
             if (first == false)
             {
-                buffer.Write((byte)a); // if it is the second part, send 0x01 before coords
-                a++;
+                _buffer.Write((byte)_a); // if it is the second part, send 0x01 before coords
+                _a++;
             }
-            buffer.Write((short)x);
-            buffer.Write((short)y);
+            _buffer.Write((short)x);
+            _buffer.Write((short)y);
         }
 
     }

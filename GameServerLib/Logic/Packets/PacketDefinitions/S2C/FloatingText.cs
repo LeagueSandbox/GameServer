@@ -1,5 +1,4 @@
 using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -8,13 +7,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class FloatingText : BasePacket
     {
         public FloatingText(AttackableUnit u, string text)
-            : base(PacketCmd.PKT_S2C_FloatingText, u.NetId)
+            : base(PacketCmd.PKT_S2C_FLOATING_TEXT, u.NetId)
         {
-            buffer.Write((int)0); // netid?
-            buffer.fill(0, 10);
-            buffer.Write((int)0); // netid?
-            buffer.Write(Encoding.Default.GetBytes(text));
-            buffer.Write((byte)0x00);
+            _buffer.Write(0); // netid?
+            _buffer.Fill(0, 10);
+            _buffer.Write(0); // netid?
+            _buffer.Write(Encoding.Default.GetBytes(text));
+            _buffer.Write((byte)0x00);
         }
     }
 }

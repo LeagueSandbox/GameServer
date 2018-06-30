@@ -2,10 +2,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public enum Pings : byte
     {
-        Ping_Default = 0,
-        Ping_Danger = 2,
-        Ping_Missing = 3,
-        Ping_OnMyWay = 4,
-        Ping_Assist = 6
+        PING_DEFAULT = 0,
+        PING_DANGER = 2,
+        PING_MISSING = 3,
+        PING_ON_MY_WAY = 4,
+        PING_ASSIST = 6
     }
 }

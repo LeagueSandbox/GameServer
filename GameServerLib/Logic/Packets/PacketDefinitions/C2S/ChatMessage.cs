@@ -7,33 +7,35 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class ChatMessage
     {
-        public PacketCmd cmd;
-        public int playerId;
-        public int botNetId;
-        public byte isBotMessage;
+        public PacketCmd Cmd;
+        public int PlayerId;
+        public int BotNetId;
+        public byte IsBotMessage;
 
-        public ChatType type;
-        public int unk1; // playerNo?
-        public int length;
-        public byte[] unk2 = new byte[32];
-        public string msg;
+        public ChatType Type;
+        public int Unk1; // playerNo?
+        public int Length;
+        public byte[] Unk2 = new byte[32];
+        public string Msg;
 
         public ChatMessage(byte[] data)
         {
             var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            playerId = reader.ReadInt32();
-            botNetId = reader.ReadInt32();
-            isBotMessage = reader.ReadByte();
-            type = (ChatType)reader.ReadInt32();
-            unk1 = reader.ReadInt32();
-            length = reader.ReadInt32();
-            unk2 = reader.ReadBytes(32);
+            Cmd = (PacketCmd)reader.ReadByte();
+            PlayerId = reader.ReadInt32();
+            BotNetId = reader.ReadInt32();
+            IsBotMessage = reader.ReadByte();
+            Type = (ChatType)reader.ReadInt32();
+            Unk1 = reader.ReadInt32();
+            Length = reader.ReadInt32();
+            Unk2 = reader.ReadBytes(32);
 
             var bytes = new List<byte>();
-            for (var i = 0; i < length; i++)
+            for (var i = 0; i < Length; i++)
+            {
                 bytes.Add(reader.ReadByte());
-            msg = Encoding.Default.GetString(bytes.ToArray());
+            }
+            Msg = Encoding.Default.GetString(bytes.ToArray());
         }
     }
 }

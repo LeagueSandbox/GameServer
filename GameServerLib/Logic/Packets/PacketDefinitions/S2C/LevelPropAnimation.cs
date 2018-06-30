@@ -13,27 +13,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             int unk2 = 1,
             int unk3 = 1,
             bool deletePropAfterAnimationFinishes = false)
-            : base(PacketCmd.PKT_S2C_LevelPropAnimation)
+            : base(PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
         {
-            buffer.Write(Encoding.Default.GetBytes(animationName));
-            buffer.fill(0, 64 - animationName.Length);
+            _buffer.Write(Encoding.Default.GetBytes(animationName));
+            _buffer.Fill(0, 64 - animationName.Length);
 
-            buffer.Write((float)unk1);
-            buffer.Write((float)animationTime);
+            _buffer.Write(unk1);
+            _buffer.Write(animationTime);
 
-            buffer.Write((uint)lp.NetId);
+            _buffer.Write(lp.NetId);
 
-            buffer.Write((int)unk2);
-            buffer.Write((int)unk3);
+            _buffer.Write(unk2);
+            _buffer.Write(unk3);
 
             byte delete = 0x00;
             if (deletePropAfterAnimationFinishes)
             {
                 delete = 0x01;
             }
-            buffer.Write((byte)delete); // Most likely deletes prop after animation ends when set to 1
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            _buffer.Write(delete); // Most likely deletes prop after animation ends when set to 1
+            _buffer.Write((byte)0x00);
+            _buffer.Write((byte)0x00);
         }
     }
 }

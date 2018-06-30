@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 
 namespace LeagueSandbox.GameServerTests.Tests.Logic.Chatbox
@@ -13,7 +8,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Logic.Chatbox
         public override string Command { get; }
         public override string Syntax { get; }
 
-        public TestCommand(ChatCommandManager chatCommandManager, string command, string syntax) 
+        public TestCommand(ChatCommandManager chatCommandManager, string command, string syntax)
             : base(chatCommandManager)
         {
             Command = command;

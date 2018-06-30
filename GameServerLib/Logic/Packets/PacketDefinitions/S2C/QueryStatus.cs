@@ -4,10 +4,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class QueryStatus : BasePacket
     {
-        public QueryStatus() 
-            : base(PacketCmd.PKT_S2C_QueryStatusAns)
+        public QueryStatus()
+            : base(PacketCmd.PKT_S2C_QUERY_STATUS_ANS)
         {
-            buffer.Write((byte)1); //ok
+            _buffer.Write((byte)1); //ok
         }
     }
 }

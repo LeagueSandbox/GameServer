@@ -1,17 +1,17 @@
-﻿using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer
 {
-    static class Extensions
+    internal static class Extensions
     {
         public static float SqrLength(this Vector2 v)
         {
@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer
 
         public static void Add(this List<byte> list, int val)
         {
-            list.AddRange(PacketHelper.intToByteArray(val));
+            list.AddRange(PacketHelper.IntToByteArray(val));
         }
 
         public static void Add(this List<byte> list, string val)
@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer
             list.AddRange(Encoding.BigEndianUnicode.GetBytes(val));
         }
 
-        public static void fill(this BinaryWriter list, byte data, int length)
+        public static void Fill(this BinaryWriter list, byte data, int length)
         {
             for (var i = 0; i < length; ++i)
             {
@@ -115,26 +115,39 @@ namespace LeagueSandbox.GameServer
         public bool ContainsKey(TKey key)
         {
             foreach (var v in this)
+            {
                 if (v.Item1.Equals(key))
+                {
                     return true;
+                }
+            }
 
             return false;
         }
+
         public TValue this[TKey key]
         {
             get
             {
                 foreach (var v in this)
+                {
                     if (v.Item1.Equals(key))
+                    {
                         return v.Item2;
+                    }
+                }
 
                 return default(TValue);
             }
             set
             {
                 foreach (var v in this)
+                {
                     if (v.Item1.Equals(key))
+                    {
                         v.Item2 = value;
+                    }
+                }
             }
         }
     }

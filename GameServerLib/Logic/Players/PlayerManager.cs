@@ -1,8 +1,8 @@
-﻿using ENet;
+﻿using System.Collections.Generic;
+using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets;
-using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Logic.Players
 {
@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
 
         private TeamId GetTeamIdFromConfig(PlayerConfig p)
         {
-            if (p.Team.ToLower() == "blue")
+            if (p.Team.ToLower().Equals("blue"))
             {
                 return TeamId.TEAM_BLUE;
             }
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();
-            c.setPosition(pos.X, pos.Y);
+            c.SetPosition(pos.X, pos.Y);
             c.LevelUp();
 
             player.Champion = c;

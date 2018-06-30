@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
@@ -11,10 +8,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class UpdateStats : BasePacket
     {
         public UpdateStats(Replication r, bool partial = true)
-            : base(PacketCmd.PKT_S2C_CharStats)
+            : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
-            buffer.Write(Environment.TickCount); // syncID
-            buffer.Write((byte)1); // updating 1 unit
+            _buffer.Write(Environment.TickCount); // syncID
+            _buffer.Write((byte)1); // updating 1 unit
 
             var values = r.Values;
 
@@ -24,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 for (var j = 0; j < 32; j++)
                 {
                     var rep = values[i, j];
-                    if (rep == null || (!rep.Changed && partial))
+                    if (rep == null || !rep.Changed && partial)
                     {
                         continue;
                     }
@@ -34,8 +31,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 }
             }
 
-            buffer.Write((byte)masterMask);
-            buffer.Write((uint)r.NetID);
+            _buffer.Write((byte)masterMask);
+            _buffer.Write(r.NetId);
 
             for (var i = 0; i < 6; i++)
             {
@@ -45,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 for (var j = 0; j < 32; j++)
                 {
                     var rep = values[i, j];
-                    if (rep == null || (!rep.Changed && partial))
+                    if (rep == null || !rep.Changed && partial)
                     {
                         continue;
                     }
@@ -64,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                     }
                     else
                     {
-                        uint num = rep.Value;
+                        var num = rep.Value;
                         while (num >= 0x80)
                         {
                             writer.Write((byte)(num | 0x80));
@@ -78,9 +75,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var data = stream.ToArray();
                 if (data.Length > 0)
                 {
-                    buffer.Write(fieldMask);
-                    buffer.Write((byte)data.Length);
-                    buffer.Write(data);
+                    _buffer.Write(fieldMask);
+                    _buffer.Write((byte)data.Length);
+                    _buffer.Write(data);
                 }
             }
         }

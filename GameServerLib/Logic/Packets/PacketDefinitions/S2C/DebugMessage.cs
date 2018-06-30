@@ -6,12 +6,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class DebugMessage : BasePacket
     {
         public DebugMessage(string message)
-            : base(PacketCmd.PKT_S2C_DebugMessage)
+            : base(PacketCmd.PKT_S2C_DEBUG_MESSAGE)
         {
-            buffer.Write((int)0);
+            _buffer.Write(0);
             foreach (var b in Encoding.Default.GetBytes(message))
-                buffer.Write((byte)b);
-            buffer.fill(0, 512 - message.Length);
+                _buffer.Write(b);
+            _buffer.Fill(0, 512 - message.Length);
         }
     }
 }

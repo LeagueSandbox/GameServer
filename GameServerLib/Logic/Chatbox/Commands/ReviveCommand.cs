@@ -24,6 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion is already alive.");
                 return;
             }
+
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion has revived!");
             champ.Respawn();
         }

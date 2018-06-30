@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Core.Logic;
-using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 {
     public class Projectile : ObjMissile
     {
@@ -16,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected float _moveSpeed;
         protected Spell _originSpell;
         private Logger _logger = Program.ResolveDependency<Logger>();
-        
+
         public Projectile(
             float x,
             float y,
@@ -46,27 +48,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             if (!target.IsSimpleTarget)
             {
-                ((GameObject)target).incrementAttackerCount();
+                ((GameObject)target).IncrementAttackerCount();
             }
 
-            owner.incrementAttackerCount();
+            owner.IncrementAttackerCount();
         }
 
-        public override void update(float diff)
+        public override void Update(float diff)
         {
             if (Target == null)
             {
-                setToRemove();
+                SetToRemove();
                 return;
             }
 
-            base.update(diff);
+            base.Update(diff);
         }
 
-        public override void onCollision(GameObject collider)
+        public override void OnCollision(GameObject collider)
         {
-            base.onCollision(collider);
-            if (Target != null && Target.IsSimpleTarget && !isToRemove())
+            base.OnCollision(collider);
+            if (Target != null && Target.IsSimpleTarget && !IsToRemove())
             {
                 CheckFlagsForUnit(collider as AttackableUnit);
             }
@@ -79,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return _moveSpeed;
         }
@@ -94,51 +96,71 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (Target.IsSimpleTarget)
             { // Skillshot
                 if (unit == null || ObjectsHit.Contains(unit))
+                {
                     return;
+                }
 
                 if (unit.Team == Owner.Team
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectFriends) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_FRIENDS) > 0))
+                {
                     return;
+                }
 
                 if (unit.Team == TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectNeutral) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NEUTRAL) > 0))
+                {
                     return;
+                }
 
                 if (unit.Team != Owner.Team
                     && unit.Team != TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectEnemies) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
+                {
                     return;
+                }
 
 
-                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectDead) > 0))
+                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_DEAD) > 0))
+                {
                     return;
+                }
 
                 var m = unit as Minion;
-                if (m != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectMinions) > 0))
+                if (m != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
+                {
                     return;
+                }
 
                 var p = unit as Placeable;
-                if (p != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectUseable) > 0))
+                if (p != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
+                {
                     return;
+                }
 
                 var t = unit as BaseTurret;
-                if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectTurrets) > 0))
+                if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
+                {
                     return;
+                }
 
                 var i = unit as Inhibitor;
                 var n = unit as Nexus;
-                if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectBuildings) > 0))
+                if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
+                {
                     return;
+                }
 
                 var c = unit as Champion;
-                if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AffectHeroes) > 0))
+                if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
+                {
                     return;
+                }
 
                 ObjectsHit.Add(unit);
-                var attackableUnit = unit as AttackableUnit;
+                var attackableUnit = unit;
                 if (attackableUnit != null)
                 {
-                    _originSpell.applyEffects(attackableUnit, this);
+                    _originSpell.ApplyEffects(attackableUnit, this);
                 }
             }
             else
@@ -148,28 +170,30 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 { // Autoguided spell
                     if (_originSpell != null)
                     {
-                        _originSpell.applyEffects(u, this);
+                        _originSpell.ApplyEffects(u, this);
                     }
                     else
                     { // auto attack
-                        var ai = u as ObjAIBase;
+                        var ai = u as ObjAiBase;
                         if (ai != null)
                         {
                             ai.AutoAttackHit(u);
                         }
-                        setToRemove();
+                        SetToRemove();
                     }
                 }
             }
         }
 
-        public override void setToRemove()
+        public override void SetToRemove()
         {
             if (Target != null && !Target.IsSimpleTarget)
-                (Target as GameObject).decrementAttackerCount();
+            {
+                (Target as GameObject).DecrementAttackerCount();
+            }
 
-            Owner.decrementAttackerCount();
-            base.setToRemove();
+            Owner.DecrementAttackerCount();
+            base.SetToRemove();
             _game.PacketNotifier.NotifyProjectileDestroy(this);
         }
     }

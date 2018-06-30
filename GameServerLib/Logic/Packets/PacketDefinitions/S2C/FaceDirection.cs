@@ -1,4 +1,3 @@
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -12,13 +11,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float relativeZ,
             bool instantTurn = true,
             float turnTime = 0.0833f)
-            : base(PacketCmd.PKT_S2C_FaceDirection, u.NetId)
+            : base(PacketCmd.PKT_S2C_FACE_DIRECTION, u.NetId)
         {
-            buffer.Write((byte)(instantTurn ? 0x00 : 0x01));
-            buffer.Write(relativeX);
-            buffer.Write(relativeZ);
-            buffer.Write(relativeY);
-            buffer.Write((float)turnTime);
+            _buffer.Write((byte)(instantTurn ? 0x00 : 0x01));
+            _buffer.Write(relativeX);
+            _buffer.Write(relativeZ);
+            _buffer.Write(relativeY);
+            _buffer.Write(turnTime);
         }
-    };
+    }
 }

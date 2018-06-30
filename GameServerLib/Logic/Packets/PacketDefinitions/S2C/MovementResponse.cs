@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
@@ -14,18 +15,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         }
 
         public MovementResponse(List<GameObject> actors)
-            : base(PacketCmd.PKT_S2C_MoveAns)
+            : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
-            buffer.Write(Environment.TickCount); // syncID
-            buffer.Write((short)actors.Count);
+            _buffer.Write(Environment.TickCount); // syncID
+            _buffer.Write((short)actors.Count);
 
             foreach (var actor in actors)
             {
                 var waypoints = actor.Waypoints;
                 var numCoords = waypoints.Count * 2;
-                buffer.Write((byte)numCoords);
-                buffer.Write((int)actor.NetId);
-                buffer.Write(Movement.EncodeWaypoints(waypoints));
+                _buffer.Write((byte)numCoords);
+                _buffer.Write((int)actor.NetId);
+                _buffer.Write(Movement.EncodeWaypoints(waypoints));
             }
         }
 
@@ -38,12 +39,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             return ret;
         }
 
-        static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
+        private static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
         {
             if (val)
-                mask[pos / 8] |= (byte)(1 << (pos % 8));
+                mask[pos / 8] |= (byte)(1 << pos % 8);
             else
-                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
+                mask[pos / 8] &= (byte)~(1 << pos % 8);
         }
     }
 }

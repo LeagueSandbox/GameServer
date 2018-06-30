@@ -1,13 +1,13 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
-using System;
+﻿using System;
 using System.Linq;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Monster : ObjAIBase
+    public class Monster : ObjAiBase
     {
         public Vector2 Facing { get; private set; }
         public string Name { get; private set; }
@@ -28,13 +28,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
+            {
                 SetVisibleByTeam(team, true);
+            }
 
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
             Facing = new Vector2(facingX, facingY);

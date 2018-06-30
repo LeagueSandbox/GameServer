@@ -1,5 +1,4 @@
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -7,10 +6,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetTeam : BasePacket
     {
-        public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SetTeam)
+        public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SET_TEAM)
         {
-            buffer.Write(unit.NetId);
-            buffer.Write((int)team);
+            _buffer.Write(unit.NetId);
+            _buffer.Write((int)team);
         }
     }
 }

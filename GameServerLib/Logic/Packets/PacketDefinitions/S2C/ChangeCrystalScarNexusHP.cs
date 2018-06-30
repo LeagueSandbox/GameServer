@@ -3,13 +3,13 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
-    public class ChangeCrystalScarNexusHP : BasePacket
+    public class ChangeCrystalScarNexusHp : BasePacket
     {
-        public ChangeCrystalScarNexusHP(TeamId team, int hp)
-            : base(PacketCmd.PKT_S2C_ChangeCrystalScarNexusHP)
+        public ChangeCrystalScarNexusHp(TeamId team, int hp)
+            : base(PacketCmd.PKT_S2C_CHANGE_CRYSTAL_SCAR_NEXUS_HP)
         {
-            buffer.Write((uint)team);
-            buffer.Write(hp);
+            _buffer.Write((uint)team);
+            _buffer.Write(hp);
         }
     }
 }

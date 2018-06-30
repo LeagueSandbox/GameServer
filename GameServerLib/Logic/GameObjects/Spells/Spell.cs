@@ -1,16 +1,14 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using System;
-using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using Newtonsoft.Json.Linq;
+﻿using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 {
     public enum SpellState
     {
@@ -18,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         STATE_CASTING,
         STATE_COOLDOWN,
         STATE_CHANNELING
-    };
+    }
 
     public class Spell
     {
@@ -30,9 +28,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
-        public bool HasEmptyScript { get { return spellGameScript.GetType() == typeof(GameScriptEmpty); } }
+        public bool HasEmptyScript => _spellGameScript.GetType() == typeof(GameScriptEmpty);
 
-        public SpellState state { get; protected set; } = SpellState.STATE_READY;
+        public SpellState State { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
@@ -49,7 +47,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private static Logger _logger = Program.ResolveDependency<Logger>();
         private static Game _game = Program.ResolveDependency<Game>();
 
-        private GameScript spellGameScript;
+        private IGameScript _spellGameScript;
         protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
@@ -69,15 +67,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
             //Set the game script for the spell
-            spellGameScript = _scriptEngine.CreateObject<GameScript>("Spells", spellName) ?? new GameScriptEmpty();
+            _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            spellGameScript.OnActivate(owner);
+            _spellGameScript.OnActivate(owner);
         }
 
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool cast(float x, float y, float x2, float y2, AttackableUnit u = null)
+        public virtual bool Cast(float x, float y, float x2, float y2, AttackableUnit u = null)
         {
             if (HasEmptyScript)
             {
@@ -85,9 +83,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var stats = Owner.Stats;
-            if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana || 
-                state != SpellState.STATE_READY)
+            if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana ||
+                State != SpellState.STATE_READY)
+            {
                 return false;
+            }
 
             stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction);
             X = x;
@@ -95,40 +95,41 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             X2 = x2;
             Y2 = y2;
             Target = u;
-            FutureProjNetId = _networkIdManager.GetNewNetID();
-            SpellNetId = _networkIdManager.GetNewNetID();
+            FutureProjNetId = _networkIdManager.GetNewNetId();
+            SpellNetId = _networkIdManager.GetNewNetId();
 
             if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
             {
                 return false;
             }
 
-            spellGameScript.OnStartCasting(Owner, this, Target);
+            _spellGameScript.OnStartCasting(Owner, this, Target);
 
-            if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_InstantCast) == 0)
+            if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
-                Owner.setPosition(Owner.X, Owner.Y);//stop moving serverside too. TODO: check for each spell if they stop movement or not
-                state = SpellState.STATE_CASTING;
+                Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
+                State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
             }
             else
             {
-                finishCasting();
+                FinishCasting();
             }
+
             var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
-            _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
+            _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
             return true;
         }
-        
+
         /// <summary>
         /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
-        public virtual void finishCasting()
+        public virtual void FinishCasting()
         {
-            spellGameScript.OnFinishCasting(Owner, this, Target);
-            if (SpellData.ChannelDuration[Level] == 0)
+            _spellGameScript.OnFinishCasting(Owner, this, Target);
+            if (SpellData.ChannelDuration[Level] <= 0)
             {
-                state = SpellState.STATE_COOLDOWN;
+                State = SpellState.STATE_COOLDOWN;
 
                 CurrentCooldown = GetCooldown();
 
@@ -144,18 +145,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called when the spell is started casting and we're supposed to do things such as projectile spawning, etc.
         /// </summary>
-        public virtual void channel()
+        public virtual void Channel()
         {
-            state = SpellState.STATE_CHANNELING;
+            State = SpellState.STATE_CHANNELING;
             CurrentChannelDuration = SpellData.ChannelDuration[Level];
         }
 
         /// <summary>
         /// Called when the character finished channeling
         /// </summary>
-        public virtual void finishChanneling()
+        public virtual void FinishChanneling()
         {
-            state = SpellState.STATE_COOLDOWN;
+            State = SpellState.STATE_COOLDOWN;
 
             CurrentCooldown = GetCooldown();
 
@@ -170,9 +171,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called every diff milliseconds to update the spell
         /// </summary>
-        public virtual void update(float diff)
+        public virtual void Update(float diff)
         {
-            switch (state)
+            switch (State)
             {
                 case SpellState.STATE_READY:
                     break;
@@ -181,10 +182,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     CurrentCastTime -= diff / 1000.0f;
                     if (CurrentCastTime <= 0)
                     {
-                        finishCasting();
-                        if(SpellData.ChannelDuration[Level] > 0)
+                        FinishCasting();
+                        if (SpellData.ChannelDuration[Level] > 0)
                         {
-                            channel();
+                            Channel();
                         }
                     }
                     break;
@@ -192,14 +193,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                     CurrentCooldown -= diff / 1000.0f;
                     if (CurrentCooldown < 0)
                     {
-                        state = SpellState.STATE_READY;
+                        State = SpellState.STATE_READY;
                     }
                     break;
                 case SpellState.STATE_CHANNELING:
                     CurrentChannelDuration -= diff / 1000.0f;
-                    if(CurrentChannelDuration <= 0)
+                    if (CurrentChannelDuration <= 0)
                     {
-                        finishChanneling();
+                        FinishChanneling();
                     }
                     break;
             }
@@ -208,14 +209,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        public void applyEffects(AttackableUnit u, Projectile p = null)
+        public void ApplyEffects(AttackableUnit u, Projectile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
                 ApiFunctionManager.AddParticleTarget(Owner, SpellData.HitEffectName, u);
             }
 
-            spellGameScript.ApplyEffects(Owner, u, this, p);
+            _spellGameScript.ApplyEffects(Owner, u, this, p);
         }
 
         public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
@@ -273,18 +274,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.ObjectManager.AddObject(l);
         }
 
-        public void spellAnimation(string animName, AttackableUnit target)
+        public void SpellAnimation(string animName, AttackableUnit target)
         {
             _game.PacketNotifier.NotifySpellAnimation(target, animName);
         }
 
         /// <returns>spell's unique ID</returns>
-        public int getId()
+        public int GetId()
         {
             return (int)HashFunctions.HashString(SpellName);
         }
 
-        public string getStringForSlot()
+        public string GetStringForSlot()
         {
             switch (Slot)
             {
@@ -303,20 +304,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return "undefined";
         }
 
-        /**
-         * TODO : Add in CDR % from champion's stat
-         */
         public float GetCooldown()
         {
             return CooldownsEnabled ? SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction.Total) : 0;
         }
 
-        public virtual void levelUp()
+        public virtual void LevelUp()
         {
             if (Level <= 5)
             {
                 ++Level;
             }
+
             if (Slot < 4)
             {
                 Owner.Stats.ManaCost[Slot] = SpellData.ManaCost[Level];
@@ -330,13 +329,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (newCd <= 0)
             {
                 _game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
-                targetSpell.state = SpellState.STATE_READY;
+                targetSpell.State = SpellState.STATE_READY;
                 targetSpell.CurrentCooldown = 0;
             }
             else
             {
                 _game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.GetCooldown());
-                targetSpell.state = SpellState.STATE_COOLDOWN;
+                targetSpell.State = SpellState.STATE_COOLDOWN;
                 targetSpell.CurrentCooldown = newCd;
             }
         }

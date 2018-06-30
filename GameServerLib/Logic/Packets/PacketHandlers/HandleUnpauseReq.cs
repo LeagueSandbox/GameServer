@@ -1,7 +1,6 @@
 ﻿using System.Timers;
 using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -11,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_UnpauseGame;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSE_GAME;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleUnpauseReq(Game game, PlayerManager playerManager)
         {
@@ -27,12 +26,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            Champion unpauser;
-            if (peer == null)
-            {
-                unpauser = null;
-            }
-            else
+            Champion unpauser = null;
+            if (peer != null)
             {
                 unpauser = _playerManager.GetPeerInfo(peer).Champion;
             }

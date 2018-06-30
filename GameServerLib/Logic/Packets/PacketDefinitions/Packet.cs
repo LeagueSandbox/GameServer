@@ -1,31 +1,30 @@
 ﻿using System.IO;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public class Packet
     {
         protected readonly Game Game = Program.ResolveDependency<Game>();
 
-        private MemoryStream memStream;
-        protected BinaryWriter buffer;
-        public BinaryWriter getBuffer()
+        private MemoryStream _memStream;
+        protected BinaryWriter _buffer;
+        public BinaryWriter GetBuffer()
         {
-            return buffer;
+            return _buffer;
         }
 
-        public Packet(PacketCmd cmd = PacketCmd.PKT_KeyCheck)
+        public Packet(PacketCmd cmd = PacketCmd.PKT_KEY_CHECK)
         {
-            memStream = new MemoryStream();
-            buffer = new BinaryWriter(memStream);
+            _memStream = new MemoryStream();
+            _buffer = new BinaryWriter(_memStream);
 
-            buffer.Write((byte)cmd);
+            _buffer.Write((byte)cmd);
         }
 
         internal byte[] GetBytes()
         {
-            return memStream.ToArray();
+            return _memStream.ToArray();
         }
     }
 }

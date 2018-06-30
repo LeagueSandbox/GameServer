@@ -4,11 +4,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class UnpauseGame : BasePacket
     {
-        public UnpauseGame(uint unpauserNetId, bool showWindow) 
-            : base(PacketCmd.PKT_UnpauseGame)
+        public UnpauseGame(uint unpauserNetId, bool showWindow)
+            : base(PacketCmd.PKT_UNPAUSE_GAME)
         {
-            buffer.Write((uint)unpauserNetId);
-            buffer.Write(showWindow);
+            _buffer.Write(unpauserNetId);
+            _buffer.Write(showWindow);
         }
     }
 }

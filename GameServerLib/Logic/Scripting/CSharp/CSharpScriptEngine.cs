@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Core.Logic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -25,9 +24,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         //Takes about 300 milliseconds for a single script
         public bool Load(List<string> scriptLocations)
         {
-            var compiledSuccessfully = true;
+            bool compiledSuccessfully;
             var treeList = new List<SyntaxTree>();
-            Parallel.For(0, scriptLocations.Count, i => {
+            Parallel.For(0, scriptLocations.Count, i =>
+            {
                 _logger.LogCoreInfo($"Loading script: {scriptLocations[i]}");
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 }
             });
             var assemblyName = Path.GetRandomFileName();
-            
+
             var references = new List<MetadataReference>();
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -109,7 +109,8 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             return default(T);
         }
 
-        public T CreateObject<T>(string scriptNamespace, string scriptClass) {
+        public T CreateObject<T>(string scriptNamespace, string scriptClass)
+        {
             scriptClass = scriptClass.Replace(" ", "_");
             _logger.LogCoreInfo("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
@@ -118,13 +119,14 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             }
 
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
-            if(classType == null)
+            if (classType == null)
             {
                 _logger.LogCoreWarning($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
             return (T)Activator.CreateInstance(classType);
         }
+
         public static object RunFunctionOnObject(object obj, string method, params object[] args)
         {
             return obj.GetType().InvokeMember(
@@ -135,6 +137,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                 args
             );
         }
+
         public static T GetObjectMethod<T>(object obj, string scriptFunction)
         {
             var classType = obj.GetType();

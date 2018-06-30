@@ -1,4 +1,4 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class Stat
     {
@@ -15,13 +15,56 @@
             private set { _modified = value; }
         }
 
-        public float BaseBonus { get { return _baseBonus; } set { Modified = true; _baseBonus = value; } }
-        public float FlatBonus { get { return _flatBonus; } set { Modified = true; _flatBonus = value; } }
-        public float BaseValue { get { return _baseValue; } set { Modified = true; _baseValue = value; } }
-        public float PercentBonus { get { return _percentBonus; } set { Modified = true; _percentBonus = value; } }
-        public float PercentBaseBonus { get { return _percentBaseBonus; } set { Modified = true; _percentBaseBonus = value; } }
+        public float BaseBonus 
+        {
+            get => _baseBonus;
+            set
+            {
+                Modified = true; 
+                _baseBonus = value;
+            }
+        }
 
-        public float Total { get { return ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus)*(1+PercentBonus); } }
+        public float FlatBonus
+        {
+            get => _flatBonus;
+            set
+            {
+                Modified = true; _flatBonus = value;
+            }
+        }
+
+        public float BaseValue
+        {
+            get => _baseValue;
+            set
+            {
+                Modified = true; 
+                _baseValue = value;
+            }
+        }
+
+        public float PercentBonus
+        {
+            get => _percentBonus;
+            set
+            {
+                Modified = true;
+                _percentBonus = value;
+            }
+        }
+
+        public float PercentBaseBonus
+        {
+            get => _percentBaseBonus;
+            set
+            {
+                Modified = true;
+                _percentBaseBonus = value;
+            }
+        }
+
+        public float Total => ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus) * (1 + PercentBonus);
 
         public Stat(float baseValue, float baseBonus, float percentBaseBonus, float flatBonus, float percentBonus)
         {
@@ -41,22 +84,28 @@
         public bool ApplyStatModificator(StatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
+            {
                 return false;
+            }
             BaseBonus += statModifcator.BaseBonus;
             PercentBaseBonus += statModifcator.PercentBaseBonus;
             FlatBonus += statModifcator.FlatBonus;
             PercentBonus += statModifcator.PercentBonus;
+
             return true;
         }
 
         public bool RemoveStatModificator(StatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
+            {
                 return false;
+            }
             BaseBonus -= statModifcator.BaseBonus;
             PercentBaseBonus -= statModifcator.PercentBaseBonus;
             FlatBonus -= statModifcator.FlatBonus;
             PercentBonus -= statModifcator.PercentBonus;
+
             return true;
         }
    }

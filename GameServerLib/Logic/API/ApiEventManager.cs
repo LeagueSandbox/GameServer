@@ -1,11 +1,7 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 /*
  * Possible Events:
@@ -65,88 +61,89 @@ namespace LeagueSandbox.GameServer.Logic.API
             _logger = Program.ResolveDependency<Logger>();
         }
 
-        public static void removeAllListenersForOwner(object owner)
+        public static void RemoveAllListenersForOwner(object owner)
         {
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
         }
-        
+
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
     }
 
-
     public class EventOnUpdate
     {
-        private List<Tuple<object, Action<float>>> listeners = new List<Tuple<object, Action<float>>>();
+        private List<Tuple<object, Action<float>>> _listeners = new List<Tuple<object, Action<float>>>();
         public void AddListener(object owner, Action<float> callback)
         {
             var listenerTuple = new Tuple<object, Action<float>>(owner, callback);
-            listeners.Add(listenerTuple);
+            _listeners.Add(listenerTuple);
         }
 
         public void RemoveListener(object owner)
         {
-            listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
+
         public void Publish(float diff)
         {
-            listeners.ForEach((listener) => {
-                listener.Item2(diff);
-            });
+            _listeners.ForEach(listener => listener.Item2(diff));
         }
     }
 
     public class EventOnUnitDamageTaken
     {
-        private List<Tuple<object, AttackableUnit, Action>> listeners = new List<Tuple<object, AttackableUnit, Action>>();
+        private List<Tuple<object, AttackableUnit, Action>> _listeners = new List<Tuple<object, AttackableUnit, Action>>();
         public void AddListener(object owner, AttackableUnit unit, Action callback)
         {
             var listenerTuple = new Tuple<object, AttackableUnit, Action>(owner, unit, callback);
-            listeners.Add(listenerTuple);
+            _listeners.Add(listenerTuple);
         }
 
         public void RemoveListener(object owner, AttackableUnit unit)
         {
-            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == unit);
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
         }
+
         public void RemoveListener(object owner)
         {
-            listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
+
         public void Publish(AttackableUnit unit)
         {
-            listeners.ForEach((listener) => {
-                listener.Item3();
-            });
-            if (unit is Champion)
+            _listeners.ForEach(listener => listener.Item3());
+            if (unit is Champion champion)
             {
-                ApiEventManager.OnChampionDamageTaken.Publish((Champion)unit);
+                ApiEventManager.OnChampionDamageTaken.Publish(champion);
             }
         }
     }
 
     public class EventOnChampionDamageTaken
     {
-        private List<Tuple<object, Champion, Action>> listeners = new List<Tuple<object, Champion, Action>>();
+        private List<Tuple<object, Champion, Action>> _listeners = new List<Tuple<object, Champion, Action>>();
         public void AddListener(object owner, Champion champion, Action callback)
         {
             var listenerTuple = new Tuple<object, Champion, Action>(owner, champion, callback);
-            listeners.Add(listenerTuple);
+            _listeners.Add(listenerTuple);
         }
 
         public void RemoveListener(object owner, Champion champion)
         {
-            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champion);
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
         }
+
         public void RemoveListener(object owner)
         {
-            listeners.RemoveAll((listener) => listener.Item1 == owner);
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
+
         public void Publish(Champion champion)
         {
-            listeners.ForEach((listener) => {
+            _listeners.ForEach(listener =>
+            {
                 if (listener.Item2 == champion)
                 {
                     listener.Item3();

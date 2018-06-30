@@ -1,6 +1,5 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -11,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "changeteam";
         public override string Syntax => $"{Command} teamNumber";
 
-        public ChangeTeamCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public ChangeTeamCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;
@@ -27,8 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
 
-            int t;
-            if (!int.TryParse(split[1], out t))
+            if (!int.TryParse(split[1], out var t))
             {
                 return;
             }

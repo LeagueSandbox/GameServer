@@ -1,11 +1,7 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public abstract class Replication
     {
@@ -18,14 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         protected Replication(AttackableUnit owner)
         {
-            _owner = owner;
+            Owner = owner;
             Update();
         }
 
-        protected readonly AttackableUnit _owner;
-        protected Stats Stats => _owner.Stats;
+        protected readonly AttackableUnit Owner;
+        protected Stats Stats => Owner.Stats;
 
-        public UInt32 NetID => _owner.NetId;
+        public uint NetId => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
         public bool Changed { get; set; }
 

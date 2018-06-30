@@ -1,5 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -8,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Game _game;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_QueryStatusReq;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUERY_STATUS_REQ;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleQueryStatus(Game game)
         {
@@ -19,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var response = new QueryStatus();
-            return _game.PacketHandlerManager.sendPacket(peer, response, Channel.CHL_S2C);
+            return _game.PacketHandlerManager.SendPacket(peer, response, Channel.CHL_S2_C);
         }
     }
 }

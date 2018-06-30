@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class ReplicationHero : Replication
     {
@@ -79,7 +75,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             UpdateFloat(Stats.Size.Total, 3, 11); //mSkinScaleCoef(mistyped as mCrit)
             // UpdateFloat(Stats.FlatPathfindingRadiusMod, 3, 12); //mPathfindingRadiusMod
             UpdateUint(Stats.Level, 3, 13); //mLevelRef
-            UpdateUint((uint)_owner.MinionCounter, 3, 14); //mNumNeutralMinionsKilled
+            UpdateUint((uint)Owner.MinionCounter, 3, 14); //mNumNeutralMinionsKilled
             UpdateBool(Stats.IsTargetable, 3, 15); //mIsTargetable
             UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags
         }

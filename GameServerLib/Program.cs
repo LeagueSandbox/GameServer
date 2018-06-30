@@ -1,8 +1,9 @@
 using System;
-using Ninject;
-using LeagueSandbox.GameServer.Logic.Content;
+using System.Timers;
 using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.DependencyInjection;
+using Ninject;
 
 namespace LeagueSandbox.GameServer
 {
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer
         }
     }
 
-    class Program
+    internal class Program
     {
         // TODO: Require consumers of this inject a ServerContext
         public static string ExecutingDirectory { get; private set; }
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer
         public static string ConfigJson { get; private set; }
         public static ushort ServerPort { get; private set; }
 
-        public static void Run(ushort serverPort, String configJson)
+        public static void Run(ushort serverPort, string configJson)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
@@ -57,9 +58,9 @@ namespace LeagueSandbox.GameServer
 
         public static void SetToExit()
         {
-            Logger _logger = Program.ResolveDependency<Logger>();
-            _logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
-            var timer = new System.Timers.Timer(10000) { AutoReset = false };
+            var logger = ResolveDependency<Logger>();
+            logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
+            var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => IsSetToExit = true;
             timer.Start();
         }

@@ -5,15 +5,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class BuyItemRequest
     {
-        PacketCmd cmd;
-        int netId;
-        public int id;
+        private PacketCmd _cmd;
+        private int _netId;
+        public int Id;
         public BuyItemRequest(byte[] data)
         {
             var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadInt32();
-            id = reader.ReadInt32();
+            _cmd = (PacketCmd)reader.ReadByte();
+            _netId = reader.ReadInt32();
+            Id = reader.ReadInt32();
         }
     }
 }

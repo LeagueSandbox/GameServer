@@ -5,10 +5,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class MessagesAvailable : BasePacket
     {
         public MessagesAvailable(int messagesAvailable)
-            : base(PacketCmd.PKT_S2C_MessagesAvailable)
+            : base(PacketCmd.PKT_S2C_MESSAGES_AVAILABLE)
         {
             // The following structure might be incomplete or wrong
-            buffer.Write((int)messagesAvailable);
+            _buffer.Write(messagesAvailable);
         }
     }
 }

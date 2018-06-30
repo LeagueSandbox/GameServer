@@ -6,14 +6,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class ViewResponse : Packet
     {
         public ViewResponse(ViewRequest request)
-            : base(PacketCmd.PKT_S2C_ViewAns)
+            : base(PacketCmd.PKT_S2C_VIEW_ANS)
         {
-            buffer.Write(request.netId);
+            _buffer.Write(request.NetId);
         }
 
-        public void setRequestNo(byte requestNo)
+        public void SetRequestNo(byte requestNo)
         {
-            buffer.Write(requestNo);
+            _buffer.Write(requestNo);
         }
     }
 }

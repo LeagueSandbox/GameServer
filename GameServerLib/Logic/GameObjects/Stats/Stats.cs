@@ -1,8 +1,8 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
-using System;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     public class Stats
     {
@@ -82,9 +82,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             _spellCostReduction = 0;
             ManaCost = new float[64];
-            ActionState = ActionState.CanAttack | ActionState.CanCast | ActionState.CanMove | ActionState.Unknown;
+            ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.UNKNOWN;
             IsTargetable = true;
-            IsTargetableToTeam = IsTargetableToTeamFlags.TargetableToAll;
+            IsTargetableToTeam = IsTargetableToTeamFlags.TARGETABLE_TO_ALL;
 
             AbilityPower = new Stat();
             Armor = new Stat();
@@ -111,25 +111,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void LoadStats(CharData charData)
         {
-            HealthPoints.BaseValue = charData.BaseHP;
-            ManaPoints.BaseValue = charData.BaseMP;
+            HealthPoints.BaseValue = charData.BaseHp;
+            ManaPoints.BaseValue = charData.BaseMp;
             AttackDamage.BaseValue = charData.BaseDamage;
             Range.BaseValue = charData.AttackRange;
             MoveSpeed.BaseValue = charData.MoveSpeed;
             Armor.BaseValue = charData.Armor;
             MagicResist.BaseValue = charData.SpellBlock;
-            HealthRegeneration.BaseValue = charData.BaseStaticHPRegen;
-            ManaRegeneration.BaseValue = charData.BaseStaticMPRegen;
+            HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
+            ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
             AttackSpeedFlat = 0.625f / (1 + charData.AttackDelayOffsetPercent);
-            HealthPerLevel = charData.HPPerLevel;
-            ManaPerLevel = charData.MPPerLevel;
+            HealthPerLevel = charData.HpPerLevel;
+            ManaPerLevel = charData.MpPerLevel;
             AdPerLevel = charData.DamagePerLevel;
             ArmorPerLevel = charData.ArmorPerLevel;
             MagicResistPerLevel = charData.SpellBlockPerLevel;
-            HealthRegenerationPerLevel = charData.HPRegenPerLevel;
-            ManaRegenerationPerLevel = charData.MPRegenPerLevel;
+            HealthRegenerationPerLevel = charData.HpRegenPerLevel;
+            ManaRegenerationPerLevel = charData.MpRegenPerLevel;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
-            ParType = charData.PARType;
+            ParType = charData.ParType;
         }
 
         public void AddModifier(StatsModifier modifier)
@@ -283,48 +283,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
     [Flags]
     public enum ActionState : uint
     {
-        CanAttack = 1 << 0,
-        CanCast = 1 << 1,
-        CanMove = 1 << 2,
-        CanNotMove = 1 << 3,
-        Stealthed = 1 << 4,
-        RevealSpecificUnit = 1 << 5,
-        Taunted = 1 << 6,
-        Feared = 1 << 7,
-        IsFleeing = 1 << 8,
-        CanNotAttack = 1 << 9,
-        IsAsleep = 1 << 10,
-        IsNearSighted = 1 << 11,
-        IsGhosted = 1 << 12,
+        CAN_ATTACK = 1 << 0,
+        CAN_CAST = 1 << 1,
+        CAN_MOVE = 1 << 2,
+        CAN_NOT_MOVE = 1 << 3,
+        STEALTHED = 1 << 4,
+        REVEAL_SPECIFIC_UNIT = 1 << 5,
+        TAUNTED = 1 << 6,
+        FEARED = 1 << 7,
+        IS_FLEEING = 1 << 8,
+        CAN_NOT_ATTACK = 1 << 9,
+        IS_ASLEEP = 1 << 10,
+        IS_NEAR_SIGHTED = 1 << 11,
+        IS_GHOSTED = 1 << 12,
 
-        Charmed = 1 << 15,
-        NoRender = 1 << 16,
-        ForceRenderParticles = 1 << 17,
-        
-        Unknown = 1 << 23 // set to 1 by default, interferes with targetability
+        CHARMED = 1 << 15,
+        NO_RENDER = 1 << 16,
+        FORCE_RENDER_PARTICLES = 1 << 17,
+
+        UNKNOWN = 1 << 23 // set to 1 by default, interferes with targetability
     }
 
     [Flags]
     public enum IsTargetableToTeamFlags : uint
     {
-        NonTargetableAlly = 0x800000,
-        NonTargetableEnemy = 0x1000000,
-        TargetableToAll = 0x2000000
+        NON_TARGETABLE_ALLY = 0x800000,
+        NON_TARGETABLE_ENEMY = 0x1000000,
+        TARGETABLE_TO_ALL = 0x2000000
     }
 
     public enum PrimaryAbilityResourceType : byte
     {
-        Mana = 0,
-        Energy = 1,
-        None = 2,
-        Shield = 3,
-        BattleFury = 4,
-        DragonFury = 5,
-        Rage = 6,
-        Heat = 7,
-        Ferocity = 8,
-        BloodWell = 9,
-        Wind = 10,
-        Other = 11
+        MANA = 0,
+        ENERGY = 1,
+        NONE = 2,
+        SHIELD = 3,
+        BATTLE_FURY = 4,
+        DRAGON_FURY = 5,
+        RAGE = 6,
+        HEAT = 7,
+        FEROCITY = 8,
+        BLOOD_WELL = 9,
+        WIND = 10,
+        OTHER = 11
     }
 }

@@ -1,26 +1,22 @@
-﻿using BlowFishCS;
-using ENet;
-using LeagueSandbox.GameServer.Exceptions;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Players;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using Timer = System.Timers.Timer;
-using System.IO;
+using ENet;
+using LeagueSandbox.GameServer.Exceptions;
+using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Maps;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using Timer = System.Timers.Timer;
 
-namespace LeagueSandbox.GameServer.Core.Logic
+namespace LeagueSandbox.GameServer.Logic
 {
     public class Game
     {
@@ -36,7 +32,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
         public int PlayersReady { get; private set; }
 
-        public float GameTime { get; private set; } = 0;
+        public float GameTime { get; private set; }
         private float _nextSyncTime = 10 * 1000;
 
 
@@ -150,7 +146,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
 
                         case EventType.Receive:
                             var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, channel);
+                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;
@@ -167,7 +163,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2_S)
                             .HandlePacket(null, new byte[0]);
                         _autoResumeCheck = true;
                     }
@@ -187,6 +183,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
                 Thread.Sleep(1);
             }
         }
+
         public void Update(float diff)
         {
             GameTime += diff;
@@ -253,7 +250,7 @@ namespace LeagueSandbox.GameServer.Core.Logic
             {
                 if (!peerinfo.IsDisconnected)
                 {
-                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerDisconnected, peerinfo.Champion);
+                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
                 }
                 peerinfo.IsDisconnected = true;
             }

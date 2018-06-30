@@ -1,7 +1,7 @@
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Items;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests
 {
@@ -73,11 +73,11 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.AreEqual(1, item2.StackSize);
 
             // Stack the second item, and make sure the second gets stacked
-            for(int i = 0; i < itemType2.MaxStack - 1; i++)
+            for(var i = 0; i < itemType2.MaxStack - 1; i++)
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);
-                Assert.AreEqual(1 + (i + 1), item2.StackSize);
+                Assert.AreEqual(1 + i + 1, item2.StackSize);
             }
 
             // Make sure the first item's stack is unchanged
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             // Try to add an extra item to an invalid slot, make sure it fails
             try
             {
-                var fail = manager.SetExtraItem(6, itemManager.GetItemType(2001));
+                manager.SetExtraItem(6, itemManager.GetItemType(2001));
                 Assert.Fail("This should fail");
             }
             catch (Exception e)

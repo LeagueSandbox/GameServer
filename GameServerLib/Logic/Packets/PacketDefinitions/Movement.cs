@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using LeagueSandbox.GameServer.Core.Logic;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
-    static class Movement
+    internal static class Movement
     {
         public static Pair<bool, bool> IsAbsolute(Vector2 vec)
         {
@@ -19,9 +18,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
         {
             if (val)
-                mask[pos / 8] |= (byte)(1 << (pos % 8));
+            {
+                mask[pos / 8] |= (byte)(1 << pos % 8);
+            }
             else
-                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
+            {
+                mask[pos / 8] &= (byte)~(1 << pos % 8);
+            }
         }
 
         public static byte[] EncodeWaypoints(List<Vector2> waypoints)
@@ -30,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             var mapSize = game.Map.NavGrid.GetSize();
             var numCoords = waypoints.Count * 2;
 
-            var maskBytes = new byte[((numCoords - 3) / 8) + 1];
+            var maskBytes = new byte[(numCoords - 3) / 8 + 1];
             var tempStream = new MemoryStream();
             var resultStream = new MemoryStream();
             var tempBuffer = new BinaryWriter(tempStream);
@@ -52,14 +55,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                     var isAbsolute = IsAbsolute(relative);
 
                     if (isAbsolute.Item1)
+                    {
                         tempBuffer.Write((short)curVector.X);
+                    }
                     else
+                    {
                         tempBuffer.Write((byte)relative.X);
+                    }
 
                     if (isAbsolute.Item2)
+                    {
                         tempBuffer.Write((short)curVector.Y);
+                    }
                     else
+                    {
                         tempBuffer.Write((byte)relative.Y);
+                    }
 
                     SetBitmaskValue(ref maskBytes, coordinate - 2, !isAbsolute.Item1);
                     SetBitmaskValue(ref maskBytes, coordinate - 1, !isAbsolute.Item2);
@@ -67,10 +78,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets
                 lastCoord = curVector;
                 coordinate += 2;
             }
+
             if (numCoords > 2)
             {
                 resultBuffer.Write(maskBytes);
             }
+
             resultBuffer.Write(tempStream.ToArray());
 
             return resultStream.ToArray();

@@ -1,10 +1,12 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -35,7 +37,9 @@ namespace LeagueSandbox.GameServer.Logic
             Teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             foreach (var team in Teams)
+            {
                 _visionUnits.Add(team, new Dictionary<uint, AttackableUnit>());
+            }
         }
 
         public void Update(float diff)
@@ -43,14 +47,14 @@ namespace LeagueSandbox.GameServer.Logic
             var temp = GetObjects();
             foreach (var obj in temp.Values)
             {
-                if (obj.isToRemove())
+                if (obj.IsToRemove())
                 {
                     if (obj.AttackerCount == 0)
                         RemoveObject(obj);
                     continue;
                 }
 
-                obj.update(diff);
+                obj.Update(diff);
 
                 if (!(obj is AttackableUnit))
                     continue;
@@ -88,8 +92,8 @@ namespace LeagueSandbox.GameServer.Logic
                         _game.PacketNotifier.NotifyLeaveVision(u, team);
                     }
                 }
-                
-                var ai = u as ObjAIBase;
+
+                var ai = u as ObjAiBase;
                 if (ai != null)
                 {
                     var tempBuffs = ai.GetBuffs();
@@ -117,10 +121,10 @@ namespace LeagueSandbox.GameServer.Logic
                     u.IsModelUpdated = false;
                 }
 
-                if (obj.isMovementUpdated())
+                if (obj.IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(obj);
-                    obj.clearMovementUpdated();
+                    obj.ClearMovementUpdated();
                 }
             }
         }
@@ -128,7 +132,9 @@ namespace LeagueSandbox.GameServer.Logic
         public GameObject GetObjectById(uint id)
         {
             if (!_objects.ContainsKey(id))
+            {
                 return null;
+            }
 
             return _objects[id];
         }
@@ -136,7 +142,9 @@ namespace LeagueSandbox.GameServer.Logic
         public Inhibitor GetInhibitorById(uint id)
         {
             if (!_inhibitors.ContainsKey(id))
+            {
                 return null;
+            }
 
             return _inhibitors[id];
         }
@@ -145,7 +153,7 @@ namespace LeagueSandbox.GameServer.Logic
         {
             foreach (var inhibitor in _inhibitors.Values)
             {
-                if (inhibitor.Team == team && inhibitor.getState() == InhibitorState.Alive)
+                if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
                 {
                     return false;
                 }
@@ -194,13 +202,17 @@ namespace LeagueSandbox.GameServer.Logic
         public void AddChampion(Champion champion)
         {
             lock (_championsLock)
+            {
                 _champions.Add(champion.NetId, champion);
+            }
         }
 
         public void RemoveChampion(Champion champion)
         {
             lock (_championsLock)
+            {
                 _champions.Remove(champion.NetId);
+            }
         }
 
         public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
@@ -210,7 +222,9 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 var visionUnitsTeam = _visionUnits[team];
                 foreach (var unit in visionUnitsTeam)
+                {
                     ret.Add(unit.Key, unit.Value);
+                }
 
                 return ret;
             }
@@ -232,15 +246,21 @@ namespace LeagueSandbox.GameServer.Logic
         public void RemoveVisionUnit(TeamId team, uint netId)
         {
             lock (_visionLock)
+            {
                 _visionUnits[team].Remove(netId);
+            }
         }
 
         public Dictionary<uint, GameObject> GetObjects()
         {
             var ret = new Dictionary<uint, GameObject>();
             lock (_objectsLock)
+            {
                 foreach (var obj in _objects)
+                {
                     ret.Add(obj.Key, obj.Value);
+                }
+            }
 
             return ret;
         }
@@ -253,8 +273,10 @@ namespace LeagueSandbox.GameServer.Logic
                 {
                     var u = kv.Value as AttackableUnit;
                     if (u == null)
+                    {
                         continue;
-                    var ai = u as ObjAIBase;
+                    }
+                    var ai = u as ObjAiBase;
                     if (ai != null)
                     {
                         if (ai.TargetUnit == target)
@@ -273,9 +295,11 @@ namespace LeagueSandbox.GameServer.Logic
             var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
-                Champion c = kv.Value;
+                var c = kv.Value;
                 if (c.Team == team)
+                {
                     champs.Add(c);
+                }
             }
             return champs;
         }
@@ -314,11 +338,13 @@ namespace LeagueSandbox.GameServer.Logic
                 foreach (var kv in _objects)
                 {
                     var u = kv.Value as AttackableUnit;
-                    if (u != null && t.GetDistanceTo(u) <= range)
-                        if ((onlyAlive && !u.IsDead) || !onlyAlive)
-                            units.Add(u);
+                    if (u != null && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
+                    {
+                        units.Add(u);
+                    }
                 }
             }
+
             return units;
         }
 
@@ -351,6 +377,7 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
             }
+
             return false;
         }
     }

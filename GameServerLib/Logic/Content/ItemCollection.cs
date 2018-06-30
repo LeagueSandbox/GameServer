@@ -1,17 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentCollectionEntry : ContentFile
     {
-        public int ContentFormatVersion { get { return Convert.ToInt32(MetaData["ContentFormatVersion"]); } }
-        public string ResourcePath { get { return Convert.ToString(MetaData["ResourcePath"]); } }
-        public string Name { get { return Convert.ToString(MetaData["Name"]); } }
-        public object Id { get { return MetaData["Id"]; } }
+        public int ContentFormatVersion => Convert.ToInt32(MetaData["ContentFormatVersion"]);
+        public string ResourcePath => Convert.ToString(MetaData["ResourcePath"]);
+        public string Name => Convert.ToString(MetaData["Name"]);
+        public object Id => MetaData["Id"];
     }
 
     public class ContentCollection
@@ -20,13 +20,17 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class ItemContentCollectionEntry : ContentCollectionEntry
     {
-        public int ItemId { get { return Convert.ToInt32(Id); } }
+        public int ItemId => Convert.ToInt32(Id);
     }
 
     public class ItemContentCollection : ContentCollection
     {
         private Dictionary<int, ItemContentCollectionEntry> _items;
-        public Dictionary<int, ItemContentCollectionEntry>.Enumerator GetEnumerator() { return _items.GetEnumerator(); }
+
+        public Dictionary<int, ItemContentCollectionEntry>.Enumerator GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
 
         private ItemContentCollection()
         {
@@ -44,13 +48,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
         {
             var result = new ItemContentCollection();
             var itemDirectoryPaths = Directory.GetDirectories(directoryPath);
-            foreach(var location in itemDirectoryPaths)
+            foreach (var location in itemDirectoryPaths)
             {
                 var path = location.Replace('\\', '/');
                 var itemName = path.Split('/').Last();
-                var itemDataPath = string.Format("{0}/{1}.json", path, itemName);
+                var itemDataPath = $"{path}/{itemName}.json";
                 result.AddFromPath(itemDataPath);
             }
+
             return result;
         }
     }

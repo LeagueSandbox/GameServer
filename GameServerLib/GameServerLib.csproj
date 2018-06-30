@@ -477,7 +477,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleSpawn.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleStartGame.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleSwapItems.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSynch.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\HandleSync.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleView.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\Packet.cs" />
     <Compile Include="Logic\Packets\PacketNotifier.cs" />

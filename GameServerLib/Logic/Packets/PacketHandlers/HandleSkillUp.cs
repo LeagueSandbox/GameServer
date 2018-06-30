@@ -1,6 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -12,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SkillUp;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SKILL_UP;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSkillUp(Game game, PlayerManager playerManager)
         {
@@ -26,18 +24,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var skillUpPacket = new SkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.skill);
+            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.Skill);
             if (s == null)
+            {
                 return false;
+            }
 
             var skillUpResponse = new SkillUpResponse(
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
-                skillUpPacket.skill,
+                skillUpPacket.Skill,
                 (byte)s.Level,
-                (byte)s.Owner.getSkillPoints()
+                (byte)s.Owner.GetSkillPoints()
             );
-            _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).Champion.Stats.SetSpellEnabled(skillUpPacket.skill, true);
+            _game.PacketHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+            _playerManager.GetPeerInfo(peer).Champion.Stats.SetSpellEnabled(skillUpPacket.Skill, true);
 
             return true;
         }

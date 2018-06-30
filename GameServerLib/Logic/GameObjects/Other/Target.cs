@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Numerics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Target
     {
         public float X { get; protected set; }
         public float Y { get; protected set; }
 
-        public virtual bool IsSimpleTarget { get { return true; } }
+        public virtual bool IsSimpleTarget => true;
 
         public Target(float x, float y)
         {

@@ -1,7 +1,5 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -12,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "ap";
         public override string Syntax => $"{Command} bonusAp";
 
-        public ApCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public ApCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;
@@ -21,13 +19,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            float ap;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (float.TryParse(split[1], out ap))
+            else if (float.TryParse(split[1], out var ap))
             {
                 _playerManager.GetPeerInfo(peer).Champion.Stats.AbilityPower.FlatBonus += ap;
             }

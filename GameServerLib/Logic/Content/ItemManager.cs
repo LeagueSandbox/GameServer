@@ -1,6 +1,6 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -21,7 +21,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public ItemType SafeGetItemType(int itemId, ItemType defaultValue)
         {
-            if (!_itemTypes.ContainsKey(itemId)) return defaultValue;
+            if (!_itemTypes.ContainsKey(itemId))
+            {
+                return defaultValue;
+            }
+
             return _itemTypes[itemId];
         }
 
@@ -40,7 +44,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var itemContentCollection = ItemContentCollection.LoadItemsFrom(
                 "Content/Data/LeagueSandbox-Default/Items"
             );
-            foreach(var entry in itemContentCollection)
+
+            foreach (var entry in itemContentCollection)
             {
                 var itemType = ItemType.Load(this, entry.Value);
                 _itemTypes.Add(entry.Key, itemType);
@@ -71,9 +76,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         // Not from data
         public ItemRecipe Recipe { get; private set; }
-        public int TotalPrice { get { return Recipe.TotalPrice; } }
+        public int TotalPrice => Recipe.TotalPrice;
 
-        private ItemType(ItemManager owner, ItemContentCollectionEntry itemInfo)
+        private ItemType(ItemContentCollectionEntry itemInfo)
         {
             _itemInfo = itemInfo;
         }
@@ -86,7 +91,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
-            var result = new ItemType(owner, itemInfo)
+            var result = new ItemType(itemInfo)
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
@@ -167,7 +172,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             return result;
         }
 
-        public bool GetIsTrinket()
+        public bool IsTrinket()
         {
             return ItemGroup.ToLower().Equals("relicbase");
         }
@@ -185,7 +190,10 @@ namespace LeagueSandbox.GameServer.Logic.Content
             get
             {
                 if (_totalPrice <= -1)
+                {
                     FindPrice();
+                }
+
                 return _totalPrice;
             }
         }
@@ -200,14 +208,17 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public List<ItemType> GetItems()
         {
             if (_items == null)
+            {
                 FindRecipeItems(_itemManager);
+            }
+
             return _items.ToList();
         }
 
         private void FindRecipeItems(ItemManager itemManager)
         {
             // TODO: Figure out how to refactor this.
-            _items = new ItemType[]
+            _items = new[]
             {
                 itemManager.SafeGetItemType(_owner.RecipeItem1),
                 itemManager.SafeGetItemType(_owner.RecipeItem2),
@@ -221,9 +232,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice = 0;
             foreach (var item in GetItems())
             {
-                if(item != null)
+                if (item != null)
+                {
                     _totalPrice += item.TotalPrice;
+                }
             }
+
             _totalPrice += _owner.Price;
         }
 
@@ -238,7 +252,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
-        
+
         private Inventory _owner;
 
         private Item(Inventory owner, ItemType type)
@@ -250,14 +264,22 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool IncrementStackSize()
         {
-            if (StackSize >= ItemType.MaxStack) return false;
+            if (StackSize >= ItemType.MaxStack)
+            {
+                return false;
+            }
+
             StackSize++;
             return true;
         }
 
         public bool DecrementStackSize()
         {
-            if (StackSize < 1) return false;
+            if (StackSize < 1)
+            {
+                return false;
+            }
+
             StackSize--;
             return true;
         }

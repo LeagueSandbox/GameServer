@@ -1,8 +1,6 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using Newtonsoft.Json.Linq;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class AzirTurret : BaseTurret
     {
@@ -23,16 +21,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             SetTeam(team);
             Stats.Range.BaseValue = 905.0f;
         }
+
         public override void OnAdded()
         {
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
         }
-        public override void refreshWaypoints()
+
+        public override void RefreshWaypoints()
         {
         }
 
-        public override float getMoveSpeed()
+        public override float GetMoveSpeed()
         {
             return 0;
         }

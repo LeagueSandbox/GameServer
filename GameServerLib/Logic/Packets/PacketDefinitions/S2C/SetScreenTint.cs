@@ -6,16 +6,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SetScreenTint : BasePacket
     {
         public SetScreenTint(TeamId team, bool enable, float transitionTime, byte red, byte green, byte blue, float alpha)
-            : base(PacketCmd.PKT_S2C_SetScreenTint)
+            : base(PacketCmd.PKT_S2C_SET_SCREEN_TINT)
         {
-            buffer.Write(enable);
-            buffer.Write((float)transitionTime); // Transition time in seconds
-            buffer.Write((int)team);
-            buffer.Write((byte)blue);
-            buffer.Write((byte)green);
-            buffer.Write((byte)red);
-            buffer.Write((byte)0xFF); // Unk
-            buffer.Write((float)alpha);
+            _buffer.Write(enable);
+            _buffer.Write(transitionTime); // Transition time in seconds
+            _buffer.Write((int)team);
+            _buffer.Write(blue);
+            _buffer.Write(green);
+            _buffer.Write(red);
+            _buffer.Write((byte)0xFF); // Unk
+            _buffer.Write(alpha);
         }
     }
 }

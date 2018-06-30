@@ -1,7 +1,5 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -13,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BuyItemReq;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BUY_ITEM_REQ;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleBuyItem(Game game, ItemManager itemManager, PlayerManager playerManager)
         {
@@ -27,13 +25,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var request = new BuyItemRequest(data);
 
-            var itemTemplate = _itemManager.SafeGetItemType(request.id);
+            var itemTemplate = _itemManager.SafeGetItemType(request.Id);
             if (itemTemplate == null)
+            {
                 return false;
+            }
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             var stats = champion.Stats;
-            var inventory = champion.getInventory();
+            var inventory = champion.GetInventory();
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
@@ -48,17 +48,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 i = inventory.AddItem(itemTemplate);
 
                 if (i == null)
-                { // Slots full
+                {
+                    // Slots full
                     return false;
                 }
             }
             else
             {
                 foreach (var instance in recipeParts)
+                {
                     price -= instance.ItemType.TotalPrice;
+                }
 
                 if (stats.Gold < price)
+                {
                     return false;
+                }
 
                 foreach (var instance in recipeParts)
                 {

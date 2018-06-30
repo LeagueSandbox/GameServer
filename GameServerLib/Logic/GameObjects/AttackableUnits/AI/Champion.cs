@@ -1,17 +1,16 @@
-﻿using LeagueSandbox.GameServer.Logic.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
-using Newtonsoft.Json.Linq;
-using LeagueSandbox.GameServer.Logic.Scripting;
-using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.Items;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public class Champion : ObjAIBase
+    public class Champion : ObjAiBase
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
@@ -39,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         RuneCollection runeList,
                         ClientInfo clientInfo,
                         uint netId = 0)
-            : base(model, new Stats(), 30, 0, 0, 1200, netId)
+            : base(model, new Stats.Stats(), 30, 0, 0, 1200, netId)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -53,20 +52,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-            for(short i = 0; i<CharData.SpellNames.Length;i++)
+
+            for (short i = 0; i<CharData.SpellNames.Length;i++)
             {
-                if(CharData.SpellNames[i] != "")
+                if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
-                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
+                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)i);
                 }
             }
+
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
             Spells[13] = new Spell(this, "Recall", 13);
 
-            for(short i = 0; i<CharData.Passives.Length; i++)
+            for (short i = 0; i<CharData.Passives.Length; i++)
             {
-                if (CharData.Passives[i].PassiveLuaName != "")
+                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
                 {
                     Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
                 }
@@ -74,17 +75,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             for (short i = 0; i < CharData.ExtraSpells.Length; i++)
             {
-                if (CharData.ExtraSpells[i] != "")
+                if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                 {
                     var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
                     Spells[(byte)(i + 45)] = spell;
-                    spell.levelUp();
+                    spell.LevelUp();
                 }
             }
-            Spells[4].levelUp();
-            Spells[5].levelUp();
+
+            Spells[4].LevelUp();
+            Spells[5].LevelUp();
             Replication = new ReplicationHero(this);
         }
+
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
@@ -110,7 +113,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             foreach (var player in _game.Config.Players.Values)
             {
-                if (player.Team.ToLower() == "blue")
+                if (player.Team.ToLower().Equals("blue"))
                 {
                     blueTeamSize++;
                 }
@@ -137,17 +140,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public bool CanMove()
         {
-            return !this.HasCrowdControl(CrowdControlType.Stun) &&
-                !this.IsDashing &&
-                !this.IsCastingSpell &&
-                !this.IsDead &&
-                !this.HasCrowdControl(CrowdControlType.Root);
+            return !HasCrowdControl(CrowdControlType.STUN) &&
+                !IsDashing &&
+                !IsCastingSpell &&
+                !IsDead &&
+                !HasCrowdControl(CrowdControlType.ROOT);
         }
 
         public bool CanCast()
         {
-            return !this.HasCrowdControl(CrowdControlType.Stun) &&
-                !this.HasCrowdControl(CrowdControlType.Silence);
+            return !HasCrowdControl(CrowdControlType.STUN) &&
+                !HasCrowdControl(CrowdControlType.SILENCE);
         }
 
         public Vector2 GetSpawnPosition()
@@ -158,7 +161,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             var teamSize = GetTeamSize();
 
             if (teamSize > 6) //???
+            {
                 teamSize = 6;
+            }
 
             if (config.Players.ContainsKey(playerIndex))
             {
@@ -185,11 +190,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             {
                 var p = config.Players[playerIndex];
             }
+
             var coords = new Vector2
             {
                 X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
                 Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
             };
+
             return new Vector2(coords.X, coords.Y);
         }
 
@@ -203,46 +210,56 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             foreach(var s in Spells.Values)
             {
                 if (s == null)
+                {
                     continue;
+                }
+
                 if (s.SpellName == name)
+                {
                     return s;
+                }
             }
+
             return null;
         }
 
         public Spell LevelUpSpell(short slot)
         {
             if (_skillPoints == 0)
+            {
                 return null;
+            }
 
-            var s = GetSpell((byte) slot);
+            var s = GetSpell((byte)slot);
 
             if (s == null)
+            {
                 return null;
+            }
 
-            s.levelUp();
+            s.LevelUp();
             _skillPoints--;
 
             return s;
         }
 
-        public override void update(float diff)
+        public override void Update(float diff)
         {
-            base.update(diff);
+            base.Update(diff);
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
-                var distanceToTarget = 9000000.0f;
+                var distanceToTarget = 25000f;
                 AttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
-                    var u = it.Value as AttackableUnit;
-
-                    if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
+                    if (!(it.Value is AttackableUnit u) || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
+                    {
                         continue;
+                    }
 
                     if (GetDistanceTo(u) < distanceToTarget)
                     {
@@ -282,7 +299,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             foreach (var s in Spells.Values)
-                s.update(diff);
+            {
+                s.Update(diff);
+            }
 
             if (_championHitFlagTimer > 0)
             {
@@ -298,7 +317,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public void Respawn()
         {
             var spawnPos = GetRespawnPosition();
-            setPosition(spawnPos.X, spawnPos.Y);
+            SetPosition(spawnPos.X, spawnPos.Y);
             _game.PacketNotifier.NotifyChampionRespawn(this);
             Stats.CurrentHealth = Stats.HealthPoints.Total;
             Stats.CurrentMana = Stats.HealthPoints.Total;
@@ -306,44 +325,52 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAIBase owner)
+	    public void Recall(ObjAiBase owner)
         {
             var spawnPos = GetRespawnPosition();
             _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
         }
 
-        public void setSkillPoints(int _skillPoints)
+        public void SetSkillPoints(int skillPoints)
         {
-            _skillPoints = (short)_skillPoints;
+            skillPoints = (short)skillPoints;
         }
 
-        public int getChampionHash()
+        public int GetChampionHash()
         {
             var szSkin = "";
 
             if (Skin < 10)
+            {
                 szSkin = "0" + Skin;
+            }
             else
+            {
                 szSkin = Skin.ToString();
+            }
 
-            int hash = 0;
+            var hash = 0;
             var gobj = "[Character]";
+
             for (var i = 0; i < gobj.Length; i++)
             {
-                hash = Char.ToLower(gobj[i]) + (0x1003F * hash);
+                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
             }
+
             for (var i = 0; i < Model.Length; i++)
             {
-                hash = Char.ToLower(Model[i]) + (0x1003F * hash);
+                hash = char.ToLower(Model[i]) + 0x1003F * hash;
             }
+
             for (var i = 0; i < szSkin.Length; i++)
             {
-                hash = Char.ToLower(szSkin[i]) + (0x1003F * hash);
+                hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
             }
+
             return hash;
         }
 
-        public short getSkillPoints()
+        public short GetSkillPoints()
         {
             return _skillPoints;
         }
@@ -372,17 +399,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             return true;
         }
 
-        public InventoryManager getInventory()
+        public InventoryManager GetInventory()
         {
             return Inventory;
         }
 
-        public override void die(AttackableUnit killer)
+        public override void Die(AttackableUnit killer)
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
             _game.ObjectManager.StopTargeting(this);
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
 
             var cKiller = killer as Champion;
 
@@ -400,7 +427,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             cKiller.ChampionGoldFromMinions = 0;
 
-            float gold = _game.Map.MapGameScript.GetGoldFor(this);
+            var gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
                 "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
                 gold,
@@ -449,16 +476,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void onCollision(GameObject collider)
+        public override void OnCollision(GameObject collider)
         {
-            base.onCollision(collider);
+            base.OnCollision(collider);
             if (collider == null)
             {
                 //CORE_INFO("I bumped into a wall!");
-            }
-            else
-            {
-                //CORE_INFO("I bumped into someone else!");
             }
         }
 
