@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public StatePacket2(PacketCmd state)
             : base(state)
         {
-            _buffer.Write((short)0); //unk
+            Write((short)0); //unk
         }
     }
 }

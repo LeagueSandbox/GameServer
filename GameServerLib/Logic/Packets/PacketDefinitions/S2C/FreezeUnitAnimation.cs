@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             byte flag = 0xDE;
             if (freeze)
                 flag = 0xDD;
-            _buffer.Write(flag);
+            Write(flag);
         }
     }
 }

@@ -17,17 +17,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public PingLoadInfoRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadUInt32();
-            Position = reader.ReadInt32();
-            UserId = reader.ReadInt64();
-            Loaded = reader.ReadSingle();
-            Unk2 = reader.ReadSingle();
-            Ping = reader.ReadInt16();
-            Unk3 = reader.ReadInt16();
-            Unk4 = reader.ReadByte();
-            reader.Close();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadUInt32();
+                Position = reader.ReadInt32();
+                UserId = reader.ReadInt64();
+                Loaded = reader.ReadSingle();
+                Unk2 = reader.ReadSingle();
+                Ping = reader.ReadInt16();
+                Unk3 = reader.ReadInt16();
+                Unk4 = reader.ReadByte();
+            }
         }
     }
 }

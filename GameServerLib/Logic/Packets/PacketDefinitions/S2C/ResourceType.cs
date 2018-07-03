@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ResourceType(uint playernetid, byte resourceType)
             : base(PacketCmd.PKT_S2C_RESOURCE_TYPE, playernetid)
         {
-            _buffer.Write(resourceType);
+            Write(resourceType);
         }
     }
 }

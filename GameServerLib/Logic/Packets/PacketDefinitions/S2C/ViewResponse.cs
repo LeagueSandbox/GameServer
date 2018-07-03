@@ -8,12 +8,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ViewResponse(ViewRequest request)
             : base(PacketCmd.PKT_S2C_VIEW_ANS)
         {
-            _buffer.Write(request.NetId);
+            Write(request.NetId);
         }
 
         public void SetRequestNo(byte requestNo)
         {
-            _buffer.Write(requestNo);
+            Write(requestNo);
         }
     }
 }

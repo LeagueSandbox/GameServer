@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
         public EmotionPacketResponse(byte id, uint netId) : base(PacketCmd.PKT_S2C_EMOTION, netId)
         {
-            _buffer.Write(id);
+            Write(id);
         }
     }
 }

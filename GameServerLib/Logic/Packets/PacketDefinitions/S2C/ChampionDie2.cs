@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ChampionDie2(Champion die, float deathTimer) : base(PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
         {
             // Not sure what the whole purpose of that packet is
-            _buffer.Write((float)deathTimer);
+            Write((float)deathTimer);
         }
     }
 }

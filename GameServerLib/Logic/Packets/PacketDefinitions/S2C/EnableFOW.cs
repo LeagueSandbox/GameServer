@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public EnableFow(bool activate)
             : base(PacketCmd.PKT_S2C_ENABLE_FOW)
         {
-            _buffer.Write(activate ? 0x01 : 0x00);
+            Write(activate ? 0x01 : 0x00);
         }
     }
 }

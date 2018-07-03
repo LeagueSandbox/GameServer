@@ -9,17 +9,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public AddGold(Champion richMan, AttackableUnit died, float gold)
             : base(PacketCmd.PKT_S2C_ADD_GOLD, richMan.NetId)
         {
-            _buffer.Write(richMan.NetId);
+            Write(richMan.NetId);
             if (died != null)
             {
-                _buffer.Write(died.NetId);
+                Write(died.NetId);
             }
             else
             {
-                _buffer.Write(0);
+                Write(0);
             }
 
-            _buffer.Write(gold);
+            Write(gold);
         }
     }
 }

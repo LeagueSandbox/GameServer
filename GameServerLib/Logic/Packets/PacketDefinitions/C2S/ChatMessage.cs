@@ -20,22 +20,25 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public ChatMessage(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            PlayerId = reader.ReadInt32();
-            BotNetId = reader.ReadInt32();
-            IsBotMessage = reader.ReadByte();
-            Type = (ChatType)reader.ReadInt32();
-            Unk1 = reader.ReadInt32();
-            Length = reader.ReadInt32();
-            Unk2 = reader.ReadBytes(32);
-
-            var bytes = new List<byte>();
-            for (var i = 0; i < Length; i++)
+            using (var reader = new BinaryReader(new MemoryStream(data)))
             {
-                bytes.Add(reader.ReadByte());
+                Cmd = (PacketCmd)reader.ReadByte();
+                PlayerId = reader.ReadInt32();
+                BotNetId = reader.ReadInt32();
+                IsBotMessage = reader.ReadByte();
+                Type = (ChatType)reader.ReadInt32();
+                Unk1 = reader.ReadInt32();
+                Length = reader.ReadInt32();
+                Unk2 = reader.ReadBytes(32);
+
+                var bytes = new List<byte>();
+                for (var i = 0; i < Length; i++)
+                {
+                    bytes.Add(reader.ReadByte());
+                }
+
+                Msg = Encoding.Default.GetString(bytes.ToArray());
             }
-            Msg = Encoding.Default.GetString(bytes.ToArray());
         }
     }
 }

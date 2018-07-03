@@ -10,10 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_INHIBITOR_DEATH_ANIMATION, inhi.NetId)
         {
             if (killer != null)
-                _buffer.Write(killer.NetId);
+                Write(killer.NetId);
             else
-                _buffer.Write(0);
-            _buffer.Write(0); //unk
+                Write(0);
+            Write(0); //unk
         }
     }
 }

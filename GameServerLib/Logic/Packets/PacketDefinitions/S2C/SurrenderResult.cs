@@ -8,10 +8,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SurrenderResult(bool reason, int yes, int no, TeamId team)
             : base(PacketCmd.PKT_S2C_SURRENDER_RESULT)
         {
-            _buffer.Write(reason); //surrendererNetworkId
-            _buffer.Write((byte)yes); //yesVotes
-            _buffer.Write((byte)no); //noVotes
-            _buffer.Write((int)team); //team
+            Write(reason); //surrendererNetworkId
+            Write((byte)yes); //yesVotes
+            Write((byte)no); //noVotes
+            Write((int)team); //team
         }
     }
 }

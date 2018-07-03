@@ -11,10 +11,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public EmotionPacketRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadUInt32();
-            Id = reader.ReadByte();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadUInt32();
+                Id = reader.ReadByte();
+            }
         }
     }
 }

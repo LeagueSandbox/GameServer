@@ -27,12 +27,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public SynchVersionRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadInt32();
-            Unk1 = reader.ReadInt32();
-            _version = reader.ReadBytes(256);
-            reader.Close();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadInt32();
+                Unk1 = reader.ReadInt32();
+                _version = reader.ReadBytes(256);
+            }
         }
     }
 }

@@ -9,15 +9,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_EXPLODE_NEXUS, nexus.NetId)
         {
             // animation ID?
-            _buffer.Write((byte)0xE7);
-            _buffer.Write((byte)0xF9);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x40);
+            Write((byte)0xE7);
+            Write((byte)0xF9);
+            Write((byte)0x00);
+            Write((byte)0x40);
             // unk
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
         }
     }
 }

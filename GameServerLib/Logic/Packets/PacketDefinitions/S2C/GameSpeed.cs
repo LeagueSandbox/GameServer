@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public GameSpeed(float gameSpeed)
             : base(PacketCmd.PKT_S2C_GAME_SPEED)
         {
-            _buffer.Write(gameSpeed);
+            Write(gameSpeed);
         }
     }
 }

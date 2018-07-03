@@ -9,9 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public BasicTutorialMessageWindowClicked(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = reader.ReadByte();
-            Unk = reader.ReadInt32(); // Seems to be always 0
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = reader.ReadByte();
+                Unk = reader.ReadInt32(); // Seems to be always 0
+            }
         }
 
         public BasicTutorialMessageWindowClicked()

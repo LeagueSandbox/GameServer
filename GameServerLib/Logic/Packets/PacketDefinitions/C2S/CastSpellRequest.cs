@@ -17,16 +17,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public CastSpellRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadInt32();
-            SpellSlotType = reader.ReadByte();
-            SpellSlot = reader.ReadByte();
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            X2 = reader.ReadSingle();
-            Y2 = reader.ReadSingle();
-            TargetNetId = reader.ReadUInt32();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadInt32();
+                SpellSlotType = reader.ReadByte();
+                SpellSlot = reader.ReadByte();
+                X = reader.ReadSingle();
+                Y = reader.ReadSingle();
+                X2 = reader.ReadSingle();
+                Y2 = reader.ReadSingle();
+                TargetNetId = reader.ReadUInt32();
+            }
         }
     }
 }

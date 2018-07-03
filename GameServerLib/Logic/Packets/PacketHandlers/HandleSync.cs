@@ -31,10 +31,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
-            if (version.Version != Config.VERSION)
+            if (version.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.LogCoreWarning("Client " + version.Version + " does not match Server " + Config.VERSION);
+                _logger.LogCoreWarning($"Client's version ({version.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
                 }
             }
-            var answer = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION, "CLASSIC", mapId);
+            var answer = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
 
             return _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2_C);
         }

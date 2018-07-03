@@ -7,16 +7,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     {
         public HeroSpawn2(Champion p) : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, p.NetId)
         {
-            _buffer.Fill(0, 15);
-            _buffer.Write((byte)0x80); // unk
-            _buffer.Write((byte)0x3F); // unk
-            _buffer.Fill(0, 13);
-            _buffer.Write((byte)3); // unk
-            _buffer.Write((uint)1); // unk
-            _buffer.Write(p.X);
-            _buffer.Write(p.Y);
-            _buffer.Write((float)0x3F441B7D); // z ?
-            _buffer.Write((float)0x3F248DBB); // Rotation ?
+            Fill(0, 15);
+            Write((byte)0x80); // unk
+            Write((byte)0x3F); // unk
+            Fill(0, 13);
+            Write((byte)3); // unk
+            Write((uint)1); // unk
+            Write(p.X);
+            Write(p.Y);
+            Write((float)0x3F441B7D); // z ?
+            Write((float)0x3F248DBB); // Rotation ?
         }
     }
 }

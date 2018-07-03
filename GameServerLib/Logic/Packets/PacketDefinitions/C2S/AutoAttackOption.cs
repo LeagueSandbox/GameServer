@@ -10,10 +10,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public AutoAttackOption(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = reader.ReadByte();
-            Netid = reader.ReadInt32();
-            Activated = reader.ReadByte();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = reader.ReadByte();
+                Netid = reader.ReadInt32();
+                Activated = reader.ReadByte();
+            }
         }
 
         public AutoAttackOption()

@@ -10,11 +10,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             if (attacked != null)
             {
-                _buffer.Write(attacked.NetId);
+                Write(attacked.NetId);
             }
             else
             {
-                _buffer.Write(0);
+                Write(0);
             }
         }
     }

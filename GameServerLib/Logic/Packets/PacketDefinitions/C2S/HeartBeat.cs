@@ -11,12 +11,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
         public float AckTime;
         public HeartBeat(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadInt32();
-            ReceiveTime = reader.ReadSingle();
-            AckTime = reader.ReadSingle();
-            reader.Close();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadInt32();
+                ReceiveTime = reader.ReadSingle();
+                AckTime = reader.ReadSingle();
+                reader.Close();
+            }
         }
     }
 }

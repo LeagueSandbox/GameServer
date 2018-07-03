@@ -11,16 +11,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public QuestClicked(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = reader.ReadByte();
-            Playernetid = reader.ReadUInt32();
-            Unk = reader.ReadByte();
-            Netid = reader.ReadUInt32();
-        }
-
-        public QuestClicked()
-        {
-
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = reader.ReadByte();
+                Playernetid = reader.ReadUInt32();
+                Unk = reader.ReadByte();
+                Netid = reader.ReadUInt32();
+            }
         }
     }
 }
