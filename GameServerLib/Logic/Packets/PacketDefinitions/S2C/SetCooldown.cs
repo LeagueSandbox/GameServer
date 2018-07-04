@@ -7,10 +7,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SetCooldown(uint netId, byte slotId, float currentCd, float totalCd = 0.0f)
             : base(PacketCmd.PKT_S2C_SET_COOLDOWN, netId)
         {
-            _buffer.Write(slotId);
-            _buffer.Write((byte)0xF8); // 4.18
-            _buffer.Write(currentCd);
-            _buffer.Write(totalCd);
+            Write(slotId);
+            Write((byte)0xF8); // 4.18
+            Write(currentCd);
+            Write(totalCd);
         }
     }
 }

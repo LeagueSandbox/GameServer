@@ -27,7 +27,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var userId = _game.Blowfish.Decrypt(keyCheck.CheckId);
 
             if (userId != keyCheck.UserId)
+            {
+                _logger.LogCoreWarning("Client has sent wrong blowfish data.");
                 return false;
+            }
+
+            if (keyCheck.VersionNo != Config.VERSION_NUMBER)
+            {
+                _logger.LogCoreWarning("Client version doesn't match server's. " +
+                                       $"(C:{keyCheck.VersionNo}, S:{Config.VERSION_NUMBER})");
+                return false;
+            }
 
             var playerNo = 0;
 
@@ -40,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (!player.IsDisconnected)
                         {
-                            _logger.LogCoreWarning("Ignoring new player " + userId + ", already connected!");
+                            _logger.LogCoreWarning($"Ignoring new player {userId}, already connected!");
                             return false;
                         }
                     }

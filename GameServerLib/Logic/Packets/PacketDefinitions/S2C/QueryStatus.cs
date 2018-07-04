@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public QueryStatus()
             : base(PacketCmd.PKT_S2C_QUERY_STATUS_ANS)
         {
-            _buffer.Write((byte)1); //ok
+            Write((byte)1); //ok
         }
     }
 }

@@ -11,16 +11,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public BlueTipClicked(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = reader.ReadByte();
-            Playernetid = reader.ReadUInt32();
-            Unk = reader.ReadByte();
-            Netid = reader.ReadUInt32();
-        }
-
-        public BlueTipClicked()
-        {
-
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = reader.ReadByte();
+                Playernetid = reader.ReadUInt32();
+                Unk = reader.ReadByte();
+                Netid = reader.ReadUInt32();
+            }
         }
     }
 }

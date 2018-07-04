@@ -12,11 +12,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public SwapItemsRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetId = reader.ReadInt32();
-            SlotFrom = reader.ReadByte();
-            SlotTo = reader.ReadByte();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadInt32();
+                SlotFrom = reader.ReadByte();
+                SlotTo = reader.ReadByte();
+            }
         }
     }
 }

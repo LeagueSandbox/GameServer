@@ -13,12 +13,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             {
                 state = 0x01;
             }
-            _buffer.Write(state);
-            _buffer.Write(distance); // How much it's moved towards
+            Write(state);
+            Write(distance); // How much it's moved towards
             // where the champion is facing
             // (Can be a negative value; ends up behind the champion)
-            _buffer.Fill(0, 8);
-            _buffer.Write(mode); // Seems to be a bit field.
+            Fill(0, 8);
+            Write(mode); // Seems to be a bit field.
             // First bit 1 : Always in front (or back) of the player
             // First bit 0 : Doesn't move when the champion faces another direction
         }

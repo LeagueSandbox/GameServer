@@ -38,14 +38,6 @@ namespace LeagueSandbox.GameServer
             list.AddRange(Encoding.BigEndianUnicode.GetBytes(val));
         }
 
-        public static void Fill(this BinaryWriter list, byte data, int length)
-        {
-            for (var i = 0; i < length; ++i)
-            {
-                list.Write(data);
-            }
-        }
-
         public static Vector2 Rotate(this Vector2 v, Vector2 origin, float angle)
         {
             // Rotating (px,py) around (ox, oy) with angle a

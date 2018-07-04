@@ -8,8 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public StopAutoAttack(AttackableUnit attacker)
             : base(PacketCmd.PKT_S2C_STOP_AUTO_ATTACK, attacker.NetId)
         {
-            _buffer.Write((byte)0); // Flag
-            _buffer.Write(0); // A netId
+            Write((byte)0); // Flag
+            Write(0); // A netId
         }
     }
 }

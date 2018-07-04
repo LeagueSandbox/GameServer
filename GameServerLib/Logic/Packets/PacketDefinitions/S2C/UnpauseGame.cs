@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public UnpauseGame(uint unpauserNetId, bool showWindow)
             : base(PacketCmd.PKT_UNPAUSE_GAME)
         {
-            _buffer.Write(unpauserNetId);
-            _buffer.Write(showWindow);
+            Write(unpauserNetId);
+            Write(showWindow);
         }
     }
 }

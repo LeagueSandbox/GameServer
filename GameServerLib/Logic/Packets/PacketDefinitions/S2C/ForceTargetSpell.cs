@@ -8,11 +8,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ForceTargetSpell(AttackableUnit u, byte slot, float time)
             : base(PacketCmd.PKT_S2C_FORCE_TARGET_SPELL, u.NetId)
         {
-            _buffer.Write(slot);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write(time);
+            Write(slot);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write(time);
         }
     }
 }

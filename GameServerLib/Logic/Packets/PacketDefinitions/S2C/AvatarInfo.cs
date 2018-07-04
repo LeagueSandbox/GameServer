@@ -13,20 +13,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             var runesRequired = 30;
             foreach (var rune in player.Champion.RuneList.Runes)
             {
-                _buffer.Write((short)rune.Value);
-                _buffer.Write((short)0x00);
+                Write((short)rune.Value);
+                Write((short)0x00);
                 runesRequired--;
             }
 
             for (var i = 1; i <= runesRequired; i++)
             {
-                _buffer.Write((short)0);
-                _buffer.Write((short)0);
+                Write((short)0);
+                Write((short)0);
             }
 
             var summonerSpells = player.SummonerSkills;
-            _buffer.Write(HashFunctions.HashString(summonerSpells[0]));
-            _buffer.Write(HashFunctions.HashString(summonerSpells[1]));
+            WriteStringHash(summonerSpells[0]);
+            WriteStringHash(summonerSpells[1]);
 
             var talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>
@@ -36,18 +36,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             foreach (var talent in talentsHashes)
             {
-                _buffer.Write(talent.Key); // hash
-                _buffer.Write(talent.Value); // level
+                Write(talent.Key); // hash
+                Write(talent.Value); // level
                 talentsRequired--;
             }
 
             for (var i = 1; i <= talentsRequired; i++)
             {
-                _buffer.Write(0);
-                _buffer.Write((byte)0);
+                Write(0);
+                Write((byte)0);
             }
 
-            _buffer.Write((short)30); // avatarLevel
+            Write((short)30); // avatarLevel
         }
     }
 }

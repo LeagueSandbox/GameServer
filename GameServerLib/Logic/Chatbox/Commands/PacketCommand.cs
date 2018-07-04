@@ -35,17 +35,16 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
                 var opcode = Convert.ToByte(s[1], 16);
                 var packet = new Packet((PacketCmd)opcode);
-                var buffer = packet.GetBuffer();
 
                 for (var i = 2; i < s.Length; i++)
                 {
                     if (s[i].Equals("netid"))
                     {
-                        buffer.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
+                        packet.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
                     }
                     else
                     {
-                        buffer.Write(Convert.ToByte(s[i], 16));
+                        packet.Write(Convert.ToByte(s[i], 16));
                     }
                 }
 

@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ChampionDeathTimer(Champion die)
             : base(PacketCmd.PKT_S2C_CHAMPION_DEATH_TIMER, die.NetId)
         {
-            _buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
+            Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
     }
 }

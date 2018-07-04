@@ -13,23 +13,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             uint netid)
             : base(PacketCmd.PKT_S2C_BLUE_TIP, playernetid)
         {
-            _buffer.Write(Encoding.Default.GetBytes(text));
-            _buffer.Fill(0, 128 - text.Length);
+            WriteConstLengthString(text, 128);
 
-            _buffer.Write(Encoding.Default.GetBytes(title));
-            _buffer.Fill(0, 128 - title.Length);
+            WriteConstLengthString(title, 128);
 
-            _buffer.Write(Encoding.Default.GetBytes(imagePath));
-            _buffer.Fill(0, 128 - imagePath.Length);
+            WriteConstLengthString(imagePath, 128);
 
-            _buffer.Write((byte)tipCommand); /* ACTIVATE_TIP     = 0
+            Write((byte)tipCommand); /* ACTIVATE_TIP     = 0
                                                REMOVE_TIP       = 1
                                                ENABLE_TIP_EVENTS  = 2
                                                DISABLE_TIP_EVENTS  = 3
                                                ACTIVATE_TIP_DIALOGUE  = 4
                                                ENABLE_TIP_DIALOGUE_EVENTS  = 5
                                                DISABLE_TIP_DIALOGUE_EVENTS  = 6 */
-            _buffer.Write((int)netid);
+            Write((int)netid);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_MESSAGES_AVAILABLE)
         {
             // The following structure might be incomplete or wrong
-            _buffer.Write(messagesAvailable);
+            Write(messagesAvailable);
         }
     }
 }

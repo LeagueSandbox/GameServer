@@ -13,31 +13,31 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public EnterVisionAgain(Minion m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
-            _buffer.Fill(0, 13);
-            _buffer.Write(1.0f);
-            _buffer.Fill(0, 13);
-            _buffer.Write((byte)0x02);
-            _buffer.Write(Environment.TickCount); // unk
+            Fill(0, 13);
+            Write(1.0f);
+            Fill(0, 13);
+            Write((byte)0x02);
+            Write(Environment.TickCount); // unk
 
             var waypoints = m.Waypoints;
 
-            _buffer.Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
-            _buffer.Write((int)m.NetId);
+            Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
+            WriteNetId(m);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
-            _buffer.Write((byte)0); // movement mask
-            _buffer.Write(MovementVector.TargetXToNormalFormat(m.X));
-            _buffer.Write(MovementVector.TargetYToNormalFormat(m.Y));
+            Write((byte)0); // movement mask
+            Write(MovementVector.TargetXToNormalFormat(m.X));
+            Write(MovementVector.TargetYToNormalFormat(m.Y));
             for (var i = m.CurWaypoint; i < waypoints.Count; i++)
             {
-                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
 
         public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
         {
-            _buffer.Write((short)0); // extraInfo
-            _buffer.Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
+            Write((short)0); // extraInfo
+            Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
             //buffer.Write((short)7; // unknown
 
             /*
@@ -56,24 +56,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             */
 
-            _buffer.Fill(0, 10);
-            _buffer.Write(1.0f);
-            _buffer.Fill(0, 13);
+            Fill(0, 10);
+            Write(1.0f);
+            Fill(0, 13);
 
-            _buffer.Write((byte)2); // Type of data: Waypoints=2
-            _buffer.Write(Environment.TickCount); // unk
+            Write((byte)2); // Type of data: Waypoints=2
+            Write(Environment.TickCount); // unk
 
             var waypoints = c.Waypoints;
 
-            _buffer.Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
-            _buffer.Write(c.NetId);
-            _buffer.Write((byte)0); // movement mask; 1=KeepMoving?
-            _buffer.Write(MovementVector.TargetXToNormalFormat(c.X));
-            _buffer.Write(MovementVector.TargetYToNormalFormat(c.Y));
+            Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
+            WriteNetId(c);
+            Write((byte)0); // movement mask; 1=KeepMoving?
+            Write(MovementVector.TargetXToNormalFormat(c.X));
+            Write(MovementVector.TargetYToNormalFormat(c.Y));
             for (var i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
-                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                _buffer.Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
+                Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
             }
         }
     }

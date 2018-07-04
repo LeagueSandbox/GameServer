@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public GameEnd(bool winningTeamIsBlue)
             : base(PacketCmd.PKT_S2C_GAME_END)
         {
-            _buffer.Write(winningTeamIsBlue ? (byte)1 : (byte)0);
+            Write(winningTeamIsBlue ? (byte)1 : (byte)0);
         }
     }
 }

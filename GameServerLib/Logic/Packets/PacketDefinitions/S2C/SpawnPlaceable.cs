@@ -10,71 +10,69 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
-            _buffer.Write(p.NetId);
+            WriteNetId(p);
 
-            _buffer.Write((byte)0xB5);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0xB3);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x7C);
+            Write((byte)0xB5);
+            Write((byte)0x00);
+            Write((byte)0xB3);
+            Write((byte)0x00);
+            Write((byte)0x7C);
 
-            _buffer.Write(p.NetId);
-            _buffer.Write(p.NetId);
-            _buffer.Write(p.Owner.NetId);
+            WriteNetId(p);
+            WriteNetId(p);
+            WriteNetId(p.Owner);
 
-            _buffer.Write((byte)0x40);
+            Write((byte)0x40);
 
-            _buffer.Write(p.X); //x
-            _buffer.Write(p.GetZ()); //z
-            _buffer.Write(p.Y); //y
+            Write(p.X); //x
+            Write(p.GetZ()); //z
+            Write(p.Y); //y
 
-            _buffer.Fill(0, 8);
+            Fill(0, 8);
 
-            _buffer.Write((short)p.Team);
-            _buffer.Write((byte)0x92);
-            _buffer.Write((byte)0x00);
+            Write((short)p.Team);
+            Write((byte)0x92);
+            Write((byte)0x00);
 
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x02);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x02);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
 
-            _buffer.Write(Encoding.Default.GetBytes(p.Name));
-            _buffer.Fill(0, 64 - p.Name.Length);
+			WriteConstLengthString(p.Name, 64);
 
-            _buffer.Write(Encoding.Default.GetBytes(p.Model));
-            _buffer.Fill(0, 64 - p.Model.Length);
+			WriteConstLengthString(p.Model, 64);
 
-            _buffer.Write((byte)0x01);
+            Write((byte)0x01);
 
-            _buffer.Fill(0, 16);
+            Fill(0, 16);
 
-            _buffer.Write(1.0f); // Unk
+            Write(1.0f); // Unk
 
-            _buffer.Fill(0, 13);
+            Fill(0, 13);
 
-            _buffer.Write((byte)0x03);
+            Write((byte)0x03);
 
-            _buffer.Write((byte)0xB1); // <--|
-            _buffer.Write((byte)0x20); //    | Unknown, changes between packets
-            _buffer.Write((byte)0x18); //    |
-            _buffer.Write((byte)0x00); // <--|
+            Write((byte)0xB1); // <--|
+            Write((byte)0x20); //    | Unknown, changes between packets
+            Write((byte)0x18); //    |
+            Write((byte)0x00); // <--|
 
-            _buffer.Write(p.X);
-            _buffer.Write(p.Y);
+            Write(p.X);
+            Write(p.Y);
 
-            _buffer.Write((byte)0x00); // 0.0f
-            _buffer.Write((byte)0x00); // Probably a float, see SpawnMonster
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
+            Write((byte)0x00); // 0.0f
+            Write((byte)0x00); // Probably a float, see SpawnMonster
+            Write((byte)0x00);
+            Write((byte)0x00);
 
-            _buffer.Write((byte)0xFF); // 1.0f
-            _buffer.Write((byte)0xFF); // Probably a float, see SpawnMonster
-            _buffer.Write((byte)0x7F);
-            _buffer.Write((byte)0x3F);
+            Write((byte)0xFF); // 1.0f
+            Write((byte)0xFF); // Probably a float, see SpawnMonster
+            Write((byte)0x7F);
+            Write((byte)0x3F);
         }
     }
 }

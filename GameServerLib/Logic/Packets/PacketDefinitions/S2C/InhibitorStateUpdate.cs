@@ -8,9 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public InhibitorStateUpdate(Inhibitor inhi)
             : base(PacketCmd.PKT_S2C_INHIBITOR_STATE, inhi.NetId)
         {
-            _buffer.Write((byte)inhi.InhibitorState);
-            _buffer.Write((byte)0);
-            _buffer.Write((byte)0);
+            Write((byte)inhi.InhibitorState);
+            Write((byte)0);
+            Write((byte)0);
         }
     }
 }

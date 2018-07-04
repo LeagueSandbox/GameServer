@@ -7,14 +7,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public KeyCheckResponse(long userId, int playerNo)
             : base(PacketCmd.PKT_KEY_CHECK)
         {
-            _buffer.Write((byte)0x2A);
-            _buffer.Write((byte)0);
-            _buffer.Write((byte)0xFF);
-            _buffer.Write((uint)playerNo);
-            _buffer.Write((ulong)userId);
-            _buffer.Write((uint)0);
-            _buffer.Write((long)0);
-            _buffer.Write((uint)0);
+            Write((byte)0x2A);
+            Write((byte)0);
+            Write((byte)0xFF);
+            Write((uint)playerNo);
+            Write((ulong)userId);
+            Write((uint)0);
+            Write((long)0);
+            Write((uint)0);
         }
     }
 }

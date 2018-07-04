@@ -8,16 +8,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public UpdateModel(uint netId, string modelName, bool useSpells = true)
             : base(PacketCmd.PKT_S2C_UPDATE_MODEL, netId)
         {
-            _buffer.Write(useSpells); // Use spells from the new model
-            _buffer.Write((byte)0x00); // <-- These three bytes most likely form
-            _buffer.Write((byte)0x00); // <-- an int with the useSpells byte, but
-            _buffer.Write((byte)0x00); // <-- they don't seem to affect anything
-            _buffer.Write((byte)1); // Bit field with bits 1 and 2. Unk
-            _buffer.Write(-1); // SkinID (Maybe -1 means keep using current one?)
-            foreach (var b in Encoding.Default.GetBytes(modelName))
-                _buffer.Write(b);
-            if (modelName.Length < 32)
-                _buffer.Fill(0, 32 - modelName.Length);
+            Write(useSpells); // Use spells from the new model
+            Write((byte)0x00); // <-- These three bytes most likely form
+            Write((byte)0x00); // <-- an int with the useSpells byte, but
+            Write((byte)0x00); // <-- they don't seem to affect anything
+            Write((byte)1); // Bit field with bits 1 and 2. Unk
+            Write(-1); // SkinID (Maybe -1 means keep using current one?)
+			WriteConstLengthString(modelName, 32, true);
         }
     }
 }

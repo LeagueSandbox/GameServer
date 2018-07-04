@@ -10,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_LOAD_SCREEN_INFO)
         {
             //Zero this complete buffer
-            _buffer.Write((uint)6); // blueMax
-            _buffer.Write((uint)6); // redMax
+            Write((uint)6); // blueMax
+            Write((uint)6); // redMax
 
             var currentBlue = 0;
             foreach (var p in players)
@@ -19,15 +19,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_BLUE)
                 {
-                    _buffer.Write((ulong)player.UserId);
+                    Write((ulong)player.UserId);
                     currentBlue++;
                 }
             }
 
             for (var i = 0; i < 6 - currentBlue; ++i)
-                _buffer.Write((ulong)0);
+                Write((ulong)0);
 
-            _buffer.Fill(0, 144);
+            Fill(0, 144);
 
             var currentPurple = 0;
             foreach (var p in players)
@@ -35,19 +35,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_PURPLE)
                 {
-                    _buffer.Write((ulong)player.UserId);
+                    Write((ulong)player.UserId);
                     currentPurple++;
                 }
             }
 
             for (var i = 0; i < 6 - currentPurple; ++i)
             {
-                _buffer.Write((ulong)0);
+                Write((ulong)0);
             }
 
-            _buffer.Fill(0, 144);
-            _buffer.Write(currentBlue);
-            _buffer.Write(currentPurple);
+            Fill(0, 144);
+            Write(currentBlue);
+            Write(currentPurple);
         }
     }
 }

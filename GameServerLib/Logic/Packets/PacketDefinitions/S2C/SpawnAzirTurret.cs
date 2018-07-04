@@ -9,46 +9,44 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SpawnAzirTurret(AzirTurret turret)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, turret.NetId)
         {
-            _buffer.Write((byte)0xAD);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0xAB);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0xFE);
+            Write((byte)0xAD);
+            Write((byte)0x00);
+            Write((byte)0xAB);
+            Write((byte)0x00);
+            Write((byte)0xFE);
 
-            _buffer.Write(turret.NetId);
-            _buffer.Write((byte)0x23);
-            _buffer.Write((byte)0x01);
-            _buffer.Write(turret.NetId);
-            _buffer.Write(turret.Owner.NetId);
+            WriteNetId(turret);
+            Write((byte)0x23);
+            Write((byte)0x01);
+            WriteNetId(turret);
+            WriteNetId(turret.Owner);
 
-            _buffer.Write((byte)0x40);
+            Write((byte)0x40);
 
-            _buffer.Write(Encoding.Default.GetBytes(turret.Name));
-            _buffer.Fill(0, 64 - turret.Name.Length);
+			WriteConstLengthString(turret.Name, 64);
 
-            _buffer.Write(Encoding.Default.GetBytes(turret.Model));
-            _buffer.Fill(0, 64 - turret.Model.Length);
+			WriteConstLengthString(turret.Model, 64);
 
-            _buffer.Write(0);
+            Write(0);
 
-            _buffer.Write(turret.X);
-            _buffer.Write(turret.GetZ());
-            _buffer.Write(turret.Y);
-            _buffer.Write(4.0f);
+            Write(turret.X);
+            Write(turret.GetZ());
+            Write(turret.Y);
+            Write(4.0f);
 
-            _buffer.Write((byte)0xC1);
-            _buffer.Write((short)turret.Team);
+            Write((byte)0xC1);
+            Write((short)turret.Team);
 
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x02);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x02);
 
-            _buffer.Fill(0, 11);
+            Fill(0, 11);
 
-            _buffer.Write(1.0f); // Unk
+            Write(1.0f); // Unk
 
-            _buffer.Fill(0, 13);
+            Fill(0, 13);
         }
     }
 }

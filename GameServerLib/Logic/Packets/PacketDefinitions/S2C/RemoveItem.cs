@@ -8,8 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public RemoveItem(AttackableUnit u, byte slot, short remaining)
             : base(PacketCmd.PKT_S2C_REMOVE_ITEM, u.NetId)
         {
-            _buffer.Write(slot);
-            _buffer.Write(remaining);
+            Write(slot);
+            Write(remaining);
         }
     }
 }

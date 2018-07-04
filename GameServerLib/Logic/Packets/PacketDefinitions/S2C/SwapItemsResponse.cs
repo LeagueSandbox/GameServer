@@ -8,8 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SwapItemsResponse(Champion c, byte slotFrom, byte slotTo)
             : base(PacketCmd.PKT_S2C_SWAP_ITEMS, c.NetId)
         {
-            _buffer.Write(slotFrom);
-            _buffer.Write(slotTo);
+            Write(slotFrom);
+            Write(slotTo);
         }
     }
 }

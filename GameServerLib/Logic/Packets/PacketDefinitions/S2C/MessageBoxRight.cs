@@ -9,8 +9,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_MESSAGE_BOX_RIGHT)
         {
             // The following structure might be incomplete or wrong
-            _buffer.Write(Encoding.Default.GetBytes(message));
-            _buffer.Write(0x00);
+            Write(message);
+            Write(0x00);
         }
     }
 }

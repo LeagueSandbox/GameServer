@@ -8,12 +8,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public NpcDie(AttackableUnit die, AttackableUnit killer)
             : base(PacketCmd.PKT_S2C_NPC_DIE, die.NetId)
         {
-            _buffer.Write(0);
-            _buffer.Write((byte)0);
-            _buffer.Write(killer.NetId);
-            _buffer.Write((byte)0); // unk
-            _buffer.Write((byte)7); // unk
-            _buffer.Write(0); // Flags?
+            Write(0);
+            Write((byte)0);
+            WriteNetId(killer);
+            Write((byte)0); // unk
+            Write((byte)7); // unk
+            Write(0); // Flags?
         }
     }
 }

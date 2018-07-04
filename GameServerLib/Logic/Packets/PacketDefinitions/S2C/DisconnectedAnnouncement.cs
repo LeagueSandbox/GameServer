@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public DisconnectedAnnouncement(AttackableUnit unit)
             : base(PacketCmd.PKT_S2C_DISCONNECTED_ANNOUNCEMENT)
         {
-            _buffer.Write(unit.NetId);
+            WriteNetId(unit);
         }
     }
 }

@@ -11,10 +11,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public UseObject(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            _cmd = (PacketCmd)reader.ReadByte();
-            _netId = reader.ReadInt32();
-            TargetNetId = reader.ReadUInt32();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                _cmd = (PacketCmd)reader.ReadByte();
+                _netId = reader.ReadInt32();
+                TargetNetId = reader.ReadUInt32();
+            }
         }
     }
 }

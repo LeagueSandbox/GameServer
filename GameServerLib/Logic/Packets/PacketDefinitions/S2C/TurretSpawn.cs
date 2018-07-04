@@ -9,16 +9,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public TurretSpawn(BaseTurret t)
             : base(PacketCmd.PKT_S2C_TURRET_SPAWN, t.ParentNetId)
         {
-            _buffer.Write((int)t.NetId);
-            _buffer.Write((byte)0x40);
-            foreach (var b in Encoding.Default.GetBytes(t.Name))
-                _buffer.Write(b);
-            _buffer.Fill(0, 64 - t.Name.Length);
-            _buffer.Write((byte)0x0C);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x80);
-            _buffer.Write((byte)0x01);
+            WriteNetId(t);
+            Write((byte)0x40);
+			WriteConstLengthString(t.Name, 64);
+            Write((byte)0x0C);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x80);
+            Write((byte)0x01);
         }
     }
 }

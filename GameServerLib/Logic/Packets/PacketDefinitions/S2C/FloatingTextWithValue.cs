@@ -9,11 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public FloatingTextWithValue(AttackableUnit u, int value, string text)
             : base(PacketCmd.PKT_S2C_FLOATING_TEXT_WITH_VALUE)
         {
-            _buffer.Write(u.NetId);
-            _buffer.Write(15); // Unk
-            _buffer.Write(value); // Example -3
-            _buffer.Write(Encoding.Default.GetBytes(text));
-            _buffer.Write((byte)0x00);
+            WriteNetId(u);
+            Write(15); // Unk
+            Write(value); // Example -3
+            Write(text);
+            Write((byte)0x00);
         }
     }
 }

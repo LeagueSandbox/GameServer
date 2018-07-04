@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public DestroyParticle(Particle p)
             : base(PacketCmd.PKT_S2C_DESTROY_OBJECT, p.NetId)
         {
-            _buffer.Write(p.NetId);
+            WriteNetId(p);
         }
     }
 }

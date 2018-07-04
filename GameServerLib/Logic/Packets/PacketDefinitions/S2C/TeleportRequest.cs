@@ -9,21 +9,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public TeleportRequest(uint netId, float x, float y, bool first)
             : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
-            _buffer.Write(Environment.TickCount); // syncID
-            _buffer.Write((byte)0x01); // Unk
-            _buffer.Write((byte)0x00); // Unk
+            Write(Environment.TickCount); // syncID
+            Write((byte)0x01); // Unk
+            Write((byte)0x00); // Unk
             if (first) //seems to be id, 02 = before teleporting, 03 = do teleport
-                _buffer.Write((byte)0x02);
+                Write((byte)0x02);
             else
-                _buffer.Write((byte)0x03);
-            _buffer.Write((int)netId);
+                Write((byte)0x03);
+            Write((int)netId);
             if (first == false)
             {
-                _buffer.Write((byte)_a); // if it is the second part, send 0x01 before coords
+                Write((byte)_a); // if it is the second part, send 0x01 before coords
                 _a++;
             }
-            _buffer.Write((short)x);
-            _buffer.Write((short)y);
+            Write((short)x);
+            Write((short)y);
         }
 
     }

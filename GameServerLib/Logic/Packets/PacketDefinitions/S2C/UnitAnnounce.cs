@@ -14,15 +14,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (assists == null)
                 assists = new List<Champion>();
 
-            _buffer.Write((byte)id);
+            Write((byte)id);
             if (killer != null)
             {
-                _buffer.Write((long)killer.NetId);
-                _buffer.Write(assists.Count);
+                Write((long)killer.NetId);
+                Write(assists.Count);
                 foreach (var a in assists)
-                    _buffer.Write(a.NetId);
+                {
+                    WriteNetId(a);
+                }
+
                 for (var i = 0; i < 12 - assists.Count; i++)
-                    _buffer.Write(0);
+                {
+                    Write(0);
+                }
             }
         }
     }

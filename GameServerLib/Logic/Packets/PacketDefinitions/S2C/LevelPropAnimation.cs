@@ -15,25 +15,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             bool deletePropAfterAnimationFinishes = false)
             : base(PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
         {
-            _buffer.Write(Encoding.Default.GetBytes(animationName));
-            _buffer.Fill(0, 64 - animationName.Length);
+			WriteConstLengthString(animationName, 64);
 
-            _buffer.Write(unk1);
-            _buffer.Write(animationTime);
+            Write(unk1);
+            Write(animationTime);
 
-            _buffer.Write(lp.NetId);
+            WriteNetId(lp);
 
-            _buffer.Write(unk2);
-            _buffer.Write(unk3);
+            Write(unk2);
+            Write(unk3);
 
             byte delete = 0x00;
             if (deletePropAfterAnimationFinishes)
             {
                 delete = 0x01;
             }
-            _buffer.Write(delete); // Most likely deletes prop after animation ends when set to 1
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
+            Write(delete); // Most likely deletes prop after animation ends when set to 1
+            Write((byte)0x00);
+            Write((byte)0x00);
         }
     }
 }

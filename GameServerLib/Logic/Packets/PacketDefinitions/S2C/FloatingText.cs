@@ -9,11 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public FloatingText(AttackableUnit u, string text)
             : base(PacketCmd.PKT_S2C_FLOATING_TEXT, u.NetId)
         {
-            _buffer.Write(0); // netid?
-            _buffer.Fill(0, 10);
-            _buffer.Write(0); // netid?
-            _buffer.Write(Encoding.Default.GetBytes(text));
-            _buffer.Write((byte)0x00);
+            Write(0); // netid?
+            Fill(0, 10);
+            Write(0); // netid?
+            Write(text);
+            Write((byte)0x00);
         }
     }
 }

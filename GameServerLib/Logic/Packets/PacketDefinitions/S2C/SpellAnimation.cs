@@ -9,13 +9,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public SpellAnimation(AttackableUnit u, string animationName)
             : base(PacketCmd.PKT_S2C_SPELL_ANIMATION, u.NetId)
         {
-            _buffer.Write((byte)0xC4); // unk  <--
-            _buffer.Write((uint)0); // unk     <-- One of these bytes is a flag
-            _buffer.Write((uint)0); // unk     <--
-            _buffer.Write(1.0f); // Animation speed scale factor
-            foreach (var b in Encoding.Default.GetBytes(animationName))
-                _buffer.Write(b);
-            _buffer.Write((byte)0);
+            Write((byte)0xC4); // unk  <--
+            Write((uint)0); // unk     <-- One of these bytes is a flag
+            Write((uint)0); // unk     <--
+            Write(1.0f); // Animation speed scale factor
+			Write(animationName);
+            Write((byte)0);
         }
     }
 }

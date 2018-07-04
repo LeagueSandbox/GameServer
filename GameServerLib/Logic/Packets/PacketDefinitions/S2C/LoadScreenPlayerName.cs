@@ -9,12 +9,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public LoadScreenPlayerName(Pair<uint, ClientInfo> player)
             : base(PacketCmd.PKT_S2C_LOAD_NAME)
         {
-            _buffer.Write(player.Item2.UserId);
-            _buffer.Write(0);
-            _buffer.Write(player.Item2.Name.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.Name))
-                _buffer.Write(b);
-            _buffer.Write((byte)0);
+            Write(player.Item2.UserId);
+            Write(0);
+            Write(player.Item2.Name.Length + 1);
+			Write(player.Item2.Name);
+            Write((byte)0);
         }
 
         /*

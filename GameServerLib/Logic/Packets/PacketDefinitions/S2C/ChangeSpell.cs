@@ -9,14 +9,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ChangeSpell(AttackableUnit unit, int slot, string spell)
             : base(PacketCmd.PKT_S2C_CHANGE_SPELL, unit.NetId)
         {
-            _buffer.Write((byte)slot);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x02);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write((byte)0x00);
-            _buffer.Write(Encoding.Default.GetBytes(spell));
-            _buffer.Write((byte)0x00);
+            Write((byte)slot);
+            Write((byte)0x00);
+            Write((byte)0x02);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+			Write(spell);
+            Write((byte)0x00);
         }
     }
 }

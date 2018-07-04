@@ -17,18 +17,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 
         public MovementRequest(byte[] data)
         {
-            var baseStream = new MemoryStream(data);
-            var reader = new BinaryReader(baseStream);
-            Cmd = (PacketCmd)reader.ReadByte();
-            NetIdHeader = reader.ReadInt32();
-            Type = (MoveType)reader.ReadByte();
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            TargetNetId = reader.ReadUInt32();
-            CoordCount = reader.ReadByte();
-            NetId = reader.ReadInt32();
-            MoveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
-            reader.Close();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetIdHeader = reader.ReadInt32();
+                Type = (MoveType)reader.ReadByte();
+                X = reader.ReadSingle();
+                Y = reader.ReadSingle();
+                TargetNetId = reader.ReadUInt32();
+                CoordCount = reader.ReadByte();
+                NetId = reader.ReadInt32();
+                MoveData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            }
         }
     }
 }

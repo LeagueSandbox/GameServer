@@ -10,11 +10,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             byte toggle = 0xFE;
             if (locked)
                 toggle = 0xFF;
-            _buffer.Write(bitField); // 0x01 = centerCamera; 0x02 = movement; 0x04 = spells; etc
-            _buffer.Write((byte)00);
-            _buffer.Write((byte)00);
-            _buffer.Write((byte)00);
-            _buffer.Write(toggle); // FE(nabled); FD(isabled);
+            Write(bitField); // 0x01 = centerCamera; 0x02 = movement; 0x04 = spells; etc
+            Write((byte)00);
+            Write((byte)00);
+            Write((byte)00);
+            Write(toggle); // FE(nabled); FD(isabled);
         }
     }
 }

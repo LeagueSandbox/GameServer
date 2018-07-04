@@ -17,16 +17,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public MovementResponse(List<GameObject> actors)
             : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
-            _buffer.Write(Environment.TickCount); // syncID
-            _buffer.Write((short)actors.Count);
+            Write(Environment.TickCount); // syncID
+            Write((short)actors.Count);
 
             foreach (var actor in actors)
             {
                 var waypoints = actor.Waypoints;
                 var numCoords = waypoints.Count * 2;
-                _buffer.Write((byte)numCoords);
-                _buffer.Write((int)actor.NetId);
-                _buffer.Write(Movement.EncodeWaypoints(waypoints));
+                Write((byte)numCoords);
+                WriteNetId(actor);
+                Write(Movement.EncodeWaypoints(waypoints));
             }
         }
 

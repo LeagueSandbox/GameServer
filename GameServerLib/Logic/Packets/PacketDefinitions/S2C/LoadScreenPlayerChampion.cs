@@ -10,12 +10,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_LOAD_HERO)
         {
             var player = p.Item2;
-            _buffer.Write(player.UserId);
-            _buffer.Write(player.SkinNo);
-            _buffer.Write(player.Champion.Model.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
-                _buffer.Write(b);
-            _buffer.Write((byte)0);
+            Write(player.UserId);
+            Write(player.SkinNo);
+            Write(player.Champion.Model.Length + 1);
+			Write(player.Champion.Model);
+            Write((byte)0);
         }
 
         /*

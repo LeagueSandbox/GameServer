@@ -9,20 +9,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public ChampionDie(Champion die, AttackableUnit killer, int goldFromKill)
             : base(PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
         {
-            _buffer.Write((int)goldFromKill); // Gold from kill?
-            _buffer.Write((byte)0);
-            if (killer != null)
-            {
-                _buffer.Write(killer.NetId);
-            }
-            else
-            {
-                _buffer.Write(0);
-            }
+            Write((int)goldFromKill); // Gold from kill?
+            Write((byte)0);
+            WriteNetId(killer);
 
-            _buffer.Write((byte)0);
-            _buffer.Write((byte)7);
-            _buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
+            Write((byte)0);
+            Write((byte)7);
+            Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
     }
 }

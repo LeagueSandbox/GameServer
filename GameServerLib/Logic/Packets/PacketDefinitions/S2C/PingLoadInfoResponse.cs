@@ -7,13 +7,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     {
         public PingLoadInfoResponse(PingLoadInfoRequest loadInfo, long id) : base(PacketCmd.PKT_S2C_PING_LOAD_INFO, loadInfo.NetId)
         {
-            _buffer.Write((uint)loadInfo.Position);
-            _buffer.Write((ulong)id);
-            _buffer.Write(loadInfo.Loaded);
-            _buffer.Write(loadInfo.Unk2);
-            _buffer.Write(loadInfo.Ping);
-            _buffer.Write(loadInfo.Unk3);
-            _buffer.Write(loadInfo.Unk4);
+            Write((uint)loadInfo.Position);
+            Write((ulong)id);
+            Write(loadInfo.Loaded);
+            Write(loadInfo.Unk2);
+            Write(loadInfo.Ping);
+            Write(loadInfo.Unk3);
+            Write(loadInfo.Unk4);
         }
     }
 }

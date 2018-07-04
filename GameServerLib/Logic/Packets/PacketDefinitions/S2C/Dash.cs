@@ -20,27 +20,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float travelTime = 0.0f
         ) : base(PacketCmd.PKT_S2C_DASH)
         {
-            _buffer.Write(Environment.TickCount); // syncID
-            _buffer.Write((short)1); // Number of dashes
-            _buffer.Write((byte)4); // Waypoints size * 2
-            _buffer.Write(u.NetId);
-            _buffer.Write(dashSpeed);
-            _buffer.Write(leapHeight);
-            _buffer.Write(u.X);
-            _buffer.Write(u.Y);
-            _buffer.Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
+            Write(Environment.TickCount); // syncID
+            Write((short)1); // Number of dashes
+            Write((byte)4); // Waypoints size * 2
+            WriteNetId(u);
+            Write(dashSpeed);
+            Write(leapHeight);
+            Write(u.X);
+            Write(u.Y);
+            Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
             if (t.IsSimpleTarget)
             {
-                _buffer.Write((uint)0);
+                Write((uint)0);
             }
             else
             {
-                _buffer.Write((t as GameObject).NetId);
+                WriteNetId(t as GameObject);
             }
 
-            _buffer.Write(followTargetMaxDistance);
-            _buffer.Write(backDistance);
-            _buffer.Write(travelTime);
+            Write(followTargetMaxDistance);
+            Write(backDistance);
+            Write(travelTime);
 
             var waypoints = new List<Vector2>
             {
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 new Vector2(t.X, t.Y)
             };
 
-            _buffer.Write(Movement.EncodeWaypoints(waypoints));
+            Write(Movement.EncodeWaypoints(waypoints));
         }
     }
 }
