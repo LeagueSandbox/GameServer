@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public BeginAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical)
             : base(PacketCmd.PKT_S2C_BEGIN_AUTO_ATTACK, attacker.NetId)
         {
-            Write((uint)attacked.NetId);
+            WriteNetId(attacked);
             Write((byte)0x80); // extraTime
             Write((uint)futureProjNetId); // Basic attack projectile ID, to be spawned later
             if (isCritical)

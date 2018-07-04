@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_SET_CAPTURE_POINT)
         {
             Write(capturePointId);
-            Write(unit.NetId);
+            WriteNetId(unit);
             Fill(0, 6);
         }
     }

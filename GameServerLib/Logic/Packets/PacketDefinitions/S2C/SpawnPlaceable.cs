@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
-            Write(p.NetId);
+            WriteNetId(p);
 
             Write((byte)0xB5);
             Write((byte)0x00);
@@ -18,9 +18,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0x7C);
 
-            Write(p.NetId);
-            Write(p.NetId);
-            Write(p.Owner.NetId);
+            WriteNetId(p);
+            WriteNetId(p);
+            WriteNetId(p.Owner);
 
             Write((byte)0x40);
 
@@ -42,11 +42,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0x00);
 
-            Write(Encoding.Default.GetBytes(p.Name));
-            Fill(0, 64 - p.Name.Length);
+			WriteConstLengthString(p.Name, 64);
 
-            Write(Encoding.Default.GetBytes(p.Model));
-            Fill(0, 64 - p.Model.Length);
+			WriteConstLengthString(p.Model, 64);
 
             Write((byte)0x01);
 

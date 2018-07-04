@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0x00);
             Write((byte)0x00);
-            Write(Encoding.Default.GetBytes(text));
+            Write(text);
             Write((byte)0x00);
         }
     }

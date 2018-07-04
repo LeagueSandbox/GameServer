@@ -15,13 +15,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             bool deletePropAfterAnimationFinishes = false)
             : base(PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
         {
-            Write(Encoding.Default.GetBytes(animationName));
-            Fill(0, 64 - animationName.Length);
+			WriteConstLengthString(animationName, 64);
 
             Write(unk1);
             Write(animationTime);
 
-            Write(lp.NetId);
+            WriteNetId(lp);
 
             Write(unk2);
             Write(unk3);

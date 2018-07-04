@@ -12,8 +12,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             Write((uint)0x00150017); // unk
             Write((byte)0x03); // SpawnType - 3 = minion
-            Write(m.NetId);
-            Write(m.NetId);
+            WriteNetId(m);
+            WriteNetId(m);
             Write((uint)m.SpawnPosition);
             Write((byte)0xFF); // unk
             Write((byte)1); // wave number ?
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             var waypoints = m.Waypoints;
 
             Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
-            Write((int)m.NetId);
+            WriteNetId(m);
             Write((byte)0); // movement mask
             Write(MovementVector.TargetXToNormalFormat(m.X));
             Write(MovementVector.TargetYToNormalFormat(m.Y));

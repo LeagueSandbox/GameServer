@@ -1,11 +1,10 @@
-using System.IO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public abstract class BasePacket : Packet
     {
-        protected BasePacket(PacketCmd cmd = PacketCmd.PKT_KEY_CHECK, uint netId = 0) : base(cmd)
+        protected BasePacket(PacketCmd cmd, uint netId = 0) : base(cmd)
         {
             Write(netId);
             if ((short)cmd > 0xFF) // Make an extended packet instead

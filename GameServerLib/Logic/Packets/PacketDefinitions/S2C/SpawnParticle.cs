@@ -12,21 +12,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             Write((byte)1); // number of particles
             Write((uint)particle.Owner.GetChampionHash());
-            Write(HashFunctions.HashString(particle.Name));
+            WriteStringHash(particle.Name);
             Write(0x00000020); // flags ?
 
             Write((short)0); // Unk
-            Write(HashFunctions.HashString(particle.BoneName));
+            WriteStringHash(particle.BoneName);
 
             Write((byte)1); // number of targets ?
-            Write(particle.Owner.NetId);
-            Write(particle.NetId); // Particle net id ?
-            Write(particle.Owner.NetId);
+            WriteNetId(particle.Owner);
+            WriteNetId(particle); // Particle net id ?
+            WriteNetId(particle.Owner);
 
             if (particle.Target.IsSimpleTarget)
                 Write(0);
             else
-                Write((particle.Target as GameObject).NetId);
+                WriteNetId(particle.Target as GameObject);
 
             Write(0); // unk
 

@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)buffType); //Type
             Write((byte)stacks); // stacks
             Write((byte)0x00); // Visible was (byte)0x00
-            Write(HashFunctions.HashString(name)); //Buff id
+            WriteStringHash(name); //Buff id
 
             Write((int)0); // <-- Probably runningTime
 
@@ -22,14 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             Write((float)time);
 
-            if (source != null)
-            {
-                Write((uint)source.NetId); //source
-            }
-            else
-            {
-                Write((int)0);
-            }
+            WriteNetId(source);
         }
     }
 }

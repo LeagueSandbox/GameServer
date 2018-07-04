@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public NextAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
             : base(PacketCmd.PKT_S2C_NEXT_AUTO_ATTACK, attacker.NetId)
         {
-            Write(attacked.NetId);
+            WriteNetId(attacked);
             if (initial)
                 Write((byte)0x80); // extraTime
             else

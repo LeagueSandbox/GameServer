@@ -18,8 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((uint)spellNetId); // Spell net ID
             Write((byte)(s.Level - 1));
             Write(1.0f); // attackSpeedMod
-            Write((uint)s.Owner.NetId);
-            Write((uint)s.Owner.NetId);
+            WriteNetId(s.Owner);
+            WriteNetId(s.Owner);
             Write((int)s.Owner.GetChampionHash());
             Write((uint)futureProjNetId); // The projectile ID that will be spawned
             Write((float)x);

@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     {
         public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SET_TEAM)
         {
-            Write(unit.NetId);
+            WriteNetId(unit);
             Write((int)team);
         }
     }

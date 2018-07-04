@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(Environment.TickCount); // syncID
             Write((short)1); // Number of dashes
             Write((byte)4); // Waypoints size * 2
-            Write(u.NetId);
+            WriteNetId(u);
             Write(dashSpeed);
             Write(leapHeight);
             Write(u.X);
@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             else
             {
-                Write((t as GameObject).NetId);
+                WriteNetId(t as GameObject);
             }
 
             Write(followTargetMaxDistance);

@@ -15,8 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0xC3);
             Write((byte)0x46);
             Write(0);
-            Write(u.NetId);
-
+            WriteNetId(u);
         }
     }
 }

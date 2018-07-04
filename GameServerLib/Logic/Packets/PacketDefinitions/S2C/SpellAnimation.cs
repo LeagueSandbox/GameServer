@@ -13,8 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((uint)0); // unk     <-- One of these bytes is a flag
             Write((uint)0); // unk     <--
             Write(1.0f); // Animation speed scale factor
-            foreach (var b in Encoding.Default.GetBytes(animationName))
-                Write(b);
+			Write(animationName);
             Write((byte)0);
         }
     }

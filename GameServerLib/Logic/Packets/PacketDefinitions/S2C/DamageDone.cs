@@ -11,8 +11,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)damageText);
             Write((short)((short)type << 8));
             Write(amount);
-            Write((int)target.NetId);
-            Write((int)source.NetId);
+            WriteNetId(target);
+            WriteNetId(source);
         }
     }
 }

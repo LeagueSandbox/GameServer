@@ -9,9 +9,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public PlaySound(AttackableUnit unit, string soundName)
             : base(PacketCmd.PKT_S2C_PLAY_SOUND, unit.NetId)
         {
-            Write(Encoding.Default.GetBytes(soundName));
-            Fill(0, 1024 - soundName.Length);
-            Write(unit.NetId); // audioEventNetworkID?
+			WriteConstLengthString(soundName, 1024);
+            WriteNetId(unit); // audioEventNetworkID?
         }
     }
 }

@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public HeroSpawn(ClientInfo player, int playerId)
             : base(PacketCmd.PKT_S2C_HERO_SPAWN)
         {
-            Write((int)player.Champion.NetId);
+            WriteNetId(player.Champion);
             Write(playerId); // player Id
             Write((byte)40); // netNodeID ?
             Write((byte)0); // botSkillLevel Beginner=0 Intermediate=1
@@ -25,12 +25,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             //buffer.Write((short)0; // botRank (deprecated as of 4.18)
             Write((byte)0); // spawnPosIndex
             Write(player.SkinNo);
-            foreach (var b in Encoding.Default.GetBytes(player.Name))
-                Write(b);
-            Fill(0, 128 - player.Name.Length);
-            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
-                Write(b);
-            Fill(0, 40 - player.Champion.Model.Length);
+			WriteConstLengthString(player.Name, 128);
+			WriteConstLengthString(player.Champion.Model, 40);
             Write(0.0f); // deathDurationRemaining
             Write(0.0f); // timeSinceDeath
             Write(0); // UNK (4.18)

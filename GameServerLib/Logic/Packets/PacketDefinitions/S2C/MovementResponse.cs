@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var waypoints = actor.Waypoints;
                 var numCoords = waypoints.Count * 2;
                 Write((byte)numCoords);
-                Write((int)actor.NetId);
+                WriteNetId(actor);
                 Write(Movement.EncodeWaypoints(waypoints));
             }
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Text;
+using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
@@ -23,6 +25,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 
         public void Fill(byte data, int length)
         {
+            if (length <= 0)
+            {
+                return;
+            }
+
             var arr = new byte[length];
             for (var i = 0; i < length; ++i)
             {
@@ -121,6 +128,39 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
         public void Write(double d)
         {
             Write(BitConverter.GetBytes(d));
+        }
+
+        public void Write(string s)
+        {
+            Write(Encoding.UTF8.GetBytes(s));
+        }
+
+        public void WriteConstLengthString(string str, int length, bool overrideMaxLength = false)
+        {
+            if (str.Length > length && !overrideMaxLength)
+            {
+                str = str.Substring(0, length);
+            }
+
+            Write(str);
+            Fill(0, length - str.Length);
+        }
+
+        public void WriteStringHash(string str)
+        {
+            Write(HashFunctions.HashString(str));
+        }
+
+        public void WriteNetId(GameObject obj)
+        {
+            if (obj == null)
+            {
+                Write(0u);
+            }
+            else
+            {
+                Write(obj.NetId);
+            }
         }
     }
 }

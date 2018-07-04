@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(attacked.X);
             Write(attacked.GetZ());
             Write(attacked.Y);
-            Write(attacked.NetId);
+            WriteNetId(attacked);
         }
     }
 }

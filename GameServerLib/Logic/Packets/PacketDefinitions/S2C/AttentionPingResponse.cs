@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((float)ping.X);
             Write((float)ping.Y);
             Write((int)ping.TargetNetId);
-            Write((int)player.Champion.NetId);
+            WriteNetId(player.Champion);
             Write((byte)ping.Type);
             Write((byte)0xFB); // 4.18
         }

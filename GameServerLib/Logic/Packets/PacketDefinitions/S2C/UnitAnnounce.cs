@@ -20,9 +20,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 Write((long)killer.NetId);
                 Write(assists.Count);
                 foreach (var a in assists)
-                    Write(a.NetId);
+                {
+                    WriteNetId(a);
+                }
+
                 for (var i = 0; i < 12 - assists.Count; i++)
+                {
                     Write(0);
+                }
             }
         }
     }

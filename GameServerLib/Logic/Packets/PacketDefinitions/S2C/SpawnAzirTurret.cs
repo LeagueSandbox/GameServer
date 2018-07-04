@@ -15,19 +15,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0xFE);
 
-            Write(turret.NetId);
+            WriteNetId(turret);
             Write((byte)0x23);
             Write((byte)0x01);
-            Write(turret.NetId);
-            Write(turret.Owner.NetId);
+            WriteNetId(turret);
+            WriteNetId(turret.Owner);
 
             Write((byte)0x40);
 
-            Write(Encoding.Default.GetBytes(turret.Name));
-            Fill(0, 64 - turret.Name.Length);
+			WriteConstLengthString(turret.Name, 64);
 
-            Write(Encoding.Default.GetBytes(turret.Model));
-            Fill(0, 64 - turret.Model.Length);
+			WriteConstLengthString(turret.Model, 64);
 
             Write(0);
 

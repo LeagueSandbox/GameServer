@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_EDIT_MESSAGE_BOX_TOP)
         {
             // The following structure might be incomplete or wrong
-            Write(Encoding.Default.GetBytes(message));
+            Write(message);
             Write(0x00);
         }
     }

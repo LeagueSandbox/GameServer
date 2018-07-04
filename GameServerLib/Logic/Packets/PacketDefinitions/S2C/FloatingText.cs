@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(0); // netid?
             Fill(0, 10);
             Write(0); // netid?
-            Write(Encoding.Default.GetBytes(text));
+            Write(text);
             Write((byte)0x00);
         }
     }

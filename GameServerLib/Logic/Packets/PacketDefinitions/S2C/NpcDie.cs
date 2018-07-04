@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             Write(0);
             Write((byte)0);
-            Write(killer.NetId);
+            WriteNetId(killer);
             Write((byte)0); // unk
             Write((byte)7); // unk
             Write(0); // Flags?

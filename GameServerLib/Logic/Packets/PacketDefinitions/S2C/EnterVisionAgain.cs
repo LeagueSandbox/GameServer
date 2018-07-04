@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             var waypoints = m.Waypoints;
 
             Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
-            Write((int)m.NetId);
+            WriteNetId(m);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
             Write((byte)0); // movement mask
             Write(MovementVector.TargetXToNormalFormat(m.X));
@@ -66,7 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             var waypoints = c.Waypoints;
 
             Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
-            Write(c.NetId);
+            WriteNetId(c);
             Write((byte)0); // movement mask; 1=KeepMoving?
             Write(MovementVector.TargetXToNormalFormat(c.X));
             Write(MovementVector.TargetYToNormalFormat(c.Y));

@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_BASIC_TUTORIAL_MESSAGE_WINDOW)
         {
             // The following structure might be incomplete or wrong
-            Write(Encoding.Default.GetBytes(message)); // It seems to show up to 189 characters, which is strange
+            Write(message); // It seems to show up to 189 characters, which is strange
             Write(0x00);
         }
     }

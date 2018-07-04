@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public LevelPropSpawn(LevelProp lp)
             : base(PacketCmd.PKT_S2C_LEVEL_PROP_SPAWN)
         {
-            Write((int)lp.NetId);
+            WriteNetId(lp);
             Write((byte)0x40); // unk
             Write(lp.SkinId);
             Write((byte)0);
@@ -32,12 +32,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((int)lp.Team); // Probably a short
             Write(2); // nPropType [size 1 . 4] (4.18) -- if is a prop, become unselectable and use direction params
 
-            foreach (var b in Encoding.Default.GetBytes(lp.Name))
-                Write(b);
-            Fill(0, 64 - lp.Name.Length);
-            foreach (var b in Encoding.Default.GetBytes(lp.Model))
-                Write(b);
-            Fill(0, 64 - lp.Model.Length);
+			WriteConstLengthString(lp.Name, 64);
+			WriteConstLengthString(lp.Model, 64);
         }
     }
 }

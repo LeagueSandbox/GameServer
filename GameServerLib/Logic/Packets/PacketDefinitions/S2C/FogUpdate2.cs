@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0xFF);
             Write((byte)0xFF);
             Write(0);
-            Write(unit.NetId); // Fog Attached, when unit dies it disappears
+            WriteNetId(unit); // Fog Attached, when unit dies it disappears
             Write(idManager.GetNewNetId()); //Fog NetID
             Write(0);
             Write(unit.X);

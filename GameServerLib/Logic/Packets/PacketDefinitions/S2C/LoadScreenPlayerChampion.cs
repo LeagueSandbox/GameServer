@@ -13,8 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(player.UserId);
             Write(player.SkinNo);
             Write(player.Champion.Model.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Champion.Model))
-                Write(b);
+			Write(player.Champion.Model);
             Write((byte)0);
         }
 

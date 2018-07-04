@@ -11,8 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(x);
             Write(z);
             Write(y);
-            Write(Encoding.Default.GetBytes(iconName));
-            Fill(0, 64 - iconName.Length);
+			WriteConstLengthString(iconName, 64);
             Write(campId);
             Write(campUnk);
 

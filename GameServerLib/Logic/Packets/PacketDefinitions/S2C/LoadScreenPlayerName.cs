@@ -12,8 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(player.Item2.UserId);
             Write(0);
             Write(player.Item2.Name.Length + 1);
-            foreach (var b in Encoding.Default.GetBytes(player.Item2.Name))
-                Write(b);
+			Write(player.Item2.Name);
             Write((byte)0);
         }
 

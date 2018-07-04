@@ -15,8 +15,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x01);
 
             Write((byte)0x63); // 0x63 (99) for jungle monster, 3 for minion
-            Write(m.NetId);
-            Write(m.NetId);
+            WriteNetId(m);
+            WriteNetId(m);
             Write((byte)0x40);
             Write(m.X); //x
             Write(m.GetZ()); //z
@@ -28,17 +28,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             Write(m.Facing.Y); //facing y
 
-            Write(Encoding.Default.GetBytes(m.Name));
-            Fill(0, 64 - m.Name.Length);
+			WriteConstLengthString(m.Name, 64);
 
-            Write(Encoding.Default.GetBytes(m.Model));
-            Fill(0, 64 - m.Model.Length);
+			WriteConstLengthString(m.Model, 64);
 
-            Write(Encoding.Default.GetBytes(m.Name));
-            Fill(0, 64 - m.Name.Length);
+			WriteConstLengthString(m.Name, 64);
 
-            Write(Encoding.Default.GetBytes(m.SpawnAnimation));
-            Fill(0, 64 - m.SpawnAnimation.Length);
+			WriteConstLengthString(m.SpawnAnimation, 64);
 
             Write((int)m.Team); // Probably a short
             Fill(0, 12); // Unk

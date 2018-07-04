@@ -25,8 +25,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
 
             var summonerSpells = player.SummonerSkills;
-            Write(HashFunctions.HashString(summonerSpells[0]));
-            Write(HashFunctions.HashString(summonerSpells[1]));
+            WriteStringHash(summonerSpells[0]);
+            WriteStringHash(summonerSpells[1]);
 
             var talentsRequired = 80;
             var talentsHashes = new Dictionary<int, byte>

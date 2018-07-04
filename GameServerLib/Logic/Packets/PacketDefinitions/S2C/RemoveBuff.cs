@@ -10,9 +10,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_REMOVE_BUFF, u.NetId)
         {
             Write(slot);
-            Write(HashFunctions.HashString(name));
+            WriteStringHash(name);
             Write(0x0);
-            //buffer.Write(u.NetId);//source?
+            //WriteNetId(u);//source?
         }
     }
 }

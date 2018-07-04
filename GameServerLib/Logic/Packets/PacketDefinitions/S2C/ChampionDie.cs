@@ -11,14 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         {
             Write((int)goldFromKill); // Gold from kill?
             Write((byte)0);
-            if (killer != null)
-            {
-                Write(killer.NetId);
-            }
-            else
-            {
-                Write(0);
-            }
+            WriteNetId(killer);
 
             Write((byte)0);
             Write((byte)7);

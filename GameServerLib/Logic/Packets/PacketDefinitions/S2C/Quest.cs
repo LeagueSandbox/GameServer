@@ -8,10 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public Quest(string title, string description, byte type, byte command, uint netid, byte questEvent = 0)
             : base(PacketCmd.PKT_S2C_QUEST)
         {
-            Write(Encoding.Default.GetBytes(title));
-            Fill(0, 256 - title.Length);
-            Write(Encoding.Default.GetBytes(description));
-            Fill(0, 256 - description.Length);
+			WriteConstLengthString(title, 256);
+			WriteConstLengthString(description, 256);
             Write(type); // 0 : Primary quest, 1 : Secondary quest
             Write(command); // 0 : Activate quest, 1 : Complete quest, 2 : Remove quest
             Write(questEvent); // 0 : Roll over, 1 : Roll out, 2 : Mouse down, 3 : Mouse up

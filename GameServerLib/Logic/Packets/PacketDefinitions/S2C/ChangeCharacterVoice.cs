@@ -9,11 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_CHANGE_CHARACTER_VOICE, netId)
         {
             Write(resetOverride); // If this is 1, resets voice to default state and ignores voiceOverride
-            Write(Encoding.Default.GetBytes(voiceOverride));
-            if (voiceOverride.Length < 32)
-            {
-                Fill(0, 32 - voiceOverride.Length);
-            }
+            WriteConstLengthString(voiceOverride, 32, true);
         }
     }
 }

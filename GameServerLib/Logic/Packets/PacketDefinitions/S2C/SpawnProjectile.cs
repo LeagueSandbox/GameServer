@@ -51,8 +51,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(0); // Second net ID
             Write((byte)0); // spellLevel
             Write(1.0f); // attackSpeedMod
-            Write((int)p.Owner.NetId);
-            Write((int)p.Owner.NetId);
+            WriteNetId(p.Owner);
+            WriteNetId(p.Owner);
 
             var c = p.Owner as Champion;
             if (c != null)
@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 Write(0);
             }
 
-            Write((int)p.NetId);
+            WriteNetId(p);
             Write(p.Target.X);
             Write(Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
             Write(p.Target.Y);
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (!p.Target.IsSimpleTarget)
             {
                 Write((byte)0x01); // numTargets
-                Write((p.Target as AttackableUnit).NetId);
+                WriteNetId(p.Target as AttackableUnit);
                 Write((byte)0); // hitResult
             }
             else

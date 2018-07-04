@@ -14,10 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0x00); // <-- they don't seem to affect anything
             Write((byte)1); // Bit field with bits 1 and 2. Unk
             Write(-1); // SkinID (Maybe -1 means keep using current one?)
-            foreach (var b in Encoding.Default.GetBytes(modelName))
-                Write(b);
-            if (modelName.Length < 32)
-                Fill(0, 32 - modelName.Length);
+			WriteConstLengthString(modelName, 32, true);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_SURRENDER)
         {
             Write(flag); // Flag. 2 bits
-            Write(starter.NetId);
+            WriteNetId(starter);
             Write(yesVotes);
             Write(noVotes);
             Write(maxVotes);

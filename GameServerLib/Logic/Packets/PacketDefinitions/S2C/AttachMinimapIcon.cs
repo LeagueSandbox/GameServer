@@ -10,15 +10,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public AttachMinimapIcon(AttackableUnit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
             : base(PacketCmd.PKT_S2C_ATTACH_MINIMAP_ICON)
         {
-            Write(unit.NetId);
+            WriteNetId(unit);
             Write((byte)unk1);
-            Write(Encoding.Default.GetBytes(iconName)); // This is probably the icon name, but sometimes it's empty
-            Fill(0, 64 - iconName.Length);              // Example: "Quest"
+            WriteConstLengthString(iconName, 64); // This is probably the icon name, but sometimes it's empty; Example: "Quest"
             Write((byte)unk2);
-            Write(Encoding.Default.GetBytes(unk3));
-            Fill(0, 64 - unk3.Length); // Example: "Recall"
-            Write(Encoding.Default.GetBytes(unk4));
-            Fill(0, 64 - unk4.Length); // Example "OdinRecall", "odinrecallimproved"
+            WriteConstLengthString(unk3, 64); // Example: "Recall"
+            WriteConstLengthString(unk4, 64); // Example "OdinRecall", "odinrecallimproved"
         }
     }
 }

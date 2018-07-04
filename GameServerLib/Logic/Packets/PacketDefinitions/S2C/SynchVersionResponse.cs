@@ -21,14 +21,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var summonerSpells = p.SummonerSkills;
                 Write(p.UserId);
                 Write((short)0x1E); // unk
-                Write(HashFunctions.HashString(summonerSpells[0]));
-                Write(HashFunctions.HashString(summonerSpells[1]));
+                WriteStringHash(summonerSpells[0]);
+                WriteStringHash(summonerSpells[1]);
                 Write((byte)0); // bot boolean
                 Write((int)p.Team); // Probably a short
                 Fill(0, 64); // name is no longer here
                 Fill(0, 64);
-                Write(Encoding.Default.GetBytes(p.Rank));
-                Fill(0, 24 - p.Rank.Length);
+				WriteConstLengthString(p.Rank, 24);
                 Write(p.Icon);
                 Write(p.Ribbon);
             }
@@ -38,15 +37,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 Write((long)-1);
                 Fill(0, 173);
             }
-            foreach (var b in Encoding.Default.GetBytes(version))
-                Write(b);
-            Fill(0, 256 - version.Length);
-            foreach (var b in Encoding.Default.GetBytes(gameMode))
-                Write(b);
-            Fill(0, 128 - gameMode.Length);
+			WriteConstLengthString(version, 256);
+			WriteConstLengthString(gameMode, 128);
 
-            foreach (var b in Encoding.Default.GetBytes("NA1"))
-                Write(b);
+			Write("NA1");
             Fill(0, 2333); // 128 - 3 + 661 + 1546
             Write((uint)487826); // gameFeatures (turret range indicators, etc.)
             Fill(0, 256);
