@@ -174,7 +174,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
                     }
                     else
                     { // auto attack
-                        var ai = u as ObjAiBase;
+                        var ai = Owner as ObjAiBase;
                         if (ai != null)
                         {
                             ai.AutoAttackHit(u);

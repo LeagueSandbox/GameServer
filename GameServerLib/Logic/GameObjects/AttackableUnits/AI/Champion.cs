@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
 
-            for (short i = 0; i<CharData.SpellNames.Length;i++)
+            for (short i = 0; i<CharData.SpellNames.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
@@ -63,6 +63,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
+
+            for (byte i = 6; i < 13; i++)
+            {
+                Spells[i] = new Spell(this, "BaseSpell", i);
+            }
+
             Spells[13] = new Spell(this, "Recall", 13);
 
             for (short i = 0; i<CharData.Passives.Length; i++)
@@ -86,6 +92,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             Spells[4].LevelUp();
             Spells[5].LevelUp();
             Replication = new ReplicationHero(this);
+            Stats.SetSpellEnabled(13, true);
         }
 
         private string GetPlayerIndex()
