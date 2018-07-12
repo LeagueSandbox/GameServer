@@ -145,8 +145,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
 
-
-        //private Game Game;
+        
         private int _cannonMinionCount;
         private int _minionNumber;
         private long _firstSpawnTime = 90 * 1000;

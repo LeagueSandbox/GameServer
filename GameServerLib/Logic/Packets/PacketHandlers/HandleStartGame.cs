@@ -47,7 +47,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (Game.IsRunning)
             {
-                var map = Game.Map;
                 if (peerInfo.IsDisconnected)
                 {
                     foreach (var player in PlayerManager.GetPlayers())

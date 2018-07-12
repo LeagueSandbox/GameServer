@@ -134,7 +134,10 @@ namespace LeagueSandbox.GameServer.Logic
                 }
             }
 
-            if (text == null) return;
+            if (text == null)
+            {
+                return;
+            }
             WriteTextToLogFile(text + Environment.NewLine);
             Console.Write(text);
         }
@@ -181,7 +184,10 @@ namespace LeagueSandbox.GameServer.Logic
 
         private void Dispose(bool disposing)
         {
-            if (_disposedValue) return;
+            if (_disposedValue)
+            {
+                return;
+            }
             if (disposing)
             {
                 Flush();

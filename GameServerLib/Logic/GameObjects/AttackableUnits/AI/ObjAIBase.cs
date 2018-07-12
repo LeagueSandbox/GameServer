@@ -21,8 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private object BuffsLock { get; }
         private Dictionary<string, Buff> Buffs { get; }
 
-        private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
-        //protected ItemManager _ıtemManager = Program.ResolveDependency<ItemManager>();
+        private readonly List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
 
         /// <summary>
         /// Unit we want to attack as soon as in range

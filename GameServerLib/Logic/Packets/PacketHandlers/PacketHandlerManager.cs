@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
         }
 
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
+        public static Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
         {
             var inst = Program.GetInstances<PacketHandlerBase>(loadFrom);
             var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();

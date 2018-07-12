@@ -12,13 +12,12 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestAddAndGetItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var inventoryManager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it gets added to the first (0) slot
-            var item = inventoryManager.AddItem(itemManager.GetItemType(2001));
+            var item = inventoryManager.AddItem(ItemManager.GetItemType(2001));
             Assert.AreEqual(0, inventoryManager.GetItemSlot(item));
 
             // Make sure the added item and the one we fetch by it's slot are the same object
@@ -26,24 +25,24 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.AreEqual(item, receivedItem);
 
             // Add a trinket and check that it goes to the slot 7 (so index 6)
-            item = inventoryManager.AddItem(itemManager.GetItemType(3361));
+            item = inventoryManager.AddItem(ItemManager.GetItemType(3361));
             receivedItem = inventoryManager.GetItem(6);
             Assert.AreEqual(item, receivedItem);
 
             // Check that we get null back when we try to add another trinket
-            item = inventoryManager.AddItem(itemManager.GetItemType(3352));
+            item = inventoryManager.AddItem(ItemManager.GetItemType(3352));
             Assert.IsNull(item);
 
             // Add 5 more items and check that each of them get added
             for (var i = 0; i < 5; i++)
             {
-                item = inventoryManager.AddItem(itemManager.GetItemType(4001 + i));
+                item = inventoryManager.AddItem(ItemManager.GetItemType(4001 + i));
                 receivedItem = inventoryManager.GetItem(inventoryManager.GetItemSlot(item));
                 Assert.AreEqual(item, receivedItem);
             }
 
             // Check that we get null back when we try to add a new item
-            item = inventoryManager.AddItem(itemManager.GetItemType(4007));
+            item = inventoryManager.AddItem(ItemManager.GetItemType(4007));
             Assert.IsNull(item);
         }
 
@@ -51,14 +50,13 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestItemStacking()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
             // Get two stacking item types
-            var itemType1 = itemManager.GetItemType(2038);
-            var itemType2 = itemManager.GetItemType(2040);
+            var itemType1 = ItemManager.GetItemType(2038);
+            var itemType2 = ItemManager.GetItemType(2040);
 
             // Add items
             var item1 = manager.AddItem(itemType1);
@@ -92,20 +90,19 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestSetExtraItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it exists in the proper slot
-            var item = manager.SetExtraItem(7, itemManager.GetItemType(2001));
+            var item = manager.SetExtraItem(7, ItemManager.GetItemType(2001));
             var slot = manager.GetItemSlot(item);
             Assert.AreEqual(7, slot);
 
             // Try to add an extra item to an invalid slot, make sure it fails
             try
             {
-                manager.SetExtraItem(6, itemManager.GetItemType(2001));
+                manager.SetExtraItem(6, ItemManager.GetItemType(2001));
                 Assert.Fail("This should fail");
             }
             catch (Exception e)
@@ -118,13 +115,12 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestGetItemSlot()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
             // Add an item, and make sure the slot is right
-            var item = manager.AddItem(itemManager.GetItemType(2001));
+            var item = manager.AddItem(ItemManager.GetItemType(2001));
             var slot = manager.GetItemSlot(item);
             Assert.AreEqual(0, slot);
 
@@ -141,7 +137,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             }
 
             // Add an extra item to a specific slot, and make sure this still works
-            var extraItem = manager.SetExtraItem(7, itemManager.GetItemType(4002));
+            var extraItem = manager.SetExtraItem(7, ItemManager.GetItemType(4002));
             var extraSlot = manager.GetItemSlot(extraItem);
             Assert.AreEqual(7, extraSlot);
         }
@@ -150,13 +146,12 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it gets added to the first (0) slot
-            var item = manager.AddItem(itemManager.GetItemType(2001));
+            var item = manager.AddItem(ItemManager.GetItemType(2001));
             Assert.AreEqual(0, manager.GetItemSlot(item));
 
             // Remove the item and make sure it doesn't exist anymore in the inventory
@@ -164,7 +159,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.IsNull(manager.GetItem(0));
 
             // Add a new item and make sure it's added to the first (0) slot
-            item = manager.AddItem(itemManager.GetItemType(2001));
+            item = manager.AddItem(ItemManager.GetItemType(2001));
             Assert.AreEqual(0, manager.GetItemSlot(item));
 
             // Remove the item another way and make sure it doesn't exist anymore in the inventory
@@ -176,15 +171,14 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestSwapItems()
         {
-            var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
             // Add 3 items and make sure they get proper slots
-            var item1 = manager.AddItem(itemManager.GetItemType(4001));
-            var item2 = manager.AddItem(itemManager.GetItemType(4002));
-            var item3 = manager.AddItem(itemManager.GetItemType(4003));
+            var item1 = manager.AddItem(ItemManager.GetItemType(4001));
+            var item2 = manager.AddItem(ItemManager.GetItemType(4002));
+            var item3 = manager.AddItem(ItemManager.GetItemType(4003));
             Assert.AreEqual(0, manager.GetItemSlot(item1));
             Assert.AreEqual(1, manager.GetItemSlot(item2));
             Assert.AreEqual(2, manager.GetItemSlot(item3));
@@ -227,9 +221,8 @@ namespace LeagueSandbox.GameServerTests.Tests
         [DeploymentItem("Content", "Content")]
         public void TestGetAvailableItems()
         {
-            var itemManager = new ItemManager();
-            itemManager.ResetItems();
-            itemManager.LoadItems();
+            ItemManager.ResetItems();
+            ItemManager.LoadItems();
 
             var manager = InventoryManager.CreateInventory(null);
 
@@ -238,18 +231,18 @@ namespace LeagueSandbox.GameServerTests.Tests
             var componentId2 = 1037;
 
             // Get zephyr and make sure we have no items available to it's recipe
-            var zephyr = itemManager.GetItemType(zephyrId);
+            var zephyr = ItemManager.GetItemType(zephyrId);
             var availableItems = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(0, availableItems.Count);
 
             // Add a component and make sure we get it from the available items function
-            var component1 = manager.AddItem(itemManager.GetItemType(componentId1));
+            var component1 = manager.AddItem(ItemManager.GetItemType(componentId1));
             var available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component1, available[0]);
 
             // Add another component and make sure we get that as well
-            var component2 = manager.AddItem(itemManager.GetItemType(componentId2));
+            var component2 = manager.AddItem(ItemManager.GetItemType(componentId2));
             available = manager.GetAvailableItems(zephyr.Recipe);
             Assert.AreEqual(2, available.Count);
             Assert.AreEqual(component1, available[0]);
@@ -265,7 +258,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             manager.RemoveItem(manager.GetItemSlot(component2));
 
             // Add an unrelated item and make sure it exists
-            var unrelated = manager.AddItem(itemManager.GetItemType(4001));
+            var unrelated = manager.AddItem(ItemManager.GetItemType(4001));
             Assert.IsNotNull(manager.GetItem(manager.GetItemSlot(unrelated)));
 
             // Make sure we have no available items, even though there are some in the inventory

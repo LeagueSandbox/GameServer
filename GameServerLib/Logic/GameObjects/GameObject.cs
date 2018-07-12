@@ -14,8 +14,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class GameObject : Target
     {
-        public uint NetId { get; private set; }
-        protected float _xvector, _yvector;
+        public uint NetId { get; }
+        protected float Xvector, Yvector;
 
         /// <summary>
         /// Current target the object running to (can be coordinates or an object)
@@ -45,10 +45,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
         public bool IsDashing { get; protected set; }
-        public override bool IsSimpleTarget { get { return false; } }
+        public override bool IsSimpleTarget => false;
         protected float _dashSpeed;
-        private Dictionary<TeamId, bool> _visibleByTeam;
-        //protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        private readonly Dictionary<TeamId, bool> _visibleByTeam;
 
         public GameObject(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
@@ -161,17 +160,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public void CalculateVector(float xtarget, float ytarget)
         {
-            _xvector = xtarget - X;
-            _yvector = ytarget - Y;
+            Xvector = xtarget - X;
+            Yvector = ytarget - Y;
 
-            if (_xvector == 0 && _yvector == 0)
+            if (Xvector == 0 && Yvector == 0)
             {
                 return;
             }
 
-            var toDivide = Math.Abs(_xvector) + Math.Abs(_yvector);
-            _xvector /= toDivide;
-            _yvector /= toDivide;
+            var toDivide = Math.Abs(Xvector) + Math.Abs(Yvector);
+            Xvector /= toDivide;
+            Yvector /= toDivide;
         }
 
         public virtual void Update(float diff)

@@ -93,8 +93,7 @@ namespace LeagueSandbox.GameServer.Logic
                     }
                 }
 
-                var ai = u as ObjAiBase;
-                if (ai != null)
+                if (u is ObjAiBase ai)
                 {
                     var tempBuffs = ai.GetBuffs();
                     foreach (var buff in tempBuffs.Values)
@@ -141,9 +140,12 @@ namespace LeagueSandbox.GameServer.Logic
 
         public Inhibitor GetInhibitorById(uint id)
         {
-            if (!_inhibitors.ContainsKey(id))
+            lock (_inhibitorsLock)
             {
-                return null;
+                if (!_inhibitors.ContainsKey(id))
+                {
+                    return null;
+                }
             }
 
             return _inhibitors[id];
@@ -151,13 +153,17 @@ namespace LeagueSandbox.GameServer.Logic
 
         public bool AllInhibitorsDestroyedFromTeam(TeamId team)
         {
-            foreach (var inhibitor in _inhibitors.Values)
+            lock (_inhibitorsLock)
             {
-                if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
+                foreach (var inhibitor in _inhibitors.Values)
                 {
-                    return false;
+                    if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
+                    {
+                        return false;
+                    }
                 }
             }
+
             return true;
         }
 
@@ -272,12 +278,7 @@ namespace LeagueSandbox.GameServer.Logic
                 foreach (var kv in _objects)
                 {
                     var u = kv.Value as AttackableUnit;
-                    if (u == null)
-                    {
-                        continue;
-                    }
-                    var ai = u as ObjAiBase;
-                    if (ai != null)
+                    if (u is ObjAiBase ai)
                     {
                         if (ai.TargetUnit == target)
                         {
@@ -293,12 +294,15 @@ namespace LeagueSandbox.GameServer.Logic
         public List<Champion> GetAllChampionsFromTeam(TeamId team)
         {
             var champs = new List<Champion>();
-            foreach (var kv in _champions)
+            lock (_championsLock)
             {
-                var c = kv.Value;
-                if (c.Team == team)
+                foreach (var kv in _champions)
                 {
-                    champs.Add(c);
+                    var c = kv.Value;
+                    if (c.Team == team)
+                    {
+                        champs.Add(c);
+                    }
                 }
             }
             return champs;
@@ -337,8 +341,7 @@ namespace LeagueSandbox.GameServer.Logic
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as AttackableUnit;
-                    if (u != null && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
+                    if (kv.Value is AttackableUnit u && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
                     {
                         units.Add(u);
                     }
@@ -367,8 +370,7 @@ namespace LeagueSandbox.GameServer.Logic
                     if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
                         !Game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
-                        var unit = kv.Value as AttackableUnit;
-                        if (unit != null && unit.IsDead)
+                        if (kv.Value is AttackableUnit unit && unit.IsDead)
                         {
                             continue;
                         }

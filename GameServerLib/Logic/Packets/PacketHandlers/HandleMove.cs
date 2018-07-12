@@ -33,6 +33,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.SetPosition(request.X, request.Y);
+
+                    //This code is redundant. I have commented it out
+                    /*
                     var x = (request.X - Game.Map.NavGrid.MapWidth) / 2;
                     var y = (request.Y - Game.Map.NavGrid.MapHeight) / 2;
 
@@ -42,6 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                         v.X = (short)request.X;
                         v.Y = (short)request.Y;
                     }
+                    //*/
                     break;
                 case MoveType.EMOTE:
                     //Logging->writeLine("Emotion");

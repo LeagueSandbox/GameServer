@@ -8,16 +8,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public static class ChatCommandManager
     {
-        //private readonly IHandlersProvider _handlersProvider;
-
-        public static string CommandStarterCharacter = ".";
+        public const string CommandStarterCharacter = ".";
 
         private static SortedDictionary<string, IChatCommand> _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
 
+        public static void SendDebugMsgFormatted(DebugMsgType type) => SendDebugMsgFormatted(type, "");
+
         // TODO: Refactor this method or maybe the packet notifier?
-        public static void SendDebugMsgFormatted(DebugMsgType type, string message = "")
+        public static void SendDebugMsgFormatted(DebugMsgType type, string message)
         {
-            //var game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
             var fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
@@ -52,15 +51,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         public static void LoadCommands()
         {
             //TODO: cyclic dependency
-            //var game = Program.ResolveDependency<Game>();
             if (!Game.Config.ChatCheatsEnabled)
             {
                 return;
             }
             
-            //ChatCommandBase
             _chatCommandsDictionary = GetInstances(ServerLibAssemblyDefiningType.Assembly);
-            //Console.WriteLine("Break");
         }
 
         internal static SortedDictionary<string, IChatCommand> GetInstances(Assembly loadFrom)

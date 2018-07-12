@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         public static void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => Logger.LogCoreInfo(text));
+            Task.Factory.StartNew(() => Logger.LogCoreInfo(text));
         }
     }
 }

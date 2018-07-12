@@ -40,24 +40,19 @@ namespace LeagueSandbox.GameServer.Logic
         public static PacketNotifier PacketNotifier { get; private set; }
         public static PacketHandlerManager PacketHandlerManager { get; private set; }
         public static Config Config { get; protected set; }
-        protected const int PEER_MTU = 996;
-        protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
+        protected const int PeerMTU = 996;
+        protected const double RefreshRate = 1000.0 / 30.0; // 30 fps
         // Other managers
         private static Stopwatch _lastMapDurationWatch;
 
-        private List<GameScriptTimer> GameScriptTimers;
-
-        public Game()
-        {
-
-        }
+        private List<GameScriptTimer> _gameScriptTimers;
 
         public void Initialize(Address address, string blowfishKey, Config config)
         {
             Logger.LogCoreInfo("Loading Config.");
             Config = config;
 
-            GameScriptTimers = new List<GameScriptTimer>();
+            _gameScriptTimers = new List<GameScriptTimer>();
 
             ChatCommandManager.LoadCommands();
             _server = new Host();
@@ -111,20 +106,18 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void NetLoop()
         {
-            var enetEvent = new Event();
-
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
 
             while (!Program.IsSetToExit)
             {
-                while (_server.Service(0, out enetEvent) > 0)
+                while (_server.Service(0, out var enetEvent) > 0)
                 {
                     switch (enetEvent.Type)
                     {
                         case EventType.Connect:
                             // Set some defaults
-                            enetEvent.Peer.Mtu = PEER_MTU;
+                            enetEvent.Peer.Mtu = PeerMTU;
                             enetEvent.Data = 0;
                             break;
 
@@ -154,7 +147,7 @@ namespace LeagueSandbox.GameServer.Logic
                     continue;
                 }
 
-                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > RefreshRate)
                 {
                     var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                     _lastMapDurationWatch.Restart();
@@ -173,8 +166,8 @@ namespace LeagueSandbox.GameServer.Logic
             GameTime += diff;
             ObjectManager.Update(diff);
             Map.Update(diff);
-            GameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
-            GameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
+            _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
+            _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
 
             // By default, synchronize the game time every 10 seconds
             _nextSyncTime += diff;
@@ -187,12 +180,12 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void AddGameScriptTimer(GameScriptTimer timer)
         {
-            GameScriptTimers.Add(timer);
+            _gameScriptTimers.Add(timer);
         }
 
         public void RemoveGameScriptTimer(GameScriptTimer timer)
         {
-            GameScriptTimers.Remove(timer);
+            _gameScriptTimers.Remove(timer);
         }
 
         public static void IncrementReadyPlayers()
