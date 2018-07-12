@@ -9,8 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 {
     public class Map
     {
-        protected Game _game;
-        protected static Logger _logger = Program.ResolveDependency<Logger>();
+        protected Game Game;
 
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }
@@ -20,13 +19,13 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
         public Map(Game game)
         {
-            _game = game;
-            Id = _game.Config.GameConfig.Map;
+            Game = game;
+            Id = Game.Config.GameConfig.Map;
             var path = Path.Combine(
                 Program.ExecutingDirectory,
                 "Content",
                 "Data",
-                _game.Config.ContentManager.GameModeName,
+                Game.Config.ContentManager.GameModeName,
                 "AIMesh",
                 "Map" + Id,
                 "AIPath.aimesh_ngrid"
@@ -38,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             else
             {
-                _logger.LogCoreError("Failed to load navigation graph. Aborting map load.");
+                Logger.LogCoreError("Failed to load navigation graph. Aborting map load.");
                 return;
             }
 
@@ -82,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             CollisionHandler.Update();
             foreach (var announce in AnnouncerEvents)
             {
-                if (!announce.IsAnnounced && _game.GameTime >= announce.EventTime)
+                if (!announce.IsAnnounced && Game.GameTime >= announce.EventTime)
                 {
                     announce.Execute();
                 }

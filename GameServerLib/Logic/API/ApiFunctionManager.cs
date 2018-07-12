@@ -16,8 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 {
     public static class ApiFunctionManager
     {
-        private static Game _game;
-        private static Logger _logger;
+        private static Game Game;
 
         public static byte[] StringToByteArray(string hex)
         {
@@ -30,24 +29,23 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         internal static void SetGame(Game game)
         {
-            _game = game;
-            _logger = Program.ResolveDependency<Logger>();
+            Game = game;
         }
 
         public static void LogInfo(string format)
         {
-            _logger.LogCoreInfo(format);
+            Logger.LogCoreInfo(format);
         }
 
         public static void LogInfo(string format, params object[] args)
         {
-            _logger.LogCoreInfo(format, args);
+            Logger.LogCoreInfo(format, args);
         }
 
         public static GameScriptTimer CreateTimer(float duration, Action callback)
         {
             var newTimer = new GameScriptTimer(duration, callback);
-            _game.AddGameScriptTimer(newTimer);
+            Game.AddGameScriptTimer(newTimer);
 
             return newTimer;
         }
@@ -59,8 +57,8 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
         {
-            var b = new Buff(_game, buffName, duration, stacks, onto, from);
-            _game.PacketNotifier.NotifyAddBuff(b);
+            var b = new Buff(Game, buffName, duration, stacks, onto, from);
+            Game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
                 CreateTimer(removeAfter, () => RemoveBuffHudVisual(b));
@@ -71,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void RemoveBuffHudVisual(Buff b)
         {
-            _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
+            Game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
             b.TargetUnit.RemoveBuffSlot(b);
         }
 
@@ -86,76 +84,76 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static List<TeamId> GetTeams()
         {
-            return _game.ObjectManager.Teams;
+            return Game.ObjectManager.Teams;
         }
 
         public static void TeleportTo(ObjAiBase unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
+            var truePos = Game.Map.NavGrid.GetClosestTerrainExit(coords);
 
             CancelDash(unit);
-            _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
+            Game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
         {
-            return _game.Map.NavGrid.IsWalkable(x, y);
+            return Game.Map.NavGrid.IsWalkable(x, y);
         }
 
         public static void AddBuff(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, onto, from);
+            var buff = new Buff(Game, buffName, duration, stacks, onto, from);
             onto.AddBuff(buff);
-            _game.PacketNotifier.NotifyAddBuff(buff);
+            Game.PacketNotifier.NotifyAddBuff(buff);
         }
 
         public static void EditBuff(Buff b, int newStacks)
         {
             b.SetStacks(newStacks);
-            _game.PacketNotifier.NotifyEditBuff(b, newStacks);
+            Game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
         public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
             var p = new Particle(champion, t, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            Game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
 
         public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
             var p = new Particle(champion, target, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            Game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
 
         public static void RemoveParticle(Particle p)
         {
-            _game.PacketNotifier.NotifyParticleDestroy(p);
+            Game.PacketNotifier.NotifyParticleDestroy(p);
         }
 
         public static void PrintChat(string msg)
         {
             var dm = new DebugMessage(msg);
-            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2_C);
+            Game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2_C);
         }
 
         public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
         {
-            _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime);
+            Game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime);
             // todo change units direction
         }
 
         public static List<AttackableUnit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
-            return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
+            return Game.ObjectManager.GetUnitsInRange(target, range, isAlive);
         }
 
         public static List<Champion> GetChampionsInRange(Target target, float range, bool isAlive)
         {
-            return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
+            return Game.ObjectManager.GetChampionsInRange(target, range, isAlive);
         }
 
         public static void CancelDash(ObjAiBase unit)
@@ -165,7 +163,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
             // Reset the default run animation
             var animList = new List<string> {"RUN", ""};
-            _game.PacketNotifier.NotifySetAnimation(unit, animList);
+            Game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
         public static void DashToUnit(ObjAiBase unit,
@@ -182,15 +180,15 @@ namespace LeagueSandbox.GameServer.Logic.API
             if (animation != null)
             {
                 var animList = new List<string> {"RUN", animation};
-                _game.PacketNotifier.NotifySetAnimation(unit, animList);
+                Game.PacketNotifier.NotifySetAnimation(unit, animList);
             }
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = Game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
+                Game.PacketNotifier.NotifyDash(
                     unit,
                     newTarget,
                     dashSpeed,
@@ -204,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             else
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
+                Game.PacketNotifier.NotifyDash(
                     unit,
                     target,
                     dashSpeed,
@@ -246,7 +244,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void SendPacket(string packetString)
         {
             var packet = StringToByteArray(packetString);
-            _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2_C);
+            Game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2_C);
         }
     }
 }

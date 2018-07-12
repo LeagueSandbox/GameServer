@@ -52,13 +52,11 @@ namespace LeagueSandbox.GameServer.Logic.API
 {
     public static class ApiEventManager
     {
-        private static Game _game;
-        private static Logger _logger;
+        private static Game Game;
 
         internal static void SetGame(Game game)
         {
-            _game = game;
-            _logger = Program.ResolveDependency<Logger>();
+            Game = game;
         }
 
         public static void RemoveAllListenersForOwner(object owner)

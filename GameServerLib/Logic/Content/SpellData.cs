@@ -55,9 +55,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class SpellData
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
-
         public string AfterEffectName { get; set; } = "";
         //AIEndOnly
         //AILifetime
@@ -235,15 +232,15 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetSpellDataPath(name);
-                _logger.LogCoreInfo($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
+                var path = Game.Config.ContentManager.GetSpellDataPath(name);
+                Logger.LogCoreInfo($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
 
             catch (ContentNotFoundException)
             {
-                _logger.LogCoreWarning($"Spell data for {name} was not found.");
+                Logger.LogCoreWarning($"Spell data for {name} was not found.");
                 return;
             }
 

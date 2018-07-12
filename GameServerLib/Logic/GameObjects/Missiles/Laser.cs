@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 
             if (_originSpell.State != SpellState.STATE_CASTING)
             {
-                var objects = _game.ObjectManager.GetObjects().Values;
+                var objects = Game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
                 {
                     var u = obj as AttackableUnit;

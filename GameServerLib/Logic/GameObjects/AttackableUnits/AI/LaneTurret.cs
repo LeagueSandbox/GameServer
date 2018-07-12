@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
@@ -32,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 foreach (var item in items)
                 {
-                    var itemTemplate = _ıtemManager.SafeGetItemType(item);
+                    var itemTemplate = ItemManager.SafeGetItemType(item);
                     if (itemTemplate == null)
                     {
                         continue;
@@ -49,12 +50,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             var blueTeam = new List<Champion>();
             var purpTeam = new List<Champion>();
-            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
+            foreach (var player in Game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
             {
                 blueTeam.Add(player);
             }
 
-            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
+            foreach (var player in Game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE))
             {
                 purpTeam.Add(player);
             }
@@ -176,13 +177,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         Stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 250;
                     }
 
-                    if (_game.GameTime > 40000 - GetEnemyChampionsCount() * 2000 &&
-                        _game.GameTime < 400000 - GetEnemyChampionsCount() * 2000)
+                    if (Game.GameTime > 40000 - GetEnemyChampionsCount() * 2000 &&
+                        Game.GameTime < 400000 - GetEnemyChampionsCount() * 2000)
                     {
-                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 30000) / 60000;
-                        Stats.AttackDamage.BaseValue = 152.0f + (_game.GameTime - 30000) / 60000 * 4;
+                        Stats.MagicResist.BaseValue = 100.0f + (Game.GameTime - 30000) / 60000;
+                        Stats.AttackDamage.BaseValue = 152.0f + (Game.GameTime - 30000) / 60000 * 4;
                     }
-                    else if (_game.GameTime < 30000)
+                    else if (Game.GameTime < 30000)
                     {
                         Stats.MagicResist.BaseValue = 100.0f;
                         Stats.AttackDamage.BaseValue = 152.0f;
@@ -199,13 +200,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         Stats.CurrentHealth = 1300.0f + GetEnemyChampionsCount() * 250.0f;
                         Stats.HealthPoints.BaseValue = 1300.0f + GetEnemyChampionsCount() * 250.0f;
                     }
-                    if (_game.GameTime > 480000 && _game.GameTime < 1620000)
+                    if (Game.GameTime > 480000 && Game.GameTime < 1620000)
                     {
-                        Stats.Armor.BaseValue = 60.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.AttackDamage.BaseValue = 170.0f + (_game.GameTime - 480000) / 60000 * 4;
+                        Stats.Armor.BaseValue = 60.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 170.0f + (Game.GameTime - 480000) / 60000 * 4;
                     }
-                    else if (_game.GameTime < 480000)
+                    else if (Game.GameTime < 480000)
                     {
                         Stats.Armor.BaseValue = 60.0f;
                         Stats.MagicResist.BaseValue = 100.0f;
@@ -225,13 +226,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         Stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 250;
                     }
 
-                    if (_game.GameTime > 480000 && _game.GameTime < 2220000)
+                    if (Game.GameTime > 480000 && Game.GameTime < 2220000)
                     {
-                        Stats.Armor.BaseValue = 67.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.AttackDamage.BaseValue = 190.0f + (_game.GameTime - 480000) / 60000 * 4;
+                        Stats.Armor.BaseValue = 67.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 190.0f + (Game.GameTime - 480000) / 60000 * 4;
                     }
-                    else if (_game.GameTime < 480000)
+                    else if (Game.GameTime < 480000)
                     {
                         Stats.Armor.BaseValue = 67.0f;
                         Stats.MagicResist.BaseValue = 100.0f;
@@ -251,19 +252,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         Stats.HealthPoints.BaseValue = 1300 + GetEnemyChampionsCount() * 125;
                     }
 
-                    if (_game.GameTime < 1)
+                    if (Game.GameTime < 1)
                     {
                         Stats.Armor.BaseValue = 65.0f;
                         Stats.MagicResist.BaseValue = 100.0f;
                         Stats.AttackDamage.BaseValue = 180.0f;
                     }
-                    else if (_game.GameTime > 480000 && _game.GameTime < 2220000)
+                    else if (Game.GameTime > 480000 && Game.GameTime < 2220000)
                     {
-                        Stats.Armor.BaseValue = 65.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.MagicResist.BaseValue = 100.0f + (_game.GameTime - 480000) / 60000;
-                        Stats.AttackDamage.BaseValue = 180.0f + (_game.GameTime - 480000) / 60000 * 4;
+                        Stats.Armor.BaseValue = 65.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.MagicResist.BaseValue = 100.0f + (Game.GameTime - 480000) / 60000;
+                        Stats.AttackDamage.BaseValue = 180.0f + (Game.GameTime - 480000) / 60000 * 4;
                     }
-                    else if (_game.GameTime < 480000)
+                    else if (Game.GameTime < 480000)
                     {
                         Stats.Armor.BaseValue = 65.0f;
                         Stats.MagicResist.BaseValue = 100.0f;

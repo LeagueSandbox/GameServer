@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Timers;
 using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.DependencyInjection;
-using Ninject;
 
 namespace LeagueSandbox.GameServer
 {
@@ -23,7 +25,6 @@ namespace LeagueSandbox.GameServer
     {
         // TODO: Require consumers of this inject a ServerContext
         public static string ExecutingDirectory { get; private set; }
-        private static StandardKernel _kernel;
         public static bool IsSetToExit { get; set; }
         public static string ConfigJson { get; private set; }
         public static ushort ServerPort { get; private set; }
@@ -33,23 +34,20 @@ namespace LeagueSandbox.GameServer
             ConfigJson = configJson;
             ServerPort = serverPort;
 
-            _kernel = new StandardKernel();
-            _kernel.Load(new Bindings());
-
-            var context = _kernel.Get<ServerContext>();
-            var server = _kernel.Get<Server>();
-            var itemManager = _kernel.Get<ItemManager>();
-            var logger = _kernel.Get<Logger>();
+            Logger.CreateLogger();
+            
+            var game = new Game();
+            var server = new Server(game);
 
             try
             {
-                ExecutingDirectory = context.ExecutingDirectory;
-                itemManager.LoadItems();
+                ExecutingDirectory = ServerContext.ExecutingDirectory;
+                ItemManager.LoadItems();
                 server.Start();
             }
             catch (Exception e)
             {
-                logger.LogFatalError("Error: {0}", e.ToString());
+                Logger.LogFatalError("Error: {0}", e.ToString());
 #if DEBUG
                 throw;
 #endif
@@ -58,17 +56,17 @@ namespace LeagueSandbox.GameServer
 
         public static void SetToExit()
         {
-            var logger = ResolveDependency<Logger>();
-            logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
+            Logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
             var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => IsSetToExit = true;
             timer.Start();
         }
 
-        [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
-        public static T ResolveDependency<T>()
+        public static List<T> GetInstances<T>(Assembly a)
         {
-            return _kernel.Get<T>();
+            return (from t in Assembly.GetCallingAssembly().GetTypes()
+                where t.BaseType == (typeof(T)) && t.GetConstructor(Type.EmptyTypes) != null
+                select (T)Activator.CreateInstance(t)).ToList();
         }
     }
 }

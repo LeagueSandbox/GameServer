@@ -8,19 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class PacketCommand : ChatCommandBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
 
         public override string Command => "packet";
         public override string Syntax => $"{Command} XX XX XX...";
-
-        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _game = game;
-            _playerManager = playerManager;
-        }
-
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             try
@@ -40,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 {
                     if (s[i].Equals("netid"))
                     {
-                        packet.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
+                        packet.Write(PlayerManager.GetPeerInfo(peer).Champion.NetId);
                     }
                     else
                     {
@@ -48,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     }
                 }
 
-                _game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
+                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
             }
             catch
             {

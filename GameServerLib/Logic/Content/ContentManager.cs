@@ -8,7 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
@@ -54,7 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             foreach (var content in contents)
             {
-                _logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
+                Logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
                 if (!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
@@ -118,7 +117,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 throw new ContentNotFoundException("Failed to load content [" + contentType + "][" + fileName + "]");
             }
 
-            _logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
+            Logger.LogCoreInfo("Loaded content [{0}][{1}][{2}]", contentPackages[depth], contentType, fileName);
             return path;
         }
 

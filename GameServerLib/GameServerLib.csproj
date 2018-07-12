@@ -68,10 +68,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -184,7 +180,6 @@
   <ItemGroup>
     <Compile Include="Logic\Chatbox\DebugMsgType.cs" />
     <Compile Include="Logic\Content\NavGrid.cs" />
-    <Compile Include="Logic\DependencyInjection\Bindings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
     <Compile Include="Logic\API\ApiEventManager.cs" />
@@ -262,7 +257,6 @@
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\LaneTurret.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
     <Compile Include="Logic\Chatbox\IChatCommand.cs" />
-    <Compile Include="Logic\Handlers\IHandlersProvider.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
     <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />
@@ -368,7 +362,6 @@
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\MovementRequest.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Attributes\DisabledHandlerAttribute.cs" />
-    <Compile Include="Logic\Handlers\HandlersProvider.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NextAutoAttack.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NpcDie.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\OnAttack.cs" />

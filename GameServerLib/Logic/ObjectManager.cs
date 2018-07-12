@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic
 {
     public class ObjectManager
     {
-        private Game _game;
+        private Game Game;
 
         private Dictionary<uint, GameObject> _objects;
         private Dictionary<uint, Champion> _champions;
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public ObjectManager(Game game)
         {
-            _game = game;
+            Game = game;
             _objects = new Dictionary<uint, GameObject>();
             _inhibitors = new Dictionary<uint, Inhibitor>();
             _champions = new Dictionary<uint, Champion>();
@@ -71,10 +71,10 @@ namespace LeagueSandbox.GameServer.Logic
                         if (TeamHasVisionOn(team, u))
                         {
                             u.SetVisibleByTeam(team, true);
-                            _game.PacketNotifier.NotifySpawn(u);
+                            Game.PacketNotifier.NotifySpawn(u);
                             RemoveVisionUnit(u);
                             // TODO: send this in one place only
-                            _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                            Game.PacketNotifier.NotifyUpdatedStats(u, false);
                             continue;
                         }
                     }
@@ -82,14 +82,14 @@ namespace LeagueSandbox.GameServer.Logic
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
                     {
                         u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyEnterVision(u, team);
+                        Game.PacketNotifier.NotifyEnterVision(u, team);
                         // TODO: send this in one place only
-                        _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                        Game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
                     else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u))
                     {
                         u.SetVisibleByTeam(team, false);
-                        _game.PacketNotifier.NotifyLeaveVision(u, team);
+                        Game.PacketNotifier.NotifyLeaveVision(u, team);
                     }
                 }
 
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Logic
                         {
                             if (buff.Name != "")
                             {
-                                _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+                                Game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
                             }
                             ai.RemoveBuff(buff);
                             continue;
@@ -113,17 +113,17 @@ namespace LeagueSandbox.GameServer.Logic
                 }
 
                 // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                Game.PacketNotifier.NotifyUpdatedStats(u, false);
 
                 if (u.IsModelUpdated)
                 {
-                    _game.PacketNotifier.NotifyModelUpdate(u);
+                    Game.PacketNotifier.NotifyModelUpdate(u);
                     u.IsModelUpdated = false;
                 }
 
                 if (obj.IsMovementUpdated())
                 {
-                    _game.PacketNotifier.NotifyMovement(obj);
+                    Game.PacketNotifier.NotifyMovement(obj);
                     obj.ClearMovementUpdated();
                 }
             }
@@ -283,7 +283,7 @@ namespace LeagueSandbox.GameServer.Logic
                         {
                             ai.TargetUnit = null;
                             ai.AutoAttackTarget = null;
-                            _game.PacketNotifier.NotifySetTarget(u, null);
+                            Game.PacketNotifier.NotifySetTarget(u, null);
                         }
                     }
                 }
@@ -365,7 +365,7 @@ namespace LeagueSandbox.GameServer.Logic
                 foreach (var kv in _objects)
                 {
                     if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
+                        !Game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as AttackableUnit;
                         if (unit != null && unit.IsDead)

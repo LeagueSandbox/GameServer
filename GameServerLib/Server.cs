@@ -10,25 +10,21 @@ namespace LeagueSandbox.GameServer
         private uint _serverHost = Address.IPv4HostAny;
         private ushort _serverPort = Program.ServerPort;
         private string _serverVersion = "0.2.0";
-        private Logger _logger;
-        private ServerContext _serverContext;
-        private Game _game;
+        private Game Game;
         private Config _config;
 
-        public Server(Logger logger, ServerContext serverContext, Game game)
+        public Server(Game game)
         {
-            _logger = logger;
-            _serverContext = serverContext;
-            _game = game;
+            Game = game;
             _config = Config.LoadFromJson(Program.ConfigJson);
         }
 
         public void Start()
         {
-            _logger.LogCoreInfo($"Yorick {_serverVersion}");
-            _logger.LogCoreInfo("Game started on port: {0}", _serverPort);
-            _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
-            _game.NetLoop();
+            Logger.LogCoreInfo($"Yorick {_serverVersion}");
+            Logger.LogCoreInfo("Game started on port: {0}", _serverPort);
+            Game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
+            Game.NetLoop();
         }
 
         public void Dispose()

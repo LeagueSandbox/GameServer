@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public void CheckForTargets()
         {
-            var objects = _game.ObjectManager.GetObjects();
+            var objects = Game.ObjectManager.GetObjects();
             AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (nextTarget != null)
             {
                 TargetUnit = nextTarget;
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
+                Game.PacketNotifier.NotifySetTarget(this, nextTarget);
             }
         }
 
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (TargetUnit != null && GetDistanceTo(TargetUnit) > Stats.Range.Total)
             {
                 TargetUnit = null;
-                _game.PacketNotifier.NotifySetTarget(this, null);
+                Game.PacketNotifier.NotifySetTarget(this, null);
             }
 
             base.Update(diff);
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public override void Die(AttackableUnit killer)
         {
-            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
+            foreach (var player in Game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
             {
                 var goldEarn = _globalGold;
 
@@ -121,10 +121,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
 
                 player.Stats.Gold += goldEarn;
-                _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
+                Game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
+            Game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
             base.Die(killer);
         }
 

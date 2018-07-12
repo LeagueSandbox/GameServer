@@ -6,26 +6,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleUseObject : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly Logger _logger;
-        private readonly PlayerManager _playerManager;
-
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_USE_OBJECT;
         public override Channel PacketChannel => Channel.CHL_C2_S;
-
-        public HandleUseObject(Game game, Logger logger, PlayerManager playerManager)
-        {
-            _game = game;
-            _logger = logger;
-            _playerManager = playerManager;
-        }
-
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var parsedData = new UseObject(data);
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = PlayerManager.GetPeerInfo(peer).Champion;
             var msg = $"Object {champion.NetId} is trying to use (right clicked) {parsedData.TargetNetId}";
-            _logger.LogCoreInfo(msg);
+            Logger.LogCoreInfo(msg);
 
             return true;
         }

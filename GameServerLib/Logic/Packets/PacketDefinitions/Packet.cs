@@ -9,8 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public class Packet
     {
-        protected readonly Game Game = Program.ResolveDependency<Game>();
-
         protected List<byte> _bytes = new List<byte>();
 
         public Packet(PacketCmd cmd)
