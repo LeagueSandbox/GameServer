@@ -9,26 +9,24 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public class CSharpScriptEngine
+    public static class CSharpScriptEngine
     {
-        private Assembly _scriptAssembly;
+        private static Assembly _scriptAssembly;
 
-        private Logger _logger = Program.ResolveDependency<Logger>();
-
-        public bool LoadSubdirectoryScripts(string folder)
+        public static bool LoadSubdirectoryScripts(string folder)
         {
             var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories);
             return Load(new List<string>(allfiles));
         }
 
         //Takes about 300 milliseconds for a single script
-        public bool Load(List<string> scriptLocations)
+        public static bool Load(List<string> scriptLocations)
         {
             bool compiledSuccessfully;
             var treeList = new List<SyntaxTree>();
             Parallel.For(0, scriptLocations.Count, i =>
             {
-                _logger.LogCoreInfo($"Loading script: {scriptLocations[i]}");
+                Logger.LogCoreInfo($"Loading script: {scriptLocations[i]}");
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
                     // Read the stream to a string, and write the string to the console.
@@ -75,7 +73,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
                     foreach (var diagnostic in failures)
                     {
                         var loc = diagnostic.Location;
-                        _logger.LogCoreError($"{diagnostic.Id}: {diagnostic.GetMessage()} with location: {loc.SourceTree}");
+                        Logger.LogCoreError($"{diagnostic.Id}: {diagnostic.GetMessage()} with location: {loc.SourceTree}");
                     }
                 }
                 else
@@ -89,7 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             return compiledSuccessfully;
         }
 
-        public T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
+        public static T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
         {
             if (_scriptAssembly == null)
             {
@@ -109,10 +107,10 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             return default(T);
         }
 
-        public T CreateObject<T>(string scriptNamespace, string scriptClass)
+        public static T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             scriptClass = scriptClass.Replace(" ", "_");
-            _logger.LogCoreInfo("Loading game script for: " + scriptNamespace + ", " + scriptClass);
+            Logger.LogCoreInfo("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
             {
                 return default(T);
@@ -121,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
             if (classType == null)
             {
-                _logger.LogCoreWarning($"Failed to load script: {scriptNamespace}.{scriptClass}");
+                Logger.LogCoreWarning($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
             return (T)Activator.CreateInstance(classType);

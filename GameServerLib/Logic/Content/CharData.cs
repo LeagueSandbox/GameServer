@@ -14,9 +14,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class CharData
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
-
         public float BaseHp { get; private set; } = 100.0f;
         public float BaseMp { get; private set; } = 100.0f;
         public float BaseDamage { get; private set; } = 10.0f;
@@ -73,14 +70,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.LogCoreInfo($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
+                var path = Game.Config.ContentManager.GetUnitStatPath(name);
+                Logger.LogCoreInfo($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
             catch (ContentNotFoundException notfound)
             {
-                _logger.LogCoreWarning($"Stats for {name} was not found: {notfound.Message}");
+                Logger.LogCoreWarning($"Stats for {name} was not found: {notfound.Message}");
                 return;
             }
 

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Handlers;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
 using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
@@ -17,44 +17,54 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private readonly List<TeamId> _teamsEnumerator;
-        private readonly Logger _logger;
         private readonly BlowFish _blowfish;
         private readonly Host _server;
-        private readonly PlayerManager _playerManager;
-        private readonly IHandlersProvider _packetHandlerProvider;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager,
-            IHandlersProvider handlersProvider)
+        public PacketHandlerManager(BlowFish blowfish, Host server)
         {
-            _logger = logger;
             _blowfish = blowfish;
             _server = server;
-            _playerManager = playerManager;
-            _packetHandlerProvider = handlersProvider;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
-
-            var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
-            _handlerTable = _packetHandlerProvider.GetAllPacketHandlers(loadFrom);
+            
+            //31
+            _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
         }
+
+        public static Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
+        {
+            var inst = Program.GetInstances<PacketHandlerBase>(loadFrom);
+            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
+            foreach (var pktCmd in inst)
+            {
+                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
+                {
+                    {
+                        pktCmd.PacketChannel, pktCmd
+                    }
+                });
+            }
+
+            return dict;
+        }
+
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelId)
         {
-            var game = Program.ResolveDependency<Game>();
             var packetsHandledWhilePaused = new List<PacketCmd>
             {
-                PacketCmd.PKT_UNPAUSE_GAME,
+                PacketCmd.PKT_UNPAUSEGame,
                 PacketCmd.PKT_C2S_CHAR_LOADED,
                 PacketCmd.PKT_C2S_CLICK,
                 PacketCmd.PKT_C2S_CLIENT_READY,
                 PacketCmd.PKT_C2S_EXIT,
                 PacketCmd.PKT_C2S_HEART_BEAT,
                 PacketCmd.PKT_C2S_QUERY_STATUS_REQ,
-                PacketCmd.PKT_C2S_START_GAME,
-                PacketCmd.PKT_C2S_WORLD_SEND_GAME_NUMBER,
+                PacketCmd.PKT_C2S_STARTGame,
+                PacketCmd.PKT_C2S_WORLD_SENDGame_NUMBER,
                 PacketCmd.PKT_CHAT_BOX_MESSAGE,
                 PacketCmd.PKT_KEY_CHECK
             };
-            if (game.IsPaused && !packetsHandledWhilePaused.Contains(cmd))
+            if (Game.IsPaused && !packetsHandledWhilePaused.Contains(cmd))
             {
                 return null;
             }
@@ -152,7 +162,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var ci in _playerManager.GetPlayers())
+            foreach (var ci in PlayerManager.GetPlayers())
             {
                 if (ci.Item2.Peer != null && ci.Item2.Team == team)
                 {
@@ -178,7 +188,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public bool BroadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            var game = Program.ResolveDependency<Game>();
             foreach (var team in _teamsEnumerator)
             {
                 if (team == TeamId.TEAM_NEUTRAL)
@@ -186,7 +195,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     continue;
                 }
 
-                if (game.ObjectManager.TeamHasVisionOn(team, o))
+                if (Game.ObjectManager.TeamHasVisionOn(team, o))
                 {
                     BroadcastPacketTeam(team, data, channelNo, flag);
                 }
@@ -222,7 +231,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var data = new byte[packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
-            if (data.Length >= 8 && _playerManager.GetPeerInfo(peer) != null)
+            if (data.Length >= 8 && PlayerManager.GetPeerInfo(peer) != null)
             {
                 data = _blowfish.Decrypt(data);
             }

@@ -8,8 +8,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Logic.Chatbox
         public override string Command { get; }
         public override string Syntax { get; }
 
-        public TestCommand(ChatCommandManager chatCommandManager, string command, string syntax)
-            : base(chatCommandManager)
+        public TestCommand(string command, string syntax)
         {
             Command = command;
             Syntax = syntax;

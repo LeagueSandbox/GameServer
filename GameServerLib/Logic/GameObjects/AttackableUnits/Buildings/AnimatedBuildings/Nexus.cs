@@ -22,8 +22,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
 
         public override void Die(AttackableUnit killer)
         {
-            _game.Stop();
-            _game.PacketNotifier.NotifyGameEnd(this);
+            Game.Stop();
+            Game.PacketNotifier.NotifyGameEnd(this);
         }
 
         public override void SetToRemove()

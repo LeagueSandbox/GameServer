@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this);
+            Game.PacketNotifier.NotifySpawn(this);
         }
     }
 }

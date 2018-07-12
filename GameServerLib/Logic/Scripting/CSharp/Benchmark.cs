@@ -7,7 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
     public static class Benchmark
     {
         private static IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private static Logger _logger = Program.ResolveDependency<Logger>();
         public static void StartTiming(string label)
         {
             var stopwatch = new Stopwatch();
@@ -22,14 +21,14 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             stopwatch.Stop();
             var t = Task.Factory.StartNew(() =>
             {
-                _logger.LogCoreInfo($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000/stopwatch.Elapsed.TotalMilliseconds}");
+                Logger.LogCoreInfo($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000/stopwatch.Elapsed.TotalMilliseconds}");
             });
             _map.Remove(label);
         }
 
         public static void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => _logger.LogCoreInfo(text));
+            Task.Factory.StartNew(() => Logger.LogCoreInfo(text));
         }
     }
 }

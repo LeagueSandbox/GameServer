@@ -5,41 +5,31 @@ using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
-    public class ItemManager
+    public static class ItemManager
     {
-        private Dictionary<int, ItemType> _itemTypes;
+        private static Dictionary<int, ItemType> _itemTypes = new Dictionary<int, ItemType>();
 
-        public ItemManager()
-        {
-            _itemTypes = new Dictionary<int, ItemType>();
-        }
-
-        public ItemType GetItemType(int itemId)
+        public static ItemType GetItemType(int itemId)
         {
             return _itemTypes[itemId];
         }
 
-        public ItemType SafeGetItemType(int itemId, ItemType defaultValue)
+        public static ItemType SafeGetItemType(int itemId, ItemType defaultValue)
         {
-            if (!_itemTypes.ContainsKey(itemId))
-            {
-                return defaultValue;
-            }
-
-            return _itemTypes[itemId];
+            return !_itemTypes.ContainsKey(itemId) ? defaultValue : _itemTypes[itemId];
         }
 
-        public ItemType SafeGetItemType(int itemId)
+        public static ItemType SafeGetItemType(int itemId)
         {
             return SafeGetItemType(itemId, null);
         }
 
-        public void ResetItems()
+        public static void ResetItems()
         {
             _itemTypes.Clear();
         }
 
-        public void LoadItems()
+        public static void LoadItems()
         {
             var itemContentCollection = ItemContentCollection.LoadItemsFrom(
                 "Content/Data/LeagueSandbox-Default/Items"
@@ -47,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             foreach (var entry in itemContentCollection)
             {
-                var itemType = ItemType.Load(this, entry.Value);
+                var itemType = ItemType.Load(entry.Value);
                 _itemTypes.Add(entry.Key, itemType);
             }
         }
@@ -83,12 +73,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _itemInfo = itemInfo;
         }
 
-        private void CreateRecipe(ItemManager manager)
+        private void CreateRecipe()
         {
-            Recipe = ItemRecipe.FromItemType(this, manager);
+            Recipe = ItemRecipe.FromItemType(this);
         }
 
-        public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
+        public static ItemType Load(ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
             var result = new ItemType(itemInfo)
@@ -168,7 +158,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
 
-            result.CreateRecipe(owner);
+            result.CreateRecipe();
             return result;
         }
 
@@ -183,7 +173,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ItemType _owner;
         private ItemType[] _items;
         private int _totalPrice;
-        private ItemManager _itemManager;
 
         public int TotalPrice
         {
@@ -198,32 +187,31 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
         }
 
-        private ItemRecipe(ItemType owner, ItemManager manager)
+        private ItemRecipe(ItemType owner)
         {
             _owner = owner;
             _totalPrice = -1;
-            _itemManager = manager;
         }
 
         public List<ItemType> GetItems()
         {
             if (_items == null)
             {
-                FindRecipeItems(_itemManager);
+                FindRecipeItems();
             }
 
             return _items.ToList();
         }
 
-        private void FindRecipeItems(ItemManager itemManager)
+        private void FindRecipeItems()
         {
             // TODO: Figure out how to refactor this.
             _items = new[]
             {
-                itemManager.SafeGetItemType(_owner.RecipeItem1),
-                itemManager.SafeGetItemType(_owner.RecipeItem2),
-                itemManager.SafeGetItemType(_owner.RecipeItem3),
-                itemManager.SafeGetItemType(_owner.RecipeItem4)
+                ItemManager.SafeGetItemType(_owner.RecipeItem1),
+                ItemManager.SafeGetItemType(_owner.RecipeItem2),
+                ItemManager.SafeGetItemType(_owner.RecipeItem3),
+                ItemManager.SafeGetItemType(_owner.RecipeItem4)
             };
         }
 
@@ -241,9 +229,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice += _owner.Price;
         }
 
-        public static ItemRecipe FromItemType(ItemType type, ItemManager manager)
+        public static ItemRecipe FromItemType(ItemType type)
         {
-            return new ItemRecipe(type, manager);
+            return new ItemRecipe(type);
         }
     }
 

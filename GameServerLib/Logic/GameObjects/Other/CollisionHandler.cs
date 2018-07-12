@@ -7,7 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class CollisionHandler
     {
-        private Game _game = Program.ResolveDependency<Game>();
 
         private List<GameObject> _objects = new List<GameObject>();
 
@@ -36,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
                     continue;
                 }
 
-                if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
+                if (!Game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
                 {
                     obj.OnCollision(null);
                 }

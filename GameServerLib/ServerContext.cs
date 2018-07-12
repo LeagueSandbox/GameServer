@@ -3,13 +3,8 @@ using System.Reflection;
 
 namespace LeagueSandbox.GameServer
 {
-    public class ServerContext
+    public static class ServerContext
     {
-        public string ExecutingDirectory { get; private set; }
-
-        public ServerContext()
-        {
-            ExecutingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        }
+        public static string ExecutingDirectory { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }
 }

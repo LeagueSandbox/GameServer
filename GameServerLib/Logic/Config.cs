@@ -125,14 +125,14 @@ namespace LeagueSandbox.GameServer.Logic
 
     public class GameConfig
     {
-        public int Map => (int)_gameData.SelectToken("map");
-        public string GameMode => (string)_gameData.SelectToken("gameMode");
+        public int Map => (int)GameData.SelectToken("map");
+        public string GameMode => (string)GameData.SelectToken("gameMode");
 
-        private JToken _gameData;
+        private JToken GameData;
 
         public GameConfig(JToken gameData)
         {
-            _gameData = gameData;
+            GameData = gameData;
         }
     }
 

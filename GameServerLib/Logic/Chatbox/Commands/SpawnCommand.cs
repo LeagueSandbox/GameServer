@@ -10,19 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class SpawnCommand : ChatCommandBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
-
         public override string Command => "spawn";
         public override string Syntax => $"{Command} minionsblue minionspurple";
-
-        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _game = game;
-            _playerManager = playerManager;
-        }
-
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
@@ -53,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
             };
 
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = PlayerManager.GetPeerInfo(peer).Champion;
             var random = new Random();
 
             var minions = new[]
@@ -72,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 minion.SetWaypoints(
                     new List<Vector2> {new Vector2(minion.X, minion.Y), new Vector2(minion.X, minion.Y)});
                 minion.SetVisibleByTeam(team, true);
-                _game.ObjectManager.AddObject(minion);
+                Game.ObjectManager.AddObject(minion);
             }
         }
     }

@@ -5,16 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class ChangeTeamCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
-
         public override string Command => "changeteam";
         public override string Syntax => $"{Command} teamNumber";
-
-        public ChangeTeamCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _playerManager = playerManager;
-        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
@@ -32,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
 
             var team = CustomConvert.ToTeamId(t);
-            _playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
+            PlayerManager.GetPeerInfo(peer).Champion.SetTeam(team);
         }
     }
 }

@@ -12,7 +12,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class RainbowCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
 
         private Champion _me;
         private bool _run;
@@ -22,18 +21,13 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override string Command => "rainbow";
         public override string Syntax => $"{Command} alpha speed";
-
-        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _playerManager = playerManager;
-        }
+        
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
 
-            _me = _playerManager.GetPeerInfo(peer).Champion;
+            _me = PlayerManager.GetPeerInfo(peer).Champion;
 
             if (split.Length > 1)
             {
@@ -70,9 +64,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            var game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2_C);
+            Game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2_C);
         }
     }
 }

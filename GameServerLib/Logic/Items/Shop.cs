@@ -55,16 +55,16 @@ namespace LeagueSandbox.GameServer.Logic.Items
                 foreach (var instance in recipeParts)
                 {
                     _owner.Stats.unapplyStatMods(instance.getTemplate().getStatMods());
-                    _game.PacketNotifier.notifyRemoveItem(_owner, instance.getSlot(), 0);
+                    Game.PacketNotifier.notifyRemoveItem(_owner, instance.getSlot(), 0);
                     _owner.Inventory.RemoveItem(instance.getSlot());
                 }
 
-                i = _game.GetPeerInfo(peer).GetChampion().Inventory.AddItem(itemTemplate);
+                i = Game.GetPeerInfo(peer).GetChampion().Inventory.AddItem(itemTemplate);
             }
 
             _owner.Stats.Gold -= price;
             _owner.Stats.pplyStatMods(itemTemplate.getStatMods());
-            _game.PacketNotifier.NotifyItemBought(_game.GetPeerInfo(peer).GetChampion(), i);
+            Game.PacketNotifier.NotifyItemBought(Game.GetPeerInfo(peer).GetChampion(), i);
 
             return true;
         }

@@ -6,35 +6,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleMap : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
-
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLIENT_READY;
         public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
-
-        public HandleMap(Game game, PlayerManager playerManager)
-        {
-            _game = game;
-            _playerManager = playerManager;
-        }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player
-            var screenInfo = new LoadScreenInfo(_playerManager.GetPlayers());
-            var pInfo = _game.PacketHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
+            var screenInfo = new LoadScreenInfo(PlayerManager.GetPlayers());
+            var pInfo = Game.PacketHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
 
             // Distributes each players info by UserId
             var bOk = false;
-            foreach (var player in _playerManager.GetPlayers())
+            foreach (var player in PlayerManager.GetPlayers())
             {
                 // Giving the UserId in loading screen a name
                 var loadName = new LoadScreenPlayerName(player);
                 // Giving the UserId in loading screen a champion
                 var loadChampion = new LoadScreenPlayerChampion(player);
-                var pName = _game.PacketHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
-                var pHero = _game.PacketHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
+                var pName = Game.PacketHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
+                var pHero = Game.PacketHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
 
                 bOk = pName && pHero;
 

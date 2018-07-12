@@ -4,7 +4,6 @@
     {
         public short X;
         public short Y;
-        private static Game _game = Program.ResolveDependency<Game>();
 
         public MovementVector() { }
 
@@ -16,13 +15,13 @@
 
         public MovementVector(float x, float y)
         {
-            X = FormatCoordinate(x, _game.Map.NavGrid.MiddleOfMap.Y);
-            Y = FormatCoordinate(y, _game.Map.NavGrid.MiddleOfMap.X);
+            X = FormatCoordinate(x, Game.Map.NavGrid.MiddleOfMap.Y);
+            Y = FormatCoordinate(y, Game.Map.NavGrid.MiddleOfMap.X);
         }
 
         public Target ToTarget()
         {
-            return new Target(2.0f * X + _game.Map.NavGrid.MiddleOfMap.X, 2.0f * Y + _game.Map.NavGrid.MiddleOfMap.Y);
+            return new Target(2.0f * X + Game.Map.NavGrid.MiddleOfMap.X, 2.0f * Y + Game.Map.NavGrid.MiddleOfMap.Y);
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -32,12 +31,12 @@
 
         public static short TargetXToNormalFormat(float value)
         {
-            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.X);
+            return FormatCoordinate(value, Game.Map.NavGrid.MiddleOfMap.X);
         }
 
         public static short TargetYToNormalFormat(float value)
         {
-            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.Y);
+            return FormatCoordinate(value, Game.Map.NavGrid.MiddleOfMap.Y);
         }
     }
 }

@@ -7,31 +7,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleBuyItem : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly ItemManager _itemManager;
-        private readonly PlayerManager _playerManager;
-
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_BUY_ITEM_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
-
-        public HandleBuyItem(Game game, ItemManager itemManager, PlayerManager playerManager)
-        {
-            _game = game;
-            _itemManager = itemManager;
-            _playerManager = playerManager;
-        }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new BuyItemRequest(data);
 
-            var itemTemplate = _itemManager.SafeGetItemType(request.Id);
+            var itemTemplate = ItemManager.SafeGetItemType(request.Id);
             if (itemTemplate == null)
             {
                 return false;
             }
 
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = PlayerManager.GetPeerInfo(peer).Champion;
             var stats = champion.Stats;
             var inventory = champion.GetInventory();
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
@@ -68,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 foreach (var instance in recipeParts)
                 {
                     stats.RemoveModifier(instance.ItemType);
-                    _game.PacketNotifier.NotifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
+                    Game.PacketNotifier.NotifyRemoveItem(champion, inventory.GetItemSlot(instance), 0);
                     inventory.RemoveItem(instance);
                 }
 
@@ -77,7 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
-            _game.PacketNotifier.NotifyItemBought(champion, i);
+            Game.PacketNotifier.NotifyItemBought(champion, i);
 
             return true;
         }

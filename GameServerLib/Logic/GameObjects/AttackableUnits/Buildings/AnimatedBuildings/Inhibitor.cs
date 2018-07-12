@@ -35,12 +35,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.ObjectManager.AddInhibitor(this);
+            Game.ObjectManager.AddInhibitor(this);
         }
 
         public override void Die(AttackableUnit killer)
         {
-            var objects = _game.ObjectManager.GetObjects().Values;
+            var objects = Game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
                 var u = obj as ObjAiBase;
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
                     u.SetTargetUnit(null);
                     u.AutoAttackTarget = null;
                     u.IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(u, null);
+                    Game.PacketNotifier.NotifySetTarget(u, null);
                     u.HasMadeInitialAttack = false;
                 }
             }
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             if (killer is Champion c)
             {
                 c.Stats.Gold += GOLD_WORTH;
-                _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
+                Game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
             }
 
             SetState(InhibitorState.DEAD, killer);
@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             }
 
             InhibitorState = state;
-            _game.PacketNotifier.NotifyInhibitorState(this, killer);
+            Game.PacketNotifier.NotifyInhibitorState(this, killer);
         }
 
         public double GetRespawnTimer()
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
         {
             if (!RespawnAnnounced && InhibitorState == InhibitorState.DEAD && GetRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
-                _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
+                Game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
                 RespawnAnnounced = true;
             }
 
