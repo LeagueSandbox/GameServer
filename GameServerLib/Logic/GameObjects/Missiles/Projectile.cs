@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
         protected Spell _originSpell;
-        private Logger _logger = Program.ResolveDependency<Logger>();
 
         public Projectile(
             float x,
@@ -32,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             uint netId = 0
         ) : base(x, y, collisionRadius, 0, netId)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
+            SpellData = Game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;
             Owner = owner;
@@ -194,7 +193,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 
             Owner.DecrementAttackerCount();
             base.SetToRemove();
-            _game.PacketNotifier.NotifyProjectileDestroy(this);
+            Game.PacketNotifier.NotifyProjectileDestroy(this);
         }
     }
 }

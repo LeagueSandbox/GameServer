@@ -7,21 +7,21 @@ using System.Timers;
 
 namespace LeagueSandbox.GameServer.Logic
 {
-    public class Logger
+    public static class Logger
     {
-        private LogWriter _logWriter;
+        private static LogWriter _logWriter;
         private const string LOG_NAME = "LeagueSandbox.txt";
 
-        public Logger(ServerContext serverContext)
+        public static void CreateLogger()
         {
-            var directory = serverContext.ExecutingDirectory;
+            var directory = ServerContext.ExecutingDirectory;
             _logWriter = new LogWriter(directory, LOG_NAME);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
-        public void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+        public static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
             if (e.Exception is InvalidCastException || e.Exception is KeyNotFoundException)
             {
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic
             _logWriter.Log(e.Exception.StackTrace, "EXCEPTION");
         }
 
-        public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs x)
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs x)
         {
             _logWriter.Log("An unhandled exception was thrown", "UNHANDLEDEXCEPTION");
             var ex = (Exception)x.ExceptionObject;
@@ -43,161 +43,160 @@ namespace LeagueSandbox.GameServer.Logic
             _logWriter.Log(ex.StackTrace, "UNHANDLEDEXCEPTION");
         }
 
-        public void Log(string line, string type = "LOG")
+        public static void Log(string line, string type = "LOG")
         {
             _logWriter.Log(line, type);
         }
 
-        public void LogCoreInfo(string line)
+        public static void LogCoreInfo(string line)
         {
             Log(line, "INFO");
         }
 
-        public void LogCoreInfo(string format, params object[] args)
+        public static void LogCoreInfo(string format, params object[] args)
         {
             LogCoreInfo(string.Format(format, args));
         }
 
-        public void LogCoreWarning(string line)
+        public static void LogCoreWarning(string line)
         {
             Log(line, "WARNING");
         }
 
-        public void LogCoreWarning(string format, params object[] args)
+        public static void LogCoreWarning(string format, params object[] args)
         {
             LogCoreWarning(string.Format(format, args));
         }
 
-        public void LogCoreError(string line)
+        public static void LogCoreError(string line)
         {
             Log(line, "ERROR");
         }
 
-        public void LogCoreError(string format, params object[] args)
+        public static void LogCoreError(string format, params object[] args)
         {
             LogCoreError(string.Format(format, args));
         }
 
-        public void Flush()
+        public static void Flush()
         {
             _logWriter.Flush();
         }
 
-        public void LogFatalError(string line)
+        public static void LogFatalError(string line)
         {
             Log(line, "FATAL_ERROR");
             Flush();
         }
 
-        public void LogFatalError(string format, params object[] args)
+        public static void LogFatalError(string format, params object[] args)
         {
             LogFatalError(string.Format(format, args));
         }
 
-        private class LogWriter : IDisposable
+        
+    }
+
+    internal class LogWriter : IDisposable
+    {
+        private string _logFileName;
+        private FileStream _logFile;
+        private readonly StringBuilder _stringBuilder;
+        private const double RefreshRate = 1000.0 / 10.0; // 10fps
+
+        public LogWriter(string executingDirectory, string logFileName)
         {
-            public string LogFileName;
-            private FileStream _logFile;
-            private StringBuilder _stringBuilder;
-            private const double REFRESH_RATE = 1000.0 / 10.0; // 10fps
-            private Timer _refreshTimer;
+            CreateLogFile(executingDirectory, logFileName);
 
-            public LogWriter(string executingDirectory, string logFileName)
+            _stringBuilder = new StringBuilder();
+            //Start refresh loop
+            var refreshTimer = new Timer(RefreshRate)
             {
-                CreateLogFile(executingDirectory, logFileName);
+                AutoReset = true,
+                Enabled = true
+            };
+            refreshTimer.Elapsed += (a, b) => RefreshLoop();
+            refreshTimer.Start();
+        }
 
-                _stringBuilder = new StringBuilder();
-                //Start refresh loop
-                _refreshTimer = new Timer(REFRESH_RATE)
-                {
-                    AutoReset = true,
-                    Enabled = true
-                };
-                _refreshTimer.Elapsed += (_, _2) => RefreshLoop();
-                _refreshTimer.Start();
-            }
+        public void Flush() => RefreshLoop();
 
-            public void Flush()
+        //Can get called by different threads
+        private void RefreshLoop()
+        {
+            string text = null;
+            lock (_stringBuilder)
             {
-                RefreshLoop();
-            }
-
-            //Can get called by different threads
-            private void RefreshLoop()
-            {
-                string text = null;
-                lock (_stringBuilder)
+                if (_stringBuilder.Length > 0)
                 {
-                    if (_stringBuilder.Length > 0)
-                    {
-                        text = _stringBuilder.ToString();
-                        _stringBuilder.Clear();
-                    }
-                }
-                if (text != null)
-                {
-                    WriteTextToLogFile(text + Environment.NewLine);
-                    Console.Write(text);
+                    text = _stringBuilder.ToString();
+                    _stringBuilder.Clear();
                 }
             }
 
-            //Can get called by different threads
-            private void WriteTextToLogFile(string text)
+            if (text == null) return;
+            WriteTextToLogFile(text + Environment.NewLine);
+            Console.Write(text);
+        }
+
+        //Can get called by different threads
+        private void WriteTextToLogFile(string text)
+        {
+            var info = new UTF8Encoding(true).GetBytes(text);
+            lock (_logFile)
             {
-                var info = new UTF8Encoding(true).GetBytes(text);
+                _logFile.WriteAsync(info, 0, info.Length);
+            }
+        }
+
+        public void Log(string lines, string type = "LOG")
+        {
+            var text = $"({DateTime.Now:MM/dd/yyyy HH:mm:ss.fff}) [{type.ToUpper()}]: {lines}";
+            lock (_stringBuilder)
+            {
+                _stringBuilder.AppendLine(text);
+            }
+        }
+
+        private void CreateLogFile(string directory, string name)
+        {
+            if (!string.IsNullOrEmpty(_logFileName))
+            {
+                return;
+            }
+
+            var path = Path.Combine(directory, "Logs");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var logName = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}";
+            _logFileName = Path.Combine(path, logName);
+
+            _logFile = File.Create(_logFileName);
+        }
+
+        private bool _disposedValue; // To detect redundant dispose calls
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposedValue) return;
+            if (disposing)
+            {
+                Flush();
                 lock (_logFile)
                 {
-                    _logFile.WriteAsync(info, 0, info.Length);
+                    _logFile.Flush();
+                    _logFile.Close();
                 }
             }
+            _disposedValue = true;
+        }
 
-            public void Log(string lines, string type = "LOG")
-            {
-                var text = $"({DateTime.Now:MM/dd/yyyy HH:mm:ss.fff}) [{type.ToUpper()}]: {lines}";
-                lock (_stringBuilder)
-                {
-                    _stringBuilder.AppendLine(text);
-                }
-            }
-
-            public void CreateLogFile(string directory, string name)
-            {
-                if (!string.IsNullOrEmpty(LogFileName))
-                {
-                    return;
-                }
-
-                var path = Path.Combine(directory, "Logs");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                var logName = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}";
-                LogFileName = Path.Combine(path, logName);
-
-                _logFile = File.Create(LogFileName);
-            }
-
-            private bool _disposedValue; // To detect redundant dispose calls
-            protected virtual void Dispose(bool disposing)
-            {
-                if (!_disposedValue)
-                {
-                    if (disposing)
-                    {
-                        Flush();
-                        _logFile.Flush();
-                        _logFile.Close();
-                    }
-                    _disposedValue = true;
-                }
-            }
-
-            public void Dispose()
-            {
-                Dispose(true);
-            }
+        public void Dispose()
+        {
+            Dispose(true);
         }
     }
 }

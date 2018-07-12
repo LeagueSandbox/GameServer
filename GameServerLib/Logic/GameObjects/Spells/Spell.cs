@@ -43,19 +43,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public float X2 { get; private set; }
         public float Y2 { get; private set; }
 
-        private static CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
-        private static Logger _logger = Program.ResolveDependency<Logger>();
-        private static Game _game = Program.ResolveDependency<Game>();
-
         private IGameScript _spellGameScript;
-        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
 
         static Spell()
         {
-            CooldownsEnabled = _game.Config.CooldownsEnabled;
-            ManaCostsEnabled = _game.Config.ManaCostsEnabled;
+            CooldownsEnabled = Game.Config.CooldownsEnabled;
+            ManaCostsEnabled = Game.Config.ManaCostsEnabled;
         }
 
         public Spell(Champion owner, string spellName, byte slot)
@@ -63,11 +58,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             Owner = owner;
             SpellName = spellName;
             Slot = slot;
-            SpellData = _game.Config.ContentManager.GetSpellData(spellName);
-            _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            SpellData = Game.Config.ContentManager.GetSpellData(spellName);
 
             //Set the game script for the spell
-            _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
+            _spellGameScript = CSharpScriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             _spellGameScript.OnActivate(owner);
         }
@@ -95,8 +89,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             X2 = x2;
             Y2 = y2;
             Target = u;
-            FutureProjNetId = _networkIdManager.GetNewNetId();
-            SpellNetId = _networkIdManager.GetNewNetId();
+            FutureProjNetId = NetworkIdManager.GetNewNetId();
+            SpellNetId = NetworkIdManager.GetNewNetId();
 
             if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
             {
@@ -117,7 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             }
 
             var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
-            _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
+            Game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
             return true;
         }
 
@@ -135,7 +129,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
                 if (Slot < 4)
                 {
-                    _game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
+                    Game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
                 }
 
                 Owner.IsCastingSpell = false;
@@ -162,7 +156,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
             if (Slot < 4)
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
+                Game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
             }
 
             Owner.IsCastingSpell = false;
@@ -232,10 +226,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 nameMissile,
                 SpellData.Flags
             );
-            _game.ObjectManager.AddObject(p);
+            Game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.NotifyProjectileSpawn(p);
+                Game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -252,10 +246,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 nameMissile,
                 SpellData.Flags
             );
-            _game.ObjectManager.AddObject(p);
+            Game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
-                _game.PacketNotifier.NotifyProjectileSpawn(p);
+                Game.PacketNotifier.NotifyProjectileSpawn(p);
             }
         }
 
@@ -271,12 +265,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 SpellData.Flags,
                 affectAsCastIsOver
             );
-            _game.ObjectManager.AddObject(l);
+            Game.ObjectManager.AddObject(l);
         }
 
         public void SpellAnimation(string animName, AttackableUnit target)
         {
-            _game.PacketNotifier.NotifySpellAnimation(target, animName);
+            Game.PacketNotifier.NotifySpellAnimation(target, animName);
         }
 
         /// <returns>spell's unique ID</returns>
@@ -328,13 +322,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
             if (newCd <= 0)
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
+                Game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
                 targetSpell.State = SpellState.STATE_READY;
                 targetSpell.CurrentCooldown = 0;
             }
             else
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.GetCooldown());
+                Game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.GetCooldown());
                 targetSpell.State = SpellState.STATE_COOLDOWN;
                 targetSpell.CurrentCooldown = newCd;
             }

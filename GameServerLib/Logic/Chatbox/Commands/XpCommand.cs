@@ -5,16 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class XpCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
-
         public override string Command => "xp";
         public override string Syntax => $"{Command} xp";
-
-        public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _playerManager = playerManager;
-        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
@@ -28,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             if (float.TryParse(split[1], out var xp))
             {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.Experience += xp;
+                PlayerManager.GetPeerInfo(peer).Champion.Stats.Experience += xp;
             }
         }
     }

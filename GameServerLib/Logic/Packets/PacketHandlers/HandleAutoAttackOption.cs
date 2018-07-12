@@ -6,17 +6,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleAutoAttackOption : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly ChatCommandManager _chatCommandManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_AUTO_ATTACK_OPTION;
         public override Channel PacketChannel => Channel.CHL_C2_S;
-
-        public HandleAutoAttackOption(Game game, ChatCommandManager chatCommandManager)
-        {
-            _game = game;
-            _chatCommandManager = chatCommandManager;
-        }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
@@ -28,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 state = "Activated";
             }
 
-            _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");
             return true;
         }
     }

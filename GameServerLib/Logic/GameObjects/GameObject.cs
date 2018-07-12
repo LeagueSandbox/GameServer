@@ -31,10 +31,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _visibleByTeam[Team] = false;
             Team = team;
             _visibleByTeam[Team] = true;
-            if (_game.IsRunning)
+            if (Game.IsRunning)
             {
                 var p = new SetTeam(this as AttackableUnit, team);
-                _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2_C);
+                Game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2_C);
             }
         }
 
@@ -48,19 +48,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public override bool IsSimpleTarget { get { return false; } }
         protected float _dashSpeed;
         private Dictionary<TeamId, bool> _visibleByTeam;
-        protected Game _game = Program.ResolveDependency<Game>();
-        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        //protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public GameObject(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
-            if (netId != 0)
-            {
-                NetId = netId; // Custom netId
-            }
-            else
-            {
-                NetId = _networkIdManager.GetNewNetId(); // Let the base class (this one) asign a netId
-            }
+            NetId = netId != 0 ? netId : NetworkIdManager.GetNewNetId();
             Target = null;
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
@@ -82,12 +74,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual void OnAdded()
         {
-            _game.Map.CollisionHandler.AddObject(this);
+            Game.Map.CollisionHandler.AddObject(this);
         }
 
         public virtual void OnRemoved()
         {
-            _game.Map.CollisionHandler.RemoveObject(this);
+            Game.Map.CollisionHandler.RemoveObject(this);
         }
 
         public virtual void OnCollision(GameObject collider)
@@ -146,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                         var u = this as AttackableUnit;
 
                         var animList = new List<string>();
-                        _game.PacketNotifier.NotifySetAnimation(u, animList);
+                        Game.PacketNotifier.NotifySetAnimation(u, animList);
                     }
 
                     Target = null;
@@ -196,7 +188,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
             Waypoints = newWaypoints;
 
-            SetPosition(Waypoints[0].X, Waypoints[0].Y);
+            SetPosition(Waypoints[0]);
             _movementUpdated = true;
             if (Waypoints.Count == 1)
             {
@@ -245,7 +237,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
         public virtual float GetZ()
         {
-            return _game.Map.NavGrid.GetHeightAtLocation(X, Y);
+            return Game.Map.NavGrid.GetHeightAtLocation(X, Y);
         }
 
         public bool IsCollidingWith(GameObject o)
@@ -274,7 +266,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (this is AttackableUnit)
             {
                 // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
+                Game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
             }
         }
 

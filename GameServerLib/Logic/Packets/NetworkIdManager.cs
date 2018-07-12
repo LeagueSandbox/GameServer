@@ -1,11 +1,11 @@
 ﻿namespace LeagueSandbox.GameServer.Logic.Packets
 {
-    public class NetworkIdManager
+    public static class NetworkIdManager
     {
-        protected uint _dwStart = 0x40000000; //new netid
-        protected object _lock = new object();
+        private static uint _dwStart = 0x40000000; //new netid
+        private static object _lock = new object();
 
-        public uint GetNewNetId()
+        public static uint GetNewNetId()
         {
             lock (_lock)
             {

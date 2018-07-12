@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
     public class InventoryManager
     {
         private Inventory _inventory;
-        private AttackableUnit _owner;
+        //private AttackableUnit _owner;
 
         private InventoryManager(AttackableUnit owner)
         {

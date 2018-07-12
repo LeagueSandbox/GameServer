@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
@@ -21,8 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private Dictionary<string, Buff> Buffs { get; }
 
         private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
-        protected ItemManager _ıtemManager = Program.ResolveDependency<ItemManager>();
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        //protected ItemManager _ıtemManager = Program.ResolveDependency<ItemManager>();
 
         /// <summary>
         /// Unit we want to attack as soon as in range
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(model, stats, collisionRadius, x, y, visionRadius, netId)
         {
-            CharData = _game.Config.ContentManager.GetCharData(Model);
+            CharData = Game.Config.ContentManager.GetCharData(Model);
             Stats.LoadStats(CharData);
 
             if (CharData.PathfindingCollisionRadius > 0)
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             Stats.CurrentHealth = stats.HealthPoints.Total;
             if (!string.IsNullOrEmpty(model))
             {
-                AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
+                AaSpellData = Game.Config.ContentManager.GetSpellData(model + "BasicAttack");
                 AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
@@ -381,7 +381,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 damage *= Stats.CriticalDamage.Total;
             }
 
-            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
+            var onAutoAttack = CSharpScriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
             target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
@@ -404,7 +404,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     SetTargetUnit(null);
                     AutoAttackTarget = null;
                     IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(this, null);
+                    Game.PacketNotifier.NotifySetTarget(this, null);
                     HasMadeInitialAttack = false;
                 }
                 return;
@@ -412,11 +412,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             if (TargetUnit != null)
             {
-                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit))
+                if (TargetUnit.IsDead || !Game.ObjectManager.TeamHasVisionOn(Team, TargetUnit))
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(this, null);
+                    Game.PacketNotifier.NotifySetTarget(this, null);
                     HasMadeInitialAttack = false;
 
                 }
@@ -439,8 +439,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                                 0,
                                 _autoAttackProjId
                             );
-                            _game.ObjectManager.AddObject(p);
-                            _game.PacketNotifier.NotifyShowProjectile(p);
+                            Game.ObjectManager.AddObject(p);
+                            Game.PacketNotifier.NotifyShowProjectile(p);
                         }
                         else
                         {
@@ -459,13 +459,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     {
                         IsAttacking = true;
                         _autoAttackCurrentDelay = 0;
-                        _autoAttackProjId = _networkIdManager.GetNewNetId();
+                        _autoAttackProjId = NetworkIdManager.GetNewNetId();
                         AutoAttackTarget = TargetUnit;
 
                         if (!HasMadeInitialAttack)
                         {
                             HasMadeInitialAttack = true;
-                            _game.PacketNotifier.NotifyBeginAutoAttack(
+                            Game.PacketNotifier.NotifyBeginAutoAttack(
                                 this,
                                 TargetUnit,
                                 _autoAttackProjId,
@@ -475,7 +475,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         else
                         {
                             _nextAttackFlag = !_nextAttackFlag; // The first auto attack frame has occurred
-                            _game.PacketNotifier.NotifyNextAutoAttack(
+                            Game.PacketNotifier.NotifyNextAutoAttack(
                                 this,
                                 TargetUnit,
                                 _autoAttackProjId,
@@ -485,7 +485,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         }
 
                         var attackType = IsMelee ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        _game.PacketNotifier.NotifyOnAttack(this, TargetUnit, attackType);
+                        Game.PacketNotifier.NotifyOnAttack(this, TargetUnit, attackType);
                     }
 
                 }
@@ -499,7 +499,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 if (AutoAttackTarget == null
                     || AutoAttackTarget.IsDead
-                    || !_game.ObjectManager.TeamHasVisionOn(Team, AutoAttackTarget)
+                    || !Game.ObjectManager.TeamHasVisionOn(Team, AutoAttackTarget)
                 )
                 {
                     IsAttacking = false;
@@ -524,7 +524,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             _crowdControlList.RemoveAll(cc => cc.IsRemoved);
 
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<AttackableUnit, double>>(Model, "Passive", "OnUpdate");
+            var onUpdate = CSharpScriptEngine.GetStaticMethod<Action<AttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
             BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
             base.Update(diff);
@@ -533,7 +533,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public override void Die(AttackableUnit killer)
         {
-            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnDie");
+            var onDie = CSharpScriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
             base.Die(killer);
         }
@@ -543,12 +543,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             base.OnCollision(collider);
             if (collider == null)
             {
-                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<AttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
+                var onCollideWithTerrain = CSharpScriptEngine.GetStaticMethod<Action<AttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
             }
             else
             {
-                var onCollide = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "onCollide");
+                var onCollide = CSharpScriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider as AttackableUnit);
             }
         }

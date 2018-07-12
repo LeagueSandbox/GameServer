@@ -12,21 +12,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleMove : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
-
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleMove(Game game, PlayerManager playerManager)
-        {
-            _game = game;
-            _playerManager = playerManager;
-        }
-
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var peerInfo = _playerManager.GetPeerInfo(peer);
+            var peerInfo = PlayerManager.GetPeerInfo(peer);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
             {
@@ -34,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             var request = new MovementRequest(data);
-            var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, _game.Map);
+            var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, Game.Map);
 
             switch (request.Type)
             {
@@ -42,8 +33,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //TODO anticheat, currently it trusts client 100%
 
                     peerInfo.Champion.SetPosition(request.X, request.Y);
-                    var x = (request.X - _game.Map.NavGrid.MapWidth) / 2;
-                    var y = (request.Y - _game.Map.NavGrid.MapHeight) / 2;
+                    var x = (request.X - Game.Map.NavGrid.MapWidth) / 2;
+                    var y = (request.Y - Game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
@@ -66,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
 
-            var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as AttackableUnit;
+            var u = Game.ObjectManager.GetObjectById(request.TargetNetId) as AttackableUnit;
             if (u == null)
             {
                 peerInfo.Champion.TargetUnit = null;

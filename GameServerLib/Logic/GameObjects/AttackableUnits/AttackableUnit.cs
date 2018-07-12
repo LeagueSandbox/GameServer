@@ -27,8 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 IsModelUpdated = true;
             }
         }
-
-        protected Logger _logger = Program.ResolveDependency<Logger>();
+        
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
@@ -54,13 +53,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.ObjectManager.AddVisionUnit(this);
+            Game.ObjectManager.AddVisionUnit(this);
         }
 
         public override void OnRemoved()
         {
             base.OnRemoved();
-            _game.ObjectManager.RemoveVisionUnit(this);
+            Game.ObjectManager.RemoveVisionUnit(this);
         }
 
         public override void Update(float diff)
@@ -84,12 +83,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         public virtual void Die(AttackableUnit killer)
         {
             SetToRemove();
-            _game.ObjectManager.StopTargeting(this);
+            Game.ObjectManager.StopTargeting(this);
 
-            _game.PacketNotifier.NotifyNpcDie(this, killer);
+            Game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            var exp = _game.Map.MapGameScript.GetExperienceFor(this);
-            var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
+            var exp = Game.Map.MapGameScript.GetExperienceFor(this);
+            var champs = Game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
 
@@ -99,7 +98,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 foreach (var c in champs)
                 {
                     c.Stats.Experience += expPerChamp;
-                    _game.PacketNotifier.NotifyAddXp(c, expPerChamp);
+                    Game.PacketNotifier.NotifyAddXp(c, expPerChamp);
                 }
             }
 
@@ -112,19 +111,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     return;
                 }
 
-                var gold = _game.Map.MapGameScript.GetGoldFor(this);
+                var gold = Game.Map.MapGameScript.GetGoldFor(this);
                 if (gold <= 0)
                 {
                     return;
                 }
 
                 cKiller.Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
+                Game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
 
                 if (cKiller.KillDeathCounter < 0)
                 {
                     cKiller.ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
+                    Logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
                 }
 
                 if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
@@ -199,9 +198,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 Die(attacker);
             }
 
-            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
+            Game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
             // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
+            Game.PacketNotifier.NotifyUpdatedStats(this, false);
 
             // Get health from lifesteal/spellvamp
             if (regain > 0)
@@ -209,7 +208,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * damage);
                 // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                Game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
 

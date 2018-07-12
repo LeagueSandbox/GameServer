@@ -4,17 +4,8 @@ using LeagueSandbox.GameServer.Logic.Players;
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class HealthCommand : ChatCommandBase
-    {
-        private readonly PlayerManager _playerManager;
-
-        public override string Command => "health";
+    {public override string Command => "health";
         public override string Syntax => $"{Command} maxHealth";
-
-        public HealthCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
-            : base(chatCommandManager)
-        {
-            _playerManager = playerManager;
-        }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
@@ -26,8 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out var hp))
             {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.HealthPoints.FlatBonus += hp;
-                _playerManager.GetPeerInfo(peer).Champion.Stats.CurrentHealth += hp;
+                PlayerManager.GetPeerInfo(peer).Champion.Stats.HealthPoints.FlatBonus += hp;
+                PlayerManager.GetPeerInfo(peer).Champion.Stats.CurrentHealth += hp;
             }
         }
     }

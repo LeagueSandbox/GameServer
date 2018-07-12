@@ -45,17 +45,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             _curMainWaypoint = 0;
             _aiPaused = false;
 
-            var spawnSpecifics = _game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
+            var spawnSpecifics = Game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
-            SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
+            SetPosition(spawnSpecifics.Item2);
 
-            _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
+            Game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             // Set model
-            Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, spawnType);
+            Model = Game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, spawnType);
 
             // Fix issues induced by having an empty model string
-            CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
+            CollisionRadius = Game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 
             // If we have lane path instructions from the map
             if (mainWaypoints.Count > 0)
@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifyMinionSpawned(this, Team);
+            Game.PacketNotifier.NotifyMinionSpawned(this, Team);
         }
 
         public override void Update(float diff)
@@ -133,7 +133,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
-            var objects = _game.ObjectManager.GetObjects();
+            var objects = Game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
                 var u = it.Value as AttackableUnit;
@@ -143,7 +143,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     u.IsDead ||                          // alive
                     u.Team == Team ||                    // not on our team
                     GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
+                    !Game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
                     continue;                             // If not, look for something else
 
                 var priority = (int)ClassifyTarget(u);  // get the priority.
@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (nextTarget != null) // If we have a target
             {
                 TargetUnit = nextTarget; // Set the new target and refresh waypoints
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
+                Game.PacketNotifier.NotifySetTarget(this, nextTarget);
                 return true;
             }
 
@@ -182,7 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
-                _game.PacketNotifier.NotifyStopAutoAttack(this);
+                Game.PacketNotifier.NotifyStopAutoAttack(this);
                 IsAttacking = false;
             }
         }

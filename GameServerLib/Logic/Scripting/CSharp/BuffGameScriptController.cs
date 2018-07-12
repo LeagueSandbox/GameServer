@@ -14,7 +14,6 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         public Spell OwnerSpell { get; private set; }
         private bool _remove;
         private float _duration = -1f;
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
 
         public BuffGameScriptController(ObjAiBase unit, string buffNamespace, string buffClass, Spell ownerSpell, float duration = -1f)
         {
@@ -23,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             OwnerSpell = ownerSpell;
             Unit = unit;
             _duration = duration;
-            GameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffNamespace, buffClass);
+            GameScript = CSharpScriptEngine.CreateObject<IBuffGameScript>(buffNamespace, buffClass);
 
             if (_duration >= 0)
             {

@@ -7,41 +7,29 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleKeyCheck : PacketHandlerBase
     {
-        private readonly Logger _logger;
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
-
         public override PacketCmd PacketType => PacketCmd.PKT_KEY_CHECK;
         public override Channel PacketChannel => Channel.CHL_HANDSHAKE;
-
-        public HandleKeyCheck(Logger logger, Game game, PlayerManager playerManager)
-        {
-            _logger = logger;
-            _game = game;
-            _playerManager = playerManager;
-        }
-
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var keyCheck = new KeyCheckRequest(data);
-            var userId = _game.Blowfish.Decrypt(keyCheck.CheckId);
+            var userId = Game.Blowfish.Decrypt(keyCheck.CheckId);
 
             if (userId != keyCheck.UserId)
             {
-                _logger.LogCoreWarning("Client has sent wrong blowfish data.");
+                Logger.LogCoreWarning("Client has sent wrong blowfish data.");
                 return false;
             }
 
             if (keyCheck.VersionNo != Config.VERSION_NUMBER)
             {
-                _logger.LogCoreWarning("Client version doesn't match server's. " +
+                Logger.LogCoreWarning("Client version doesn't match server's. " +
                                        $"(C:{keyCheck.VersionNo}, S:{Config.VERSION_NUMBER})");
                 return false;
             }
 
             var playerNo = 0;
 
-            foreach (var p in _playerManager.GetPlayers())
+            foreach (var p in PlayerManager.GetPlayers())
             {
                 var player = p.Item2;
                 if (player.UserId == userId)
@@ -50,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (!player.IsDisconnected)
                         {
-                            _logger.LogCoreWarning($"Ignoring new player {userId}, already connected!");
+                            Logger.LogCoreWarning($"Ignoring new player {userId}, already connected!");
                             return false;
                         }
                     }
@@ -60,15 +48,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     player.Peer = peer;
                     player.PlayerNo = playerNo;
                     var response = new KeyCheckResponse(keyCheck.UserId, playerNo);
-                    _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
+                    Game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
 
-                    foreach(var p2 in _playerManager.GetPlayers())
+                    foreach(var p2 in PlayerManager.GetPlayers())
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {
                             var response2 = new KeyCheckResponse(p2.Item2.UserId, p2.Item2.PlayerNo);
-                            _game.PacketHandlerManager.SendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
+                            Game.PacketHandlerManager.SendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
                         }
                     }
 

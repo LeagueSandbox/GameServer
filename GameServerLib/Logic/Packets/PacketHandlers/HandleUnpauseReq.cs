@@ -7,21 +7,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleUnpauseReq : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSE_GAME;
+        public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSEGame;
         public override Channel PacketChannel => Channel.CHL_C2_S;
-
-        public HandleUnpauseReq(Game game, PlayerManager playerManager)
-        {
-            _game = game;
-            _playerManager = playerManager;
-        }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            if (!_game.IsPaused)
+            if (!Game.IsPaused)
             {
                 return false;
             }
@@ -29,10 +20,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             Champion unpauser = null;
             if (peer != null)
             {
-                unpauser = _playerManager.GetPeerInfo(peer).Champion;
+                unpauser = PlayerManager.GetPeerInfo(peer).Champion;
             }
 
-            _game.PacketNotifier.NotifyResumeGame(unpauser, true);
+            Game.PacketNotifier.NotifyResumeGame(unpauser, true);
             var timer = new Timer
             {
                 AutoReset = false,
@@ -41,8 +32,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             };
             timer.Elapsed += (sender, args) =>
             {
-                _game.PacketNotifier.NotifyResumeGame(unpauser, false);
-                _game.Unpause();
+                Game.PacketNotifier.NotifyResumeGame(unpauser, false);
+                Game.Unpause();
             };
             return true;
         }

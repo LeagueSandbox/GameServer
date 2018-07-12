@@ -6,24 +6,18 @@ using LeagueSandbox.GameServer.Logic.Packets;
 
 namespace LeagueSandbox.GameServer.Logic.Players
 {
-    public class PlayerManager
+    public static class PlayerManager
     {
-        private NetworkIdManager _networkIdManager;
 
-        private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
-        private int _currentId = 1;
-        private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
+        private static List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
+        private static int _currentId = 1;
+        private static Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
         {
             { TeamId.TEAM_BLUE, 0 },
             { TeamId.TEAM_PURPLE, 0 }
         };
 
-        public PlayerManager(NetworkIdManager networkIdManager)
-        {
-            _networkIdManager = networkIdManager;
-        }
-
-        private TeamId GetTeamIdFromConfig(PlayerConfig p)
+        private static TeamId GetTeamIdFromConfig(PlayerConfig p)
         {
             if (p.Team.ToLower().Equals("blue"))
             {
@@ -33,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
             return TeamId.TEAM_PURPLE;
         }
 
-        public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
+        public static void AddPlayer(KeyValuePair<string, PlayerConfig> p)
         {
             var summonerSkills = new[]
             {
@@ -65,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
         }
 
         // GetPlayerFromPeer
-        public ClientInfo GetPeerInfo(Peer peer)
+        public static ClientInfo GetPeerInfo(Peer peer)
         {
             foreach (var player in _players)
             {
@@ -78,12 +72,12 @@ namespace LeagueSandbox.GameServer.Logic.Players
             return null;
         }
 
-        public ClientInfo GetClientInfoByChampion(Champion champ)
+        public static ClientInfo GetClientInfoByChampion(Champion champ)
         {
             return GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }
 
-        public List<Pair<uint, ClientInfo>> GetPlayers()
+        public static List<Pair<uint, ClientInfo>> GetPlayers()
         {
             return _players;
         }

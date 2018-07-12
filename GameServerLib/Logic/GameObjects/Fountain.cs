@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _fountainSize;
         private float _healTickTimer;
         private TeamId _team;
-        private Game _game = Program.ResolveDependency<Game>();
 
         public Fountain(TeamId team, float x, float y, float size)
         {
@@ -34,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             _healTickTimer = 0;
 
-            var champions = _game.ObjectManager.GetChampionsInRange(_x, _y, _fountainSize, true);
+            var champions = Game.ObjectManager.GetChampionsInRange(_x, _y, _fountainSize, true);
             foreach (var champion in champions)
             {
                 if (champion.Team != _team)
