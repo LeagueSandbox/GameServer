@@ -25,12 +25,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         /// Player number ordered by the config file.
         /// </summary>
         private uint _playerId;
+
         /// <summary>
         /// Player number in the team ordered by the config file.
         /// Used in nowhere but to set spawnpoint at the game start.
         /// </summary>
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
+
+        public bool _canRecall = true;
+        private Buff _visualBuff;
+        private Particle _addParticle;
+        public bool IsRecalling { get; private set; } = false;
 
         public Champion(string model,
                         uint playerId,
@@ -160,6 +166,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 !HasCrowdControl(CrowdControlType.SILENCE);
         }
 
+        internal void SwapSpells(byte slot1, byte slot2)
+        {
+            var enabled1 = Stats.GetSpellEnabled(slot1);
+            var enabled2 = Stats.GetSpellEnabled(slot2);
+            var buffer = Spells[slot1];
+            Spells[slot1] = Spells[slot2];
+            Spells[slot2] = buffer;
+            Stats.SetSpellEnabled(slot1, enabled2);
+            Stats.SetSpellEnabled(slot2, enabled1);
+        }
+
         public Vector2 GetSpawnPosition()
         {
             var config = _game.Config;
@@ -254,6 +271,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
 
+            if (_movementUpdated)
+            {
+                if (IsRecalling)
+                {
+                    ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    IsRecalling = false;
+                }
+                _canRecall = false;
+            }
+
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
@@ -332,10 +360,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAiBase owner)
+	    public void Recall(ObjAiBase owner, float timer)
         {
             var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+            IsRecalling = true;
+            _visualBuff = ApiFunctionManager.AddBuffHudVisual("Recall", timer, 1, this);
+            _addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+            _canRecall = true;
+
+            ApiFunctionManager.CreateTimer(timer, () =>
+            {
+                if (_canRecall)
+                {
+                    ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    ApiFunctionManager.TeleportTo(owner, spawnPos.X, spawnPos.Y);
+                    IsRecalling = false;
+                }
+            });
         }
 
         public void SetSkillPoints(int skillPoints)
@@ -498,6 +540,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             _playerHitId = NetId;
+
+            if (IsRecalling)
+            {
+                ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
+                ApiFunctionManager.RemoveParticle(_addParticle);
+                IsRecalling = false;
+            }
+            _canRecall = false;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

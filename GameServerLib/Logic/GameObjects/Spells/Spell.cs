@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.API;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
@@ -25,6 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public Champion Owner { get; private set; }
         public short Level { get; private set; }
         public byte Slot { get; set; }
+
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
@@ -70,6 +72,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             _spellGameScript.OnActivate(owner);
+        }
+
+
+
+        public void DeactivateSpell()
+        {
+            _spellGameScript.OnDeactivate(Owner);
         }
 
         /// <summary>

@@ -27,9 +27,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            _playerManager.GetPeerInfo(peer).Champion.GetInventory().SwapItems(request.SlotFrom, request.SlotTo);
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+
+            champion.Inventory.SwapItems(request.SlotFrom, request.SlotTo);
+            champion.SwapSpells((byte)(6 + request.SlotFrom), (byte)(6 + request.SlotTo));
             _game.PacketNotifier.NotifyItemsSwapped(
-                _playerManager.GetPeerInfo(peer).Champion,
+                champion,
                 request.SlotFrom,
                 request.SlotTo
             );
