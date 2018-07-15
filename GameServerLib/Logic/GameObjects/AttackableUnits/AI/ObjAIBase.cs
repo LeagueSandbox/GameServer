@@ -538,6 +538,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             base.Die(killer);
         }
 
+        public void RestoreHealth(float healValue) // used for healing.
+        {
+            if (HasBuffGameScriptActive("GrievousWounds", "GrievousWounds"))
+            {
+                healValue = healValue * 0.5f; // if Grievous Wounds is active, cut heal value in half. 
+            }
+            float newHealth = Stats.CurrentHealth + healValue;
+            float maxHealth = Stats.HealthPoints.Total;
+            if (newHealth > maxHealth)
+            {
+                Stats.CurrentHealth = maxHealth;
+            }
+            else
+            {
+                Stats.CurrentHealth = newHealth;
+            }
+        }
+
         public override void OnCollision(GameObject collider)
         {
             base.OnCollision(collider);

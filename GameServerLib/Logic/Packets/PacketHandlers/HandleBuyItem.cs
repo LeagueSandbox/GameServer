@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -78,6 +79,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(champion, i);
+            
+            var slot = inventory.GetItemSlot(i);
+            champion.Spells[(short)(slot + 6)] = new Spell(champion,i.ItemType.SpellName,(byte)(slot + 6));
+            champion.Stats.SetSpellEnabled((byte)(slot + 6), true);
 
             return true;
         }
