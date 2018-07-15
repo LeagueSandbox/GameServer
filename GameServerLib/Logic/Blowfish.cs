@@ -16,11 +16,11 @@
 using System;
 using System.Security.Cryptography;
 
-namespace BlowFishCS
+namespace LeagueSandbox.GameServer.Logic
 {
     public class BlowFish
     {
-        RNGCryptoServiceProvider randomSource;
+        private RNGCryptoServiceProvider randomSource;
 
         //SBLOCKS
         private uint[] bf_s0;
@@ -58,7 +58,9 @@ namespace BlowFishCS
         public byte[] Encrypt(byte[] pt)
         {
             lock (_blowfishLock)
+            {
                 return Crypt_ECB(pt, false);
+            }
         }
 
         /// <summary>
@@ -69,7 +71,9 @@ namespace BlowFishCS
         public byte[] Decrypt(byte[] ct)
         {
             lock (_blowfishLock)
+            {
                 return Crypt_ECB(ct, true);
+            }
         }
 
         #region Cryptography
@@ -94,42 +98,42 @@ namespace BlowFishCS
             }
 
             Buffer.BlockCopy(cipherKey, 0, key, 0, cipherKey.Length);
-            int j = 0;
-            for (int i = 0; i < 18; i++)
+            var j = 0;
+            for (var i = 0; i < 18; i++)
             {
-                uint d = (uint)(((key[j % cipherKey.Length] * 256 + key[(j + 1) % cipherKey.Length]) * 256 + key[(j + 2) % cipherKey.Length]) * 256 + key[(j + 3) % cipherKey.Length]);
+                var d = (uint)(((key[j % cipherKey.Length] * 256 + key[(j + 1) % cipherKey.Length]) * 256 + key[(j + 2) % cipherKey.Length]) * 256 + key[(j + 3) % cipherKey.Length]);
                 bf_P[i] ^= d;
                 j = (j + 4) % cipherKey.Length;
             }
 
             xl_par = 0;
             xr_par = 0;
-            for (int i = 0; i < 18; i += 2)
+            for (var i = 0; i < 18; i += 2)
             {
                 encipher();
                 bf_P[i] = xl_par;
                 bf_P[i + 1] = xr_par;
             }
 
-            for (int i = 0; i < 256; i += 2)
+            for (var i = 0; i < 256; i += 2)
             {
                 encipher();
                 bf_s0[i] = xl_par;
                 bf_s0[i + 1] = xr_par;
             }
-            for (int i = 0; i < 256; i += 2)
+            for (var i = 0; i < 256; i += 2)
             {
                 encipher();
                 bf_s1[i] = xl_par;
                 bf_s1[i + 1] = xr_par;
             }
-            for (int i = 0; i < 256; i += 2)
+            for (var i = 0; i < 256; i += 2)
             {
                 encipher();
                 bf_s2[i] = xl_par;
                 bf_s2[i + 1] = xr_par;
             }
-            for (int i = 0; i < 256; i += 2)
+            for (var i = 0; i < 256; i += 2)
             {
                 encipher();
                 bf_s3[i] = xl_par;
@@ -145,13 +149,13 @@ namespace BlowFishCS
         /// <returns>(En/De)crypted data</returns>
         private byte[] Crypt_ECB(byte[] text, bool decrypt)
         {
-            byte[] block = new byte[8];
-            byte[] plainText = new byte[text.Length];
+            var block = new byte[8];
+            var plainText = new byte[text.Length];
 
             Buffer.BlockCopy(text, 0, plainText, 0, text.Length);
 
-            var n = plainText.Length - (plainText.Length % 8);
-            for (int i = 0; i < n; i += 8)
+            var n = plainText.Length - plainText.Length % 8;
+            for (var i = 0; i < n; i += 8)
             {
                 Buffer.BlockCopy(plainText, i, block, 0, 8);
                 if (decrypt)
@@ -206,8 +210,8 @@ namespace BlowFishCS
         /// <param name="block">the 64 bit block to setup</param>
         private void SetBlock(byte[] block)
         {
-            byte[] block1 = new byte[4];
-            byte[] block2 = new byte[4];
+            var block1 = new byte[4];
+            var block2 = new byte[4];
 
             Buffer.BlockCopy(block, 0, block1, 0, 4);
             Buffer.BlockCopy(block, 4, block2, 0, 4);
@@ -253,7 +257,7 @@ namespace BlowFishCS
             xr_par = xr_par ^ bf_P[17];
 
             //swap the blocks
-            uint swap = xl_par;
+            var swap = xl_par;
             xl_par = xr_par;
             xr_par = swap;
         }
@@ -272,7 +276,7 @@ namespace BlowFishCS
             xr_par = xr_par ^ bf_P[0];
 
             //swap the blocks
-            uint swap = xl_par;
+            var swap = xl_par;
             xl_par = xr_par;
             xr_par = swap;
         }
@@ -286,16 +290,16 @@ namespace BlowFishCS
         /// <returns></returns>
         private uint round(uint a, uint b, uint n)
         {
-            uint x1 = (bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)]) ^ bf_s2[wordByte2(b)];
-            uint x2 = x1 + bf_s3[this.wordByte3(b)];
-            uint x3 = x2 ^ bf_P[n];
+            var x1 = bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)] ^ bf_s2[wordByte2(b)];
+            var x2 = x1 + bf_s3[wordByte3(b)];
+            var x3 = x2 ^ bf_P[n];
             return x3 ^ a;
         }
 
         #endregion
 
         #region SBLOCKS
-        //SBLOCKS ARE THE HEX DIGITS OF PI. 
+        //SBLOCKS ARE THE HEX DIGITS OF PI.
         //The amount of hex digits can be increased if you want to experiment with more rounds and longer key lengths
         private uint[] SetupP()
         {

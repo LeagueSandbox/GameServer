@@ -5,16 +5,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class EmotionPacketRequest
     {
-        public PacketCmd cmd;
-        public uint netId;
-        public byte id;
+        public PacketCmd Cmd;
+        public uint NetId;
+        public byte Id;
 
         public EmotionPacketRequest(byte[] data)
         {
-            var reader = new BinaryReader(new MemoryStream(data));
-            cmd = (PacketCmd)reader.ReadByte();
-            netId = reader.ReadUInt32();
-            id = reader.ReadByte();
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Cmd = (PacketCmd)reader.ReadByte();
+                NetId = reader.ReadUInt32();
+                Id = reader.ReadByte();
+            }
         }
     }
 }

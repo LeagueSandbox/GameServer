@@ -1,5 +1,5 @@
 using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
@@ -7,74 +7,72 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class SpawnPlaceable : Packet
     {
         public SpawnPlaceable(Placeable p)
-            : base(PacketCmd.PKT_S2C_ObjectSpawn)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
-            buffer.Write(p.NetId);
+            WriteNetId(p);
 
-            buffer.Write((byte)0xB5);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0xB3);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x7C);
+            Write((byte)0xB5);
+            Write((byte)0x00);
+            Write((byte)0xB3);
+            Write((byte)0x00);
+            Write((byte)0x7C);
 
-            buffer.Write(p.NetId);
-            buffer.Write(p.NetId);
-            buffer.Write(p.Owner.NetId);
+            WriteNetId(p);
+            WriteNetId(p);
+            WriteNetId(p.Owner);
 
-            buffer.Write((byte)0x40);
+            Write((byte)0x40);
 
-            buffer.Write((float)p.X); //x
-            buffer.Write((float)p.GetZ()); //z
-            buffer.Write((float)p.Y); //y
+            Write(p.X); //x
+            Write(p.GetZ()); //z
+            Write(p.Y); //y
 
-            buffer.fill(0, 8);
+            Fill(0, 8);
 
-            buffer.Write((short)p.Team);
-            buffer.Write((byte)0x92);
-            buffer.Write((byte)0x00);
+            Write((short)p.Team);
+            Write((byte)0x92);
+            Write((byte)0x00);
 
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x02);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x02);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
+            Write((byte)0x00);
 
-            buffer.Write(Encoding.Default.GetBytes(p.Name));
-            buffer.fill(0, 64 - p.Name.Length);
+			WriteConstLengthString(p.Name, 64);
 
-            buffer.Write(Encoding.Default.GetBytes(p.Model));
-            buffer.fill(0, 64 - p.Model.Length);
+			WriteConstLengthString(p.Model, 64);
 
-            buffer.Write((byte)0x01);
+            Write((byte)0x01);
 
-            buffer.fill(0, 16);
+            Fill(0, 16);
 
-            buffer.Write((float)1.0f); // Unk
+            Write(1.0f); // Unk
 
-            buffer.fill(0, 13);
+            Fill(0, 13);
 
-            buffer.Write((byte)0x03);
+            Write((byte)0x03);
 
-            buffer.Write((byte)0xB1); // <--|
-            buffer.Write((byte)0x20); //    | Unknown, changes between packets
-            buffer.Write((byte)0x18); //    |
-            buffer.Write((byte)0x00); // <--|
+            Write((byte)0xB1); // <--|
+            Write((byte)0x20); //    | Unknown, changes between packets
+            Write((byte)0x18); //    |
+            Write((byte)0x00); // <--|
 
-            buffer.Write((float)p.X);
-            buffer.Write((float)p.Y);
+            Write(p.X);
+            Write(p.Y);
 
-            buffer.Write((byte)0x00); // 0.0f
-            buffer.Write((byte)0x00); // Probably a float, see SpawnMonster
-            buffer.Write((byte)0x00);
-            buffer.Write((byte)0x00);
+            Write((byte)0x00); // 0.0f
+            Write((byte)0x00); // Probably a float, see SpawnMonster
+            Write((byte)0x00);
+            Write((byte)0x00);
 
-            buffer.Write((byte)0xFF); // 1.0f
-            buffer.Write((byte)0xFF); // Probably a float, see SpawnMonster
-            buffer.Write((byte)0x7F);
-            buffer.Write((byte)0x3F);
+            Write((byte)0xFF); // 1.0f
+            Write((byte)0xFF); // Probably a float, see SpawnMonster
+            Write((byte)0x7F);
+            Write((byte)0x3F);
         }
     }
 }

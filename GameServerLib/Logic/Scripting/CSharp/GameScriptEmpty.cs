@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public class GameScriptEmpty : GameScript
+    public class GameScriptEmpty : IGameScript
     {
         public void OnActivate(Champion owner)
         {

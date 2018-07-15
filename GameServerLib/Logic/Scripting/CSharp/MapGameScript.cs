@@ -1,16 +1,14 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public interface MapGameScript
+    public interface IMapGameScript
     {
         List<int> ExpToLevelUp { get; set; }
         float GoldPerSecond { get; set; }

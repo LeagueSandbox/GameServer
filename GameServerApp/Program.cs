@@ -1,17 +1,16 @@
-﻿using CommandLine;
+﻿using System.IO;
+using CommandLine;
 using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.Logic;
-using System.IO;
 
 namespace LeagueSandbox.GameServerApp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var options = ArgsOptions.Parse(args);
 
-            string configJson = options.ConfigJson;
+            var configJson = options.ConfigJson;
             if (string.IsNullOrEmpty(configJson))
             {
                 configJson = File.ReadAllText(options.ConfigPath);

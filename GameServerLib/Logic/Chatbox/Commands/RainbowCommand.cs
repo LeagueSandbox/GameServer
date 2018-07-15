@@ -1,14 +1,12 @@
-﻿using ENet;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Players;
+using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -17,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         private readonly PlayerManager _playerManager;
 
         private Champion _me;
-        private bool _run = false;
+        private bool _run;
         private float _a = 0.5f;
         private float _speed = 0.25f;
         private int _delay = 250;
@@ -25,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "rainbow";
         public override string Syntax => $"{Command} alpha speed";
 
-        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public RainbowCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;
@@ -59,21 +57,22 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         {
             while (_run)
             {
-                byte[] rainbow = new byte[4];
+                var rainbow = new byte[4];
                 new Random().NextBytes(rainbow);
                 Thread.Sleep(_delay);
                 BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
                 BroadcastTint(_me.Team, true, _speed, rainbow[1], rainbow[2], rainbow[3], _a);
             }
+
             Thread.Sleep(_delay);
             BroadcastTint(_me.Team, false, 0.0f, 0, 0, 0, 1f);
         }
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            Game _game = Program.ResolveDependency<Game>();
+            var game = Program.ResolveDependency<Game>();
             var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            _game.PacketHandlerManager.broadcastPacket(tint, Channel.CHL_S2C);
+            game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2_C);
         }
     }
 }

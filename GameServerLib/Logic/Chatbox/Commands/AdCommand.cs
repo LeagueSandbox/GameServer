@@ -1,6 +1,5 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -11,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "ad";
         public override string Syntax => $"{Command} bonusAd";
 
-        public AdCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+        public AdCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _playerManager = playerManager;
@@ -20,14 +19,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            float ad;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (float.TryParse(split[1], out ad))
-                _playerManager.GetPeerInfo(peer).Champion.GetStats().AttackDamage.FlatBonus = ad;
+            else if (float.TryParse(split[1], out var ad))
+            {
+                _playerManager.GetPeerInfo(peer).Champion.Stats.AttackDamage.FlatBonus += ad;
+            }
         }
     }
 }

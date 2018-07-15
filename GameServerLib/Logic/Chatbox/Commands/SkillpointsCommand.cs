@@ -1,6 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -24,9 +22,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            _playerManager.GetPeerInfo(peer).Champion.setSkillPoints(17);
+            _playerManager.GetPeerInfo(peer).Champion.SetSkillPoints(17);
             var skillUpResponse = new SkillUpResponse(_playerManager.GetPeerInfo(peer).Champion.NetId, 0, 0, 17);
-            _game.PacketHandlerManager.sendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+            _game.PacketHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
         }
     }
 }

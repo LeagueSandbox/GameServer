@@ -1,5 +1,4 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -9,8 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Scoreboard;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleScoreboard(PlayerManager playerManager, Logger logger)
         {

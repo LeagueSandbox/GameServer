@@ -1,10 +1,9 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
@@ -16,8 +15,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }
         public CollisionHandler CollisionHandler { get; private set; }
-        public int Id { get; private set; } = 0;
-        public MapGameScript MapGameScript { get; private set; }
+        public int Id { get; private set; }
+        public IMapGameScript MapGameScript { get; private set; }
 
         public Map(Game game)
         {
@@ -48,12 +47,12 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             MapGameScript = GetMapScript(Id);
         }
 
-        public MapGameScript GetMapScript(int mapId)
+        public IMapGameScript GetMapScript(int mapId)
         {
             var dict = new Dictionary<int, Type>
             {
                 // [0] = typeof(FlatTestMap),
-                [1] = typeof(SummonersRift),
+                [1] = typeof(SummonersRift)
                 // [2] = typeof(HarrowingRift),
                 // [3] = typeof(ProvingGrounds),
                 // [4] = typeof(TwistedTreeline),
@@ -70,7 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                 return new SummonersRift();
             }
 
-            return (MapGameScript)Activator.CreateInstance(dict[mapId]);
+            return (IMapGameScript)Activator.CreateInstance(dict[mapId]);
         }
 
         public void Init()
@@ -88,6 +87,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     announce.Execute();
                 }
             }
+
             MapGameScript.Update(diff);
         }
     }

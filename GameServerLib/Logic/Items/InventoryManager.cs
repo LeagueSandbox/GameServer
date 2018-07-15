@@ -1,8 +1,7 @@
-﻿using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Items
@@ -56,13 +55,22 @@ namespace LeagueSandbox.GameServer.Logic.Items
         {
             var result = new List<Item>();
             var tmpRecipe = recipe.GetItems().ToList();
-            foreach(var item in _inventory.Items)
+            foreach (var item in _inventory.Items)
             {
-                if (item == null) continue;
-                if (!tmpRecipe.Contains(item.ItemType)) continue;
+                if (item == null)
+                {
+                    continue;
+                }
+
+                if (!tmpRecipe.Contains(item.ItemType))
+                {
+                    continue;
+                }
+
                 result.Add(item);
                 tmpRecipe.Remove(item.ItemType);
             }
+
             return result;
         }
 

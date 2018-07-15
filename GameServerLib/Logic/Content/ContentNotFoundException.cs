@@ -2,7 +2,7 @@
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
-    class ContentNotFoundException : Exception
+    internal class ContentNotFoundException : Exception
     {
         public ContentNotFoundException() : base("The given content was not found.")
         {

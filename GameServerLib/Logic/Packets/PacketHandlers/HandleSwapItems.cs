@@ -1,7 +1,5 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -11,8 +9,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SwapItems;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SWAP_ITEMS;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleSwapItems(Game game, PlayerManager playerManager)
         {
@@ -23,18 +21,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new SwapItemsRequest(data);
-            if (request.slotFrom > 6 || request.slotTo > 6)
+            if (request.SlotFrom > 6 || request.SlotTo > 6)
+            {
                 return false;
-
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            }
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            champion.getInventory().SwapItems(request.slotFrom, request.slotTo);
-            champion.SwapSpells((byte)(request.slotFrom + 6),(byte)(request.slotTo + 6));
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+
+            champion.Inventory.SwapItems(request.SlotFrom, request.SlotTo);
+            champion.SwapSpells((byte)(6 + request.SlotFrom), (byte)(6 + request.SlotTo));
             _game.PacketNotifier.NotifyItemsSwapped(
-                _playerManager.GetPeerInfo(peer).Champion,
-                request.slotFrom,
-                request.slotTo
+                champion,
+                request.SlotFrom,
+                request.SlotTo
             );
 
             return true;

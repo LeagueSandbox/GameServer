@@ -1,4 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
+﻿using System;
 using LeagueSandbox.GameServer.Logic.Enet;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private float _fountainSize;
         private float _healTickTimer;
         private TeamId _team;
-        private Game _game = Program.ResolveDependency<Game>(); 
+        private Game _game = Program.ResolveDependency<Game>();
 
         public Fountain(TeamId team, float x, float y, float size)
         {
@@ -38,21 +38,22 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             foreach (var champion in champions)
             {
                 if (champion.Team != _team)
+                {
                     continue;
+                }
 
-                var hp = champion.GetStats().CurrentHealth;
-                var maxHP = champion.GetStats().HealthPoints.Total;
-                if (hp + maxHP * PERCENT_MAX_HEALTH_HEAL < maxHP)
-                    champion.GetStats().CurrentHealth = hp + maxHP * PERCENT_MAX_HEALTH_HEAL;
-                else
-                    champion.GetStats().CurrentHealth = maxHP;
+                var hp = champion.Stats.CurrentHealth;
+                var maxHp = champion.Stats.HealthPoints.Total;
+                champion.Stats.CurrentHealth = Math.Min(hp + maxHp * PERCENT_MAX_HEALTH_HEAL, maxHp);
 
-                var mp = champion.GetStats().CurrentMana;
-                var maxMp = champion.GetStats().ManaPoints.Total;
-                if (mp + maxMp * PERCENT_MAX_MANA_HEAL < maxMp)
-                    champion.GetStats().CurrentMana = mp + maxMp * PERCENT_MAX_MANA_HEAL;
-                else
-                    champion.GetStats().CurrentMana = maxMp;
+                if ((byte)champion.Stats.ParType > 1)
+                {
+                    continue;
+                }
+
+                var mp = champion.Stats.CurrentMana;
+                var maxMp = champion.Stats.ManaPoints.Total;
+                champion.Stats.CurrentMana = Math.Min(mp + maxMp * PERCENT_MAX_MANA_HEAL, maxMp);
             }
         }
     }

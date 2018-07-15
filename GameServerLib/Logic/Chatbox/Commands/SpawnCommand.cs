@@ -1,12 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Players;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
+using ENet;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -18,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "spawn";
         public override string Syntax => $"{Command} minionsblue minionspurple";
 
-        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;
@@ -34,77 +32,47 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
-            else if (split[1] == "minionsblue")
+            else if (split[1].StartsWith("minions"))
             {
-                var champion = _playerManager.GetPeerInfo(peer).Champion;
-                var random = new Random();
+                split[1] = split[1].Replace("minions", "team_").ToUpper();
+                if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
+                {
+                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ShowSyntax();
+                }
 
-                var caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_BLUE_BOT);
-                var cannon = new Minion(MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_BLUE_BOT);
-                var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_BLUE_BOT);
-                var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_BLUE_BOT);
-
-                const int x = 400;
-                caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                cannon.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                melee.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                super.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-
-                caster.PauseAI(true);
-                cannon.PauseAI(true);
-                melee.PauseAI(true);
-                super.PauseAI(true);
-
-                caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
-                cannon.SetWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
-                melee.SetWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
-                super.SetWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
-
-                caster.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                cannon.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                melee.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-                super.SetVisibleByTeam(Enet.TeamId.TEAM_BLUE, true);
-
-                _game.ObjectManager.AddObject(caster);
-                _game.ObjectManager.AddObject(cannon);
-                _game.ObjectManager.AddObject(melee);
-                _game.ObjectManager.AddObject(super);
+                SpawnMinionsForTeam(team, peer);
             }
-            else if (split[1] == "minionspurple")
+        }
+
+        public void SpawnMinionsForTeam(TeamId team, Peer peer)
+        {
+            var spawnPositions = new Dictionary<TeamId, MinionSpawnPosition>
             {
-                var champion = _playerManager.GetPeerInfo(peer).Champion;
-                var random = new Random();
+                [TeamId.TEAM_BLUE] = MinionSpawnPosition.SPAWN_BLUE_BOT,
+                [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
+            };
 
-                var caster = new Minion(MinionSpawnType.MINION_TYPE_CASTER, MinionSpawnPosition.SPAWN_RED_BOT);
-                var cannon = new Minion(MinionSpawnType.MINION_TYPE_CANNON, MinionSpawnPosition.SPAWN_RED_BOT);
-                var melee = new Minion(MinionSpawnType.MINION_TYPE_MELEE, MinionSpawnPosition.SPAWN_RED_BOT);
-                var super = new Minion(MinionSpawnType.MINION_TYPE_SUPER, MinionSpawnPosition.SPAWN_RED_BOT);
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var random = new Random();
 
-                const int x = 400;
-                caster.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                cannon.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                melee.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
-                super.setPosition(champion.X + random.Next(-x, x), champion.Y + random.Next(-x, x));
+            var minions = new[]
+            {
+                new Minion(MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
+                new Minion(MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
+                new Minion(MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
+                new Minion(MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
+            };
 
-                caster.PauseAI(true);
-                cannon.PauseAI(true);
-                melee.PauseAI(true);
-                super.PauseAI(true);
-
-                caster.SetWaypoints(new List<Vector2> { new Vector2(caster.X, caster.Y), new Vector2(caster.X, caster.Y) });
-                cannon.SetWaypoints(new List<Vector2> { new Vector2(cannon.X, cannon.Y), new Vector2(cannon.X, cannon.Y) });
-                melee.SetWaypoints(new List<Vector2> { new Vector2(melee.X, melee.Y), new Vector2(melee.X, melee.Y) });
-                super.SetWaypoints(new List<Vector2> { new Vector2(super.X, super.Y), new Vector2(super.X, super.Y) });
-
-                caster.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                cannon.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                melee.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-                super.SetVisibleByTeam(Enet.TeamId.TEAM_PURPLE, true);
-
-                _game.ObjectManager.AddObject(caster);
-                _game.ObjectManager.AddObject(cannon);
-                _game.ObjectManager.AddObject(melee);
-                _game.ObjectManager.AddObject(super);
+            const int X = 400;
+            foreach (var minion in minions)
+            {
+                minion.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                minion.PauseAi(true);
+                minion.SetWaypoints(
+                    new List<Vector2> {new Vector2(minion.X, minion.Y), new Vector2(minion.X, minion.Y)});
+                minion.SetVisibleByTeam(team, true);
+                _game.ObjectManager.AddObject(minion);
             }
         }
     }

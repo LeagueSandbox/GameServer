@@ -1,7 +1,5 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -14,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "inhib";
         public override string Syntax => $"{Command}";
 
-        public InhibCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public InhibCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;

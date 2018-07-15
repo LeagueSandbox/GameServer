@@ -1,21 +1,21 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
-    public class Placeable : ObjAIBase
+    public class Placeable : ObjAiBase
     {
         public string Name { get; private set; }
-        public ObjAIBase Owner { get; private set; } // We'll probably want to change this in the future
+        public ObjAiBase Owner { get; private set; } // We'll probably want to change this in the future
 
         public Placeable(
-            ObjAIBase owner,
+            ObjAiBase owner,
             float x,
             float y,
             string model,
             string name,
             uint netId = 0
-        ) : base(model, new Stats(), 40, x, y, 0, netId)
+        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(owner.Team);
 

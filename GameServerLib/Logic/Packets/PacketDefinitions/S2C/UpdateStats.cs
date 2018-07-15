@@ -1,65 +1,83 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using System.IO;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class UpdateStats : BasePacket
     {
-        public UpdateStats(AttackableUnit u, bool partial = true)
-            : base(PacketCmd.PKT_S2C_CharStats)
+        public UpdateStats(Replication r, bool partial = true)
+            : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
-            var stats = new Dictionary<MasterMask, Dictionary<FieldMask, float>>();
+            Write(Environment.TickCount); // syncID
+            Write((byte)1); // updating 1 unit
 
-            if (partial)
-                stats = u.GetStats().GetUpdatedStats();
-            else
-                stats = u.GetStats().GetAllStats();
-            var orderedStats = stats.OrderBy(x => x.Key);
+            var values = r.Values;
 
-            buffer.Write(Environment.TickCount); // syncID
-            buffer.Write((byte)1); // updating 1 unit
-
-            byte masterMask = 0;
-            foreach (var p in orderedStats)
-                masterMask |= (byte)p.Key;
-
-            buffer.Write((byte)masterMask);
-            buffer.Write((uint)u.NetId);
-
-            foreach (var group in orderedStats)
+            uint masterMask = 0;
+            for (var i = 0; i < 6; i++)
             {
-                var orderedGroup = group.Value.OrderBy(x => x.Key);
-                uint fieldMask = 0;
-                byte size = 0;
-                foreach (var stat in orderedGroup)
+                for (var j = 0; j < 32; j++)
                 {
-                    fieldMask |= (uint)stat.Key;
-                    size += u.GetStats().getSize(group.Key, stat.Key);
-                }
-                buffer.Write((uint)fieldMask);
-                buffer.Write((byte)size);
-                foreach (var stat in orderedGroup)
-                {
-                    size = u.GetStats().getSize(group.Key, stat.Key);
-                    switch (size)
+                    var rep = values[i, j];
+                    if (rep == null || !rep.Changed && partial)
                     {
-                        case 1:
-                            buffer.Write((byte)Convert.ToByte(stat.Value));
-                            break;
-                        case 2:
-                            buffer.Write((short)Convert.ToInt16(stat.Value));
-                            break;
-                        case 4:
-                            var bytes = BitConverter.GetBytes(stat.Value);
-                            if (bytes[0] >= 0xFE)
-                                bytes[0] = 0xFD;
-                            buffer.Write((float)BitConverter.ToSingle(bytes, 0));
-                            break;
+                        continue;
                     }
+
+                    masterMask |= 1u << i;
+                    break;
+                }
+            }
+
+            Write((byte)masterMask);
+            Write(r.NetId);
+
+            for (var i = 0; i < 6; i++)
+            {
+                uint fieldMask = 0;
+                var stream = new MemoryStream();
+                var writer = new BinaryWriter(stream);
+                for (var j = 0; j < 32; j++)
+                {
+                    var rep = values[i, j];
+                    if (rep == null || !rep.Changed && partial)
+                    {
+                        continue;
+                    }
+
+                    fieldMask |= 1u << j;
+                    if (rep.IsFloat)
+                    {
+                        var source = BitConverter.GetBytes(rep.Value);
+
+                        if (source[0] >= 0xFE)
+                        {
+                            writer.Write((byte)0xFE);
+                        }
+
+                        writer.Write(source);
+                    }
+                    else
+                    {
+                        var num = rep.Value;
+                        while (num >= 0x80)
+                        {
+                            writer.Write((byte)(num | 0x80));
+                            num >>= 7;
+                        }
+
+                        writer.Write((byte)num);
+                    }
+                }
+
+                var data = stream.ToArray();
+                if (data.Length > 0)
+                {
+                    Write(fieldMask);
+                    Write((byte)data.Length);
+                    Write(data);
                 }
             }
         }

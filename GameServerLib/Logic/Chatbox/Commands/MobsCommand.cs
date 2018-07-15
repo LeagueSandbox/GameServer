@@ -1,13 +1,11 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using System.Linq;
+using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Players;
-using System.Linq;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
+using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -35,9 +33,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            int team;
-            if (!int.TryParse(split[1], out team))
+
+            if (!int.TryParse(split[1], out var team))
+            {
                 return;
+            }
 
             var units = _game.ObjectManager.GetObjects()
                 .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))
@@ -45,10 +45,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             foreach (var unit in units)
             {
-                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.Ping_Danger);
+                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
                 var client = _playerManager.GetPeerInfo(peer);
                 var response = new AttentionPingResponse(client, ping);
-                _game.PacketHandlerManager.broadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
+                _game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2_C);
             }
         }
     }

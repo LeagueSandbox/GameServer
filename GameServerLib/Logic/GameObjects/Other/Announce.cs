@@ -1,6 +1,4 @@
-﻿using LeagueSandbox.GameServer.Core.Logic;
-
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Announce
     {
@@ -28,9 +26,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
     public enum Announces : byte
     {
-        WelcomeToSR = 0x77,
-        ThirySecondsToMinionsSpawn = 0x78,
-        MinionsHaveSpawned = 0x7F,
-        MinionsHaveSpawned2 = 0x76
+        WELCOME_TO_SR = 0x77,
+        THIRY_SECONDS_TO_MINIONS_SPAWN = 0x78,
+        MINIONS_HAVE_SPAWNED = 0x7F,
+        MINIONS_HAVE_SPAWNED2 = 0x76
     }
 }

@@ -1,8 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -14,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "kill";
         public override string Syntax => $"{Command} minions";
 
-        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
             : base(chatCommandManager)
         {
             _game = game;
@@ -35,9 +33,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 var objects = _game.ObjectManager.GetObjects();
                 foreach (var o in objects)
                 {
-                    if (o.Value is Minion)
+                    if (o.Value is Minion minion)
                     {
-                        (o.Value as Minion).die(_playerManager.GetPeerInfo(peer).Champion); // :(
+                        minion.Die(_playerManager.GetPeerInfo(peer).Champion); // :(
                     }
                 }
             }

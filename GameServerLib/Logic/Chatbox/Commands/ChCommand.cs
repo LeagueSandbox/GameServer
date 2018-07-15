@@ -1,8 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Players;
-using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -31,6 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
             var currentChampion = _playerManager.GetPeerInfo(peer).Champion;
+
             var c = new Champion(
                 split[1],
                 (uint)_playerManager.GetPeerInfo(peer).UserId,
@@ -39,10 +38,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 _playerManager.GetClientInfoByChampion(currentChampion),
                 currentChampion.NetId
             );
-            c.setPosition(
+            c.SetPosition(
                 _playerManager.GetPeerInfo(peer).Champion.X,
                 _playerManager.GetPeerInfo(peer).Champion.Y
             );
+
             c.Model = split[1]; // trigger the "modelUpdate" proc
             c.SetTeam(_playerManager.GetPeerInfo(peer).Champion.Team);
             _game.ObjectManager.RemoveObject(_playerManager.GetPeerInfo(peer).Champion);

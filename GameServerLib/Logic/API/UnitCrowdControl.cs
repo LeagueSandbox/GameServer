@@ -1,46 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LeagueSandbox.GameServer.Logic.API
+﻿namespace LeagueSandbox.GameServer.Logic.API
 {
     public enum CrowdControlType
     {
-        Airbone, Blind, Disarm, Ground, Invulnerable, Nearsight, Root, Silence, Stasis, Stun, Suppression, Snare
+        AIRBORNE, BLIND, DISARM, GROUND, INVULNERABLE, NEARSIGHT, ROOT, SILENCE, STASIS, STUN, SUPPRESSION, SNARE
     }
 
     public class UnitCrowdControl
     {
-        CrowdControlType _type;
-        float _duration;
-        float _currentTime = 0;
-        bool _remove = false;
+        public CrowdControlType Type { get; private set; }
+        public float Duration { get; private set; }
+        public float CurrentTime { get; private set; }
+        public bool IsRemoved { get; private set; }
+
         public UnitCrowdControl(CrowdControlType type, float duration = -1)
         {
-            _type = type;
-            _duration = duration;
+            Type = type;
+            Duration = duration;
         }
+
         public void Update(float diff)
         {
-            _currentTime += diff / 1000.0f;
-            if (_currentTime >= _duration && !_remove && _duration != -1)
+            CurrentTime += diff / 1000.0f;
+            if (CurrentTime >= Duration && !IsRemoved && Duration != -1)
             {
-                _remove = true;
+                IsRemoved = true;
             }
         }
-        public void SetForRemoval()
-        {
-            _remove = true;
-        }
-        public bool IsDead()
-        {
-            return _remove;
-        }
+
         public bool IsTypeOf(CrowdControlType type)
         {
-            return type == _type;
+            return type == Type;
         }
     }
 }

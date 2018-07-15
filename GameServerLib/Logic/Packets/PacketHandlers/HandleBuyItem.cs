@@ -1,7 +1,7 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BuyItemReq;
-        public override Channel PacketChannel => Channel.CHL_C2S;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BUY_ITEM_REQ;
+        public override Channel PacketChannel => Channel.CHL_C2_S;
 
         public HandleBuyItem(Game game, ItemManager itemManager, PlayerManager playerManager)
         {
@@ -27,13 +27,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var request = new BuyItemRequest(data);
 
-            var itemTemplate = _itemManager.SafeGetItemType(request.id);
+            var itemTemplate = _itemManager.SafeGetItemType(request.Id);
             if (itemTemplate == null)
+            {
                 return false;
+            }
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            var stats = champion.GetStats();
-            var inventory = champion.getInventory();
+            var stats = champion.Stats;
+            var inventory = champion.GetInventory();
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;
@@ -49,7 +51,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 i = inventory.AddItem(itemTemplate);
 
                 if (i == null)
-                { // Slots full
+                {
+                    // Slots full
                     return false;
                 }
                 else
@@ -60,10 +63,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             else
             {
                 foreach (var instance in recipeParts)
+                {
                     price -= instance.ItemType.TotalPrice;
+                }
 
                 if (stats.Gold < price)
+                {
                     return false;
+                }
 
                 foreach (var instance in recipeParts)
                 {
@@ -83,6 +90,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(champion, i);
+            
+            var slot = inventory.GetItemSlot(i);
+            champion.Spells[(short)(slot + 6)] = new Spell(champion,i.ItemType.SpellName,(byte)(slot + 6));
+            champion.Stats.SetSpellEnabled((byte)(slot + 6), true);
 
             return true;
         }

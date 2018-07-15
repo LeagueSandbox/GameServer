@@ -1,10 +1,9 @@
-﻿using System;
-using LeagueSandbox.GameServer.Core.Logic;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logic.Maps;
-using System.Collections.Generic;
-using System.Diagnostics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class CollisionHandler
     {
@@ -39,7 +38,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                 if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
                 {
-                    obj.onCollision(null);
+                    obj.OnCollision(null);
                 }
 
                 foreach (var obj2 in _objects)
@@ -51,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
                     if (obj.IsCollidingWith(obj2))
                     {
-                        obj.onCollision(obj2);
+                        obj.OnCollision(obj2);
                     }
                 }
             }
