@@ -457,9 +457,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 {
                     RefreshWaypoints();
                     bool isValid = (TargetUnit is Minion) || (TargetUnit is Monster) || (TargetUnit is Champion);
-                    if (ai != null)
+                    if (isValid)
                     {
-                        _isNextAutoCrit = random.Next(0, 100) < Stats.CriticalChance.Total * 100;
+                        _isNextAutoCrit = new Random().Next(0, 100) < Stats.CriticalChance.Total * 100;
                     }
                     else
                     {
@@ -566,23 +566,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
         }
 
-        public void RestoreHealth(float healValue) // used for healing.
-        {
-            if (HasBuffGameScriptActive("GrievousWounds", "GrievousWounds"))
-            {
-                healValue = healValue * 0.5f; // if Grievous Wounds is active, cut heal value in half. 
-            }
-            float newHealth = GetStats().CurrentHealth + healValue;
-            float maxHealth = GetStats().HealthPoints.Total;
-            if (newHealth > maxHealth)
-            {
-                GetStats().CurrentHealth = maxHealth;
-            }
-            else
-            {
-                GetStats().CurrentHealth = newHealth;
-            }
-        }
         public override void OnCollision(GameObject collider)
         {
             base.OnCollision(collider);

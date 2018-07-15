@@ -244,17 +244,17 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_C_02_A", "ChaosTurretNormal", 12118.0f, 12876.0f, TeamId.TEAM_PURPLE,
                 TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_OrderTurretShrine_A", "OrderTurretShrine", -236.05f, -53.32f, TeamId.TEAM_BLUE,
-                TurretType.FountainTurret, GetTurretItems(TurretType.FountainTurret)));
+                TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_ChaosTurretShrine_A", "ChaosTurretShrine", 14157.0f, 14456.0f, TeamId.TEAM_PURPLE,
-                TurretType.FountainTurret, GetTurretItems(TurretType.FountainTurret)));
+                TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_L_03_A", "OrderTurretNormal", 574.66f, 10220.47f, TeamId.TEAM_BLUE,
-                TurretType.OUTER_TURRET, _turretItems[TurretType.OUTER_TURRET]));
+                TurretType.OUTER_TURRET, GetTurretItems(TurretType.OUTER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_L_02_A", "OrderTurretNormal2", 1106.26f, 6485.25f, TeamId.TEAM_BLUE,
                 TurretType.INNER_TURRET, GetTurretItems(TurretType.INNER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T1_C_06_A", "OrderTurretDragon", 802.81f, 4052.36f, TeamId.TEAM_BLUE,
                 TurretType.INHIBITOR_TURRET, GetTurretItems(TurretType.INHIBITOR_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_03_A", "ChaosTurretWorm", 3911.0f, 13654.0f, TeamId.TEAM_PURPLE,
-                TurretType.OUTER_TURRET, _turretItems[TurretType.OUTER_TURRET]));
+                TurretType.OUTER_TURRET, GetTurretItems(TurretType.OUTER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_02_A", "ChaosTurretWorm2", 7536.0f, 13190.0f, TeamId.TEAM_PURPLE,
                 TurretType.INNER_TURRET, GetTurretItems(TurretType.INNER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret("Turret_T2_L_01_A", "ChaosTurretGiant", 10261.0f, 13465.0f, TeamId.TEAM_PURPLE,

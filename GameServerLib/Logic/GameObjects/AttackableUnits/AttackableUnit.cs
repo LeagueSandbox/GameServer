@@ -1,11 +1,4 @@
-<<<<<<< HEAD
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-=======
-﻿using System;
->>>>>>> Replication-Merger
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
@@ -198,10 +191,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
 
             ApiEventManager.OnDamageTaken.Publish(this);
-<<<<<<< HEAD
-
-=======
->>>>>>> Replication-Merger
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
             if (!IsDead && Stats.CurrentHealth <= 0)
@@ -238,20 +227,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             TakeDamage(attacker, damage, type, source, text);
         }
 
-<<<<<<< HEAD
-        public virtual void TakeDamageBySpell(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, Spell spell)
-        {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
-            }
-
-            ApiEventManager.OnSpellHit.Publish(this, spell);
-
-            TakeDamage(attacker, damage, type, source, text);
-=======
         public bool GetIsTargetableToTeam(TeamId team)
         {
             if (!Stats.IsTargetable)
@@ -291,7 +266,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
                 }
             }
->>>>>>> Replication-Merger
         }
     }
 

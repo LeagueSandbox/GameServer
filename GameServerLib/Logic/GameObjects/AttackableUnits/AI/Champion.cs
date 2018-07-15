@@ -290,11 +290,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 _canRecall = false;
             }
 
-            if (this.isMovementUpdated())
+            if (this.IsMovementUpdated())
             {
                 if (IsRecalling)
                 {
-                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
                     ApiFunctionManager.RemoveParticle(_addParticle);
                     IsRecalling = false;
                 }
@@ -379,11 +379,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
-        public void Recall(ObjAIBase owner, float timer = 8.0f)
+        public void Recall(ObjAiBase owner, float timer = 8.0f)
         {
             var spawnPos = GetRespawnPosition();
             IsRecalling = true;
-            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
+            _visualBuff = ApiFunctionManager.AddBuffHudVisual("Recall", timer, 1, this);
             _addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
             _canRecall = true;
 

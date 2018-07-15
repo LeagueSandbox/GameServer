@@ -81,12 +81,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             _spellGameScript.OnDeactivate(Owner);
         }
 
-        // TODO: Make a better way to deactivate spells; this is placeholder for activated items.
-        public void DeactivateSpell()
-        {
-            spellGameScript.OnDeactivate(Owner);
-        }
-
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>

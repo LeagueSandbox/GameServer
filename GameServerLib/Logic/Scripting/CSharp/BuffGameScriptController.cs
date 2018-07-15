@@ -54,12 +54,11 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             return _remove;
         }
 
-        public AttackableUnit GetUnit() { return _unit; }
-        public Spell GetOwnerSpell() { return _ownerSpell; }
-        public BuffGameScript GetBuffGameScript() { return _gameScript; }
-        public String GetBuffNamespace() { return _buffNamespace; }
-        public String GetBuffClass() { return _buffClass; }
-        public bool IsBuffSame(String buffNamespace, String buffClass)
+        public AttackableUnit GetUnit() { return Unit; }
+        public Spell GetOwnerSpell() { return OwnerSpell; }
+        public IBuffGameScript GetBuffGameScript() { return GameScript; }
+        public String GetBuffNamespace() { return BuffNamespace; }
+        public String GetBuffClass() { return BuffClass; }
 
         public bool IsBuffSame(string buffNamespace, string buffClass)
         {
