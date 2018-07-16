@@ -19,6 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         private Vector2 _rectangleCornerEnd2;
 
         public Laser(
+            Game game,
             float x,
             float y,
             int collisionRadius,
@@ -26,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             Target target,
             Spell originSpell,
             int flags,
-            bool affectAsCastIsOver) : base(x, y, collisionRadius, owner, target, originSpell, 0, "", flags)
+            bool affectAsCastIsOver) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, "", flags)
         {
             CreateRectangle(new Target(x, y), target);
             _affectAsCastIsOver = affectAsCastIsOver;

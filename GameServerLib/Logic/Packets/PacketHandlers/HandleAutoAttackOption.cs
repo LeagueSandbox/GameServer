@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_AUTO_ATTACK_OPTION;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleAutoAttackOption(Game game, ChatCommandManager chatCommandManager)
+        public HandleAutoAttackOption(Game game)
         {
             _game = game;
-            _chatCommandManager = chatCommandManager;
+            _chatCommandManager = game.GetChatCommandManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

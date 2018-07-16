@@ -10,10 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "xp";
         public override string Syntax => $"{Command} xp";
 
-        public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public XpCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _playerManager = playerManager;
+            _playerManager = game.GetPlayerManager();
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

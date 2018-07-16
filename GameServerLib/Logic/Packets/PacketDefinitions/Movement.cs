@@ -27,9 +27,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
             }
         }
 
-        public static byte[] EncodeWaypoints(List<Vector2> waypoints)
+        public static byte[] EncodeWaypoints(Game game, List<Vector2> waypoints)
         {
-            var game = Program.ResolveDependency<Game>();
             var mapSize = game.Map.NavGrid.GetSize();
             var numCoords = waypoints.Count * 2;
 

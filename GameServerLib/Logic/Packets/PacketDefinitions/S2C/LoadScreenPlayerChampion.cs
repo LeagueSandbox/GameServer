@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class LoadScreenPlayerChampion : Packet
     {
-        public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p)
-            : base(PacketCmd.PKT_S2C_LOAD_HERO)
+        public LoadScreenPlayerChampion(Game game, Pair<uint, ClientInfo> p)
+            : base(game, PacketCmd.PKT_S2C_LOAD_HERO)
         {
             var player = p.Item2;
             Write(player.UserId);

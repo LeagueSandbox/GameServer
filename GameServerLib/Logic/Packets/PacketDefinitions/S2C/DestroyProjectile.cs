@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class DestroyProjectile : BasePacket
     {
-        public DestroyProjectile(Projectile p)
-            : base(PacketCmd.PKT_S2C_DESTROY_PROJECTILE, p.NetId)
+        public DestroyProjectile(Game game, Projectile p)
+            : base(game, PacketCmd.PKT_S2C_DESTROY_PROJECTILE, p.NetId)
         {
 
         }

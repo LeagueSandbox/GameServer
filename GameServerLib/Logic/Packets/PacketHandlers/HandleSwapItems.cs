@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SWAP_ITEMS;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleSwapItems(Game game, PlayerManager playerManager)
+        public HandleSwapItems(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AddBuff : BasePacket
     {
-        public AddBuff(AttackableUnit u, AttackableUnit source, int stacks, float time, BuffType buffType, string name, byte slot)
-            : base(PacketCmd.PKT_S2C_ADD_BUFF, u.NetId)
+        public AddBuff(Game game, AttackableUnit u, AttackableUnit source, int stacks, float time, BuffType buffType, string name, byte slot)
+            : base(game, PacketCmd.PKT_S2C_ADD_BUFF, u.NetId)
         {
             Write((byte)slot); //Slot
             Write((byte)buffType); //Type

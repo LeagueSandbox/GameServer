@@ -32,4 +32,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("0.1.*")]
+#pragma warning disable CS7035 // The specified version string does not conform to the recommended format - major.minor.build.revision
 [assembly: AssemblyFileVersion("0.1.*")]
+#pragma warning restore CS7035 // The specified version string does not conform to the recommended format - major.minor.build.revision

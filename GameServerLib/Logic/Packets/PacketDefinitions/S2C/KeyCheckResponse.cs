@@ -4,8 +4,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class KeyCheckResponse : Packet
     {
-        public KeyCheckResponse(long userId, int playerNo)
-            : base(PacketCmd.PKT_KEY_CHECK)
+        public KeyCheckResponse(Game game, long userId, int playerNo)
+            : base(game, PacketCmd.PKT_KEY_CHECK)
         {
             Write((byte)0x2A);
             Write((byte)0);

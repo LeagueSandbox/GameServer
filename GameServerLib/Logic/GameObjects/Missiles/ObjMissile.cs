@@ -2,8 +2,8 @@
 {
     public class ObjMissile : GameObject
     {
-        public ObjMissile(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) :
-            base(x, y, collisionRadius, visionRadius, netId)
+        public ObjMissile(Game game,float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) :
+            base(game, x, y, collisionRadius, visionRadius, netId)
         {
         }
     }

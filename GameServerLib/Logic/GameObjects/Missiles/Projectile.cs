@@ -17,9 +17,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
         protected Spell _originSpell;
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Logger _logger;
 
         public Projectile(
+            Game game,
             float x,
             float y,
             int collisionRadius,
@@ -30,8 +31,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             string projectileName,
             int flags = 0,
             uint netId = 0
-        ) : base(x, y, collisionRadius, 0, netId)
+        ) : base(game, x, y, collisionRadius, 0, netId)
         {
+            _logger = game.GetLogger();
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;
@@ -125,33 +127,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
                     return;
                 }
 
-                var m = unit as Minion;
-                if (m != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
+                if (unit is Minion m && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
                 {
                     return;
                 }
 
-                var p = unit as Placeable;
-                if (p != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
+                if (unit is Placeable p && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
                 {
                     return;
                 }
 
-                var t = unit as BaseTurret;
-                if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
+                if (unit is BaseTurret t && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
                 {
                     return;
                 }
 
-                var i = unit as Inhibitor;
-                var n = unit as Nexus;
-                if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
+                if ((unit is Inhibitor i || unit is Nexus n) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
                 {
                     return;
                 }
 
-                var c = unit as Champion;
-                if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
+                if (unit is Champion c && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
                 {
                     return;
                 }
@@ -165,8 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             }
             else
             {
-                var u = Target as AttackableUnit;
-                if (u != null)
+                if (Target is AttackableUnit u)
                 { // Autoguided spell
                     if (_originSpell != null)
                     {
@@ -174,8 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
                     }
                     else
                     { // auto attack
-                        var ai = Owner as ObjAiBase;
-                        if (ai != null)
+                        if (Owner is ObjAiBase ai)
                         {
                             ai.AutoAttackHit(u);
                         }
@@ -189,7 +183,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         {
             if (Target != null && !Target.IsSimpleTarget)
             {
-                (Target as GameObject).DecrementAttackerCount();
+                (Target as GameObject)?.DecrementAttackerCount();
             }
 
             Owner.DecrementAttackerCount();

@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var request = new ViewRequest(data);
-            var answer = new ViewResponse(request);
+            var answer = new ViewResponse(_game, request);
             if (request.RequestNo == 0xFE)
             {
                 answer.SetRequestNo(0xFF);

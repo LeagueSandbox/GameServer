@@ -7,15 +7,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetAnimation : BasePacket
     {
-        public SetAnimation(AttackableUnit u, List<string> animationPairs)
-            : base(PacketCmd.PKT_S2C_SET_ANIMATION, u.NetId)
+        public SetAnimation(Game game, AttackableUnit u, List<string> animationPairs)
+            : base(game, PacketCmd.PKT_S2C_SET_ANIMATION, u.NetId)
         {
             Write((byte)(animationPairs.Count / 2));
 
-            for (var i = 0; i < animationPairs.Count; i++)
+            foreach (var t in animationPairs)
             {
-                Write(animationPairs[i].Length);
-                Write(animationPairs[i]);
+                Write(t.Length);
+                Write(t);
             }
         }
     }

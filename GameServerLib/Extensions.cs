@@ -146,7 +146,6 @@ namespace LeagueSandbox.GameServer
 
     public static class CustomConvert
     {
-        private static PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
         public static TeamId ToTeamId(int i)
         {
             var dic = new Dictionary<int, TeamId>

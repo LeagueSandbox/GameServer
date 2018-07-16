@@ -14,11 +14,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleEmotion(Game game, PlayerManager playerManager, Logger logger)
+        public HandleEmotion(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
-            _logger = logger;
+            _playerManager = game.GetPlayerManager();
+            _logger = game.GetLogger();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
             }
 
-            var response = new EmotionPacketResponse(emotion.Id, emotion.NetId);
+            var response = new EmotionPacketResponse(_game, emotion.Id, emotion.NetId);
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2_C);
         }
     }

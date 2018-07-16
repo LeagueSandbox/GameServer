@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private bool _turretHpUpdated;
 
         public LaneTurret(
+            Game game,
             string name,
             float x = 0,
             float y = 0,
@@ -25,14 +26,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
             uint netId = 0
-        ) : base(name, "", x, y, team, netId)
+        ) : base(game, name, "", x, y, team, netId)
         {
             Type = type;
             if (items != null)
             {
                 foreach (var item in items)
                 {
-                    var itemTemplate = _ıtemManager.SafeGetItemType(item);
+                    var itemTemplate = _itemManager.SafeGetItemType(item);
                     if (itemTemplate == null)
                     {
                         continue;

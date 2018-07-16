@@ -18,10 +18,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleMove(Game game, PlayerManager playerManager)
+        public HandleMove(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

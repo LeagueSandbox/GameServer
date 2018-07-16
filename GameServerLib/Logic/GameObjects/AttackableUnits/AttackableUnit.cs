@@ -28,13 +28,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
         }
 
-        protected Logger _logger = Program.ResolveDependency<Logger>();
+        protected Logger _logger;
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
         public Replication Replication { get; protected set; }
 
         public AttackableUnit(
+            Game game,
             string model,
             Stats.Stats stats,
             int collisionRadius = 40,
@@ -42,9 +43,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(x, y, collisionRadius, visionRadius, netId)
+        ) : base(game, x, y, collisionRadius, visionRadius, netId)
 
         {
+            _logger = game.GetLogger();
             Stats = stats;
             Model = model;
             CollisionRadius = 40;

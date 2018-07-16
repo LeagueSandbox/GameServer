@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EXIT;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleExit(Game game, PlayerManager playerManager)
+        public HandleExit(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

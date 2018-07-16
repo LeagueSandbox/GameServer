@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using LeagueSandbox.GameServer.Logic.Handlers;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public class ChatCommandManager
     {
-        private readonly IHandlersProvider _handlersProvider;
+        private readonly Game _game;
 
         public string CommandStarterCharacter = ".";
 
@@ -16,7 +19,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
         {
-            var game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
             var fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
@@ -25,46 +27,65 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
                 case DebugMsgType.ERROR: // Tag: [ERROR], Color: Red
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.INFO: // Tag: [INFO], Color: Green
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[LS INFO]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAX: // Tag: [SYNTAX], Color: Blue
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAXERROR: // Tag: [ERROR], Color: Red
                     formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append("Incorrect command syntax");
-                    game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.NORMAL: // No tag, no format
-                    game.PacketNotifier.NotifyDebugMessage(message);
+                    _game.PacketNotifier.NotifyDebugMessage(message);
                     break;
             }
         }
 
-        public ChatCommandManager(IHandlersProvider handlersProvider)
+        public ChatCommandManager(Game game)
         {
-            _handlersProvider = handlersProvider;
+            _game = game;
             _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
         }
 
         public void LoadCommands()
         {
             //TODO: cyclic dependency
-            var game = Program.ResolveDependency<Game>();
-            if (!game.Config.ChatCheatsEnabled)
+            if (!_game.Config.ChatCheatsEnabled)
             {
                 return;
             }
 
             var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
-            _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(loadFrom);
+            _chatCommandsDictionary = GetAllChatCommandHandlers(loadFrom, _game);
+        }
+
+        internal SortedDictionary<string, IChatCommand> GetAllChatCommandHandlers(Assembly[] loadFromArray, Game game)
+        {
+            var commands = new List<IChatCommand>();
+            var args = new object[] {this, game};
+            foreach (var loadFrom in loadFromArray)
+            {
+                commands.AddRange(loadFrom.GetTypes()
+                    .Where(t => t.BaseType == typeof(ChatCommandBase))
+                    .Select(t => (IChatCommand) Activator.CreateInstance(t, args)));
+            }
+            var commandsOutput = new SortedDictionary<string, IChatCommand>();
+
+            foreach (var converter in commands)
+            {
+                commandsOutput.Add(converter.Command, converter);
+            }
+
+            return commandsOutput;
         }
 
         public bool AddCommand(IChatCommand command)
