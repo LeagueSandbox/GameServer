@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AttachMinimapIcon : BasePacket
     {
-        public AttachMinimapIcon(AttackableUnit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
-            : base(PacketCmd.PKT_S2C_ATTACH_MINIMAP_ICON)
+        public AttachMinimapIcon(Game game, AttackableUnit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
+            : base(game, PacketCmd.PKT_S2C_ATTACH_MINIMAP_ICON)
         {
             WriteNetId(unit);
             Write((byte)unk1);

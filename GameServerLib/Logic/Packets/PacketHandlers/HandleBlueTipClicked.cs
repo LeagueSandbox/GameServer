@@ -15,17 +15,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_BLUE_TIP_CLICKED;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleBlueTipClicked(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager)
+        public HandleBlueTipClicked(Game game)
         {
             _game = game;
-            _chatCommandManager = chatCommandManager;
-            _playerManager = playerManager;
+            _chatCommandManager = game.GetChatCommandManager();
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var blueTipClicked = new BlueTipClicked(data);
-            var removeBlueTip = new BlueTip(
+            var removeBlueTip = new BlueTip(_game,
                 "",
                 "",
                 "",

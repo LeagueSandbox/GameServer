@@ -4,11 +4,15 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public static class Benchmark
+    public class Benchmark
     {
-        private static IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private static Logger _logger = Program.ResolveDependency<Logger>();
-        public static void StartTiming(string label)
+        public Benchmark(Game game)
+        {
+            _logger = game.GetLogger();
+        }
+        private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
+        private Logger _logger;
+        public void StartTiming(string label)
         {
             var stopwatch = new Stopwatch();
             _map[label] = stopwatch;
@@ -16,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             stopwatch.Start();
         }
 
-        public static void EndTiming(string label)
+        public void EndTiming(string label)
         {
             var stopwatch = _map[label];
             stopwatch.Stop();
@@ -27,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             _map.Remove(label);
         }
 
-        public static void Log(string text)
+        public void Log(string text)
         {
             var t = Task.Factory.StartNew(() => _logger.LogCoreInfo(text));
         }

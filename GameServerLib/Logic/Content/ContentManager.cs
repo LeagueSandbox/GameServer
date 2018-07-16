@@ -8,7 +8,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Logger _logger;
+        private Game _game;
+
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
@@ -24,8 +26,11 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Dictionary<string, Dictionary<string, List<string>>> _content;
         public string GameModeName { get; }
 
-        private ContentManager(string gameModeName)
+        private ContentManager(Game game, string gameModeName)
         {
+            _game = game;
+            _logger = game.GetLogger();
+
             GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
@@ -201,7 +206,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 return _spellData[spellName];
             }
 
-            _spellData[spellName] = new SpellData();
+            _spellData[spellName] = new SpellData(_game);
             _spellData[spellName].Load(spellName);
             return _spellData[spellName];
         }
@@ -212,14 +217,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return _charData[charName];
             }
-            _charData[charName] = new CharData();
+            _charData[charName] = new CharData(_game);
             _charData[charName].Load(charName);
             return _charData[charName];
         }
 
-        public static ContentManager LoadGameMode(string gameModeName)
+        public static ContentManager LoadGameMode(Game game, string gameModeName)
         {
-            var contentManager = new ContentManager(gameModeName);
+            var contentManager = new ContentManager(game, gameModeName);
 
             var gameModeConfigurationPath = $"Content/GameMode/{gameModeName}/GameMode.json";
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));

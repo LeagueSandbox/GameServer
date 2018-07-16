@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ViewResponse : Packet
     {
-        public ViewResponse(ViewRequest request)
-            : base(PacketCmd.PKT_S2C_VIEW_ANS)
+        public ViewResponse(Game game, ViewRequest request)
+            : base(game, PacketCmd.PKT_S2C_VIEW_ANS)
         {
             Write(request.NetId);
         }

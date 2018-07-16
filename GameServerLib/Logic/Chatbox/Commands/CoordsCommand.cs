@@ -11,11 +11,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "coords";
         public override string Syntax => $"{Command}";
 
-        public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public CoordsCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _logger = logger;
-            _playerManager = playerManager;
+            _logger = game.GetLogger();
+            _playerManager = game.GetPlayerManager();
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

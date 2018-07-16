@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class BeginAutoAttack : BasePacket
     {
-        public BeginAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical)
-            : base(PacketCmd.PKT_S2C_BEGIN_AUTO_ATTACK, attacker.NetId)
+        public BeginAutoAttack(Game game, AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical)
+            : base(game, PacketCmd.PKT_S2C_BEGIN_AUTO_ATTACK, attacker.NetId)
         {
             WriteNetId(attacked);
             Write((byte)0x80); // extraTime
@@ -23,10 +23,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             Write((byte)0x80); // not sure what this is, but it should be correct (or maybe attacked x z y?) - 4.18
             Write((byte)0x01);
-            Write(MovementVector.TargetXToNormalFormat(attacked.X));
+            Write(MovementVector.TargetXToNormalFormat(game, attacked.X));
             Write((byte)0x80);
             Write((byte)0x01);
-            Write(MovementVector.TargetYToNormalFormat(attacked.Y));
+            Write(MovementVector.TargetYToNormalFormat(game, attacked.Y));
             Write((byte)0xCC);
             Write((byte)0x35);
             Write((byte)0xC4);

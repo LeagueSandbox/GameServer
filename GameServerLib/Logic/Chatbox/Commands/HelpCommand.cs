@@ -6,21 +6,21 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
     {
         private const string COMMAND_PREFIX = "<font color =\"#E175FF\"><b>";
         private const string COMMAND_SUFFIX = "</b></font>, ";
-        private readonly Game _game;
 
         public override string Command => "help";
         public override string Syntax => $"{Command}";
 
-        public HelpCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        public HelpCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
+
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            if (!_game.Config.ChatCheatsEnabled)
+            if (!Game.Config.ChatCheatsEnabled)
             {
-                var msg = "Chat commands are disabled in this game.";
+                var msg = "[LS] Chat commands are disabled in this game.";
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);
                 return;
             }

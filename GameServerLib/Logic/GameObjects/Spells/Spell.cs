@@ -21,7 +21,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
     public class Spell
     {
         public static bool CooldownsEnabled;
-        public static bool ManaCostsEnabled;
+        public static  bool ManaCostsEnabled;
+
         public Champion Owner { get; private set; }
         public short Level { get; private set; }
         public byte Slot { get; set; }
@@ -43,28 +44,23 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public float X2 { get; private set; }
         public float Y2 { get; private set; }
 
-        private static CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
-        private static Logger _logger = Program.ResolveDependency<Logger>();
-        private static Game _game = Program.ResolveDependency<Game>();
+        private CSharpScriptEngine _scriptEngine;
+        private Game _game;
+        protected NetworkIdManager _networkIdManager;
 
         private IGameScript _spellGameScript;
-        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
 
         public SpellData SpellData { get; private set; }
 
-        static Spell()
-        {
-            CooldownsEnabled = _game.Config.CooldownsEnabled;
-            ManaCostsEnabled = _game.Config.ManaCostsEnabled;
-        }
-
-        public Spell(Champion owner, string spellName, byte slot)
+        public Spell(Game game, Champion owner, string spellName, byte slot)
         {
             Owner = owner;
             SpellName = spellName;
             Slot = slot;
-            SpellData = _game.Config.ContentManager.GetSpellData(spellName);
-            _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            _game = game;
+            SpellData = game.Config.ContentManager.GetSpellData(spellName);
+            _scriptEngine = game.GetScriptEngine();
+            _networkIdManager = game.GetNetworkManager();
 
             //Set the game script for the spell
             _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
@@ -116,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 FinishCasting();
             }
 
-            var response = new CastSpellResponse(this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            var response = new CastSpellResponse(_game, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2_C);
             return true;
         }
@@ -222,6 +218,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
         {
             var p = new Projectile(
+                _game,
                 Owner.X,
                 Owner.Y,
                 (int) SpellData.LineWidth,
@@ -242,6 +239,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public void AddProjectileTarget(string nameMissile, Target target, bool isServerOnly = false)
         {
             var p = new Projectile(
+                _game,
                 Owner.X,
                 Owner.Y,
                 (int)SpellData.LineWidth,
@@ -262,6 +260,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public void AddLaser(float toX, float toY, bool affectAsCastIsOver = true)
         {
             var l = new Laser(
+                _game,
                 Owner.X,
                 Owner.Y,
                 (int)SpellData.LineWidth,

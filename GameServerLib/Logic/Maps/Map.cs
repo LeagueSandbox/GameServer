@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     public class Map
     {
         protected Game _game;
-        protected static Logger _logger = Program.ResolveDependency<Logger>();
+        protected static Logger _logger;
 
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }
@@ -21,9 +21,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public Map(Game game)
         {
             _game = game;
+            _logger = game.GetLogger();
             Id = _game.Config.GameConfig.Map;
             var path = Path.Combine(
-                Program.ExecutingDirectory,
+                ServerContext.ExecutingDirectory,
                 "Content",
                 "Data",
                 _game.Config.ContentManager.GameModeName,
@@ -43,7 +44,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             AnnouncerEvents = new List<Announce>();
-            CollisionHandler = new CollisionHandler(this);
+            CollisionHandler = new CollisionHandler(_game, this);
             MapGameScript = GetMapScript(Id);
         }
 
@@ -66,10 +67,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             if (!dict.ContainsKey(mapId))
             {
-                return new SummonersRift();
+                return new SummonersRift(_game);
             }
 
-            return (IMapGameScript)Activator.CreateInstance(dict[mapId]);
+            return (IMapGameScript)Activator.CreateInstance(dict[mapId], _game);
         }
 
         public void Init()

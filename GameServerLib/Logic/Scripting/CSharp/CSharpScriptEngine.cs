@@ -13,7 +13,12 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
     {
         private Assembly _scriptAssembly;
 
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Logger _logger;
+
+        public CSharpScriptEngine(Game game)
+        {
+            _logger = game.GetLogger();
+        }
 
         public bool LoadSubdirectoryScripts(string folder)
         {

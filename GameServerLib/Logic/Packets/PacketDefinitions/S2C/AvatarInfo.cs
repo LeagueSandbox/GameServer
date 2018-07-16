@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AvatarInfo : BasePacket
     {
-        public AvatarInfo(ClientInfo player)
-            : base(PacketCmd.PKT_S2C_AVATAR_INFO, player.Champion.NetId)
+        public AvatarInfo(Game game, ClientInfo player)
+            : base(game, PacketCmd.PKT_S2C_AVATAR_INFO, player.Champion.NetId)
         {
             var runesRequired = 30;
             foreach (var rune in player.Champion.RuneList.Runes)

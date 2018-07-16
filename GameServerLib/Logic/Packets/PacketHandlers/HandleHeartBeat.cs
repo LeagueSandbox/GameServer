@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_HEART_BEAT;
         public override Channel PacketChannel => Channel.CHL_GAMEPLAY;
 
-        public HandleHeartBeat(Logger logger, PlayerManager playerManager)
+        public HandleHeartBeat(Game game)
         {
-            _logger = logger;
-            _playerManager = playerManager;
+            _logger = game.GetLogger();
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

@@ -26,21 +26,21 @@ namespace LeagueSandbox.GameServer.Logic
         {
         }
 
-        public static Config LoadFromJson(string json)
+        public static Config LoadFromJson(Game game, string json)
         {
             var result = new Config();
-            result.LoadConfig(json);
+            result.LoadConfig(game, json);
             return result;
         }
 
-        public static Config LoadFromFile(string path)
+        public static Config LoadFromFile(Game game, string path)
         {
             var result = new Config();
-            result.LoadConfig(File.ReadAllText(path));
+            result.LoadConfig(game, File.ReadAllText(path));
             return result;
         }
 
-        private void LoadConfig(string json)
+        private void LoadConfig(Game game, string json)
         {
             Players = new Dictionary<string, PlayerConfig>();
 
@@ -67,11 +67,11 @@ namespace LeagueSandbox.GameServer.Logic
             MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED");
 
             // Read the game configuration
-            var game = data.SelectToken("game");
-            GameConfig = new GameConfig(game);
+            var gameToken = data.SelectToken("game");
+            GameConfig = new GameConfig(gameToken);
 
             // Read spawns info
-            ContentManager = ContentManager.LoadGameMode(GameConfig.GameMode);
+            ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode);
             var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
             var mapData = JObject.Parse(File.ReadAllText(mapPath));
             var spawns = mapData.SelectToken("spawns");

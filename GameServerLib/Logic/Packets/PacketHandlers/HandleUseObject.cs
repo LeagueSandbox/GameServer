@@ -13,11 +13,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_USE_OBJECT;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleUseObject(Game game, Logger logger, PlayerManager playerManager)
+        public HandleUseObject(Game game)
         {
             _game = game;
-            _logger = logger;
-            _playerManager = playerManager;
+            _logger = game.GetLogger();
+            _playerManager = game.GetPlayerManager();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
