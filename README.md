@@ -93,7 +93,7 @@ You can follow who has given consent so far in the following table:
 | :x:                | [Neekhaulas](https://github.com/Neekhaulas)       |
 | :x:                | [Maufeat](https://github.com/Maufeat)             |
 | :white_check_mark: | [Deudly](https://github.com/Deudly)               |
-| :x:                | [moonshadow565](https://github.com/moonshadow565) |
+| :white_check_mark: | [moonshadow565](https://github.com/moonshadow565) |
 | :x:                | [chutch1122](https://github.com/chutch1122)       |
 | :x:                | [NitroXenon](https://github.com/NitroXenon)       |
 | :x:                | [MatthewFrench](https://github.com/MatthewFrench) |
