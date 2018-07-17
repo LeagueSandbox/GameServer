@@ -97,7 +97,7 @@ You can follow who has given consent so far in the following table:
 | :x:                | [chutch1122](https://github.com/chutch1122)       |
 | :x:                | [NitroXenon](https://github.com/NitroXenon)       |
 | :white_check_mark: | [MatthewFrench](https://github.com/MatthewFrench) |
-| :x:                | [piorrro33](https://github.com/piorrro33)         |
+| :white_check_mark: | [piorrro33](https://github.com/piorrro33)         |
 | :x:                | [TheWebs](https://github.com/TheWebs)             |
 | :white_check_mark: | [xDawiss](https://github.com/xDawiss)             |
 | :white_check_mark: | [Pokemonred200](https://github.com/Pokemonred200) |
