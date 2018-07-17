@@ -76,3 +76,43 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 6. Checkout back to indev
     * `git checkout indev`
 7. Repeat
+
+# License
+
+Currently this repository is under the [GPL-3.0](LICENSE/GPL-3.0.txt) license.  
+We are in a transition phase to the [AGPL-3.0](LICENSE/AGPL-3.0.txt) license. Once all of the current contributors have consented to the license change, this license will be in effect.
+
+You can follow who has given consent so far in the following table:
+
+| Consent Given      | Contributor                                       |
+|--------------------|---------------------------------------------------|
+| :x:                | [joaquin95](https://github.com/joaquin95)         |
+| :white_check_mark: | [MythicManiac](https://github.com/MythicManiac)   |
+| :x:                | [horato](https://github.com/horato)               |
+| :x:                | [FurkanS](https://github.com/FurkanS1821)         |
+| :x:                | [Neekhaulas](https://github.com/Neekhaulas)       |
+| :x:                | [Maufeat](https://github.com/Maufeat)             |
+| :x:                | [Deudly](https://github.com/Deudly)               |
+| :x:                | [moonshadow565](https://github.com/moonshadow565) |
+| :x:                | [chutch1122](https://github.com/chutch1122)       |
+| :x:                | [NitroXenon](https://github.com/NitroXenon)       |
+| :x:                | [MatthewFrench](https://github.com/MatthewFrench) |
+| :x:                | [piorrro33](https://github.com/piorrro33)         |
+| :x:                | [TheWebs](https://github.com/TheWebs)             |
+| :x:                | [xDawiss](https://github.com/xDawiss)             |
+| :x:                | [Pokemonred200](https://github.com/Pokemonred200) |
+| :x:                | [ChewyBomber](https://github.com/ChewyBomber)     |
+| :x:                | [Fighter19](https://github.com/Fighter19)         |
+| :x:                | [TornjV](https://github.com/TornjV)               |
+| :x:                | [danil179](https://github.com/danil179)           |
+
+Once everyone in this table has a :white_check_mark: icon in the consent column, the AGPL-3 license will be in effect.
+
+### Giving consent
+
+To give consent in changing the license:
+* You must submit a **GPG signed commit** changing your icon from :x: to :white_check_mark: in the table from previous section.
+	* See: https://help.github.com/articles/signing-commits-with-gpg/
+* The commit must come from the **same GitHub account** as the contributions is belong to.
+* Make sure to only modify your own line as to avoid any merge conflicts.
+* Once you the submission is done, you have consented to having all of your contributions in this repository so far to be licensed under the [AGPL-3.0](LICENSE/AGPL-3.0.txt) license
