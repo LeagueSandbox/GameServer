@@ -83,7 +83,7 @@ Currently this repository is under the [GPL-3.0](LICENSE/GPL-3.0.txt) license.
 We are in a transition phase to the [AGPL-3.0](LICENSE/AGPL-3.0.txt) license. Once all of the current contributors have consented to the license change, this license will be in effect.
 
 You can follow who has given consent so far in the following table:
-
+                                       
 | Consent Given      | Contributor                                       |
 |--------------------|---------------------------------------------------|
 | :x:                | [joaquin95](https://github.com/joaquin95)         |
@@ -91,7 +91,7 @@ You can follow who has given consent so far in the following table:
 | :x:                | [horato](https://github.com/horato)               |
 | :x:                | [FurkanS](https://github.com/FurkanS1821)         |
 | :x:                | [Neekhaulas](https://github.com/Neekhaulas)       |
-| :x:                | [Maufeat](https://github.com/Maufeat)             |
+| :white_check_mark: | [Maufeat](https://github.com/Maufeat)             |
 | :white_check_mark: | [Deudly](https://github.com/Deudly)               |
 | :x:                | [moonshadow565](https://github.com/moonshadow565) |
 | :x:                | [chutch1122](https://github.com/chutch1122)       |
