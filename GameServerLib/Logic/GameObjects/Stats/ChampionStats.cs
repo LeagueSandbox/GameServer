@@ -91,7 +91,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
         [FieldOffset(286)]
         public int WardsPlaced = 0;
         [FieldOffset(298)]
-        public short Padding = 0;
+        public short Padding = 0; // sort of length (when above 0 sends malformed buffer error)
 
         // TODO: move to universal serializer
         // also code here is unsafe, but thats prefered then write function that simply dumps all the variables

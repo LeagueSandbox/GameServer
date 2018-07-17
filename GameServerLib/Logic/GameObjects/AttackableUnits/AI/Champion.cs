@@ -417,6 +417,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
             _game.ObjectManager.StopTargeting(this);
+            this.ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
 
@@ -479,6 +480,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
+
+            cKiller.ChampStats.Kills += 1;
+            // TODO: add assists
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 

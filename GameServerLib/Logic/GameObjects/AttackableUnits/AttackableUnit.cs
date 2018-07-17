@@ -120,6 +120,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
                 cKiller.Stats.Gold += gold;
                 _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
+                cKiller.ChampStats.MinionsKilled += 1;
+                if (this.Team == TeamId.TEAM_NEUTRAL)
+                {
+                    cKiller.ChampStats.NeutralMinionsKilled += 1;
+                }
 
                 if (cKiller.KillDeathCounter < 0)
                 {

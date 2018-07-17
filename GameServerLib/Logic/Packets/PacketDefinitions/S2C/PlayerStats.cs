@@ -9,13 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
         public PlayerStats(Champion player)
             : base(PacketCmd.PKT_S2C_PLAYER_STATS, player.NetId)
         {
-            // for test, assign some variables:
-            player.ChampStats.Deaths = 20;
-            player.ChampStats.GoldEarned = 8000;
-            player.ChampStats.TeamId = 100;
-            player.ChampStats.WardsPlaced = 98;
-            player.ChampStats.MinionsKilled = 123;
-
             // get the stats and writes the packet
             byte[] stats = ChampionStats.GetBytes(player.ChampStats);
             Write(stats.Length);
