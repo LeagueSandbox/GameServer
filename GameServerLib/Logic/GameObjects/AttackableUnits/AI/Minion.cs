@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
@@ -31,6 +33,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public MinionSpawnPosition SpawnPosition { get; private set; }
         public MinionSpawnType MinionSpawnType { get; protected set; }
         protected bool _aiPaused;
+
+        private int HitBox => 60;
 
         public Minion(
             Game game,
@@ -121,9 +125,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public override void OnCollision(GameObject collider)
         {
-            if (collider == TargetUnit) // If we're colliding with the target, don't do anything.
+            if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
             {
                 return;
+            }
+
+            if (collider.GetType() == typeof(Minion))
+            {
+                Vector2 newPos = new Vector2(X + 120, Y + 120);
+                if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
+                {
+                    newPos = new Vector2(X + 120, Y + 50);
+                }
+                try
+                {
+                    Move(250, newPos);
+                }
+                catch
+                {
+                    //Minion died
+                }
             }
 
             base.OnCollision(collider);

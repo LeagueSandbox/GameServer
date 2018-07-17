@@ -96,10 +96,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
         }
 
-        /// <summary>
-        /// Moves the object depending on its target, updating its coordinate.
-        /// </summary>
-        /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
         public void Move(float diff)
         {
             if (Target == null)
@@ -109,6 +105,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var to = new Vector2(Target.X, Target.Y);
+            Move(diff, to);
+        }
+
+        /// <summary>
+        /// Moves the object depending on its target, updating its coordinate.
+        /// </summary>
+        /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
+        public void Move(float diff, Vector2 to)
+        {
+            if (Target == null)
+            {
+                _direction = new Vector2();
+                return;
+            }
             var cur = new Vector2(X, Y); //?
 
             var goingTo = to - cur;
