@@ -101,7 +101,7 @@ You can follow who has given consent so far in the following table:
 | :x:                | [TheWebs](https://github.com/TheWebs)             |
 | :x:                | [xDawiss](https://github.com/xDawiss)             |
 | :x:                | [Pokemonred200](https://github.com/Pokemonred200) |
-| :x:                | [ChewyBomber](https://github.com/ChewyBomber)     |
+| :white_check_mark: | [ChewyBomber](https://github.com/ChewyBomber)     |
 | :x:                | [Fighter19](https://github.com/Fighter19)         |
 | :x:                | [TornjV](https://github.com/TornjV)               |
 | :x:                | [danil179](https://github.com/danil179)           |
