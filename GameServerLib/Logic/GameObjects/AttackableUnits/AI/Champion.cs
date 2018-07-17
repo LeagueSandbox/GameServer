@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
-        public ChampionStats ChampStats;
+        public ChampionStats ChampStats = new ChampionStats();
 
 
         private short _skillPoints;
