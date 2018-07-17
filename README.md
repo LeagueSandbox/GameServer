@@ -4,45 +4,28 @@
 # The League Sandbox project's game server
 Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
 Project chat on Discord: https://discord.gg/Bz3znAM
-Project board on Waffle: https://waffle.io/LeagueSandbox/leaguesandbox.github.io
 
 # Contributing
-We're looking for people interested in contributing to the project.  
-Currently the technologies we use include:
-* C#
-* Lua
-* Electron
-* Node.js
-* Angular
-* Socket.io
 
-For more detailed project specifications head over to https://leaguesandbox.github.io/  
-If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know
+If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know. You will need to PM a moderator to get access to development channels.
 
 # Setup guide
-* Install Microsoft Visual Studio 2015 (Community Edition is fine)
+* Install Microsoft Visual Studio 2015 or newer (Community Edition is fine)
 * Install DotNet 4.6.1 Framework
-* Install NuGet package installer (https://visualstudiogallery.msdn.microsoft.com/5d345edc-2e2d-4a9c-b73b-d53956dc458d)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
+	* This is strongly encouraged to follow the 120 character limit per line guideline
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Clone the git repository and run ```git submodule update --init --recursive``` to download the necessary contents package 
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
-* Modify the just copied settings files as required
+* Modify the file copied in the last step as required
 * Build and run
 
 # Running the client
-Currently there are two options for launching the client.
 
 #### Launching from command line
 ```
 start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
 ```
-
-#### Using a launcher created by [TheWebs](https://github.com/TheWebs)
-1. Clone the launcher's repository from https://github.com/TheWebs/IWLauncher
-2. Build it
-3. Copy the built launcher and it's dependencies to the game server's build folder `GameServer/bin/Debug/`
-4. Run it
 
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
@@ -62,15 +45,20 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 * Constants in `ALL_CAPS`
 * Private variables in `_camelCaseWithUnderscore`
 * Public properties as getters / setters in `PascalCase`
+* Acronyms should be consider a single word when capitalizing
+	* `configJson` instead of `configJSON`
 * All public variable access should happen through getters / setters
 * Regions shouldn't be used, instead split code into classes/files when needed
 * Dictionaries preferred over switches and long if/else statements
 * Boolean variable names should be prefixed with a question (is/can/should)
 * Conditional operator should be avoided. `condition ? option1 : option2`
     * This is fine to use in some niche cases where you can't avoid using it
-* Interpolated strings with embedded logic should not be used
+* String inetpolation with embedded logic should not be used
+	* It's fine to use string interpolation for variable substitution
 
 # Development flow and how to use git shell
+**Using git shell is strongly encouraged**
+
 1. Pull latest version of indev
     * `git fetch -p`
     * `git pull origin indev`
