@@ -104,7 +104,7 @@ You can follow who has given consent so far in the following table:
 | :white_check_mark: | [ChewyBomber](https://github.com/ChewyBomber)     |
 | :x:                | [Fighter19](https://github.com/Fighter19)         |
 | :x:                | [TornjV](https://github.com/TornjV)               |
-| :x:                | [danil179](https://github.com/danil179)           |
+| :white_check_mark: | [danil179](https://github.com/danil179)           |
 
 Once everyone in this table has a :white_check_mark: icon in the consent column, the AGPL-3 license will be in effect.
 
