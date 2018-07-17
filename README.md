@@ -96,7 +96,7 @@ You can follow who has given consent so far in the following table:
 | :white_check_mark: | [moonshadow565](https://github.com/moonshadow565) |
 | :x:                | [chutch1122](https://github.com/chutch1122)       |
 | :x:                | [NitroXenon](https://github.com/NitroXenon)       |
-| :x:                | [MatthewFrench](https://github.com/MatthewFrench) |
+| :white_check_mark: | [MatthewFrench](https://github.com/MatthewFrench) |
 | :x:                | [piorrro33](https://github.com/piorrro33)         |
 | :x:                | [TheWebs](https://github.com/TheWebs)             |
 | :white_check_mark: | [xDawiss](https://github.com/xDawiss)             |
