@@ -17,6 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
+        public ChampionStats ChampStats = new ChampionStats();
+
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -415,6 +417,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
             _game.ObjectManager.StopTargeting(this);
+            this.ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
 
@@ -433,6 +436,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             cKiller.ChampionGoldFromMinions = 0;
+            cKiller.ChampStats.Kills += 1;
+            // TODO: add assists
 
             var gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
@@ -477,7 +482,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
-
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.ObjectManager.StopTargeting(this);

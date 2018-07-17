@@ -47,6 +47,7 @@
         PKT_S2C_EMOTION = 0x42,
         PKT_S2C_PLAY_SOUND = 0x43,
         PKT_S2C_ANNOUNCE = 0x45,
+        PKT_S2C_PLAYER_STATS = 0x46,
         PKT_C2S_AUTO_ATTACK_OPTION = 0x47,
         PKT_C2S_EMOTION = 0x48,
         PKT_S2C_HERO_SPAWN = 0x4C,
