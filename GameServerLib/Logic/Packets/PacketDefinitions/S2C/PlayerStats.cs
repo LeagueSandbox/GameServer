@@ -1,19 +1,30 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+﻿using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     class PlayerStats : BasePacket
     {
-        public PlayerStats(ClientInfo player)
-            : base(PacketCmd.PKT_S2C_PLAYER_STATS, player.Champion.NetId)
+        public PlayerStats(Champion player)
+            : base(PacketCmd.PKT_S2C_PLAYER_STATS, player.NetId)
         {
-            throw new System.NotImplementedException(this.GetType().Name);
+            // for test, assign some variables:
+            player.ChampStats.Deaths = 20;
+            player.ChampStats.GoldEarned = 8000;
+            player.ChampStats.TeamId = 100;
+            player.ChampStats.WardsPlaced = 98;
+            player.ChampStats.MinionsKilled = 123;
+
+            // get the stats and writes the packet
+            byte[] stats = ChampionStats.GetBytes(player.ChampStats);
+            Write(stats.Length);
+            Write(stats);
 
             //4 bytes - length of the packet
-            //then all the stats
+            //then all the stats (check ChampionStats for the order)
 
-            //Some stats to add:
+            //Some stats:
             //ID
             //NAME
             //SKIN
