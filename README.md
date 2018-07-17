@@ -113,6 +113,7 @@ Once everyone in this table has a :white_check_mark: icon in the consent column,
 To give consent in changing the license:
 * You must submit a **GPG signed commit** changing your icon from :x: to :white_check_mark: in the table from previous section.
 	* See: https://help.github.com/articles/signing-commits-with-gpg/
+	* You can also use GitHub's web interface when editing, this will sign the created commit
 * The commit must come from the **same GitHub account** as the contributions is belong to.
 * Make sure to only modify your own line as to avoid any merge conflicts.
 * Once you the submission is done, you have consented to having all of your contributions in this repository so far to be licensed under the [AGPL-3.0](LICENSE/AGPL-3.0.txt) license
