@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
 
         public static void LogInfo(string format)

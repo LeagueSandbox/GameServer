@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public CharData(Game game)
         {
             _game = game;
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
 
         public float BaseHp { get; private set; } = 100.0f;

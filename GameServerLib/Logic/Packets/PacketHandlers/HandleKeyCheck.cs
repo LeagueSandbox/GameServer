@@ -16,9 +16,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleKeyCheck(Game game)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
             _game = game;
-            _playerManager = game.GetPlayerManager();
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

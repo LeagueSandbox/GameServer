@@ -17,8 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleCastSpell(Game game)
         {
             _game = game;
-            _networkIdManager = game.GetNetworkManager();
-            _playerManager = game.GetPlayerManager();
+            _networkIdManager = game.NetworkIdManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

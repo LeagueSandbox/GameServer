@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public PacketCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _playerManager = game.GetPlayerManager();
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

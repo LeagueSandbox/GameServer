@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private ContentManager(Game game, string gameModeName)
         {
             _game = game;
-            _logger = game.GetLogger();
+            _logger = game.Logger;
 
             GameModeName = gameModeName;
 

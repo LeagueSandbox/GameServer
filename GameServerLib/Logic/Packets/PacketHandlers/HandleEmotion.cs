@@ -17,8 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleEmotion(Game game)
         {
             _game = game;
-            _playerManager = game.GetPlayerManager();
-            _logger = game.GetLogger();
+            _playerManager = game.PlayerManager;
+            _logger = game.Logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

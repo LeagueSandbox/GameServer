@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
         public PlayerManager(Game game)
         {
             _game = game;
-            _networkIdManager = game.GetNetworkManager();
+            _networkIdManager = game.NetworkIdManager;
         }
 
         private TeamId GetTeamIdFromConfig(PlayerConfig p)

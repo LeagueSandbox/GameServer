@@ -18,8 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleBlueTipClicked(Game game)
         {
             _game = game;
-            _chatCommandManager = game.GetChatCommandManager();
-            _playerManager = game.GetPlayerManager();
+            _chatCommandManager = game.ChatCommandManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

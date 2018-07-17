@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public Map(Game game)
         {
             _game = game;
-            _logger = game.GetLogger();
+            _logger = game.Logger;
             Id = _game.Config.GameConfig.Map;
             var path = Path.Combine(
                 ServerContext.ExecutingDirectory,

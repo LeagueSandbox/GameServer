@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         public BuffGameScriptController(Game game, ObjAiBase unit, string buffNamespace, string buffClass, Spell ownerSpell, float duration = -1f)
         {
-            _scriptEngine = game.GetScriptEngine();
+            _scriptEngine = game.ScriptEngine;
             BuffNamespace = buffNamespace;
             BuffClass = buffClass;
             OwnerSpell = ownerSpell;

@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _logger = logger;
             _blowfish = blowfish;
             _server = server;
-            _playerManager = game.GetPlayerManager();
+            _playerManager = game.PlayerManager;
             _game = game;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
             

@@ -14,8 +14,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public CoordsCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _logger = game.GetLogger();
-            _playerManager = game.GetPlayerManager();
+            _logger = game.Logger;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

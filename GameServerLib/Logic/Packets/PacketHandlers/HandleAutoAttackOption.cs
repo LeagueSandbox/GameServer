@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleAutoAttackOption(Game game)
         {
             _game = game;
-            _chatCommandManager = game.GetChatCommandManager();
+            _chatCommandManager = game.ChatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

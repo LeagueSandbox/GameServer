@@ -59,8 +59,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             Slot = slot;
             _game = game;
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
-            _scriptEngine = game.GetScriptEngine();
-            _networkIdManager = game.GetNetworkManager();
+            _scriptEngine = game.ScriptEngine;
+            _networkIdManager = game.NetworkIdManager;
 
             //Set the game script for the spell
             _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();

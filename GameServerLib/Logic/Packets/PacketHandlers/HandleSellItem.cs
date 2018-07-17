@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleSellItem(Game game)
         {
             _game = game;
-            _playerManager = game.GetPlayerManager();
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

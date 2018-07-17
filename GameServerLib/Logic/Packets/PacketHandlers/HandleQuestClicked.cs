@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleQuestClicked(Game game)
         {
-            _chatCommandManager = game.GetChatCommandManager();
+            _chatCommandManager = game.ChatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

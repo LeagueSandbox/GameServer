@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public JunglespawnCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

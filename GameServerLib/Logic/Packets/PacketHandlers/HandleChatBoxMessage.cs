@@ -19,9 +19,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleChatBoxMessage(Game game)
         {
             _game = game;
-            _chatCommandManager = game.GetChatCommandManager();
-            _playerManager = game.GetPlayerManager();
-            _logger = game.GetLogger();
+            _chatCommandManager = game.ChatCommandManager;
+            _playerManager = game.PlayerManager;
+            _logger = game.Logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

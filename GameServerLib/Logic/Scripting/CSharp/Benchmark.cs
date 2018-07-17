@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
     {
         public Benchmark(Game game)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
         private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
         private Logger _logger;

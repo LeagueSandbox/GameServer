@@ -63,8 +63,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
         {
             _game = game;
-            _logger = game.GetLogger();
-            _scriptEngine = game.GetScriptEngine();
+            _logger = game.Logger;
+            _scriptEngine = game.ScriptEngine;
             Duration = dur;
             Stacks = stacks;
             Name = buffName;

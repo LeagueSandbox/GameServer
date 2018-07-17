@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
             _game = game;
-            _networkIdManager = game.GetNetworkManager();
+            _networkIdManager = game.NetworkIdManager;
             if (netId != 0)
             {
                 NetId = netId; // Custom netId

@@ -43,15 +43,15 @@ namespace LeagueSandbox.GameServer.Logic
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
-        private Logger _logger;
+        internal Logger Logger { get; private set; }
         // Object managers
-        private readonly ItemManager _itemManager;
+        internal ItemManager ItemManager { get; private set; }
         // Other managers
-        private readonly ChatCommandManager _chatCommandManager;
-        private readonly PlayerManager _playerManager;
-        private readonly NetworkIdManager _networkIdManager;
+        internal ChatCommandManager ChatCommandManager { get; private set; }
+        internal PlayerManager PlayerManager { get; private set; }
+        internal NetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
-        private readonly CSharpScriptEngine _scriptEngine;
+        internal CSharpScriptEngine ScriptEngine { get; private set; }
 
         private Stopwatch _lastMapDurationWatch;
 
@@ -59,52 +59,22 @@ namespace LeagueSandbox.GameServer.Logic
 
         public Game(ItemManager itemManager, Logger logger)
         {
-            _itemManager = itemManager;
-            _logger = logger;
-            _chatCommandManager = new ChatCommandManager(this);
-            _networkIdManager = new NetworkIdManager();
-            _playerManager = new PlayerManager(this);
-            _scriptEngine = new CSharpScriptEngine(this);
-        }
-        
-        public ItemManager GetItemManager()
-        {
-            return _itemManager;
-        }
-
-        public ChatCommandManager GetChatCommandManager()
-        {
-            return _chatCommandManager;
-        }
-
-        public NetworkIdManager GetNetworkManager()
-        {
-            return _networkIdManager;
-        }
-
-        public PlayerManager GetPlayerManager()
-        {
-            return _playerManager;
-        }
-
-        public CSharpScriptEngine GetScriptEngine()
-        {
-            return _scriptEngine;
-        }
-
-        public Logger GetLogger()
-        {
-            return _logger;
+            ItemManager = itemManager;
+            Logger = logger;
+            ChatCommandManager = new ChatCommandManager(this);
+            NetworkIdManager = new NetworkIdManager();
+            PlayerManager = new PlayerManager(this);
+            ScriptEngine = new CSharpScriptEngine(this);
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
         {
-            _logger.LogCoreInfo("Loading Config.");
+            Logger.LogCoreInfo("Loading Config.");
             Config = config;
 
             _gameScriptTimers = new List<GameScriptTimer>();
 
-            _chatCommandManager.LoadCommands();
+            ChatCommandManager.LoadCommands();
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
@@ -115,7 +85,7 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, this);
+            PacketHandlerManager = new PacketHandlerManager(Logger, Blowfish, _server, this);
 
 
             ObjectManager = new ObjectManager(this);
@@ -126,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic
             ApiEventManager.SetGame(this);
             IsRunning = false;
 
-            _logger.LogCoreInfo("Loading C# Scripts");
+            Logger.LogCoreInfo("Loading C# Scripts");
 
             LoadScripts();
 
@@ -134,7 +104,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             foreach (var p in Config.Players)
             {
-                _playerManager.AddPlayer(p);
+                PlayerManager.AddPlayer(p);
             }
 
             _pauseTimer = new Timer
@@ -146,12 +116,12 @@ namespace LeagueSandbox.GameServer.Logic
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
-            _logger.LogCoreInfo("Game is ready.");
+            Logger.LogCoreInfo("Game is ready.");
         }
 
         public bool LoadScripts()
         {
-            return _scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
+            return ScriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
         }
 
         public void NetLoop()
@@ -272,7 +242,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         private bool HandleDisconnect(Peer peer)
         {
-            var peerinfo = _playerManager.GetPeerInfo(peer);
+            var peerinfo = PlayerManager.GetPeerInfo(peer);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)
@@ -286,7 +256,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void SetGameToExit()
         {
-            _logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
+            Logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
             var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => SetToExit = true;
             timer.Start();

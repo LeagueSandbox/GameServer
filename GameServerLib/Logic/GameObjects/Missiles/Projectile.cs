@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             uint netId = 0
         ) : base(game, x, y, collisionRadius, 0, netId)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;

@@ -27,8 +27,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         public PacketNotifier(Game game)
         {
             _game = game;
-            _playerManager = game.GetPlayerManager();
-            _networkIdManager = game.GetNetworkManager();
+            _playerManager = game.PlayerManager;
+            _networkIdManager = game.NetworkIdManager;
         }
 
         public void NotifyMinionSpawned(Minion m, TeamId team)

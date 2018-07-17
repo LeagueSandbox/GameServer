@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public HandleSurrender(Game game)
         {
             _game = game;
-            _pm = game.GetPlayerManager();
+            _pm = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

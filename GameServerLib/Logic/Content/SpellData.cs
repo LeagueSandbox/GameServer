@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public SpellData(Game game)
         {
             _game = game;
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
 
         public string AfterEffectName { get; set; } = "";

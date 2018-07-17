@@ -49,8 +49,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
         {
-            _itemManager = game.GetItemManager();
-            _scriptEngine = game.GetScriptEngine();
+            _itemManager = game.ItemManager;
+            _scriptEngine = game.ScriptEngine;
             CharData = _game.Config.ContentManager.GetCharData(Model);
             Stats.LoadStats(CharData);
 

@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         ) : base(game, x, y, collisionRadius, visionRadius, netId)
 
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
             Stats = stats;
             Model = model;
             CollisionRadius = 40;

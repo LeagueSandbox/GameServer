@@ -24,11 +24,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSpawn(Game game)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
             _game = game;
-            _itemManager = game.GetItemManager();
-            _playerManager = game.GetPlayerManager();
-            _networkIdManager = game.GetNetworkManager();
+            _itemManager = game.ItemManager;
+            _playerManager = game.PlayerManager;
+            _networkIdManager = game.NetworkIdManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

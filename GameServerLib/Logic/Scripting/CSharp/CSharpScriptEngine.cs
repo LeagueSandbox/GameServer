@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 
         public CSharpScriptEngine(Game game)
         {
-            _logger = game.GetLogger();
+            _logger = game.Logger;
         }
 
         public bool LoadSubdirectoryScripts(string folder)

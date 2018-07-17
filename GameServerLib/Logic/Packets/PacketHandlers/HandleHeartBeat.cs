@@ -14,8 +14,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleHeartBeat(Game game)
         {
-            _logger = game.GetLogger();
-            _playerManager = game.GetPlayerManager();
+            _logger = game.Logger;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
