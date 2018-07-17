@@ -436,6 +436,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             cKiller.ChampionGoldFromMinions = 0;
+            cKiller.ChampStats.Kills += 1;
+            // TODO: add assists
 
             var gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
@@ -480,10 +482,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
-
-            cKiller.ChampStats.Kills += 1;
-            // TODO: add assists
-
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.ObjectManager.StopTargeting(this);
