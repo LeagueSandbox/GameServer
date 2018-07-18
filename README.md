@@ -89,7 +89,7 @@ You can follow who has given consent so far in the following table:
 | :x:                | [joaquin95](https://github.com/joaquin95)         |
 | :white_check_mark: | [MythicManiac](https://github.com/MythicManiac)   |
 | :x:                | [horato](https://github.com/horato)               |
-| :x:                | [FurkanS](https://github.com/FurkanS1821)         |
+| :white_check_mark: | [FurkanS](https://github.com/FurkanS1821)         |
 | :white_check_mark: | [Neekhaulas](https://github.com/Neekhaulas)       |
 | :x:                | [Maufeat](https://github.com/Maufeat)             |
 | :white_check_mark: | [Deudly](https://github.com/Deudly)               |
