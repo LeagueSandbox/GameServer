@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LeagueSandbox.GameServer</RootNamespace>
     <AssemblyName>GameServerLib</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -493,7 +493,6 @@
     <Compile Include="ServerLibDefiningAssembly.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <Content Include="GameServer.Core.GPL.txt" />
     <None Include="packages.config" />
   </ItemGroup>

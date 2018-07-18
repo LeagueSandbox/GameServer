@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -65,7 +66,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
-
+			
             var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as AttackableUnit;
             if (u == null)
             {

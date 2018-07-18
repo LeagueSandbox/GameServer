@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
@@ -190,7 +190,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             //Damage dealing. (based on leagueoflegends' wikia)
             damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
 
-            ApiEventManager.OnUnitDamageTaken.Publish(this);
+            ApiEventManager.OnDamageTaken.Publish(this);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
             if (!IsDead && Stats.CurrentHealth <= 0)
@@ -198,6 +198,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 IsDead = true;
                 Die(attacker);
             }
+
+            ApiEventManager.OnDealDamage.Publish(attacker, this);
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
             // TODO: send this in one place only

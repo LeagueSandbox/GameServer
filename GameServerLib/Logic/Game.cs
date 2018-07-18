@@ -41,6 +41,7 @@ namespace LeagueSandbox.GameServer.Logic
         public PacketNotifier PacketNotifier { get; private set; }
         public PacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
+        public int disconnectedPlayers;
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
         private Logger _logger;
@@ -95,6 +96,7 @@ namespace LeagueSandbox.GameServer.Logic
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
+            disconnectedPlayers = 0;
 
             _logger.LogCoreInfo("Loading C# Scripts");
 
@@ -251,6 +253,15 @@ namespace LeagueSandbox.GameServer.Logic
                 if (!peerinfo.IsDisconnected)
                 {
                     PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
+                }
+                _logger.LogCoreInfo("somebody disconnected");
+                disconnectedPlayers++;
+                var number = _playerManager.GetPlayers().Count - disconnectedPlayers;
+                _logger.LogCoreInfo(number.ToString());
+                if (number == 0)
+                {
+                    _logger.LogCoreInfo("no players connected");
+                    Program.SetToExit();
                 }
                 peerinfo.IsDisconnected = true;
             }

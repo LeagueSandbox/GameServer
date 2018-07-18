@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.API;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
@@ -53,9 +54,20 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             return _remove;
         }
 
+        public AttackableUnit GetUnit() { return Unit; }
+        public Spell GetOwnerSpell() { return OwnerSpell; }
+        public IBuffGameScript GetBuffGameScript() { return GameScript; }
+        public String GetBuffNamespace() { return BuffNamespace; }
+        public String GetBuffClass() { return BuffClass; }
+
         public bool IsBuffSame(string buffNamespace, string buffClass)
         {
             return buffNamespace == BuffNamespace && buffClass == BuffClass;
+        }
+
+        public void UpdateBuff(double diff)
+        {
+            GameScript.OnUpdate(diff);
         }
     }
 }

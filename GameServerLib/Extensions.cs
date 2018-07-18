@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer
 {
-    internal static class Extensions
+    public static class Extensions
     {
         public static float SqrLength(this Vector2 v)
         {

@@ -648,7 +648,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 throw new Exception($"Magic number at the start is unsupported! Value: {grid.MajorVersion:X}");
             }
-
+			
             grid.MapWidth = grid.MaxGridPos.X + grid.MinGridPos.X;
             grid.MapHeight = grid.MaxGridPos.Z + grid.MinGridPos.Z;
             grid.MiddleOfMap = new Vector2(grid.MapWidth / 2, grid.MapHeight / 2);

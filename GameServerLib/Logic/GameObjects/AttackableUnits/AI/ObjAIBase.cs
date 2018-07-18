@@ -381,6 +381,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 damage *= Stats.CriticalDamage.Total;
             }
 
+            ApiEventManager.OnHitUnit.Publish(this, target, _isNextAutoCrit);
+
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
@@ -454,7 +456,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 else if (GetDistanceTo(TargetUnit) <= Stats.Range.Total)
                 {
                     RefreshWaypoints();
-                    _isNextAutoCrit = _random.Next(0, 100) < Stats.CriticalChance.Total * 100;
+                    bool isValid = (TargetUnit is Minion) || (TargetUnit is Monster) || (TargetUnit is Champion);
+                    if (isValid)
+                    {
+                        _isNextAutoCrit = new Random().Next(0, 100) < Stats.CriticalChance.Total * 100;
+                    }
+                    else
+                    {
+                        _isNextAutoCrit = false;
+                    }
                     if (_autoAttackCurrentCooldown <= 0)
                     {
                         IsAttacking = true;
@@ -536,6 +546,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
             base.Die(killer);
+        }
+
+        public void RestoreHealth(float healValue) // used for healing.
+        {
+            if (HasBuffGameScriptActive("GrievousWounds", "GrievousWounds"))
+            {
+                healValue = healValue * 0.5f; // if Grievous Wounds is active, cut heal value in half. 
+            }
+            float newHealth = Stats.CurrentHealth + healValue;
+            float maxHealth = Stats.HealthPoints.Total;
+            if (newHealth > maxHealth)
+            {
+                Stats.CurrentHealth = maxHealth;
+            }
+            else
+            {
+                Stats.CurrentHealth = newHealth;
+            }
         }
 
         public override void OnCollision(GameObject collider)

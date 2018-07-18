@@ -16,5 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target);
 
         void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile);
+
+        void OnUpdate(double diff);
     }
 }
