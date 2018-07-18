@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = Program.ResolveDependency<Logger>();
+            _logger = game.Logger;
         }
 
         public static void LogInfo(string format)
@@ -119,14 +119,14 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            var p = new Particle(champion, t, particle, size, bone);
+            var p = new Particle(_game, champion, t, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
 
         public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
         {
-            var p = new Particle(champion, target, particle, size, bone);
+            var p = new Particle(_game, champion, target, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
         }
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void PrintChat(string msg)
         {
-            var dm = new DebugMessage(msg);
+            var dm = new DebugMessage(_game, msg);
             _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2_C);
         }
 
@@ -191,6 +191,7 @@ namespace LeagueSandbox.GameServer.Logic.API
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
+                    _game,
                     unit,
                     newTarget,
                     dashSpeed,
@@ -205,6 +206,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
+                    _game,
                     unit,
                     target,
                     dashSpeed,

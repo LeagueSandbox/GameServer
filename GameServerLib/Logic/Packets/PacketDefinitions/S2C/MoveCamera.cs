@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MoveCamera : BasePacket
     {
-        public MoveCamera(Champion champ, float x, float y, float z, float seconds)
-            : base(PacketCmd.PKT_S2C_MOVE_CAMERA, champ.NetId)
+        public MoveCamera(Game game, Champion champ, float x, float y, float z, float seconds)
+            : base(game, PacketCmd.PKT_S2C_MOVE_CAMERA, champ.NetId)
         {
             // Unk, if somebody figures out let @horato know
             Write((byte)0x97);

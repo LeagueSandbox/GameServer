@@ -12,9 +12,9 @@ namespace LeagueSandbox.GameServer.Logic
         private LogWriter _logWriter;
         private const string LOG_NAME = "LeagueSandbox.txt";
 
-        public Logger(ServerContext serverContext)
+        public Logger()
         {
-            var directory = serverContext.ExecutingDirectory;
+            var directory = ServerContext.ExecutingDirectory;
             _logWriter = new LogWriter(directory, LOG_NAME);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;

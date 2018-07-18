@@ -5,17 +5,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class LevelCommand : ChatCommandBase
     {
-        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "level";
         public override string Syntax => $"{Command} level";
 
-        public LevelCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public LevelCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -33,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     return;
                 }
 
-                var experienceToLevelUp = _game.Map.MapGameScript.ExpToLevelUp[lvl - 1];
+                var experienceToLevelUp = Game.Map.MapGameScript.ExpToLevelUp[lvl - 1];
                 _playerManager.GetPeerInfo(peer).Champion.Stats.Experience = experienceToLevelUp;
             }
         }

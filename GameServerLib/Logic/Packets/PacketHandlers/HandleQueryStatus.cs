@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var response = new QueryStatus();
+            var response = new QueryStatus(_game);
             return _game.PacketHandlerManager.SendPacket(peer, response, Channel.CHL_S2_C);
         }
     }

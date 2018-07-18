@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public float SpawnAnimationTime { get; private set; }
 
         public Monster(
+            Game game,
             float x,
             float y,
             float facingX,
@@ -28,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
+        ) : base(game, model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 

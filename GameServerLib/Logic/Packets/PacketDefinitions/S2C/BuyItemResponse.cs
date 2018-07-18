@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class BuyItemResponse : BasePacket
     {
-        public BuyItemResponse(AttackableUnit actor, Item item, byte unk = 0x29)
-            : base(PacketCmd.PKT_S2C_BUY_ITEM_ANS, actor.NetId)
+        public BuyItemResponse(Game game, AttackableUnit actor, Item item, byte unk = 0x29)
+            : base(game, PacketCmd.PKT_S2C_BUY_ITEM_ANS, actor.NetId)
         {
             Write((int)item.ItemType.ItemId);
             Write((byte)actor.Inventory.GetItemSlot(item));

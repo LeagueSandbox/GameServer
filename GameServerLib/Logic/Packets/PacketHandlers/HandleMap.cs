@@ -12,17 +12,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLIENT_READY;
         public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
 
-        public HandleMap(Game game, PlayerManager playerManager)
+        public HandleMap(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player
-            var screenInfo = new LoadScreenInfo(_playerManager.GetPlayers());
+            var screenInfo = new LoadScreenInfo(_game, _playerManager.GetPlayers());
             var pInfo = _game.PacketHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
 
             // Distributes each players info by UserId
@@ -30,9 +30,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             foreach (var player in _playerManager.GetPlayers())
             {
                 // Giving the UserId in loading screen a name
-                var loadName = new LoadScreenPlayerName(player);
+                var loadName = new LoadScreenPlayerName(_game, player);
                 // Giving the UserId in loading screen a champion
-                var loadChampion = new LoadScreenPlayerChampion(player);
+                var loadChampion = new LoadScreenPlayerChampion(_game, player);
                 var pName = _game.PacketHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
                 var pHero = _game.PacketHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
 

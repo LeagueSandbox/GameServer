@@ -11,10 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_PAUSE_GAME;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandlePauseReq(Game game, PlayerManager playerManager)
+        public HandlePauseReq(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

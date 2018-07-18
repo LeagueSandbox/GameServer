@@ -8,19 +8,18 @@ namespace LeagueSandbox.GameServer
     {
         private string _blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
         private uint _serverHost = Address.IPv4HostAny;
-        private ushort _serverPort = Program.ServerPort;
         private string _serverVersion = "0.2.0";
         private Logger _logger;
-        private ServerContext _serverContext;
         private Game _game;
         private Config _config;
+        private ushort _serverPort { get; }
 
-        public Server(Logger logger, ServerContext serverContext, Game game)
+        public Server(Logger logger, Game game, ushort port, string configJson)
         {
             _logger = logger;
-            _serverContext = serverContext;
             _game = game;
-            _config = Config.LoadFromJson(Program.ConfigJson);
+            _serverPort = port;
+            _config = Config.LoadFromJson(game, configJson);
         }
 
         public void Start()

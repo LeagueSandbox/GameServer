@@ -13,16 +13,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleCursorPositionOnWorld(Game game, PlayerManager playerManager)
+        public HandleCursorPositionOnWorld(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var cursorPosition = new CursorPositionOnWorld(data);
-            var response = new DebugMessage($"X: {cursorPosition.X} Y: {cursorPosition.Y}");
+            var response = new DebugMessage(_game, $"X: {cursorPosition.X} Y: {cursorPosition.Y}");
 
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2_C);
         }

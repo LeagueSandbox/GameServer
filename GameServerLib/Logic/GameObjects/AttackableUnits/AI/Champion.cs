@@ -32,19 +32,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
-        public Champion(string model,
+        public Champion(Game game,
+                        string model,
                         uint playerId,
                         uint playerTeamSpecialId,
                         RuneCollection runeList,
                         ClientInfo clientInfo,
                         uint netId = 0)
-            : base(model, new Stats.Stats(), 30, 0, 0, 1200, netId)
+            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory(this);
+            Inventory = InventoryManager.CreateInventory();
             Shop = Shop.CreateShop(this);
 
             Stats.Gold = 475.0f;
@@ -57,25 +58,25 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
-                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)i);
+                    Spells[i] = new Spell(game, this, CharData.SpellNames[i], (byte)i);
                 }
             }
 
-            Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
-            Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
+            Spells[4] = new Spell(game, this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell(game, this, clientInfo.SummonerSkills[1], 5);
 
             for (byte i = 6; i < 13; i++)
             {
-                Spells[i] = new Spell(this, "BaseSpell", i);
+                Spells[i] = new Spell(game, this, "BaseSpell", i);
             }
 
-            Spells[13] = new Spell(this, "Recall", 13);
+            Spells[13] = new Spell(game, this, "Recall", 13);
 
             for (short i = 0; i<CharData.Passives.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
                 {
-                    Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
                 }
             }
 
@@ -83,7 +84,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                 {
-                    var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    var spell = new Spell(game, this, CharData.ExtraSpells[i], (byte)(i + 45));
                     Spells[(byte)(i + 45)] = spell;
                     spell.LevelUp();
                 }

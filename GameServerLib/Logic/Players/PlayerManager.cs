@@ -9,6 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
     public class PlayerManager
     {
         private NetworkIdManager _networkIdManager;
+        private Game _game;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
         private int _currentId = 1;
@@ -18,9 +19,10 @@ namespace LeagueSandbox.GameServer.Logic.Players
             { TeamId.TEAM_PURPLE, 0 }
         };
 
-        public PlayerManager(NetworkIdManager networkIdManager)
+        public PlayerManager(Game game)
         {
-            _networkIdManager = networkIdManager;
+            _game = game;
+            _networkIdManager = game.NetworkIdManager;
         }
 
         private TeamId GetTeamIdFromConfig(PlayerConfig p)
@@ -52,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
-            var c = new Champion(p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
+            var c = new Champion(_game, p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();

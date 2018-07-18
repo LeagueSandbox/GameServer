@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = Program.ResolveDependency<Logger>();
+            _logger = game.Logger;
         }
 
         public static void RemoveAllListenersForOwner(object owner)

@@ -14,10 +14,11 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         public Spell OwnerSpell { get; private set; }
         private bool _remove;
         private float _duration = -1f;
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected CSharpScriptEngine _scriptEngine;
 
-        public BuffGameScriptController(ObjAiBase unit, string buffNamespace, string buffClass, Spell ownerSpell, float duration = -1f)
+        public BuffGameScriptController(Game game, ObjAiBase unit, string buffNamespace, string buffClass, Spell ownerSpell, float duration = -1f)
         {
+            _scriptEngine = game.ScriptEngine;
             BuffNamespace = buffNamespace;
             BuffClass = buffClass;
             OwnerSpell = ownerSpell;

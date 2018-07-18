@@ -8,14 +8,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(GameObject obj)
-            : this(new List<GameObject> { obj })
+        public MovementResponse(Game game, GameObject obj)
+            : this(game, new List<GameObject> { obj })
         {
 
         }
 
-        public MovementResponse(List<GameObject> actors)
-            : base(PacketCmd.PKT_S2C_MOVE_ANS)
+        public MovementResponse(Game game, List<GameObject> actors)
+            : base(game, PacketCmd.PKT_S2C_MOVE_ANS)
         {
             Write(Environment.TickCount); // syncID
             Write((short)actors.Count);
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var numCoords = waypoints.Count * 2;
                 Write((byte)numCoords);
                 WriteNetId(actor);
-                Write(Movement.EncodeWaypoints(waypoints));
+                Write(Movement.EncodeWaypoints(game, waypoints));
             }
         }
 

@@ -14,8 +14,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class CharData
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Game _game;
+        private Logger _logger;
+
+        public CharData(Game game)
+        {
+            _game = game;
+            _logger = game.Logger;
+        }
 
         public float BaseHp { get; private set; } = 100.0f;
         public float BaseMp { get; private set; } = 100.0f;

@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class TeleportRequest : BasePacket
     {
         private static short _a = 0x01;
-        public TeleportRequest(uint netId, float x, float y, bool first)
-            : base(PacketCmd.PKT_S2C_MOVE_ANS)
+        public TeleportRequest(Game game, uint netId, float x, float y, bool first)
+            : base(game, PacketCmd.PKT_S2C_MOVE_ANS)
         {
             Write(Environment.TickCount); // syncID
             Write((byte)0x01); // Unk

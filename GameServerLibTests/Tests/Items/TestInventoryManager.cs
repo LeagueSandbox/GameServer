@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var inventoryManager = InventoryManager.CreateInventory(null);
+            var inventoryManager = InventoryManager.CreateInventory();
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = inventoryManager.AddItem(itemManager.GetItemType(2001));
@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             // Get two stacking item types
             var itemType1 = itemManager.GetItemType(2038);
@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             // Add an item and make sure it exists in the proper slot
             var item = manager.SetExtraItem(7, itemManager.GetItemType(2001));
@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             // Add an item, and make sure the slot is right
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -153,7 +153,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -179,7 +179,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             // Add 3 items and make sure they get proper slots
             var item1 = manager.AddItem(itemManager.GetItemType(4001));
@@ -231,7 +231,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             itemManager.ResetItems();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory(null);
+            var manager = InventoryManager.CreateInventory();
 
             var zephyrId = 3172;
             var componentId1 = 3101;

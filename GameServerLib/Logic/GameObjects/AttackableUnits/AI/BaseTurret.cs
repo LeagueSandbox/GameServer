@@ -15,18 +15,19 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public uint ParentNetId { get; private set; }
 
         public BaseTurret(
+            Game game,
             string name,
             string model,
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(model, new Stats.Stats(), 50, x, y, 1200, netId)
+        ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
-            Inventory = InventoryManager.CreateInventory(this);
+            Inventory = InventoryManager.CreateInventory();
             Replication = new ReplicationAiTurret(this);
         }
 

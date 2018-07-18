@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AddGold : BasePacket
     {
-        public AddGold(Champion richMan, AttackableUnit died, float gold)
-            : base(PacketCmd.PKT_S2C_ADD_GOLD, richMan.NetId)
+        public AddGold(Game game, Champion richMan, AttackableUnit died, float gold)
+            : base(game, PacketCmd.PKT_S2C_ADD_GOLD, richMan.NetId)
         {
             WriteNetId(richMan);
             WriteNetId(died);

@@ -10,7 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(AttackableUnit u,
+        public Dash(Game game,
+            AttackableUnit u,
             Target t,
             float dashSpeed,
             bool keepFacingLastDirection,
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float followTargetMaxDistance = 0.0f,
             float backDistance = 0.0f,
             float travelTime = 0.0f
-        ) : base(PacketCmd.PKT_S2C_DASH)
+        ) : base(game, PacketCmd.PKT_S2C_DASH)
         {
             Write(Environment.TickCount); // syncID
             Write((short)1); // Number of dashes
@@ -48,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 new Vector2(t.X, t.Y)
             };
 
-            Write(Movement.EncodeWaypoints(waypoints));
+            Write(Movement.EncodeWaypoints(game, waypoints));
         }
     }
 }

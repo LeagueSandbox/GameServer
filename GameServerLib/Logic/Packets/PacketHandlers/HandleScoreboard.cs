@@ -11,10 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleScoreboard(PlayerManager playerManager, Logger logger)
+        public HandleScoreboard(Game game)
         {
-            _playerManager = playerManager;
-            _logger = logger;
+            _playerManager = game.PlayerManager;
+            _logger = game.Logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

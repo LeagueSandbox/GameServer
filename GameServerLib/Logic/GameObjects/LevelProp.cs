@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public byte SkinId { get; private set; }
 
         public LevelProp(
+            Game game,
             float x,
             float y,
             float z,
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             string model,
             byte skin = 0,
             uint netId = 0
-        ) : base(x, y, 0, 0, netId)
+        ) : base(game, x, y, 0, 0, netId)
         {
             Z = z;
             DirX = dirX;

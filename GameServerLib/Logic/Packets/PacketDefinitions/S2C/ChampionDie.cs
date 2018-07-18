@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ChampionDie : BasePacket
     {
-        public ChampionDie(Champion die, AttackableUnit killer, int goldFromKill)
-            : base(PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
+        public ChampionDie(Game game, Champion die, AttackableUnit killer, int goldFromKill)
+            : base(game, PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
         {
             Write((int)goldFromKill); // Gold from kill?
             Write((byte)0);

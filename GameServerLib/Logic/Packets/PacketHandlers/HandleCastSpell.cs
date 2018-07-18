@@ -14,11 +14,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CAST_SPELL;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleCastSpell(Game game, NetworkIdManager networkIdManager, PlayerManager playerManager)
+        public HandleCastSpell(Game game)
         {
             _game = game;
-            _networkIdManager = networkIdManager;
-            _playerManager = playerManager;
+            _networkIdManager = game.NetworkIdManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

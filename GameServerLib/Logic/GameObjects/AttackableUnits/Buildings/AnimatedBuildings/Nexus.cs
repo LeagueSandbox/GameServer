@@ -5,6 +5,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
     public class Nexus : ObjAnimatedBuilding
     {
         public Nexus(
+            Game game,
             string model,
             TeamId team,
             int collisionRadius = 40,
@@ -12,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;
