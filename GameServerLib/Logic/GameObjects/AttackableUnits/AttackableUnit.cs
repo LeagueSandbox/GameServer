@@ -114,31 +114,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     return;
                 }
 
-                var gold = _game.Map.MapGameScript.GetGoldFor(this);
-                if (gold <= 0)
-                {
-                    return;
-                }
-
-                cKiller.Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
-                cKiller.ChampStats.MinionsKilled += 1;
-                if (this.Team == TeamId.TEAM_NEUTRAL)
-                {
-                    cKiller.ChampStats.NeutralMinionsKilled += 1;
-                }
-
-                if (cKiller.KillDeathCounter < 0)
-                {
-                    cKiller.ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
-                }
-
-                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
-                {
-                    cKiller.ChampionGoldFromMinions = 0;
-                    cKiller.KillDeathCounter += 1;
-                }
+                cKiller.OnKillMinion(this as Minion);
             }
 
             if (IsDashing)

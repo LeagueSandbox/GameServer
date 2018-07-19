@@ -7,94 +7,98 @@ using System.Threading.Tasks;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
+    // deviates from the style guide
+    // see discussion here:https://github.com/LeagueSandbox/GameServer/pull/583
     [StructLayout(LayoutKind.Explicit)]
     public class ChampionStats
     {
         [FieldOffset(0)]
-        public int Assists = 0;
+        public int Assists;
         [FieldOffset(8)]
-        public int Kills = 0;
+        public int Kills;
         [FieldOffset(16)]
-        public int DoubleKills = 0;
+        public int DoubleKills;
         [FieldOffset(32)]
-        public int UnrealKills = 0;
+        public int UnrealKills;
         [FieldOffset(36)]
-        public float GoldEarned = 0;
+        public float GoldEarned;
         [FieldOffset(40)]
-        public float GoldSpent = 0;
+        public float GoldSpent;
         [FieldOffset(84)]
-        public int CurrentKillingSpree = 0;
+        public int CurrentKillingSpree;
         [FieldOffset(88)]
-        public float LargestCriticalStrike = 0;
+        public float LargestCriticalStrike;
         [FieldOffset(92)]
-        public int LargestKillingSpree = 0;
+        public int LargestKillingSpree;
         [FieldOffset(96)]
-        public int LargestMultiKill = 0;
+        public int LargestMultiKill;
         [FieldOffset(104)]
-        public float LongestTimeSpentLiving = 0;
+        public float LongestTimeSpentLiving;
         [FieldOffset(108)]
-        public float MagicDamageDealt = 0;
+        public float MagicDamageDealt;
         [FieldOffset(112)]
-        public float MagicDamageDealtToChampions = 0;
+        public float MagicDamageDealtToChampions;
         [FieldOffset(116)]
-        public float MagicDamageTaken = 0;
+        public float MagicDamageTaken;
         [FieldOffset(120)]
-        public int MinionsKilled = 0;
+        public int MinionsKilled;
         [FieldOffset(126)]
-        public int NeutralMinionsKilled = 0;
+        public int NeutralMinionsKilled;
         [FieldOffset(130)]
-        public int NeutralMinionsKilledInEnemyJungle = 0;
+        public int NeutralMinionsKilledInEnemyJungle;
         [FieldOffset(134)]
-        public int NeutralMinionsKilledInTeamJungle = 0;
+        public int NeutralMinionsKilledInTeamJungle;
         [FieldOffset(142)]
-        public int Deaths = 0;
+        public int Deaths;
         [FieldOffset(146)]
-        public int PentaKills = 0;
+        public int PentaKills;
         [FieldOffset(150)]
-        public float PhysicalDamageDealt = 0;
+        public float PhysicalDamageDealt;
         [FieldOffset(154)]
-        public float PhysicalDamageDealtToChampions = 0;
+        public float PhysicalDamageDealtToChampions;
         [FieldOffset(158)]
-        public float PhysicalDamageTaken = 0;
+        public float PhysicalDamageTaken;
         [FieldOffset(166)]
-        public int QuadraKills = 0;
+        public int QuadraKills;
         [FieldOffset(206)]
-        public int TeamId = 0;
+        public int TeamId;
         [FieldOffset(226)]
-        public float TotalDamageDealt = 0;
+        public float TotalDamageDealt;
         [FieldOffset(230)]
-        public float TotalDamageDealtToChampions = 0;
+        public float TotalDamageDealtToChampions;
         [FieldOffset(234)]
-        public float TotalDamageTaken = 0;
+        public float TotalDamageTaken;
         [FieldOffset(238)]
-        public int TotalHeal = 0;
+        public int TotalHeal;
         [FieldOffset(242)]
-        public float TotalTimeCrowdControlDealt = 0;
+        public float TotalTimeCrowdControlDealt;
         [FieldOffset(246)]
-        public float TotalTimeSpentDead = 0;
+        public float TotalTimeSpentDead;
         [FieldOffset(250)]
-        public int TotalUnitsHealed = 0;
+        public int TotalUnitsHealed;
         [FieldOffset(254)]
-        public int TripleKills = 0;
+        public int TripleKills;
         [FieldOffset(258)]
-        public float TrueDamageDealt = 0;
+        public float TrueDamageDealt;
         [FieldOffset(262)]
-        public float TrueDamageDealtToChampions = 0;
+        public float TrueDamageDealtToChampions;
         [FieldOffset(266)]
-        public float TrueDamageTaken = 0;
+        public float TrueDamageTaken;
         [FieldOffset(270)]
-        public int TurretsKilled = 0;
+        public int TurretsKilled;
         [FieldOffset(274)]
-        public int BarracksKilled = 0;
+        public int BarracksKilled;
         [FieldOffset(282)]
-        public int WardsKilled = 0;
+        public int WardsKilled;
         [FieldOffset(286)]
-        public int WardsPlaced = 0;
+        public int WardsPlaced;
         [FieldOffset(298)]
-        public short Padding = 0; // sort of length (when above 0 sends malformed buffer error)
+        // sort of length (when above 0 sends malformed buffer error)
+        public short Padding; 
 
         // TODO: move to universal serializer
-        // also code here is unsafe, but thats prefered then write function that simply dumps all the variables
+        // also code here is unsafe, but thats prefered than just 
+        // write a function that simply dumps all the variables
         public static byte[] GetBytes(ChampionStats stats)
         {
             int size = Marshal.SizeOf(stats);

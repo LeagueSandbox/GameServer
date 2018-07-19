@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
-        public ChampionStats ChampStats = new ChampionStats();
+        public ChampionStats ChampStats { get; private set; } = new ChampionStats();
 
 
         private short _skillPoints;
@@ -414,11 +414,42 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return Inventory;
         }
 
+        public void OnKillMinion(Minion killed)
+        {
+            ChampStats.MinionsKilled += 1;
+            if (killed.Team == TeamId.TEAM_NEUTRAL)
+            {
+                ChampStats.NeutralMinionsKilled += 1;
+            }
+
+            var gold = _game.Map.MapGameScript.GetGoldFor(killed);
+            if (gold <= 0)
+            {
+                return;
+            }
+            
+            Stats.Gold += gold;
+            _game.PacketNotifier.NotifyAddGold(this, killed, gold);
+
+            if (KillDeathCounter < 0)
+            {
+                ChampionGoldFromMinions += gold;
+                _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
+            }
+
+            if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
+            {
+                ChampionGoldFromMinions = 0;
+                KillDeathCounter += 1;
+            }
+            
+        }
+
         public override void Die(AttackableUnit killer)
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
             _game.ObjectManager.StopTargeting(this);
-            this.ChampStats.Deaths += 1;
+            ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
 
