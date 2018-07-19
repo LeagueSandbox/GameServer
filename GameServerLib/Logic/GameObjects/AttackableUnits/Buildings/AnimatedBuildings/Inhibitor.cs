@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
 
         // TODO assists
         public Inhibitor(
+            Game game,
             string model,
             TeamId team,
             int collisionRadius = 40,
@@ -24,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;

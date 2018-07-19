@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Quest : BasePacket
     {
-        public Quest(string title, string description, byte type, byte command, uint netid, byte questEvent = 0)
-            : base(PacketCmd.PKT_S2C_QUEST)
+        public Quest(Game game, string title, string description, byte type, byte command, uint netid, byte questEvent = 0)
+            : base(game, PacketCmd.PKT_S2C_QUEST)
         {
 			WriteConstLengthString(title, 256);
 			WriteConstLengthString(description, 256);

@@ -10,17 +10,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class SpawnCommand : ChatCommandBase
     {
-        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "spawn";
         public override string Syntax => $"{Command} minionsblue minionspurple";
 
-        public SpawnCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public SpawnCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -58,10 +56,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
             var minions = new[]
             {
-                new Minion(MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
-                new Minion(MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
-                new Minion(MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
-                new Minion(MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
+                new Minion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
+                new Minion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
+                new Minion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
+                new Minion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
             };
 
             const int X = 400;
@@ -72,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 minion.SetWaypoints(
                     new List<Vector2> {new Vector2(minion.X, minion.Y), new Vector2(minion.X, minion.Y)});
                 minion.SetVisibleByTeam(team, true);
-                _game.ObjectManager.AddObject(minion);
+                Game.ObjectManager.AddObject(minion);
             }
         }
     }

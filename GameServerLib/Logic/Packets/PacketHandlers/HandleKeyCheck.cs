@@ -14,11 +14,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_KEY_CHECK;
         public override Channel PacketChannel => Channel.CHL_HANDSHAKE;
 
-        public HandleKeyCheck(Logger logger, Game game, PlayerManager playerManager)
+        public HandleKeyCheck(Game game)
         {
-            _logger = logger;
+            _logger = game.Logger;
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
                     player.PlayerNo = playerNo;
-                    var response = new KeyCheckResponse(keyCheck.UserId, playerNo);
+                    var response = new KeyCheckResponse(_game, keyCheck.UserId, playerNo);
                     _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
 
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {
-                            var response2 = new KeyCheckResponse(p2.Item2.UserId, p2.Item2.PlayerNo);
+                            var response2 = new KeyCheckResponse(_game, p2.Item2.UserId, p2.Item2.PlayerNo);
                             _game.PacketHandlerManager.SendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
                         }
                     }

@@ -11,9 +11,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUEST_CLICKED;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleQuestClicked(ChatCommandManager chatCommandManager)
+        public HandleQuestClicked(Game game)
         {
-            _chatCommandManager = chatCommandManager;
+            _chatCommandManager = game.ChatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

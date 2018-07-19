@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                var p = new SetTeam(this as AttackableUnit, team);
+                var p = new SetTeam(_game, this as AttackableUnit, team);
                 _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2_C);
             }
         }
@@ -45,14 +45,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
         public bool IsDashing { get; protected set; }
-        public override bool IsSimpleTarget { get { return false; } }
+        public override bool IsSimpleTarget => false;
         protected float _dashSpeed;
         private Dictionary<TeamId, bool> _visibleByTeam;
-        protected Game _game = Program.ResolveDependency<Game>();
-        protected NetworkIdManager _networkIdManager = Program.ResolveDependency<NetworkIdManager>();
+        protected Game _game;
+        protected NetworkIdManager _networkIdManager;
 
-        public GameObject(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
+        public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
+            _game = game;
+            _networkIdManager = game.NetworkIdManager;
             if (netId != 0)
             {
                 NetId = netId; // Custom netId
@@ -94,10 +96,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         {
         }
 
-        /// <summary>
-        /// Moves the object depending on its target, updating its coordinate.
-        /// </summary>
-        /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
         public void Move(float diff)
         {
             if (Target == null)
@@ -107,6 +105,20 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             }
 
             var to = new Vector2(Target.X, Target.Y);
+            Move(diff, to);
+        }
+
+        /// <summary>
+        /// Moves the object depending on its target, updating its coordinate.
+        /// </summary>
+        /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
+        public void Move(float diff, Vector2 to)
+        {
+            if (Target == null)
+            {
+                _direction = new Vector2();
+                return;
+            }
             var cur = new Vector2(X, Y); //?
 
             var goingTo = to - cur;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logic.Maps;
@@ -7,12 +8,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class CollisionHandler
     {
-        private Game _game = Program.ResolveDependency<Game>();
+        private Game _game;
 
         private List<GameObject> _objects = new List<GameObject>();
 
-        public CollisionHandler(Map map)
+        public CollisionHandler(Game game, Map map)
         {
+            _game = game;
             //Pathfinder.setMap(map);
             // Initialise the pathfinder.
         }

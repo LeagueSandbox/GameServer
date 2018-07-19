@@ -11,17 +11,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class MobsCommand : ChatCommandBase
     {
-        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "mobs";
         public override string Syntax => $"{Command} teamNumber";
 
-        public MobsCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public MobsCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -39,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
 
-            var units = _game.ObjectManager.GetObjects()
+            var units = Game.ObjectManager.GetObjects()
                 .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
@@ -47,8 +45,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
                 var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingResponse(client, ping);
-                _game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2_C);
+                var response = new AttentionPingResponse(Game, client, ping);
+                Game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2_C);
             }
         }
     }

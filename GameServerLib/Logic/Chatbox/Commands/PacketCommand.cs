@@ -8,17 +8,15 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class PacketCommand : ChatCommandBase
     {
-        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "packet";
         public override string Syntax => $"{Command} XX XX XX...";
 
-        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public PacketCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -34,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packet((PacketCmd)opcode);
+                var packet = new Packet(Game, (PacketCmd)opcode);
 
                 for (var i = 2; i < s.Length; i++)
                 {
@@ -48,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     }
                 }
 
-                _game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
+                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
             }
             catch
             {

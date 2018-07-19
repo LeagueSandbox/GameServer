@@ -12,10 +12,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SELL_ITEM;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleSellItem(Game game, PlayerManager playerManager)
+        public HandleSellItem(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)

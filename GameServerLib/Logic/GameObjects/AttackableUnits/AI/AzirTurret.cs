@@ -7,6 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public AttackableUnit Owner { get; private set; }
 
         public AzirTurret(
+            Game game,
             AttackableUnit owner,
             string name,
             string model,
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(name, model, x, y, team, netId)
+        ) : base(game, name, model, x, y, team, netId)
         {
             Owner = owner;
 

@@ -7,6 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_LOCK_CAMERA;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
+        public HandleLockCamera(Game game) { }
+
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             return true;

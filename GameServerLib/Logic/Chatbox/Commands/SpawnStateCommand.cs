@@ -4,14 +4,13 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class SpawnStateCommand : ChatCommandBase
     {
-        private readonly Game _game;
-
         public override string Command => "spawnstate";
         public override string Syntax => $"{Command} 0 (disable) / 1 (enable)";
 
-        public SpawnStateCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
+        public SpawnStateCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
+
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -25,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else
             {
-                _game.Map.MapGameScript.SpawnEnabled = input != 0;
+                Game.Map.MapGameScript.SpawnEnabled = input != 0;
             }
         }
     }

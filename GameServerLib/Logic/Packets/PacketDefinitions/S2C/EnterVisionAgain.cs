@@ -10,8 +10,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     /// </summary>
     public class EnterVisionAgain : BasePacket
     {
-        public EnterVisionAgain(Minion m)
-            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
+        public EnterVisionAgain(Game game, Minion m)
+            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Fill(0, 13);
             Write(1.0f);
@@ -25,16 +25,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             WriteNetId(m);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
             Write((byte)0); // movement mask
-            Write(MovementVector.TargetXToNormalFormat(m.X));
-            Write(MovementVector.TargetYToNormalFormat(m.Y));
+            Write(MovementVector.TargetXToNormalFormat(game, m.X));
+            Write(MovementVector.TargetYToNormalFormat(game, m.Y));
             for (var i = m.CurWaypoint; i < waypoints.Count; i++)
             {
-                Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].X));
+                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].Y));
             }
         }
 
-        public EnterVisionAgain(Champion c) : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
+        public EnterVisionAgain(Game game, Champion c) 
+            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
         {
             Write((short)0); // extraInfo
             Write((byte)0); //c.getInventory().getItems().size(); // itemCount?
@@ -68,12 +69,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
             WriteNetId(c);
             Write((byte)0); // movement mask; 1=KeepMoving?
-            Write(MovementVector.TargetXToNormalFormat(c.X));
-            Write(MovementVector.TargetYToNormalFormat(c.Y));
+            Write(MovementVector.TargetXToNormalFormat(game, c.X));
+            Write(MovementVector.TargetYToNormalFormat(game, c.Y));
             for (var i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
-                Write(MovementVector.TargetXToNormalFormat(waypoints[i].X));
-                Write(MovementVector.TargetXToNormalFormat(waypoints[i].Y));
+                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].X));
+                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].Y));
             }
         }
     }

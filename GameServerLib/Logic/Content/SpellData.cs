@@ -55,8 +55,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
     public class SpellData
     {
-        private Game _game = Program.ResolveDependency<Game>();
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private readonly Game _game;
+        private readonly Logger _logger;
+
+        public SpellData(Game game)
+        {
+            _game = game;
+            _logger = game.Logger;
+        }
 
         public string AfterEffectName { get; set; } = "";
         //AIEndOnly

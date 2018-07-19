@@ -9,9 +9,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "junglespawn";
         public override string Syntax => $"{Command}";
 
-        public JunglespawnCommand(ChatCommandManager chatCommandManager, Logger logger) : base(chatCommandManager)
+        public JunglespawnCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _logger = logger;
+            _logger = game.Logger;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

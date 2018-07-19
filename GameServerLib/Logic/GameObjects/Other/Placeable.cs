@@ -9,13 +9,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
         public ObjAiBase Owner { get; private set; } // We'll probably want to change this in the future
 
         public Placeable(
+            Game game,
             ObjAiBase owner,
             float x,
             float y,
             string model,
             string name,
             uint netId = 0
-        ) : base(model, new Stats.Stats(), 40, x, y, 0, netId)
+        ) : base(game, model, new Stats.Stats(), 40, x, y, 0, netId)
         {
             SetTeam(owner.Team);
 

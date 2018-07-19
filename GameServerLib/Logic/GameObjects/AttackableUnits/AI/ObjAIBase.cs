@@ -21,8 +21,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private Dictionary<string, Buff> Buffs { get; }
 
         private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
-        protected ItemManager _ıtemManager = Program.ResolveDependency<ItemManager>();
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected ItemManager _itemManager;
+        protected CSharpScriptEngine _scriptEngine;
 
         /// <summary>
         /// Unit we want to attack as soon as in range
@@ -45,10 +45,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public bool IsMelee { get; set; }
         private Random _random = new Random();
 
-        public ObjAiBase(string model, Stats.Stats stats, int collisionRadius = 40,
+        public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
-            base(model, stats, collisionRadius, x, y, visionRadius, netId)
+            base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
         {
+            _itemManager = game.ItemManager;
+            _scriptEngine = game.ScriptEngine;
             CharData = _game.Config.ContentManager.GetCharData(Model);
             Stats.LoadStats(CharData);
 
@@ -95,7 +97,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             var buffController =
-                new BuffGameScriptController(this, buffNamespace, buffClass, ownerSpell, removeAfter);
+                new BuffGameScriptController(_game, this, buffNamespace, buffClass, ownerSpell, removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
@@ -428,6 +430,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         if (!IsMelee)
                         {
                             var p = new Projectile(
+                                _game,
                                 X,
                                 Y,
                                 5,

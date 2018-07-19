@@ -16,13 +16,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
         public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
 
-        public HandleChatBoxMessage(Game game, ChatCommandManager chatCommandManager, PlayerManager playerManager,
-            Logger logger)
+        public HandleChatBoxMessage(Game game)
         {
             _game = game;
-            _chatCommandManager = chatCommandManager;
-            _playerManager = playerManager;
-            _logger = logger;
+            _chatCommandManager = game.ChatCommandManager;
+            _playerManager = game.PlayerManager;
+            _logger = game.Logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -35,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 {
                     if (int.TryParse(split[1], out var y))
                     {
-                        var response = new AttentionPingResponse(
+                        var response = new AttentionPingResponse(_game,
                             _playerManager.GetPeerInfo(peer),
                             new AttentionPingRequest(x, y, 0, Pings.PING_DEFAULT)
                         );
@@ -63,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     catch
                     {
                         _logger.LogCoreWarning(command + " sent an exception.");
-                        var dm = new DebugMessage("Something went wrong...Did you wrote the command well ? ");
+                        var dm = new DebugMessage(_game, "Something went wrong...Did you wrote the command well ? ");
                         _game.PacketHandlerManager.SendPacket(peer, dm, Channel.CHL_S2_C);
                     }
                     return true;
@@ -82,8 +81,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 $"{_playerManager.GetPeerInfo(peer).Name} ({_playerManager.GetPeerInfo(peer).Champion.Model}): </font><font color=\"#FFFFFF\">{message.Msg}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
-            var dmTeam = new DebugMessage(teamChatColor + "[All] " + debugMessage);
-            var dmEnemy = new DebugMessage(enemyChatColor + "[All] " + debugMessage);
+            var dmTeam = new DebugMessage(_game, teamChatColor + "[All] " + debugMessage);
+            var dmEnemy = new DebugMessage(_game, enemyChatColor + "[All] " + debugMessage);
             var ownTeam = _playerManager.GetPeerInfo(peer).Team;
             var enemyTeam = CustomConvert.GetEnemyTeam(ownTeam);
 
@@ -101,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketHandlerManager.BroadcastPacketTeam(enemyTeam, dmEnemy, Channel.CHL_S2_C);
                     return true;
                 case ChatType.CHAT_TEAM:
-                    dmTeam = new DebugMessage(teamChatColor + debugMessage);
+                    dmTeam = new DebugMessage(_game, teamChatColor + debugMessage);
                     _game.PacketHandlerManager.BroadcastPacketTeam(ownTeam, dmTeam, Channel.CHL_S2_C);
                     return true;
                 default:

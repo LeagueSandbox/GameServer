@@ -15,7 +15,8 @@ namespace LeagueSandbox.GameServerApp
             {
                 configJson = File.ReadAllText(options.ConfigPath);
             }
-            GameServerLauncher.LaunchServer(options.ServerPort, configJson);
+
+            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson);
         }
     }
 

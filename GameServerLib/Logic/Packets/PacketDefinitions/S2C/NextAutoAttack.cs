@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class NextAutoAttack : BasePacket
     {
-        public NextAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
-            : base(PacketCmd.PKT_S2C_NEXT_AUTO_ATTACK, attacker.NetId)
+        public NextAutoAttack(Game game, AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
+            : base(game, PacketCmd.PKT_S2C_NEXT_AUTO_ATTACK, attacker.NetId)
         {
             WriteNetId(attacked);
             if (initial)

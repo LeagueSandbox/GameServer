@@ -6,23 +6,22 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class InhibCommand : ChatCommandBase
     {
-        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "inhib";
         public override string Syntax => $"{Command}";
 
-        public InhibCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
-            : base(chatCommandManager)
+        public InhibCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
-            _game = game;
-            _playerManager = playerManager;
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var sender = _playerManager.GetPeerInfo(peer);
             var min = new Monster(
+                Game,
                 sender.Champion.X,
                 sender.Champion.Y,
                 sender.Champion.X,
@@ -30,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 "Worm",
                 "Worm"
                 );
-            _game.ObjectManager.AddObject(min);
+            Game.ObjectManager.AddObject(min);
         }
     }
 }

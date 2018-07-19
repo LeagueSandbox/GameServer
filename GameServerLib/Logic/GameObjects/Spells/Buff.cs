@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
     public class Buff
     {
-        private Logger _logger = Program.ResolveDependency<Logger>();
+        private Logger _logger;
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; set; }
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public ObjAiBase TargetUnit { get; private set; }
         public ObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
-        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+        protected CSharpScriptEngine _scriptEngine;
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
@@ -63,6 +63,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
         {
             _game = game;
+            _logger = game.Logger;
+            _scriptEngine = game.ScriptEngine;
             Duration = dur;
             Stacks = stacks;
             Name = buffName;

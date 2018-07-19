@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class CastSpellResponse : BasePacket
     {
-        public CastSpellResponse(Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
-            : base(PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
+        public CastSpellResponse(Game game, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
+            : base(game, PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
         {
             var m = Game.Map;
 

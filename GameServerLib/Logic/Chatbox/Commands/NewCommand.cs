@@ -7,7 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "newcommand";
         public override string Syntax => $"{Command}";
 
-        public NewCommand(ChatCommandManager chatCommandManager) : base(chatCommandManager)
+        public NewCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
         {
         }
 
