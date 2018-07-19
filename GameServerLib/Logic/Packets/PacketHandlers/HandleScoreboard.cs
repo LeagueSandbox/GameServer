@@ -13,18 +13,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;
         public override Channel PacketChannel => Channel.CHL_C2_S;
 
-        public HandleScoreboard(Game game, PlayerManager playerManager, Logger logger)
+        public HandleScoreboard(Game game)
         {
             _game = game;
-            _playerManager = playerManager;
-            _logger = logger;
+            _playerManager = game.PlayerManager;
+            _logger = game.Logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             _logger.LogCoreInfo($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var response = new PlayerStats(_playerManager.GetPeerInfo(peer).Champion);
+            var response = new PlayerStats(_game, _playerManager.GetPeerInfo(peer).Champion);
             // TODO: research how to send the packet
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2_C);
         }
