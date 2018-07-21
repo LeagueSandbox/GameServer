@@ -414,35 +414,37 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return Inventory;
         }
 
-        public void OnKillMinion(Minion killed)
+        public void OnKill(AttackableUnit killed)
         {
-            ChampStats.MinionsKilled += 1;
-            if (killed.Team == TeamId.TEAM_NEUTRAL)
+            if (killed is Minion)
             {
-                ChampStats.NeutralMinionsKilled += 1;
-            }
+                ChampStats.MinionsKilled += 1;
+                if (killed.Team == TeamId.TEAM_NEUTRAL)
+                {
+                    ChampStats.NeutralMinionsKilled += 1;
+                }
 
-            var gold = _game.Map.MapGameScript.GetGoldFor(killed);
-            if (gold <= 0)
-            {
-                return;
-            }
-            
-            Stats.Gold += gold;
-            _game.PacketNotifier.NotifyAddGold(this, killed, gold);
+                var gold = _game.Map.MapGameScript.GetGoldFor(killed);
+                if (gold <= 0)
+                {
+                    return;
+                }
 
-            if (KillDeathCounter < 0)
-            {
-                ChampionGoldFromMinions += gold;
-                _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
-            }
+                Stats.Gold += gold;
+                _game.PacketNotifier.NotifyAddGold(this, killed, gold);
 
-            if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
-            {
-                ChampionGoldFromMinions = 0;
-                KillDeathCounter += 1;
-            }
-            
+                if (KillDeathCounter < 0)
+                {
+                    ChampionGoldFromMinions += gold;
+                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
+                }
+
+                if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
+                {
+                    ChampionGoldFromMinions = 0;
+                    KillDeathCounter += 1;
+                }
+            }        
         }
 
         public override void Die(AttackableUnit killer)

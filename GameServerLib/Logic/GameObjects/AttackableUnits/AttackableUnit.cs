@@ -114,7 +114,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                     return;
                 }
 
-                cKiller.OnKillMinion(this as Minion);
+                cKiller.OnKill(this);
             }
 
             if (IsDashing)
