@@ -105,41 +105,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 }
             }
 
-            if (killer != null)
+            if ((killer != null) && (killer is Champion))
             {
-                var cKiller = killer as Champion;
-
-                if (cKiller == null)
-                {
-                    return;
-                }
-
-                var gold = _game.Map.MapGameScript.GetGoldFor(this);
-                if (gold <= 0)
-                {
-                    return;
-                }
-
-                cKiller.Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
-
-                if (cKiller.KillDeathCounter < 0)
-                {
-                    cKiller.ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
-                }
-
-                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
-                {
-                    cKiller.ChampionGoldFromMinions = 0;
-                    cKiller.KillDeathCounter += 1;
-                }
+                ((Champion)killer).OnKill(this);
             }
-
-            if (IsDashing)
-            {
-                IsDashing = false;
-            }
+            IsDashing = false;
         }
 
         public virtual bool IsInDistress()

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -231,6 +232,7 @@
     <Compile Include="Logic\GameObjects\Missiles\ObjMissile.cs" />
     <Compile Include="Logic\GameObjects\Other\Announce.cs" />
     <Compile Include="Logic\GameObjects\Spells\Buff.cs" />
+    <Compile Include="Logic\GameObjects\Stats\ChampionStats.cs" />
     <Compile Include="Logic\GameObjects\Stats\Replication.cs" />
     <Compile Include="Logic\GameObjects\Stats\ReplicationAiTurret.cs" />
     <Compile Include="Logic\GameObjects\Stats\ReplicationAnimatedBuilding.cs" />
@@ -365,6 +367,7 @@
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NextAutoAttack.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\NpcDie.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\S2C\OnAttack.cs" />
+    <Compile Include="Logic\Packets\PacketDefinitions\S2C\PlayerStats.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleExit.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleLockCamera.cs" />
@@ -503,6 +506,12 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
