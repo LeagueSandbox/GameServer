@@ -105,22 +105,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
                 }
             }
 
-            if (killer != null)
+            if ((killer != null) && (killer is Champion))
             {
-                var cKiller = killer as Champion;
-
-                if (cKiller == null)
-                {
-                    return;
-                }
-
-                cKiller.OnKill(this);
+                ((Champion)killer).OnKill(this);
             }
-
-            if (IsDashing)
-            {
-                IsDashing = false;
-            }
+            IsDashing = false;
         }
 
         public virtual bool IsInDistress()
