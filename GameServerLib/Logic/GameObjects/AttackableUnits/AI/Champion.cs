@@ -493,7 +493,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (KillDeathCounter <= 0)
                 KillDeathCounter -= 1;
 
-            if (gold > 0)
+            if (gold < 0)
             {
                 _game.PacketNotifier.NotifyChampionDie(this, cKiller, 0);
                 return;
@@ -535,7 +535,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             base.TakeDamage(attacker, damage, type, source, isCrit);
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            _playerHitId = NetId;
+            _playerHitId = attacker.NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }
