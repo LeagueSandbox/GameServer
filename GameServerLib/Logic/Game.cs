@@ -14,6 +14,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.Utility;
 using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Logic
@@ -130,10 +131,20 @@ namespace LeagueSandbox.GameServer.Logic
                 if (File.Exists(leaguePath))
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
-                    startInfo.Arguments = String.Format("\"{0}\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 5119 {1} 1\"", address.Port, blowfishKey);
+                    startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", address.Port, blowfishKey);
                     startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
-                    Process.Start(startInfo);
+                    var leagueProcess = Process.Start(startInfo);
                     Logger.LogCoreInfo("Launching League of Legends. You can disable this in GameInfo.json.");
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
+                        Environment.OSVersion.Platform == PlatformID.Win32S ||
+                        Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+                        Environment.OSVersion.Platform == PlatformID.WinCE)
+                    {
+                        WindowsConsoleCloseDetection.SetCloseHandler((_) => {
+                            leagueProcess.Kill();
+                            return true;
+                        });
+                    }
                 } else
                 {
                     Logger.LogCoreError("Unable to find League of Legends.exe. Check the GameInfo.json settings and your League location.");
