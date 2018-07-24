@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using ENet;
 using LeagueSandbox.GameServer.Exceptions;
@@ -117,6 +118,28 @@ namespace LeagueSandbox.GameServer.Logic
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             Logger.LogCoreInfo("Game is ready.");
+            
+            #if DEBUG
+            if (Config.GameConfig.AutoStartClient)
+            {
+                String leaguePath = Config.GameConfig.ClientLocation;
+                if (Directory.Exists(leaguePath))
+                {
+                    leaguePath = Path.Combine(Config.GameConfig.ClientLocation, "League of Legends.exe");
+                }
+                if (File.Exists(leaguePath))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
+                    startInfo.Arguments = "\""+ address.Port + "\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1\"";
+                    startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
+                    Process.Start(startInfo);
+                    Logger.LogCoreInfo("Launching League of Legends. You can disable this in GameInfo.json.");
+                } else
+                {
+                    Logger.LogCoreError("Unable to find League of Legends.exe. Check the GameInfo.json settings and your League location.");
+                }
+            }
+            #endif
         }
 
         public bool LoadScripts()
