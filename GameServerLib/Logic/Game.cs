@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.Logic
                 if (File.Exists(leaguePath))
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
-                    startInfo.Arguments = "\""+ address.Port + "\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1\"";
+                    startInfo.Arguments = String.Format("\"{0}\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 5119 {1} 1\"", address.Port, blowfishKey);
                     startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
                     Process.Start(startInfo);
                     Logger.LogCoreInfo("Launching League of Legends. You can disable this in GameInfo.json.");
