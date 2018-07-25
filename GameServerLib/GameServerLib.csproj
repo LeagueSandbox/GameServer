@@ -270,6 +270,7 @@
     <Compile Include="Logic\Items\Shop.cs" />
     <Compile Include="Logic\Logger.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
+    <Compile Include="Logic\Maps\NewSummonersRift.cs" />
     <Compile Include="Logic\ObjectManager.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />
