@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUERY_STATUS_REQ;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleQueryStatus(Game game)
         {
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var response = new QueryStatus(_game);
-            return _game.PacketHandlerManager.SendPacket(peer, response, Channel.CHL_S2_C);
+            return _game.PacketHandlerManager.SendPacket(peer, response, Channel.CHL_S2C);
         }
     }
 }

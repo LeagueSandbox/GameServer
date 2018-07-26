@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly NetworkIdManager _networkIdManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CHAR_LOADED;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSpawn(Game game)
         {
@@ -34,24 +34,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var start = new StatePacket2(_game, PacketCmd.PKT_S2C_START_SPAWN);
-            _game.PacketHandlerManager.SendPacket(peer, start, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.SendPacket(peer, start, Channel.CHL_S2C);
             _logger.LogCoreInfo("Spawning map");
 
             var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())
             {
                 var spawn = new HeroSpawn(_game, p.Item2, playerId++);
-                _game.PacketHandlerManager.SendPacket(peer, spawn, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, spawn, Channel.CHL_S2C);
 
                 var info = new AvatarInfo(_game, p.Item2);
-                _game.PacketHandlerManager.SendPacket(peer, info, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, info, Channel.CHL_S2C);
             }
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
             var itemInstance = peerInfo.Champion.GetInventory().SetExtraItem(7, bluePill);
             var buyItem = new BuyItemResponse(_game, peerInfo.Champion, itemInstance);
-            _game.PacketHandlerManager.SendPacket(peer, buyItem, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.SendPacket(peer, buyItem, Channel.CHL_S2C);
 
             // Runes
             byte runeItemSlot = 14;
@@ -80,15 +80,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 if (kv.Value is LaneTurret turret)
                 {
                     var turretSpawn = new TurretSpawn(_game, turret);
-                    _game.PacketHandlerManager.SendPacket(peer, turretSpawn, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.SendPacket(peer, turretSpawn, Channel.CHL_S2C);
 
                     // Fog Of War
                     var fogOfWarPacket = new FogUpdate2(_game, turret, _networkIdManager);
-                    _game.PacketHandlerManager.BroadcastPacketTeam(turret.Team, fogOfWarPacket, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.BroadcastPacketTeam(turret.Team, fogOfWarPacket, Channel.CHL_S2C);
 
                     // To suppress game HP-related errors for enemy turrets out of vision
                     var setHealthPacket = new SetHealth(_game, turret);
-                    _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
 
                     foreach (var item in turret.Inventory)
                     {
@@ -99,14 +99,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 else if (kv.Value is LevelProp levelProp)
                 {
                     var levelPropSpawnPacket = new LevelPropSpawn(_game, levelProp);
-                    _game.PacketHandlerManager.SendPacket(peer, levelPropSpawnPacket, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.SendPacket(peer, levelPropSpawnPacket, Channel.CHL_S2C);
                 }
                 else if (kv.Value is Champion champion)
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
                         var enterVisionPacket = new EnterVisionAgain(_game, champion);
-                        _game.PacketHandlerManager.SendPacket(peer, enterVisionPacket, Channel.CHL_S2_C);
+                        _game.PacketHandlerManager.SendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
                     }
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
@@ -114,16 +114,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     var inhibtor = (AttackableUnit) kv.Value;
 
                     var minionSpawnPacket = new MinionSpawn2(_game, inhibtor.NetId);
-                    _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
                     var setHealthPacket = new SetHealth(_game, inhibtor.NetId);
-                    _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
+                    _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
                 }
                 else if (kv.Value is Projectile projectile)
                 {
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
                         var spawnProjectilePacket = new SpawnProjectile(_game, projectile);
-                        _game.PacketHandlerManager.SendPacket(peer, spawnProjectilePacket, Channel.CHL_S2_C);
+                        _game.PacketHandlerManager.SendPacket(peer, spawnProjectilePacket, Channel.CHL_S2C);
                     }
                 }
                 else
@@ -138,21 +138,21 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 // Shop (blue team)
                 var minionSpawnPacket = new MinionSpawn2(_game, 0xff10c6db);
-                _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
                 var setHealthPacket = new SetHealth(_game, 0xff10c6db);
-                _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
             }
             else if (peerInfo != null && peerInfo.Team == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
                 var minionSpawnPacket = new MinionSpawn2(_game, 0xffa6170e);
-                _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
                 var setHealthPacket = new SetHealth(_game, 0xffa6170e);
-                _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
             }
 
             var endSpawnPacket = new StatePacket(_game, PacketCmd.PKT_S2C_END_SPAWN);
-            return _game.PacketHandlerManager.SendPacket(peer, endSpawnPacket, Channel.CHL_S2_C);
+            return _game.PacketHandlerManager.SendPacket(peer, endSpawnPacket, Channel.CHL_S2C);
         }
     }
 }

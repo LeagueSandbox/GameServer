@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SYNCH_VERSION;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSync(Game game)
         {
@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
             var answer = new SynchVersionResponse(_game, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
 
-            return _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2_C);
+            return _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             if (_game.IsRunning)
             {
                 var p = new SetTeam(_game, this as AttackableUnit, team);
-                _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2_C);
+                _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
             }
         }
 

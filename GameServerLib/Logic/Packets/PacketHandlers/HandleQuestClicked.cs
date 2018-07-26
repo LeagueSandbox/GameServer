@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly ChatCommandManager _chatCommandManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUEST_CLICKED;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleQuestClicked(Game game)
         {

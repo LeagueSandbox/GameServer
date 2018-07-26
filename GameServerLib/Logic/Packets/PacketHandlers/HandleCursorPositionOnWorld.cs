@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleCursorPositionOnWorld(Game game)
         {
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var cursorPosition = new CursorPositionOnWorld(data);
             var response = new DebugMessage(_game, $"X: {cursorPosition.X} Y: {cursorPosition.Y}");
 
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2_C);
+            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
     }
 }

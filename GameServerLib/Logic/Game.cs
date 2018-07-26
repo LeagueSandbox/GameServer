@@ -160,7 +160,7 @@ namespace LeagueSandbox.GameServer.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2_S)
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
                             .HandlePacket(null, new byte[0]);
                         _autoResumeCheck = true;
                     }

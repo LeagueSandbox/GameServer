@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_VIEW_REQ;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleView(Game game)
         {
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 answer.SetRequestNo(request.RequestNo);
             }
-            _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2_C, PacketFlags.None);
+            _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
             return true;
         }
     }
