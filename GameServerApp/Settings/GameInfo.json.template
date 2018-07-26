@@ -47,9 +47,7 @@
     ],
     "game": {
         "map": 1,
-        "gameMode": "LeagueSandbox-Default",
-        "clientLocation": "C:\\League_Sandbox_Client",
-        "autoStartClient": true
+        "gameMode": "LeagueSandbox-Default"
     },
     "gameInfo": {
         "MANACOSTS_ENABLED": false,

@@ -17,20 +17,20 @@ namespace LeagueSandbox.GameServer
         public string ConfigJson { get; private set; }
         public ushort ServerPort { get; private set; }
 
-        public GameServerLauncher(ushort serverPort, string configJson)
+        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey, Action<Logger> onServerStarted)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
             logger = new Logger();
             var itemManager = new ItemManager();
             game = new Game(itemManager, logger);
-            var server = new Server(logger, game, serverPort, configJson);
+            var server = new Server(logger, game, serverPort, configJson, blowfishKey);
 
             try
             {
                 ExecutingDirectory = ServerContext.ExecutingDirectory;
                 itemManager.LoadItems();
-                server.Start();
+                server.Start(onServerStarted);
             }
             catch (Exception e)
             {

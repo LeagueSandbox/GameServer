@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer
 {
     internal class Server : IDisposable
     {
-        private string _blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
+        private string _blowfishKey;
         private uint _serverHost = Address.IPv4HostAny;
         private string _serverVersion = "0.2.0";
         private Logger _logger;
@@ -14,19 +14,21 @@ namespace LeagueSandbox.GameServer
         private Config _config;
         private ushort _serverPort { get; }
 
-        public Server(Logger logger, Game game, ushort port, string configJson)
+        public Server(Logger logger, Game game, ushort port, string configJson, string blowfishKey)
         {
             _logger = logger;
             _game = game;
             _serverPort = port;
+            _blowfishKey = blowfishKey;
             _config = Config.LoadFromJson(game, configJson);
         }
 
-        public void Start()
+        public void Start(Action<Logger> onServerStarted)
         {
             _logger.LogCoreInfo($"Yorick {_serverVersion}");
             _logger.LogCoreInfo("Game started on port: {0}", _serverPort);
             _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
+            onServerStarted(_logger);
             _game.NetLoop();
         }
 

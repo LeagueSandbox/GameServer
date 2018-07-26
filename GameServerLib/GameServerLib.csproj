@@ -482,7 +482,6 @@
     <Compile Include="Logic\Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Logic\Scripting\CSharp\MapGameScript.cs" />
-    <Compile Include="Logic\Utility\WindowsConsoleCloseDetection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
