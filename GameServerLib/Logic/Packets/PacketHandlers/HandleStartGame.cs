@@ -48,6 +48,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
                     // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
+
+                    var tip = new BlueTip(
+                        _game,
+                        "Server Build Date",
+                        $"{ServerContext.BuildDateString}",
+                        "",
+                        0,
+                        player.Item2.Champion.NetId,
+                        _game.NetworkIdManager.GetNewNetId()
+                    );
+                    _game.PacketHandlerManager.SendPacket(player.Item2.Peer, tip, Channel.CHL_S2_C);
                 }
 
                 _game.Start();
@@ -55,7 +66,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.IsRunning)
             {
-                var map = _game.Map;
                 if (peerInfo.IsDisconnected)
                 {
                     foreach (var player in _playerManager.GetPlayers())
