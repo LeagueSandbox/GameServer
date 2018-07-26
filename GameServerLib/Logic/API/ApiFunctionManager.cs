@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void PrintChat(string msg)
         {
             var dm = new DebugMessage(_game, msg);
-            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2C);
         }
 
         public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         public static void SendPacket(string packetString)
         {
             var packet = StringToByteArray(packetString);
-            _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
         }
     }
 }

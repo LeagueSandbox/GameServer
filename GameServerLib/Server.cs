@@ -24,8 +24,11 @@ namespace LeagueSandbox.GameServer
 
         public void Start()
         {
+            var build = $"League Sandbox Build {ServerContext.BuildDateString}";
+            Console.Title = build;
+            _logger.LogCoreInfo(build);
             _logger.LogCoreInfo($"Yorick {_serverVersion}");
-            _logger.LogCoreInfo("Game started on port: {0}", _serverPort);
+            _logger.LogCoreInfo($"Game started on port: {_serverPort}");
             _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
             _game.NetLoop();
         }

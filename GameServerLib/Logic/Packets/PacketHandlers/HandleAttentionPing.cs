@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_ATTENTION_PING;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleAttentionPing(Game game)
         {
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var ping = new AttentionPingRequest(data);
             var response = new AttentionPingResponse(_game, _playerManager.GetPeerInfo(peer), ping);
             var team = _playerManager.GetPeerInfo(peer).Team;
-            return _game.PacketHandlerManager.BroadcastPacketTeam(team, response, Channel.CHL_S2_C);
+            return _game.PacketHandlerManager.BroadcastPacketTeam(team, response, Channel.CHL_S2C);
         }
     }
 }

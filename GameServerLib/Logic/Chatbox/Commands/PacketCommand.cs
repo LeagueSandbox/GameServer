@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                     }
                 }
 
-                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2_C);
+                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2C);
             }
             catch
             {

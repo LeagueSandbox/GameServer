@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_BLUE_TIP_CLICKED;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleBlueTipClicked(Game game)
         {
@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 _playerManager.GetPeerInfo(peer).Champion.NetId,
                 blueTipClicked.Netid);
 
-            _game.PacketHandlerManager.SendPacket(peer, removeBlueTip, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.SendPacket(peer, removeBlueTip, Channel.CHL_S2C);
             var msg = $"Clicked blue tip with netid: {blueTipClicked.Netid}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;

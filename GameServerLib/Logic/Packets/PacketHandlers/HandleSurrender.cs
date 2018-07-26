@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _pm;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SURRENDER;
-        public override Channel PacketChannel => Channel.CHL_C2_S;
+        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSurrender(Game game)
         {
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var c = _pm.GetPeerInfo(peer).Champion;
             var surrender = new Surrender(_game, c, 0x03, 1, 0, 5, c.Team, 10.0f);
-            _game.PacketHandlerManager.BroadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2_C);
+            _game.PacketHandlerManager.BroadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2C);
             return true;
         }
     }
