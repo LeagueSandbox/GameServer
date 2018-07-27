@@ -307,3 +307,4 @@ OpenCover/
 # Custom stuff
 GameServer/Settings/GameInfo.json
 GameServerApp/Settings/GameInfo.json
+GameServerApp/Settings/GameServerSettings.json
