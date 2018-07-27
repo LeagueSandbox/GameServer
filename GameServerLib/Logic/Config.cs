@@ -127,8 +127,6 @@ namespace LeagueSandbox.GameServer.Logic
     {
         public int Map => (int)_gameData.SelectToken("map");
         public string GameMode => (string)_gameData.SelectToken("gameMode");
-        public string ClientLocation => _gameData.Value<string>("clientLocation") ?? "";
-        public bool AutoStartClient => _gameData.Value<bool?>("autoStartClient") ?? false;
 
         private JToken _gameData;
 
