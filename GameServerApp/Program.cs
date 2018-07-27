@@ -32,43 +32,46 @@ namespace LeagueSandbox.GameServerApp
             }
 
             string blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
-            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson, blowfishKey, (Logger logger)=> {
-                #if DEBUG
-                if (configGameServerSettings.AutoStartClient)
+
+            Logger logger = new Logger();
+            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson, blowfishKey, logger);
+            #if DEBUG
+            if (configGameServerSettings.AutoStartClient)
+            {
+                string leaguePath = configGameServerSettings.ClientLocation;
+                if (Directory.Exists(leaguePath))
                 {
-                    string leaguePath = configGameServerSettings.ClientLocation;
-                    if (Directory.Exists(leaguePath))
+                    leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
+                }
+                if (File.Exists(leaguePath))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
+                    startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", options.ServerPort, blowfishKey);
+                    startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
+                    var leagueProcess = Process.Start(startInfo);
+                    logger.LogCoreInfo("Launching League of Legends. You can disable this in GameServerSettings.json.");
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
+                        Environment.OSVersion.Platform == PlatformID.Win32S ||
+                        Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+                        Environment.OSVersion.Platform == PlatformID.WinCE)
                     {
-                        leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
-                    }
-                    if (File.Exists(leaguePath))
-                    {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
-                        startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", options.ServerPort, blowfishKey);
-                        startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
-                        var leagueProcess = Process.Start(startInfo);
-                        logger.LogCoreInfo("Launching League of Legends. You can disable this in GameServerSettings.json.");
-                        if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
-                            Environment.OSVersion.Platform == PlatformID.Win32S ||
-                            Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-                            Environment.OSVersion.Platform == PlatformID.WinCE)
+                        WindowsConsoleCloseDetection.SetCloseHandler((_) =>
                         {
-                            WindowsConsoleCloseDetection.SetCloseHandler((_) => {
-                                if (!leagueProcess.HasExited)
-                                {
-                                    leagueProcess.Kill();
-                                }
-                                return true;
-                            });
-                        }
-                    }
-                    else
-                    {
-                        logger.LogCoreError("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                            if (!leagueProcess.HasExited)
+                            {
+                                leagueProcess.Kill();
+                            }
+                            return true;
+                        });
                     }
                 }
-                #endif
-            });
+                else
+                {
+                    logger.LogCoreError("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                }
+            }
+            #endif
+            gameServerLauncher.StartNetworkLoop();
         }
     }
 

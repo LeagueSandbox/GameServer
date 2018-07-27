@@ -16,28 +16,43 @@ namespace LeagueSandbox.GameServer
         public string ExecutingDirectory { get; private set; }
         public string ConfigJson { get; private set; }
         public ushort ServerPort { get; private set; }
+        private Server server;
 
-        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey, Action<Logger> onServerStarted)
+        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey, Logger logger)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
-            logger = new Logger();
+            this.logger = logger;
             var itemManager = new ItemManager();
             game = new Game(itemManager, logger);
-            var server = new Server(logger, game, serverPort, configJson, blowfishKey);
+            server = new Server(logger, game, serverPort, configJson, blowfishKey);
 
             try
             {
                 ExecutingDirectory = ServerContext.ExecutingDirectory;
                 itemManager.LoadItems();
-                server.Start(onServerStarted);
+                server.Start();
             }
             catch (Exception e)
             {
                 logger.LogFatalError("Error: {0}", e.ToString());
-#if DEBUG
+                #if DEBUG
                 throw;
-#endif
+                #endif
+            }
+        }
+        public void StartNetworkLoop()
+        {
+            try
+            {
+                server.StartNetworkLoop();
+            }
+            catch (Exception e)
+            {
+                logger.LogFatalError("Error: {0}", e.ToString());
+                #if DEBUG
+                throw;
+                #endif
             }
         }
     }

@@ -23,12 +23,15 @@ namespace LeagueSandbox.GameServer
             _config = Config.LoadFromJson(game, configJson);
         }
 
-        public void Start(Action<Logger> onServerStarted)
+        public void Start()
         {
             _logger.LogCoreInfo($"Yorick {_serverVersion}");
             _logger.LogCoreInfo("Game started on port: {0}", _serverPort);
             _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
-            onServerStarted(_logger);
+        }
+
+        public void StartNetworkLoop()
+        {
             _game.NetLoop();
         }
 
