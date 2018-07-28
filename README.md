@@ -14,6 +14,11 @@ If you're interested in contributing, come find us from [Discord](https://discor
 * Install DotNet 4.6.1 Framework
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 	* This is strongly encouraged to follow the 120 character limit per line guideline
+	
+### Auto Setup (Windows x64)
+* Download and run [League Sandbox Auto Setup](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/files/2237674/League.Sandbox.Auto.Setup.zip)
+
+### Manual Setup (Windows/Mac/Linux)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Clone the git repository and run ```git submodule update --init --recursive``` to download the necessary contents package 
 * Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
@@ -22,7 +27,11 @@ If you're interested in contributing, come find us from [Discord](https://discor
 
 # Running the client
 
-#### Launching from command line
+#### Automatically Launching from Visual Studio
+Click the debug button.
+> Auto run settings are located in Settings/GameServerSettings.json.
+
+#### Manually Launching from command line
 ```
 start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
 ```
