@@ -16,7 +16,7 @@ If you're interested in contributing, come find us from [Discord](https://discor
 	* This is strongly encouraged to follow the 120 character limit per line guideline
 	
 ### Auto Setup (Windows x64)
-* Download and run [League Sandbox Auto Setup](http://gamemakersgarage.com/League%20Sandbox%20Auto%20Setup.exe) [[Mirror]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/files/2237674/League.Sandbox.Auto.Setup.zip)
+* Download and run [League Sandbox Auto Setup](http://gamemakersgarage.com/League%20Sandbox%20Auto%20Setup.exe) [[Mirror]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/files/2237681/League.Sandbox.Auto.Setup.zip)
 
 ### Manual Setup (Windows/Mac/Linux)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
