@@ -97,7 +97,7 @@ You can follow who has given consent so far in the following table:
 |--------------------|---------------------------------------------------|
 | :white_check_mark: | [joaquin95](https://github.com/joaquin95)         |
 | :white_check_mark: | [MythicManiac](https://github.com/MythicManiac)   |
-| :x:                | [horato](https://github.com/horato)               |
+| :white_check_mark: | [horato](https://github.com/horato)               |
 | :white_check_mark: | [FurkanS](https://github.com/FurkanS1821)         |
 | :white_check_mark: | [Neekhaulas](https://github.com/Neekhaulas)       |
 | :white_check_mark: | [Maufeat](https://github.com/Maufeat)             |
