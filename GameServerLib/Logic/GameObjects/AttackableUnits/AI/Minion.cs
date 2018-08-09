@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public MinionSpawnType MinionSpawnType { get; protected set; }
         protected bool _aiPaused;
         
-        private int HitBox => 60;//Collision Radius
+        private int HitBox => 60;
         
         public Minion(
             Game game,
