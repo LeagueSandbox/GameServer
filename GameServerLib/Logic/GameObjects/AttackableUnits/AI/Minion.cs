@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Timers;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
@@ -60,7 +58,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         protected bool _aiPaused;
         
         private int HitBox => 60;//Collision Radius
-        private float _lastUpdate = 0;
         
         public Minion(
             Game game,
