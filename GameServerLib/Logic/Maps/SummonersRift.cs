@@ -150,7 +150,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         private int _cannonMinionCount;
         private int _minionNumber;
         private readonly long _firstSpawnTime = 90 * 1000;
-        private long _nextSpawnTime = 90 * 1000;
+        private long _nextSpawnTime = 0;//90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
         private readonly Dictionary<TeamId, Fountain> _fountains;
 

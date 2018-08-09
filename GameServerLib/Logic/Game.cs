@@ -66,6 +66,8 @@ namespace LeagueSandbox.GameServer.Logic
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine(this);
+            _lastMapDurationWatch = new Stopwatch();
+            _lastMapDurationWatch.Start();
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
@@ -127,9 +129,6 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void NetLoop()
         {
-            _lastMapDurationWatch = new Stopwatch();
-            _lastMapDurationWatch.Start();
-
             while (!SetToExit)
             {
                 while (_server.Service(0, out var enetEvent) > 0)
@@ -137,32 +136,35 @@ namespace LeagueSandbox.GameServer.Logic
                     switch (enetEvent.Type)
                     {
                         case EventType.Connect:
+                        {
                             // Set some defaults
                             enetEvent.Peer.Mtu = PEER_MTU;
                             enetEvent.Data = 0;
-                            break;
-
+                        }   
+                        break;
                         case EventType.Receive:
+                        {
                             var channel = (Channel)enetEvent.ChannelID;
                             PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
-                            break;
-
+                        }
+                        break;
                         case EventType.Disconnect:
+                        {
                             HandleDisconnect(enetEvent.Peer);
-                            break;
+                        }
+                        break;
                     }
                 }
-
+                
                 if (IsPaused)
                 {
                     _lastMapDurationWatch.Stop();
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
-                            .HandlePacket(null, new byte[0]);
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S).HandlePacket(null, new byte[0]);
                         _autoResumeCheck = true;
                     }
                     continue;
