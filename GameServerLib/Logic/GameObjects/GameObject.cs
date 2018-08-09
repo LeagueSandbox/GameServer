@@ -169,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
                 else
                 {
-                    Target = new Target(Waypoints[CurWaypoint]);
+                    Target = new Target(Waypoints[CurWaypoint - 1]);
                 }
 
                 if (IsDashing)

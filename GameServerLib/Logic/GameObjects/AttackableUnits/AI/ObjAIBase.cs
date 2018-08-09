@@ -251,27 +251,26 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public virtual void RefreshWaypoints()
         {
-            if (TargetUnit == null || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
+            if (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
             {
                 return;
             }
 
-            if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2.0f)
+            if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2f)
             {
                 SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
             }
             else
             {
-                var t = new Target(Waypoints[Waypoints.Count - 1]);
-                if (t.GetDistanceTo(TargetUnit) >= 25.0f)
+                SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
+                /*if(CurWaypoint >= Waypoints.Count)
                 {
-                    SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
-                    /*var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
-                    if(newWaypoints.Count > 1)
+                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
+                    if (newWaypoints.Count > 1)
                     {
                         SetWaypoints(newWaypoints);
-                    }*/
-                }
+                    }
+                }*/         
             }
         }
 
@@ -606,11 +605,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         if (!positionUsed)
                         {
                             SetWaypoints(new List<Vector2>() { GetPosition(), point });
-                            /*var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), point);
-                            if (newWaypoints.Count > 1)
-                            {
-                                SetWaypoints(newWaypoints);
-                            }*/
                             return true;
                         }
                     }
