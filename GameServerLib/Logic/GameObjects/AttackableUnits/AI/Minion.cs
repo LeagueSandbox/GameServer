@@ -104,20 +104,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
             Replication = new ReplicationMinion(this);
-
-            //To Test Pathfinding.
-            /*Timer timer = new Timer(1000);
-            timer.Elapsed += Timer_Elapsed;
-            timer.Start();*/
-        }
-
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), _game.ObjectManager.GetAllChampionsFromTeam(Enet.TeamId.TEAM_BLUE)[0].GetPosition());
-            if (newWaypoints.Count > 0)
-            {
-                SetWaypoints(newWaypoints);
-            }
         }
 
         public Minion(
@@ -248,7 +234,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 if (Waypoints.Count == 1 || CurWaypoint == 2 && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    var newWaypoints = new List<Vector2> { new Vector2(X, Y), _mainWaypoints[_curMainWaypoint] };
+                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), _mainWaypoints[_curMainWaypoint]);
                     SetWaypoints(newWaypoints);
                 }
             }
@@ -256,7 +242,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         protected void KeepFocussingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyStopAutoAttack(this);
