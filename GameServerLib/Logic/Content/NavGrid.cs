@@ -7,6 +7,11 @@ using RoyT.AStar;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
+    public enum NavMeshSystem
+    {
+        System2D = 0,
+        System3D = 1
+    }
     public class NavGrid
     {
         public byte MajorVersion;
@@ -29,17 +34,40 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float MapHeight;
         public Vector2 MiddleOfMap;
         public const float SCALE = 2f;
+        public NavMeshSystem System = NavMeshSystem.System2D;
         private Grid grid;
-        
+        private RcdtcsUnityUtils.RecastMeshParams m_NavMeshParams = new RcdtcsUnityUtils.RecastMeshParams();
+        private RcdtcsUnityUtils.SystemHelper navmesh;
+
         public void InitializePathfinding()
         {
-            grid = new Grid((int)XCellCount, (int)YCellCount);
-            foreach(var cell in Cells)
+            if (System == NavMeshSystem.System2D)
             {
-                if(cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
+                grid = new Grid((int)XCellCount, (int)YCellCount);
+                foreach (var cell in Cells)
                 {
-                    grid.BlockCell(new Position(cell.X, cell.Y));
+                    if (cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
+                    {
+                        grid.BlockCell(new Position(cell.X, cell.Y));
+                    }
                 }
+            }
+            else
+            {
+                var filepath = Path.Combine(Environment.CurrentDirectory + "/maps/Test_NavMesh.bin");
+                navmesh = new RcdtcsUnityUtils.SystemHelper();
+
+                NavMeshData navMeshData;
+                using (var file = File.OpenRead(filepath))
+                {
+                    navMeshData = ProtoSerializer.Deserialize<NavMeshData>(file);
+                }
+                navmesh.SetNavMeshParams(m_NavMeshParams);
+                navmesh.ClearComputedData();
+                navmesh.ClearMesh();
+                //
+                navmesh.AddMesh(navMeshData);
+                navmesh.ComputeSystem();
             }
         }
 
@@ -48,30 +76,44 @@ namespace LeagueSandbox.GameServer.Logic.Content
             List<Vector2> returnList = new List<Vector2>();
             try
             {
-                var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
-                var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
-
-                var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
-                var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
-
-                Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
-                if (path != null)
+                if (System == NavMeshSystem.System2D)
                 {
-                    foreach (var position in path)
+                    var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
+                    var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
+
+                    var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
+                    var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+
+                    Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
+                    if (path != null)
                     {
-                        var navGridCell = GetCell(position.X, position.Y);
-                        var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
-                        returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                        foreach (var position in path)
+                        {
+                            var navGridCell = GetCell(position.X, position.Y);
+                            var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                            returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                        }
                     }
-                }                
+                }
+                else
+                {
+                    var computedPath = RcdtcsUnityUtils.ComputeSmoothPath(navmesh.m_navQuery, new Vector3(from.X, GetHeightAtLocation(from), from.Y), new Vector3(to.X, GetHeightAtLocation(to), to.Y));
+                    for (int i = 1; i < computedPath.m_nsmoothPath; ++i)
+                    {
+                        int v = i * 3;
+                        //Vector3 a = new Vector3(path[v - 3], path[v - 2], path[v - 1]);
+                        //returnList.Add(new Vector2(computedPath.m_smoothPath[v + 0], computedPath.m_smoothPath[v + 1], computedPath.m_smoothPath[v + 2]));
+                        returnList.Add(new Vector2(computedPath.m_smoothPath[v + 0], computedPath.m_smoothPath[v + 2]));
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
             return returnList;
         }
-
+        
         public void CreateTranslation()
         {
             if (TranslationMaxGridPos == null)
