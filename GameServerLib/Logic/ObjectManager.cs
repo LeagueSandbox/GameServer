@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic
                 _visionUnits.Add(team, new Dictionary<uint, AttackableUnit>());
             }
         }
-
+        
         public void Update(float diff)
         {
             var temp = GetObjects();
@@ -214,7 +214,7 @@ namespace LeagueSandbox.GameServer.Logic
                 _champions.Remove(champion.NetId);
             }
         }
-
+        
         public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
         {
             var ret = new Dictionary<uint, AttackableUnit>();
@@ -379,6 +379,30 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             return false;
+        }
+
+        public int CountUnitsAttackingUnit(AttackableUnit target)
+        {
+            int count = 0;
+            try
+            {
+                var enemyUnits = GetObjects();
+                foreach (var obj in enemyUnits)
+                {
+                    if(obj.Value is ObjAiBase aiBase)
+                    {
+                        if(aiBase != null && aiBase.Team != target.Team && aiBase.Team != TeamId.TEAM_NEUTRAL && !aiBase.IsDead && aiBase.TargetUnit != null && aiBase.TargetUnit == target)
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return count;
         }
     }
 }

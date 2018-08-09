@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
+
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
     public class ObjAiBase : AttackableUnit
@@ -390,8 +391,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 DamageSource.DAMAGE_SOURCE_ATTACK,
                 _isNextAutoCrit);
         }
-
-
+        
         public void UpdateAutoAttackTarget(float diff)
         {
             if (HasCrowdControl(CrowdControlType.DISARM) || HasCrowdControl(CrowdControlType.STUN))
@@ -516,8 +516,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 _autoAttackCurrentCooldown -= diff / 1000.0f;
             }
         }
-
-
+        
         public override void Update(float diff)
         {
             foreach (var cc in _crowdControlList)
@@ -554,6 +553,60 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 var onCollide = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider as AttackableUnit);
             }
+        }
+
+        public bool RecalculateAttackPosition()
+        {
+            if(Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
+            {
+                return false;
+            }
+            var objects = _game.ObjectManager.GetObjects();
+            List<CirclePoly> UsedPositions = new List<CirclePoly>();
+            var isCurrentlyOverlapping = false;
+
+            var thisCollisionCircle = new CirclePoly((Target != null ? Target.GetPosition() : GetPosition()), CollisionRadius + 10, 20);
+            
+            foreach (var gameObject in objects)
+            {
+                var u = gameObject.Value as AttackableUnit;
+                if (u == null || u.NetId == NetId || u.IsDead || u.Team != Team || u.GetDistanceTo(TargetUnit) > DETECT_RANGE)
+                //if (u == null || u.NetId == NetId || u.IsDead || (u.Team == Team && u.GetDistanceTo(TargetUnit) > DETECT_RANGE))
+                {
+                    continue;
+                }                    
+                var targetCollisionCircle = new CirclePoly((u.Target != null ? u.Target.GetPosition() : u.GetPosition()), u.CollisionRadius + 10, 20);                
+                if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
+                {
+                    isCurrentlyOverlapping = true;
+                }
+                UsedPositions.Add(targetCollisionCircle);
+            }
+            if (isCurrentlyOverlapping)
+            {
+                var targetCircle = new CirclePoly((TargetUnit.Target != null ? TargetUnit.Target.GetPosition() : TargetUnit.GetPosition()), Stats.Range.Total, 72);
+                //Find optimal position...
+                foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
+                {
+                    if (_game.Map.NavGrid.IsWalkable(point))
+                    {
+                        var positionUsed = false;
+                        foreach (var circlePoly in UsedPositions)
+                        {
+                            if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
+                            {
+                                positionUsed = true;
+                            }
+                        }
+                        if (!positionUsed)
+                        {
+                            SetWaypoints(new List<Vector2>() { GetPosition(), point });
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
