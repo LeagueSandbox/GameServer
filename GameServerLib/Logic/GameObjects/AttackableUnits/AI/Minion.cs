@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     return;
                 }
 
-                /*if (ScanForTargets()) // returns true if we have a target
+                if (ScanForTargets()) // returns true if we have a target
                 {
                     //Here we need to add another check: Positioning.
                     if (RecalculateAttackPosition())
@@ -162,7 +162,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 else
                 {
                     WalkToDestination(); // walk to destination (or target)
-                }*/
+                }
             }
             Replication.Update();
         }
