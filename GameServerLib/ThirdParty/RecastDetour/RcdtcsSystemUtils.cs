@@ -36,19 +36,25 @@ public static partial class RcdtcsUnityUtils{
 	public class RecastMeshParams {
 		
 		public float m_cellSize = 50f;
-		public float m_cellHeight = 50f;
-		public float m_agentHeight = 2.0f;
-		public float m_agentRadius = 80f;
-		public float m_agentMaxClimb = .9f;
-		public float m_agentMaxSlope = 90f;
-		public float m_regionMinSize = 8.0f;
-		public float m_regionMergeSize = 20.0f;
-		public bool m_monotonePartitioning = false;
-		public float m_edgeMaxLen = 12.0f;
-		public float m_edgeMaxError = 1.3f;
+		public float m_cellHeight = 100;
+
+		public float m_agentHeight = 500f;
+		public float m_agentRadius = 100f;
+		public float m_agentMaxClimb = 5000;
+		public float m_agentMaxSlope = 50f;
+
+		public float m_regionMinSize = 0.0f;
+		public float m_regionMergeSize = 999.0f;
+
+		public bool m_monotonePartitioning = true;
+
+		public float m_edgeMaxLen = 0;
+		public float m_edgeMaxError = 999f;
+
 		public float m_vertsPerPoly = 6.0f;
-		public float m_detailSampleDist = 6.0f;
-		public float m_detailSampleMaxError= 1.0f;
+
+		public float m_detailSampleDist = 0.5f;
+		public float m_detailSampleMaxError= 1;
 		
 		public void Copy(RecastMeshParams param){
 			m_cellSize = param.m_cellSize;
@@ -275,15 +281,15 @@ public static partial class RcdtcsUnityUtils{
 			m_cfg.cs = m_RecastMeshParams.m_cellSize;
 			m_cfg.ch = m_RecastMeshParams.m_cellHeight;
 			m_cfg.walkableSlopeAngle = m_RecastMeshParams.m_agentMaxSlope;
-			m_cfg.walkableHeight = (int)Math.Ceiling(m_RecastMeshParams.m_agentHeight / m_cfg.ch);
-			m_cfg.walkableClimb = (int)Math.Floor(m_RecastMeshParams.m_agentMaxClimb / m_cfg.ch);
+            m_cfg.walkableHeight = 100;// (int)Math.Ceiling(m_RecastMeshParams.m_agentHeight / m_cfg.ch);
+            m_cfg.walkableClimb = 90;// (int)Math.Floor(m_RecastMeshParams.m_agentMaxClimb / m_cfg.ch);
 			m_cfg.walkableRadius = (int)Math.Ceiling(m_RecastMeshParams.m_agentRadius / m_cfg.cs);
 			m_cfg.maxEdgeLen = (int)(m_RecastMeshParams.m_edgeMaxLen / m_RecastMeshParams.m_cellSize);
 			m_cfg.maxSimplificationError = m_RecastMeshParams.m_edgeMaxError;
 			m_cfg.minRegionArea = (int)(m_RecastMeshParams.m_regionMinSize * m_RecastMeshParams.m_regionMinSize);		// Note: area = size*size
-			m_cfg.mergeRegionArea = (int)(m_RecastMeshParams.m_regionMergeSize * m_RecastMeshParams.m_regionMergeSize);	// Note: area = size*size
-			m_cfg.maxVertsPerPoly = (int)m_RecastMeshParams.m_vertsPerPoly;
-			m_cfg.detailSampleDist = m_RecastMeshParams.m_detailSampleDist < 0.9f ? 0 : m_RecastMeshParams.m_cellSize * m_RecastMeshParams.m_detailSampleDist;
+			m_cfg.mergeRegionArea = (int)(m_RecastMeshParams.m_regionMergeSize * m_RecastMeshParams.m_regionMergeSize); // Note: area = size*size
+            m_cfg.maxVertsPerPoly = 4;// (int)m_RecastMeshParams.m_vertsPerPoly;
+            m_cfg.detailSampleDist = 24.944000244140625f;// m_RecastMeshParams.m_detailSampleDist < 0.9f ? 0 : m_RecastMeshParams.m_cellSize * m_RecastMeshParams.m_detailSampleDist;
 			m_cfg.detailSampleMaxError = m_RecastMeshParams.m_cellHeight * m_RecastMeshParams.m_detailSampleMaxError;
 			
 			// Set the area where the navigation will be build.
