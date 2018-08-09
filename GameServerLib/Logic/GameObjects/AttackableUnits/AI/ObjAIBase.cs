@@ -270,7 +270,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     {
                         SetWaypoints(newWaypoints);
                     }
-                }*/         
+                }*/
             }
         }
 
