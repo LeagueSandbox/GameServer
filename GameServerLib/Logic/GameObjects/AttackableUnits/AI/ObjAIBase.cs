@@ -265,11 +265,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 var t = new Target(Waypoints[Waypoints.Count - 1]);
                 if (t.GetDistanceTo(TargetUnit) >= 25.0f)
                 {
-                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
+                    SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
+                    /*var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
                     if(newWaypoints.Count > 1)
                     {
                         SetWaypoints(newWaypoints);
-                    }
+                    }*/
                 }
             }
         }
@@ -604,11 +605,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         }
                         if (!positionUsed)
                         {
-                            var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), point);
-                            if(newWaypoints.Count > 1)
+                            SetWaypoints(new List<Vector2>() { GetPosition(), point });
+                            /*var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), point);
+                            if (newWaypoints.Count > 1)
                             {
                                 SetWaypoints(newWaypoints);
-                            }                            
+                            }*/
                             return true;
                         }
                     }
