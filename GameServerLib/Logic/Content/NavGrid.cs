@@ -46,6 +46,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public List<Vector2> GetPath(Vector2 from, Vector2 to)
         {
             List<Vector2> returnList = new List<Vector2>();
+            returnList.Add(from);
             try
             {
                 var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
