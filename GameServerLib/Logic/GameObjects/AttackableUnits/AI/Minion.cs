@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
@@ -99,8 +100,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
             Replication = new ReplicationMinion(this);
+
+            Timer timer = new Timer(1000);
+            timer.Elapsed += Timer_Elapsed;
+            timer.Start();
         }
-        
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), _game.ObjectManager.GetAllChampionsFromTeam(Enet.TeamId.TEAM_BLUE)[0].GetPosition());
+            if (newWaypoints.Count > 0)
+            {
+                SetWaypoints(newWaypoints);
+            }
+        }
+
         public Minion(
             Game game,
             MinionSpawnType spawnType,
@@ -132,7 +146,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     return;
                 }
 
-                if (ScanForTargets()) // returns true if we have a target
+                /*if (ScanForTargets()) // returns true if we have a target
                 {
                     //Here we need to add another check: Positioning.
                     if (RecalculateAttackPosition())
@@ -147,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 else
                 {
                     WalkToDestination(); // walk to destination (or target)
-                }
+                }*/
             }
             Replication.Update();
         }

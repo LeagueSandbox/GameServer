@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using RoyT.AStar;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
@@ -27,6 +29,48 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float MapHeight;
         public Vector2 MiddleOfMap;
         public const float SCALE = 2f;
+        private Grid grid;
+        
+        public void InitializePathfinding()
+        {
+            grid = new Grid((int)XCellCount, (int)YCellCount);
+            foreach(var cell in Cells)
+            {
+                if(cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
+                {
+                    grid.BlockCell(new Position(cell.X, cell.Y));
+                }
+            }
+        }
+
+        public List<Vector2> GetPath(Vector2 from, Vector2 to)
+        {
+            List<Vector2> returnList = new List<Vector2>();
+            try
+            {
+                var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
+                var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
+
+                var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
+                var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+
+                Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
+                if (path != null)
+                {
+                    foreach (var position in path)
+                    {
+                        var navGridCell = GetCell(position.X, position.Y);
+                        var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                        returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                    }
+                }                
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return returnList;
+        }
 
         public void CreateTranslation()
         {
@@ -226,6 +270,17 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
 
         public NavGridCell GetCell(short x, short y)
+        {
+            var index = y * XCellCount + x;
+            if (x < 0 || x > XCellCount || y < 0 || y > YCellCount || index >= Cells.Length)
+            {
+                return null;
+            }
+
+            return Cells[index];
+        }
+
+        public NavGridCell GetCell(int x, int y)
         {
             var index = y * XCellCount + x;
             if (x < 0 || x > XCellCount || y < 0 || y > YCellCount || index >= Cells.Length)
@@ -652,7 +707,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             grid.MapWidth = grid.MaxGridPos.X + grid.MinGridPos.X;
             grid.MapHeight = grid.MaxGridPos.Z + grid.MinGridPos.Z;
             grid.MiddleOfMap = new Vector2(grid.MapWidth / 2, grid.MapHeight / 2);
-
+            grid.InitializePathfinding();
             return grid;
         }
 
