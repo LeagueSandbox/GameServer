@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
 
             SetTeam(team);
         }
-
+        
         public override void Die(AttackableUnit killer)
         {
             _game.Stop();

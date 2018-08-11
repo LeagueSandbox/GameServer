@@ -1,11 +1,33 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
+    public enum MinionState
+    {
+        AI_IDLE,
+        AI_SOFTATTACK,
+        AI_HARDATTACK,
+        AI_ATTACKMOVESTATE,
+        AI_STANDING,
+        AI_MOVE,
+        AI_GUARD,
+        AI_ATTACK,
+        AI_RETREAT,
+        AI_HARDIDLE,
+        AI_HARDIDLE_ATTACKING,
+        AI_TAUNTED,
+        AI_ATTACKMOVE_ATTACKING,
+        AI_FEARED,
+        AI_CHARMED,
+        AI_FLEEING,
+        AI_ATTACK_GOING_TO_LAST_KNOWN_LOCATION,
+        AI_HALTED,
+        AI_SIEGEATTACK,
+        AI_LAST_NONPET_AI_STATE
+    }
     public enum MinionSpawnPosition : uint
     {
         SPAWN_BLUE_TOP = 0xeb364c40,
@@ -23,6 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         MINION_TYPE_CANNON = 0x02,
         MINION_TYPE_SUPER = 0x01
     }
+
     public class Minion : ObjAiBase
     {
         /// <summary>
@@ -33,9 +56,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public MinionSpawnPosition SpawnPosition { get; private set; }
         public MinionSpawnType MinionSpawnType { get; protected set; }
         protected bool _aiPaused;
-
-        private int HitBox => 60;
-
+        
+        private int HitBox => 60;//Collision Radius
+        
         public Minion(
             Game game,
             MinionSpawnType spawnType,
@@ -77,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
             Replication = new ReplicationMinion(this);
         }
-
+        
         public Minion(
             Game game,
             MinionSpawnType spawnType,
@@ -102,7 +125,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-
             if (!IsDead)
             {
                 if (IsDashing || _aiPaused)
@@ -112,52 +134,65 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
                 if (ScanForTargets()) // returns true if we have a target
                 {
-                    KeepFocussingTarget(); // fight target
+                    //Here we need to add another check: Positioning.
+                    if (RecalculateAttackPosition())
+                    {
+
+                    }
+                    else
+                    {
+                        KeepFocussingTarget(); // attack target
+                    }
                 }
                 else
                 {
                     WalkToDestination(); // walk to destination (or target)
                 }
             }
-
             Replication.Update();
         }
-
+        
         public override void OnCollision(GameObject collider)
         {
-            if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
+            /*if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
             {
                 return;
             }
-
             if (collider.GetType() == typeof(Minion))
             {
-                Vector2 newPos = new Vector2(X + 120, Y + 120);
-                if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
+                if(NetId > collider.NetId)
                 {
-                    newPos = new Vector2(X + 120, Y + 50);
+                    Vector2 newPos = new Vector2(X + 120, Y + 120);
+                    if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
+                    {
+                        newPos = new Vector2(X + 120, Y + 50);
+                    }
+                    try
+                    {
+                        Move(250, newPos);
+                    }
+                    catch
+                    {
+                        //Minion died
+                    }
                 }
-                try
-                {
-                    Move(250, newPos);
-                }
-                catch
-                {
-                    //Minion died
-                }
-            }
-
+            }*/
             base.OnCollision(collider);
         }
 
         // AI tasks
         protected bool ScanForTargets()
         {
+            if(TargetUnit != null && !TargetUnit.IsDead)
+            {
+                return true;
+            }
             AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             var objects = _game.ObjectManager.GetObjects();
-            foreach (var it in objects)
+            //foreach (var it in objects.OrderBy(x => _game.ObjectManager.CountUnitsAttackingUnit(x.Value)))
+            foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
             {
                 var u = it.Value as AttackableUnit;
 
