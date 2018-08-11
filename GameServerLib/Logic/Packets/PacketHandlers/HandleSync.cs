@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -7,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase
     {
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSync(Game game)
         {
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
         }
@@ -27,18 +28,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
-            _logger.LogCoreInfo("Current map: " + mapId);
+            _logger.Info("Current map: " + mapId);
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
             if (version.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.LogCoreWarning($"Client's version ({version.Version}) does not match server's {Config.VERSION}");
+                _logger.Warning($"Client's version ({version.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
-                _logger.LogCoreInfo("Accepted client version (" + version.Version + ")");
+                _logger.Info("Accepted client version (" + version.Version + ")");
             }
 
             foreach (var player in _playerManager.GetPlayers())

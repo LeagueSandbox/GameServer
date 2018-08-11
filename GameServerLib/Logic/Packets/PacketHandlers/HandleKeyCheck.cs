@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -7,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleKeyCheck : PacketHandlerBase
     {
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleKeyCheck(Game game)
         {
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
         }
@@ -28,13 +29,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (userId != keyCheck.UserId)
             {
-                _logger.LogCoreWarning("Client has sent wrong blowfish data.");
+                _logger.Warning("Client has sent wrong blowfish data.");
                 return false;
             }
 
             if (keyCheck.VersionNo != Config.VERSION_NUMBER)
             {
-                _logger.LogCoreWarning("Client version doesn't match server's. " +
+                _logger.Warning("Client version doesn't match server's. " +
                                        $"(C:{keyCheck.VersionNo}, S:{Config.VERSION_NUMBER})");
                 return false;
             }
@@ -50,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (!player.IsDisconnected)
                         {
-                            _logger.LogCoreWarning($"Ignoring new player {userId}, already connected!");
+                            _logger.Warning($"Ignoring new player {userId}, already connected!");
                             return false;
                         }
                     }
@@ -63,7 +64,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
 
-                    foreach(var p2 in _playerManager.GetPlayers())
+                    foreach (var p2 in _playerManager.GetPlayers())
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {

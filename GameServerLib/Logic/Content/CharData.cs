@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.Logging;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -9,18 +10,18 @@ namespace LeagueSandbox.GameServer.Logic.Content
     {
         public string PassiveNameStr { get; set; } = "";
         public string PassiveLuaName { get; set; } = "";
-        public int[] PassiveLevels { get; set; } = {-1, -1, -1, -1, -1, -1};
+        public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
     }
 
     public class CharData
     {
-        private Game _game;
-        private Logger _logger;
+        private readonly Game _game;
+        private readonly ILogger _logger;
 
         public CharData(Game game)
         {
             _game = game;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public float BaseHp { get; private set; } = 100.0f;
@@ -46,8 +47,8 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
 
-        public string[] SpellNames { get; private set; } = {"", "", "", ""};
-        public int[] MaxLevels { get; private set; } = {5, 5, 5, 3};
+        public string[] SpellNames { get; private set; } = { "", "", "", "" };
+        public int[] MaxLevels { get; private set; } = { 5, 5, 5, 3 };
 
         public int[][] SpellsUpLevels { get; private set; } =
         {
@@ -57,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             new[] {6, 11, 16, 99, 99, 99}
         };
 
-        public string[] ExtraSpells { get; private set; } = {"", "", "", "", "", "", "", ""};
+        public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
 
         public PassiveData[] Passives { get; private set; } =
         {
@@ -80,13 +81,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
             try
             {
                 var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.LogCoreInfo($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
+                _logger.Info($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
             catch (ContentNotFoundException notfound)
             {
-                _logger.LogCoreWarning($"Stats for {name} was not found: {notfound.Message}");
+                _logger.Warning($"Stats for {name} was not found: {notfound.Message}");
                 return;
             }
 

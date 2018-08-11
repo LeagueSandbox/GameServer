@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Logging;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -56,12 +57,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
     public class SpellData
     {
         private readonly Game _game;
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         public SpellData(Game game)
         {
             _game = game;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public string AfterEffectName { get; set; } = "";
@@ -242,14 +243,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
             try
             {
                 var path = _game.Config.ContentManager.GetSpellDataPath(name);
-                _logger.LogCoreInfo($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
+                _logger.Info($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
 
             catch (ContentNotFoundException)
             {
-                _logger.LogCoreWarning($"Spell data for {name} was not found.");
+                _logger.Warning($"Spell data for {name} was not found.");
                 return;
             }
 
@@ -358,7 +359,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             LockConeToPlayer = file.GetBool("SpellData", "LockConeToPlayer", LockConeToPlayer);
             //LookAtPolicy
             LuaOnMissileUpdateDistanceInterval = file.GetFloat("SpellData", "LuaOnMissileUpdateDistanceInterval", LuaOnMissileUpdateDistanceInterval);
-            ManaCost = file.GetMultiFloat("SpellData", "ManaCost",6, ManaCost[0]);
+            ManaCost = file.GetMultiFloat("SpellData", "ManaCost", 6, ManaCost[0]);
             //Map_X_EffectYLevelZAmmount
             MaxAmmo = file.GetMultiInt("SpellData", "MaxAmmo", 6, MaxAmmo[0]);
             //MaxGrowthRangeTextureName
@@ -389,7 +390,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             //OrientRangeIndicatorToFacing
             OverrideCastTime = file.GetFloat("SpellData", "OverrideCastTime", OverrideCastTime);
             //public Vector3 ParticleStartOffset { get; set; } = new Vector3(0, 0, 0);
-            var particleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z});
+            var particleStartOffset = file.GetFloatArray("SpellData", "ParticleStartOffset", new[] { ParticleStartOffset.X, ParticleStartOffset.Y, ParticleStartOffset.Z });
             ParticleStartOffset = new Vector3(particleStartOffset[0], particleStartOffset[1], particleStartOffset[2]);
             //PlatformEnabled
             PointEffectName = file.GetString("SpellData", "PointEffectName", PointEffectName);

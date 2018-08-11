@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.Logging;
 
 /*
  * Possible Events:
@@ -53,12 +54,12 @@ namespace LeagueSandbox.GameServer.Logic.API
     public static class ApiEventManager
     {
         private static Game _game;
-        private static Logger _logger;
+        private static ILogger _logger;
 
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public static void RemoveAllListenersForOwner(object owner)

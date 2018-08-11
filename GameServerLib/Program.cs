@@ -2,6 +2,7 @@ using System;
 using System.Timers;
 using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer
 {
@@ -11,48 +12,49 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class GameServerLauncher
     {
-        public Logger logger;
+        private readonly ILogger _logger;
+        private readonly Server _server;
+
         public Game game;
         public string ExecutingDirectory { get; private set; }
         public string ConfigJson { get; private set; }
         public ushort ServerPort { get; private set; }
-        private Server server;
 
-        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey, Logger logger)
+        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
-            this.logger = logger;
+            _logger = LoggerProvider.GetLogger();
             var itemManager = new ItemManager();
-            game = new Game(itemManager, logger);
-            server = new Server(logger, game, serverPort, configJson, blowfishKey);
+            game = new Game(itemManager);
+            _server = new Server(game, serverPort, configJson, blowfishKey);
 
             try
             {
                 ExecutingDirectory = ServerContext.ExecutingDirectory;
                 itemManager.LoadItems();
-                server.Start();
+                _server.Start();
             }
             catch (Exception e)
             {
-                logger.LogFatalError("Error: {0}", e.ToString());
-                #if DEBUG
+                _logger.Error(e);
+#if DEBUG
                 throw;
-                #endif
+#endif
             }
         }
         public void StartNetworkLoop()
         {
             try
             {
-                server.StartNetworkLoop();
+                _server.StartNetworkLoop();
             }
             catch (Exception e)
             {
-                logger.LogFatalError("Error: {0}", e.ToString());
-                #if DEBUG
+                _logger.Error(e);
+#if DEBUG
                 throw;
-                #endif
+#endif
             }
         }
     }

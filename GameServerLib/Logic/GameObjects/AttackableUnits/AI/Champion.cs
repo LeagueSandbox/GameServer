@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
 
-            for (short i = 0; i<CharData.SpellNames.Length; i++)
+            for (short i = 0; i < CharData.SpellNames.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             Spells[13] = new Spell(game, this, "Recall", 13);
 
-            for (short i = 0; i<CharData.Passives.Length; i++)
+            for (short i = 0; i < CharData.Passives.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
                 {
@@ -217,7 +217,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public Spell GetSpellByName(string name)
         {
-            foreach(var s in Spells.Values)
+            foreach (var s in Spells.Values)
             {
                 if (s == null)
                 {
@@ -288,7 +288,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
-                _logger.LogCoreInfo("Generating Gold!");
+                Logger.Info("Generating Gold!");
             }
 
             if (RespawnTimer > 0)
@@ -335,7 +335,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAiBase owner)
+        public void Recall(ObjAiBase owner)
         {
             var spawnPos = GetRespawnPosition();
             _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
@@ -402,7 +402,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 Stats.LevelUp();
-                _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
+                Logger.Info("Champion " + Model + " leveled up to " + stats.Level);
                 _skillPoints++;
             }
 
@@ -436,7 +436,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 if (KillDeathCounter < 0)
                 {
                     ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
+                    Logger.Info($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
                 }
 
                 if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
@@ -444,7 +444,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     ChampionGoldFromMinions = 0;
                     KillDeathCounter += 1;
                 }
-            }        
+            }
         }
 
         public override void Die(AttackableUnit killer)
@@ -460,7 +460,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (cKiller == null && _championHitFlagTimer > 0)
             {
                 cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
-                _logger.LogCoreInfo("Killed by turret, minion or monster, but still  give gold to the enemy.");
+                Logger.Info("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
             if (cKiller == null)
@@ -474,12 +474,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             // TODO: add assists
 
             var gold = _game.Map.MapGameScript.GetGoldFor(this);
-            _logger.LogCoreInfo(
-                "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
-                gold,
-                cKiller.KillDeathCounter,
-                KillDeathCounter
-            );
+            Logger.Info($"Before: getGoldFromChamp: {gold} Killer: {cKiller.KillDeathCounter} Victim {KillDeathCounter}");
 
             if (cKiller.KillDeathCounter < 0)
                 cKiller.KillDeathCounter = 0;
