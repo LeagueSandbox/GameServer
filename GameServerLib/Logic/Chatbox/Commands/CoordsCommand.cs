@@ -1,5 +1,7 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Players;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -11,11 +13,11 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "coords";
         public override string Syntax => $"{Command}";
 
-        public CoordsCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public CoordsCommand(ChatCommandManager chatCommandManager, Logger logger, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
-            _logger = game.Logger;
-            _playerManager = game.PlayerManager;
+            _logger = logger;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

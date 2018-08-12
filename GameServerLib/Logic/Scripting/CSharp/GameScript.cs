@@ -1,11 +1,14 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
-using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public interface IGameScript
+    public interface GameScript
     {
         void OnActivate(Champion owner);
 
@@ -16,5 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
         void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target);
 
         void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile);
+
+        void OnUpdate(double diff);
     }
 }

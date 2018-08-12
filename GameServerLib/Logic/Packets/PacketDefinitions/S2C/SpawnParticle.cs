@@ -7,28 +7,28 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnParticle : BasePacket
     {
-        public SpawnParticle(Game game, Particle particle)
-            : base(game, PacketCmd.PKT_S2C_SPAWN_PARTICLE, particle.Owner.NetId)
+        public SpawnParticle(Particle particle) 
+            : base(PacketCmd.PKT_S2C_SpawnParticle, particle.Owner.NetId)
         {
-            Write((byte)1); // number of particles
-            Write((uint)particle.Owner.GetChampionHash());
-            WriteStringHash(particle.Name);
-            Write(0x00000020); // flags ?
+            buffer.Write((byte)1); // number of particles
+            buffer.Write((uint)particle.Owner.getChampionHash());
+            buffer.Write((uint)HashFunctions.HashString(particle.Name));
+            buffer.Write((int)0x00000020); // flags ?
 
-            Write((short)0); // Unk
-            WriteStringHash(particle.BoneName);
+            buffer.Write((short)0); // Unk
+            buffer.Write((uint)HashFunctions.HashString(particle.BoneName));
 
-            Write((byte)1); // number of targets ?
-            WriteNetId(particle.Owner);
-            WriteNetId(particle); // Particle net id ?
-            WriteNetId(particle.Owner);
+            buffer.Write((byte)1); // number of targets ?
+            buffer.Write((uint)particle.Owner.NetId);
+            buffer.Write((uint)particle.NetId); // Particle net id ?
+            buffer.Write((uint)particle.Owner.NetId);
 
             if (particle.Target.IsSimpleTarget)
-                Write(0);
+                buffer.Write((int)0);
             else
-                WriteNetId(particle.Target as GameObject);
+                buffer.Write((particle.Target as GameObject).NetId);
 
-            Write(0); // unk
+            buffer.Write((int)0); // unk
 
             for (var i = 0; i < 3; ++i)
             {
@@ -36,16 +36,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var ownerHeight = map.NavGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
                 var particleHeight = map.NavGrid.GetHeightAtLocation(particle.X, particle.Y);
                 var higherValue = Math.Max(ownerHeight, particleHeight);
-                Write((short)((particle.Target.X - Game.Map.NavGrid.MapWidth / 2) / 2));
-                Write(higherValue);
-                Write((short)((particle.Target.Y - Game.Map.NavGrid.MapHeight / 2) / 2));
+                buffer.Write((short)((particle.Target.X - Game.Map.NavGrid.MapWidth / 2) / 2));
+                buffer.Write((float)higherValue);
+                buffer.Write((short)((particle.Target.Y - Game.Map.NavGrid.MapHeight / 2) / 2));
             }
 
-            Write((uint)0); // unk
-            Write((uint)0); // unk
-            Write((uint)0); // unk
-            Write((uint)0); // unk
-            Write(particle.Size); // Particle size
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((uint)0); // unk
+            buffer.Write((float)particle.Size); // Particle size
         }
     }
 }

@@ -1,12 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
+using LeagueSandbox.GameServer.Logic.API;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -15,13 +18,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_MoveReq;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleMove(Game game)
+        public HandleMove(Game game, PlayerManager playerManager)
         {
             _game = game;
-            _playerManager = game.PlayerManager;
+            _playerManager = playerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -29,27 +32,25 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
-            {
                 return true;
-            }
 
             var request = new MovementRequest(data);
-            var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, _game.Map);
+            var vMoves = readWaypoints(request.moveData, request.coordCount, _game.Map);
 
-            switch (request.Type)
+            switch (request.type)
             {
                 case MoveType.STOP:
                     //TODO anticheat, currently it trusts client 100%
 
-                    peerInfo.Champion.SetPosition(request.X, request.Y);
-                    var x = (request.X - _game.Map.NavGrid.MapWidth) / 2;
-                    var y = (request.Y - _game.Map.NavGrid.MapHeight) / 2;
+                    peerInfo.Champion.setPosition(request.x, request.y);
+                    float x = ((request.x) - _game.Map.NavGrid.MapWidth) / 2;
+                    float y = ((request.y) - _game.Map.NavGrid.MapHeight) / 2;
 
                     for (var i = 0; i < vMoves.Count; i++)
                     {
                         var v = vMoves[i];
-                        v.X = (short)request.X;
-                        v.Y = (short)request.Y;
+                        v.X = (short)request.x;
+                        v.Y = (short)request.y;
                     }
                     break;
                 case MoveType.EMOTE:
@@ -66,7 +67,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
 
-            var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as AttackableUnit;
+            ApiEventManager.OnMoveSuccess.Publish(peerInfo.Champion, request.x, request.y);
+
+            var u = _game.ObjectManager.GetObjectById(request.targetNetId) as AttackableUnit;
             if (u == null)
             {
                 peerInfo.Champion.TargetUnit = null;
@@ -78,12 +81,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return true;
         }
 
-        private List<Vector2> ReadWaypoints(byte[] buffer, int coordCount, Map map)
+        private List<Vector2> readWaypoints(byte[] buffer, int coordCount, Map map)
         {
             if (coordCount % 2 > 0)
-            {
                 coordCount++;
-            }
 
             var mapSize = map.NavGrid.GetSize();
             var reader = new BinaryReader(new MemoryStream(buffer));
@@ -124,7 +125,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
                 vMoves.Add(TranslateCoordinates(lastCoord, mapSize));
             }
-
             return vMoves;
         }
 

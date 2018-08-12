@@ -2,12 +2,12 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
-    public class EnableFow : BasePacket
+    public class EnableFOW : BasePacket
     {
-        public EnableFow(Game game, bool activate)
-            : base(game, PacketCmd.PKT_S2C_ENABLE_FOW)
+        public EnableFOW(bool activate)
+            : base(PacketCmd.PKT_S2C_EnableFOW)
         {
-            Write(activate ? 0x01 : 0x00);
+            buffer.Write(activate ? 0x01 : 0x00);
         }
     }
 }

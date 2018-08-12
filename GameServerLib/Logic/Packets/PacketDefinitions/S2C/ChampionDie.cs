@@ -1,21 +1,24 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ChampionDie : BasePacket
     {
-        public ChampionDie(Game game, Champion die, AttackableUnit killer, int goldFromKill)
-            : base(game, PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
+        public ChampionDie(Champion die, AttackableUnit killer, int goldFromKill)
+            : base(PacketCmd.PKT_S2C_ChampionDie, die.NetId)
         {
-            Write((int)goldFromKill); // Gold from kill?
-            Write((byte)0);
-            WriteNetId(killer);
+            buffer.Write(goldFromKill); // Gold from kill?
+            buffer.Write((byte)0);
+            if (killer != null)
+                buffer.Write(killer.NetId);
+            else
+                buffer.Write((int)0);
 
-            Write((byte)0);
-            Write((byte)7);
-            Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
+            buffer.Write((byte)0);
+            buffer.Write((byte)7);
+            buffer.Write(die.RespawnTimer / 1000.0f); // Respawn timer, float
         }
     }
 }

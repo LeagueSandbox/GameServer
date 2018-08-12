@@ -1,3 +1,4 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -5,12 +6,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetCapturePoint : BasePacket
     {
-        public SetCapturePoint(Game game, AttackableUnit unit, byte capturePointId)
-            : base(game, PacketCmd.PKT_S2C_SET_CAPTURE_POINT)
+        public SetCapturePoint(AttackableUnit unit, byte capturePointId) 
+            : base(PacketCmd.PKT_S2C_SetCapturePoint)
         {
-            Write(capturePointId);
-            WriteNetId(unit);
-            Fill(0, 6);
+            buffer.Write((byte)capturePointId);
+            buffer.Write(unit.NetId);
+            buffer.fill(0, 6);
         }
     }
 }

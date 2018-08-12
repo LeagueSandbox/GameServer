@@ -6,15 +6,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AttentionPingResponse : BasePacket
     {
-        public AttentionPingResponse(Game game, ClientInfo player, AttentionPingRequest ping) : 
-            base(game, PacketCmd.PKT_S2C_ATTENTION_PING)
+        public AttentionPingResponse(ClientInfo player, AttentionPingRequest ping) : base(PacketCmd.PKT_S2C_AttentionPing)
         {
-            Write((float)ping.X);
-            Write((float)ping.Y);
-            Write((int)ping.TargetNetId);
-            WriteNetId(player.Champion);
-            Write((byte)ping.Type);
-            Write((byte)0xFB); // 4.18
+            buffer.Write((float)ping.x);
+            buffer.Write((float)ping.y);
+            buffer.Write((int)ping.targetNetId);
+            buffer.Write((int)player.Champion.NetId);
+            buffer.Write((byte)ping.type);
+            buffer.Write((byte)0xFB); // 4.18
         }
     }
 }

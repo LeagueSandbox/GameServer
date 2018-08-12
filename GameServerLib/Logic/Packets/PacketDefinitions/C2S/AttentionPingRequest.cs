@@ -5,32 +5,30 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class AttentionPingRequest
     {
-        public byte Cmd;
-        public int Unk1;
-        public float X;
-        public float Y;
-        public int TargetNetId;
-        public Pings Type;
+        public byte cmd;
+        public int unk1;
+        public float x;
+        public float y;
+        public int targetNetId;
+        public Pings type;
 
         public AttentionPingRequest(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = reader.ReadByte();
-                Unk1 = reader.ReadInt32();
-                X = reader.ReadSingle();
-                Y = reader.ReadSingle();
-                TargetNetId = reader.ReadInt32();
-                Type = (Pings)reader.ReadByte();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            unk1 = reader.ReadInt32();
+            x = reader.ReadSingle();
+            y = reader.ReadSingle();
+            targetNetId = reader.ReadInt32();
+            type = (Pings)reader.ReadByte();
         }
-
+        
         public AttentionPingRequest(float x, float y, int netId, Pings type)
         {
-            X = x;
-            Y = y;
-            TargetNetId = netId;
-            Type = type;
+            this.x = x;
+            this.y = y;
+            this.targetNetId = netId;
+            this.type = type;
         }
     }
 }

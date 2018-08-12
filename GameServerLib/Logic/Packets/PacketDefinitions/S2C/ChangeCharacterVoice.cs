@@ -5,11 +5,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ChangeCharacterVoice : BasePacket
     {
-        public ChangeCharacterVoice(Game game, uint netId, string voiceOverride, bool resetOverride = false)
-            : base(game, PacketCmd.PKT_S2C_CHANGE_CHARACTER_VOICE, netId)
+        public ChangeCharacterVoice(uint netID, string voiceOverride, bool resetOverride = false)
+            : base(PacketCmd.PKT_S2C_ChangeCharacterVoice, netID)
         {
-            Write(resetOverride); // If this is 1, resets voice to default state and ignores voiceOverride
-            WriteConstLengthString(voiceOverride, 32, true);
+            buffer.Write(resetOverride); // If this is 1, resets voice to default state and ignores voiceOverride
+            foreach (var b in Encoding.Default.GetBytes(voiceOverride))
+                buffer.Write((byte)b);
+            if (voiceOverride.Length < 32)
+                buffer.fill(0, 32 - voiceOverride.Length);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+using ENet;
 
 namespace LeagueSandbox.GameServer.Logic.Enet
 {
@@ -20,10 +20,10 @@ namespace LeagueSandbox.GameServer.Logic.Enet
         private Champion _champion;
         public Champion Champion
         {
-            get => _champion;
+            get { return _champion; }
             set
             {
-                _champion = value;
+                this._champion = value;
                 _champion.Skin = SkinNo;
             }
         }

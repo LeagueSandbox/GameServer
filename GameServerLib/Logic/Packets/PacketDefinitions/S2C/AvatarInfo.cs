@@ -7,47 +7,44 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AvatarInfo : BasePacket
     {
-        public AvatarInfo(Game game, ClientInfo player)
-            : base(game, PacketCmd.PKT_S2C_AVATAR_INFO, player.Champion.NetId)
+        public AvatarInfo(ClientInfo player)
+            : base(PacketCmd.PKT_S2C_AvatarInfo, player.Champion.NetId)
         {
-            var runesRequired = 30;
-            foreach (var rune in player.Champion.RuneList.Runes)
+            int runesRequired = 30;
+            foreach (var rune in player.Champion.RuneList._runes)
             {
-                Write((short)rune.Value);
-                Write((short)0x00);
+                buffer.Write((short)rune.Value);
+                buffer.Write((short)0x00);
                 runesRequired--;
             }
-
-            for (var i = 1; i <= runesRequired; i++)
+            for (int i = 1; i <= runesRequired; i++)
             {
-                Write((short)0);
-                Write((short)0);
+                buffer.Write((short)0);
+                buffer.Write((short)0);
             }
 
             var summonerSpells = player.SummonerSkills;
-            WriteStringHash(summonerSpells[0]);
-            WriteStringHash(summonerSpells[1]);
+            buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
+            buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
 
-            var talentsRequired = 80;
-            var talentsHashes = new Dictionary<int, byte>
-            {
+            int talentsRequired = 80;
+            var talentsHashes = new Dictionary<int, byte>(){
                 { 0, 0 } // hash, level
             };
 
             foreach (var talent in talentsHashes)
             {
-                Write(talent.Key); // hash
-                Write(talent.Value); // level
+                buffer.Write((int)talent.Key); // hash
+                buffer.Write((byte)talent.Value); // level
                 talentsRequired--;
             }
-
-            for (var i = 1; i <= talentsRequired; i++)
+            for (int i = 1; i <= talentsRequired; i++)
             {
-                Write(0);
-                Write((byte)0);
+                buffer.Write((int)0);
+                buffer.Write((byte)0);
             }
 
-            Write((short)30); // avatarLevel
+            buffer.Write((short)30); // avatarLevel
         }
     }
 }

@@ -5,20 +5,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class HeartBeat
     {
-        public PacketCmd Cmd;
-        public int NetId;
-        public float ReceiveTime;
-        public float AckTime;
+        public PacketCmd cmd;
+        public int netId;
+        public float receiveTime;
+        public float ackTime;
         public HeartBeat(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = (PacketCmd)reader.ReadByte();
-                NetId = reader.ReadInt32();
-                ReceiveTime = reader.ReadSingle();
-                AckTime = reader.ReadSingle();
-                reader.Close();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            receiveTime = reader.ReadSingle();
+            ackTime = reader.ReadSingle();
+            reader.Close();
         }
     }
 }

@@ -4,11 +4,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SoundSettings : BasePacket
     {
-        public SoundSettings(Game game, byte soundCategory, bool mute)
-            : base(game, PacketCmd.PKT_S2C_SOUND_SETTINGS)
+        public SoundSettings(byte soundCategory, bool mute) 
+            : base(PacketCmd.PKT_S2C_SoundSettings)
         {
-            Write(soundCategory);
-            Write(mute);
+            buffer.Write((byte)soundCategory);
+            buffer.Write(mute);
         }
     }
 }

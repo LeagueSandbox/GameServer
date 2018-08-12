@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
@@ -9,13 +10,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_AUTO_ATTACK_OPTION;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_AutoAttackOption;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleAutoAttackOption(Game game)
+        public HandleAutoAttackOption(Game game, ChatCommandManager chatCommandManager)
         {
             _game = game;
-            _chatCommandManager = game.ChatCommandManager;
+            _chatCommandManager = chatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -23,10 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             //TODO: implement this
             var autoAttackOption = new AutoAttackOption(data);
             var state = "Deactivated";
-            if (autoAttackOption.Activated == 1)
-            {
+            if (autoAttackOption.activated == 1)
                 state = "Activated";
-            }
 
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");
             return true;

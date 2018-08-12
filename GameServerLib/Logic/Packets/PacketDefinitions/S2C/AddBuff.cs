@@ -1,28 +1,35 @@
 using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AddBuff : BasePacket
     {
-        public AddBuff(Game game, AttackableUnit u, AttackableUnit source, int stacks, float time, BuffType buffType, string name, byte slot)
-            : base(game, PacketCmd.PKT_S2C_ADD_BUFF, u.NetId)
+        public AddBuff(AttackableUnit u, AttackableUnit source, int stacks, float time, BuffType buffType, string name, byte slot)
+            : base(PacketCmd.PKT_S2C_AddBuff, u.NetId)
         {
-            Write((byte)slot); //Slot
-            Write((byte)buffType); //Type
-            Write((byte)stacks); // stacks
-            Write((byte)0x00); // Visible was (byte)0x00
-            WriteStringHash(name); //Buff id
+            buffer.Write((byte)slot); //Slot
+            buffer.Write((byte)buffType); //Type
+            buffer.Write((byte)stacks); // stacks
+            buffer.Write((byte)0x00); // Visible was (byte)0x00
+            buffer.Write(HashFunctions.HashString(name)); //Buff id
 
-            Write((int)0); // <-- Probably runningTime
+            buffer.Write((int)0); // <-- Probably runningTime
 
-            Write((float)0); // <- ProgressStartPercent
+            buffer.Write((float)0); // <- ProgressStartPercent
 
-            Write((float)time);
+            buffer.Write((float)time);
 
-            WriteNetId(source);
+            if (source != null)
+            {
+                buffer.Write(source.NetId); //source
+            }
+            else
+            {
+                buffer.Write((int)0);
+            }
         }
     }
 }

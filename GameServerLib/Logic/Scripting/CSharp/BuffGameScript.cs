@@ -1,14 +1,18 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
+namespace LeagueSandbox.GameServer.Logic.Scripting
 {
-    public interface IBuffGameScript
+    public interface BuffGameScript
     {
         void OnUpdate(double diff);
 
-        void OnActivate(ObjAiBase unit, Spell ownerSpell);
+        void OnActivate(ObjAIBase unit, Spell ownerSpell);
 
-        void OnDeactivate(ObjAiBase unit);
+        void OnDeactivate(ObjAIBase unit);
     }
 }

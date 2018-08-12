@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(Game game,
-            AttackableUnit u,
+        public Dash(AttackableUnit u,
             Target t,
             float dashSpeed,
             bool keepFacingLastDirection,
@@ -19,29 +17,29 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float followTargetMaxDistance = 0.0f,
             float backDistance = 0.0f,
             float travelTime = 0.0f
-        ) : base(game, PacketCmd.PKT_S2C_DASH)
+        ) : base(PacketCmd.PKT_S2C_Dash)
         {
-            Write(Environment.TickCount); // syncID
-            Write((short)1); // Number of dashes
-            Write((byte)4); // Waypoints size * 2
-            WriteNetId(u);
-            Write(dashSpeed);
-            Write(leapHeight);
-            Write(u.X);
-            Write(u.Y);
-            Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
+            buffer.Write(Environment.TickCount); // syncID
+            buffer.Write((short)1); // Number of dashes
+            buffer.Write((byte)4); // Waypoints size * 2
+            buffer.Write((uint)u.NetId);
+            buffer.Write((float)dashSpeed);
+            buffer.Write((float)leapHeight);
+            buffer.Write((float)u.X);
+            buffer.Write((float)u.Y);
+            buffer.Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
             if (t.IsSimpleTarget)
             {
-                Write((uint)0);
+                buffer.Write((uint)0);
             }
             else
             {
-                WriteNetId(t as GameObject);
+                buffer.Write((uint)(t as GameObject).NetId);
             }
 
-            Write(followTargetMaxDistance);
-            Write(backDistance);
-            Write(travelTime);
+            buffer.Write((float)followTargetMaxDistance);
+            buffer.Write((float)backDistance);
+            buffer.Write((float)travelTime);
 
             var waypoints = new List<Vector2>
             {
@@ -49,7 +47,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 new Vector2(t.X, t.Y)
             };
 
-            Write(Movement.EncodeWaypoints(game, waypoints));
+            buffer.Write(Movement.EncodeWaypoints(waypoints));
         }
     }
 }

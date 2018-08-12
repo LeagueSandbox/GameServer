@@ -8,44 +8,51 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SynchVersionResponse : BasePacket
     {
-        public SynchVersionResponse(Game game, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map)
-            : base(game, PacketCmd.PKT_S2C_SYNCH_VERSION)
+        public SynchVersionResponse(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map)
+            : base(PacketCmd.PKT_S2C_SynchVersion)
         {
-            Write((byte)1); // Bit field
+            buffer.Write((byte)1); // Bit field
             // First bit: doVersionsMatch - If set to 0, the client closes
             // Second bit: Seems to enable a 'ClientMetricsLogger'
-            Write((uint)map); // mapId
+            buffer.Write((uint)map); // mapId
             foreach (var player in players)
             {
                 var p = player.Item2;
                 var summonerSpells = p.SummonerSkills;
-                Write(p.UserId);
-                Write((short)0x1E); // unk
-                WriteStringHash(summonerSpells[0]);
-                WriteStringHash(summonerSpells[1]);
-                Write((byte)0); // bot boolean
-                Write((int)p.Team); // Probably a short
-                Fill(0, 64); // name is no longer here
-                Fill(0, 64);
-				WriteConstLengthString(p.Rank, 24);
-                Write(p.Icon);
-                Write(p.Ribbon);
+                buffer.Write((long)p.UserId);
+                buffer.Write((short)0x1E); // unk
+                buffer.Write((uint)HashFunctions.HashString(summonerSpells[0]));
+                buffer.Write((uint)HashFunctions.HashString(summonerSpells[1]));
+                buffer.Write((byte)0); // bot boolean
+                buffer.Write((int)p.Team); // Probably a short
+                buffer.fill(0, 64); // name is no longer here
+                buffer.fill(0, 64);
+                foreach (var b in Encoding.Default.GetBytes(p.Rank))
+                    buffer.Write((byte)b);
+                buffer.fill(0, 24 - p.Rank.Length);
+                buffer.Write((int)p.Icon);
+                buffer.Write((short)p.Ribbon);
             }
 
             for (var i = 0; i < 12 - players.Count; ++i)
             {
-                Write((long)-1);
-                Fill(0, 173);
+                buffer.Write((long)-1);
+                buffer.fill(0, 173);
             }
-			WriteConstLengthString(version, 256);
-			WriteConstLengthString(gameMode, 128);
+            foreach (var b in Encoding.Default.GetBytes(version))
+                buffer.Write((byte)b);
+            buffer.fill(0, 256 - version.Length);
+            foreach (var b in Encoding.Default.GetBytes(gameMode))
+                buffer.Write((byte)b);
+            buffer.fill(0, 128 - gameMode.Length);
 
-			Write("NA1");
-            Fill(0, 2333); // 128 - 3 + 661 + 1546
-            Write((uint)487826); // gameFeatures (turret range indicators, etc.)
-            Fill(0, 256);
-            Write((uint)0);
-            Fill(1, 19);
+            foreach (var b in Encoding.Default.GetBytes("NA1"))
+                buffer.Write((byte)b);
+            buffer.fill(0, 2333); // 128 - 3 + 661 + 1546
+            buffer.Write((uint)487826); // gameFeatures (turret range indicators, etc.)
+            buffer.fill(0, 256);
+            buffer.Write((uint)0);
+            buffer.fill(1, 19);
         }
     }
 }

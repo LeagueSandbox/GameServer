@@ -5,20 +5,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class SwapItemsRequest
     {
-        public PacketCmd Cmd;
-        public int NetId;
-        public byte SlotFrom;
-        public byte SlotTo;
+        public PacketCmd cmd;
+        public int netId;
+        public byte slotFrom;
+        public byte slotTo;
 
         public SwapItemsRequest(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = (PacketCmd)reader.ReadByte();
-                NetId = reader.ReadInt32();
-                SlotFrom = reader.ReadByte();
-                SlotTo = reader.ReadByte();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            slotFrom = reader.ReadByte();
+            slotTo = reader.ReadByte();
         }
     }
 }

@@ -1,30 +1,30 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
-using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
     public class Map
     {
         protected Game _game;
-        protected static Logger _logger;
+        protected static Logger _logger = Program.ResolveDependency<Logger>();
 
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }
         public CollisionHandler CollisionHandler { get; private set; }
-        public int Id { get; private set; }
-        public IMapGameScript MapGameScript { get; private set; }
+        public int Id { get; private set; } = 0;
+        public MapGameScript MapGameScript { get; private set; }
 
         public Map(Game game)
         {
             _game = game;
-            _logger = game.Logger;
             Id = _game.Config.GameConfig.Map;
             var path = Path.Combine(
-                ServerContext.ExecutingDirectory,
+                Program.ExecutingDirectory,
                 "Content",
                 "Data",
                 _game.Config.ContentManager.GameModeName,
@@ -44,16 +44,16 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
 
             AnnouncerEvents = new List<Announce>();
-            CollisionHandler = new CollisionHandler(_game, this);
+            CollisionHandler = new CollisionHandler(this);
             MapGameScript = GetMapScript(Id);
         }
 
-        public IMapGameScript GetMapScript(int mapId)
+        public MapGameScript GetMapScript(int mapId)
         {
             var dict = new Dictionary<int, Type>
             {
                 // [0] = typeof(FlatTestMap),
-                [1] = typeof(SummonersRift)
+                [1] = typeof(SummonersRift),
                 // [2] = typeof(HarrowingRift),
                 // [3] = typeof(ProvingGrounds),
                 // [4] = typeof(TwistedTreeline),
@@ -67,10 +67,10 @@ namespace LeagueSandbox.GameServer.Logic.Maps
 
             if (!dict.ContainsKey(mapId))
             {
-                return new SummonersRift(_game);
+                return new SummonersRift();
             }
 
-            return (IMapGameScript)Activator.CreateInstance(dict[mapId], _game);
+            return (MapGameScript)Activator.CreateInstance(dict[mapId]);
         }
 
         public void Init()
@@ -88,7 +88,6 @@ namespace LeagueSandbox.GameServer.Logic.Maps
                     announce.Execute();
                 }
             }
-
             MapGameScript.Update(diff);
         }
     }

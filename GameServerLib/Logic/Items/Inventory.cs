@@ -1,5 +1,6 @@
-﻿using System;
-using LeagueSandbox.GameServer.Logic.Content;
+﻿using LeagueSandbox.GameServer.Logic.Content;
+using LeagueSandbox.GameServer.Logic.GameObjects;
+using System;
 
 namespace LeagueSandbox.GameServer.Logic.Items
 {
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Items
         private const int RUNE_INVENTORY_SIZE = 30;
         private Item[] _items;
         private InventoryManager _owner;
-        public Item[] Items => _items;
+        public Item[] Items { get { return _items; } }
 
         public Inventory(InventoryManager owner)
         {
@@ -21,26 +22,15 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         public Item AddItem(ItemType item)
         {
-            if (item.IsTrinket())
-            {
-                return AddTrinketItem(item);
-            }
-
-            if (item.MaxStack > 1)
-            {
-                return AddStackingItem(item);
-            }
-
+            if(item.GetIsTrinket()) return AddTrinketItem(item);
+            if (item.MaxStack > 1) return AddStackingItem(item);
             return AddNewItem(item);
         }
 
         public Item SetExtraItem(byte slot, ItemType item)
         {
             if (slot < BASE_INVENTORY_SIZE)
-            {
                 throw new Exception("Invalid extra item slot—must be greater than base inventory size!");
-            }
-
             return SetItem(slot, item);
         }
 
@@ -55,6 +45,12 @@ namespace LeagueSandbox.GameServer.Logic.Items
             return _items[slot];
         }
 
+        public string GetItemSpellName(int slot)
+        {
+            Item theItem = GetItem(slot);
+            return theItem.ItemType.SpellName;
+        }
+
         public void RemoveItem(int slot)
         {
             _items[slot] = null;
@@ -67,25 +63,18 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         public int GetItemSlot(Item item)
         {
-            for (var i = 0; i < _items.Length; i++)
+            for(var i = 0; i < _items.Length; i++)
             {
-                if (_items[i] != item)
-                {
-                    continue;
-                }
-
+                if (_items[i] != item) continue;
                 return i;
             }
-
             throw new Exception("Specified item doesn't exist in the inventory!");
         }
 
         public void SwapItems(int slot1, int slot2)
         {
             if (slot1 == TRINKET_SLOT || slot2 == TRINKET_SLOT)
-            {
                 throw new Exception("Can't swap to or from the trinket slot");
-            }
 
             var buffer = _items[slot1];
             _items[slot1] = _items[slot2];
@@ -94,33 +83,17 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         private Item AddTrinketItem(ItemType item)
         {
-            if (_items[TRINKET_SLOT] != null)
-            {
-                return null;
-            }
-
+            if (_items[TRINKET_SLOT] != null) return null;
             return SetItem(TRINKET_SLOT, item);
         }
 
         private Item AddStackingItem(ItemType item)
         {
-            for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
+            for(var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
-                if (_items[i] == null)
-                {
-                    continue;
-                }
-
-                if (item.ItemId != _items[i].ItemType.ItemId)
-                {
-                    continue;
-                }
-
-                if (_items[i].IncrementStackSize())
-                {
-                    return _items[i];
-                }
-
+                if (_items[i] == null) continue;
+                if (item.ItemId != _items[i].ItemType.ItemId) continue;
+                if (_items[i].IncrementStackSize()) return _items[i];
                 return null;
             }
             return AddNewItem(item);
@@ -128,21 +101,12 @@ namespace LeagueSandbox.GameServer.Logic.Items
 
         private Item AddNewItem(ItemType item)
         {
-            for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
+            for(var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
-                if (i == TRINKET_SLOT)
-                {
-                    continue;
-                }
-
-                if (_items[i] != null)
-                {
-                    continue;
-                }
-
+                if (i == TRINKET_SLOT) continue;
+                if (_items[i] != null) continue;
                 return SetItem((byte)i, item);
             }
-
             return null;
         }
     }

@@ -1,3 +1,4 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -5,27 +6,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class FogUpdate2 : BasePacket
     {
-        public FogUpdate2(Game game, AttackableUnit unit, NetworkIdManager idManager) 
-            : base(game, PacketCmd.PKT_S2C_FOG_UPDATE2, 0)
+        public FogUpdate2(AttackableUnit unit, NetworkIdManager idManager) : base(PacketCmd.PKT_S2C_FogUpdate2, 0)
         {
-            Write((int)unit.Team);
-            Write((byte)0xFE);
-            Write((byte)0xFF);
-            Write((byte)0xFF);
-            Write((byte)0xFF);
-            Write(0);
-            WriteNetId(unit); // Fog Attached, when unit dies it disappears
-            Write(idManager.GetNewNetId()); //Fog NetID
-            Write(0);
-            Write(unit.X);
-            Write(unit.Y);
-            Write((float)2500);
-            Write(88.4f);
-            Write((float)130);
-            Write(1.0f);
-            Write(0);
-            Write((byte)199);
-            Write(unit.VisionRadius);
+            buffer.Write((int)unit.Team);
+            buffer.Write((byte)0xFE);
+            buffer.Write((byte)0xFF);
+            buffer.Write((byte)0xFF);
+            buffer.Write((byte)0xFF);
+            buffer.Write((int)0);
+            buffer.Write((uint)unit.NetId); // Fog Attached, when unit dies it disappears
+            buffer.Write((uint)idManager.GetNewNetID()); //Fog NetID
+            buffer.Write((int)0);
+            buffer.Write((float)unit.X);
+            buffer.Write((float)unit.Y);
+            buffer.Write((float)2500);
+            buffer.Write((float)88.4f);
+            buffer.Write((float)130);
+            buffer.Write((float)1.0f);
+            buffer.Write((int)0);
+            buffer.Write((byte)199);
+            buffer.Write((float)unit.VisionRadius);
         }
     }
 }

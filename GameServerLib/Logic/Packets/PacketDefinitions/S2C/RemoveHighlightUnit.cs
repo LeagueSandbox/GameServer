@@ -4,11 +4,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class RemoveHighlightUnit : BasePacket
     {
-        public RemoveHighlightUnit(Game game, uint netId)
-            : base(game, PacketCmd.PKT_S2C_REMOVE_HIGHLIGHT_UNIT)
+        public RemoveHighlightUnit(uint netId)
+            : base(PacketCmd.PKT_S2C_RemoveHighlightUnit)
         {
             // The following structure might be incomplete or wrong
-            Write(netId);
+            buffer.Write((uint)netId);
         }
     }
 }

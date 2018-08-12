@@ -1,4 +1,5 @@
 ﻿using ENet;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -7,8 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "newcommand";
         public override string Syntax => $"{Command}";
 
-        public NewCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public NewCommand(ChatCommandManager chatCommandManager) : base(chatCommandManager)
         {
         }
 

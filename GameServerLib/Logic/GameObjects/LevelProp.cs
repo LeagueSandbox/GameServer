@@ -1,6 +1,4 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
-
-namespace LeagueSandbox.GameServer.Logic.GameObjects
+﻿namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class LevelProp : GameObject
     {
@@ -15,7 +13,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         public byte SkinId { get; private set; }
 
         public LevelProp(
-            Game game,
             float x,
             float y,
             float z,
@@ -28,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             string model,
             byte skin = 0,
             uint netId = 0
-        ) : base(game, x, y, 0, 0, netId)
+        ) : base(x, y, 0, 0, netId)
         {
             Z = z;
             DirX = dirX;
@@ -39,10 +36,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             Name = name;
             Model = model;
             SkinId = skin;
-            SetTeam(TeamId.TEAM_NEUTRAL);
+            SetTeam(Enet.TeamId.TEAM_NEUTRAL);
         }
 
-        public override float GetMoveSpeed()
+        public override float getMoveSpeed()
         {
             return 0.0f;
         }

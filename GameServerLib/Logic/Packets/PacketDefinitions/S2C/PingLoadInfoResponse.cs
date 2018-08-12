@@ -5,16 +5,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class PingLoadInfoResponse : BasePacket
     {
-        public PingLoadInfoResponse(Game game, PingLoadInfoRequest loadInfo, long id) 
-            : base(game, PacketCmd.PKT_S2C_PING_LOAD_INFO, loadInfo.NetId)
+        public PingLoadInfoResponse(PingLoadInfoRequest loadInfo, long id) : base(PacketCmd.PKT_S2C_Ping_Load_Info, loadInfo.netId)
         {
-            Write((uint)loadInfo.Position);
-            Write((ulong)id);
-            Write(loadInfo.Loaded);
-            Write(loadInfo.Unk2);
-            Write(loadInfo.Ping);
-            Write(loadInfo.Unk3);
-            Write(loadInfo.Unk4);
+            buffer.Write((uint)loadInfo.position);
+            buffer.Write((ulong)id);
+            buffer.Write((float)loadInfo.loaded);
+            buffer.Write((float)loadInfo.unk2);
+            buffer.Write((short)loadInfo.ping);
+            buffer.Write((short)loadInfo.unk3);
+            buffer.Write((byte)loadInfo.unk4);
         }
     }
 }

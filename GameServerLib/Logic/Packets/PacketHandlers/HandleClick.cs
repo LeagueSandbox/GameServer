@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Attributes;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -12,20 +13,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Logger _logger;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLICK;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Click;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleClick(Game game)
+        public HandleClick(Game game, Logger logger, PlayerManager playerManager)
         {
             _game = game;
-            _logger = game.Logger;
-            _playerManager = game.PlayerManager;
+            _logger = logger;
+            _playerManager = playerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var click = new Click(data);
-            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.TargetNetId}";
+            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.targetNetId}";
             _logger.LogCoreInfo(msg);
 
             return true;

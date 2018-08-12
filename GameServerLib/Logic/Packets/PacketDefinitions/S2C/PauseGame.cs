@@ -4,13 +4,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class PauseGame : BasePacket
     {
-        public PauseGame(Game game, int seconds, bool showWindow)
-            : base(game, PacketCmd.PKT_PAUSE_GAME)
+        public PauseGame(int seconds, bool showWindow) 
+            : base(PacketCmd.PKT_PauseGame)
         {
             // The following structure might be incomplete or wrong
-            Write(0);
-            Write(seconds);
-            Write(showWindow);
+            buffer.Write((int)0);
+            buffer.Write((int)seconds);
+            buffer.Write((bool)showWindow);
         }
     }
 }

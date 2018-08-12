@@ -5,15 +5,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ViewResponse : Packet
     {
-        public ViewResponse(Game game, ViewRequest request)
-            : base(game, PacketCmd.PKT_S2C_VIEW_ANS)
+        public ViewResponse(ViewRequest request)
+            : base(PacketCmd.PKT_S2C_ViewAns)
         {
-            Write(request.NetId);
+            buffer.Write(request.netId);
         }
 
-        public void SetRequestNo(byte requestNo)
+        public void setRequestNo(byte requestNo)
         {
-            Write(requestNo);
+            buffer.Write(requestNo);
         }
     }
 }

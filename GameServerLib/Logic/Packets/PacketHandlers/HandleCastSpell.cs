@@ -1,4 +1,7 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -11,35 +14,38 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly NetworkIdManager _networkIdManager;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CAST_SPELL;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CastSpell;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleCastSpell(Game game)
+        public HandleCastSpell(Game game, NetworkIdManager networkIdManager, PlayerManager playerManager)
         {
             _game = game;
-            _networkIdManager = game.NetworkIdManager;
-            _playerManager = game.PlayerManager;
+            _networkIdManager = networkIdManager;
+            _playerManager = playerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var spell = new CastSpellRequest(data);
 
-            var targetObj = _game.ObjectManager.GetObjectById(spell.TargetNetId);
-            var targetUnit = targetObj as AttackableUnit;
+            var targetObj = _game.ObjectManager.GetObjectById(spell.targetNetId);
+            var TargetUnit = targetObj as AttackableUnit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
-            if (owner == null || !owner.CanCast())
+            if (owner == null)
             {
                 return false;
             }
-
-            var s = owner.GetSpell(spell.SpellSlot);
+            if (!owner.CanCast())
+            {
+                return false;
+            }
+            var s = owner.GetSpell(spell.spellSlot);
             if (s == null)
             {
                 return false;
             }
 
-            return s.Cast(spell.X, spell.Y, spell.X2, spell.Y2, targetUnit);
+            return s.cast(spell.x, spell.y, spell.x2, spell.y2, TargetUnit);
         }
     }
 }

@@ -5,18 +5,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class UseObject
     {
-        private PacketCmd _cmd;
-        private int _netId;
-        public uint TargetNetId; // netId of the object used
+        PacketCmd cmd;
+        int netId;
+        public uint targetNetId; // netId of the object used
 
         public UseObject(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                _cmd = (PacketCmd)reader.ReadByte();
-                _netId = reader.ReadInt32();
-                TargetNetId = reader.ReadUInt32();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            targetNetId = reader.ReadUInt32();
         }
     }
 }

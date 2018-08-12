@@ -1,18 +1,15 @@
 using System;
 using System.Linq;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
+namespace LeagueSandbox.GameServer.Logic.Packets
 {
     public static class PacketHelper
     {
-        public static byte[] IntToByteArray(int i)
+        public static byte[] intToByteArray(int i)
         {
             var ret = BitConverter.GetBytes(i);
             if (BitConverter.IsLittleEndian)
-            {
                 return ret.Reverse().ToArray();
-            }
-
             return ret;
         }
     }

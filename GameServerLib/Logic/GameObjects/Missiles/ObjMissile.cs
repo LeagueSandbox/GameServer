@@ -1,9 +1,15 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class ObjMissile : GameObject
     {
-        public ObjMissile(Game game,float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) :
-            base(game, x, y, collisionRadius, visionRadius, netId)
+        public ObjMissile(float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) :
+            base(x, y, collisionRadius, visionRadius, netId)
         {
         }
     }

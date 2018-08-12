@@ -12,15 +12,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
         public float Y;
         public CursorPositionOnWorld(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = reader.ReadByte();
-                NetId = reader.ReadUInt32();
-                Unk1 = reader.ReadInt16();
-                X = reader.ReadSingle();
-                Z = reader.ReadSingle();
-                Y = reader.ReadSingle();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            Cmd = reader.ReadByte();
+            NetId = reader.ReadUInt32();
+            Unk1 = reader.ReadInt16();
+            X = reader.ReadSingle();
+            Z = reader.ReadSingle();
+            Y = reader.ReadSingle();
         }
     }
 }

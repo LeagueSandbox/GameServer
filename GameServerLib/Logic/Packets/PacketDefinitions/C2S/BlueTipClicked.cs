@@ -4,20 +4,22 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class BlueTipClicked
     {
-        public byte Cmd;
-        public uint Playernetid;
-        public byte Unk;
-        public uint Netid;
+        public byte cmd;
+        public uint playernetid;
+        public byte unk;
+        public uint netid;
 
         public BlueTipClicked(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = reader.ReadByte();
-                Playernetid = reader.ReadUInt32();
-                Unk = reader.ReadByte();
-                Netid = reader.ReadUInt32();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            playernetid = reader.ReadUInt32();
+            unk = reader.ReadByte();
+            netid = reader.ReadUInt32();
+        }
+        public BlueTipClicked()
+        {
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Players;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -10,10 +11,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "size";
         public override string Syntax => $"{Command} size";
 
-        public SizeCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public SizeCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager) 
+            : base(chatCommandManager)
         {
-            _playerManager = game.PlayerManager;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -24,11 +25,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
+                return;
             }
             else if (float.TryParse(split[1], out size))
-            {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.Size.BaseValue += size;
-            }
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().Size.BaseValue = size;
         }
     }
 }

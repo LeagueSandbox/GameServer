@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LeagueSandbox.GameServer.Logic.GameObjects;
+using System.Collections.Generic;
 using System.Linq;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.Content
@@ -21,11 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public ItemType SafeGetItemType(int itemId, ItemType defaultValue)
         {
-            if (!_itemTypes.ContainsKey(itemId))
-            {
-                return defaultValue;
-            }
-
+            if (!_itemTypes.ContainsKey(itemId)) return defaultValue;
             return _itemTypes[itemId];
         }
 
@@ -44,8 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             var itemContentCollection = ItemContentCollection.LoadItemsFrom(
                 "Content/Data/LeagueSandbox-Default/Items"
             );
-
-            foreach (var entry in itemContentCollection)
+            foreach(var entry in itemContentCollection)
             {
                 var itemType = ItemType.Load(this, entry.Value);
                 _itemTypes.Add(entry.Key, itemType);
@@ -53,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType : StatsModifier
+    public class ItemType : IStatsModifier
     {
         //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
@@ -68,6 +63,28 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public string ItemGroup { get; private set; }
         public float SellBackModifier { get; private set; }
 
+        // Stats
+        public StatModifcator HealthPoints { get; set; }
+        public StatModifcator HealthRegeneration { get; set; }
+        public StatModifcator AttackDamage { get; set; }
+        public StatModifcator AbilityPower { get; set; }
+        public StatModifcator CriticalChance { get; set; }
+        public StatModifcator Armor { get; set; }
+        public StatModifcator MagicResist { get; set; }
+        public StatModifcator AttackSpeed { get; set; }
+        public StatModifcator ArmorPenetration { get; set; }
+        public StatModifcator MagicPenetration { get; set; }
+        public StatModifcator ManaPoints { get; set; }
+        public StatModifcator ManaRegeneration { get; set; }
+        public StatModifcator LifeSteel { get; set; }
+        public StatModifcator SpellVamp { get; set; }
+        public StatModifcator Tenacity { get; set; }
+        public StatModifcator Size { get; set; }
+        public StatModifcator Range { get; set; }
+        public StatModifcator MoveSpeed { get; set; }
+        public StatModifcator GoldPerSecond { get; set; }
+        public string SpellName { get; private set; }
+
         // Recipes
         public int RecipeItem1 { get; private set; }
         public int RecipeItem2 { get; private set; }
@@ -76,11 +93,31 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         // Not from data
         public ItemRecipe Recipe { get; private set; }
-        public int TotalPrice => Recipe.TotalPrice;
+        public int TotalPrice { get { return Recipe.TotalPrice; } }
 
-        private ItemType(ItemContentCollectionEntry itemInfo)
+        private ItemType(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             _itemInfo = itemInfo;
+
+            HealthPoints = new StatModifcator();
+            HealthRegeneration = new StatModifcator();
+            AttackDamage = new StatModifcator();
+            AbilityPower = new StatModifcator();
+            CriticalChance = new StatModifcator();
+            Armor = new StatModifcator();
+            MagicResist = new StatModifcator();
+            AttackSpeed = new StatModifcator();
+            ArmorPenetration = new StatModifcator();
+            MagicPenetration = new StatModifcator();
+            ManaPoints = new StatModifcator();
+            ManaRegeneration = new StatModifcator();
+            LifeSteel = new StatModifcator();
+            SpellVamp = new StatModifcator();
+            Tenacity = new StatModifcator();
+            Size = new StatModifcator();
+            Range = new StatModifcator();
+            MoveSpeed = new StatModifcator();
+            GoldPerSecond = new StatModifcator();
         }
 
         private void CreateRecipe(ItemManager manager)
@@ -91,7 +128,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
-            var result = new ItemType(itemInfo)
+            var result = new ItemType(owner, itemInfo)
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
@@ -103,78 +140,40 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 RecipeItem1 = itemInfo.GetInt("Data", "RecipeItem1", -1),
                 RecipeItem2 = itemInfo.GetInt("Data", "RecipeItem2", -1),
                 RecipeItem3 = itemInfo.GetInt("Data", "RecipeItem3", -1),
-                RecipeItem4 = itemInfo.GetInt("Data", "RecipeItem4", -1),
-                Armor =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatArmorMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentArmorMod")
-                },
-                CriticalChance =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatCritChanceMod")
-                },
-                HealthPoints =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatHPPoolMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentHPPoolMod")
-                },
-                ManaPoints =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatMPPoolMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentMPPoolMod")
-                },
-                AbilityPower =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatMagicDamageMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentMagicDamageMod")
-                },
-                MagicPenetration =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatMagicPenetrationMod")
-                },
-                MoveSpeed =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatMovementSpeedMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod")
-                },
-                AttackDamage =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatPhysicalDamageMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod")
-                },
-                MagicResist =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatSpellBlockMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod")
-                },
-                AttackSpeed =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "PercentAttackSpeedMod")
-                },
-                HealthRegeneration =
-                {
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentBaseHPRegenMod")
-                },
-                ManaRegeneration =
-                {
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod")
-                },
-                CriticalDamage =
-                {
-                    FlatBonus = itemInfo.GetFloat("Data", "FlatCritDamageMod"),
-                    PercentBonus = itemInfo.GetFloat("Data", "PercentCritDamageMod")
-                }
+                RecipeItem4 = itemInfo.GetInt("Data", "RecipeItem4", -1)
             };
 
+            result.Armor.FlatBonus = itemInfo.GetFloat("Data", "FlatArmorMod");
+            result.CriticalChance.FlatBonus = itemInfo.GetFloat("Data", "FlatCritChanceMod");
+            //itemInfo.SafeGetFloat("Data", "FlatCritDamageMod"); // TODO
+            result.HealthPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatHPPoolMod");
+            result.ManaPoints.FlatBonus = itemInfo.GetFloat("Data", "FlatMPPoolMod");
+            result.AbilityPower.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicDamageMod");
+            result.MagicPenetration.FlatBonus = itemInfo.GetFloat("Data", "FlatMagicPenetrationMod");
+            result.MoveSpeed.FlatBonus = itemInfo.GetFloat("Data", "FlatMovementSpeedMod");
+            result.AttackDamage.FlatBonus = itemInfo.GetFloat("Data", "FlatPhysicalDamageMod");
+            result.MagicResist.FlatBonus = itemInfo.GetFloat("Data", "FlatSpellBlockMod");
+            result.Armor.PercentBonus = itemInfo.GetFloat("Data", "PercentArmorMod");
+            result.AttackSpeed.FlatBonus = itemInfo.GetFloat("Data", "PercentAttackSpeedMod");
+            //itemInfo.SafeGetFloat("Data", "PercentCritDamageMod"); // TODO
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
+            result.HealthPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentHPPoolMod");
+            result.HealthRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseHPRegenMod");
+            result.ManaPoints.PercentBonus = itemInfo.GetFloat("Data", "PercentMPPoolMod");
+            result.ManaRegeneration.PercentBonus = itemInfo.GetFloat("Data", "PercentBaseMPRegenMod");
+            result.AbilityPower.PercentBonus = itemInfo.GetFloat("Data", "PercentMagicDamageMod");
+            result.MoveSpeed.PercentBonus = itemInfo.GetFloat("Data", "PercentMovementSpeedMod");
+            result.AttackDamage.PercentBonus = itemInfo.GetFloat("Data", "PercentPhysicalDamageMod");
+            result.MagicResist.PercentBonus = itemInfo.GetFloat("Data", "PercentSpellBlockMod");
+            result.SpellName = itemInfo.GetString("Data", "SpellName");
 
             result.CreateRecipe(owner);
             return result;
         }
 
-        public bool IsTrinket()
+        public bool GetIsTrinket()
         {
-            return ItemGroup.ToLower().Equals("relicbase");
+            return ItemGroup.ToLower() == "relicbase";
         }
     }
 
@@ -190,10 +189,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             get
             {
                 if (_totalPrice <= -1)
-                {
                     FindPrice();
-                }
-
                 return _totalPrice;
             }
         }
@@ -208,17 +204,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public List<ItemType> GetItems()
         {
             if (_items == null)
-            {
                 FindRecipeItems(_itemManager);
-            }
-
             return _items.ToList();
         }
 
         private void FindRecipeItems(ItemManager itemManager)
         {
             // TODO: Figure out how to refactor this.
-            _items = new[]
+            _items = new ItemType[]
             {
                 itemManager.SafeGetItemType(_owner.RecipeItem1),
                 itemManager.SafeGetItemType(_owner.RecipeItem2),
@@ -232,12 +225,9 @@ namespace LeagueSandbox.GameServer.Logic.Content
             _totalPrice = 0;
             foreach (var item in GetItems())
             {
-                if (item != null)
-                {
+                if(item != null)
                     _totalPrice += item.TotalPrice;
-                }
             }
-
             _totalPrice += _owner.Price;
         }
 
@@ -252,7 +242,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
-
+        
         private Inventory _owner;
 
         private Item(Inventory owner, ItemType type)
@@ -264,22 +254,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public bool IncrementStackSize()
         {
-            if (StackSize >= ItemType.MaxStack)
-            {
-                return false;
-            }
-
+            if (StackSize >= ItemType.MaxStack) return false;
             StackSize++;
             return true;
         }
 
         public bool DecrementStackSize()
         {
-            if (StackSize < 1)
-            {
-                return false;
-            }
-
+            if (StackSize < 1) return false;
             StackSize--;
             return true;
         }

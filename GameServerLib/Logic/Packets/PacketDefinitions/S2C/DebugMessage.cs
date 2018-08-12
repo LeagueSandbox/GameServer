@@ -5,11 +5,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class DebugMessage : BasePacket
     {
-        public DebugMessage(Game game, string message)
-            : base(game, PacketCmd.PKT_S2C_DEBUG_MESSAGE)
+        public DebugMessage(string message)
+            : base(PacketCmd.PKT_S2C_DebugMessage)
         {
-            Write(0);
-			WriteConstLengthString(message, 512);
+            buffer.Write((int)0);
+            foreach (var b in Encoding.Default.GetBytes(message))
+                buffer.Write((byte)b);
+            buffer.fill(0, 512 - message.Length);
         }
     }
 }

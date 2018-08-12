@@ -1,9 +1,10 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Content;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Content;
-using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic
 {
@@ -13,9 +14,7 @@ namespace LeagueSandbox.GameServer.Logic
         public GameConfig GameConfig { get; private set; }
         public MapSpawns MapSpawns { get; private set; }
         public ContentManager ContentManager { get; private set; }
-        public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
-        public static readonly Version VERSION = new Version(4, 20, 0, 315);
-        public const uint VERSION_NUMBER = 42000315;
+        public const string VERSION = "Version 4.20.0.315 [PUBLIC]";
 
         public bool CooldownsEnabled { get; private set; }
         public bool ManaCostsEnabled { get; private set; }
@@ -26,21 +25,21 @@ namespace LeagueSandbox.GameServer.Logic
         {
         }
 
-        public static Config LoadFromJson(Game game, string json)
+        public static Config LoadFromJson(string json)
         {
             var result = new Config();
-            result.LoadConfig(game, json);
+            result.LoadConfig(json);
             return result;
         }
 
-        public static Config LoadFromFile(Game game, string path)
+        public static Config LoadFromFile(string path)
         {
             var result = new Config();
-            result.LoadConfig(game, File.ReadAllText(path));
+            result.LoadConfig(File.ReadAllText(path));
             return result;
         }
 
-        private void LoadConfig(Game game, string json)
+        private void LoadConfig(string json)
         {
             Players = new Dictionary<string, PlayerConfig>();
 
@@ -67,11 +66,11 @@ namespace LeagueSandbox.GameServer.Logic
             MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED");
 
             // Read the game configuration
-            var gameToken = data.SelectToken("game");
-            GameConfig = new GameConfig(gameToken);
+            var game = data.SelectToken("game");
+            GameConfig = new GameConfig(game);
 
             // Read spawns info
-            ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode);
+            ContentManager = ContentManager.LoadGameMode(GameConfig.GameMode);
             var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
             var mapData = JObject.Parse(File.ReadAllText(mapPath));
             var spawns = mapData.SelectToken("spawns");
@@ -97,7 +96,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
         {
-            if (team.ToLower().Equals("blue"))
+            if (team.ToLower() == "blue")
             {
                 Blue[playerCount] = spawns;
             }
@@ -125,8 +124,8 @@ namespace LeagueSandbox.GameServer.Logic
 
     public class GameConfig
     {
-        public int Map => (int)_gameData.SelectToken("map");
-        public string GameMode => (string)_gameData.SelectToken("gameMode");
+        public int Map { get { return (int)_gameData.SelectToken("map"); } }
+        public string GameMode { get { return (string)_gameData.SelectToken("gameMode"); } }
 
         private JToken _gameData;
 
@@ -139,16 +138,16 @@ namespace LeagueSandbox.GameServer.Logic
 
     public class PlayerConfig
     {
-        public string Rank => (string)_playerData.SelectToken("rank");
-        public string Name => (string)_playerData.SelectToken("name");
-        public string Champion => (string)_playerData.SelectToken("champion");
-        public string Team => (string)_playerData.SelectToken("team");
-        public short Skin => (short)_playerData.SelectToken("skin");
-        public string Summoner1 => (string)_playerData.SelectToken("summoner1");
-        public string Summoner2 => (string)_playerData.SelectToken("summoner2");
-        public short Ribbon => (short)_playerData.SelectToken("ribbon");
-        public int Icon => (int)_playerData.SelectToken("icon");
-        public RuneCollection Runes => _runeList;
+        public string Rank { get { return (string)_playerData.SelectToken("rank"); } }
+        public string Name { get { return (string)_playerData.SelectToken("name"); } }
+        public string Champion { get { return (string)_playerData.SelectToken("champion"); } }
+        public string Team { get { return (string)_playerData.SelectToken("team"); } }
+        public short Skin { get { return (short)_playerData.SelectToken("skin"); } }
+        public string Summoner1 { get { return (string)_playerData.SelectToken("summoner1"); } }
+        public string Summoner2 { get { return (string)_playerData.SelectToken("summoner2"); } }
+        public short Ribbon { get { return (short)_playerData.SelectToken("ribbon"); } }
+        public int Icon { get { return (int)_playerData.SelectToken("icon"); } }
+        public RuneCollection Runes { get { return _runeList; } }
 
         private JToken _playerData;
         private RuneCollection _runeList;

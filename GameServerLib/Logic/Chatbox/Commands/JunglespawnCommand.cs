@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -9,10 +11,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "junglespawn";
         public override string Syntax => $"{Command}";
 
-        public JunglespawnCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public JunglespawnCommand(ChatCommandManager chatCommandManager, Logger logger) : base(chatCommandManager)
         {
-            _logger = game.Logger;
+            _logger = logger;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")

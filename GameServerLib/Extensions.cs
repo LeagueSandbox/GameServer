@@ -1,17 +1,17 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.Packets;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer
 {
-    internal static class Extensions
+    static class Extensions
     {
         public static float SqrLength(this Vector2 v)
         {
@@ -30,12 +30,20 @@ namespace LeagueSandbox.GameServer
 
         public static void Add(this List<byte> list, int val)
         {
-            list.AddRange(PacketHelper.IntToByteArray(val));
+            list.AddRange(PacketHelper.intToByteArray(val));
         }
 
         public static void Add(this List<byte> list, string val)
         {
             list.AddRange(Encoding.BigEndianUnicode.GetBytes(val));
+        }
+
+        public static void fill(this BinaryWriter list, byte data, int length)
+        {
+            for (var i = 0; i < length; ++i)
+            {
+                list.Write(data);
+            }
         }
 
         public static Vector2 Rotate(this Vector2 v, Vector2 origin, float angle)
@@ -77,11 +85,6 @@ namespace LeagueSandbox.GameServer
             return returnVal;
         }
 
-        public static float Clamp(this float value, float minValue, float maxValue)
-        {
-            return value < minValue ? minValue : Math.Min(value, maxValue);
-        }
-
         public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
         {
             return v.AngleBetween(vectorToGetAngle, new Vector2(0, 0));
@@ -107,45 +110,33 @@ namespace LeagueSandbox.GameServer
         public bool ContainsKey(TKey key)
         {
             foreach (var v in this)
-            {
                 if (v.Item1.Equals(key))
-                {
                     return true;
-                }
-            }
 
             return false;
         }
-
         public TValue this[TKey key]
         {
             get
             {
                 foreach (var v in this)
-                {
                     if (v.Item1.Equals(key))
-                    {
                         return v.Item2;
-                    }
-                }
 
                 return default(TValue);
             }
             set
             {
                 foreach (var v in this)
-                {
                     if (v.Item1.Equals(key))
-                    {
                         v.Item2 = value;
-                    }
-                }
             }
         }
     }
 
     public static class CustomConvert
     {
+        private static PlayerManager _playerManager = Program.ResolveDependency<PlayerManager>();
         public static TeamId ToTeamId(int i)
         {
             var dic = new Dictionary<int, TeamId>

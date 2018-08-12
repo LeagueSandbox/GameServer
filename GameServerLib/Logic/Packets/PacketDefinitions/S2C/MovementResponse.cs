@@ -1,32 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(Game game, GameObject obj)
-            : this(game, new List<GameObject> { obj })
+        public MovementResponse(GameObject obj)
+            : this(new List<GameObject> { obj })
         {
 
         }
 
-        public MovementResponse(Game game, List<GameObject> actors)
-            : base(game, PacketCmd.PKT_S2C_MOVE_ANS)
+        public MovementResponse(List<GameObject> actors)
+            : base(PacketCmd.PKT_S2C_MoveAns)
         {
-            Write(Environment.TickCount); // syncID
-            Write((short)actors.Count);
+            buffer.Write(Environment.TickCount); // syncID
+            buffer.Write((short)actors.Count);
 
             foreach (var actor in actors)
             {
                 var waypoints = actor.Waypoints;
                 var numCoords = waypoints.Count * 2;
-                Write((byte)numCoords);
-                WriteNetId(actor);
-                Write(Movement.EncodeWaypoints(game, waypoints));
+                buffer.Write((byte)numCoords);
+                buffer.Write((int)actor.NetId);
+                buffer.Write(Movement.EncodeWaypoints(waypoints));
             }
         }
 
@@ -39,12 +38,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             return ret;
         }
 
-        private static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
+        static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
         {
             if (val)
-                mask[pos / 8] |= (byte)(1 << pos % 8);
+                mask[pos / 8] |= (byte)(1 << (pos % 8));
             else
-                mask[pos / 8] &= (byte)~(1 << pos % 8);
+                mask[pos / 8] &= (byte)(~(1 << (pos % 8)));
         }
     }
 }

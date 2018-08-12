@@ -1,34 +1,27 @@
-﻿using System.Text;
-using Force.Crc32;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Items;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class BaseTurret : ObjAiBase
+    public class BaseTurret : ObjAIBase
     {
         public string Name { get; private set; }
-        protected float _globalGold = 250.0f;
-        protected float _globalExp = 0.0f;
-
-        public uint ParentNetId { get; private set; }
+        protected float globalGold = 250.0f;
+        protected float globalExp = 0.0f;
 
         public BaseTurret(
-            Game game,
             string name,
             string model,
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
+        ) : base(model, new TurretStats(), 50, x, y, 1200, netId)
         {
-            ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
-            Inventory = InventoryManager.CreateInventory();
-            Replication = new ReplicationAiTurret(this);
+            Inventory = InventoryManager.CreateInventory(this);
         }
 
         public void CheckForTargets()
@@ -42,9 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 var u = it.Value as AttackableUnit;
 
                 if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
-                {
                     continue;
-                }
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
@@ -70,7 +61,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         {
                             var enemyChampTarget = enemyChamp.TargetUnit as Champion;
                             if (enemyChampTarget != null && // Enemy Champion is targeting an ally
-                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.Stats.Range.Total && // Enemy within range of ally
+                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.GetStats().Range.Total && // Enemy within range of ally
                                 GetDistanceTo(enemyChampTarget) <= Stats.Range.Total) // Enemy within range of this turret
                             {
                                 nextTarget = enemyChamp; // No priority required
@@ -80,7 +71,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     }
                 }
             }
-
             if (nextTarget != null)
             {
                 TargetUnit = nextTarget;
@@ -88,7 +78,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void Update(float diff)
+        public override void update(float diff)
         {
             if (!IsAttacking)
             {
@@ -102,40 +92,39 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
-            base.Update(diff);
-            Replication.Update();
+            base.update(diff);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void die(AttackableUnit killer)
         {
             foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
             {
-                var goldEarn = _globalGold;
+                var goldEarn = globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
                 if (player.GetDistanceTo(this) <= Stats.Range.Total * 1.5f && !player.IsDead)
                 {
-                    goldEarn = _globalGold * 2.5f;
-                    if(_globalExp > 0)
-                        player.Stats.Experience += _globalExp;
+                    goldEarn = globalGold * 2.5f;
+                    if(globalExp > 0)
+                        player.GetStats().Experience += globalExp;
                 }
 
 
-                player.Stats.Gold += goldEarn;
+                player.GetStats().Gold += goldEarn;
                 _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
-
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
-            base.Die(killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TurretDestroyed, this, killer);
+            base.die(killer);
         }
 
-        public override void RefreshWaypoints()
+        public override void refreshWaypoints()
         {
         }
 
-        public override float GetMoveSpeed()
+        public override float getMoveSpeed()
         {
             return 0;
         }
+
     }
 }

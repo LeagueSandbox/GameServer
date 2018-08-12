@@ -1,22 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
+﻿using BlowFishCS;
 using ENet;
 using LeagueSandbox.GameServer.Exceptions;
+using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using Timer = System.Timers.Timer;
+using System.IO;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.Handlers;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
-namespace LeagueSandbox.GameServer.Logic
+namespace LeagueSandbox.GameServer.Core.Logic
 {
     public class Game
     {
@@ -29,11 +33,10 @@ namespace LeagueSandbox.GameServer.Logic
         private Timer _pauseTimer;
         public long PauseTimeLeft { get; private set; }
         private bool _autoResumeCheck;
-        public bool SetToExit { get; set; }
 
         public int PlayersReady { get; private set; }
 
-        public float GameTime { get; private set; }
+        public float GameTime { get; private set; } = 0;
         private float _nextSyncTime = 10 * 1000;
 
 
@@ -42,40 +45,40 @@ namespace LeagueSandbox.GameServer.Logic
         public PacketNotifier PacketNotifier { get; private set; }
         public PacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
+        public int disconnectedPlayers;
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
-        internal Logger Logger { get; private set; }
+        private Logger _logger;
         // Object managers
-        internal ItemManager ItemManager { get; private set; }
+        private readonly ItemManager _itemManager;
         // Other managers
-        internal ChatCommandManager ChatCommandManager { get; private set; }
-        internal PlayerManager PlayerManager { get; private set; }
-        internal NetworkIdManager NetworkIdManager { get; private set; }
-        //Script Engine
-        internal CSharpScriptEngine ScriptEngine { get; private set; }
-
+        private readonly ChatCommandManager _chatCommandManager;
+        private readonly PlayerManager _playerManager;
+        private readonly NetworkIdManager _networkIdManager;
+        private readonly IHandlersProvider _packetHandlerProvider;
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager, Logger logger)
+        public Game(ItemManager itemManager, ChatCommandManager chatCommandManager, NetworkIdManager networkIdManager,
+            PlayerManager playerManager, Logger logger, IHandlersProvider handlersProvider)
         {
-            ItemManager = itemManager;
-            Logger = logger;
-            ChatCommandManager = new ChatCommandManager(this);
-            NetworkIdManager = new NetworkIdManager();
-            PlayerManager = new PlayerManager(this);
-            ScriptEngine = new CSharpScriptEngine(this);
+            _itemManager = itemManager;
+            _chatCommandManager = chatCommandManager;
+            _networkIdManager = networkIdManager;
+            _playerManager = playerManager;
+            _logger = logger;
+            _packetHandlerProvider = handlersProvider;
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
         {
-            Logger.LogCoreInfo("Loading Config.");
+            _logger.LogCoreInfo("Loading Config.");
             Config = config;
 
             _gameScriptTimers = new List<GameScriptTimer>();
 
-            ChatCommandManager.LoadCommands();
+            _chatCommandManager.LoadCommands();
             _server = new Host();
             _server.Create(address, 32, 32, 0, 0);
 
@@ -86,18 +89,20 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(Logger, Blowfish, _server, this);
+            PacketHandlerManager = new PacketHandlerManager(_logger, Blowfish, _server, _playerManager,
+                _packetHandlerProvider);
 
 
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            PacketNotifier = new PacketNotifier(this);
+            PacketNotifier = new PacketNotifier(this, _playerManager, _networkIdManager);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
+            disconnectedPlayers = 0;
 
-            Logger.LogCoreInfo("Loading C# Scripts");
+            _logger.LogCoreInfo("Loading C# Scripts");
 
             LoadScripts();
 
@@ -105,7 +110,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             foreach (var p in Config.Players)
             {
-                PlayerManager.AddPlayer(p);
+                _playerManager.AddPlayer(p);
             }
 
             _pauseTimer = new Timer
@@ -117,22 +122,25 @@ namespace LeagueSandbox.GameServer.Logic
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
-            Logger.LogCoreInfo("Game is ready.");
+            _logger.LogCoreInfo("Game is ready.");
         }
 
         public bool LoadScripts()
         {
-            return ScriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
+            var scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
+            return scriptEngine.LoadSubdirectoryScripts($"Content/Data/{Config.GameConfig.GameMode}/");
         }
 
         public void NetLoop()
         {
+            var enetEvent = new Event();
+
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
 
-            while (!SetToExit)
+            while (!Program.IsSetToExit)
             {
-                while (_server.Service(0, out var enetEvent) > 0)
+                while (_server.Service(0, out enetEvent) > 0)
                 {
                     switch (enetEvent.Type)
                     {
@@ -144,7 +152,7 @@ namespace LeagueSandbox.GameServer.Logic
 
                         case EventType.Receive:
                             var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
+                            PacketHandlerManager.handlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
                             break;
@@ -161,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
+                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UnpauseGame, Channel.CHL_C2S)
                             .HandlePacket(null, new byte[0]);
                         _autoResumeCheck = true;
                     }
@@ -181,7 +189,6 @@ namespace LeagueSandbox.GameServer.Logic
                 Thread.Sleep(1);
             }
         }
-
         public void Update(float diff)
         {
             GameTime += diff;
@@ -243,24 +250,25 @@ namespace LeagueSandbox.GameServer.Logic
 
         private bool HandleDisconnect(Peer peer)
         {
-            var peerinfo = PlayerManager.GetPeerInfo(peer);
+            var peerinfo = _playerManager.GetPeerInfo(peer);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)
                 {
-                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
+                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerDisconnected, peerinfo.Champion);
+                }
+                _logger.LogCoreInfo("somebody disconnected");
+                disconnectedPlayers++;
+                var number = _playerManager.GetPlayers().Count - disconnectedPlayers;
+                _logger.LogCoreInfo(number.ToString());
+                if (number == 0)
+                {
+                    _logger.LogCoreInfo("no players connected");
+                    Program.SetToExit();
                 }
                 peerinfo.IsDisconnected = true;
             }
             return true;
-        }
-
-        public void SetGameToExit()
-        {
-            Logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
-            var timer = new Timer(10000) { AutoReset = false };
-            timer.Elapsed += (a, b) => SetToExit = true;
-            timer.Start();
         }
     }
 }

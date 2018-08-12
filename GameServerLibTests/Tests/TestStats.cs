@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests
@@ -33,7 +34,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.AreEqual(0, stats.Level);
+            Assert.AreEqual(0, stats.GetLevel());
 
             stats.LevelUp();
 
@@ -73,11 +74,11 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.IsFalse(stats.IsGeneratingGold);
+            Assert.IsFalse(stats.IsGeneratingGold());
 
-            stats.IsGeneratingGold = true;
+            stats.SetGeneratingGold(true);
 
-            Assert.IsTrue(stats.IsGeneratingGold);
+            Assert.IsTrue(stats.IsGeneratingGold());
         }
     }
 }

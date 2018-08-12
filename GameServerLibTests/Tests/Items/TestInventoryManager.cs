@@ -1,7 +1,7 @@
 using System;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Items;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServerTests.Tests
 {
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var inventoryManager = InventoryManager.CreateInventory();
+            var inventoryManager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = inventoryManager.AddItem(itemManager.GetItemType(2001));
@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             // Get two stacking item types
             var itemType1 = itemManager.GetItemType(2038);
@@ -73,11 +73,11 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.AreEqual(1, item2.StackSize);
 
             // Stack the second item, and make sure the second gets stacked
-            for(var i = 0; i < itemType2.MaxStack - 1; i++)
+            for(int i = 0; i < itemType2.MaxStack - 1; i++)
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);
-                Assert.AreEqual(1 + i + 1, item2.StackSize);
+                Assert.AreEqual(1 + (i + 1), item2.StackSize);
             }
 
             // Make sure the first item's stack is unchanged
@@ -95,7 +95,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it exists in the proper slot
             var item = manager.SetExtraItem(7, itemManager.GetItemType(2001));
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             // Try to add an extra item to an invalid slot, make sure it fails
             try
             {
-                manager.SetExtraItem(6, itemManager.GetItemType(2001));
+                var fail = manager.SetExtraItem(6, itemManager.GetItemType(2001));
                 Assert.Fail("This should fail");
             }
             catch (Exception e)
@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             // Add an item, and make sure the slot is right
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -153,7 +153,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -179,7 +179,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             var itemManager = new ItemManager();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             // Add 3 items and make sure they get proper slots
             var item1 = manager.AddItem(itemManager.GetItemType(4001));
@@ -231,7 +231,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             itemManager.ResetItems();
             itemManager.LoadItems();
 
-            var manager = InventoryManager.CreateInventory();
+            var manager = InventoryManager.CreateInventory(null);
 
             var zephyrId = 3172;
             var componentId1 = 3101;

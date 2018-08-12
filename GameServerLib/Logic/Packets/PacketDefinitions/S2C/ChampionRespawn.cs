@@ -1,16 +1,15 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ChampionRespawn : BasePacket
     {
-        public ChampionRespawn(Game game, Champion c) :
-            base(game, PacketCmd.PKT_S2C_CHAMPION_RESPAWN, c.NetId)
+        public ChampionRespawn(Champion c) : base(PacketCmd.PKT_S2C_ChampionRespawn, c.NetId)
         {
-            Write((float)c.X);
-            Write((float)c.Y);
-            Write((float)c.GetZ());
+            buffer.Write(c.X);
+            buffer.Write(c.Y);
+            buffer.Write(c.GetZ());
         }
     }
 }

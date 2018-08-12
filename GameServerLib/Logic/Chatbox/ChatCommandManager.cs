@@ -1,16 +1,17 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Chatbox.Commands;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Handlers;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox
 {
     public class ChatCommandManager
     {
-        private readonly Game _game;
+        private readonly IHandlersProvider _handlersProvider;
 
         public string CommandStarterCharacter = ".";
 
@@ -19,8 +20,9 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         // TODO: Refactor this method or maybe the packet notifier?
         public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
         {
+            var _game = Program.ResolveDependency<Game>();
             var formattedText = new StringBuilder();
-            var fontSize = 20; // Big fonts seem to make the chatbox buggy
+            int fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
             switch (type)
             {
@@ -30,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
                     _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
                 case DebugMsgType.INFO: // Tag: [INFO], Color: Green
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[LS INFO]</b><font color =\"#AFBF00\">: ");
+                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[INFO]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
                     _game.PacketNotifier.NotifyDebugMessage(formattedText.ToString());
                     break;
@@ -50,42 +52,21 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
             }
         }
 
-        public ChatCommandManager(Game game)
+        public ChatCommandManager(IHandlersProvider handlersProvider)
         {
-            _game = game;
+            _handlersProvider = handlersProvider;
             _chatCommandsDictionary = new SortedDictionary<string, IChatCommand>();
         }
 
         public void LoadCommands()
         {
             //TODO: cyclic dependency
+            var _game = Program.ResolveDependency<Game>();
             if (!_game.Config.ChatCheatsEnabled)
-            {
                 return;
-            }
 
             var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
-            _chatCommandsDictionary = GetAllChatCommandHandlers(loadFrom, _game);
-        }
-
-        internal SortedDictionary<string, IChatCommand> GetAllChatCommandHandlers(Assembly[] loadFromArray, Game game)
-        {
-            var commands = new List<IChatCommand>();
-            var args = new object[] {this, game};
-            foreach (var loadFrom in loadFromArray)
-            {
-                commands.AddRange(loadFrom.GetTypes()
-                    .Where(t => t.BaseType == typeof(ChatCommandBase))
-                    .Select(t => (IChatCommand) Activator.CreateInstance(t, args)));
-            }
-            var commandsOutput = new SortedDictionary<string, IChatCommand>();
-
-            foreach (var converter in commands)
-            {
-                commandsOutput.Add(converter.Command, converter);
-            }
-
-            return commandsOutput;
+            _chatCommandsDictionary = _handlersProvider.GetAllChatCommandHandlers(loadFrom);
         }
 
         public bool AddCommand(IChatCommand command)
@@ -101,24 +82,24 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
 
         public bool RemoveCommand(IChatCommand command)
         {
-            if (!_chatCommandsDictionary.ContainsValue(command))
+            if (_chatCommandsDictionary.ContainsValue(command))
             {
-                return false;
+                _chatCommandsDictionary.Remove(command.Command);
+                return true;
             }
 
-            _chatCommandsDictionary.Remove(command.Command);
-            return true;
+            return false;
         }
 
         public bool RemoveCommand(string commandString)
         {
-            if (!_chatCommandsDictionary.ContainsKey(commandString))
+            if (_chatCommandsDictionary.ContainsKey(commandString))
             {
-                return false;
+                _chatCommandsDictionary.Remove(commandString);
+                return true;
             }
 
-            _chatCommandsDictionary.Remove(commandString);
-            return true;
+            return false;
         }
 
         public List<IChatCommand> GetCommands()

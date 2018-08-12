@@ -1,25 +1,30 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
+﻿using LeagueSandbox.GameServer.Core.Logic;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class MovementVector
     {
-        public short X;
-        public short Y;
+        public short x;
+        public short y;
+        private static Game _game = Program.ResolveDependency<Game>();
 
-        public MovementVector(Game game, short x, short y)
+        public MovementVector() { }
+
+        public MovementVector(short x, short y)
         {
-            X = x;
-            Y = y;
+            this.x = x;
+            this.y = y;
         }
 
-        public MovementVector(Game game, float x, float y)
+        public MovementVector(float x, float y)
         {
-            X = FormatCoordinate(x, game.Map.NavGrid.MiddleOfMap.Y);
-            Y = FormatCoordinate(y, game.Map.NavGrid.MiddleOfMap.X);
+            this.x = FormatCoordinate(x, _game.Map.NavGrid.MiddleOfMap.Y);
+            this.y = FormatCoordinate(y, _game.Map.NavGrid.MiddleOfMap.X);
         }
 
-        public Target ToTarget(Game game)
+        public Target ToTarget()
         {
-            return new Target(2.0f * X + game.Map.NavGrid.MiddleOfMap.X, 2.0f * Y + game.Map.NavGrid.MiddleOfMap.Y);
+            return new Target(2.0f * x + _game.Map.NavGrid.MiddleOfMap.X, 2.0f * y + _game.Map.NavGrid.MiddleOfMap.Y);
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -27,14 +32,14 @@
             return (short)((coordinate - origin) / 2f);
         }
 
-        public static short TargetXToNormalFormat(Game game, float value)
+        public static short TargetXToNormalFormat(float value)
         {
-            return FormatCoordinate(value, game.Map.NavGrid.MiddleOfMap.X);
+            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.X);
         }
 
-        public static short TargetYToNormalFormat(Game game, float value)
+        public static short TargetYToNormalFormat(float value)
         {
-            return FormatCoordinate(value, game.Map.NavGrid.MiddleOfMap.Y);
+            return FormatCoordinate(value, _game.Map.NavGrid.MiddleOfMap.Y);
         }
     }
 }

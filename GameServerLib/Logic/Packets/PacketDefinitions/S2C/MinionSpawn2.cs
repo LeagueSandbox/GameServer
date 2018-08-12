@@ -4,11 +4,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MinionSpawn2 : Packet // shhhhh....
     {
-        public MinionSpawn2(Game game, uint netId) 
-            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN)
+        public MinionSpawn2(uint netId) : base(PacketCmd.PKT_S2C_ObjectSpawn)
         {
-            Write(netId);
-            Fill(0, 3);
+            buffer.Write((uint)netId);
+            buffer.fill(0, 3);
         }
     }
 }

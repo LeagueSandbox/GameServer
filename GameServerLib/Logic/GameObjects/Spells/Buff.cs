@@ -1,58 +1,61 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public enum BuffType : byte
     {
-        INTERNAL,
-        AURA,
-        COMBAT_ENCHANCER,
-        COMBAT_DEHANCER,
-        SPELL_SHIELD,
-        STUN,
-        INVISIBILITY,
-        SILENCE,
-        TAUNT,
-        POLYMORPH,
-        SLOW,
-        SNARE,
-        DAMAGE,
-        HEAL,
-        HASTE,
-        SPELL_IMMUNITY,
-        PHYSICAL_IMMUNITY,
-        INVULNERABILITY,
-        SLEEP,
-        NEAR_SIGHT,
-        FRENZY,
-        FEAR,
-        CHARM,
-        POISON,
-        SUPPRESSION,
-        BLIND,
-        COUNTER,
-        SHRED,
-        FLEE,
-        KNOCKUP,
-        KNOCKBACK,
-        DISARM
+        Internal,
+        Aura,
+        CombatEnchancer,
+        CombatDehancer,
+        SpellShield,
+        Stun,
+        Invisibility,
+        Silence,
+        Taunt,
+        Polymorph,
+        Slow,
+        Snare,
+        Damage,
+        Heal,
+        Haste,
+        SpellImmunity,
+        PhysicalImmunity,
+        Invulnerability,
+        Sleep,
+        NearSight,
+        Frenzy,
+        Fear,
+        Charm,
+        Poison,
+        Suppression,
+        Blind,
+        Counter,
+        Shred,
+        Flee,
+        Knockup,
+        Knockback,
+        Disarm
     }
 
     public class Buff
     {
-        private Logger _logger;
+        private Logger _logger = Program.ResolveDependency<Logger>();
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; set; }
         protected bool _remove;
-        public ObjAiBase TargetUnit { get; private set; }
-        public ObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public ObjAIBase TargetUnit { get; private set; }
+        public ObjAIBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
-        protected CSharpScriptEngine _scriptEngine;
+        protected CSharpScriptEngine _scriptEngine = Program.ResolveDependency<CSharpScriptEngine>();
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
+        protected Dictionary<Pair<MasterMask, FieldMask>, float> StatsModified = new Dictionary<Pair<MasterMask, FieldMask>, float>();
         protected Game _game;
 
         public bool NeedsToRemove()
@@ -60,11 +63,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto, ObjAIBase from)
         {
             _game = game;
-            _logger = game.Logger;
-            _scriptEngine = game.ScriptEngine;
             Duration = dur;
             Stacks = stacks;
             Name = buffName;
@@ -72,17 +73,17 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
-            BuffType = BuffType.AURA;
+            BuffType = BuffType.Aura;
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto)
+        public Buff(Game game, string buffName, float dur, int stacks, ObjAIBase onto)
                : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
         public void Update(float diff)
         {
-            TimeElapsed += diff / 1000.0f;
+            TimeElapsed += (float)diff / 1000.0f;
             if (Duration != 0.0f)
             {
                 if (TimeElapsed >= Duration)
