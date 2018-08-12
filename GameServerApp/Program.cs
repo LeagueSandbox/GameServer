@@ -4,6 +4,7 @@ using System.IO;
 using CommandLine;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServerApp.Logic;
 using LeagueSandbox.GameServerApp.Utility;
 
@@ -11,6 +12,8 @@ namespace LeagueSandbox.GameServerApp
 {
     internal class Program
     {
+        private static ILogger _logger;
+
         private static void Main(string[] args)
         {
             var options = ArgsOptions.Parse(args);
@@ -26,16 +29,17 @@ namespace LeagueSandbox.GameServerApp
             if (string.IsNullOrEmpty(configGameServerSettingsJson))
             {
                 configGameServerSettings = GameServerConfig.LoadFromFile(options.ConfigGameServerPath);
-            } else
+            }
+            else
             {
                 configGameServerSettings = GameServerConfig.Default();
             }
 
             string blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
 
-            Logger logger = new Logger();
-            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson, blowfishKey, logger);
-            #if DEBUG
+            _logger = LoggerProvider.GetLogger();
+            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson, blowfishKey);
+#if DEBUG
             if (configGameServerSettings.AutoStartClient)
             {
                 string leaguePath = configGameServerSettings.ClientLocation;
@@ -49,7 +53,7 @@ namespace LeagueSandbox.GameServerApp
                     startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", options.ServerPort, blowfishKey);
                     startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
                     var leagueProcess = Process.Start(startInfo);
-                    logger.LogCoreInfo("Launching League of Legends. You can disable this in GameServerSettings.json.");
+                    _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
                         Environment.OSVersion.Platform == PlatformID.Win32S ||
                         Environment.OSVersion.Platform == PlatformID.Win32Windows ||
@@ -67,10 +71,10 @@ namespace LeagueSandbox.GameServerApp
                 }
                 else
                 {
-                    logger.LogCoreError("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                    _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
                 }
             }
-            #endif
+#endif
             gameServerLauncher.StartNetworkLoop();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
@@ -41,7 +42,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 
     public class Buff
     {
-        private Logger _logger;
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; set; }
@@ -63,7 +63,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
         {
             _game = game;
-            _logger = game.Logger;
             _scriptEngine = game.ScriptEngine;
             Duration = dur;
             Stacks = stacks;

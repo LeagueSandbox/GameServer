@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -21,6 +22,7 @@ namespace LeagueSandbox.GameServer.Logic
     public class Game
     {
         private Host _server;
+        private ILogger _logger;
         public BlowFish Blowfish { get; private set; }
 
         public bool IsRunning { get; private set; }
@@ -44,7 +46,7 @@ namespace LeagueSandbox.GameServer.Logic
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
-        internal Logger Logger { get; private set; }
+
         // Object managers
         internal ItemManager ItemManager { get; private set; }
         // Other managers
@@ -58,19 +60,19 @@ namespace LeagueSandbox.GameServer.Logic
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager, Logger logger)
+        public Game(ItemManager itemManager)
         {
+            _logger = LoggerProvider.GetLogger();
             ItemManager = itemManager;
-            Logger = logger;
             ChatCommandManager = new ChatCommandManager(this);
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
-            ScriptEngine = new CSharpScriptEngine(this);
+            ScriptEngine = new CSharpScriptEngine();
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
         {
-            Logger.LogCoreInfo("Loading Config.");
+            _logger.Info("Loading Config.");
             Config = config;
 
             _gameScriptTimers = new List<GameScriptTimer>();
@@ -86,7 +88,7 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(Logger, Blowfish, _server, this);
+            PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, this);
 
 
             ObjectManager = new ObjectManager(this);
@@ -97,7 +99,7 @@ namespace LeagueSandbox.GameServer.Logic
             ApiEventManager.SetGame(this);
             IsRunning = false;
 
-            Logger.LogCoreInfo("Loading C# Scripts");
+            _logger.Info("Loading C# Scripts");
 
             LoadScripts();
 
@@ -117,7 +119,7 @@ namespace LeagueSandbox.GameServer.Logic
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
-            Logger.LogCoreInfo("Game is ready.");
+            _logger.Info("Game is ready.");
         }
 
         public bool LoadScripts()
@@ -257,7 +259,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public void SetGameToExit()
         {
-            Logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
+            _logger.Info("Game is over. Game Server will exit in 10 seconds.");
             var timer = new Timer(10000) { AutoReset = false };
             timer.Elapsed += (a, b) => SetToExit = true;
             timer.Start();

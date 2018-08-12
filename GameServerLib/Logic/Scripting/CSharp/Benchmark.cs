@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
     public class Benchmark
     {
+        private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
+        private readonly ILogger _logger;
+
         public Benchmark(Game game)
         {
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
-        private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private Logger _logger;
+
         public void StartTiming(string label)
         {
             var stopwatch = new Stopwatch();
@@ -26,14 +29,14 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             stopwatch.Stop();
             var t = Task.Factory.StartNew(() =>
             {
-                _logger.LogCoreInfo($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000/stopwatch.Elapsed.TotalMilliseconds}");
+                _logger.Info($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000 / stopwatch.Elapsed.TotalMilliseconds}");
             });
             _map.Remove(label);
         }
 
         public void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => _logger.LogCoreInfo(text));
+            var t = Task.Factory.StartNew(() => _logger.Info(text));
         }
     }
 }

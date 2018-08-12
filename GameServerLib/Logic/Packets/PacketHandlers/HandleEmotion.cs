@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -9,7 +10,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             _game = game;
             _playerManager = game.PlayerManager;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -29,16 +30,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             switch (emotion.Id)
             {
                 case (byte)Emotions.DANCE:
-                    _logger.LogCoreInfo("Player " + playerName + " is dancing.");
+                    _logger.Info("Player " + playerName + " is dancing.");
                     break;
                 case (byte)Emotions.TAUNT:
-                    _logger.LogCoreInfo("Player " + playerName + " is taunting.");
+                    _logger.Info("Player " + playerName + " is taunting.");
                     break;
                 case (byte)Emotions.LAUGH:
-                    _logger.LogCoreInfo("Player " + playerName + " is laughing.");
+                    _logger.Info("Player " + playerName + " is laughing.");
                     break;
                 case (byte)Emotions.JOKE:
-                    _logger.LogCoreInfo("Player " + playerName + " is joking.");
+                    _logger.Info("Player " + playerName + " is joking.");
                     break;
             }
 
