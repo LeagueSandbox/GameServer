@@ -17,10 +17,8 @@ Currently the technologies we use include:
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Launch GameServer.sln and hit Run
-* Creat a .bat file and add this string :
+* Creat a .bat file and add this string then run the client :
     * `start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"`
-# Running the client
-Currently there are two options for launching the client.
 
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
