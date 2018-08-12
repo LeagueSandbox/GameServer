@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ChampionRespawn : BasePacket
     {
-        public ChampionRespawn(Game game, Champion c) :
-            base(game, PacketCmd.PKT_S2C_CHAMPION_RESPAWN, c.NetId)
+        public ChampionRespawn(Champion c) :
+            base(PacketCmd.PKT_S2C_CHAMPION_RESPAWN, c.NetId)
         {
             Write((float)c.X);
             Write((float)c.Y);

@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class LoadScreenInfo : Packet
     {
-        public LoadScreenInfo(Game game, List<Pair<uint, ClientInfo>> players)
-            : base(game, PacketCmd.PKT_S2C_LOAD_SCREEN_INFO)
+        public LoadScreenInfo(List<Pair<uint, ClientInfo>> players)
+            : base(PacketCmd.PKT_S2C_LOAD_SCREEN_INFO)
         {
             //Zero this complete buffer
             Write((uint)6); // blueMax

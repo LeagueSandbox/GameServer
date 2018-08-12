@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             _logger.Info($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var response = new PlayerStats(_game, _playerManager.GetPeerInfo(peer).Champion);
+            var response = new PlayerStats(_playerManager.GetPeerInfo(peer).Champion);
             // TODO: research how to send the packet
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }

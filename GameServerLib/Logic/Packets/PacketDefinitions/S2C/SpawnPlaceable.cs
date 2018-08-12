@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnPlaceable : Packet
     {
-        public SpawnPlaceable(Game game, Placeable p)
-            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN)
+        public SpawnPlaceable(Placeable p)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
             WriteNetId(p);

@@ -1,4 +1,5 @@
 using System.Text;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -6,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnMonster : Packet
     {
-        public SpawnMonster(Game game, Monster m)
-            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN)
+        public SpawnMonster(NavGrid navGrid, Monster m)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
             WriteNetId(m);
             Write((short)345);
@@ -24,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(m.GetZ()); //z
             Write(m.Y); //y
             Write(m.Facing.X); //facing x
-            Write(Game.Map.NavGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
+            Write(navGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             Write(m.Facing.Y); //facing y
 
 			WriteConstLengthString(m.Name, 64);

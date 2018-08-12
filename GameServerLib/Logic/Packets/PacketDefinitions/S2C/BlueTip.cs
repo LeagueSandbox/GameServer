@@ -5,14 +5,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class BlueTip : BasePacket
     {
-        public BlueTip(Game game, 
-            string title,
+        public BlueTip(string title,
             string text,
             string imagePath,
             byte tipCommand,
             uint playernetid,
             uint netid)
-            : base(game, PacketCmd.PKT_S2C_BLUE_TIP, playernetid)
+            : base(PacketCmd.PKT_S2C_BLUE_TIP, playernetid)
         {
             WriteConstLengthString(text, 128);
 

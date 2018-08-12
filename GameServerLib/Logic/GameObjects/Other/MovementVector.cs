@@ -1,4 +1,6 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
+﻿using LeagueSandbox.GameServer.Logic.Content;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class MovementVector
     {
@@ -29,12 +31,22 @@
 
         public static short TargetXToNormalFormat(Game game, float value)
         {
-            return FormatCoordinate(value, game.Map.NavGrid.MiddleOfMap.X);
+            return TargetXToNormalFormat(game.Map.NavGrid, value);
         }
 
         public static short TargetYToNormalFormat(Game game, float value)
         {
-            return FormatCoordinate(value, game.Map.NavGrid.MiddleOfMap.Y);
+            return TargetYToNormalFormat(game.Map.NavGrid, value);
+        }
+
+        public static short TargetXToNormalFormat(NavGrid navGrid, float value)
+        {
+            return FormatCoordinate(value, navGrid.MiddleOfMap.X);
+        }
+
+        public static short TargetYToNormalFormat(NavGrid navGrid, float value)
+        {
+            return FormatCoordinate(value, navGrid.MiddleOfMap.Y);
         }
     }
 }

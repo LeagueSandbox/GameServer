@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class DamageDone : BasePacket
     {
-        public DamageDone(Game game, AttackableUnit source, AttackableUnit target, float amount, DamageType type, DamageText damageText)
-            : base(game, PacketCmd.PKT_S2C_DAMAGE_DONE, target.NetId)
+        public DamageDone(AttackableUnit source, AttackableUnit target, float amount, DamageType type, DamageText damageText)
+            : base(PacketCmd.PKT_S2C_DAMAGE_DONE, target.NetId)
         {
             Write((byte)damageText);
             Write((short)((short)type << 8));

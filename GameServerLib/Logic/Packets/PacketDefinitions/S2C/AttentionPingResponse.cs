@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class AttentionPingResponse : BasePacket
     {
-        public AttentionPingResponse(Game game, ClientInfo player, AttentionPingRequest ping) : 
-            base(game, PacketCmd.PKT_S2C_ATTENTION_PING)
+        public AttentionPingResponse(ClientInfo player, AttentionPingRequest ping) : 
+            base(PacketCmd.PKT_S2C_ATTENTION_PING)
         {
             Write((float)ping.X);
             Write((float)ping.Y);

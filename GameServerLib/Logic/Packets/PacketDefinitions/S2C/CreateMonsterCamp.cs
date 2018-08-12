@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class CreateMonsterCamp : BasePacket
     {
-        public CreateMonsterCamp(Game game, float x, float y, float z, string iconName, byte campId, byte campUnk, float unk)
-            : base(game, PacketCmd.PKT_S2C_CREATE_MONSTER_CAMP)
+        public CreateMonsterCamp(float x, float y, float z, string iconName, byte campId, byte campUnk, float unk)
+            : base(PacketCmd.PKT_S2C_CREATE_MONSTER_CAMP)
         {
             Write(x);
             Write(z);

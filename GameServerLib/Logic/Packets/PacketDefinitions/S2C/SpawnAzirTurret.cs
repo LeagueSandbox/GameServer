@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnAzirTurret : BasePacket
     {
-        public SpawnAzirTurret(Game game, AzirTurret turret)
-            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN, turret.NetId)
+        public SpawnAzirTurret(AzirTurret turret)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, turret.NetId)
         {
             Write((byte)0xAD);
             Write((byte)0x00);

@@ -25,8 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var blueTipClicked = new BlueTipClicked(data);
-            var removeBlueTip = new BlueTip(_game,
-                "",
+            var removeBlueTip = new BlueTip("",
                 "",
                 "",
                 0,

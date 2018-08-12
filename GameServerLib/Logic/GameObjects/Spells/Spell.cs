@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 FinishCasting();
             }
 
-            var response = new CastSpellResponse(_game, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            var response = new CastSpellResponse(_game.Map.NavGrid, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2C);
             return true;
         }

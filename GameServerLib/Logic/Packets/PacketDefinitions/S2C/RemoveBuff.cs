@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class RemoveBuff : BasePacket
     {
-        public RemoveBuff(Game game, AttackableUnit u, string name, byte slot)
-            : base(game, PacketCmd.PKT_S2C_REMOVE_BUFF, u.NetId)
+        public RemoveBuff(AttackableUnit u, string name, byte slot)
+            : base(PacketCmd.PKT_S2C_REMOVE_BUFF, u.NetId)
         {
             Write(slot);
             WriteStringHash(name);

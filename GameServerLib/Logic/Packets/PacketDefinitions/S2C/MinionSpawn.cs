@@ -1,4 +1,5 @@
 using System;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
@@ -7,8 +8,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MinionSpawn : BasePacket
     {
-        public MinionSpawn(Game game, Minion m)
-            : base(game, PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
+        public MinionSpawn(NavGrid navGrid, Minion m)
+            : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Write((uint)0x00150017); // unk
             Write((byte)0x03); // SpawnType - 3 = minion
@@ -62,12 +63,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
             WriteNetId(m);
             Write((byte)0); // movement mask
-            Write(MovementVector.TargetXToNormalFormat(game, m.X));
-            Write(MovementVector.TargetYToNormalFormat(game, m.Y));
+            Write(MovementVector.TargetXToNormalFormat(navGrid, m.X));
+            Write(MovementVector.TargetYToNormalFormat(navGrid, m.Y));
             for (var i = m.CurWaypoint; i < waypoints.Count; ++i)
             {
-                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].X));
-                Write(MovementVector.TargetXToNormalFormat(game, waypoints[i].Y));
+                Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].X));
+                Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].Y));
             }
         }
     }

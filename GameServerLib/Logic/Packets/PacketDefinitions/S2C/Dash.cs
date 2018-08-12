@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
@@ -10,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(Game game,
+        public Dash(NavGrid navGrid,
             AttackableUnit u,
             Target t,
             float dashSpeed,
@@ -19,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             float followTargetMaxDistance = 0.0f,
             float backDistance = 0.0f,
             float travelTime = 0.0f
-        ) : base(game, PacketCmd.PKT_S2C_DASH)
+        ) : base(PacketCmd.PKT_S2C_DASH)
         {
             Write(Environment.TickCount); // syncID
             Write((short)1); // Number of dashes
@@ -49,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 new Vector2(t.X, t.Y)
             };
 
-            Write(Movement.EncodeWaypoints(game, waypoints));
+            Write(Movement.EncodeWaypoints(navGrid, waypoints));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var ping = new AttentionPingRequest(data);
-            var response = new AttentionPingResponse(_game, _playerManager.GetPeerInfo(peer), ping);
+            var response = new AttentionPingResponse(_playerManager.GetPeerInfo(peer), ping);
             var team = _playerManager.GetPeerInfo(peer).Team;
             return _game.PacketHandlerManager.BroadcastPacketTeam(team, response, Channel.CHL_S2C);
         }

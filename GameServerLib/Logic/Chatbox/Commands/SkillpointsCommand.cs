@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             _playerManager.GetPeerInfo(peer).Champion.SetSkillPoints(17);
-            var skillUpResponse = new SkillUpResponse(Game, _playerManager.GetPeerInfo(peer).Champion.NetId, 0, 0, 17);
+            var skillUpResponse = new SkillUpResponse(_playerManager.GetPeerInfo(peer).Champion.NetId, 0, 0, 17);
             Game.PacketHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
         }
     }

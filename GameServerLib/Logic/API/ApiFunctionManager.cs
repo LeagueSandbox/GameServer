@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void PrintChat(string msg)
         {
-            var dm = new DebugMessage(_game, msg);
+            var dm = new DebugMessage(msg);
             _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2C);
         }
 

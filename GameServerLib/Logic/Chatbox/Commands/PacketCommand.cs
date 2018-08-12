@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packet(Game, (PacketCmd)opcode);
+                var packet = new Packet((PacketCmd)opcode);
 
                 for (var i = 2; i < s.Length; i++)
                 {

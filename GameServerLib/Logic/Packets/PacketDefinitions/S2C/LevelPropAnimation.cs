@@ -7,7 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
     public class LevelPropAnimation : BasePacket
     {
         public LevelPropAnimation(
-            Game game, 
             LevelProp lp,
             string animationName,
             float unk1 = 0.0f,
@@ -15,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             int unk2 = 1,
             int unk3 = 1,
             bool deletePropAfterAnimationFinishes = false)
-            : base(game, PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
+            : base(PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
         {
 			WriteConstLengthString(animationName, 64);
 

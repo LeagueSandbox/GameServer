@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
@@ -27,9 +28,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
             }
         }
 
-        public static byte[] EncodeWaypoints(Game game, List<Vector2> waypoints)
+        public static byte[] EncodeWaypoints(NavGrid navGrid, List<Vector2> waypoints)
         {
-            var mapSize = game.Map.NavGrid.GetSize();
+            var mapSize = navGrid.GetSize();
             var numCoords = waypoints.Count * 2;
 
             var maskBytes = new byte[(numCoords - 3) / 8 + 1];

@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             {
                 var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
                 var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingResponse(Game, client, ping);
+                var response = new AttentionPingResponse(client, ping);
                 Game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
             }
         }

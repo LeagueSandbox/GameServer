@@ -30,8 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            var skillUpResponse = new SkillUpResponse(_game,
-                _playerManager.GetPeerInfo(peer).Champion.NetId,
+            var skillUpResponse = new SkillUpResponse(_playerManager.GetPeerInfo(peer).Champion.NetId,
                 skillUpPacket.Skill,
                 (byte)s.Level,
                 (byte)s.Owner.GetSkillPoints()

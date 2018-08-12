@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
                 }
             }
-            var answer = new SynchVersionResponse(_game, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
+            var answer = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
 
             return _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C);
         }

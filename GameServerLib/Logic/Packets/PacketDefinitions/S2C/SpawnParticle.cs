@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnParticle : BasePacket
     {
-        public SpawnParticle(Game game, Particle particle)
-            : base(game, PacketCmd.PKT_S2C_SPAWN_PARTICLE, particle.Owner.NetId)
+        public SpawnParticle(NavGrid navGrid, Particle particle)
+            : base(PacketCmd.PKT_S2C_SPAWN_PARTICLE, particle.Owner.NetId)
         {
             Write((byte)1); // number of particles
             Write((uint)particle.Owner.GetChampionHash());
@@ -32,13 +32,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             for (var i = 0; i < 3; ++i)
             {
-                var map = Game.Map;
-                var ownerHeight = map.NavGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
-                var particleHeight = map.NavGrid.GetHeightAtLocation(particle.X, particle.Y);
+                var ownerHeight = navGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
+                var particleHeight = navGrid.GetHeightAtLocation(particle.X, particle.Y);
                 var higherValue = Math.Max(ownerHeight, particleHeight);
-                Write((short)((particle.Target.X - Game.Map.NavGrid.MapWidth / 2) / 2));
+                Write((short)((particle.Target.X - navGrid.MapWidth / 2) / 2));
                 Write(higherValue);
-                Write((short)((particle.Target.Y - Game.Map.NavGrid.MapHeight / 2) / 2));
+                Write((short)((particle.Target.Y - navGrid.MapHeight / 2) / 2));
             }
 
             Write((uint)0); // unk

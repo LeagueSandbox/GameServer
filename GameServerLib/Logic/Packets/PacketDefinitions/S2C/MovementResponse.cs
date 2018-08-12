@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -8,14 +9,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(Game game, GameObject obj)
-            : this(game, new List<GameObject> { obj })
+        public MovementResponse(NavGrid navGrid, GameObject obj)
+            : this(navGrid, new List<GameObject> { obj })
         {
 
         }
 
-        public MovementResponse(Game game, List<GameObject> actors)
-            : base(game, PacketCmd.PKT_S2C_MOVE_ANS)
+        public MovementResponse(NavGrid navGrid, List<GameObject> actors)
+            : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
             Write(Environment.TickCount); // syncID
             Write((short)actors.Count);
@@ -26,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
                 var numCoords = waypoints.Count * 2;
                 Write((byte)numCoords);
                 WriteNetId(actor);
-                Write(Movement.EncodeWaypoints(game, waypoints));
+                Write(Movement.EncodeWaypoints(navGrid, waypoints));
             }
         }
 

@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
                     player.PlayerNo = playerNo;
-                    var response = new KeyCheckResponse(_game, keyCheck.UserId, playerNo);
+                    var response = new KeyCheckResponse(keyCheck.UserId, playerNo);
                     _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
 
@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {
-                            var response2 = new KeyCheckResponse(_game, p2.Item2.UserId, p2.Item2.PlayerNo);
+                            var response2 = new KeyCheckResponse(p2.Item2.UserId, p2.Item2.PlayerNo);
                             _game.PacketHandlerManager.SendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
                         }
                     }

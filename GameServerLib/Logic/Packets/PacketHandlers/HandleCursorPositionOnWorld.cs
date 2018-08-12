@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var cursorPosition = new CursorPositionOnWorld(data);
-            var response = new DebugMessage(_game, $"X: {cursorPosition.X} Y: {cursorPosition.Y}");
+            var response = new DebugMessage($"X: {cursorPosition.X} Y: {cursorPosition.Y}");
 
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }

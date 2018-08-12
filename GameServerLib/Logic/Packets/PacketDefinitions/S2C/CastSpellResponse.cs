@@ -1,4 +1,5 @@
 using System;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -6,11 +7,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class CastSpellResponse : BasePacket
     {
-        public CastSpellResponse(Game game, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
-            : base(game, PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
+        public CastSpellResponse(NavGrid navGrid, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
+            : base(PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
         {
-            var m = Game.Map;
-
             Write(Environment.TickCount); // syncID
             Write((byte)0); // Unk
             Write((short)0x66); // Buffer size from here
@@ -23,10 +22,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((int)s.Owner.GetChampionHash());
             Write((uint)futureProjNetId); // The projectile ID that will be spawned
             Write((float)x);
-            Write((float)m.NavGrid.GetHeightAtLocation(x, y));
+            Write((float)navGrid.GetHeightAtLocation(x, y));
             Write((float)y);
             Write((float)xDragEnd);
-            Write((float)m.NavGrid.GetHeightAtLocation(xDragEnd, yDragEnd));
+            Write((float)navGrid.GetHeightAtLocation(xDragEnd, yDragEnd));
             Write((float)yDragEnd);
             Write((byte)0); // numTargets (if >0, what follows is a list of {uint32 targetNetId, uint8 hitResult})
             Write((float)s.SpellData.GetCastTime()); // designerCastTime

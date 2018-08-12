@@ -1,3 +1,4 @@
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
@@ -7,10 +8,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpawnProjectile : BasePacket
     {
-        public SpawnProjectile(Game game, Projectile p)
-            : base(game, PacketCmd.PKT_S2C_SPAWN_PROJECTILE, p.NetId)
+        public SpawnProjectile(NavGrid navGrid, Projectile p)
+            : base(PacketCmd.PKT_S2C_SPAWN_PROJECTILE, p.NetId)
         {
-            var targetZ = Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
+            var targetZ = navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
 
             Write(p.X);
             Write(p.GetZ() + 100.0f);
@@ -28,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write(p.GetZ() + 100.0f);
             Write(p.Y);
             Write(p.Target.X);
-            Write(Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
             Write(p.Target.Y);
             Write(p.X);
             Write(p.GetZ());
@@ -66,10 +67,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 
             WriteNetId(p);
             Write(p.Target.X);
-            Write(Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
+            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
             Write(p.Target.Y);
             Write(p.Target.X);
-            Write(Game.Map.NavGrid.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
+            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
             Write(p.Target.Y);
             if (!p.Target.IsSimpleTarget)
             {

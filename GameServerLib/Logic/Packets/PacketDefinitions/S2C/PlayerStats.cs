@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     class PlayerStats : BasePacket
     {
-        public PlayerStats(Game game, Champion player)
-            : base(game,PacketCmd.PKT_S2C_PLAYER_STATS, player.NetId)
+        public PlayerStats(Champion player)
+            : base(PacketCmd.PKT_S2C_PLAYER_STATS, player.NetId)
         {
             // get the stats and writes the packet
             byte[] stats = ChampionStats.GetBytes(player.ChampStats);

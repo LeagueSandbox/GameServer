@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class UpdateStats : BasePacket
     {
-        public UpdateStats(Game game, Replication r, bool partial = true)
-            : base(game, PacketCmd.PKT_S2C_CHAR_STATS)
+        public UpdateStats(Replication r, bool partial = true)
+            : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
             Write(Environment.TickCount); // syncID
             Write((byte)1); // updating 1 unit

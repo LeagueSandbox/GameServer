@@ -9,13 +9,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
 {
     public class Packet
     {
-        protected readonly Game Game;
-
         protected List<byte> _bytes = new List<byte>();
 
-        public Packet(Game game, PacketCmd cmd)
+        public Packet(PacketCmd cmd)
         {
-            Game = game;
             Write((byte)cmd);
         }
 

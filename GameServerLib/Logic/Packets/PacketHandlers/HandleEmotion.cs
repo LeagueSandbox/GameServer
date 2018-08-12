@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
             }
 
-            var response = new EmotionPacketResponse(_game, emotion.Id, emotion.NetId);
+            var response = new EmotionPacketResponse(emotion.Id, emotion.NetId);
             return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
     }

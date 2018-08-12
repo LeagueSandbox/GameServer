@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetAnimation : BasePacket
     {
-        public SetAnimation(Game game, AttackableUnit u, List<string> animationPairs)
-            : base(game, PacketCmd.PKT_S2C_SET_ANIMATION, u.NetId)
+        public SetAnimation(AttackableUnit u, List<string> animationPairs)
+            : base(PacketCmd.PKT_S2C_SET_ANIMATION, u.NetId)
         {
             Write((byte)(animationPairs.Count / 2));
 
