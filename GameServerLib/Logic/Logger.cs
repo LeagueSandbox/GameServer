@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using System.Timers;
 
 namespace LeagueSandbox.GameServer.Logic
 {
     public class Logger
     {
         private LogWriter _logWriter;
-        private const string LOG_NAME = "LeagueSandbox.txt";
+        private const string _logName = "LeagueSandbox.txt";
 
-        public Logger()
+        public Logger(ServerContext serverContext)
         {
-            var directory = ServerContext.ExecutingDirectory;
-            _logWriter = new LogWriter(directory, LOG_NAME);
+            var directory = serverContext.ExecutingDirectory;
+            _logWriter = new LogWriter(directory, _logName);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -96,11 +95,11 @@ namespace LeagueSandbox.GameServer.Logic
 
         private class LogWriter : IDisposable
         {
-            public string LogFileName;
+            public string _logFileName;
             private FileStream _logFile;
             private StringBuilder _stringBuilder;
             private const double REFRESH_RATE = 1000.0 / 10.0; // 10fps
-            private Timer _refreshTimer;
+            private System.Timers.Timer _refreshTimer;
 
             public LogWriter(string executingDirectory, string logFileName)
             {
@@ -108,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic
 
                 _stringBuilder = new StringBuilder();
                 //Start refresh loop
-                _refreshTimer = new Timer(REFRESH_RATE)
+                _refreshTimer = new System.Timers.Timer(REFRESH_RATE)
                 {
                     AutoReset = true,
                     Enabled = true
@@ -144,7 +143,7 @@ namespace LeagueSandbox.GameServer.Logic
             //Can get called by different threads
             private void WriteTextToLogFile(string text)
             {
-                var info = new UTF8Encoding(true).GetBytes(text);
+                byte[] info = new UTF8Encoding(true).GetBytes(text);
                 lock (_logFile)
                 {
                     _logFile.WriteAsync(info, 0, info.Length);
@@ -162,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic
 
             public void CreateLogFile(string directory, string name)
             {
-                if (!string.IsNullOrEmpty(LogFileName))
+                if (!string.IsNullOrEmpty(_logFileName))
                 {
                     return;
                 }
@@ -174,9 +173,9 @@ namespace LeagueSandbox.GameServer.Logic
                 }
 
                 var logName = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}";
-                LogFileName = Path.Combine(path, logName);
+                _logFileName = Path.Combine(path, logName);
 
-                _logFile = File.Create(LogFileName);
+                _logFile = File.Create(_logFileName);
             }
 
             private bool _disposedValue; // To detect redundant dispose calls

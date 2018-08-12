@@ -1,24 +1,23 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Logic.Items;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
-using LeagueSandbox.GameServer.Logic.Items;
+using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Champion : ObjAiBase
+    public class Champion : ObjAIBase
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
         public RuneCollection RuneList { get; set; }
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
-        public ChampionStats ChampStats { get; private set; } = new ChampionStats();
-
 
         private short _skillPoints;
         public int Skin { get; set; }
@@ -34,70 +33,68 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
-        public Champion(Game game,
-                        string model,
+        public bool _canRecall = true;
+        private Buff _visualBuff;
+        private Particle _addParticle;
+        public bool IsRecalling { get; private set; } = false;
+
+        public Champion(string model,
                         uint playerId,
                         uint playerTeamSpecialId,
                         RuneCollection runeList,
                         ClientInfo clientInfo,
                         uint netId = 0)
-            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId)
+            : base(model, new Stats(), 30, 0, 0, 1200, netId)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory();
+            Inventory = InventoryManager.CreateInventory(this);
             Shop = Shop.CreateShop(this);
 
             Stats.Gold = 475.0f;
             Stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
-            Stats.IsGeneratingGold = false;
+            Stats.SetGeneratingGold(false);
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-
-            for (short i = 0; i<CharData.SpellNames.Length; i++)
+            for (short i = 0; i < CharData.SpellNames.Length; i++)
             {
-                if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
+                if (CharData.SpellNames[i] != "")
                 {
-                    Spells[i] = new Spell(game, this, CharData.SpellNames[i], (byte)i);
+                    Spells[i] = new Spell(this, CharData.SpellNames[i], (byte)(i));
                 }
             }
+            Spells[4] = new Spell(this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell(this, clientInfo.SummonerSkills[1], 5);
 
-            Spells[4] = new Spell(game, this, clientInfo.SummonerSkills[0], 4);
-            Spells[5] = new Spell(game, this, clientInfo.SummonerSkills[1], 5);
-
-            for (byte i = 6; i < 13; i++)
+            for (short i = 0; i < 6; i++)
             {
-                Spells[i] = new Spell(game, this, "BaseSpell", i);
+                Spells[(byte)(i + 6)] = new Spell(this, "BaseSpell", (byte)(i + 6));
             }
 
-            Spells[13] = new Spell(game, this, "Recall", 13);
+            Spells[13] = new Spell(this, "Recall", 13);
 
-            for (short i = 0; i<CharData.Passives.Length; i++)
+            for (short i = 0; i < CharData.Passives.Length; i++)
             {
-                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
+                if (CharData.Passives[i].PassiveLuaName != "")
                 {
-                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                    Spells[(byte)(i + 14)] = new Spell(this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
                 }
             }
 
             for (short i = 0; i < CharData.ExtraSpells.Length; i++)
             {
-                if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
+                if (CharData.ExtraSpells[i] != "")
                 {
-                    var spell = new Spell(game, this, CharData.ExtraSpells[i], (byte)(i + 45));
+                    var spell = new Spell(this, CharData.ExtraSpells[i], (byte)(i + 45));
                     Spells[(byte)(i + 45)] = spell;
-                    spell.LevelUp();
+                    spell.levelUp();
                 }
             }
-
-            Spells[4].LevelUp();
-            Spells[5].LevelUp();
-            Replication = new ReplicationHero(this);
-            Stats.SetSpellEnabled(13, true);
+            Spells[4].levelUp();
+            Spells[5].levelUp();
         }
-
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
@@ -123,7 +120,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             foreach (var player in _game.Config.Players.Values)
             {
-                if (player.Team.ToLower().Equals("blue"))
+                if (player.Team.ToLower() == "blue")
                 {
                     blueTeamSize++;
                 }
@@ -148,19 +145,39 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return 0;
         }
 
-        public bool CanMove()
+        public void AddStatModifier(ChampionStatModifier statModifier)
         {
-            return !HasCrowdControl(CrowdControlType.STUN) &&
-                !IsDashing &&
-                !IsCastingSpell &&
-                !IsDead &&
-                !HasCrowdControl(CrowdControlType.ROOT);
+            Stats.AddModifier(statModifier);
         }
 
+        public void UpdateStatModifier(ChampionStatModifier statModifier)
+        {
+            Stats.UpdateModifier(statModifier);
+        }
+
+        public void RemoveStatModifier(ChampionStatModifier statModifier)
+        {
+            Stats.RemoveModifier(statModifier);
+        }
+        public bool CanMove()
+        {
+            return !this.HasCrowdControl(CrowdControlType.Stun) &&
+                !this.IsDashing &&
+                !this.IsCastingSpell &&
+                !this.IsDead &&
+                !this.HasCrowdControl(CrowdControlType.Root);
+        }
         public bool CanCast()
         {
-            return !HasCrowdControl(CrowdControlType.STUN) &&
-                !HasCrowdControl(CrowdControlType.SILENCE);
+            return !this.HasCrowdControl(CrowdControlType.Stun) &&
+                !this.HasCrowdControl(CrowdControlType.Silence);
+        }
+
+        public void SwapSpells(byte slot1, byte slot2)
+        {
+            var buffer = Spells[slot1];
+            Spells[slot1] = Spells[slot2];
+            Spells[slot2] = buffer;
         }
 
         public Vector2 GetSpawnPosition()
@@ -171,9 +188,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             var teamSize = GetTeamSize();
 
             if (teamSize > 6) //???
-            {
                 teamSize = 6;
-            }
 
             if (config.Players.ContainsKey(playerIndex))
             {
@@ -200,76 +215,83 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 var p = config.Players[playerIndex];
             }
-
             var coords = new Vector2
             {
                 X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
                 Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
             };
-
             return new Vector2(coords.X, coords.Y);
         }
 
         public Spell GetSpell(byte slot)
         {
-            return Spells[slot];
+            if (Spells.ContainsKey(slot))
+            {
+                return Spells[slot];
+            }
+            else
+            {
+                ApiFunctionManager.LogInfo("There is no spell in slot " + slot + ". Using empty spell in its place.");
+                return new Spell(this, "BaseSpell", slot);
+            }
         }
 
         public Spell GetSpellByName(string name)
         {
-            foreach(var s in Spells.Values)
+            foreach (var s in Spells.Values)
             {
                 if (s == null)
-                {
                     continue;
-                }
-
                 if (s.SpellName == name)
-                {
                     return s;
-                }
             }
-
             return null;
         }
 
         public Spell LevelUpSpell(short slot)
         {
             if (_skillPoints == 0)
-            {
                 return null;
-            }
 
             var s = GetSpell((byte)slot);
 
             if (s == null)
-            {
                 return null;
-            }
 
-            s.LevelUp();
+            s.levelUp();
             _skillPoints--;
 
             return s;
         }
 
-        public override void Update(float diff)
+        public override void update(float diff)
         {
-            base.Update(diff);
+            base.update(diff);
+
+            if (this.isMovementUpdated())
+            {
+                if (IsRecalling)
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    IsRecalling = false;
+                }
+                _canRecall = false;
+            }
 
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
-                var distanceToTarget = 25000f;
+                var distanceToTarget = 9000000.0f;
                 AttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
                 foreach (var it in objects)
                 {
-                    if (!(it.Value is AttackableUnit u) || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
-                    {
+                    var u = it.Value as AttackableUnit;
+
+                    if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
                         continue;
-                    }
 
                     if (GetDistanceTo(u) < distanceToTarget)
                     {
@@ -285,9 +307,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 }
             }
 
-            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
+            if (!Stats.IsGeneratingGold() && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
-                Stats.IsGeneratingGold = true;
+                Stats.SetGeneratingGold(true);
                 _logger.LogCoreInfo("Generating Gold!");
             }
 
@@ -304,13 +326,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (isLevelup)
             {
                 _game.PacketNotifier.NotifyLevelUp(this);
-                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
             foreach (var s in Spells.Values)
             {
-                s.Update(diff);
+                s.update(diff);
             }
 
             if (_championHitFlagTimer > 0)
@@ -321,139 +342,105 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                     _championHitFlagTimer = 0;
                 }
             }
-            Replication.Update();
         }
 
         public void Respawn()
         {
             var spawnPos = GetRespawnPosition();
-            SetPosition(spawnPos.X, spawnPos.Y);
+            setPosition(spawnPos.X, spawnPos.Y);
             _game.PacketNotifier.NotifyChampionRespawn(this);
-            Stats.CurrentHealth = Stats.HealthPoints.Total;
-            Stats.CurrentMana = Stats.HealthPoints.Total;
+            GetStats().CurrentHealth = GetStats().HealthPoints.Total;
+            GetStats().CurrentMana = GetStats().HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
         }
 
-	    public void Recall(ObjAiBase owner)
+        public void Recall(ObjAIBase owner, float timer = 8.0f)
         {
             var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+            IsRecalling = true;
+            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("Recall", timer, 1, this);
+            _addParticle = ApiFunctionManager.AddParticleTarget(this, "TeleportHome.troy", this);
+            _canRecall = true;
+
+            ApiFunctionManager.CreateTimer(timer, () =>
+            {
+                if (_canRecall)
+                {
+                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveParticle(_addParticle);
+                    ApiFunctionManager.TeleportTo(owner, spawnPos.X, spawnPos.Y);
+                    IsRecalling = false;
+                }
+            });
         }
 
-        public void SetSkillPoints(int skillPoints)
+        public void setSkillPoints(int _skillPoints)
         {
-            skillPoints = (short)skillPoints;
+            _skillPoints = (short)_skillPoints;
         }
 
-        public int GetChampionHash()
+        public int getChampionHash()
         {
             var szSkin = "";
 
             if (Skin < 10)
-            {
                 szSkin = "0" + Skin;
-            }
             else
-            {
                 szSkin = Skin.ToString();
-            }
 
-            var hash = 0;
+            int hash = 0;
             var gobj = "[Character]";
-
             for (var i = 0; i < gobj.Length; i++)
             {
-                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
+                hash = Char.ToLower(gobj[i]) + (0x1003F * hash);
             }
-
             for (var i = 0; i < Model.Length; i++)
             {
-                hash = char.ToLower(Model[i]) + 0x1003F * hash;
+                hash = Char.ToLower(Model[i]) + (0x1003F * hash);
             }
-
             for (var i = 0; i < szSkin.Length; i++)
             {
-                hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
+                hash = Char.ToLower(szSkin[i]) + (0x1003F * hash);
             }
-
             return hash;
         }
 
-        public short GetSkillPoints()
+        public short getSkillPoints()
         {
             return _skillPoints;
         }
 
         public bool LevelUp()
         {
-            var stats = Stats;
+            var stats = GetStats();
             var expMap = _game.Map.MapGameScript.ExpToLevelUp;
-            if (stats.Level >= expMap.Count)
-            {
+            if (stats.GetLevel() >= expMap.Count)
                 return false;
-            }
-
             if (stats.Experience < expMap[stats.Level])
-            {
                 return false;
-            }
 
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
-                Stats.LevelUp();
+                GetStats().LevelUp();
+                ApiEventManager.OnLevelUp.Publish(this);
                 _logger.LogCoreInfo("Champion " + Model + " leveled up to " + stats.Level);
                 _skillPoints++;
             }
-
             return true;
         }
 
-        public InventoryManager GetInventory()
+        public InventoryManager getInventory()
         {
             return Inventory;
         }
 
-        public void OnKill(AttackableUnit killed)
+        public override void die(AttackableUnit killer)
         {
-            if (killed is Minion)
-            {
-                ChampStats.MinionsKilled += 1;
-                if (killed.Team == TeamId.TEAM_NEUTRAL)
-                {
-                    ChampStats.NeutralMinionsKilled += 1;
-                }
-
-                var gold = _game.Map.MapGameScript.GetGoldFor(killed);
-                if (gold <= 0)
-                {
-                    return;
-                }
-
-                Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(this, killed, gold);
-
-                if (KillDeathCounter < 0)
-                {
-                    ChampionGoldFromMinions += gold;
-                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
-                }
-
-                if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
-                {
-                    ChampionGoldFromMinions = 0;
-                    KillDeathCounter += 1;
-                }
-            }        
-        }
-
-        public override void Die(AttackableUnit killer)
-        {
-            RespawnTimer = 5000 + Stats.Level * 2500;
+            RespawnTimer = 5000 + GetStats().Level * 2500;
             _game.ObjectManager.StopTargeting(this);
-            ChampStats.Deaths += 1;
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.Death, this, killer);
 
             var cKiller = killer as Champion;
 
@@ -470,10 +457,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             cKiller.ChampionGoldFromMinions = 0;
-            cKiller.ChampStats.Kills += 1;
-            // TODO: add assists
 
-            var gold = _game.Map.MapGameScript.GetGoldFor(this);
+            float gold = _game.Map.MapGameScript.GetGoldFor(this);
             _logger.LogCoreInfo(
                 "Before: getGoldFromChamp: {0} Killer: {1} Victim {2}",
                 gold,
@@ -493,7 +478,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             if (KillDeathCounter <= 0)
                 KillDeathCounter -= 1;
 
-            if (gold < 0)
+            if (gold > 0)
             {
                 _game.PacketNotifier.NotifyChampionDie(this, cKiller, 0);
                 return;
@@ -514,19 +499,24 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);
 
-            cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
+            cKiller.GetStats().Gold = cKiller.GetStats().Gold + gold;
             _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
+
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void OnCollision(GameObject collider)
+        public override void onCollision(GameObject collider)
         {
-            base.OnCollision(collider);
+            base.onCollision(collider);
             if (collider == null)
             {
                 //CORE_INFO("I bumped into a wall!");
+            }
+            else
+            {
+                //CORE_INFO("I bumped into someone else!");
             }
         }
 
@@ -535,7 +525,15 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             base.TakeDamage(attacker, damage, type, source, isCrit);
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            _playerHitId = attacker.NetId;
+            _playerHitId = NetId;
+
+            if (IsRecalling)
+            {
+                ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                ApiFunctionManager.RemoveParticle(_addParticle);
+                IsRecalling = false;
+            }
+            _canRecall = false;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
     }

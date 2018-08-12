@@ -10,10 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "revive";
         public override string Syntax => $"{Command}";
 
-        public ReviveCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public ReviveCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
-            _playerManager = game.PlayerManager;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -24,7 +24,6 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion is already alive.");
                 return;
             }
-
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion has revived!");
             champ.Respawn();
         }

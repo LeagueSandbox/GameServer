@@ -4,18 +4,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class BasicTutorialMessageWindowClicked
     {
-        public byte Cmd;
-        public int Unk;
+        public byte cmd;
+        public int unk;
 
         public BasicTutorialMessageWindowClicked(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                Cmd = reader.ReadByte();
-                Unk = reader.ReadInt32(); // Seems to be always 0
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = reader.ReadByte();
+            unk = reader.ReadInt32(); // Seems to be always 0
         }
-
         public BasicTutorialMessageWindowClicked()
         {
 

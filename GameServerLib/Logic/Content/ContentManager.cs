@@ -1,20 +1,21 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Core.Logic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class ContentManager
     {
-        private Logger _logger;
-        private Game _game;
-
+        private Logger _logger = Program.ResolveDependency<Logger>();
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
-        private static readonly string[] ContentTypes = {
+        private static readonly string[] CONTENT_TYPES = new string[]
+        {
             "Champions",
             "Items",
             "Buffs",
@@ -26,15 +27,12 @@ namespace LeagueSandbox.GameServer.Logic.Content
         private Dictionary<string, Dictionary<string, List<string>>> _content;
         public string GameModeName { get; }
 
-        private ContentManager(Game game, string gameModeName)
+        private ContentManager(string gameModeName)
         {
-            _game = game;
-            _logger = game.Logger;
-
             GameModeName = gameModeName;
 
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
-            foreach (var contentType in ContentTypes)
+            foreach(var contentType in CONTENT_TYPES)
             {
                 _content[contentType] = new Dictionary<string, List<string>>();
             }
@@ -57,14 +55,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
                 throw new Exception("Invalid content configuration");
             }
 
-            foreach (var content in contents)
+            foreach(var content in contents)
             {
                 _logger.LogCoreInfo("Mapped Content [{0}][{1}][{2}]", packageName, contentType, content);
-                if (!_content[contentType].ContainsKey(content))
+                if(!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
                 }
-
                 _content[contentType][content].Add(packageName);
             }
         }
@@ -90,22 +87,21 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private string GetPackagePath(string packageName)
         {
-            return $"{GetContentRootPath()}/Data/{packageName}";
+            return string.Format("{0}/Data/{1}", GetContentRootPath(), packageName);
         }
 
         private string GetContentSetPath(string packageName, string contentType)
         {
-            if (packageName == "Self")
+            if(packageName == "Self")
             {
-                return $"{GetContentRootPath()}/GameMode/{GameModeName}/Data/{contentType}";
+                return string.Format("{0}/GameMode/{1}/Data/{2}", GetContentRootPath(), GameModeName, contentType);
             }
-
-            return $"{GetPackagePath(packageName)}/{contentType}";
+            return string.Format("{0}/{1}", GetPackagePath(packageName), contentType);
         }
 
         private string GetContentPath(string packageName, string contentType, string fileName)
         {
-            return $"{GetContentSetPath(packageName, contentType)}/{fileName}";
+            return string.Format("{0}/{1}", GetContentSetPath(packageName, contentType), fileName);
         }
 
         private string GetContentPath(List<string> contentPackages, string contentType, string fileName)
@@ -198,15 +194,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             return GetContentPath(contentPackages, contentType, fileName);
         }
-
+        
         public SpellData GetSpellData(string spellName)
         {
             if (_spellData.ContainsKey(spellName))
             {
                 return _spellData[spellName];
             }
-
-            _spellData[spellName] = new SpellData(_game);
+            _spellData[spellName] = new SpellData();
             _spellData[spellName].Load(spellName);
             return _spellData[spellName];
         }
@@ -217,31 +212,28 @@ namespace LeagueSandbox.GameServer.Logic.Content
             {
                 return _charData[charName];
             }
-            _charData[charName] = new CharData(_game);
+            _charData[charName] = new CharData();
             _charData[charName].Load(charName);
             return _charData[charName];
         }
 
-        public static ContentManager LoadGameMode(Game game, string gameModeName)
+        public static ContentManager LoadGameMode(string gameModeName)
         {
-            var contentManager = new ContentManager(game, gameModeName);
+            var contentManager = new ContentManager(gameModeName);
 
-            var gameModeConfigurationPath = $"Content/GameMode/{gameModeName}/GameMode.json";
+            var gameModeConfigurationPath = string.Format("Content/GameMode/{0}/GameMode.json", gameModeName);
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
             var dataConfiguration = gameModeConfiguration.SelectToken("data");
 
-            foreach (JProperty dataPackage in dataConfiguration)
+            foreach(JProperty dataPackage in dataConfiguration)
             {
                 if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
 
-                foreach(var contentType in ContentTypes)
+                foreach(var contentType in CONTENT_TYPES)
                 {
                     var contentSet = dataPackage.Value.SelectToken(contentType);
 
-                    if (contentSet == null)
-                    {
-                        continue;
-                    }
+                    if (contentSet == null) continue;
 
                     contentManager.AddContent(dataPackage.Name, contentType, contentSet);
                 }
@@ -252,25 +244,14 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         private static bool ValidatePackageName(string packageName)
         {
-            if (packageName == "Self")
-            {
-                return true;
-            }
+            if (packageName == "Self") return true;
 
-            if (packageName.Count(c => c == '-') < 1)
+            if (packageName.Count(c => c == '-') < 1) return false;
+            string[] parts = packageName.Split('-');
+            foreach(var part in parts)
             {
-                return false;
+                if (part.Length < 2) return false;
             }
-
-            var parts = packageName.Split('-');
-            foreach (var part in parts)
-            {
-                if (part.Length < 2)
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
     }

@@ -1,20 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+﻿using System;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Maps;
+using System.Collections.Generic;
+using System.Diagnostics;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class CollisionHandler
     {
-        private Game _game;
+        private Game _game = Program.ResolveDependency<Game>();
 
         private List<GameObject> _objects = new List<GameObject>();
 
-        public CollisionHandler(Game game, Map map)
+        public CollisionHandler(Map map)
         {
-            _game = game;
             //Pathfinder.setMap(map);
             // Initialise the pathfinder.
         }
@@ -40,7 +39,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 
                 if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
                 {
-                    obj.OnCollision(null);
+                    obj.onCollision(null);
                 }
 
                 foreach (var obj2 in _objects)
@@ -52,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 
                     if (obj.IsCollidingWith(obj2))
                     {
-                        obj.OnCollision(obj2);
+                        obj.onCollision(obj2);
                     }
                 }
             }

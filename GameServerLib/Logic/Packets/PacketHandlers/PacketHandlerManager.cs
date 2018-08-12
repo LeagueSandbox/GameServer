@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using BlowFishCS;
 using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
+using LeagueSandbox.GameServer.Logic.Handlers;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -21,141 +19,106 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly BlowFish _blowfish;
         private readonly Host _server;
         private readonly PlayerManager _playerManager;
-        private readonly Game _game;
+        private readonly IHandlersProvider _packetHandlerProvider;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, Game game)
+        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, PlayerManager playerManager,
+            IHandlersProvider handlersProvider)
         {
             _logger = logger;
             _blowfish = blowfish;
             _server = server;
-            _playerManager = game.PlayerManager;
-            _game = game;
+            _playerManager = playerManager;
+            _packetHandlerProvider = handlersProvider;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
-            
-            _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
+
+            var loadFrom = new[] { ServerLibAssemblyDefiningType.Assembly };
+            _handlerTable = _packetHandlerProvider.GetAllPacketHandlers(loadFrom);
         }
 
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
+        internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelID)
         {
-            var inst = GetInstances<PacketHandlerBase>(loadFrom, _game);
-            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
-            foreach (var pktCmd in inst)
-            {
-                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
-                {
-                    {
-                        pktCmd.PacketChannel, pktCmd
-                    }
-                });
-            }
-            return dict;
-        }
-
-        public static List<T> GetInstances<T>(Assembly a, Game g)
-        {
-            return (Assembly.GetCallingAssembly()
-                .GetTypes()
-                .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T) Activator.CreateInstance(t, g))).ToList();
-        }
-
-        internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelId)
-        {
+            var game = Program.ResolveDependency<Game>();
             var packetsHandledWhilePaused = new List<PacketCmd>
             {
-                PacketCmd.PKT_UNPAUSE_GAME,
-                PacketCmd.PKT_C2S_CHAR_LOADED,
-                PacketCmd.PKT_C2S_CLICK,
-                PacketCmd.PKT_C2S_CLIENT_READY,
-                PacketCmd.PKT_C2S_EXIT,
-                PacketCmd.PKT_C2S_HEART_BEAT,
-                PacketCmd.PKT_C2S_QUERY_STATUS_REQ,
-                PacketCmd.PKT_C2S_START_GAME,
-                PacketCmd.PKT_C2S_WORLD_SEND_GAME_NUMBER,
-                PacketCmd.PKT_CHAT_BOX_MESSAGE,
-                PacketCmd.PKT_KEY_CHECK
+                PacketCmd.PKT_UnpauseGame,
+                PacketCmd.PKT_C2S_CharLoaded,
+                PacketCmd.PKT_C2S_Click,
+                PacketCmd.PKT_C2S_ClientReady,
+                PacketCmd.PKT_C2S_Exit,
+                PacketCmd.PKT_C2S_HeartBeat,
+                PacketCmd.PKT_C2S_QueryStatusReq,
+                PacketCmd.PKT_C2S_StartGame,
+                PacketCmd.PKT_C2S_World_SendGameNumber,
+                PacketCmd.PKT_ChatBoxMessage,
+                PacketCmd.PKT_KeyCheck
             };
-            if (_game.IsPaused && !packetsHandledWhilePaused.Contains(cmd))
+            if (game.IsPaused && !packetsHandledWhilePaused.Contains(cmd))
             {
                 return null;
             }
             if (_handlerTable.ContainsKey(cmd))
             {
                 var handlers = _handlerTable[cmd];
-                if (handlers.ContainsKey(channelId))
-                {
-                    return handlers[channelId];
-                }
+                if (handlers.ContainsKey(channelID))
+                    return handlers[channelID];
             }
-
             return null;
         }
-        public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
+        public bool sendPacket(Peer peer, GameServer.Logic.Packets.Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            return SendPacket(peer, packet.GetBytes(), channelNo, flag);
+            return sendPacket(peer, packet.GetBytes(), channelNo, flag);
         }
 
-        private IntPtr AllocMemory(byte[] data)
+        private IntPtr allocMemory(byte[] data)
         {
             var unmanagedPointer = Marshal.AllocHGlobal(data.Length);
             Marshal.Copy(data, 0, unmanagedPointer, data.Length);
             return unmanagedPointer;
         }
 
-        private void ReleaseMemory(IntPtr ptr)
+        private void releaseMemory(IntPtr ptr)
         {
             Marshal.FreeHGlobal(ptr);
         }
 
-        public void PrintPacket(byte[] buffer, string str)
+        public void printPacket(byte[] buffer, string str)
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
-            lock (ServerContext.ExecutingDirectory)
+            lock (Program.ExecutingDirectory)
             {
-                Debug.Write(str);
+                System.Diagnostics.Debug.Write(str);
                 foreach (var b in buffer)
-                {
-                    Debug.Write(b.ToString("X2") + " ");
-                }
+                    System.Diagnostics.Debug.Write(b.ToString("X2") + " ");
 
-                Debug.WriteLine("");
-                Debug.WriteLine("--------");
+                System.Diagnostics.Debug.WriteLine("");
+                System.Diagnostics.Debug.WriteLine("--------");
             }
         }
-
-        public bool SendPacket(Peer peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool sendPacket(Peer peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
             //if(length < 300)
             //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
-            {
                 temp = _blowfish.Encrypt(source);
-            }
             else
-            {
                 temp = source;
-            }
 
             return peer.Send((byte)channelNo, temp);
         }
 
-        public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool broadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
             ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
             //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
-            {
                 temp = _blowfish.Encrypt(data);
-            }
             else
-            {
                 temp = data;
-            }
 
             var packet = new ENet.Packet();
             packet.Create(temp);
@@ -163,91 +126,88 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return true;
         }
 
-        public bool BroadcastPacket(Packet packet, Channel channelNo,
+        public bool broadcastPacket(GameServer.Logic.Packets.Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            return BroadcastPacket(packet.GetBytes(), channelNo, flag);
+            return broadcastPacket(packet.GetBytes(), channelNo, flag);
         }
 
 
-        public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
+        public bool broadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var ci in _playerManager.GetPlayers())
-            {
                 if (ci.Item2.Peer != null && ci.Item2.Team == team)
-                {
-                    SendPacket(ci.Item2.Peer, data, channelNo, flag);
-                }
-            }
-
+                    sendPacket(ci.Item2.Peer, data, channelNo, flag);
             return true;
         }
 
-        public bool BroadcastPacketTeam(TeamId team, Packet packet, Channel channelNo,
+        public bool broadcastPacketTeam(TeamId team, GameServer.Logic.Packets.Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            return BroadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
+            return broadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, Packet packet, Channel channelNo,
+        public bool broadcastPacketVision(GameObject o, GameServer.Logic.Packets.Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
+            return broadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
+        public bool broadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
+            var game = Program.ResolveDependency<Game>();
             foreach (var team in _teamsEnumerator)
             {
                 if (team == TeamId.TEAM_NEUTRAL)
-                {
                     continue;
-                }
 
-                if (_game.ObjectManager.TeamHasVisionOn(team, o))
+                if (game.ObjectManager.TeamHasVisionOn(team, o))
                 {
-                    BroadcastPacketTeam(team, data, channelNo, flag);
+                    broadcastPacketTeam(team, data, channelNo, flag);
                 }
             }
 
             return true;
         }
 
-        public bool HandlePacket(Peer peer, byte[] data, Channel channelId)
+        public bool handlePacket(Peer peer, byte[] data, Channel channelID)
         {
-            var header = new PacketHeader(data);
-            var handler = GetHandler(header.Cmd, channelId);
+            var header = new GameServer.Logic.Packets.PacketHeader(data);
+            var handler = GetHandler(header.cmd, channelID);
 
-            switch (header.Cmd)
+            switch (header.cmd)
             {
-                case PacketCmd.PKT_C2S_STATS_CONFIRM:
-                case PacketCmd.PKT_C2S_MOVE_CONFIRM:
-                case PacketCmd.PKT_C2S_VIEW_REQ:
+                case PacketCmd.PKT_C2S_StatsConfirm:
+                case PacketCmd.PKT_C2S_MoveConfirm:
+                case PacketCmd.PKT_C2S_ViewReq:
                     break;
             }
 
             if (handler != null)
             {
-                return handler.HandlePacket(peer, data);
-            }
+                if (!handler.HandlePacket(peer, data))
+                {
+                    return false;
+                }
 
-            PrintPacket(data, "Error: ");
+                return true;
+            }
+            printPacket(data, "Error: ");
             return false;
         }
 
-        public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
+        public bool handlePacket(Peer peer, ENet.Packet packet, Channel channelID)
         {
-            var data = new byte[packet.Length];
+            var data = new byte[(int)packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
-            if (data.Length >= 8 && _playerManager.GetPeerInfo(peer) != null)
-            {
-                data = _blowfish.Decrypt(data);
-            }
+            if (data.Length >= 8)
+                if (_playerManager.GetPeerInfo(peer) != null)
+                    data = _blowfish.Decrypt(data);
 
-            return HandlePacket(peer, data, channelId);
+            return handlePacket(peer, data, channelID);
         }
     }
 }

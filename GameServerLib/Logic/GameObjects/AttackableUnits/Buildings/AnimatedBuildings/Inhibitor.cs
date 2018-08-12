@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Timers;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Inhibitor : ObjAnimatedBuilding
     {
-        private Timer _respawnTimer;
-        public InhibitorState InhibitorState { get; private set; }
+        private System.Timers.Timer RespawnTimer;
+        private InhibitorState State;
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
         private const float GOLD_WORTH = 50.0f;
-        private DateTime _timerStartTime;
+        private DateTime TimerStartTime;
         public bool RespawnAnnounced { get; private set; } = true;
 
         // TODO assists
         public Inhibitor(
-            Game game,
             string model,
             TeamId team,
             int collisionRadius = 40,
@@ -25,94 +23,100 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;
-            InhibitorState = InhibitorState.ALIVE;
+            State = InhibitorState.Alive;
             SetTeam(team);
         }
-
         public override void OnAdded()
         {
             base.OnAdded();
             _game.ObjectManager.AddInhibitor(this);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void die(AttackableUnit killer)
         {
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
-                var u = obj as ObjAiBase;
+                var u = obj as ObjAIBase;
                 if (u != null && u.TargetUnit == this)
                 {
                     u.SetTargetUnit(null);
                     u.AutoAttackTarget = null;
                     u.IsAttacking = false;
                     _game.PacketNotifier.NotifySetTarget(u, null);
-                    u.HasMadeInitialAttack = false;
+                    u._hasMadeInitialAttack = false;
                 }
             }
 
-            _respawnTimer?.Stop();
-            _respawnTimer = new Timer(RESPAWN_TIMER) {AutoReset = false};
+            if (RespawnTimer != null) //?
+                RespawnTimer.Stop();
 
-            _respawnTimer.Elapsed += (a, b) =>
+            RespawnTimer = new System.Timers.Timer(RESPAWN_TIMER) {AutoReset = false};
+
+            RespawnTimer.Elapsed += (a, b) =>
             {
-                Stats.CurrentHealth = Stats.HealthPoints.Total;
-                SetState(InhibitorState.ALIVE);
+                GetStats().CurrentHealth = GetStats().HealthPoints.Total;
+                setState(InhibitorState.Alive);
                 IsDead = false;
             };
-            _respawnTimer.Start();
-            _timerStartTime = DateTime.Now;
+            RespawnTimer.Start();
+            TimerStartTime = DateTime.Now;
 
-            if (killer is Champion c)
+            if (killer != null && killer is Champion)
             {
-                c.Stats.Gold += GOLD_WORTH;
+                var c = (Champion)killer;
+                c.GetStats().Gold += GOLD_WORTH;
                 _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
             }
 
-            SetState(InhibitorState.DEAD, killer);
+            setState(InhibitorState.Dead, killer);
             RespawnAnnounced = false;
 
-            base.Die(killer);
+            base.die(killer);
         }
 
-        public void SetState(InhibitorState state, GameObject killer = null)
+        public void setState(InhibitorState state, GameObject killer = null)
         {
-            if (_respawnTimer != null && state == InhibitorState.ALIVE)
-            {
-                _respawnTimer.Stop();
-            }
+            if (RespawnTimer != null && state == InhibitorState.Alive)
+                RespawnTimer.Stop();
 
-            InhibitorState = state;
+            State = state;
             _game.PacketNotifier.NotifyInhibitorState(this, killer);
         }
 
-        public double GetRespawnTimer()
+        public InhibitorState getState()
         {
-            var diff = DateTime.Now - _timerStartTime;
+            return State;
+        }
+
+        public double getRespawnTimer()
+        {
+            var diff = DateTime.Now - TimerStartTime;
             return RESPAWN_TIMER - diff.TotalMilliseconds;
         }
 
-        public override void Update(float diff)
+        public override void update(float diff)
         {
-            if (!RespawnAnnounced && InhibitorState == InhibitorState.DEAD && GetRespawnTimer() <= RESPAWN_ANNOUNCE)
+            if (!RespawnAnnounced && getState() == InhibitorState.Dead && getRespawnTimer() <= RESPAWN_ANNOUNCE)
             {
                 _game.PacketNotifier.NotifyInhibitorSpawningSoon(this);
                 RespawnAnnounced = true;
             }
 
-            base.Update(diff);
+            base.update(diff);
         }
 
-        public override void SetToRemove()
+
+        public override void setToRemove()
         {
 
         }
 
-        public override float GetMoveSpeed()
+        public override float getMoveSpeed()
         {
             return 0;
         }
@@ -121,7 +125,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
 
     public enum InhibitorState : byte
     {
-        DEAD = 0x00,
-        ALIVE = 0x01
+        Dead = 0x00,
+        Alive = 0x01
     }
 }

@@ -1,5 +1,5 @@
-﻿using LeagueSandbox.GameServerApp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LeagueSandbox.GameServerApp;
 
 namespace LeagueSandbox.GameServerAppTests
 {
@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServerAppTests
         {
             var port = 5839;
             var config = "/some/config/path.json";
-            var args = new[]
+            var args = new string[]
             {
                 "--port", port.ToString(),
                 "--config", config

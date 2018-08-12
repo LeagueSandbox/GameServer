@@ -1,15 +1,16 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
-    public class ShowHpAndName : BasePacket
+    public class ShowHPAndName : BasePacket
     {
-        public ShowHpAndName(Game game, AttackableUnit unit, bool show)
-            : base(game, PacketCmd.PKT_S2C_SHOW_HP_AND_NAME, unit.NetId)
+        public ShowHPAndName(AttackableUnit unit, bool show) 
+            : base(PacketCmd.PKT_S2C_ShowHPAndName, unit.NetId)
         {
-            Write(show);
-            Write((byte)0x00);
+            buffer.Write(show);
+            buffer.Write((byte)0x00);
         }
     }
 }

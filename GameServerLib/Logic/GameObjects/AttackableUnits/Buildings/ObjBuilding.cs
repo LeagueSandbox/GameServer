@@ -1,10 +1,17 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class ObjBuilding : AttackableUnit
     {
-        public ObjBuilding(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
-            base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
+        public ObjBuilding(string model, Stats stats, int collisionRadius = 40, 
+            float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) : 
+            base(model, stats, collisionRadius, x, y, visionRadius, netId)
         {
         }
     }

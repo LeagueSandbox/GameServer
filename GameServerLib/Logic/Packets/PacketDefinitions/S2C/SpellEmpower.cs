@@ -1,3 +1,4 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -5,16 +6,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SpellEmpower : BasePacket
     {
-        public SpellEmpower(Game game, AttackableUnit unit, byte slot, byte empowerLevel)
-            : base(game, PacketCmd.PKT_S2C_SPELL_EMPOWER, unit.NetId)
+        public SpellEmpower(AttackableUnit unit, byte slot, byte empowerLevel)
+            : base(PacketCmd.PKT_S2C_SpellEmpower, unit.NetId)
         {
-            Write(slot);
-            Write((byte)0x00);
-            Write((byte)0x06); // Unknown
-            Write((byte)0x00);
-            Write((byte)0x00);
-            Write((byte)0x00);
-            Write(empowerLevel); // 0 - normal, 1 - empowered (for Rengar)
+            buffer.Write((byte)slot);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x06); // Unknown
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)empowerLevel); // 0 - normal, 1 - empowered (for Rengar)
         }
     }
 }

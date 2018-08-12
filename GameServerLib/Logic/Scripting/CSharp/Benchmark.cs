@@ -1,26 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Core.Logic;
 
 namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
 {
-    public class Benchmark
+    public static class Benchmark
     {
-        public Benchmark(Game game)
-        {
-            _logger = game.Logger;
-        }
-        private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private Logger _logger;
-        public void StartTiming(string label)
+        static IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
+        private static Logger _logger = Program.ResolveDependency<Logger>();
+        public static void StartTiming(string label)
         {
             var stopwatch = new Stopwatch();
             _map[label] = stopwatch;
             stopwatch.Reset();
             stopwatch.Start();
         }
-
-        public void EndTiming(string label)
+        public static void EndTiming(string label)
         {
             var stopwatch = _map[label];
             stopwatch.Stop();
@@ -30,10 +26,12 @@ namespace LeagueSandbox.GameServer.Logic.Scripting.CSharp
             });
             _map.Remove(label);
         }
-
-        public void Log(string text)
+        public static void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => _logger.LogCoreInfo(text));
+            var t = Task.Factory.StartNew(() =>
+            {
+                _logger.LogCoreInfo(text);
+            });
         }
     }
 }

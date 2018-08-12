@@ -1,22 +1,25 @@
 ﻿using System;
 using ENet;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class PacketCommand : ChatCommandBase
     {
+        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "packet";
         public override string Syntax => $"{Command} XX XX XX...";
 
-        public PacketCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public PacketCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
-            _playerManager = game.PlayerManager;
+            _game = game;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -32,26 +35,24 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packet(Game, (PacketCmd)opcode);
+                var packet = new Packets.Packet((PacketCmd)opcode);
+                var buffer = packet.getBuffer();
 
-                for (var i = 2; i < s.Length; i++)
+                for (int i = 2; i < s.Length; i++)
                 {
-                    if (s[i].Equals("netid"))
+                    if (s[i] == "netid")
                     {
-                        packet.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
+                        buffer.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
                     }
                     else
                     {
-                        packet.Write(Convert.ToByte(s[i], 16));
+                        buffer.Write(Convert.ToByte(s[i], 16));
                     }
                 }
 
-                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2C);
+                _game.PacketHandlerManager.sendPacket(peer, packet, Channel.CHL_S2C);
             }
-            catch
-            {
-                // ignored
-            }
+            catch { }
         }
     }
 }

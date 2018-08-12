@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -10,13 +12,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_START_GAME;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_StartGame;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleStartGame(Game game)
+        public HandleStartGame(Game game, PlayerManager playerManager)
         {
             _game = game;
-            _playerManager = game.PlayerManager;
+            _playerManager = playerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -33,8 +35,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                var start = new StatePacket(_game, PacketCmd.PKT_S2C_START_GAME);
-                _game.PacketHandlerManager.BroadcastPacket(start, Channel.CHL_S2C);
+                var start = new StatePacket(PacketCmd.PKT_S2C_StartGame);
+                _game.PacketHandlerManager.broadcastPacket(start, Channel.CHL_S2C);
 
                 foreach (var player in _playerManager.GetPlayers())
                 {
@@ -42,23 +44,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";
-                        var dm = new DebugMessage(_game, msg);
-                        _game.PacketHandlerManager.SendPacket(peer, dm, Channel.CHL_S2C);
+                        var dm = new DebugMessage(msg);
+                        _game.PacketHandlerManager.sendPacket(peer, dm, Channel.CHL_S2C);
                     }
                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
-                    // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
-
-                    var tip = new BlueTip(
-                        _game,
-                        "Server Build Date",
-                        $"{ServerContext.BuildDateString}",
-                        "",
-                        0,
-                        player.Item2.Champion.NetId,
-                        _game.NetworkIdManager.GetNewNetId()
-                    );
-                    _game.PacketHandlerManager.SendPacket(player.Item2.Peer, tip, Channel.CHL_S2C);
                 }
 
                 _game.Start();
@@ -66,37 +56,38 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.IsRunning)
             {
+                var map = _game.Map;
                 if (peerInfo.IsDisconnected)
                 {
                     foreach (var player in _playerManager.GetPlayers())
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                            var heroSpawnPacket = new HeroSpawn2(_game, player.Item2.Champion);
-                            _game.PacketHandlerManager.SendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
+                            var heroSpawnPacket = new HeroSpawn2(player.Item2.Champion);
+                            _game.PacketHandlerManager.sendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */
-                            var levelUpPacket = new LevelUp(_game, player.Item2.Champion);
-                            _game.PacketHandlerManager.SendPacket(peer, levelUpPacket, Channel.CHL_S2C);
+                            var levelUpPacket = new LevelUp(player.Item2.Champion);
+                            _game.PacketHandlerManager.sendPacket(peer, levelUpPacket, Channel.CHL_S2C);
                             if (_game.IsPaused)
                             {
-                                var pausePacket = new PauseGame(_game, (int)_game.PauseTimeLeft, true);
-                                _game.PacketHandlerManager.SendPacket(peer, pausePacket, Channel.CHL_S2C);
+                                var pausePacket = new PauseGame((int)_game.PauseTimeLeft, true);
+                                _game.PacketHandlerManager.sendPacket(peer, pausePacket, Channel.CHL_S2C);
                             }
                         }
                     }
                     peerInfo.IsDisconnected = false;
-                    _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_RECONNECTED, peerInfo.Champion);
+                    _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SummonerReconnected, peerInfo.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime / 1000.0f;
+                    float gameTime = _game.GameTime / 1000.0f;
 
-                    var timer = new GameTimer(_game, gameTime); // 0xC1
-                    _game.PacketHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
+                    var timer = new GameTimer(gameTime); // 0xC1
+                    _game.PacketHandlerManager.sendPacket(peer, timer, Channel.CHL_S2C);
 
-                    var timer2 = new GameTimerUpdate(_game, gameTime); // 0xC2
-                    _game.PacketHandlerManager.SendPacket(peer, timer2, Channel.CHL_S2C);
+                    var timer2 = new GameTimerUpdate(gameTime); // 0xC2
+                    _game.PacketHandlerManager.sendPacket(peer, timer2, Channel.CHL_S2C);
 
                     return true;
                 }
@@ -106,13 +97,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.ObjectManager.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime / 1000.0f;
+                    float gameTime = _game.GameTime / 1000.0f;
 
-                    var timer = new GameTimer(_game, gameTime); // 0xC1
-                    _game.PacketHandlerManager.SendPacket(p.Item2.Peer, timer, Channel.CHL_S2C);
+                    var timer = new GameTimer(gameTime); // 0xC1
+                    _game.PacketHandlerManager.sendPacket(p.Item2.Peer, timer, Channel.CHL_S2C);
 
-                    var timer2 = new GameTimerUpdate(_game, gameTime); // 0xC2
-                    _game.PacketHandlerManager.SendPacket(p.Item2.Peer, timer2, Channel.CHL_S2C);
+                    var timer2 = new GameTimerUpdate(gameTime); // 0xC2
+                    _game.PacketHandlerManager.sendPacket(p.Item2.Peer, timer2, Channel.CHL_S2C);
                 }
             }
 

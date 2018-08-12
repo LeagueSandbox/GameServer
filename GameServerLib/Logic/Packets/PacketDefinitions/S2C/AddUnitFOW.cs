@@ -1,14 +1,15 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
-    public class AddUnitFow : BasePacket
+    public class AddUnitFOW : BasePacket
     {
-        public AddUnitFow(Game game, AttackableUnit u)
-            : base(game, PacketCmd.PKT_S2C_ADD_UNIT_FOW)
+        public AddUnitFOW(AttackableUnit u)
+            : base(PacketCmd.PKT_S2C_AddUnitFOW)
         {
-            WriteNetId(u);
+            buffer.Write((int)u.NetId);
         }
     }
 }

@@ -4,10 +4,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class GameTimerUpdate : BasePacket
     {
-        public GameTimerUpdate(Game game, float fTime)
-            : base(game, PacketCmd.PKT_S2C_GAME_TIMER_UPDATE, 0)
+        public GameTimerUpdate(float fTime)
+            : base(PacketCmd.PKT_S2C_GameTimerUpdate, 0)
         {
-            Write(fTime);
+            buffer.Write((float)fTime);
         }
     }
 }

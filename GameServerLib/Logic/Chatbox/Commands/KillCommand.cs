@@ -1,20 +1,24 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Core.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Players;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class KillCommand : ChatCommandBase
     {
+        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "kill";
         public override string Syntax => $"{Command} minions";
 
-        public KillCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public KillCommand(ChatCommandManager chatCommandManager, Game game, PlayerManager playerManager) 
+            : base(chatCommandManager)
         {
-            _playerManager = game.PlayerManager;
+            _game = game;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -28,12 +32,12 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
             else if (split[1] == "minions")
             {
-                var objects = Game.ObjectManager.GetObjects();
+                var objects = _game.ObjectManager.GetObjects();
                 foreach (var o in objects)
                 {
-                    if (o.Value is Minion minion)
+                    if (o.Value is Minion)
                     {
-                        minion.Die(_playerManager.GetPeerInfo(peer).Champion); // :(
+                        (o.Value as Minion).die(_playerManager.GetPeerInfo(peer).Champion); // :(
                     }
                 }
             }

@@ -6,35 +6,34 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class LevelPropAnimation : BasePacket
     {
-        public LevelPropAnimation(
-            Game game, 
-            LevelProp lp,
+        public LevelPropAnimation(LevelProp lp,
             string animationName,
             float unk1 = 0.0f,
             float animationTime = 0.0f,
             int unk2 = 1,
             int unk3 = 1,
             bool deletePropAfterAnimationFinishes = false)
-            : base(game, PacketCmd.PKT_S2C_LEVEL_PROP_ANIMATION)
+            : base(PacketCmd.PKT_S2C_LevelPropAnimation)
         {
-			WriteConstLengthString(animationName, 64);
+            buffer.Write(Encoding.Default.GetBytes(animationName));
+            buffer.fill(0, 64 - animationName.Length);
 
-            Write(unk1);
-            Write(animationTime);
+            buffer.Write((float)unk1);
+            buffer.Write((float)animationTime);
 
-            WriteNetId(lp);
+            buffer.Write((uint)lp.NetId);
 
-            Write(unk2);
-            Write(unk3);
+            buffer.Write((int)unk2);
+            buffer.Write((int)unk3);
 
             byte delete = 0x00;
             if (deletePropAfterAnimationFinishes)
             {
                 delete = 0x01;
             }
-            Write(delete); // Most likely deletes prop after animation ends when set to 1
-            Write((byte)0x00);
-            Write((byte)0x00);
+            buffer.Write((byte)delete); // Most likely deletes prop after animation ends when set to 1
+            buffer.Write((byte)0x00);
+            buffer.Write((byte)0x00);
         }
     }
 }

@@ -1,15 +1,15 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SwapItemsResponse : BasePacket
     {
-        public SwapItemsResponse(Game game, Champion c, byte slotFrom, byte slotTo)
-            : base(game, PacketCmd.PKT_S2C_SWAP_ITEMS, c.NetId)
+        public SwapItemsResponse(Champion c, byte slotFrom, byte slotTo)
+            : base(PacketCmd.PKT_S2C_SwapItems, c.NetId)
         {
-            Write(slotFrom);
-            Write(slotTo);
+            buffer.Write((byte)slotFrom);
+            buffer.Write((byte)slotTo);
         }
     }
 }

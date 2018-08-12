@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using ENet;
+﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Logic.Players
 {
     public class PlayerManager
     {
         private NetworkIdManager _networkIdManager;
-        private Game _game;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
         private int _currentId = 1;
@@ -19,15 +18,14 @@ namespace LeagueSandbox.GameServer.Logic.Players
             { TeamId.TEAM_PURPLE, 0 }
         };
 
-        public PlayerManager(Game game)
+        public PlayerManager(NetworkIdManager networkIdManager)
         {
-            _game = game;
-            _networkIdManager = game.NetworkIdManager;
+            _networkIdManager = networkIdManager;
         }
 
         private TeamId GetTeamIdFromConfig(PlayerConfig p)
         {
-            if (p.Team.ToLower().Equals("blue"))
+            if (p.Team.ToLower() == "blue")
             {
                 return TeamId.TEAM_BLUE;
             }
@@ -54,11 +52,11 @@ namespace LeagueSandbox.GameServer.Logic.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
-            var c = new Champion(_game, p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
+            var c = new Champion(p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();
-            c.SetPosition(pos.X, pos.Y);
+            c.setPosition(pos.X, pos.Y);
             c.LevelUp();
 
             player.Champion = c;

@@ -1,11 +1,11 @@
 ﻿using LeagueSandbox.GameServer.Logic.Enet;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public class Nexus : ObjAnimatedBuilding
     {
         public Nexus(
-            Game game,
             string model,
             TeamId team,
             int collisionRadius = 40,
@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(model, new BuildingStats(), collisionRadius, x, y, visionRadius, netId)
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;
@@ -21,18 +21,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             SetTeam(team);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void die(AttackableUnit killer)
         {
             _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(this);
         }
 
-        public override void SetToRemove()
+        public override void setToRemove()
         {
 
         }
 
-        public override float GetMoveSpeed()
+        public override float getMoveSpeed()
         {
             return 0;
         }

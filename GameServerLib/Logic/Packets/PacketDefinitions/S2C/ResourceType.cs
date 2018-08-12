@@ -4,10 +4,10 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class ResourceType : BasePacket
     {
-        public ResourceType(Game game, uint playernetid, byte resourceType)
-            : base(game, PacketCmd.PKT_S2C_RESOURCE_TYPE, playernetid)
+        public ResourceType(uint playernetid, byte resourceType)
+            : base(PacketCmd.PKT_S2C_ResourceType, playernetid)
         {
-            Write(resourceType);
+            buffer.Write((byte)resourceType);
         }
     }
 }

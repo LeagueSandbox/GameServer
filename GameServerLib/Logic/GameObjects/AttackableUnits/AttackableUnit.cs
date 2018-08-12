@@ -1,8 +1,9 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
@@ -12,41 +13,35 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        public Stats.Stats Stats { get; protected set; }
+        protected Stats Stats { get; }
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
-
         private string _model;
         public string Model
         {
-            get => _model;
+            get { return _model; }
             set
             {
                 _model = value;
                 IsModelUpdated = true;
             }
         }
-
-        protected Logger _logger;
+        protected Logger _logger = Program.ResolveDependency<Logger>();
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
-        public int MinionCounter { get; protected set; }
-        public Replication Replication { get; protected set; }
 
         public AttackableUnit(
-            Game game,
             string model,
-            Stats.Stats stats,
+            Stats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, x, y, collisionRadius, visionRadius, netId)
+        ) : base(x, y, collisionRadius, visionRadius, netId)
 
         {
-            _logger = game.Logger;
             Stats = stats;
             Model = model;
             CollisionRadius = 40;
@@ -65,27 +60,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             _game.ObjectManager.RemoveVisionUnit(this);
         }
 
-        public override void Update(float diff)
+        public Stats GetStats()
         {
-            base.Update(diff);
+            return Stats;
+        }
+
+        public override void update(float diff)
+        {
+            base.update(diff);
 
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
-            {
-                // update Stats (hpregen, manaregen) every 0.5 seconds
-                Stats.Update(_statUpdateTimer);
+            { // update Stats (hpregen, manaregen) every 0.5 seconds
+                Stats.update(_statUpdateTimer);
                 _statUpdateTimer -= 500;
             }
         }
 
-        public override float GetMoveSpeed()
+        public override float getMoveSpeed()
         {
             return Stats.MoveSpeed.Total;
         }
 
-        public virtual void Die(AttackableUnit killer)
+        public virtual void die(AttackableUnit killer)
         {
-            SetToRemove();
+            setToRemove();
             _game.ObjectManager.StopTargeting(this);
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
@@ -97,22 +96,50 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
             if (champs.Count > 0)
             {
-                var expPerChamp = exp / champs.Count;
+                float expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
                 {
-                    c.Stats.Experience += expPerChamp;
-                    _game.PacketNotifier.NotifyAddXp(c, expPerChamp);
+                    c.GetStats().Experience += expPerChamp;
+                    _game.PacketNotifier.NotifyAddXP(c, expPerChamp);
                 }
             }
 
-            if ((killer != null) && (killer is Champion))
+            if (killer != null)
             {
-                ((Champion)killer).OnKill(this);
+                var cKiller = killer as Champion;
+
+                if (cKiller == null)
+                    return;
+
+                var gold = _game.Map.MapGameScript.GetGoldFor(this);
+                if (gold <= 0)
+                {
+                    return;
+                }
+
+                cKiller.GetStats().Gold += gold;
+                _game.PacketNotifier.NotifyAddGold(cKiller, this, gold);
+
+                if (cKiller.KillDeathCounter < 0)
+                {
+                    cKiller.ChampionGoldFromMinions += gold;
+                    _logger.LogCoreInfo($"Adding gold form minions to reduce death spree: {cKiller.ChampionGoldFromMinions}");
+                }
+
+                if (cKiller.ChampionGoldFromMinions >= 50 && cKiller.KillDeathCounter < 0)
+                {
+                    cKiller.ChampionGoldFromMinions = 0;
+                    cKiller.KillDeathCounter += 1;
+                }
             }
-            IsDashing = false;
+
+            if (IsDashing)
+            {
+                IsDashing = false;
+            }
         }
 
-        public virtual bool IsInDistress()
+        public virtual bool isInDistress()
         {
             return false; //return DistressCause;
         }
@@ -122,18 +149,18 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         {
             float defense = 0;
             float regain = 0;
-            var attackerStats = attacker.Stats;
+            var attackerStats = attacker.GetStats();
 
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = Stats.Armor.Total;
+                    defense = GetStats().Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
                               attackerStats.ArmorPenetration.FlatBonus;
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = Stats.MagicPenetration.Total;
+                    defense = GetStats().MagicPenetration.Total;
                     defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
                               attackerStats.MagicPenetration.FlatBonus;
                     break;
@@ -160,19 +187,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
 
             //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            damage = defense >= 0 ? (100 / (100 + defense)) * damage : (2 - (100 / (100 - defense))) * damage;
 
-            ApiEventManager.OnUnitDamageTaken.Publish(this);
+            ApiEventManager.OnDamageTaken.Publish(this);
 
-            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
-            if (!IsDead && Stats.CurrentHealth <= 0)
+
+            GetStats().CurrentHealth = Math.Max(0.0f, GetStats().CurrentHealth - damage);
+            if (!IsDead && GetStats().CurrentHealth <= 0)
             {
                 IsDead = true;
-                Die(attacker);
+                die(attacker);
             }
 
+            ApiEventManager.OnDealDamage.Publish(attacker, this);
+
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
-            // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
 
             // Get health from lifesteal/spellvamp
@@ -180,7 +209,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             {
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * damage);
-                // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
@@ -197,75 +225,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             TakeDamage(attacker, damage, type, source, text);
         }
 
-        public bool GetIsTargetableToTeam(TeamId team)
+        public virtual void TakeDamageBySpell(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, Spell spell)
         {
-            if (!Stats.IsTargetable)
+            var text = DamageText.DAMAGE_TEXT_NORMAL;
+
+            if (isCrit)
             {
-                return false;
+                text = DamageText.DAMAGE_TEXT_CRITICAL;
             }
 
-            if (Team == team)
-            {
-                return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ALLY);
-            }
+            ApiEventManager.OnSpellHit.Publish(this, spell);
 
-            return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY);
-        }
-
-        public void SetIsTargetableToTeam(TeamId team, bool targetable)
-        {
-            if (team == Team)
-            {
-                if (!targetable)
-                {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
-                }
-                else
-                {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
-                }
-            }
-            else
-            {
-                if (!targetable)
-                {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
-                }
-                else
-                {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
-                }
-            }
+            TakeDamage(attacker, damage, type, source, text);
         }
     }
 
     public enum UnitAnnounces : byte
     {
-        DEATH = 0x04,
-        INHIBITOR_DESTROYED = 0x1F,
-        INHIBITOR_ABOUT_TO_SPAWN = 0x20,
-        INHIBITOR_SPAWNED = 0x21,
-        TURRET_DESTROYED = 0x24,
-        SUMMONER_DISCONNECTED = 0x47,
-        SUMMONER_RECONNECTED = 0x48
+        Death = 0x04,
+        InhibitorDestroyed = 0x1F,
+        InhibitorAboutToSpawn = 0x20,
+        InhibitorSpawned = 0x21,
+        TurretDestroyed = 0x24,
+        SummonerDisconnected = 0x47,
+        SummonerReconnected = 0x48
     }
 
     public enum ClassifyUnit
     {
-        CHAMPION_ATTACKING_CHAMPION = 1,
-        MINION_ATTACKING_CHAMPION = 2,
-        MINION_ATTACKING_MINION = 3,
-        TURRET_ATTACKING_MINION = 4,
-        CHAMPION_ATTACKING_MINION = 5,
-        PLACEABLE = 6,
-        MELEE_MINION = 7,
-        CASTER_MINION = 8,
-        SUPER_OR_CANNON_MINION = 9,
-        TURRET = 10,
-        CHAMPION = 11,
-        INHIBITOR = 12,
-        NEXUS = 13,
-        DEFAULT = 14
+        ChampionAttackingChampion = 1,
+        MinionAttackingChampion = 2,
+        MinionAttackingMinion = 3,
+        TurretAttackingMinion = 4,
+        ChampionAttackingMinion = 5,
+        Placeable = 6,
+        MeleeMinion = 7,
+        CasterMinion = 8,
+        SuperOrCannonMinion = 9,
+        Turret = 10,
+        Champion = 11,
+        Inhibitor = 12,
+        Nexus = 13,
+        Default = 14
     }
 
     public enum DamageType : byte
@@ -307,8 +308,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 
     public enum ShieldType : byte
     {
-        GREEN_SHIELD = 0x01,
-        MAGIC_SHIELD = 0x02,
-        NORMAL_SHIELD = 0x03
+        GreenShield = 0x01,
+        MagicShield = 0x02,
+        NormalShield = 0x03
     }
 }

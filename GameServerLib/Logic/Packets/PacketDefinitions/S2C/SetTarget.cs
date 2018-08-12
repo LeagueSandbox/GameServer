@@ -1,3 +1,4 @@
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
@@ -5,10 +6,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class SetTarget : BasePacket
     {
-        public SetTarget(Game game, AttackableUnit attacker, AttackableUnit attacked)
-            : base(game, PacketCmd.PKT_S2C_SET_TARGET, attacker.NetId)
+        public SetTarget(AttackableUnit attacker, AttackableUnit attacked)
+            : base(PacketCmd.PKT_S2C_SetTarget, attacker.NetId)
         {
-            WriteNetId(attacked);
+            if (attacked != null)
+            {
+                buffer.Write(attacked.NetId);
+            }
+            else
+            {
+                buffer.Write((int)0);
+            }
         }
     }
 }

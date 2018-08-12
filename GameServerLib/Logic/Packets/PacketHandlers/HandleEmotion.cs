@@ -1,4 +1,5 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -11,14 +12,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly PlayerManager _playerManager;
         private readonly Logger _logger;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
+        public override PacketCmd PacketType => PacketCmd.PKT_C2S_Emotion;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
-        public HandleEmotion(Game game)
+        public HandleEmotion(Game game, PlayerManager playerManager, Logger logger)
         {
             _game = game;
-            _playerManager = game.PlayerManager;
-            _logger = game.Logger;
+            _playerManager = playerManager;
+            _logger = logger;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -26,33 +27,33 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var emotion = new EmotionPacketRequest(data);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
-            switch (emotion.Id)
+            switch (emotion.id)
             {
-                case (byte)Emotions.DANCE:
+                case (byte)Emotions.Dance:
                     _logger.LogCoreInfo("Player " + playerName + " is dancing.");
                     break;
-                case (byte)Emotions.TAUNT:
+                case (byte)Emotions.Taunt:
                     _logger.LogCoreInfo("Player " + playerName + " is taunting.");
                     break;
-                case (byte)Emotions.LAUGH:
+                case (byte)Emotions.Laugh:
                     _logger.LogCoreInfo("Player " + playerName + " is laughing.");
                     break;
-                case (byte)Emotions.JOKE:
+                case (byte)Emotions.Joke:
                     _logger.LogCoreInfo("Player " + playerName + " is joking.");
                     break;
             }
 
-            var response = new EmotionPacketResponse(_game, emotion.Id, emotion.NetId);
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+            var response = new EmotionPacketResponse(emotion.id, emotion.netId);
+            return _game.PacketHandlerManager.broadcastPacket(response, Channel.CHL_S2C);
         }
     }
 
     //TODO: move to separate file
     public enum Emotions : byte
     {
-        DANCE = 0,
-        TAUNT = 1,
-        LAUGH = 2,
-        JOKE = 3
+        Dance = 0,
+        Taunt = 1,
+        Laugh = 2,
+        Joke = 3
     }
 }

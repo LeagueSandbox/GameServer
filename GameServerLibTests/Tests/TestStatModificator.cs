@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+﻿using System;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests
@@ -10,7 +11,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         public void TestStatModificator1()
         {
             //Create new stat modificator with all value to 0
-            var statModificator = new StatModifier();
+            var statModificator = new StatModifcator();
             //Test if not modificated
             Assert.IsFalse(statModificator.StatModified);
 

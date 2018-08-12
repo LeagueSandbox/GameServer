@@ -5,11 +5,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class WorldSendGameNumber : BasePacket
     {
-        public WorldSendGameNumber(Game game, long gameId, string name)
-            : base(game, PacketCmd.PKT_S2C_WORLD_SEND_GAME_NUMBER)
+        public WorldSendGameNumber(long gameId, string name)
+            : base(PacketCmd.PKT_S2C_World_SendGameNumber)
         {
-            Write(gameId);
-            WriteConstLengthString(name, 128);
+            var data = Encoding.Default.GetBytes(name);
+            buffer.Write((long)gameId);
+            foreach (var d in data)
+                buffer.Write((byte)d);
+            buffer.fill(0, 128 - data.Length);
         }
     }
 }

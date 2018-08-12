@@ -10,12 +10,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
         public abstract string Syntax { get; }
         public bool IsHidden { get; set; }
         public bool IsDisabled { get; set; }
-        protected Game Game { get; }
 
-        protected ChatCommandBase(ChatCommandManager chatCommandManager, Game game)
+        protected ChatCommandBase(ChatCommandManager chatCommandManager)
         {
             ChatCommandManager = chatCommandManager;
-            Game = game;
         }
 
         public abstract void Execute(Peer peer, bool hasReceivedArguments, string arguments = "");

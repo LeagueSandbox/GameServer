@@ -1,4 +1,6 @@
 ﻿using ENet;
+using LeagueSandbox.GameServer.Core.Logic;
+using static LeagueSandbox.GameServer.Logic.Chatbox.ChatCommandManager;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -6,21 +8,21 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
     {
         private const string COMMAND_PREFIX = "<font color =\"#E175FF\"><b>";
         private const string COMMAND_SUFFIX = "</b></font>, ";
+        private readonly Game _game;
 
         public override string Command => "help";
         public override string Syntax => $"{Command}";
 
-        public HelpCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public HelpCommand(ChatCommandManager chatCommandManager, Game game) : base(chatCommandManager)
         {
-
+            _game = game;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            if (!Game.Config.ChatCheatsEnabled)
+            if (!_game.Config.ChatCheatsEnabled)
             {
-                var msg = "[LS] Chat commands are disabled in this game.";
+                var msg = "Chat commands are disabled in this game.";
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);
                 return;
             }

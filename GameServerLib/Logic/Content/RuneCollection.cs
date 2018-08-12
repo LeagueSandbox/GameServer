@@ -4,16 +4,16 @@ namespace LeagueSandbox.GameServer.Logic.Content
 {
     public class RuneCollection
     {
-        public Dictionary<int, int> Runes { get; set; }
+        public Dictionary<int, int> _runes { get; set; }
 
         public RuneCollection()
         {
-            Runes = new Dictionary<int, int>();
+            _runes = new Dictionary<int, int>();
         }
 
         public void Add(int runeSlotId, int runeId)
         {
-            Runes.Add(runeSlotId, runeId);
+            _runes.Add(runeSlotId, runeId);
         }
     }
 }

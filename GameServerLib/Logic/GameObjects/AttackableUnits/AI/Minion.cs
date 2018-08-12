@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.API;
 
-namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
+namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
     public enum MinionSpawnPosition : uint
     {
@@ -14,7 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         SPAWN_RED_TOP = 0xe647d540,
         SPAWN_RED_BOT = 0x5ec9af40,
         SPAWN_RED_MID = 0xba00e840
-    }
+    };
 
     public enum MinionSpawnType : byte
     {
@@ -22,43 +21,40 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         MINION_TYPE_CASTER = 0x03,
         MINION_TYPE_CANNON = 0x02,
         MINION_TYPE_SUPER = 0x01
-    }
-    public class Minion : ObjAiBase
+    };
+    public class Minion : ObjAIBase
     {
         /// <summary>
         /// Const waypoints that define the minion's route
         /// </summary>
-        protected List<Vector2> _mainWaypoints;
-        protected int _curMainWaypoint;
+        protected List<Vector2> mainWaypoints;
+        protected int curMainWaypoint = 0;
         public MinionSpawnPosition SpawnPosition { get; private set; }
-        public MinionSpawnType MinionSpawnType { get; protected set; }
-        protected bool _aiPaused;
-
-        private int HitBox => 60;
+        protected MinionSpawnType minionType;
+        protected bool _AIPaused;
 
         public Minion(
-            Game game,
-            MinionSpawnType spawnType,
+            MinionSpawnType type,
             MinionSpawnPosition position,
             List<Vector2> mainWaypoints,
             uint netId = 0
-        ) : base(game, "", new Stats.Stats(), 40, 0, 0, 1100, netId)
+        ) : base("", new MinionStats(), 40, 0, 0, 1100, netId)
         {
-            MinionSpawnType = spawnType;
+            minionType = type;
             SpawnPosition = position;
-            _mainWaypoints = mainWaypoints;
-            _curMainWaypoint = 0;
-            _aiPaused = false;
+            this.mainWaypoints = mainWaypoints;
+            curMainWaypoint = 0;
+            _AIPaused = false;
 
             var spawnSpecifics = _game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
-            SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
+            setPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             // Set model
-            Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, spawnType);
-
+            Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, type);
+            
             // Fix issues induced by having an empty model string
             CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 
@@ -75,134 +71,135 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
-            Replication = new ReplicationMinion(this);
         }
 
         public Minion(
-            Game game,
-            MinionSpawnType spawnType,
+            MinionSpawnType type,
             MinionSpawnPosition position,
             uint netId = 0
-        ) : this(game, spawnType, position, new List<Vector2>(), netId)
+        ) : this(type, position, new List<Vector2>(), netId)
         {
 
         }
 
-        public void PauseAi(bool b)
+        public MinionSpawnType getType()
         {
-            _aiPaused = b;
+            return minionType;
         }
 
+        public void PauseAI(bool b)
+        {
+            _AIPaused = b;
+        }
         public override void OnAdded()
         {
             base.OnAdded();
             _game.PacketNotifier.NotifyMinionSpawned(this, Team);
         }
-
-        public override void Update(float diff)
+        public override void update(float diff)
         {
-            base.Update(diff);
+            base.update(diff);
 
             if (!IsDead)
             {
-                if (IsDashing || _aiPaused)
+                if (IsDashing || _AIPaused)
                 {
                     return;
                 }
 
-                if (ScanForTargets()) // returns true if we have a target
+                if (scanForTargets()) // returns true if we have a target
                 {
-                    KeepFocussingTarget(); // fight target
+                    keepFocussingTarget(); // fight target
                 }
                 else
                 {
-                    WalkToDestination(); // walk to destination (or target)
+                    walkToDestination(); // walk to destination 
                 }
             }
-
-            Replication.Update();
         }
 
-        public override void OnCollision(GameObject collider)
+        public override void onCollision(GameObject collider)
         {
-            if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
+            if (collider == TargetUnit) // If we're colliding with the target, don't do anything.
             {
                 return;
             }
 
-            if (collider.GetType() == typeof(Minion))
-            {
-                Vector2 newPos = new Vector2(X + 120, Y + 120);
-                if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
-                {
-                    newPos = new Vector2(X + 120, Y + 50);
-                }
-                try
-                {
-                    Move(250, newPos);
-                }
-                catch
-                {
-                    //Minion died
-                }
-            }
-
-            base.OnCollision(collider);
+            base.onCollision(collider);
         }
 
         // AI tasks
-        protected bool ScanForTargets()
+        protected bool scanForTargets()
         {
-            AttackableUnit nextTarget = null;
-            var nextTargetPriority = 14;
+            
+                AttackableUnit nextTarget = null;
+                var nextTargetPriority = 14;
 
-            var objects = _game.ObjectManager.GetObjects();
-            foreach (var it in objects)
-            {
-                var u = it.Value as AttackableUnit;
+                var _atabun = ApiFunctionManager.GetUnitsInRange(this, DETECT_RANGE, true);
 
-                // Targets have to be:
-                if (u == null ||                          // a unit
-                    u.IsDead ||                          // alive
-                    u.Team == Team ||                    // not on our team
-                    GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
-                    continue;                             // If not, look for something else
-
-                var priority = (int)ClassifyTarget(u);  // get the priority.
-                if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously
+                foreach (var it in _atabun)
                 {
-                    nextTarget = u;                // make him a potential target.
-                    nextTargetPriority = priority;
-                }
-            }
+                    if (it.Team != Team && _game.ObjectManager.TeamHasVisionOn(Team, it))
+                    {
 
-            if (nextTarget != null) // If we have a target
-            {
-                TargetUnit = nextTarget; // Set the new target and refresh waypoints
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
-                return true;
-            }
+                        var priority = (int)ClassifyTarget(it);  // get the priority.
+                        if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously
+                        {
+                            nextTarget = it;                // make him a potential target.
+                            nextTargetPriority = priority;
+                        }
+
+                    }
+                }
+
+                if (nextTarget != null) // If we have a target
+                {
+                    TargetUnit = nextTarget; // Set the new target and refresh waypoints
+                    _game.PacketNotifier.NotifySetTarget(this, nextTarget); // Take a look a that !!!
+                    return true;
+                }
+
+            _game.PacketNotifier.NotifyStopAutoAttack(this);
+            IsAttacking = false;
 
             return false;
+            
         }
 
-        protected void WalkToDestination()
+
+
+        protected void walkToDestination()
         {
-            if (_mainWaypoints.Count > _curMainWaypoint + 1)
+            
+            if (mainWaypoints.Count > curMainWaypoint + 1)
             {
-                if (Waypoints.Count == 1 || CurWaypoint == 2 && ++_curMainWaypoint < _mainWaypoints.Count)
+
+                if (Target == null)
                 {
-                    //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    var newWaypoints = new List<Vector2> { new Vector2(X, Y), _mainWaypoints[_curMainWaypoint] };
-                    SetWaypoints(newWaypoints);
+                    if ((Waypoints.Count == 1) || (CurWaypoint == 10 && curMainWaypoint + 1 < mainWaypoints.Count))
+                    {
+                        //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
+                        List<Vector2> newWaypoints = new List<Vector2> { new Vector2(X, Y), mainWaypoints[curMainWaypoint] };
+                        SetWaypoints(newWaypoints);
+                    }
+                    else
+                    if ((Waypoints.Count == 1) || (CurWaypoint == 2 && ++curMainWaypoint < mainWaypoints.Count))
+                    {
+                        //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
+                        List<Vector2> newWaypoints = new List<Vector2> { new Vector2(X, Y), mainWaypoints[curMainWaypoint] };
+                        SetWaypoints(newWaypoints);
+                    }
                 }
+
             }
+            
         }
 
-        protected void KeepFocussingTarget()
+
+
+        protected void keepFocussingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > DETECT_RANGE)) //Stats.Range.Total
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyStopAutoAttack(this);

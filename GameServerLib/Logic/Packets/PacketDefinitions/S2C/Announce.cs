@@ -1,19 +1,19 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class Announce : BasePacket
     {
-        public Announce(Game game, Announces messageId, int mapId = 0)
-            : base(game, PacketCmd.PKT_S2C_ANNOUNCE)
+        public Announce(Announces messageId, int mapId = 0)
+            : base(PacketCmd.PKT_S2C_Announce)
         {
-            Write((byte)messageId);
-            Write((long)0);
+            buffer.Write((byte)messageId);
+            buffer.Write((long)0);
 
             if (mapId > 0)
             {
-                Write((int)mapId);
+                buffer.Write(mapId);
             }
         }
     }

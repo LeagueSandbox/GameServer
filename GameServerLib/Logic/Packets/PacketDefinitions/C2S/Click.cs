@@ -5,20 +5,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
     public class Click
     {
-        private PacketCmd _cmd;
-        private int _netId;
-        public int Zero;
-        public uint TargetNetId; // netId on which the player clicked
+        PacketCmd cmd;
+        int netId;
+        public int zero;
+        public uint targetNetId; // netId on which the player clicked
 
         public Click(byte[] data)
         {
-            using (var reader = new BinaryReader(new MemoryStream(data)))
-            {
-                _cmd = (PacketCmd)reader.ReadByte();
-                _netId = reader.ReadInt32();
-                Zero = reader.ReadInt32();
-                TargetNetId = reader.ReadUInt32();
-            }
+            var reader = new BinaryReader(new MemoryStream(data));
+            cmd = (PacketCmd)reader.ReadByte();
+            netId = reader.ReadInt32();
+            zero = reader.ReadInt32();
+            targetNetId = reader.ReadUInt32();
         }
     }
 }

@@ -10,26 +10,24 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public override string Command => "xp";
         public override string Syntax => $"{Command} xp";
 
-        public XpCommand(ChatCommandManager chatCommandManager, Game game)
-            : base(chatCommandManager, game)
+        public XpCommand(ChatCommandManager chatCommandManager, PlayerManager playerManager)
+            : base(chatCommandManager)
         {
-            _playerManager = game.PlayerManager;
+            _playerManager = playerManager;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            float xp;
             if (split.Length < 2)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
-
-            if (float.TryParse(split[1], out var xp))
-            {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.Experience += xp;
-            }
+            if (float.TryParse(split[1], out xp))
+                _playerManager.GetPeerInfo(peer).Champion.GetStats().Experience = xp;
         }
     }
 }

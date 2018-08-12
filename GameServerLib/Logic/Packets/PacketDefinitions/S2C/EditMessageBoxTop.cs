@@ -5,12 +5,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
 {
     public class EditMessageBoxTop : BasePacket
     {
-        public EditMessageBoxTop(Game game, string message)
-            : base(game, PacketCmd.PKT_S2C_EDIT_MESSAGE_BOX_TOP)
+        public EditMessageBoxTop(string message) 
+            : base(PacketCmd.PKT_S2C_EditMessageBoxTop)
         {
             // The following structure might be incomplete or wrong
-            Write(message);
-            Write(0x00);
+            buffer.Write(Encoding.Default.GetBytes(message));
+            buffer.Write(0x00);
         }
     }
 }
