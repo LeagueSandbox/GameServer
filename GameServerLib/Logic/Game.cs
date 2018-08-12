@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic
         public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
         public PacketNotifier PacketNotifier { get; private set; }
-        public PacketHandlerManager PacketHandlerManager { get; private set; }
+        public IPacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -94,7 +94,7 @@ namespace LeagueSandbox.GameServer.Logic
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            PacketNotifier = new PacketNotifier(this);
+            PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid, PlayerManager, NetworkIdManager);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
@@ -163,8 +163,7 @@ namespace LeagueSandbox.GameServer.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
-                            .HandlePacket(null, new byte[0]);
+                        PacketHandlerManager.UnpauseGame();
                         _autoResumeCheck = true;
                     }
                     continue;
@@ -196,7 +195,7 @@ namespace LeagueSandbox.GameServer.Logic
             _nextSyncTime += diff;
             if (_nextSyncTime >= 10 * 1000)
             {
-                PacketNotifier.NotifyGameTimer();
+                PacketNotifier.NotifyGameTimer(GameTime);
                 _nextSyncTime = 0;
             }
         }

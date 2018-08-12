@@ -382,6 +382,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleScoreboard.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleStatsConfirm.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleUnpauseReq.cs" />
+    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandlerManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerBase.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\Pings.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\PacketHeader.cs" />

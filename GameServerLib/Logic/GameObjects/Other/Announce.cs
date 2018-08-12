@@ -19,7 +19,7 @@
 
         public void Execute()
         {
-            _game.PacketNotifier.NotifyAnnounceEvent(_messageId, _isMapSpecific);
+            _game.PacketNotifier.NotifyAnnounceEvent(_game.Map.Id, _messageId, _isMapSpecific);
             IsAnnounced = true;
         }
     }

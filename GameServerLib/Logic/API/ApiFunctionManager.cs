@@ -192,7 +192,6 @@ namespace LeagueSandbox.GameServer.Logic.API
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
-                    _game,
                     unit,
                     newTarget,
                     dashSpeed,
@@ -207,7 +206,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
-                    _game,
                     unit,
                     target,
                     dashSpeed,

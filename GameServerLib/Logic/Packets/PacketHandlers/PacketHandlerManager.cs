@@ -14,7 +14,7 @@ using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class PacketHandlerManager
+    public class PacketHandlerManager : IPacketHandlerManager
     {
         private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private readonly List<TeamId> _teamsEnumerator;
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
         }
 
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
+        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
         {
             var inst = GetInstances<PacketHandlerBase>(loadFrom, _game);
             var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return dict;
         }
 
-        public static List<T> GetInstances<T>(Assembly a, Game g)
+        private static List<T> GetInstances<T>(Assembly a, Game g)
         {
             return (Assembly.GetCallingAssembly()
                 .GetTypes()
@@ -89,25 +89,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             return null;
         }
+
         public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return SendPacket(peer, packet.GetBytes(), channelNo, flag);
         }
 
-        private IntPtr AllocMemory(byte[] data)
+        public void UnpauseGame()
         {
-            var unmanagedPointer = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, 0, unmanagedPointer, data.Length);
-            return unmanagedPointer;
+            GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
+                .HandlePacket(null, new byte[0]);
         }
 
-        private void ReleaseMemory(IntPtr ptr)
-        {
-            Marshal.FreeHGlobal(ptr);
-        }
-
-        public void PrintPacket(byte[] buffer, string str)
+        private void PrintPacket(byte[] buffer, string str)
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
