@@ -18,7 +18,7 @@ using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.An
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
-    public class PacketNotifier
+    public class PacketNotifier : IPacketNotifier
     {
         private readonly IPacketHandlerManager _packetHandlerManager;
         private readonly NavGrid _navGrid;

@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Logic
 
         public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
-        public PacketNotifier PacketNotifier { get; private set; }
+        public IPacketNotifier PacketNotifier { get; private set; }
         public IPacketHandlerManager PacketHandlerManager { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;

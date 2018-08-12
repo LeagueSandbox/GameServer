@@ -277,6 +277,7 @@
     <Compile Include="Logic\Logging\LoggerProvider.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\ObjectManager.cs" />
+    <Compile Include="Logic\Packets\IPacketNotifier.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />
     <Compile Include="Logic\Packets\PacketDefinitions\C2S\PingLoadInfoRequest.cs" />
