@@ -1,3 +1,4 @@
+You need to download place this (https://github.com/lilstav/GameServer) into [GameServer] to be able to use it.
 Project chat on Discord: https://discord.gg/Bz3znAM
 
 # Contributing
