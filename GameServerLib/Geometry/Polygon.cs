@@ -9,16 +9,10 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 /// </summary>
 public class Polygon
 {
-    #region Public Properties
-
     /// <summary>
     ///     Gets or sets the list of all points in the polygon.
     /// </summary>
     public List<Vector2> Points { get; set; } = new List<Vector2>();
-
-    #endregion
-
-    #region Public Methods and Operators
 
     /// <summary>
     ///     Converts Vector3 to 2D, then adds it to the points.
@@ -100,6 +94,4 @@ public class Polygon
         result.AddRange(Points.Select(point => new IntPoint((long)point.X, (long)point.Y)));
         return result;
     }
-
-    #endregion
 }

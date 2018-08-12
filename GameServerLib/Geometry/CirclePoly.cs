@@ -1,20 +1,25 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Numerics;
 /// <summary>
 ///     Represents a Circle <see cref="Polygon" />
 /// </summary>
 public class CirclePoly : Polygon
 {
-    #region Fields
+    /// <summary>
+    ///     Gets or sets the Center of the Circle.
+    /// </summary>
+    public Vector2 Center { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the Radius of Circle.
+    /// </summary>
+    public float Radius { get; set; }
+
     /// <summary>
     ///     Circle Quality
     /// </summary>
     private readonly int quality;
-    #endregion
 
-    #region Constructors and Destructors
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CirclePoly" /> class.
@@ -36,22 +41,7 @@ public class CirclePoly : Polygon
 
         UpdatePolygon();
     }
-    #endregion
 
-    #region Public Properties
-    /// <summary>
-    ///     Gets or sets the Center of the Circle.
-    /// </summary>
-    public Vector2 Center { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the Radius of Circle.
-    /// </summary>
-    public float Radius { get; set; }
-
-    #endregion
-
-    #region Public Methods and Operators
     /// <summary>
     ///     Updates the Polygon. Call this after changing something.
     /// </summary>
@@ -70,5 +60,4 @@ public class CirclePoly : Polygon
             Points.Add(point);
         }
     }
-    #endregion
 }
