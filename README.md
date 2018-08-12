@@ -1,4 +1,4 @@
-You need to download place this (https://github.com/lilstav/LeagueSandbox-Default) into [GameServer] to be able to use it.
+You need to download and place this (https://github.com/lilstav/LeagueSandbox-Default) into [GameServer] to be able to use it.
 
 Project chat on Discord: https://discord.gg/Bz3znAM
 
