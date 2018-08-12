@@ -387,16 +387,14 @@ namespace LeagueSandbox.GameServer.Logic
             try
             {
                 var enemyUnits = GetObjects();
-                foreach (var obj in enemyUnits)
-                {
-                    if(obj.Value is ObjAiBase aiBase)
-                    {
-                        if(aiBase != null && aiBase.Team != target.Team && aiBase.Team != TeamId.TEAM_NEUTRAL && !aiBase.IsDead && aiBase.TargetUnit != null && aiBase.TargetUnit == target)
-                        {
-                            count++;
-                        }
-                    }
-                }
+                var team = target.Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE;
+                count = enemyUnits.Count(x =>
+                    x.Value is ObjAiBase aiBase &&
+                    aiBase.Team == team &&
+                    aiBase.IsDead == false &&
+                    aiBase.TargetUnit != null &&
+                    aiBase.TargetUnit == target
+                );
             }
             catch (Exception ex)
             {

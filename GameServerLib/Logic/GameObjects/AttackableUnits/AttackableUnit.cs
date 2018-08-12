@@ -257,7 +257,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         PLACEABLE = 6,
         SUPER_OR_CANNON_MINION = 7,
         CASTER_MINION = 8,
-        MELEE_MINION = 9,        
+        MELEE_MINION = 9,
         TURRET = 10,
         CHAMPION = 11,
         INHIBITOR = 12,
