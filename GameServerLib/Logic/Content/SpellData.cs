@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Numerics;
+using GameServerCore.Logic.Domain;
 using LeagueSandbox.GameServer.Logic.Logging;
 using Newtonsoft.Json;
 
@@ -54,7 +55,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
     }
 
-    public class SpellData
+    public class SpellData : ISpellData
     {
         private readonly Game _game;
         private readonly ILogger _logger;

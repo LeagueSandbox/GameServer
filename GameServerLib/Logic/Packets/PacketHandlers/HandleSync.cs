@@ -1,6 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers

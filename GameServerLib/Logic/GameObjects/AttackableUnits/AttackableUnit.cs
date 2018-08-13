@@ -1,6 +1,8 @@
 ﻿using System;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.API;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
@@ -8,7 +10,7 @@ using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 {
-    public class AttackableUnit : GameObject
+    public class AttackableUnit : GameObject, IAttackableUnit
     {
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
@@ -34,6 +36,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
         public Replication Replication { get; protected set; }
+
+        IReplication IAttackableUnit.Replication => Replication;
+        IStats IAttackableUnit.Stats => Stats;
+        IInventoryManager IAttackableUnit.Inventory => Inventory;
 
         public AttackableUnit(
             Game game,
@@ -240,17 +246,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         }
     }
 
-    public enum UnitAnnounces : byte
-    {
-        DEATH = 0x04,
-        INHIBITOR_DESTROYED = 0x1F,
-        INHIBITOR_ABOUT_TO_SPAWN = 0x20,
-        INHIBITOR_SPAWNED = 0x21,
-        TURRET_DESTROYED = 0x24,
-        SUMMONER_DISCONNECTED = 0x47,
-        SUMMONER_RECONNECTED = 0x48
-    }
-
     public enum ClassifyUnit
     {
         CHAMPION_ATTACKING_CHAMPION = 1,
@@ -269,47 +264,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         DEFAULT = 14
     }
 
-    public enum DamageType : byte
-    {
-        DAMAGE_TYPE_PHYSICAL = 0x0,
-        DAMAGE_TYPE_MAGICAL = 0x1,
-        DAMAGE_TYPE_TRUE = 0x2
-    }
-
-    public enum DamageText : byte
-    {
-        DAMAGE_TEXT_INVULNERABLE = 0x0,
-        DAMAGE_TEXT_DODGE = 0x2,
-        DAMAGE_TEXT_CRITICAL = 0x3,
-        DAMAGE_TEXT_NORMAL = 0x4,
-        DAMAGE_TEXT_MISS = 0x5
-    }
-
     public enum DamageSource
     {
         DAMAGE_SOURCE_ATTACK,
         DAMAGE_SOURCE_SPELL,
         DAMAGE_SOURCE_SUMMONER_SPELL, // Ignite shouldn't destroy Banshee's
         DAMAGE_SOURCE_PASSIVE // Red/Thornmail shouldn't as well
-    }
-
-    public enum AttackType : byte
-    {
-        ATTACK_TYPE_RADIAL,
-        ATTACK_TYPE_MELEE,
-        ATTACK_TYPE_TARGETED
-    }
-
-    public enum MoveOrder
-    {
-        MOVE_ORDER_MOVE,
-        MOVE_ORDER_ATTACKMOVE
-    }
-
-    public enum ShieldType : byte
-    {
-        GREEN_SHIELD = 0x01,
-        MAGIC_SHIELD = 0x02,
-        NORMAL_SHIELD = 0x03
     }
 }

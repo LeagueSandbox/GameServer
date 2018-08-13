@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class LevelUp : BasePacket
     {
-        public LevelUp(Champion c)
+        public LevelUp(IChampion c)
             : base(PacketCmd.PKT_S2C_LEVEL_UP, c.NetId)
         {
             Write(c.Stats.Level);

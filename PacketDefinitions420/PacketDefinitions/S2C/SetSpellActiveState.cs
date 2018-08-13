@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SetSpellActiveState : BasePacket
     {
-        public SetSpellActiveState(AttackableUnit u, byte slot, byte state)
+        public SetSpellActiveState(IAttackableUnit u, byte slot, byte state)
             : base(PacketCmd.PKT_S2C_SET_SPELL_ACTIVE_STATE, u.NetId)
         {
             Write(slot);

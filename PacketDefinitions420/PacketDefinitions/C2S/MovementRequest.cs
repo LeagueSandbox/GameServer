@@ -1,5 +1,5 @@
 using System.IO;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
 using PacketDefinitions420.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.C2S

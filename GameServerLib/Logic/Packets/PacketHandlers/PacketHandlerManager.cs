@@ -5,12 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
+using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -184,13 +186,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return BroadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, Packet packet, Channel channelNo,
+        public bool BroadcastPacketVision(IGameObject o, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
+        public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var team in _teamsEnumerator)
@@ -200,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     continue;
                 }
 
-                if (_game.ObjectManager.TeamHasVisionOn(team, o))
+                if (_game.ObjectManager.TeamHasVisionOn(team, (GameObject)o))
                 {
                     BroadcastPacketTeam(team, data, channelNo, flag);
                 }

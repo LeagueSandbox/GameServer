@@ -1,13 +1,13 @@
 using System;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpawnParticle : BasePacket
     {
-        public SpawnParticle(NavGrid navGrid, Particle particle)
+        public SpawnParticle(INavGrid navGrid, IParticle particle)
             : base(PacketCmd.PKT_S2C_SPAWN_PARTICLE, particle.Owner.NetId)
         {
             Write((byte)1); // number of particles
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (particle.Target.IsSimpleTarget)
                 Write(0);
             else
-                WriteNetId(particle.Target as GameObject);
+                WriteNetId(particle.Target as IGameObject);
 
             Write(0); // unk
 

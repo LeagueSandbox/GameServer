@@ -1,31 +1,34 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
+using GameServerCore.Logic.Content;
+using GameServerCore;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using Vector2 = System.Numerics.Vector2;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
-    public class NavGrid
+    //TODO: use constructor and remove public setters
+    public class NavGrid : INavGrid
     {
-        public byte MajorVersion;
-        public short MinorVersion;
-        public Vector<float> MinGridPos;
-        public Vector<float> MaxGridPos;
-        public Vector<float> TranslationMaxGridPos;
-        public float CellSize;
-        public uint XCellCount;
-        public uint YCellCount;
-        public NavGridCell[] Cells; // XCellCount * YCellCount cells
-        public ushort[] CellFlags; // Version 7 change
-        public int XSampledHeightCount;
-        public int YSampledHeightCount;
-        public float DirectionX;
-        public float DirectionY;
-        public float OffsetX;
-        public float OffsetZ;
-        public float MapWidth;
-        public float MapHeight;
-        public Vector2 MiddleOfMap;
+        public byte MajorVersion { get; set; }
+        public short MinorVersion { get; set; }
+        public Vector<float> MinGridPos { get; set; }
+        public Vector<float> MaxGridPos { get; set; }
+        public Vector<float> TranslationMaxGridPos { get; set; }
+        public float CellSize { get; set; }
+        public uint XCellCount { get; set; }
+        public uint YCellCount { get; set; }
+        public NavGridCell[] Cells { get; set; } // XCellCount * YCellCount cells
+        public ushort[] CellFlags { get; set; } // Version 7 change
+        public int XSampledHeightCount { get; set; }
+        public int YSampledHeightCount { get; set; }
+        public float DirectionX { get; set; }
+        public float DirectionY { get; set; }
+        public float OffsetX { get; set; }
+        public float OffsetZ { get; set; }
+        public float MapWidth { get; set; }
+        public float MapHeight { get; set; }
+        public Vector2 MiddleOfMap { get; set; }
         public const float SCALE = 2f;
 
         public void CreateTranslation()
@@ -666,29 +669,6 @@ namespace LeagueSandbox.GameServer.Logic.Content
             grid.YCellCount = b.GetBinaryReader().ReadUInt32();
 
             return grid;
-        }
-    }
-
-    public class Vector<T> where T : struct
-    {
-        public T X;
-        public T Y;
-        public T Z;
-
-        public void ForceSize(int size)
-        {
-            if (size <= 2)
-            {
-                Z = default(T);
-            }
-            if (size <= 1)
-            {
-                Y = default(T);
-            }
-            if (size == 0)
-            {
-                X = default(T);
-            }
         }
     }
 }

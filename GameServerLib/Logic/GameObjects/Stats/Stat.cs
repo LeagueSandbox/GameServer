@@ -1,6 +1,8 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
+﻿using GameServerCore.Logic.Domain.GameObjects;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
-    public class Stat
+    public class Stat : IStat
     {
         private bool _modified;
         private float _baseValue;
@@ -15,12 +17,12 @@
             private set { _modified = value; }
         }
 
-        public float BaseBonus 
+        public float BaseBonus
         {
             get => _baseBonus;
             set
             {
-                Modified = true; 
+                Modified = true;
                 _baseBonus = value;
             }
         }
@@ -39,7 +41,7 @@
             get => _baseValue;
             set
             {
-                Modified = true; 
+                Modified = true;
                 _baseValue = value;
             }
         }
@@ -64,14 +66,14 @@
             }
         }
 
-        public float Total => ((BaseValue + BaseBonus) * (1+PercentBaseBonus) + FlatBonus) * (1 + PercentBonus);
+        public float Total => ((BaseValue + BaseBonus) * (1 + PercentBaseBonus) + FlatBonus) * (1 + PercentBonus);
 
         public Stat(float baseValue, float baseBonus, float percentBaseBonus, float flatBonus, float percentBonus)
         {
             _baseValue = baseValue;
             _baseBonus = baseBonus;
             _percentBaseBonus = percentBaseBonus;
-            _flatBonus  = flatBonus;
+            _flatBonus = flatBonus;
             _percentBonus = percentBonus;
             Modified = false;
         }
@@ -81,7 +83,7 @@
 
         }
 
-        public bool ApplyStatModificator(StatModifier statModifcator)
+        public bool ApplyStatModificator(IStatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
             {
@@ -95,7 +97,7 @@
             return true;
         }
 
-        public bool RemoveStatModificator(StatModifier statModifcator)
+        public bool RemoveStatModificator(IStatModifier statModifcator)
         {
             if (!statModifcator.StatModified)
             {
@@ -108,5 +110,5 @@
 
             return true;
         }
-   }
+    }
 }

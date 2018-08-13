@@ -4,6 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ENet;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Logic.Maps;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
@@ -19,7 +25,7 @@ using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Logic
 {
-    public class Game
+    public class Game : IGame
     {
         private Host _server;
         private ILogger _logger;
@@ -56,6 +62,8 @@ namespace LeagueSandbox.GameServer.Logic
         internal NetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
+
+        IMap IGame.Map => Map;
 
         private Stopwatch _lastMapDurationWatch;
 

@@ -1,18 +1,17 @@
 using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class UnitAnnounce : BasePacket
     {
-        public UnitAnnounce(UnitAnnounces id, AttackableUnit target, GameObject killer = null, List<Champion> assists = null)
+        public UnitAnnounce(UnitAnnounces id, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null)
             : base(PacketCmd.PKT_S2C_ANNOUNCE2, target.NetId)
         {
             if (assists == null)
-                assists = new List<Champion>();
+                assists = new List<IChampion>();
 
             Write((byte)id);
             if (killer != null)

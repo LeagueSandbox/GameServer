@@ -1,12 +1,12 @@
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class BuyItemResponse : BasePacket
     {
-        public BuyItemResponse(AttackableUnit actor, Item item, byte unk = 0x29)
+        public BuyItemResponse(IAttackableUnit actor, IItem item, byte unk = 0x29)
             : base(PacketCmd.PKT_S2C_BUY_ITEM_ANS, actor.NetId)
         {
             Write((int)item.ItemType.ItemId);

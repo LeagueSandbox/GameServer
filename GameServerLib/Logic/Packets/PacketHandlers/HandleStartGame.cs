@@ -1,4 +1,8 @@
 ﻿using ENet;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
+using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -87,7 +91,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
                 foreach (var p in _playerManager.GetPlayers())
                 {
-                    _game.ObjectManager.AddObject(p.Item2.Champion);
+                    _game.ObjectManager.AddObject((GameObject)p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;

@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SwapItemsResponse : BasePacket
     {
-        public SwapItemsResponse(Champion c, byte slotFrom, byte slotTo)
+        public SwapItemsResponse(IChampion c, byte slotFrom, byte slotTo)
             : base(PacketCmd.PKT_S2C_SWAP_ITEMS, c.NetId)
         {
             Write(slotFrom);

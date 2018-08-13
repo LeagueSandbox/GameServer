@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SetAnimation : BasePacket
     {
-        public SetAnimation(AttackableUnit u, List<string> animationPairs)
+        public SetAnimation(IAttackableUnit u, List<string> animationPairs)
             : base(PacketCmd.PKT_S2C_SET_ANIMATION, u.NetId)
         {
             Write((byte)(animationPairs.Count / 2));

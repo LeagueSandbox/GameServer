@@ -1,8 +1,8 @@
 using System.IO;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
 using PacketDefinitions420.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
+namespace PacketDefinitions420.PacketDefinitions.C2S
 {
     public class EmotionPacketRequest
     {

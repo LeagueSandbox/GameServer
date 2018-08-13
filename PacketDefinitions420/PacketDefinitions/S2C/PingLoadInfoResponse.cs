@@ -1,7 +1,6 @@
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class PingLoadInfoResponse : BasePacket
     {

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Content;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Content;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
+namespace PacketDefinitions420.PacketDefinitions
 {
     internal static class Movement
     {
@@ -28,7 +29,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
             }
         }
 
-        public static byte[] EncodeWaypoints(NavGrid navGrid, List<Vector2> waypoints)
+        public static byte[] EncodeWaypoints(INavGrid navGrid, List<Vector2> waypoints)
         {
             var mapSize = navGrid.GetSize();
             var numCoords = waypoints.Count * 2;

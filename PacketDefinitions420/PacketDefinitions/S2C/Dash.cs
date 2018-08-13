@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(NavGrid navGrid,
-            AttackableUnit u,
-            Target t,
+        public Dash(INavGrid navGrid,
+            IAttackableUnit u,
+            ITarget t,
             float dashSpeed,
             bool keepFacingLastDirection,
             float leapHeight = 0.0f,
@@ -37,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             }
             else
             {
-                WriteNetId(t as GameObject);
+                WriteNetId(t as IGameObject);
             }
 
             Write(followTargetMaxDistance);

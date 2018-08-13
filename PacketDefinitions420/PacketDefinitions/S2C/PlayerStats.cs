@@ -1,16 +1,15 @@
-﻿using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     class PlayerStats : BasePacket
     {
-        public PlayerStats(Champion player)
+        public PlayerStats(IChampion player)
             : base(PacketCmd.PKT_S2C_PLAYER_STATS, player.NetId)
         {
             // get the stats and writes the packet
-            byte[] stats = ChampionStats.GetBytes(player.ChampStats);
+            byte[] stats = player.ChampStats.GetBytes();
             Write(stats.Length);
             Write(stats);
 

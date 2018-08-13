@@ -1,12 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class InhibitorDeathAnimation : BasePacket
     {
-        public InhibitorDeathAnimation(Inhibitor inhi, GameObject killer)
+        public InhibitorDeathAnimation(IInhibitor inhi, IGameObject killer)
             : base(PacketCmd.PKT_S2C_INHIBITOR_DEATH_ANIMATION, inhi.NetId)
         {
             WriteNetId(killer);

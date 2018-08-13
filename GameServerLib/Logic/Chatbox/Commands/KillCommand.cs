@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 {
                     if (o.Value is Minion minion)
                     {
-                        minion.Die(_playerManager.GetPeerInfo(peer).Champion); // :(
+                        minion.Die((Champion)_playerManager.GetPeerInfo(peer).Champion); // :(
                     }
                 }
             }

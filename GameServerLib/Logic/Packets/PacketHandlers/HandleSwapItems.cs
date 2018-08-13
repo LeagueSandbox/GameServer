@@ -1,5 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             }
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
-            _playerManager.GetPeerInfo(peer).Champion.GetInventory().SwapItems(request.SlotFrom, request.SlotTo);
+            _playerManager.GetPeerInfo(peer).Champion.Inventory.SwapItems(request.SlotFrom, request.SlotTo);
             _game.PacketNotifier.NotifyItemsSwapped(
                 _playerManager.GetPeerInfo(peer).Champion,
                 request.SlotFrom,

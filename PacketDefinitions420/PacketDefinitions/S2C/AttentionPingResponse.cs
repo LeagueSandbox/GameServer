@@ -1,8 +1,8 @@
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Enet;
+using GameServerCore.Packets.Enums;
+using PacketDefinitions420.PacketDefinitions.C2S;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class AttentionPingResponse : BasePacket
     {

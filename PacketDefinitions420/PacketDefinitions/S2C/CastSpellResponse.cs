@@ -1,13 +1,13 @@
 using System;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class CastSpellResponse : BasePacket
     {
-        public CastSpellResponse(NavGrid navGrid, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
+        public CastSpellResponse(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
             : base(PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
         {
             Write(Environment.TickCount); // syncID

@@ -1,4 +1,6 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
+﻿using GameServerCore.Logic.Enums;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
     public class Announce
     {
@@ -22,13 +24,5 @@
             _game.PacketNotifier.NotifyAnnounceEvent(_game.Map.Id, _messageId, _isMapSpecific);
             IsAnnounced = true;
         }
-    }
-
-    public enum Announces : byte
-    {
-        WELCOME_TO_SR = 0x77,
-        THIRY_SECONDS_TO_MINIONS_SPAWN = 0x78,
-        MINIONS_HAVE_SPAWNED = 0x7F,
-        MINIONS_HAVE_SPAWNED2 = 0x76
     }
 }

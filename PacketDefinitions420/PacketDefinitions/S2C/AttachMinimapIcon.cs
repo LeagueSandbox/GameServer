@@ -1,13 +1,11 @@
-using System.IO;
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class AttachMinimapIcon : BasePacket
     {
-        public AttachMinimapIcon(AttackableUnit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
+        public AttachMinimapIcon(IAttackableUnit unit, byte unk1, string iconName, byte unk2, string unk3, string unk4)
             : base(PacketCmd.PKT_S2C_ATTACH_MINIMAP_ICON)
         {
             WriteNetId(unit);

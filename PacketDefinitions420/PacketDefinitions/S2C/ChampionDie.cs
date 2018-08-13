@@ -1,12 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class ChampionDie : BasePacket
     {
-        public ChampionDie(Champion die, AttackableUnit killer, int goldFromKill)
+        public ChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill)
             : base(PacketCmd.PKT_S2C_CHAMPION_DIE, die.NetId)
         {
             Write((int)goldFromKill); // Gold from kill?

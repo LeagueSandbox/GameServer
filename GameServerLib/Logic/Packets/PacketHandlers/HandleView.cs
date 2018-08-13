@@ -1,4 +1,6 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {

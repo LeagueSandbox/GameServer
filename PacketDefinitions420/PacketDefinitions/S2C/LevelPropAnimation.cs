@@ -1,13 +1,12 @@
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class LevelPropAnimation : BasePacket
     {
         public LevelPropAnimation(
-            LevelProp lp,
+            ILevelProp lp,
             string animationName,
             float unk1 = 0.0f,
             float animationTime = 0.0f,

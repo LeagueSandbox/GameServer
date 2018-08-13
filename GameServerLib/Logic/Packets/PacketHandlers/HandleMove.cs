@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using ENet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -58,24 +61,24 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    peerInfo.Champion.MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
+                    peerInfo.Champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     break;
                 case MoveType.MOVE:
-                    peerInfo.Champion.MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
+                    peerInfo.Champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
                     break;
             }
 
             vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
             peerInfo.Champion.SetWaypoints(vMoves);
 
-            var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as AttackableUnit;
+            var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as IAttackableUnit;
             if (u == null)
             {
-                peerInfo.Champion.TargetUnit = null;
+                peerInfo.Champion.UpdateTargetUnit(null);
                 return true;
             }
 
-            peerInfo.Champion.TargetUnit = u;
+            peerInfo.Champion.UpdateTargetUnit(u);
 
             return true;
         }

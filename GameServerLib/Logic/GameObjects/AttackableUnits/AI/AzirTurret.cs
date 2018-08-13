@@ -1,10 +1,13 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public class AzirTurret : BaseTurret
+    public class AzirTurret : BaseTurret, IAzirTurret
     {
         public AttackableUnit Owner { get; private set; }
+
+        IAttackableUnit IAzirTurret.Owner => Owner;
 
         public AzirTurret(
             Game game,

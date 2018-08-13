@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
@@ -11,7 +12,7 @@ using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class GameObject : Target
+    public class GameObject : Target, IGameObject
     {
         public uint NetId { get; private set; }
         protected float _xvector, _yvector;
@@ -48,6 +49,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
+
+        ITarget IGameObject.Target => Target;
 
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {

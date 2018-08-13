@@ -1,6 +1,7 @@
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.PacketDefinitions;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions
+namespace PacketDefinitions420.PacketDefinitions
 {
     public abstract class BasePacket : Packet
     {

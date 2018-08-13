@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class ExplodeNexus : BasePacket
     {
-        public ExplodeNexus(Nexus nexus)
+        public ExplodeNexus(INexus nexus)
             : base(PacketCmd.PKT_S2C_EXPLODE_NEXUS, nexus.NetId)
         {
             // animation ID?

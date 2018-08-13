@@ -1,12 +1,11 @@
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpellAnimation : BasePacket
     {
-        public SpellAnimation(AttackableUnit u, string animationName)
+        public SpellAnimation(IAttackableUnit u, string animationName)
             : base(PacketCmd.PKT_S2C_SPELL_ANIMATION, u.NetId)
         {
             Write((byte)0xC4); // unk  <--

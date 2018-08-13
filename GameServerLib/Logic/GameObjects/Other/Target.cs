@@ -1,9 +1,10 @@
-﻿using System;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using System;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
-    public class Target
+    public class Target : ITarget
     {
         public float X { get; protected set; }
         public float Y { get; protected set; }

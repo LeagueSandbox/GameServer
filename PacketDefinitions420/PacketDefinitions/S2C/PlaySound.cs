@@ -1,12 +1,11 @@
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class PlaySound : BasePacket
     {
-        public PlaySound(AttackableUnit unit, string soundName)
+        public PlaySound(IAttackableUnit unit, string soundName)
             : base(PacketCmd.PKT_S2C_PLAY_SOUND, unit.NetId)
         {
 			WriteConstLengthString(soundName, 1024);

@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+using GameServerCore.Logic.Enums;
+
+namespace GameServerCore.Logic.Domain.GameObjects
+{
+    public interface IGameObject : ITarget
+    {
+        uint NetId { get; }
+        ITarget Target { get; }
+        List<Vector2> Waypoints { get; }
+        int CurWaypoint { get; }
+        TeamId Team { get; }
+        int AttackerCount { get; }
+        float CollisionRadius { get; }
+        float VisionRadius { get; }
+        bool IsDashing { get; }
+
+        float GetZ();
+        float GetMoveSpeed();
+        void SetPosition(float x, float y);
+        void SetWaypoints(List<Vector2> newWaypoints);
+        void SetTeam(TeamId team);
+    }
+}

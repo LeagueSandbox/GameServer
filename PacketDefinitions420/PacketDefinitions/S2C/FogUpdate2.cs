@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class FogUpdate2 : BasePacket
     {
-        public FogUpdate2(AttackableUnit unit, NetworkIdManager idManager) 
+        public FogUpdate2(IAttackableUnit unit, uint newFogId)
             : base(PacketCmd.PKT_S2C_FOG_UPDATE2, 0)
         {
             Write((int)unit.Team);
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             Write((byte)0xFF);
             Write(0);
             WriteNetId(unit); // Fog Attached, when unit dies it disappears
-            Write(idManager.GetNewNetId()); //Fog NetID
+            Write(newFogId); //Fog NetID
             Write(0);
             Write(unit.X);
             Write(unit.Y);

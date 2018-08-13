@@ -1,4 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
+using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -24,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             var request = _packetReader.ReadSellItemRequest(data);
             var client = _playerManager.GetPeerInfo(peer);
 
-            var i = _playerManager.GetPeerInfo(peer).Champion.GetInventory().GetItem(request.SlotId);
+            var i = _playerManager.GetPeerInfo(peer).Champion.Inventory.GetItem(request.SlotId) as Item;
             if (i == null)
             {
                 return false;
@@ -39,13 +42,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
-                    client.Champion.GetInventory().RemoveItem(request.SlotId);
+                    client.Champion.Inventory.RemoveItem(request.SlotId);
                 }
             }
             else
             {
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, 0);
-                client.Champion.GetInventory().RemoveItem(request.SlotId);
+                client.Champion.Inventory.RemoveItem(request.SlotId);
             }
 
             client.Champion.Stats.RemoveModifier(i.ItemType);

@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packets", "Packets", "{2576
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketDefinitions420", "PacketDefinitions420\PacketDefinitions420.csproj", "{0B60B297-306B-4317-866A-6DD70A113074}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerCore", "GameServerCore\GameServerCore.csproj", "{DA3DE633-D75B-40B0-8833-099ABFBF43A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{0B60B297-306B-4317-866A-6DD70A113074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B60B297-306B-4317-866A-6DD70A113074}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B60B297-306B-4317-866A-6DD70A113074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,15 +1,21 @@
 ﻿using System;
+using GameServerCore.Logic.Domain;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
-    public abstract class Replication
+    public abstract class Replication : IReplication
     {
-        public class Replicate
+        public class Replicate : IReplicate
         {
             public uint Value { get; set; }
             public bool IsFloat { get; set; }
             public bool Changed { get; set; }
+
+            public void MarkAsUnchanged()
+            {
+                Changed = false;
+            }
         }
 
         protected Replication(AttackableUnit owner)
@@ -23,7 +29,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 
         public uint NetId => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
-        public bool Changed { get; set; }
+        public bool Changed { get; private set; }
+
+        IReplicate[,] IReplication.Values => Values;
 
         private void DoUpdate(uint value, int primary, int secondary, bool isFloat)
         {
@@ -64,6 +72,16 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
         protected void UpdateFloat(float value, int primary, int secondary)
         {
             DoUpdate(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0), primary, secondary, true);
+        }
+
+        public void MarkAsUnchanged()
+        {
+            foreach (var x in Values)
+            {
+                x?.MarkAsUnchanged();
+            }
+
+            Changed = false;
         }
 
         public abstract void Update();

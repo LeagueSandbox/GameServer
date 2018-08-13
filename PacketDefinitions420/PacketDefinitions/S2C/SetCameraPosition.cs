@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SetCameraPosition : BasePacket
     {
-        public SetCameraPosition(Champion champ, float x, float y, float z)
+        public SetCameraPosition(IChampion champ, float x, float y, float z)
             : base(PacketCmd.PKT_S2C_SET_CAMERA_POSITION, champ.NetId)
         {
             Write(x);

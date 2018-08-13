@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SetItemStacks2 : BasePacket
     {
-        public SetItemStacks2(AttackableUnit unit, byte slot, byte stack)
+        public SetItemStacks2(IAttackableUnit unit, byte slot, byte stack)
             : base(PacketCmd.PKT_S2C_SET_ITEM_STACKS2, unit.NetId)
         {
             Write(slot);

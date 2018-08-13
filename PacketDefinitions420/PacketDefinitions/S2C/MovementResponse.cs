@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(NavGrid navGrid, GameObject obj)
-            : this(navGrid, new List<GameObject> { obj })
+        public MovementResponse(INavGrid navGrid, IGameObject obj)
+            : this(navGrid, new List<IGameObject> { obj })
         {
 
         }
 
-        public MovementResponse(NavGrid navGrid, List<GameObject> actors)
+        public MovementResponse(INavGrid navGrid, List<IGameObject> actors)
             : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
             Write(Environment.TickCount); // syncID

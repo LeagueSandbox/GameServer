@@ -1,5 +1,7 @@
 ﻿using System.Timers;
 using ENet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -26,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            Champion unpauser = null;
+            IChampion unpauser = null;
             if (peer != null)
             {
                 unpauser = _playerManager.GetPeerInfo(peer).Champion;

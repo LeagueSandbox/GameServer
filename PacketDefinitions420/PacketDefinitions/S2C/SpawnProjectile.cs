@@ -1,14 +1,12 @@
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpawnProjectile : BasePacket
     {
-        public SpawnProjectile(NavGrid navGrid, Projectile p)
+        public SpawnProjectile(INavGrid navGrid, IProjectile p)
             : base(PacketCmd.PKT_S2C_SPAWN_PROJECTILE, p.NetId)
         {
             var targetZ = navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
@@ -55,8 +53,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             WriteNetId(p.Owner);
             WriteNetId(p.Owner);
 
-            var c = p.Owner as Champion;
-            if (c != null)
+            if (p.Owner is IChampion c)
             {
                 Write(c.GetChampionHash());
             }
@@ -75,7 +72,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
             if (!p.Target.IsSimpleTarget)
             {
                 Write((byte)0x01); // numTargets
-                WriteNetId(p.Target as AttackableUnit);
+                WriteNetId(p.Target as IAttackableUnit);
                 Write((byte)0); // hitResult
             }
             else

@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class ForceTargetSpell : BasePacket
     {
-        public ForceTargetSpell(AttackableUnit u, byte slot, float time)
+        public ForceTargetSpell(IAttackableUnit u, byte slot, float time)
             : base(PacketCmd.PKT_S2C_FORCE_TARGET_SPELL, u.NetId)
         {
             Write(slot);

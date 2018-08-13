@@ -1,8 +1,9 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
-    public class Nexus : ObjAnimatedBuilding
+    public class Nexus : ObjAnimatedBuilding, INexus
     {
         public Nexus(
             Game game,
@@ -25,7 +26,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
         {
             var cameraPosition = _game.Map.MapGameScript.GetEndGameCameraPosition(Team);
             _game.Stop();
-            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this);
+            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
             _game.SetGameToExit();
         }
 

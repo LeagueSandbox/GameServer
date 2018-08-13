@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class InhibitorStateUpdate : BasePacket
     {
-        public InhibitorStateUpdate(Inhibitor inhi)
+        public InhibitorStateUpdate(IInhibitor inhi)
             : base(PacketCmd.PKT_S2C_INHIBITOR_STATE, inhi.NetId)
         {
             Write((byte)inhi.InhibitorState);

@@ -1,6 +1,7 @@
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.PacketDefinitions;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class AfkWarningWindow : Packet
     {

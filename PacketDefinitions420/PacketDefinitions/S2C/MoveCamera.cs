@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class MoveCamera : BasePacket
     {
-        public MoveCamera(Champion champ, float x, float y, float z, float seconds)
+        public MoveCamera(IChampion champ, float x, float y, float z, float seconds)
             : base(PacketCmd.PKT_S2C_MOVE_CAMERA, champ.NetId)
         {
             // Unk, if somebody figures out let @horato know

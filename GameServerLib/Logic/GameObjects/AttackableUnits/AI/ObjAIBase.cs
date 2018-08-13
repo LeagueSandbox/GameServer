@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -13,7 +16,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public class ObjAiBase : AttackableUnit
+    public class ObjAiBase : AttackableUnit, IObjAiBase
     {
         private Buff[] AppliedBuffs { get; }
         private List<BuffGameScriptController> BuffGameScriptControllers { get; }
@@ -43,6 +46,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public MoveOrder MoveOrder { get; set; }
         public bool IsCastingSpell { get; set; }
         public bool IsMelee { get; set; }
+
+        IAttackableUnit IObjAiBase.TargetUnit => TargetUnit;
+        IAttackableUnit IObjAiBase.AutoAttackTarget => AutoAttackTarget;
+
         private Random _random = new Random();
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
@@ -554,6 +561,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 var onCollide = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider as AttackableUnit);
             }
+        }
+
+        /// <summary> TODO: Probably not the best place to have this, but still better than packet notifier </summary>
+        public void TeleportTo(float x, float y)
+        {
+            // Can't teleport to this point of the map
+            if (!_game.Map.NavGrid.IsWalkable(x, y))
+            {
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, X);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, Y);
+            }
+            else
+            {
+                SetPosition(x, y);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, x);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, y);
+            }
+
+            _game.PacketNotifier.NotifyTeleport(this, x, y);
+        }
+
+        public void UpdateTargetUnit(IAttackableUnit unit)
+        {
+            TargetUnit = (AttackableUnit)unit;
         }
     }
 }

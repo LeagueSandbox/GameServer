@@ -1,4 +1,5 @@
 ﻿using ENet;
+using GameServerCore;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
@@ -31,7 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 return;
             }
 
-            var team = CustomConvert.ToTeamId(t);
+            var team = t.ToTeamId();
             _playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
         }
     }

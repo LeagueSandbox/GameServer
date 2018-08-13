@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class ChampionRespawn : BasePacket
     {
-        public ChampionRespawn(Champion c) :
+        public ChampionRespawn(IChampion c) :
             base(PacketCmd.PKT_S2C_CHAMPION_RESPAWN, c.NetId)
         {
             Write((float)c.X);

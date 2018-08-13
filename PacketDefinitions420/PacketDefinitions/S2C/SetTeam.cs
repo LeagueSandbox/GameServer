@@ -1,12 +1,12 @@
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SetTeam : BasePacket
     {
-        public SetTeam(AttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SET_TEAM)
+        public SetTeam(IAttackableUnit unit, TeamId team) : base(PacketCmd.PKT_S2C_SET_TEAM)
         {
             WriteNetId(unit);
             Write((int)team);

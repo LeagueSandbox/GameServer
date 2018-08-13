@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.Enums;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using PacketDefinitions420.Enums;
-using AttentionPingRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.AttentionPingRequest;
-using BuyItemRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.BuyItemRequest;
-using CastSpellRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.CastSpellRequest;
-using EmotionPacketRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.EmotionPacketRequest;
-using KeyCheckRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.KeyCheckRequest;
-using MovementRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.MovementRequest;
-using PingLoadInfoRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
-using SkillUpRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.SkillUpRequest;
-using SwapItemsRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.SwapItemsRequest;
-using SynchVersionRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.SynchVersionRequest;
-using ViewRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.ViewRequest;
+using PacketDefinitions420.PacketDefinitions.C2S;
+using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;
+using BuyItemRequest = GameServerCore.Packets.PacketDefinitions.Requests.BuyItemRequest;
+using CastSpellRequest = GameServerCore.Packets.PacketDefinitions.Requests.CastSpellRequest;
+using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.EmotionPacketRequest;
+using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
+using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
+using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
+using SkillUpRequest = GameServerCore.Packets.PacketDefinitions.Requests.SkillUpRequest;
+using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
+using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
+using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 
 namespace PacketDefinitions420
 {
@@ -27,13 +26,13 @@ namespace PacketDefinitions420
     {
         public SwapItemsRequest ReadSwapItemsRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.SwapItemsRequest(data);
+            var rq = new PacketDefinitions.C2S.SwapItemsRequest(data);
             return new SwapItemsRequest(rq.NetId, rq.SlotFrom, rq.SlotTo);
         }
 
         public AttentionPingRequest ReadAttentionPingRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.AttentionPingRequest(data);
+            var rq = new PacketDefinitions.C2S.AttentionPingRequest(data);
             return new AttentionPingRequest(rq.X, rq.Y, rq.TargetNetId, rq.Type);
         }
 
@@ -51,13 +50,13 @@ namespace PacketDefinitions420
 
         public BuyItemRequest ReadBuyItemRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.BuyItemRequest(data);
+            var rq = new PacketDefinitions.C2S.BuyItemRequest(data);
             return new BuyItemRequest(rq.NetId, rq.Id);
         }
 
         public CastSpellRequest ReadCastSpellRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.CastSpellRequest(data);
+            var rq = new PacketDefinitions.C2S.CastSpellRequest(data);
             return new CastSpellRequest(rq.NetId, rq.SpellSlot, rq.X, rq.Y, rq.X2, rq.Y2, rq.TargetNetId);
         }
 
@@ -81,7 +80,7 @@ namespace PacketDefinitions420
 
         public EmotionPacketRequest ReadEmotionPacketRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.EmotionPacketRequest(data);
+            var rq = new PacketDefinitions.C2S.EmotionPacketRequest(data);
 
             // Convert packet emotion type to server emotion type
             // This is done so that when emotion ID changes in other packet versions, its functionality remains the same on server
@@ -116,13 +115,13 @@ namespace PacketDefinitions420
 
         public KeyCheckRequest ReadKeyCheckRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.KeyCheckRequest(data);
+            var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
             return new KeyCheckRequest(rq.PlayerNo, rq.UserId, rq.VersionNo, rq.CheckId);
         }
 
         public PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.PingLoadInfoRequest(data);
+            var rq = new PacketDefinitions.C2S.PingLoadInfoRequest(data);
             return new PingLoadInfoRequest(rq.NetId, rq.Position, rq.UserId, rq.Loaded, rq.Unk2, rq.Ping, rq.Unk3,
                 rq.Unk4);
         }
@@ -164,7 +163,7 @@ namespace PacketDefinitions420
 
         public ViewRequest ReadViewRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.ViewRequest(data);
+            var rq = new PacketDefinitions.C2S.ViewRequest(data);
             return new ViewRequest(rq.NetId, rq.X, rq.Zoom, rq.Y, rq.Y2, rq.Width, rq.Height, rq.Unk2, rq.RequestNo);
         }
 
@@ -176,7 +175,7 @@ namespace PacketDefinitions420
 
         public SkillUpRequest ReadSkillUpRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.SkillUpRequest(data);
+            var rq = new PacketDefinitions.C2S.SkillUpRequest(data);
             return new SkillUpRequest(rq.NetId, rq.Skill);
         }
 
@@ -188,7 +187,7 @@ namespace PacketDefinitions420
 
         public SynchVersionRequest ReadSynchVersionRequest(byte[] data)
         {
-            var rq = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S.SynchVersionRequest(data);
+            var rq = new PacketDefinitions.C2S.SynchVersionRequest(data);
             return new SynchVersionRequest(rq.NetId, rq.Unk1, rq.Version);
         }
     }

@@ -2,7 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
     {
         private readonly PlayerManager _playerManager;
 
-        private Champion _me;
+        private IChampion _me;
         private bool _run;
         private float _a = 0.5f;
         private float _speed = 0.25f;

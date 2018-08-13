@@ -1,14 +1,15 @@
 using System;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class MinionSpawn : BasePacket
     {
-        public MinionSpawn(NavGrid navGrid, Minion m)
+        public MinionSpawn(INavGrid navGrid, IMinion m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Write((uint)0x00150017); // unk

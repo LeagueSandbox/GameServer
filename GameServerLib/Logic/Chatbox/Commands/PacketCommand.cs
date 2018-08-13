@@ -1,8 +1,9 @@
 ﻿using System;
 using ENet;
+using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
+using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {

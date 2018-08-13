@@ -1,6 +1,8 @@
 ﻿using ENet;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
@@ -47,7 +49,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var peerInfo = _playerManager.GetPeerInfo(peer);
             var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
-            var itemInstance = peerInfo.Champion.GetInventory().SetExtraItem(7, bluePill);
+            var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
             _packetNotifier.NotifyBuyItem(peer, peerInfo.Champion, itemInstance);
 
@@ -56,7 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             foreach (var rune in peerInfo.Champion.RuneList.Runes)
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
-                var newRune = peerInfo.Champion.GetInventory().SetExtraItem(runeItemSlot, runeItem);
+                var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
                 _playerManager.GetPeerInfo(peer).Champion.Stats.AddModifier(runeItem);
                 runeItemSlot++;
             }
@@ -78,7 +80,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _packetNotifier.NotifyTurretSpawn(peer, turret);
 
                     // Fog Of War
-                    _packetNotifier.NotifyFogUpdate2(turret);
+                    _packetNotifier.NotifyFogUpdate2(turret, _networkIdManager.GetNewNetId());
 
                     // To suppress game HP-related errors for enemy turrets out of vision
                     _packetNotifier.NotifySetHealth(peer, turret);

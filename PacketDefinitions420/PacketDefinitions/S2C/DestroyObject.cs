@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class DestroyObject : BasePacket
     {
-        public DestroyObject(AttackableUnit destroyer, AttackableUnit destroyed)
+        public DestroyObject(IAttackableUnit destroyer, IAttackableUnit destroyed)
             : base(PacketCmd.PKT_S2C_DESTROY_OBJECT, destroyer.NetId)
         {
             WriteNetId(destroyed);

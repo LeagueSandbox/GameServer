@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
+namespace PacketDefinitions420.PacketDefinitions.C2S
 {
     public class QuestClicked
     {

@@ -1,12 +1,11 @@
-using System.Text;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class TurretSpawn : BasePacket //TODO: check
     {
-        public TurretSpawn(BaseTurret t)
+        public TurretSpawn(IBaseTurret t)
             : base(PacketCmd.PKT_S2C_TURRET_SPAWN, t.ParentNetId)
         {
             WriteNetId(t);

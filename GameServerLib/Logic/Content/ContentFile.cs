@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using GameServerCore.Logic.Content;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {

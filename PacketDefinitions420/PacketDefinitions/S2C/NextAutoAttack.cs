@@ -1,11 +1,11 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class NextAutoAttack : BasePacket
     {
-        public NextAutoAttack(AttackableUnit attacker, AttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
+        public NextAutoAttack(IAttackableUnit attacker, IAttackableUnit attacked, uint futureProjNetId, bool isCritical, bool initial)
             : base(PacketCmd.PKT_S2C_NEXT_AUTO_ATTACK, attacker.NetId)
         {
             WriteNetId(attacked);

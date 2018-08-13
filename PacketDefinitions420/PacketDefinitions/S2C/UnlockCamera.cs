@@ -1,10 +1,10 @@
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class UnlockCamera : BasePacket
     {
-        public UnlockCamera(Game game)
+        public UnlockCamera()
             : base(PacketCmd.PKT_S2C_UNLOCK_CAMERA)
         {
 

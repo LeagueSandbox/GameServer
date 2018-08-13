@@ -1,5 +1,8 @@
 ﻿using System.Linq;
 using ENet;
+using GameServerCore;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Packets;
@@ -39,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
 
             var units = Game.ObjectManager.GetObjects()
-                .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))
+                .Where(xx => xx.Value.Team == team.ToTeamId())
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
             var client = _playerManager.GetPeerInfo(peer);

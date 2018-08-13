@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DA3DE633-D75B-40B0-8833-099ABFBF43A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GameServerCore</RootNamespace>
+    <AssemblyName>GameServerCore</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ENetSharpLeague.1.1.0\lib\net461\ENetCS.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Logic\Content\HashFunctions.cs" />
+    <Compile Include="Logic\Content\INavGrid.cs" />
+    <Compile Include="Logic\Content\Vector.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IAttackableUnit.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IAzirTurret.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IBaseTurret.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IChampionStats.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IGameObject.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IChampion.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IInhibitor.cs" />
+    <Compile Include="Logic\Domain\GameObjects\ILaneTurret.cs" />
+    <Compile Include="Logic\Domain\GameObjects\ILevelProp.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IMinion.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IMonster.cs" />
+    <Compile Include="Logic\Domain\GameObjects\INexus.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IObjAiBase.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IObjAnimatedBuilding.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IObjBuilding.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IObjMissile.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IParticle.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IPlaceable.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IProjectile.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IStat.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IStatModifier.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IStats.cs" />
+    <Compile Include="Logic\Domain\GameObjects\IStatsModifier.cs" />
+    <Compile Include="Logic\Domain\GameObjects\ITarget.cs" />
+    <Compile Include="Logic\Domain\IBuff.cs" />
+    <Compile Include="Logic\Domain\IInventoryManager.cs" />
+    <Compile Include="Logic\Domain\IItem.cs" />
+    <Compile Include="Logic\Domain\IItemType.cs" />
+    <Compile Include="Logic\Domain\IReplicate.cs" />
+    <Compile Include="Logic\Domain\IReplication.cs" />
+    <Compile Include="Logic\Domain\IRuneCollection.cs" />
+    <Compile Include="Logic\Domain\ISpell.cs" />
+    <Compile Include="Logic\Domain\ISpellData.cs" />
+    <Compile Include="Logic\Enet\ClientInfo.cs" />
+    <Compile Include="Logic\Enums\ActionState.cs" />
+    <Compile Include="Logic\Enums\Announces.cs" />
+    <Compile Include="Logic\Enums\AttackType.cs" />
+    <Compile Include="Logic\Enums\BuffType.cs" />
+    <Compile Include="Logic\Enums\DamageText.cs" />
+    <Compile Include="Logic\Enums\DamageType.cs" />
+    <Compile Include="Logic\Enums\InhibitorState.cs" />
+    <Compile Include="Logic\Enums\IsTargetableToTeamFlags.cs" />
+    <Compile Include="Logic\Enums\MinionSpawnPosition.cs" />
+    <Compile Include="Logic\Enums\MinionSpawnType.cs" />
+    <Compile Include="Logic\Enums\MoveOrder.cs" />
+    <Compile Include="Logic\Enums\PrimaryAbilityResourceType.cs" />
+    <Compile Include="Logic\Enums\ShieldType.cs" />
+    <Compile Include="Logic\Enums\SpellState.cs" />
+    <Compile Include="Logic\Enums\TeamId.cs" />
+    <Compile Include="Logic\Enums\TurretType.cs" />
+    <Compile Include="Logic\Enums\UnitAnnounces.cs" />
+    <Compile Include="Logic\IGame.cs" />
+    <Compile Include="Logic\Maps\IMap.cs" />
+    <Compile Include="Logic\MovementVector.cs" />
+    <Compile Include="Logic\Pair.cs" />
+    <Compile Include="Packets\Enums\Channel.cs" />
+    <Compile Include="Packets\Enums\ChatType.cs" />
+    <Compile Include="Packets\Enums\Emotions.cs" />
+    <Compile Include="Packets\Enums\MasterMask.cs" />
+    <Compile Include="Packets\Enums\MoveType.cs" />
+    <Compile Include="Packets\Enums\PacketCmd.cs" />
+    <Compile Include="Packets\Enums\Pings.cs" />
+    <Compile Include="Packets\Enums\SummonerSpellIds.cs" />
+    <Compile Include="Packets\Handlers\IPacketHandlerManager.cs" />
+    <Compile Include="Packets\Interfaces\IPacketNotifier.cs" />
+    <Compile Include="Packets\Interfaces\IPacketReader.cs" />
+    <Compile Include="Packets\PacketDefinitions\Packet.cs" />
+    <Compile Include="Packets\PacketDefinitions\PacketHeader.cs" />
+    <Compile Include="Packets\PacketDefinitions\PacketHelper.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\AttentionPingRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\AutoAttackOptionRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\BlueTipClickedRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\BuyItemRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\CastSpellRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\ChatMessageRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\ClickRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\CursorPositionOnWorldRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\EmotionPacketRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\HeartbeatRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\KeyCheckRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\MovementRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\PingLoadInfoRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\QuestClickedRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\SellItemRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\SkillUpRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\SwapItemsRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\SynchVersionRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\UseObjectRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Requests\ViewRequest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,13 +1,13 @@
 using System;
 using System.IO;
-using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class UpdateStats : BasePacket
     {
-        public UpdateStats(Replication r, bool partial = true)
+        public UpdateStats(IReplication r, bool partial = true)
             : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
             Write(Environment.TickCount); // syncID

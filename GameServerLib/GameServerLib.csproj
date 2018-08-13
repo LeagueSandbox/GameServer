@@ -184,7 +184,6 @@
   <ItemGroup>
     <Compile Include="Logic\Chatbox\DebugMsgType.cs" />
     <Compile Include="Logic\Content\NavGrid.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Logic\API\ApiFunctionManager.cs" />
     <Compile Include="Logic\API\ApiEventManager.cs" />
     <Compile Include="Logic\API\UnitCrowdControl.cs" />
@@ -223,11 +222,9 @@
     <Compile Include="Logic\Content\ContentFile.cs" />
     <Compile Include="Logic\Content\ContentManager.cs" />
     <Compile Include="Logic\Content\ContentNotFoundException.cs" />
-    <Compile Include="Logic\Content\HashFunctions.cs" />
     <Compile Include="Logic\Content\ItemCollection.cs" />
     <Compile Include="Logic\Content\RuneCollection.cs" />
     <Compile Include="Logic\Content\SpellData.cs" />
-    <Compile Include="Logic\Enet\ClientInfo.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
     <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
@@ -264,7 +261,6 @@
     <Compile Include="Logic\Chatbox\IChatCommand.cs" />
     <Compile Include="Logic\Items\Inventory.cs" />
     <Compile Include="Logic\Items\InventoryManager.cs" />
-    <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />
     <Compile Include="Logic\GameObjects\Spells\Spell.cs" />
     <Compile Include="Logic\GameObjects\Stats\Stats.cs" />
     <Compile Include="Logic\GameObjects\Other\Target.cs" />
@@ -277,32 +273,8 @@
     <Compile Include="Logic\Logging\LoggerProvider.cs" />
     <Compile Include="Logic\Maps\Map.cs" />
     <Compile Include="Logic\ObjectManager.cs" />
-    <Compile Include="Logic\Packets\IPacketNotifier.cs" />
-    <Compile Include="Logic\Packets\IPacketReader.cs" />
     <Compile Include="Logic\Packets\NetworkIdManager.cs" />
     <Compile Include="Logic\Attributes\DisabledHandlerAttribute.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\PacketHeader.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\AttentionPingRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\AutoAttackOptionRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\BlueTipClickedRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\BuyItemRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\CastSpellRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\ChatMessageRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\ClickRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\CursorPositionOnWorldRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\EmotionPacketRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\HeartbeatRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\KeyCheckRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\MovementRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\PingLoadInfoRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\QuestClickedRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\SellItemRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\SkillUpRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\SwapItemsRequest.cs" />
-    <Compile Include="Logic\Packets\Enums\Emotions.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\SynchVersionRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\UseObjectRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Requests\ViewRequest.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleExit.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleLockCamera.cs" />
@@ -311,10 +283,7 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleScoreboard.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleStatsConfirm.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleUnpauseReq.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandlerManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerBase.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\Pings.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\PacketHelper.cs" />
     <Compile Include="Logic\Players\PlayerManager.cs" />
     <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
@@ -326,7 +295,6 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleQuestClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleBlueTipClicked.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleSurrender.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\IPacketHandler.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerManager.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleAttentionPing.cs" />
@@ -348,8 +316,6 @@
     <Compile Include="Logic\Packets\PacketHandlers\HandleSwapItems.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleSync.cs" />
     <Compile Include="Logic\Packets\PacketHandlers\HandleView.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Packet.cs" />
-    <Compile Include="Logic\Pair.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
@@ -372,7 +338,12 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj">
+      <Project>{da3de633-d75b-40b0-8833-099abfbf43a2}</Project>
+      <Name>GameServerCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

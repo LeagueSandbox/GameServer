@@ -1,13 +1,12 @@
-using System.Text;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpawnCampMonster : BasePacket
     {
-        public SpawnCampMonster(NavGrid navGrid, Monster m)
+        public SpawnCampMonster(INavGrid navGrid, IMonster m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Write((byte)0x79);

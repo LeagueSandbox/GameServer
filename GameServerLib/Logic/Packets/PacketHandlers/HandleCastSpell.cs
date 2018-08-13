@@ -1,5 +1,8 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -33,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            var s = owner.GetSpell(request.SpellSlot);
+            var s = owner.GetSpell(request.SpellSlot) as Spell;
             if (s == null)
             {
                 return false;

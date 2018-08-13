@@ -1,11 +1,12 @@
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C
+namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class OnAttack : BasePacket
     {
-        public OnAttack(AttackableUnit attacker, AttackableUnit attacked, AttackType attackType)
+        public OnAttack(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType)
             : base(PacketCmd.PKT_S2C_ON_ATTACK, attacker.NetId)
         {
             Write((byte)attackType);
