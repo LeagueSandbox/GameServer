@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleAutoAttackOption : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
+        private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_AUTO_ATTACK_OPTION;
@@ -15,14 +15,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleAutoAttackOption(Game game)
         {
-            _packetReader = game.PacketReader;
+            _game = game;
             _chatCommandManager = game.ChatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             //TODO: implement this
-            var autoAttackOption = _packetReader.ReadAutoAttackOptionRequest(data);
+            var autoAttackOption = _game.PacketReader.ReadAutoAttackOptionRequest(data);
             var state = "Deactivated";
             if (autoAttackOption.Activated)
             {

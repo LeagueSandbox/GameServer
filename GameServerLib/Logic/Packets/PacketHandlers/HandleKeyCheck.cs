@@ -8,8 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleKeyCheck : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -19,8 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleKeyCheck(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
@@ -28,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadKeyCheckRequest(data);
+            var request = _game.PacketReader.ReadKeyCheckRequest(data);
             var userId = _game.Blowfish.Decrypt(request.CheckId);
 
             if (userId != request.UserId)
@@ -65,13 +61,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     player.Peer = peer;
                     player.PlayerNo = playerNo;
 
-                    _packetNotifier.NotifyKeyCheck(request.UserId, playerNo);
+                    _game.PacketNotifier.NotifyKeyCheck(request.UserId, playerNo);
 
                     foreach (var p2 in _playerManager.GetPlayers())
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {
-                            _packetNotifier.NotifyKeyCheck(player.Peer, p2.Item2.UserId, p2.Item2.PlayerNo);
+                             _game.PacketNotifier.NotifyKeyCheck(player.Peer, p2.Item2.UserId, p2.Item2.PlayerNo);
                         }
                     }
 

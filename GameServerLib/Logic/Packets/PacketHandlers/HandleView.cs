@@ -6,8 +6,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleView : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_VIEW_REQ;
@@ -15,15 +13,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleView(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadViewRequest(data);
-            _packetNotifier.NotifyViewResponse(peer, request);
+            var request = _game.PacketReader.ReadViewRequest(data);
+             _game.PacketNotifier.NotifyViewResponse(peer, request);
             return true;
         }
     }

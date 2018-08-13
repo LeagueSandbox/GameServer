@@ -7,7 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleMap : PacketHandlerBase
     {
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -16,7 +15,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleMap(Game game)
         {
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
@@ -25,15 +23,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player
-            _packetNotifier.NotifyLoadScreenInfo(peer, _playerManager.GetPlayers());
+             _game.PacketNotifier.NotifyLoadScreenInfo(peer, _playerManager.GetPlayers());
 
             // Distributes each players info by UserId
             foreach (var player in _playerManager.GetPlayers())
             {
                 // Giving the UserId in loading screen a name
-                _packetNotifier.NotifyLoadScreenPlayerName(peer, player);
+                 _game.PacketNotifier.NotifyLoadScreenPlayerName(peer, player);
                 // Giving the UserId in loading screen a champion
-                _packetNotifier.NotifyLoadScreenPlayerChampion(peer, player);
+                 _game.PacketNotifier.NotifyLoadScreenPlayerChampion(peer, player);
             }
 
             return true;

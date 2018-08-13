@@ -7,22 +7,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleCursorPositionOnWorld : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
-
+        private readonly Game _game;
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleCursorPositionOnWorld(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
+            _game = game;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadCursorPositionOnWorldRequest(data);
-            _packetNotifier.NotifyDebugMessage($"X: {request.X} Y: {request.Y}");
+            var request = _game.PacketReader.ReadCursorPositionOnWorldRequest(data);
+            _game.PacketNotifier.NotifyDebugMessage($"X: {request.X} Y: {request.Y}");
             return true;
         }
     }

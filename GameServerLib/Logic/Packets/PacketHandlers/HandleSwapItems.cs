@@ -7,7 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSwapItems : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -16,14 +15,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSwapItems(Game game)
         {
-            _packetReader = game.PacketReader;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadSwapItemsRequest(data);
+            var request = _game.PacketReader.ReadSwapItemsRequest(data);
             if (request.SlotFrom > 6 || request.SlotTo > 6)
             {
                 return false;

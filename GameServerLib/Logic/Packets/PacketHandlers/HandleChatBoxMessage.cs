@@ -10,8 +10,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleChatBoxMessage : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
@@ -22,8 +20,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleChatBoxMessage(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _chatCommandManager = game.ChatCommandManager;
             _playerManager = game.PlayerManager;
@@ -32,7 +28,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadChatMessageRequest(data);
+            var request = _game.PacketReader.ReadChatMessageRequest(data);
             var split = request.Message.Split(' ');
             if (split.Length > 1)
             {
@@ -41,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     if (int.TryParse(split[1], out var y))
                     {
                         var client = _playerManager.GetPeerInfo(peer);
-                        _packetNotifier.NotifyPing(client, x, y, 0, Pings.PING_DEFAULT);
+                         _game.PacketNotifier.NotifyPing(client, x, y, 0, Pings.PING_DEFAULT);
                     }
                 }
             }
@@ -63,7 +59,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     catch
                     {
                         _logger.Warning(command + " sent an exception.");
-                        _packetNotifier.NotifyDebugMessage(peer, "Something went wrong...Did you wrote the command well ? ");
+                         _game.PacketNotifier.NotifyDebugMessage(peer, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;
                 }
@@ -88,19 +84,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.Config.ChatCheatsEnabled)
             {
-                _packetNotifier.NotifyDebugMessage(ownTeam, dmTeam);
-                _packetNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
+                 _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
+                 _game.PacketNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
                 return true;
             }
 
             switch (request.Type)
             {
                 case ChatType.CHAT_ALL:
-                    _packetNotifier.NotifyDebugMessage(ownTeam, dmTeam);
-                    _packetNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
+                     _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
+                     _game.PacketNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
                     return true;
                 case ChatType.CHAT_TEAM:
-                    _packetNotifier.NotifyDebugMessage(ownTeam, dmTeam);
+                     _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
                     return true;
                 default:
                     //Logging.errorLine("Unknown ChatMessageType");

@@ -9,7 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleBuyItem : PacketHandlerBase
     {
-        private IPacketReader _packetReader;
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
@@ -19,7 +18,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleBuyItem(Game game)
         {
-            _packetReader = game.PacketReader;
             _game = game;
             _itemManager = game.ItemManager;
             _playerManager = game.PlayerManager;
@@ -27,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadBuyItemRequest(data);
+            var request = _game.PacketReader.ReadBuyItemRequest(data);
             var itemTemplate = _itemManager.SafeGetItemType(request.ItemId);
             if (itemTemplate == null)
             {

@@ -7,8 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleLoadPing : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -17,22 +15,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleLoadPing(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadPingLoadInfoRequest(data);
+            var request = _game.PacketReader.ReadPingLoadInfoRequest(data);
             var peerInfo = _playerManager.GetPeerInfo(peer);
             if (peerInfo == null)
             {
                 return false;
             }
 
-            _packetNotifier.NotifyPingLoadInfo(request, peerInfo.UserId);
+             _game.PacketNotifier.NotifyPingLoadInfo(request, peerInfo.UserId);
             return true;
         }
     }

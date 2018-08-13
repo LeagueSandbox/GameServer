@@ -8,8 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleEmotion : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
         private readonly ILogger _logger;
@@ -19,8 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleEmotion(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
             _logger = LoggerProvider.GetLogger();
@@ -28,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadEmotionPacketRequest(data);
+            var request = _game.PacketReader.ReadEmotionPacketRequest(data);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
             switch (request.Id)
@@ -47,7 +43,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
             }
 
-            _packetNotifier.NotifyEmotions(request.Id, request.NetId);
+             _game.PacketNotifier.NotifyEmotions(request.Id, request.NetId);
             return true;
         }
     }

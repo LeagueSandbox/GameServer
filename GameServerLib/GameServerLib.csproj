@@ -343,6 +343,10 @@
       <Project>{da3de633-d75b-40b0-8833-099abfbf43a2}</Project>
       <Name>GameServerCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj">
+      <Project>{0B60B297-306B-4317-866A-6DD70A113074}</Project>
+      <Name>PacketDefinitions420</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

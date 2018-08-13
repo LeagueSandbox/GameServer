@@ -8,7 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleScoreboard : PacketHandlerBase
     {
-        private readonly IPacketNotifier _packetNotifier;
         private readonly PlayerManager _playerManager;
         private readonly ILogger _logger;
         private readonly Game _game;
@@ -18,7 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleScoreboard(Game game)
         {
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
             _logger = LoggerProvider.GetLogger();
@@ -29,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _logger.Info($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
             // Send to that player stats packet
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            _packetNotifier.NotifyPlayerStats(champion);
+             _game.PacketNotifier.NotifyPlayerStats(champion);
             return true;
         }
     }

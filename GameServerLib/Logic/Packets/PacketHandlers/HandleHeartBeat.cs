@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleHeartBeat : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
+        private readonly Game _game;
         private readonly ILogger _logger;
         private readonly PlayerManager _playerManager;
 
@@ -17,14 +17,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleHeartBeat(Game game)
         {
-            _packetReader = game.PacketReader;
+            _game = game;
             _logger = LoggerProvider.GetLogger();
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadHeartbeatRequest(data);
+            var request = _game.PacketReader.ReadHeartbeatRequest(data);
             var diff = request.AckTime - request.ReceiveTime;
             if (request.ReceiveTime > request.AckTime)
             {

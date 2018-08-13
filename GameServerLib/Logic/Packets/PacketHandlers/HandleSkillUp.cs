@@ -7,8 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSkillUp : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -17,15 +15,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSkillUp(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadSkillUpRequest(data);
+            var request = _game.PacketReader.ReadSkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
@@ -35,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            _packetNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, (byte)s.Level, (byte)s.Owner.GetSkillPoints());
+             _game.PacketNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, (byte)s.Level, (byte)s.Owner.GetSkillPoints());
             champion.Stats.SetSpellEnabled(request.Skill, true);
 
             return true;

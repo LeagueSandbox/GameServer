@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleQuestClicked : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
+        private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_QUEST_CLICKED;
@@ -15,13 +15,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleQuestClicked(Game game)
         {
-            _packetReader = game.PacketReader;
+            _game = game;
             _chatCommandManager = game.ChatCommandManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadQuestClickedRequest(data);
+            var request = _game.PacketReader.ReadQuestClickedRequest(data);
             var msg = $"Clicked quest with netid: {request.QuestNetId}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;

@@ -8,7 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSellItem : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -17,14 +16,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSellItem(Game game)
         {
-            _packetReader = game.PacketReader;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadSellItemRequest(data);
+            var request = _game.PacketReader.ReadSellItemRequest(data);
             var client = _playerManager.GetPeerInfo(peer);
 
             var i = _playerManager.GetPeerInfo(peer).Champion.Inventory.GetItem(request.SlotId) as Item;

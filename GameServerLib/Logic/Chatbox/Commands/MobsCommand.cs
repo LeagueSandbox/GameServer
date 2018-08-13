@@ -13,8 +13,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class MobsCommand : ChatCommandBase
     {
+        private readonly Game _game;
         private readonly PlayerManager _playerManager;
-        private readonly IPacketNotifier _packetNotifier;
 
         public override string Command => "mobs";
         public override string Syntax => $"{Command} teamNumber";
@@ -22,8 +22,8 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public MobsCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
+            _game = game;
             _playerManager = game.PlayerManager;
-            _packetNotifier = game.PacketNotifier;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             var client = _playerManager.GetPeerInfo(peer);
             foreach (var unit in units)
             {
-                _packetNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
+                 _game.PacketNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
             }
         }
     }

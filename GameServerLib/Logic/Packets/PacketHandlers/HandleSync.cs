@@ -8,8 +8,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -19,8 +17,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSync(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
@@ -28,7 +24,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadSynchVersionRequest(data);
+            var request = _game.PacketReader.ReadSynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
@@ -55,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 }
             }
 
-            _packetNotifier.NotifySynchVersion(peer, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
+             _game.PacketNotifier.NotifySynchVersion(peer, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
                 mapId);
 
             return true;

@@ -9,7 +9,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleCastSpell : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
         private readonly PlayerManager _playerManager;
@@ -19,7 +18,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleCastSpell(Game game)
         {
-            _packetReader = game.PacketReader;
             _game = game;
             _networkIdManager = game.NetworkIdManager;
             _playerManager = game.PlayerManager;
@@ -27,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadCastSpellRequest(data);
+            var request = _game.PacketReader.ReadCastSpellRequest(data);
             var targetObj = _game.ObjectManager.GetObjectById(request.TargetNetId);
             var targetUnit = targetObj as AttackableUnit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;

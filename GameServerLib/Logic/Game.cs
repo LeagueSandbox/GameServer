@@ -21,6 +21,7 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Logic
@@ -99,14 +100,11 @@ namespace LeagueSandbox.GameServer.Logic
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, this);
 
-
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            //TODO: add core project to solve circular dependency
-            throw new InvalidOperationException("This isn't going to work.");
-            //PacketReader = new PacketReader();
-            //PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid, PlayerManager, NetworkIdManager);
+            PacketReader = new PacketReader();
+            PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;

@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSurrender : PacketHandlerBase
     {
-        private readonly IPacketNotifier _packetNotifier;
+        private readonly Game _game;
         private readonly PlayerManager _pm;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SURRENDER;
@@ -15,14 +15,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSurrender(Game game)
         {
-            _packetNotifier = game.PacketNotifier;
+            _game = game;
             _pm = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var c = _pm.GetPeerInfo(peer).Champion;
-            _packetNotifier.NotifySurrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
+             _game.PacketNotifier.NotifySurrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
             return true;
         }
     }

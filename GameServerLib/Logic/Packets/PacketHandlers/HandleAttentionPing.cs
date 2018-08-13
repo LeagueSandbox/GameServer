@@ -7,8 +7,6 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleAttentionPing : PacketHandlerBase
     {
-        private readonly IPacketReader _packetReader;
-        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -17,17 +15,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleAttentionPing(Game game)
         {
-            _packetReader = game.PacketReader;
-            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = _packetReader.ReadAttentionPingRequest(data);
+            var request = _game.PacketReader.ReadAttentionPingRequest(data);
             var client = _playerManager.GetPeerInfo(peer);
-            _packetNotifier.NotifyPing(client, request.X, request.Y, request.TargetNetId, Pings.PING_DANGER);
+            _game.PacketNotifier.NotifyPing(client, request.X, request.Y, request.TargetNetId, request.Type);
             return true;
         }
     }
