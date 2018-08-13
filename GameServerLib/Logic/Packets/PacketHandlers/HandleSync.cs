@@ -1,13 +1,14 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -17,6 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSync(Game game)
         {
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
@@ -24,7 +27,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var version = new SynchVersionRequest(data);
+            var request = _packetReader.ReadSynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
@@ -32,14 +35,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
-            if (version.Version != Config.VERSION_STRING)
+            if (request.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.Warning($"Client's version ({version.Version}) does not match server's {Config.VERSION}");
+                _logger.Warning($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
-                _logger.Info("Accepted client version (" + version.Version + ")");
+                _logger.Info("Accepted client version (" + request.Version + ")");
             }
 
             foreach (var player in _playerManager.GetPlayers())
@@ -50,9 +53,11 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     break;
                 }
             }
-            var answer = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
 
-            return _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C);
+            _packetNotifier.NotifySynchVersion(peer, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
+                mapId);
+
+            return true;
         }
     }
 }

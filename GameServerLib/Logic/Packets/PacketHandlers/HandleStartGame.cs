@@ -1,12 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleStartGame : PacketHandlerBase
     {
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleStartGame(Game game)
         {
+            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
@@ -33,8 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                var start = new StatePacket(PacketCmd.PKT_S2C_START_GAME);
-                _game.PacketHandlerManager.BroadcastPacket(start, Channel.CHL_S2C);
+                _packetNotifier.NotifyGameStart();
 
                 foreach (var player in _playerManager.GetPlayers())
                 {
@@ -42,22 +42,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";
-                        var dm = new DebugMessage(msg);
-                        _game.PacketHandlerManager.SendPacket(peer, dm, Channel.CHL_S2C);
+                        _packetNotifier.NotifyDebugMessage(peer, msg);
                     }
-                    _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
-                    // TODO: send this in one place only
-                    _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
 
-                    var tip = new BlueTip(
-                        "Server Build Date",
-                        $"{ServerContext.BuildDateString}",
-                        "",
-                        0,
-                        player.Item2.Champion.NetId,
-                        _game.NetworkIdManager.GetNewNetId()
-                    );
-                    _game.PacketHandlerManager.SendPacket(player.Item2.Peer, tip, Channel.CHL_S2C);
+                    _packetNotifier.NotifySetHealth(player.Item2.Champion);
+                    // TODO: send this in one place only
+                    _packetNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
+                    _packetNotifier.NotifyBlueTip(player.Item2.Peer, "Server Build Date", ServerContext.BuildDateString,
+                        "", 0, player.Item2.Champion.NetId, _game.NetworkIdManager.GetNewNetId());
                 }
 
                 _game.Start();
@@ -71,17 +63,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                            var heroSpawnPacket = new HeroSpawn2(player.Item2.Champion);
-                            _game.PacketHandlerManager.SendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
+                            _packetNotifier.NotifyHeroSpawn2(peer, player.Item2.Champion);
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */
-                            var levelUpPacket = new LevelUp(player.Item2.Champion);
-                            _game.PacketHandlerManager.SendPacket(peer, levelUpPacket, Channel.CHL_S2C);
+                            _packetNotifier.NotifyLevelUp(player.Item2.Champion);
                             if (_game.IsPaused)
                             {
-                                var pausePacket = new PauseGame((int)_game.PauseTimeLeft, true);
-                                _game.PacketHandlerManager.SendPacket(peer, pausePacket, Channel.CHL_S2C);
+                                _packetNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);
                             }
                         }
                     }
@@ -89,13 +78,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_RECONNECTED, peerInfo.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime / 1000.0f;
-
-                    var timer = new GameTimer(gameTime); // 0xC1
-                    _game.PacketHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
-
-                    var timer2 = new GameTimerUpdate(gameTime); // 0xC2
-                    _game.PacketHandlerManager.SendPacket(peer, timer2, Channel.CHL_S2C);
+                    var gameTime = _game.GameTime;
+                    _packetNotifier.NotifyGameTimer(peer, gameTime);
+                    _packetNotifier.NotifyGameTimerUpdate(peer, gameTime);
 
                     return true;
                 }
@@ -105,13 +90,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     _game.ObjectManager.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime / 1000.0f;
-
-                    var timer = new GameTimer(gameTime); // 0xC1
-                    _game.PacketHandlerManager.SendPacket(p.Item2.Peer, timer, Channel.CHL_S2C);
-
-                    var timer2 = new GameTimerUpdate(gameTime); // 0xC2
-                    _game.PacketHandlerManager.SendPacket(p.Item2.Peer, timer2, Channel.CHL_S2C);
+                    var gameTime = _game.GameTime;
+                    _packetNotifier.NotifyGameTimer(p.Item2.Peer, gameTime);
+                    _packetNotifier.NotifyGameTimerUpdate(p.Item2.Peer, gameTime);
                 }
             }
 

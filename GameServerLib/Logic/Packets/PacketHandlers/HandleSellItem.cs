@@ -1,11 +1,11 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSellItem : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -14,16 +14,17 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSellItem(Game game)
         {
+            _packetReader = game.PacketReader;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var sell = new SellItem(data);
+            var request = _packetReader.ReadSellItemRequest(data);
             var client = _playerManager.GetPeerInfo(peer);
 
-            var i = _playerManager.GetPeerInfo(peer).Champion.GetInventory().GetItem(sell.SlotId);
+            var i = _playerManager.GetPeerInfo(peer).Champion.GetInventory().GetItem(request.SlotId);
             if (i == null)
             {
                 return false;
@@ -35,16 +36,16 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             if (i.ItemType.MaxStack > 1)
             {
                 i.DecrementStackSize();
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.SlotId, i.StackSize);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
-                    client.Champion.GetInventory().RemoveItem(sell.SlotId);
+                    client.Champion.GetInventory().RemoveItem(request.SlotId);
                 }
             }
             else
             {
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, sell.SlotId, 0);
-                client.Champion.GetInventory().RemoveItem(sell.SlotId);
+                _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, 0);
+                client.Champion.GetInventory().RemoveItem(request.SlotId);
             }
 
             client.Champion.Stats.RemoveModifier(i.ItemType);

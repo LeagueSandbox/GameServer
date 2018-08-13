@@ -1,12 +1,12 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSkillUp : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -15,28 +15,26 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSkillUp(Game game)
         {
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var skillUpPacket = new SkillUpRequest(data);
+            var request = _packetReader.ReadSkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.Skill);
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var s = champion.LevelUpSpell(request.Skill);
             if (s == null)
             {
                 return false;
             }
 
-            var skillUpResponse = new SkillUpResponse(_playerManager.GetPeerInfo(peer).Champion.NetId,
-                skillUpPacket.Skill,
-                (byte)s.Level,
-                (byte)s.Owner.GetSkillPoints()
-            );
-            _game.PacketHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).Champion.Stats.SetSpellEnabled(skillUpPacket.Skill, true);
+            _packetNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, (byte)s.Level, (byte)s.Owner.GetSkillPoints());
+            champion.Stats.SetSpellEnabled(request.Skill, true);
 
             return true;
         }

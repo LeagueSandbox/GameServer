@@ -1,13 +1,13 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleKeyCheck : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly ILogger _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
@@ -17,6 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleKeyCheck(Game game)
         {
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
@@ -24,19 +26,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var keyCheck = new KeyCheckRequest(data);
-            var userId = _game.Blowfish.Decrypt(keyCheck.CheckId);
+            var request = _packetReader.ReadKeyCheckRequest(data);
+            var userId = _game.Blowfish.Decrypt(request.CheckId);
 
-            if (userId != keyCheck.UserId)
+            if (userId != request.UserId)
             {
                 _logger.Warning("Client has sent wrong blowfish data.");
                 return false;
             }
 
-            if (keyCheck.VersionNo != Config.VERSION_NUMBER)
+            if (request.VersionNo != Config.VERSION_NUMBER)
             {
                 _logger.Warning("Client version doesn't match server's. " +
-                                       $"(C:{keyCheck.VersionNo}, S:{Config.VERSION_NUMBER})");
+                                       $"(C:{request.VersionNo}, S:{Config.VERSION_NUMBER})");
                 return false;
             }
 
@@ -60,16 +62,14 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     p.Item1 = peer.Address.port;
                     player.Peer = peer;
                     player.PlayerNo = playerNo;
-                    var response = new KeyCheckResponse(keyCheck.UserId, playerNo);
-                    _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
 
+                    _packetNotifier.NotifyKeyCheck(request.UserId, playerNo);
 
                     foreach (var p2 in _playerManager.GetPlayers())
                     {
                         if (p2.Item2.Peer != null && p2.Item2.UserId != player.UserId)
                         {
-                            var response2 = new KeyCheckResponse(p2.Item2.UserId, p2.Item2.PlayerNo);
-                            _game.PacketHandlerManager.SendPacket(player.Peer, response2, Channel.CHL_HANDSHAKE);
+                            _packetNotifier.NotifyKeyCheck(player.Peer, p2.Item2.UserId, p2.Item2.PlayerNo);
                         }
                     }
 

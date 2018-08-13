@@ -43,6 +43,7 @@ namespace LeagueSandbox.GameServer.Logic
         public Map Map { get; private set; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IPacketHandlerManager PacketHandlerManager { get; private set; }
+        public IPacketReader PacketReader { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -94,7 +95,10 @@ namespace LeagueSandbox.GameServer.Logic
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid, PlayerManager, NetworkIdManager);
+            //TODO: add core project to solve circular dependency
+            throw new InvalidOperationException("This isn't going to work.");
+            //PacketReader = new PacketReader();
+            //PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid, PlayerManager, NetworkIdManager);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;

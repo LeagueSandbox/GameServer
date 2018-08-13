@@ -1,30 +1,27 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleCursorPositionOnWorld : PacketHandlerBase
     {
-        private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD;
         public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleCursorPositionOnWorld(Game game)
         {
-            _game = game;
-            _playerManager = game.PlayerManager;
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var cursorPosition = new CursorPositionOnWorld(data);
-            var response = new DebugMessage($"X: {cursorPosition.X} Y: {cursorPosition.Y}");
-
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+            var request = _packetReader.ReadCursorPositionOnWorldRequest(data);
+            _packetNotifier.NotifyDebugMessage($"X: {request.X} Y: {request.Y}");
+            return true;
         }
     }
 }

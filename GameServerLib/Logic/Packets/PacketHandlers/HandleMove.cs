@@ -5,13 +5,14 @@ using System.Numerics;
 using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Maps;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleMove : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -20,6 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleMove(Game game)
         {
+            _packetReader = game.PacketReader;
             _game = game;
             _playerManager = game.PlayerManager;
         }
@@ -33,7 +35,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return true;
             }
 
-            var request = new MovementRequest(data);
+            var request = _packetReader.ReadMovementRequest(data);
             var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, _game.Map);
 
             switch (request.Type)

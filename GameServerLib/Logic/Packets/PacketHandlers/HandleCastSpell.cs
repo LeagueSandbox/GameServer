@@ -1,12 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleCastSpell : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
         private readonly PlayerManager _playerManager;
@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleCastSpell(Game game)
         {
+            _packetReader = game.PacketReader;
             _game = game;
             _networkIdManager = game.NetworkIdManager;
             _playerManager = game.PlayerManager;
@@ -23,9 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var spell = new CastSpellRequest(data);
-
-            var targetObj = _game.ObjectManager.GetObjectById(spell.TargetNetId);
+            var request = _packetReader.ReadCastSpellRequest(data);
+            var targetObj = _game.ObjectManager.GetObjectById(request.TargetNetId);
             var targetUnit = targetObj as AttackableUnit;
             var owner = _playerManager.GetPeerInfo(peer).Champion;
             if (owner == null || !owner.CanCast())
@@ -33,13 +33,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            var s = owner.GetSpell(spell.SpellSlot);
+            var s = owner.GetSpell(request.SpellSlot);
             if (s == null)
             {
                 return false;
             }
 
-            return s.Cast(spell.X, spell.Y, spell.X2, spell.Y2, targetUnit);
+            return s.Cast(request.X, request.Y, request.X2, request.Y2, targetUnit);
         }
     }
 }

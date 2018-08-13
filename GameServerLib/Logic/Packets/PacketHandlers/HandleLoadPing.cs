@@ -1,12 +1,12 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleLoadPing : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -15,22 +15,23 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleLoadPing(Game game)
         {
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
             _game = game;
             _playerManager = game.PlayerManager;
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var loadInfo = new PingLoadInfoRequest(data);
+            var request = _packetReader.ReadPingLoadInfoRequest(data);
             var peerInfo = _playerManager.GetPeerInfo(peer);
             if (peerInfo == null)
             {
                 return false;
             }
-            var response = new PingLoadInfoResponse(loadInfo, peerInfo.UserId);
 
-            //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+            _packetNotifier.NotifyPingLoadInfo(request, peerInfo.UserId);
+            return true;
         }
     }
 }

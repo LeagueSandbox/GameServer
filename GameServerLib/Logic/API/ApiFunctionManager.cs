@@ -9,7 +9,6 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
@@ -139,8 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void PrintChat(string msg)
         {
-            var dm = new DebugMessage(msg);
-            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2C);
+            _game.PacketNotifier.NotifyDebugMessage(msg);
         }
 
         public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)

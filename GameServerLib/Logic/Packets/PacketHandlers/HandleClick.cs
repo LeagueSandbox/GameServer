@@ -1,7 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Attributes;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -9,6 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     [DisabledHandler]
     public class HandleClick : PacketHandlerBase
     {
+        private IPacketReader _packetReader;
         private readonly Game _game;
         private readonly ILogger _logger;
         private readonly PlayerManager _playerManager;
@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleClick(Game game)
         {
+            _packetReader = game.PacketReader;
             _game = game;
             _logger = LoggerProvider.GetLogger();
             _playerManager = game.PlayerManager;
@@ -25,8 +26,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var click = new Click(data);
-            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {click.TargetNetId}";
+            var request = _packetReader.ReadClickRequest(data);
+            var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {request.TargetNetId}";
             _logger.Info(msg);
 
             return true;

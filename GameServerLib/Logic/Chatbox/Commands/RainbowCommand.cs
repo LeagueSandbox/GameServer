@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -70,8 +69,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
-            Game.PacketHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
+            Game.PacketNotifier.NotifyTint(team, enable, speed, r, g, b, a);
         }
     }
 }

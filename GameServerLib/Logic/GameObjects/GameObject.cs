@@ -7,7 +7,6 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
@@ -33,8 +32,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                var p = new SetTeam(this as AttackableUnit, team);
-                _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
+                _game.PacketNotifier.NotifySetTeam(this as AttackableUnit, team);
             }
         }
 

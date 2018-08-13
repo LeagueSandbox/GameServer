@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
 using ENet;
+using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logic;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
@@ -11,12 +14,17 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.Anima
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Packets;
+using LeagueSandbox.GameServer.Logic.Packets.Enums;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
-using Announce = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce;
+using PacketDefinitions420.Enums;
+using PingLoadInfoRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
+using ViewRequest = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests.ViewRequest;
 
-namespace LeagueSandbox.GameServer.Logic.Packets
+namespace PacketDefinitions420
 {
     public class PacketNotifier : IPacketNotifier
     {
@@ -89,6 +97,251 @@ namespace LeagueSandbox.GameServer.Logic.Packets
             }
         }
 
+        public void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type)
+        {
+            var ping = new AttentionPingRequest(x, y, targetNetId, type);
+            var response = new AttentionPingResponse(client, ping);
+            _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
+        }
+
+        public void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
+        {
+            var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
+            _packetHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
+        }
+
+        public void NotifySkillUp(Peer peer, uint netId, byte skill, byte level, byte pointsLeft)
+        {
+            var skillUpResponse = new SkillUpResponse(netId, skill, level, pointsLeft);
+            _packetHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+        }
+
+        public void NotifySetTeam(AttackableUnit unit, TeamId team)
+        {
+            var p = new SetTeam(unit, team);
+            _packetHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
+        }
+
+        public void NotifyCastSpell(NavGrid navGrid, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId,
+            uint spellNetId)
+        {
+
+            var response = new CastSpellResponse(navGrid, s, x, y, xDragEnd, yDragEnd, futureProjNetId, spellNetId);
+            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+        }
+
+        public void NotifyBlueTip(Peer peer, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
+            uint targetNetId)
+        {
+            var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
+            _packetHandlerManager.SendPacket(peer, packet, Channel.CHL_S2C);
+        }
+
+        public void NotifyEmotions(Emotions type, uint netId)
+        {
+            // convert type
+            EmotionType targetType;
+            switch (type)
+            {
+                case Emotions.DANCE:
+                    targetType = EmotionType.DANCE;
+                    break;
+                case Emotions.TAUNT:
+                    targetType = EmotionType.TAUNT;
+                    break;
+                case Emotions.LAUGH:
+                    targetType = EmotionType.LAUGH;
+                    break;
+                case Emotions.JOKE:
+                    targetType = EmotionType.JOKE;
+                    break;
+                case Emotions.UNK:
+                    targetType = (EmotionType)type;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+
+            var packet = new EmotionPacketResponse((byte)targetType, netId);
+            _packetHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
+        }
+
+        public void NotifyKeyCheck(long userId, int playerNo)
+        {
+            var response = new KeyCheckResponse(userId, playerNo);
+            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
+        }
+
+        public void NotifyKeyCheck(Peer peer, long userId, int playerNo)
+        {
+            var response = new KeyCheckResponse(userId, playerNo);
+            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_HANDSHAKE);
+        }
+
+        public void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId)
+        {
+            var response = new PingLoadInfoResponse(request.NetId, (uint)request.Position, request.Loaded, request.Unk2,
+                request.Ping, request.Unk3, request.Unk4, userId);
+
+            //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
+            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+        }
+
+        public void NotifyViewResponse(Peer peer, ViewRequest request)
+        {
+            var answer = new ViewResponse(request.NetId);
+            if (request.RequestNo == 0xFE)
+            {
+                answer.SetRequestNo(0xFF);
+            }
+            else
+            {
+                answer.SetRequestNo(request.RequestNo);
+            }
+
+            _packetHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+        }
+
+        public void NotifySynchVersion(Peer peer, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId)
+        {
+            var response = new SynchVersionResponse(_playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC", mapId);
+            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_S2C);
+        }
+
+        public void NotifyLoadScreenInfo(Peer peer, List<Pair<uint, ClientInfo>> getPlayers)
+        {
+            var screenInfo = new LoadScreenInfo(_playerManager.GetPlayers());
+            _packetHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
+        }
+
+        public void NotifyLoadScreenPlayerName(Peer peer, Pair<uint, ClientInfo> player)
+        {
+            var loadName = new LoadScreenPlayerName(player);
+            _packetHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
+        }
+
+        public void NotifyLoadScreenPlayerChampion(Peer peer, Pair<uint, ClientInfo> player)
+        {
+            var loadChampion = new LoadScreenPlayerChampion(player);
+            _packetHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
+        }
+
+        public void NotifyQueryStatus(Peer peer)
+        {
+            var response = new QueryStatus();
+            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_S2C);
+        }
+
+        public void NotifyPlayerStats(Champion champion)
+        {
+            var response = new PlayerStats(champion);
+            // TODO: research how to send the packet
+            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+        }
+
+        public void NotifySurrender(Champion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team,
+            float timeOut)
+        {
+            var surrender = new Surrender(starter, flag, yesVotes, noVotes, maxVotes, team, timeOut);
+            _packetHandlerManager.BroadcastPacketTeam(team, surrender, Channel.CHL_S2C);
+        }
+
+        public void NotifyGameStart()
+        {
+            var start = new StatePacket(PacketCmd.PKT_S2C_START_GAME);
+            _packetHandlerManager.BroadcastPacket(start, Channel.CHL_S2C);
+        }
+
+        public void NotifyHeroSpawn2(Peer peer, Champion champion)
+        {
+            var heroSpawnPacket = new HeroSpawn2(champion);
+            _packetHandlerManager.SendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyGameTimer(Peer peer, float time)
+        {
+            var timer = new GameTimer(time / 1000.0f);
+            _packetHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
+        }
+
+        public void NotifyGameTimerUpdate(Peer peer, float time)
+        {
+            var timer = new GameTimerUpdate(time / 1000.0f);
+            _packetHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
+        }
+
+        public void NotifySpawnStart(Peer peer)
+        {
+            var start = new StatePacket2(PacketCmd.PKT_S2C_START_SPAWN);
+            _packetHandlerManager.SendPacket(peer, start, Channel.CHL_S2C);
+        }
+
+        public void NotifySpawnEnd(Peer peer)
+        {
+            var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2C_END_SPAWN);
+            _packetHandlerManager.SendPacket(peer, endSpawnPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyHeroSpawn(Peer peer, ClientInfo client, int playerId)
+        {
+            var spawn = new HeroSpawn(client, playerId);
+            _packetHandlerManager.SendPacket(peer, spawn, Channel.CHL_S2C);
+        }
+
+        public void NotifyAvatarInfo(Peer peer, ClientInfo client)
+        {
+            var info = new AvatarInfo(client);
+            _packetHandlerManager.SendPacket(peer, info, Channel.CHL_S2C);
+        }
+
+        public void NotifyBuyItem(Peer peer, Champion champion, Item itemInstance)
+        {
+            var buyItem = new BuyItemResponse(champion, itemInstance);
+            _packetHandlerManager.SendPacket(peer, buyItem, Channel.CHL_S2C);
+        }
+
+        public void NotifyTurretSpawn(Peer peer, LaneTurret turret)
+        {
+            var turretSpawn = new TurretSpawn(turret);
+            _packetHandlerManager.SendPacket(peer, turretSpawn, Channel.CHL_S2C);
+        }
+
+        public void NotifySetHealth(Peer peer, AttackableUnit unit)
+        {
+            var setHealthPacket = new SetHealth(unit);
+            _packetHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyLevelPropSpawn(Peer peer, LevelProp levelProp)
+        {
+            var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
+            _packetHandlerManager.SendPacket(peer, levelPropSpawnPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyEnterVision(Peer peer, Champion champion)
+        {
+            var enterVisionPacket = new EnterVisionAgain(_navGrid, champion);
+            _packetHandlerManager.SendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyStaticObjectSpawn(Peer peer, uint netId)
+        {
+            var minionSpawnPacket = new MinionSpawn2(netId);
+            _packetHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifySetHealth(Peer peer, uint netId)
+        {
+            var setHealthPacket = new SetHealth(netId);
+            _packetHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
+        }
+
+        public void NotifyProjectileSpawn(Peer peer, Projectile projectile)
+        {
+            var spawnProjectilePacket = new SpawnProjectile(_navGrid, projectile);
+            _packetHandlerManager.SendPacket(peer, spawnProjectilePacket, Channel.CHL_S2C);
+        }
+
         public void NotifyFaceDirection(AttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
         {
             var height = _navGrid.GetHeightAtLocation(direction);
@@ -127,6 +380,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         {
             var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, b.BuffType, b.Name, b.Slot);
             _packetHandlerManager.BroadcastPacket(add, Channel.CHL_S2C);
+        }
+
+        public void NotifyDebugMessage(Peer peer, string message)
+        {
+            var dm = new DebugMessage(message);
+            _packetHandlerManager.SendPacket(peer, dm, Channel.CHL_S2C);
+        }
+
+        public void NotifyDebugMessage(TeamId team, string message)
+        {
+            var dm = new DebugMessage(message);
+            _packetHandlerManager.BroadcastPacketTeam(team, dm, Channel.CHL_S2C);
         }
 
         public void NotifyEditBuff(Buff b, int stacks)
@@ -452,7 +717,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets
 
         public void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific)
         {
-            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
+            var announce = new LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C.Announce(messageId, isMapSpecific ? mapId : 0);
             _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
 

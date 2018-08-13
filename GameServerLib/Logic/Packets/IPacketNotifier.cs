@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using ENet;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
@@ -9,6 +10,9 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.Anima
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Packets.Enums;
+using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.Packets
 {
@@ -26,6 +30,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         void NotifyDamageDone(AttackableUnit source, AttackableUnit target, float amount, DamageType type, DamageText damagetext);
         void NotifyDash(AttackableUnit u, Target t, float dashSpeed, bool keepFacingLastDirection, float leapHeight, float followTargetMaxDistance, float backDistance, float travelTime);
         void NotifyDebugMessage(string htmlDebugMessage);
+        void NotifyDebugMessage(Peer peer, string message);
+        void NotifyDebugMessage(TeamId team, string message);
         void NotifyEditBuff(Buff b, int stacks);
         void NotifyEnterVision(GameObject o, TeamId team);
         void NotifyFaceDirection(AttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
@@ -64,5 +70,41 @@ namespace LeagueSandbox.GameServer.Logic.Packets
         void NotifyTeleport(AttackableUnit u, float x, float y);
         void NotifyUnitAnnounceEvent(UnitAnnounces messageId, AttackableUnit target, GameObject killer = null, List<Champion> assists = null);
         void NotifyUpdatedStats(AttackableUnit u, bool partial = true);
+        void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type);
+        void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a);
+        void NotifySkillUp(Peer peer, uint netId, byte skill, byte level, byte pointsLeft);
+        void NotifySetTeam(AttackableUnit unit, TeamId team);
+        void NotifyCastSpell(NavGrid navGrid, Spell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId);
+
+        /// <summary> TODO: tipCommand should be an lib/core enum that gets translated into league version specific packet enum as it may change over time </summary>
+        void NotifyBlueTip(Peer peer, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
+        void NotifyEmotions(Emotions type, uint netId);
+        void NotifyKeyCheck(long userId, int playerNo);
+        void NotifyKeyCheck(Peer peer, long userId, int playerNo);
+        void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId);
+        void NotifyViewResponse(Peer peer, ViewRequest request);
+        void NotifySynchVersion(Peer peer, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
+        void NotifyLoadScreenInfo(Peer peer, List<Pair<uint, ClientInfo>> getPlayers);
+        void NotifyLoadScreenPlayerName(Peer peer, Pair<uint, ClientInfo> player);
+        void NotifyLoadScreenPlayerChampion(Peer peer, Pair<uint, ClientInfo> player);
+        void NotifyQueryStatus(Peer peer);
+        void NotifyPlayerStats(Champion champion);
+        void NotifySurrender(Champion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut);
+        void NotifyGameStart();
+        void NotifyHeroSpawn2(Peer peer, Champion champion);
+        void NotifyGameTimer(Peer peer, float time);
+        void NotifyGameTimerUpdate(Peer peer, float time);
+        void NotifySpawnStart(Peer peer);
+        void NotifySpawnEnd(Peer peer);
+        void NotifyHeroSpawn(Peer peer, ClientInfo client, int playerId);
+        void NotifyAvatarInfo(Peer peer, ClientInfo client);
+        void NotifyBuyItem(Peer peer, Champion champion, Item itemInstance);
+        void NotifyTurretSpawn(Peer peer, LaneTurret turret);
+        void NotifySetHealth(Peer peer, AttackableUnit unit);
+        void NotifyLevelPropSpawn(Peer peer, LevelProp levelProp);
+        void NotifyEnterVision(Peer peer, Champion champion);
+        void NotifyStaticObjectSpawn(Peer peer, uint netId);
+        void NotifySetHealth(Peer peer, uint netId);
+        void NotifyProjectileSpawn(Peer peer, Projectile projectile);
     }
 }

@@ -2,8 +2,7 @@
 using ENet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -12,6 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
     public class MobsCommand : ChatCommandBase
     {
         private readonly PlayerManager _playerManager;
+        private readonly IPacketNotifier _packetNotifier;
 
         public override string Command => "mobs";
         public override string Syntax => $"{Command} teamNumber";
@@ -20,6 +20,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             : base(chatCommandManager, game)
         {
             _playerManager = game.PlayerManager;
+            _packetNotifier = game.PacketNotifier;
         }
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
@@ -41,12 +42,10 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
+            var client = _playerManager.GetPeerInfo(peer);
             foreach (var unit in units)
             {
-                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
-                var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingResponse(client, ping);
-                Game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
+                _packetNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
             }
         }
     }

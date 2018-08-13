@@ -5,7 +5,6 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
@@ -112,8 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 FinishCasting();
             }
 
-            var response = new CastSpellResponse(_game.Map.NavGrid, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
-            _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2C);
+            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             return true;
         }
 

@@ -1,12 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleBuyItem : PacketHandlerBase
     {
+        private IPacketReader _packetReader;
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleBuyItem(Game game)
         {
+            _packetReader = game.PacketReader;
             _game = game;
             _itemManager = game.ItemManager;
             _playerManager = game.PlayerManager;
@@ -23,9 +24,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = new BuyItemRequest(data);
-
-            var itemTemplate = _itemManager.SafeGetItemType(request.Id);
+            var request = _packetReader.ReadBuyItemRequest(data);
+            var itemTemplate = _itemManager.SafeGetItemType(request.ItemId);
             if (itemTemplate == null)
             {
                 return false;

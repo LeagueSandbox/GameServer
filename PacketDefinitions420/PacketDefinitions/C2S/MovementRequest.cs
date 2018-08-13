@@ -1,13 +1,14 @@
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using PacketDefinitions420.Enums;
 
-namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
+namespace PacketDefinitions420.PacketDefinitions.C2S
 {
     public class MovementRequest
     {
         public PacketCmd Cmd;
         public int NetIdHeader;
-        public MoveType Type; //byte
+        public MovementType Type; //byte
         public float X;
         public float Y;
         public uint TargetNetId;
@@ -21,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             {
                 Cmd = (PacketCmd)reader.ReadByte();
                 NetIdHeader = reader.ReadInt32();
-                Type = (MoveType)reader.ReadByte();
+                Type = (MovementType)reader.ReadByte();
                 X = reader.ReadSingle();
                 Y = reader.ReadSingle();
                 TargetNetId = reader.ReadUInt32();

@@ -1,13 +1,13 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleBlueTipClicked : PacketHandlerBase
     {
+        private readonly IPacketReader _packetReader;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
@@ -17,6 +17,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleBlueTipClicked(Game game)
         {
+            _packetReader = game.PacketReader;
+            _packetNotifier = game.PacketNotifier;
             _game = game;
             _chatCommandManager = game.ChatCommandManager;
             _playerManager = game.PlayerManager;
@@ -24,16 +26,12 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var blueTipClicked = new BlueTipClicked(data);
-            var removeBlueTip = new BlueTip("",
-                "",
-                "",
-                0,
-                _playerManager.GetPeerInfo(peer).Champion.NetId,
-                blueTipClicked.Netid);
-
-            _game.PacketHandlerManager.SendPacket(peer, removeBlueTip, Channel.CHL_S2C);
-            var msg = $"Clicked blue tip with netid: {blueTipClicked.Netid}";
+            var request = _packetReader.ReadBlueTipRequest(data);
+            // TODO: can we use player net id from request?
+            var playerNetId = _playerManager.GetPeerInfo(peer).Champion.NetId;
+            _packetNotifier.NotifyBlueTip(peer, "", "", "", 0, playerNetId, request.NetId);
+            
+            var msg = $"Clicked blue tip with netid: {request.NetId}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

@@ -1,5 +1,6 @@
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
+using PacketDefinitions420.Enums;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
 {
@@ -7,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
     {
         public PacketCmd Cmd;
         public uint NetId;
-        public byte Id;
+        public EmotionType Id;
 
         public EmotionPacketRequest(byte[] data)
         {
@@ -15,7 +16,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S
             {
                 Cmd = (PacketCmd)reader.ReadByte();
                 NetId = reader.ReadUInt32();
-                Id = reader.ReadByte();
+                Id = (EmotionType)reader.ReadByte();
             }
         }
     }
