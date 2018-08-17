@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Logic
             ChatCommandManager = new ChatCommandManager(this);
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
-            ScriptEngine = new CSharpScriptEngine(this);
+            ScriptEngine = new CSharpScriptEngine();
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
         }
