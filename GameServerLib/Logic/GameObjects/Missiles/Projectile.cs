@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 {
@@ -17,7 +18,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         public SpellData SpellData { get; private set; }
         protected float _moveSpeed;
         protected Spell _originSpell;
-        private Logger _logger;
 
         public Projectile(
             Game game,
@@ -33,7 +33,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             uint netId = 0
         ) : base(game, x, y, collisionRadius, 0, netId)
         {
-            _logger = game.Logger;
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;

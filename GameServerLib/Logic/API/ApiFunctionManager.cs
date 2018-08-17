@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
@@ -17,7 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.API
     public static class ApiFunctionManager
     {
         private static Game _game;
-        private static Logger _logger;
+        private static ILogger _logger;
 
         public static byte[] StringToByteArray(string hex)
         {
@@ -31,17 +32,17 @@ namespace LeagueSandbox.GameServer.Logic.API
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public static void LogInfo(string format)
         {
-            _logger.LogCoreInfo(format);
+            _logger.Info(format);
         }
 
         public static void LogInfo(string format, params object[] args)
         {
-            _logger.LogCoreInfo(format, args);
+            _logger.Info(string.Format(format, args));
         }
 
         public static GameScriptTimer CreateTimer(float duration, Action callback)
@@ -164,7 +165,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             unit.SetDashingState(false);
 
             // Reset the default run animation
-            var animList = new List<string> {"RUN", ""};
+            var animList = new List<string> { "RUN", "" };
             _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
@@ -181,7 +182,7 @@ namespace LeagueSandbox.GameServer.Logic.API
         {
             if (animation != null)
             {
-                var animList = new List<string> {"RUN", animation};
+                var animList = new List<string> { "RUN", animation };
                 _game.PacketNotifier.NotifySetAnimation(unit, animList);
             }
 

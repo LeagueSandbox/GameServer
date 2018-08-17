@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
     public class HandleSpawn : PacketHandlerBase
     {
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
@@ -24,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public HandleSpawn(Game game)
         {
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
             _game = game;
             _itemManager = game.ItemManager;
             _playerManager = game.PlayerManager;
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             var start = new StatePacket2(_game, PacketCmd.PKT_S2C_START_SPAWN);
             _game.PacketHandlerManager.SendPacket(peer, start, Channel.CHL_S2C);
-            _logger.LogCoreInfo("Spawning map");
+            _logger.Info("Spawning map");
 
             var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())
@@ -111,7 +112,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 }
                 else if (kv.Value is Inhibitor || kv.Value is Nexus)
                 {
-                    var inhibtor = (AttackableUnit) kv.Value;
+                    var inhibtor = (AttackableUnit)kv.Value;
 
                     var minionSpawnPacket = new MinionSpawn2(_game, inhibtor.NetId);
                     _game.PacketHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
@@ -128,7 +129,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 }
                 else
                 {
-                    _logger.LogCoreWarning("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
+                    _logger.Warning("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
 

@@ -4,6 +4,7 @@ using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
 {
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
             }
         }
 
-        protected Logger _logger;
+        protected readonly ILogger Logger;
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
@@ -47,7 +48,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         ) : base(game, x, y, collisionRadius, visionRadius, netId)
 
         {
-            _logger = game.Logger;
+            Logger = LoggerProvider.GetLogger();
             Stats = stats;
             Model = model;
             CollisionRadius = 40;

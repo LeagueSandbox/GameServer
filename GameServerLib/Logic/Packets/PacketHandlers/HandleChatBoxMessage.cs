@@ -1,5 +1,6 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logic.Chatbox;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
         public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
@@ -21,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _game = game;
             _chatCommandManager = game.ChatCommandManager;
             _playerManager = game.PlayerManager;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
         }
 
         public override bool HandlePacket(Peer peer, byte[] data)
@@ -61,7 +62,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     }
                     catch
                     {
-                        _logger.LogCoreWarning(command + " sent an exception.");
+                        _logger.Warning(command + " sent an exception.");
                         var dm = new DebugMessage(_game, "Something went wrong...Did you wrote the command well ? ");
                         _game.PacketHandlerManager.SendPacket(peer, dm, Channel.CHL_S2C);
                     }

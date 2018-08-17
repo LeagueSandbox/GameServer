@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using ENet;
 using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
 using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
@@ -17,21 +18,19 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
     {
         private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private readonly List<TeamId> _teamsEnumerator;
-        private readonly Logger _logger;
         private readonly BlowFish _blowfish;
         private readonly Host _server;
         private readonly PlayerManager _playerManager;
         private readonly Game _game;
 
-        public PacketHandlerManager(Logger logger, BlowFish blowfish, Host server, Game game)
+        public PacketHandlerManager(BlowFish blowfish, Host server, Game game)
         {
-            _logger = logger;
             _blowfish = blowfish;
             _server = server;
             _playerManager = game.PlayerManager;
             _game = game;
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
-            
+
             _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
         }
 
@@ -56,7 +55,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return (Assembly.GetCallingAssembly()
                 .GetTypes()
                 .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T) Activator.CreateInstance(t, g))).ToList();
+                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
         }
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelId)

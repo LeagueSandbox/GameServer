@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
+using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
@@ -10,7 +11,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
     public class Map
     {
         protected Game _game;
-        protected static Logger _logger;
+        private readonly ILogger _logger;
 
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }
@@ -21,7 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public Map(Game game)
         {
             _game = game;
-            _logger = game.Logger;
+            _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
             var path = Path.Combine(
                 ServerContext.ExecutingDirectory,
@@ -39,7 +40,7 @@ namespace LeagueSandbox.GameServer.Logic.Maps
             }
             else
             {
-                _logger.LogCoreError("Failed to load navigation graph. Aborting map load.");
+                _logger.Error("Failed to load navigation graph. Aborting map load.");
                 return;
             }
 
