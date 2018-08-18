@@ -2,3 +2,6 @@
 	path = GameServerApp/Content/Data/LeagueSandbox-Default
 	url = https://github.com/LeagueSandbox/LeagueSandbox-Default.git
 	branch = indev
+[submodule "GameServerConsole/Content/Data/LeagueSandbox-Default"]
+	path = GameServerConsole/Content/Data/LeagueSandbox-Default
+	url = https://github.com/LeagueSandbox/LeagueSandbox-Default.git

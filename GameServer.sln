@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26020.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerApp", "GameServerApp\GameServerApp.csproj", "{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerAppTests", "GameServerAppTests\GameServerAppTests.csproj", "{77FE4FF5-3B1C-42A5-B56F-4CAD91013410}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerConsoleTests", "GameServerAppTests\GameServerConsoleTests.csproj", "{77FE4FF5-3B1C-42A5-B56F-4CAD91013410}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLib", "GameServerLib\GameServerLib.csproj", "{CB004023-B938-4EC6-B036-29EE2F55CFA4}"
 EndProject
@@ -20,6 +20,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerCore", "GameServerCore\GameServerCore.csproj", "{DA3DE633-D75B-40B0-8833-099ABFBF43A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaths", "GameMaths\GameMaths.csproj", "{12F14E81-7609-43D9-9477-83A0D3DE4BBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsole", "GameServerConsole\GameServerConsole.csproj", "{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +59,10 @@ Global
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
