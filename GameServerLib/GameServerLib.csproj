@@ -2,7 +2,8 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <AssemblyName>GameServerLib</AssemblyName>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>LeagueSandbox.GameServer</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
