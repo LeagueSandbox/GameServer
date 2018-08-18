@@ -2,14 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Legacy2CPSWorkaround" Version="1.0.0">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Content\**" />
@@ -37,7 +31,7 @@
     <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
     <_SettingsTargetDirectory>Settings\</_SettingsTargetDirectory>
     <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
-    <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
+    <_ENetSharpLeagueSourceDirectory>$(NuGetPackageRoot)enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
     <_IsMac>false</_IsMac>
     <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
     <StartupObject>GameServerConsole.Program</StartupObject>
