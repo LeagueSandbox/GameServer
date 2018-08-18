@@ -1,0 +1,12 @@
+{
+    "data": {
+        "LeagueSandbox-Default": {
+            "Champions": "*",
+            "Items": "*",
+            "Buffs": "*",
+            "Maps": "*",
+            "Stats": "*",
+            "Spells": "*"
+        }
+    }
+}

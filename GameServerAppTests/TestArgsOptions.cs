@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServerApp;
+﻿using CommandLine;
+using LeagueSandbox.GameServerApp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerAppTests
@@ -16,17 +17,22 @@ namespace LeagueSandbox.GameServerAppTests
                 "--port", port.ToString(),
                 "--config", config
             };
-            var options = ArgsOptions.Parse(args);
-            Assert.AreEqual(port, options.ServerPort);
-            Assert.AreEqual(config, options.ConfigPath);
+
+            ArgsOptions.Parse(args).WithParsed(options =>
+            {
+                Assert.AreEqual(port, options.ServerPort);
+                Assert.AreEqual(config, options.ConfigPath);
+            });
         }
 
         [TestMethod]
         public void TestDefaults()
         {
-            var options = ArgsOptions.Parse(new string[0]);
-            Assert.IsTrue(options.ServerPort > 0);
-            Assert.IsFalse(string.IsNullOrEmpty(options.ConfigPath));
+            ArgsOptions.Parse(new string[0]).WithParsed(options =>
+            {
+                Assert.IsTrue(options.ServerPort > 0);
+                Assert.IsFalse(string.IsNullOrEmpty(options.ConfigPath));
+            });
         }
     }
 }

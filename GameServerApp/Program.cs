@@ -15,7 +15,8 @@ namespace LeagueSandbox.GameServerApp
 
         private static void Main(string[] args)
         {
-            var options = ArgsOptions.Parse(args);
+            ArgsOptions.Parse(args).WithParsed(options => {
+           
 
             var configJson = options.ConfigJson;
             if (string.IsNullOrEmpty(configJson))
@@ -79,31 +80,31 @@ namespace LeagueSandbox.GameServerApp
             }
 #endif
             gameServerLauncher.StartNetworkLoop();
+
+            });
         }
     }
 
     public class ArgsOptions
     {
-        [Option("config", DefaultValue = "Settings/GameInfo.json")]
+        [Option("config", Default = "Settings/GameInfo.json")]
         public string ConfigPath { get; set; }
 
-        [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
+        [Option("config-gameserver", Default = "Settings/GameServerSettings.json")]
         public string ConfigGameServerPath { get; set; }
 
-        [Option("config-json", DefaultValue = "")]
+        [Option("config-json", Default = "")]
         public string ConfigJson { get; set; }
 
-        [Option("config-gameserver-json", DefaultValue = "")]
+        [Option("config-gameserver-json", Default = "")]
         public string ConfigGameServerSettingsJson { get; set; }
 
-        [Option("port", DefaultValue = (ushort)5119)]
+        [Option("port", Default = (ushort)5119)]
         public ushort ServerPort { get; set; }
 
-        public static ArgsOptions Parse(string[] args)
+        public static ParserResult<ArgsOptions> Parse(string[] args)
         {
-            var options = new ArgsOptions();
-            Parser.Default.ParseArguments(args, options);
-            return options;
+            return Parser.Default.ParseArguments<ArgsOptions>(args);
         }
     }
 }
