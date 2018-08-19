@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaths", "GameMaths\GameMaths.csproj", "{12F14E81-7609-43D9-9477-83A0D3DE4BBC}"
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsole", "GameServerConsole\GameServerConsole.csproj", "{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerApp", "GameServerApp\GameServerApp.csproj", "{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40C1C9EF-91EF-43D7-A731-C96A65E0DB49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
