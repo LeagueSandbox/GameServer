@@ -1,8 +1,9 @@
-﻿using LeagueSandbox.GameServer.Logic.Enet;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class LevelProp : GameObject
+    public class LevelProp : GameObject, ILevelProp
     {
         public string Name { get; private set; }
         public string Model { get; private set; }

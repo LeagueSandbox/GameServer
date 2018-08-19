@@ -1,8 +1,9 @@
 ﻿using System;
 using ENet;
+using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
+using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
@@ -32,7 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
                 }
 
                 var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packet(Game, (PacketCmd)opcode);
+                var packet = new Packet((PacketCmd)opcode);
 
                 for (var i = 2; i < s.Length; i++)
                 {

@@ -1,27 +1,22 @@
-﻿using LeagueSandbox.GameServer.Logic.API;
+﻿using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 {
-    public enum SpellState
-    {
-        STATE_READY,
-        STATE_CASTING,
-        STATE_COOLDOWN,
-        STATE_CHANNELING
-    }
-
-    public class Spell
+    public class Spell : ISpell
     {
         public static bool CooldownsEnabled;
-        public static  bool ManaCostsEnabled;
+        public static bool ManaCostsEnabled;
 
         public Champion Owner { get; private set; }
         public short Level { get; private set; }
@@ -51,6 +46,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         private IGameScript _spellGameScript;
 
         public SpellData SpellData { get; private set; }
+
+        IChampion ISpell.Owner => Owner;
+        IAttackableUnit ISpell.Target => Target;
+        ISpellData ISpell.SpellData => SpellData;
 
         public Spell(Game game, Champion owner, string spellName, byte slot)
         {
@@ -112,8 +111,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 FinishCasting();
             }
 
-            var response = new CastSpellResponse(_game, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
-            _game.PacketHandlerManager.BroadcastPacket(response, Packets.PacketHandlers.Channel.CHL_S2C);
+            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
             return true;
         }
 
@@ -221,7 +219,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
                 _game,
                 Owner.X,
                 Owner.Y,
-                (int) SpellData.LineWidth,
+                (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),
                 this,

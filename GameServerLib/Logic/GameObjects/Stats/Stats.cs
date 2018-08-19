@@ -1,10 +1,12 @@
 ﻿using System;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
-    public class Stats
+    public class Stats : IStats
     {
         public ulong SpellsEnabled { get; private set; }
         public ulong SummonerSpellsEnabled { get; private set; }
@@ -78,6 +80,28 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
             set => _spellCostReduction = value;
         }
 
+        IStat IStats.AbilityPower => AbilityPower;
+        IStat IStats.Armor => Armor;
+        IStat IStats.ArmorPenetration => ArmorPenetration;
+        IStat IStats.AttackDamage => AttackDamage;
+        IStat IStats.AttackSpeedMultiplier => AttackSpeedMultiplier;
+        IStat IStats.CooldownReduction => CooldownReduction;
+        IStat IStats.CriticalChance => CriticalChance;
+        IStat IStats.CriticalDamage => CriticalDamage;
+        IStat IStats.GoldPerSecond => GoldPerSecond;
+        IStat IStats.HealthPoints => HealthPoints;
+        IStat IStats.HealthRegeneration => HealthRegeneration;
+        IStat IStats.LifeSteal => LifeSteal;
+        IStat IStats.MagicResist => MagicResist;
+        IStat IStats.MagicPenetration => MagicPenetration;
+        IStat IStats.ManaPoints => ManaPoints;
+        IStat IStats.ManaRegeneration => ManaRegeneration;
+        IStat IStats.MoveSpeed => MoveSpeed;
+        IStat IStats.Range => Range;
+        IStat IStats.Size => Size;
+        IStat IStats.SpellVamp => SpellVamp;
+        IStat IStats.Tenacity => Tenacity;
+
         public Stats()
         {
             _spellCostReduction = 0;
@@ -132,7 +156,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
             ParType = charData.ParType;
         }
 
-        public void AddModifier(StatsModifier modifier)
+        public void AddModifier(IStatsModifier modifier)
         {
             AbilityPower.ApplyStatModificator(modifier.AbilityPower);
             Armor.ApplyStatModificator(modifier.Armor);
@@ -156,7 +180,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
             Tenacity.ApplyStatModificator(modifier.Tenacity);
         }
 
-        public void RemoveModifier(StatsModifier modifier)
+        public void RemoveModifier(IStatsModifier modifier)
         {
             AbilityPower.RemoveStatModificator(modifier.AbilityPower);
             Armor.RemoveStatModificator(modifier.Armor);
@@ -278,53 +302,5 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
                 ActionState &= ~state;
             }
         }
-    }
-
-    [Flags]
-    public enum ActionState : uint
-    {
-        CAN_ATTACK = 1 << 0,
-        CAN_CAST = 1 << 1,
-        CAN_MOVE = 1 << 2,
-        CAN_NOT_MOVE = 1 << 3,
-        STEALTHED = 1 << 4,
-        REVEAL_SPECIFIC_UNIT = 1 << 5,
-        TAUNTED = 1 << 6,
-        FEARED = 1 << 7,
-        IS_FLEEING = 1 << 8,
-        CAN_NOT_ATTACK = 1 << 9,
-        IS_ASLEEP = 1 << 10,
-        IS_NEAR_SIGHTED = 1 << 11,
-        IS_GHOSTED = 1 << 12,
-
-        CHARMED = 1 << 15,
-        NO_RENDER = 1 << 16,
-        FORCE_RENDER_PARTICLES = 1 << 17,
-
-        UNKNOWN = 1 << 23 // set to 1 by default, interferes with targetability
-    }
-
-    [Flags]
-    public enum IsTargetableToTeamFlags : uint
-    {
-        NON_TARGETABLE_ALLY = 0x800000,
-        NON_TARGETABLE_ENEMY = 0x1000000,
-        TARGETABLE_TO_ALL = 0x2000000
-    }
-
-    public enum PrimaryAbilityResourceType : byte
-    {
-        MANA = 0,
-        ENERGY = 1,
-        NONE = 2,
-        SHIELD = 3,
-        BATTLE_FURY = 4,
-        DRAGON_FURY = 5,
-        RAGE = 6,
-        HEAT = 7,
-        FEROCITY = 8,
-        BLOOD_WELL = 9,
-        WIND = 10,
-        OTHER = 11
     }
 }

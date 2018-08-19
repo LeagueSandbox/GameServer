@@ -1,4 +1,6 @@
 ﻿using ENet;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Players;
 

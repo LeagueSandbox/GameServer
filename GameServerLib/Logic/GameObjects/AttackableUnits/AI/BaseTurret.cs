@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using Force.Crc32;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public class BaseTurret : ObjAiBase
+    public class BaseTurret : ObjAiBase, IBaseTurret
     {
         public string Name { get; private set; }
         protected float _globalGold = 250.0f;

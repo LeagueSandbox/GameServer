@@ -1,5 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -22,29 +23,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player
-            var screenInfo = new LoadScreenInfo(_game, _playerManager.GetPlayers());
-            var pInfo = _game.PacketHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
+             _game.PacketNotifier.NotifyLoadScreenInfo(peer, _playerManager.GetPlayers());
 
             // Distributes each players info by UserId
-            var bOk = false;
             foreach (var player in _playerManager.GetPlayers())
             {
                 // Giving the UserId in loading screen a name
-                var loadName = new LoadScreenPlayerName(_game, player);
+                 _game.PacketNotifier.NotifyLoadScreenPlayerName(peer, player);
                 // Giving the UserId in loading screen a champion
-                var loadChampion = new LoadScreenPlayerChampion(_game, player);
-                var pName = _game.PacketHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
-                var pHero = _game.PacketHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
-
-                bOk = pName && pHero;
-
-                if (!bOk)
-                {
-                    break;
-                }
+                 _game.PacketNotifier.NotifyLoadScreenPlayerChampion(peer, player);
             }
 
-            return pInfo && bOk;
+            return true;
         }
     }
 }

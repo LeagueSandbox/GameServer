@@ -1,6 +1,8 @@
-﻿namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
+﻿using GameServerCore.Logic.Domain.GameObjects;
+
+namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
-    public class StatModifier
+    public class StatModifier : IStatModifier
     {
         public float BaseBonus { get; set; }
         public float PercentBaseBonus { get; set; }

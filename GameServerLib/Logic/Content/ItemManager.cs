@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GameServerCore.Logic.Domain;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
@@ -53,7 +54,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class ItemType : StatsModifier
+    public class ItemType : StatsModifier, IItemType
     {
         //private ItemManager _owner;
         private ItemContentCollectionEntry _itemInfo;
@@ -247,11 +248,13 @@ namespace LeagueSandbox.GameServer.Logic.Content
         }
     }
 
-    public class Item
+    public class Item : IItem
     {
         public byte StackSize { get; private set; }
         public int TotalPrice { get; private set; }
         public ItemType ItemType { get; private set; }
+
+        IItemType IItem.ItemType => ItemType;
 
         private Inventory _owner;
 

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using GameServerCore.Logic.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
 {
     // deviates from the style guide
     // see discussion here:https://github.com/LeagueSandbox/GameServer/pull/583
     [StructLayout(LayoutKind.Explicit)]
-    public class ChampionStats
+    public class ChampionStats : IChampionStats
     {
         [FieldOffset(0)]
         public int Assists;
@@ -94,7 +95,48 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
         public int WardsPlaced;
         [FieldOffset(298)]
         // sort of length (when above 0 sends malformed buffer error)
-        public short Padding; 
+        public short Padding;
+
+        int IChampionStats.Assists => Assists;
+        int IChampionStats.Kills => Kills;
+        int IChampionStats.DoubleKills => DoubleKills;
+        int IChampionStats.UnrealKills => UnrealKills;
+        float IChampionStats.GoldEarned => GoldEarned;
+        float IChampionStats.GoldSpent => GoldSpent;
+        int IChampionStats.CurrentKillingSpree => CurrentKillingSpree;
+        float IChampionStats.LargestCriticalStrike => LargestCriticalStrike;
+        int IChampionStats.LargestKillingSpree => LargestKillingSpree;
+        int IChampionStats.LargestMultiKill => LargestMultiKill;
+        float IChampionStats.LongestTimeSpentLiving => LongestTimeSpentLiving;
+        float IChampionStats.MagicDamageDealt => MagicDamageDealt;
+        float IChampionStats.MagicDamageDealtToChampions => MagicDamageDealtToChampions;
+        float IChampionStats.MagicDamageTaken => MagicDamageTaken;
+        int IChampionStats.MinionsKilled => MinionsKilled;
+        int IChampionStats.NeutralMinionsKilled => NeutralMinionsKilled;
+        int IChampionStats.NeutralMinionsKilledInEnemyJungle => NeutralMinionsKilledInEnemyJungle;
+        int IChampionStats.NeutralMinionsKilledInTeamJungle => NeutralMinionsKilledInTeamJungle;
+        int IChampionStats.Deaths => Deaths;
+        int IChampionStats.PentaKills => PentaKills;
+        float IChampionStats.PhysicalDamageDealt => PhysicalDamageDealt;
+        float IChampionStats.PhysicalDamageDealtToChampions => PhysicalDamageDealtToChampions;
+        float IChampionStats.PhysicalDamageTaken => PhysicalDamageTaken;
+        int IChampionStats.QuadraKills => QuadraKills;
+        int IChampionStats.TeamId => TeamId;
+        float IChampionStats.TotalDamageDealt => TotalDamageDealt;
+        float IChampionStats.TotalDamageDealtToChampions => TotalDamageDealtToChampions;
+        float IChampionStats.TotalDamageTaken => TotalDamageTaken;
+        int IChampionStats.TotalHeal => TotalHeal;
+        float IChampionStats.TotalTimeCrowdControlDealt => TotalTimeCrowdControlDealt;
+        float IChampionStats.TotalTimeSpentDead => TotalTimeSpentDead;
+        int IChampionStats.TotalUnitsHealed => TotalUnitsHealed;
+        int IChampionStats.TripleKills => TripleKills;
+        float IChampionStats.TrueDamageDealt => TrueDamageDealt;
+        float IChampionStats.TrueDamageDealtToChampions => TrueDamageDealtToChampions;
+        float IChampionStats.TrueDamageTaken => TrueDamageTaken;
+        int IChampionStats.TurretsKilled => TurretsKilled;
+        int IChampionStats.BarracksKilled => BarracksKilled;
+        int IChampionStats.WardsKilled => WardsKilled;
+        int IChampionStats.WardsPlaced => WardsPlaced;
 
         // TODO: move to universal serializer
         // also code here is unsafe, but thats prefered than just 
@@ -112,5 +154,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
             return arr;
         }
 
+        public byte[] GetBytes()
+        {
+            return GetBytes(this);
+        }
     }
 }

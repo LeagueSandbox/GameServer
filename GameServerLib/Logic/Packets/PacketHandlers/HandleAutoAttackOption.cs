@@ -1,6 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Chatbox;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -21,9 +22,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             //TODO: implement this
-            var autoAttackOption = new AutoAttackOption(data);
+            var autoAttackOption = _game.PacketReader.ReadAutoAttackOptionRequest(data);
             var state = "Deactivated";
-            if (autoAttackOption.Activated == 1)
+            if (autoAttackOption.Activated)
             {
                 state = "Activated";
             }

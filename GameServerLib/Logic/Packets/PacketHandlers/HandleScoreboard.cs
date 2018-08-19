@@ -1,6 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -25,9 +26,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         {
             _logger.Info($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var response = new PlayerStats(_game, _playerManager.GetPeerInfo(peer).Champion);
-            // TODO: research how to send the packet
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+             _game.PacketNotifier.NotifyPlayerStats(champion);
+            return true;
         }
     }
 }

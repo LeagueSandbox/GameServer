@@ -5,16 +5,18 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.GameObjects;
-using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions;
 using LeagueSandbox.GameServer.Logic.Players;
-using Packet = LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.Packet;
+using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
-    public class PacketHandlerManager
+    public class PacketHandlerManager : IPacketHandlerManager
     {
         private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
         private readonly List<TeamId> _teamsEnumerator;
@@ -34,7 +36,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
         }
 
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
+        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
         {
             var inst = GetInstances<PacketHandlerBase>(loadFrom, _game);
             var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
@@ -50,7 +52,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return dict;
         }
 
-        public static List<T> GetInstances<T>(Assembly a, Game g)
+        private static List<T> GetInstances<T>(Assembly a, Game g)
         {
             return (Assembly.GetCallingAssembly()
                 .GetTypes()
@@ -89,25 +91,20 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             return null;
         }
+
         public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return SendPacket(peer, packet.GetBytes(), channelNo, flag);
         }
 
-        private IntPtr AllocMemory(byte[] data)
+        public void UnpauseGame()
         {
-            var unmanagedPointer = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, 0, unmanagedPointer, data.Length);
-            return unmanagedPointer;
+            GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
+                .HandlePacket(null, new byte[0]);
         }
 
-        private void ReleaseMemory(IntPtr ptr)
-        {
-            Marshal.FreeHGlobal(ptr);
-        }
-
-        public void PrintPacket(byte[] buffer, string str)
+        private void PrintPacket(byte[] buffer, string str)
         {
             //string hex = BitConverter.ToString(buffer);
             // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
@@ -189,13 +186,13 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             return BroadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, Packet packet, Channel channelNo,
+        public bool BroadcastPacketVision(IGameObject o, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
-        public bool BroadcastPacketVision(GameObject o, byte[] data, Channel channelNo,
+        public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var team in _teamsEnumerator)
@@ -205,7 +202,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                     continue;
                 }
 
-                if (_game.ObjectManager.TeamHasVisionOn(team, o))
+                if (_game.ObjectManager.TeamHasVisionOn(team, (GameObject)o))
                 {
                     BroadcastPacketTeam(team, data, channelNo, flag);
                 }

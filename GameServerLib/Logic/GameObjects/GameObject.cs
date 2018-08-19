@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Packets;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class GameObject : Target
+    public class GameObject : Target, IGameObject
     {
         public uint NetId { get; private set; }
         protected float _xvector, _yvector;
@@ -33,8 +33,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                var p = new SetTeam(_game, this as AttackableUnit, team);
-                _game.PacketHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
+                _game.PacketNotifier.NotifySetTeam(this as AttackableUnit, team);
             }
         }
 
@@ -50,6 +49,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
+
+        ITarget IGameObject.Target => Target;
 
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Timers;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
-    public class Inhibitor : ObjAnimatedBuilding
+    public class Inhibitor : ObjAnimatedBuilding, IInhibitor
     {
         private Timer _respawnTimer;
         public InhibitorState InhibitorState { get; private set; }
@@ -117,11 +118,5 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
             return 0;
         }
 
-    }
-
-    public enum InhibitorState : byte
-    {
-        DEAD = 0x00,
-        ALIVE = 0x01
     }
 }

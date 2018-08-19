@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -10,12 +13,16 @@ using LeagueSandbox.GameServer.Logic.Logging;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
 {
-    public class Projectile : ObjMissile
+    public class Projectile : ObjMissile, IProjectile
     {
         public List<GameObject> ObjectsHit { get; private set; }
         public AttackableUnit Owner { get; private set; }
         public int ProjectileId { get; private set; }
         public SpellData SpellData { get; private set; }
+
+        List<IGameObject> IProjectile.ObjectsHit => ObjectsHit.Cast<IGameObject>().ToList();
+        IAttackableUnit IProjectile.Owner => Owner;
+
         protected float _moveSpeed;
         protected Spell _originSpell;
 

@@ -4,6 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ENet;
+using GameServerCore.Logic;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Logic.Maps;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Chatbox;
@@ -15,11 +21,12 @@ using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer.Logic
 {
-    public class Game
+    public class Game : IGame
     {
         private Host _server;
         private ILogger _logger;
@@ -41,8 +48,9 @@ namespace LeagueSandbox.GameServer.Logic
 
         public ObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
-        public PacketNotifier PacketNotifier { get; private set; }
-        public PacketHandlerManager PacketHandlerManager { get; private set; }
+        public IPacketNotifier PacketNotifier { get; private set; }
+        public IPacketHandlerManager PacketHandlerManager { get; private set; }
+        public IPacketReader PacketReader { get; private set; }
         public Config Config { get; protected set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -55,6 +63,8 @@ namespace LeagueSandbox.GameServer.Logic
         internal NetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
+
+        IMap IGame.Map => Map;
 
         private Stopwatch _lastMapDurationWatch;
 
@@ -90,11 +100,11 @@ namespace LeagueSandbox.GameServer.Logic
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, this);
 
-
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
 
-            PacketNotifier = new PacketNotifier(this);
+            PacketReader = new PacketReader();
+            PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
@@ -163,8 +173,7 @@ namespace LeagueSandbox.GameServer.Logic
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
-                            .HandlePacket(null, new byte[0]);
+                        PacketHandlerManager.UnpauseGame();
                         _autoResumeCheck = true;
                     }
                     continue;
@@ -196,7 +205,7 @@ namespace LeagueSandbox.GameServer.Logic
             _nextSyncTime += diff;
             if (_nextSyncTime >= 10 * 1000)
             {
-                PacketNotifier.NotifyGameTimer();
+                PacketNotifier.NotifyGameTimer(GameTime);
                 _nextSyncTime = 0;
             }
         }

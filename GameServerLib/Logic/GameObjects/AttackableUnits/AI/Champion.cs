@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using GameServerCore.Logic.Domain;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enet;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Enet;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logic.Items;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public class Champion : ObjAiBase
+    public class Champion : ObjAiBase, IChampion
     {
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
@@ -19,9 +23,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
         public ChampionStats ChampStats { get; private set; } = new ChampionStats();
 
-
         private short _skillPoints;
         public int Skin { get; set; }
+
+        IRuneCollection IChampion.RuneList => RuneList;
+        Dictionary<short, ISpell> IChampion.Spells => Spells.ToDictionary(x => x.Key, x => (ISpell)x.Value);
+        IChampionStats IChampion.ChampStats => ChampStats;
+
         private float _championHitFlagTimer;
         /// <summary>
         /// Player number ordered by the config file.
@@ -155,6 +163,11 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 !IsCastingSpell &&
                 !IsDead &&
                 !HasCrowdControl(CrowdControlType.ROOT);
+        }
+
+        public void UpdateMoveOrder(MoveOrder order)
+        {
+            MoveOrder = order;
         }
 
         public bool CanCast()
@@ -338,7 +351,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public void Recall(ObjAiBase owner)
         {
             var spawnPos = GetRespawnPosition();
-            _game.PacketNotifier.NotifyTeleport(owner, spawnPos.X, spawnPos.Y);
+            owner.TeleportTo(spawnPos.X, spawnPos.Y);
         }
 
         public void SetSkillPoints(int skillPoints)
@@ -407,11 +420,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
 
             return true;
-        }
-
-        public InventoryManager GetInventory()
-        {
-            return Inventory;
         }
 
         public void OnKill(AttackableUnit killed)
@@ -532,6 +540,21 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             _playerHitId = attacker.NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
+        }
+
+        public void UpdateSkin(int skinNo)
+        {
+            Skin = skinNo;
+        }
+
+        ISpell IChampion.GetSpell(byte slot)
+        {
+            return GetSpell(slot);
+        }
+
+        ISpell IChampion.LevelUpSpell(short slot)
+        {
+            return LevelUpSpell(slot);
         }
     }
 }

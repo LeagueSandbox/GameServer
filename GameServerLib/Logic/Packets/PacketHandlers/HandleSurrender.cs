@@ -1,6 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -22,8 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
             var c = _pm.GetPeerInfo(peer).Champion;
-            var surrender = new Surrender(_game, c, 0x03, 1, 0, 5, c.Team, 10.0f);
-            _game.PacketHandlerManager.BroadcastPacketTeam(TeamId.TEAM_BLUE, surrender, Channel.CHL_S2C);
+             _game.PacketNotifier.NotifySurrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
             return true;
         }
     }

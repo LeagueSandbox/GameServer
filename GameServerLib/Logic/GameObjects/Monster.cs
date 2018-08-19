@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Enet;
-using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {
-    public class Monster : ObjAiBase
+    public class Monster : ObjAiBase, IMonster
     {
         public Vector2 Facing { get; private set; }
         public string Name { get; private set; }

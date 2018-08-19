@@ -1,6 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -21,23 +21,18 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var skillUpPacket = new SkillUpRequest(data);
+            var request = _game.PacketReader.ReadSkillUpRequest(data);
             //!TODO Check if can up skill? :)
 
-            var s = _playerManager.GetPeerInfo(peer).Champion.LevelUpSpell(skillUpPacket.Skill);
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var s = champion.LevelUpSpell(request.Skill);
             if (s == null)
             {
                 return false;
             }
 
-            var skillUpResponse = new SkillUpResponse(_game,
-                _playerManager.GetPeerInfo(peer).Champion.NetId,
-                skillUpPacket.Skill,
-                (byte)s.Level,
-                (byte)s.Owner.GetSkillPoints()
-            );
-            _game.PacketHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
-            _playerManager.GetPeerInfo(peer).Champion.Stats.SetSpellEnabled(skillUpPacket.Skill, true);
+             _game.PacketNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, (byte)s.Level, (byte)s.Owner.GetSkillPoints());
+            champion.Stats.SetSpellEnabled(request.Skill, true);
 
             return true;
         }

@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Enums;
+using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
-using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.API
@@ -96,7 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.API
             var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
 
             CancelDash(unit);
-            _game.PacketNotifier.NotifyTeleport(unit, truePos.X, truePos.Y);
+            unit.TeleportTo(truePos.X, truePos.Y);
         }
 
         public static bool IsWalkable(float x, float y)
@@ -139,8 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.API
 
         public static void PrintChat(string msg)
         {
-            var dm = new DebugMessage(_game, msg);
-            _game.PacketHandlerManager.BroadcastPacket(dm, Channel.CHL_S2C);
+            _game.PacketNotifier.NotifyDebugMessage(msg);
         }
 
         public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
@@ -192,7 +190,6 @@ namespace LeagueSandbox.GameServer.Logic.API
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
-                    _game,
                     unit,
                     newTarget,
                     dashSpeed,
@@ -207,7 +204,6 @@ namespace LeagueSandbox.GameServer.Logic.API
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(
-                    _game,
                     unit,
                     target,
                     dashSpeed,

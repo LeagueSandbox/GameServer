@@ -1,18 +1,10 @@
-﻿using System.Collections.Generic;
-using LeagueSandbox.GameServer.Logic.Enet;
+﻿using GameServerCore.Logic.Enums;
+using System.Collections.Generic;
+using GameServerCore.Logic.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 {
-    public enum TurretType
-    {
-        OUTER_TURRET,
-        INNER_TURRET,
-        INHIBITOR_TURRET,
-        NEXUS_TURRET,
-        FOUNTAIN_TURRET
-    }
-
-    public class LaneTurret : BaseTurret
+    public class LaneTurret : BaseTurret, ILaneTurret
     {
         public TurretType Type { get; private set; }
         private bool _turretHpUpdated;
