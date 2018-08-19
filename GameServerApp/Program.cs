@@ -1,4 +1,5 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Diagnostics;
 using System.IO;
 using CommandLine;
@@ -105,6 +106,26 @@ namespace LeagueSandbox.GameServerApp
         public static ParserResult<ArgsOptions> Parse(string[] args)
         {
             return Parser.Default.ParseArguments<ArgsOptions>(args);
+=======
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace GameServerApp
+{
+    static class Program
+    {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new GameServerAppForm());
+>>>>>>> Created empty form project for GameServerApp.
         }
     }
 }
