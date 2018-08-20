@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameMaths.Geometry.Polygons;
 using GameServerCore.Logic;
 using GameServerCore.Logic.Domain.GameObjects;
 using GameServerCore.Logic.Enums;
@@ -270,7 +271,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             else
             {
                 SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
-                /*if(CurWaypoint >= Waypoints.Count)
+                /* TODO: Soon we will use path finding for this.
+                 * if(CurWaypoint >= Waypoints.Count)
                 {
                     var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
                     if (newWaypoints.Count > 1)
@@ -582,7 +584,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 var u = gameObject.Value as AttackableUnit;
                 if (u == null || u.NetId == NetId || u.IsDead || u.Team != Team || u.GetDistanceTo(TargetUnit) > DETECT_RANGE)
-                //if (u == null || u.NetId == NetId || u.IsDead || (u.Team == Team && u.GetDistanceTo(TargetUnit) > DETECT_RANGE))
                 {
                     continue;
                 }                    

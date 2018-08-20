@@ -42,9 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Geometry\CirclePoly.cs" />
+    <Compile Include="Geometry\Polygons\ArcPoly.cs" />
+    <Compile Include="Geometry\Polygons\CirclePoly.cs" />
     <Compile Include="Geometry\Clipper.cs" />
-    <Compile Include="Geometry\Polygon.cs" />
+    <Compile Include="Geometry\Polygons\LinePoly.cs" />
+    <Compile Include="Geometry\Polygons\Polygon.cs" />
+    <Compile Include="Geometry\Polygons\RectanglePoly.cs" />
+    <Compile Include="Geometry\Polygons\RingPoly.cs" />
+    <Compile Include="Geometry\Polygons\SectorPoly.cs" />
+    <Compile Include="MathExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

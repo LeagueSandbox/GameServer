@@ -113,34 +113,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             Replication.Update();
         }
         
-        public override void OnCollision(GameObject collider)
-        {
-            /*if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
-            {
-                return;
-            }
-            if (collider.GetType() == typeof(Minion))
-            {
-                if(NetId > collider.NetId)
-                {
-                    Vector2 newPos = new Vector2(X + 120, Y + 120);
-                    if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
-                    {
-                        newPos = new Vector2(X + 120, Y + 50);
-                    }
-                    try
-                    {
-                        Move(250, newPos);
-                    }
-                    catch
-                    {
-                        //Minion died
-                    }
-                }
-            }*/
-            base.OnCollision(collider);
-        }
-
         // AI tasks
         protected bool ScanForTargets()
         {
@@ -152,7 +124,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             var nextTargetPriority = 14;
 
             var objects = _game.ObjectManager.GetObjects();
-            //foreach (var it in objects.OrderBy(x => _game.ObjectManager.CountUnitsAttackingUnit(x.Value)))
             foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
             {
                 var u = it.Value as AttackableUnit;
