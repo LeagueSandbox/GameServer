@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Numerics;
 using ClipperLib;
-using LeagueSandbox.GameServer.Logic.GameObjects;
 
 /// <summary>
 ///     Base class representing a polygon.
@@ -43,16 +42,6 @@ public class Polygon
     public bool IsInside(Vector2 point)
     {
         return !IsOutside(point);
-    }
-
-    /// <summary>
-    ///     Gets if the Objects Position is inside the polygon.
-    /// </summary>
-    /// <param name="gameObject">Game Object</param>
-    /// <returns>Whether the <see cref="GameObject" />'s position is inside the polygon</returns>
-    public bool IsInside(GameObject gameObject)
-    {
-        return !IsOutside(gameObject.GetPosition());
     }
 
     /// <summary>
