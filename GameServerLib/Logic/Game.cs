@@ -78,6 +78,8 @@ namespace LeagueSandbox.GameServer.Logic
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine(this);
+            _lastMapDurationWatch = new Stopwatch();
+            _lastMapDurationWatch.Start();
         }
 
         public void Initialize(Address address, string blowfishKey, Config config)
