@@ -1,6 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -23,9 +24,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var parsedData = new UseObject(data);
+            var request = _game.PacketReader.ReadUseObjectRequest(data);
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            var msg = $"Object {champion.NetId} is trying to use (right clicked) {parsedData.TargetNetId}";
+            var msg = $"Object {champion.NetId} is trying to use (right clicked) {request.TargetNetId}";
             _logger.Info(msg);
 
             return true;

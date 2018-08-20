@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using ENet;
+using GameServerCore;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using LeagueSandbox.GameServer.Logic.Packets;
 using LeagueSandbox.GameServer.Logic.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.Players;
 
@@ -11,6 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
 {
     public class MobsCommand : ChatCommandBase
     {
+        private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "mobs";
@@ -19,6 +22,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
         public MobsCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
+            _game = game;
             _playerManager = game.PlayerManager;
         }
 
@@ -38,15 +42,13 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox.Commands
             }
 
             var units = Game.ObjectManager.GetObjects()
-                .Where(xx => xx.Value.Team == CustomConvert.ToTeamId(team))
+                .Where(xx => xx.Value.Team == team.ToTeamId())
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
+            var client = _playerManager.GetPeerInfo(peer);
             foreach (var unit in units)
             {
-                var ping = new AttentionPingRequest(unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
-                var client = _playerManager.GetPeerInfo(peer);
-                var response = new AttentionPingResponse(Game, client, ping);
-                Game.PacketHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
+                 _game.PacketNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
             }
         }
     }

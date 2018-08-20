@@ -1,7 +1,7 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Logging;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -24,36 +24,27 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var emotion = new EmotionPacketRequest(data);
+            var request = _game.PacketReader.ReadEmotionPacketRequest(data);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
-            switch (emotion.Id)
+            switch (request.Id)
             {
-                case (byte)Emotions.DANCE:
+                case Emotions.DANCE:
                     _logger.Info("Player " + playerName + " is dancing.");
                     break;
-                case (byte)Emotions.TAUNT:
+                case Emotions.TAUNT:
                     _logger.Info("Player " + playerName + " is taunting.");
                     break;
-                case (byte)Emotions.LAUGH:
+                case Emotions.LAUGH:
                     _logger.Info("Player " + playerName + " is laughing.");
                     break;
-                case (byte)Emotions.JOKE:
+                case Emotions.JOKE:
                     _logger.Info("Player " + playerName + " is joking.");
                     break;
             }
 
-            var response = new EmotionPacketResponse(_game, emotion.Id, emotion.NetId);
-            return _game.PacketHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+             _game.PacketNotifier.NotifyEmotions(request.Id, request.NetId);
+            return true;
         }
-    }
-
-    //TODO: move to separate file
-    public enum Emotions : byte
-    {
-        DANCE = 0,
-        TAUNT = 1,
-        LAUGH = 2,
-        JOKE = 3
     }
 }

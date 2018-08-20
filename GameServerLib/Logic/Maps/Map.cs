@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using GameServerCore.Logic.Content;
+using GameServerCore.Logic.Maps;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.Logging;
@@ -8,7 +10,7 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.Maps
 {
-    public class Map
+    public class Map : IMap
     {
         protected Game _game;
         private readonly ILogger _logger;
@@ -18,6 +20,8 @@ namespace LeagueSandbox.GameServer.Logic.Maps
         public CollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; }
         public IMapGameScript MapGameScript { get; private set; }
+
+        INavGrid IMap.NavGrid => NavGrid;
 
         public Map(Game game)
         {

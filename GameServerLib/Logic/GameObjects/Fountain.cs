@@ -1,5 +1,5 @@
 ﻿using System;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Enums;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects
 {

@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore.Logic.Domain;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Logic.Items
 {
-    public class InventoryManager
+    public class InventoryManager : IInventoryManager
     {
-        private Inventory _inventory;
+        private readonly Inventory _inventory;
 
         private InventoryManager()
         {
@@ -81,6 +82,21 @@ namespace LeagueSandbox.GameServer.Logic.Items
         public IEnumerator GetEnumerator()
         {
             return _inventory.Items.GetEnumerator();
+        }
+
+        byte IInventoryManager.GetItemSlot(IItem item)
+        {
+            return GetItemSlot((Item)item);
+        }
+
+        IItem IInventoryManager.SetExtraItem(byte slot, IItemType item)
+        {
+            return SetExtraItem(slot, (ItemType)item);
+        }
+
+        IItem IInventoryManager.GetItem(int slot)
+        {
+            return GetItem(slot);
         }
     }
 }

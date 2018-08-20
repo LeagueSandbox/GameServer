@@ -1,6 +1,6 @@
 ﻿using ENet;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -18,17 +18,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = new ViewRequest(data);
-            var answer = new ViewResponse(_game, request);
-            if (request.RequestNo == 0xFE)
-            {
-                answer.SetRequestNo(0xFF);
-            }
-            else
-            {
-                answer.SetRequestNo(request.RequestNo);
-            }
-            _game.PacketHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            var request = _game.PacketReader.ReadViewRequest(data);
+             _game.PacketNotifier.NotifyViewResponse(peer, request);
             return true;
         }
     }

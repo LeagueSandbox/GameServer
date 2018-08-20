@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 using System.Timers;
 
@@ -47,7 +51,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         MINION_TYPE_SUPER = 0x01
     }
 
-    public class Minion : ObjAiBase
+    public class Minion : ObjAiBase, IMinion
     {
         /// <summary>
         /// Const waypoints that define the minion's route

@@ -1,46 +1,13 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+﻿using GameServerCore.Logic.Domain;
+using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
 {
-    public enum BuffType : byte
-    {
-        INTERNAL,
-        AURA,
-        COMBAT_ENCHANCER,
-        COMBAT_DEHANCER,
-        SPELL_SHIELD,
-        STUN,
-        INVISIBILITY,
-        SILENCE,
-        TAUNT,
-        POLYMORPH,
-        SLOW,
-        SNARE,
-        DAMAGE,
-        HEAL,
-        HASTE,
-        SPELL_IMMUNITY,
-        PHYSICAL_IMMUNITY,
-        INVULNERABILITY,
-        SLEEP,
-        NEAR_SIGHT,
-        FRENZY,
-        FEAR,
-        CHARM,
-        POISON,
-        SUPPRESSION,
-        BLIND,
-        COUNTER,
-        SHRED,
-        FLEE,
-        KNOCKUP,
-        KNOCKBACK,
-        DISARM
-    }
-
-    public class Buff
+    public class Buff : IBuff
     {
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
@@ -53,8 +20,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public string Name { get; private set; }
         public int Stacks { get; private set; }
         public byte Slot { get; private set; }
-        protected Game _game;
 
+        IObjAiBase IBuff.TargetUnit => TargetUnit;
+        IObjAiBase IBuff.SourceUnit => SourceUnit;
+
+        protected Game _game;
+        
         public bool NeedsToRemove()
         {
             return _remove;

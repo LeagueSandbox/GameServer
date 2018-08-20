@@ -1,6 +1,8 @@
 ﻿using ENet;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.C2S;
+using LeagueSandbox.GameServer.Logic.Items;
 using LeagueSandbox.GameServer.Logic.Players;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
@@ -23,9 +25,8 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
-            var request = new BuyItemRequest(data);
-
-            var itemTemplate = _itemManager.SafeGetItemType(request.Id);
+            var request = _game.PacketReader.ReadBuyItemRequest(data);
+            var itemTemplate = _itemManager.SafeGetItemType(request.ItemId);
             if (itemTemplate == null)
             {
                 return false;
@@ -33,7 +34,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             var stats = champion.Stats;
-            var inventory = champion.GetInventory();
+            var inventory = (InventoryManager)champion.Inventory;
             var recipeParts = inventory.GetAvailableItems(itemTemplate.Recipe);
             var price = itemTemplate.TotalPrice;
             Item i;

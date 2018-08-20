@@ -1,12 +1,16 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+﻿using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Logic.Enums;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.Other
 {
-    public class Placeable : ObjAiBase
+    public class Placeable : ObjAiBase, IPlaceable
     {
         public string Name { get; private set; }
         public ObjAiBase Owner { get; private set; } // We'll probably want to change this in the future
+
+        IObjAiBase IPlaceable.Owner => Owner;
 
         public Placeable(
             Game game,

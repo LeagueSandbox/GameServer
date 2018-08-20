@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using ENet;
-using LeagueSandbox.GameServer.Logic.Enet;
+using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.Players;
 
