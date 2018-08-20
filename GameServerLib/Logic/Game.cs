@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Logic
                             // Set some defaults
                             enetEvent.Peer.Mtu = PEER_MTU;
                             enetEvent.Data = 0;
-                        }   
+                        }
                         break;
                         case EventType.Receive:
                         {
@@ -169,7 +169,7 @@ namespace LeagueSandbox.GameServer.Logic
                         break;
                     }
                 }
-                
+
                 if (IsPaused)
                 {
                     _lastMapDurationWatch.Stop();

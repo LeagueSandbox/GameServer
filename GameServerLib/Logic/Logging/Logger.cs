@@ -58,9 +58,7 @@ namespace LeagueSandbox.GameServer.Logic.Logging
             try
             {
                 var methodBase = stackTrace.GetFrame(2).GetMethod();
-                var resultMessage = $"{methodBase?.ReflectedType?.FullName}.{methodBase?.Name} : {message}";
-                Console.WriteLine($"{DateTime.Now:MM/dd/yyyy HH:mm:ss.fff}: {resultMessage}");
-                return resultMessage;
+                return $"{methodBase?.ReflectedType?.FullName}.{methodBase?.Name} : {message}";
             }
             catch (Exception ex)
             {

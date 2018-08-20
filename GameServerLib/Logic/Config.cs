@@ -15,7 +15,6 @@ namespace LeagueSandbox.GameServer.Logic
         public ContentManager ContentManager { get; private set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
         public static readonly Version VERSION = new Version(4, 20, 0, 315);
-        public static readonly uint[] VERSION_NUMBER = new uint[] { 42000315, 0 };//On mac the version sent is 0 !?
 
         public bool CooldownsEnabled { get; private set; }
         public bool ManaCostsEnabled { get; private set; }

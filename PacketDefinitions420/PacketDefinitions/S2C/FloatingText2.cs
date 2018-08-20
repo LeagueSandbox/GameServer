@@ -5,7 +5,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class FloatingText2 : BasePacket
     {
-        public FloatingText2(IAttackableUnit u, string text, byte type, int unk) 
+        public FloatingText2(IAttackableUnit u, string text, byte type, int unk)
             : base(PacketCmd.PKT_S2C_FLOATING_TEXT, u.NetId)
         {
             Fill(0, 10);

@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Stats
         int IChampionStats.WardsPlaced => WardsPlaced;
 
         // TODO: move to universal serializer
-        // also code here is unsafe, but thats prefered than just 
+        // also code here is unsafe, but thats prefered than just
         // write a function that simply dumps all the variables
         public static byte[] GetBytes(ChampionStats stats)
         {

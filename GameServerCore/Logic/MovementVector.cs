@@ -18,7 +18,7 @@ namespace GameServerCore.Logic
             X = FormatCoordinate(x, game.Map.NavGrid.MiddleOfMap.Y);
             Y = FormatCoordinate(y, game.Map.NavGrid.MiddleOfMap.X);
         }
-        
+
         public static short FormatCoordinate(float coordinate, float origin)
         {
             return (short)((coordinate - origin) / 2f);
