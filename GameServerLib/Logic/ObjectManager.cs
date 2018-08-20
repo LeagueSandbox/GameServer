@@ -391,7 +391,7 @@ namespace LeagueSandbox.GameServer.Logic
                 count = enemyUnits.Count(x =>
                     x.Value is ObjAiBase aiBase &&
                     aiBase.Team == team &&
-                    aiBase.IsDead == false &&
+                    !aiBase.IsDead &&
                     aiBase.TargetUnit != null &&
                     aiBase.TargetUnit == target
                 );
