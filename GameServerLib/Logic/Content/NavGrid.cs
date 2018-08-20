@@ -4,6 +4,7 @@ using System.IO;
 using GameServerCore.Logic.Content;
 using GameServerCore;
 using LeagueSandbox.GameServer.Logic.GameObjects;
+using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
 using RoyT.AStar;
 

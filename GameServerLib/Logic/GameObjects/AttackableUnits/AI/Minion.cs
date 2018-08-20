@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         MINION_TYPE_CANNON = 0x02,
         MINION_TYPE_SUPER = 0x01
     }
-    
+
     public class Minion : ObjAiBase, IMinion
     {
         /// <summary>
