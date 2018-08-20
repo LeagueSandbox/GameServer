@@ -6,7 +6,6 @@ using GameServerCore;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
-using RoyT.AStar;
 
 namespace LeagueSandbox.GameServer.Logic.Content
 {
