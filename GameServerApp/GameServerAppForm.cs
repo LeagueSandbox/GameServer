@@ -16,5 +16,10 @@ namespace GameServerApp
         {
             InitializeComponent();
         }
+
+        private void GameServerAppForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

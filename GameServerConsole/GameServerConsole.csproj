@@ -39,7 +39,7 @@
     <StartupObject>GameServerConsole.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Unix'">
-    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
+    <_CopyCommand>xcopy /s /y /q /d /e /i</_CopyCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
