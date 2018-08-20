@@ -95,12 +95,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
                 if (ScanForTargets()) // returns true if we have a target
                 {
-                    //Here we need to add another check: Positioning.
-                    if (RecalculateAttackPosition())
-                    {
-
-                    }
-                    else
+                    if (!RecalculateAttackPosition())
                     {
                         KeepFocussingTarget(); // attack target
                     }

@@ -582,8 +582,14 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             
             foreach (var gameObject in objects)
             {
-                var u = gameObject.Value as AttackableUnit;
-                if (u == null || u.NetId == NetId || u.IsDead || u.Team != Team || u.GetDistanceTo(TargetUnit) > DETECT_RANGE)
+                var unit = gameObject.Value as AttackableUnit;
+                if (
+                    unit == null ||
+                    unit.NetId == NetId ||
+                    unit.IsDead ||
+                    unit.Team != Team ||
+                    unit.GetDistanceTo(TargetUnit) > DETECT_RANGE
+                )
                 {
                     continue;
                 }                    

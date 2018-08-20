@@ -48,32 +48,25 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
         public List<Vector2> GetPath(Vector2 from, Vector2 to)
         {
-            List<Vector2> returnList = new List<Vector2>() { from };
-            try
+            List<Vector2> returnList = new List<Vector2>() { from };            
+            var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
+            var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
+
+            var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
+            var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+
+            if(cellFrom != null && cellTo != null)
             {
-                var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
-                var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
-
-                var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
-                var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
-
-                if(cellFrom != null && cellTo != null)
+                Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
+                if (path != null)
                 {
-                    Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
-                    if (path != null)
+                    foreach (var position in path)
                     {
-                        foreach (var position in path)
-                        {
-                            var navGridCell = GetCell(position.X, position.Y);
-                            var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
-                            returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
-                        }
+                        var navGridCell = GetCell(position.X, position.Y);
+                        var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                        returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
                     }
-                }                
-            }
-            catch (Exception ex)
-            {
-
+                }
             }
             return returnList;
         }

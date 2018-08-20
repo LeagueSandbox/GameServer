@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServerApp
             }
             else
             {
-                _logger.Info("Server is ready, clients can now connect's.");
+                _logger.Info("Server is ready, clients can now connect.");
             }
 #endif
             gameServerLauncher.StartNetworkLoop();
