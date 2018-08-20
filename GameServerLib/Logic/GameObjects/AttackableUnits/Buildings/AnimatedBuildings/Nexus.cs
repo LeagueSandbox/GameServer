@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.Buildings.A
 
             SetTeam(team);
         }
-
+        
         public override void Die(AttackableUnit killer)
         {
             var cameraPosition = _game.Map.MapGameScript.GetEndGameCameraPosition(Team);

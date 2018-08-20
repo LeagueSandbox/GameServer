@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketDefinitions420", "Pac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerCore", "GameServerCore\GameServerCore.csproj", "{DA3DE633-D75B-40B0-8833-099ABFBF43A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaths", "GameMaths\GameMaths.csproj", "{12F14E81-7609-43D9-9477-83A0D3DE4BBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA3DE633-D75B-40B0-8833-099ABFBF43A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
