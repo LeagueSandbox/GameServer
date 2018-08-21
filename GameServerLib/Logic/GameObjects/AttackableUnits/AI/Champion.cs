@@ -172,8 +172,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public bool CanCast()
         {
-            return !HasCrowdControl(CrowdControlType.STUN) &&
-                !HasCrowdControl(CrowdControlType.SILENCE);
+            return !HasCrowdControl(CrowdControlType.STUN) && !HasCrowdControl(CrowdControlType.SILENCE);
         }
 
         public Vector2 GetSpawnPosition()

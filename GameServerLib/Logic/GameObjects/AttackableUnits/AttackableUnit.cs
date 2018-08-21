@@ -13,6 +13,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
     public class AttackableUnit : GameObject, IAttackableUnit
     {
         internal const float DETECT_RANGE = 475.0f;
+        //internal const float DETECT_RANGE = 600f;
         internal const int EXP_RANGE = 1400;
 
         public Stats.Stats Stats { get; protected set; }
@@ -254,9 +255,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits
         TURRET_ATTACKING_MINION = 4,
         CHAMPION_ATTACKING_MINION = 5,
         PLACEABLE = 6,
-        MELEE_MINION = 7,
+        SUPER_OR_CANNON_MINION = 7,
         CASTER_MINION = 8,
-        SUPER_OR_CANNON_MINION = 9,
+        MELEE_MINION = 9,
         TURRET = 10,
         CHAMPION = 11,
         INHIBITOR = 12,

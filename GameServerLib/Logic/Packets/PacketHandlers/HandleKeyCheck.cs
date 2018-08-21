@@ -3,6 +3,7 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Logic.Logging;
 using LeagueSandbox.GameServer.Logic.Players;
+using System.Linq;
 
 namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
 {
@@ -33,10 +34,9 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-            if (request.VersionNo != Config.VERSION_NUMBER)
+            if (!Config.VERSION_NUMBER.Contains(request.VersionNo))
             {
-                _logger.Warning("Client version doesn't match server's. " +
-                                       $"(C:{request.VersionNo}, S:{Config.VERSION_NUMBER})");
+                _logger.Warning($"Client version doesn't match server's. (C:{request.VersionNo}, S:{Config.VERSION_NUMBER[0]})");
                 return false;
             }
 
