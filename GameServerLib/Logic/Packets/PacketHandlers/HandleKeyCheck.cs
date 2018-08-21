@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
             {
                 _logger.Warning("Client version doesn't match server's. " +
                                        $"(C:{request.VersionNo}, S:{Config.VERSION_NUMBER})");
-                return false;
+                //return false;
             }
 
             var playerNo = 0;
