@@ -384,24 +384,13 @@ namespace LeagueSandbox.GameServer.Logic
 
         public int CountUnitsAttackingUnit(AttackableUnit target)
         {
-            int count = 0;
-            try
-            {
-                var enemyUnits = GetObjects();
-                var team = target.Team.GetEnemyTeam();
-                count = enemyUnits.Count(x =>
-                    x.Value is ObjAiBase aiBase &&
-                    aiBase.Team == team &&
-                    !aiBase.IsDead &&
-                    aiBase.TargetUnit != null &&
-                    aiBase.TargetUnit == target
-                );
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return count;
+            return GetObjects().Count(x =>
+                x.Value is ObjAiBase aiBase &&
+                aiBase.Team == target.Team.GetEnemyTeam() &&
+                !aiBase.IsDead &&
+                aiBase.TargetUnit != null &&
+                aiBase.TargetUnit == target
+            );
         }
     }
 }
