@@ -32,23 +32,23 @@ namespace LeagueSandbox.GameServer.Logic.Content
         public float MapHeight { get; set; }
         public Vector2 MiddleOfMap { get; set; }
         public const float SCALE = 2f;
-        private Grid grid;
+        private Grid _grid;
 
         public void InitializePathfinding()
         {
-            grid = new Grid((int)XCellCount, (int)YCellCount);
+            _grid = new Grid((int)XCellCount, (int)YCellCount);
             foreach (var cell in Cells)
             {
                 if (cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
                 {
-                    grid.BlockCell(new Position(cell.X, cell.Y));
+                    _grid.BlockCell(new Position(cell.X, cell.Y));
                 }
             }
         }
 
         public List<Vector2> GetPath(Vector2 from, Vector2 to)
         {
-            List<Vector2> returnList = new List<Vector2>() { from };            
+            List<Vector2> returnList = new List<Vector2>() { from };
             var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
             var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
 
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
 
             if(cellFrom != null && cellTo != null)
             {
-                Position[] path = grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
+                var path = _grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
                 if (path != null)
                 {
                     foreach (var position in path)
@@ -70,7 +70,7 @@ namespace LeagueSandbox.GameServer.Logic.Content
             }
             return returnList;
         }
-        
+
         public void CreateTranslation()
         {
             if (TranslationMaxGridPos == null)

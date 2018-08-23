@@ -316,8 +316,8 @@ namespace ClipperLib
                 return (double)(val.lo + val.hi * shift64);
         }
 
-        //nb: Constructing two new Int128 objects every time we want to multiply longs  
-        //is slow. So, although calling the Int128Mul method doesn't look as clean, the 
+        //nb: Constructing two new Int128 objects every time we want to multiply longs
+        //is slow. So, although calling the Int128Mul method doesn't look as clean, the
         //code runs significantly faster than if we'd used the * operator.
 
         public static Int128 Int128Mul(Int64 lhs, Int64 rhs)
@@ -356,17 +356,17 @@ namespace ClipperLib
         public cInt Y;
 #if use_xyz
     public cInt Z;
-    
+
     public IntPoint(cInt x, cInt y, cInt z = 0)
     {
       this.X = x; this.Y = y; this.Z = z;
     }
-    
+
     public IntPoint(double x, double y, double z = 0)
     {
       this.X = (cInt)x; this.Y = (cInt)y; this.Z = (cInt)z;
     }
-    
+
     public IntPoint(DoublePoint dp)
     {
       this.X = (cInt)dp.X; this.Y = (cInt)dp.Y; this.Z = 0;
@@ -1376,7 +1376,7 @@ namespace ClipperLib
         private List<Join> m_GhostJoins;
         private bool m_UsingPolyTree;
 #if use_xyz
-      public delegate void ZFillCallback(IntPoint bot1, IntPoint top1, 
+      public delegate void ZFillCallback(IntPoint bot1, IntPoint top1,
         IntPoint bot2, IntPoint top2, ref IntPoint pt);
       public ZFillCallback ZFillFunction { get; set; }
 #endif
@@ -1930,7 +1930,7 @@ namespace ClipperLib
                     if (Math.Abs(e.WindCnt) > 1)
                     {
                         //outside prev poly but still inside another.
-                        //when reversing direction of prev poly use the same WC 
+                        //when reversing direction of prev poly use the same WC
                         if (e.WindDelta * edge.WindDelta < 0) edge.WindCnt = e.WindCnt;
                         //otherwise continue to 'decrease' WC ...
                         else edge.WindCnt = e.WindCnt + edge.WindDelta;
@@ -2221,7 +2221,7 @@ namespace ClipperLib
                     if (eTmp == null)
                         eTmp = e2;
                     else if (eTmp.OutIdx == e2.OutIdx)
-                        eTmp = null; //paired               
+                        eTmp = null; //paired
                 }
                 e2 = e2.PrevInAEL;
             }
@@ -3102,7 +3102,7 @@ namespace ClipperLib
         {
             ip = new IntPoint();
             double b1, b2;
-            //nb: with very large coordinate values, it's possible for SlopesEqual() to 
+            //nb: with very large coordinate values, it's possible for SlopesEqual() to
             //return false but for the edge.Dx value be equal due to double precision rounding.
             if (edge1.Dx == edge2.Dx)
             {
@@ -4195,9 +4195,9 @@ namespace ClipperLib
         private static bool SlopesNearCollinear(IntPoint pt1,
             IntPoint pt2, IntPoint pt3, double distSqrd)
         {
-            //this function is more accurate when the point that's GEOMETRICALLY 
-            //between the other 2 points is the one that's tested for distance.  
-            //nb: with 'spikes', either pt1 or pt3 is geometrically between the other pts                    
+            //this function is more accurate when the point that's GEOMETRICALLY
+            //between the other 2 points is the one that's tested for distance.
+            //nb: with 'spikes', either pt1 or pt3 is geometrically between the other pts
             if (Math.Abs(pt1.X - pt2.X) > Math.Abs(pt1.Y - pt2.Y))
             {
                 if ((pt1.X > pt2.X) == (pt1.X < pt3.X))
@@ -4239,8 +4239,8 @@ namespace ClipperLib
 
         public static Path CleanPolygon(Path path, double distance = 1.415)
         {
-            //distance = proximity in units/pixels below which vertices will be stripped. 
-            //Default ~= sqrt(2) so when adjacent vertices or semi-adjacent vertices have 
+            //distance = proximity in units/pixels below which vertices will be stripped.
+            //Default ~= sqrt(2) so when adjacent vertices or semi-adjacent vertices have
             //both x & y coords within 1 unit, then the second vertex will be stripped.
 
             int cnt = path.Count;
@@ -4847,7 +4847,7 @@ namespace ClipperLib
                       Round(m_srcPoly[j].Y + m_normals[k].Y * m_delta)));
                     return;
                 }
-                //else angle ==> 180 degrees   
+                //else angle ==> 180 degrees
             }
             else if (m_sinA > 1.0) m_sinA = 1.0;
             else if (m_sinA < -1.0) m_sinA = -1.0;

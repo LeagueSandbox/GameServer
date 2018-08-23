@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         IObjAiBase IBuff.SourceUnit => SourceUnit;
 
         protected Game _game;
-        
+
         public bool NeedsToRemove()
         {
             return _remove;

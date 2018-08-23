@@ -17,9 +17,9 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public MinionSpawnPosition SpawnPosition { get; private set; }
         public MinionSpawnType MinionSpawnType { get; protected set; }
         protected bool _aiPaused;
-        
+
         private int HitBox => 60;
-        
+
         public Minion(
             Game game,
             MinionSpawnType spawnType,
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
             Replication.Update();
         }
-        
+
         // AI tasks
         protected bool ScanForTargets()
         {

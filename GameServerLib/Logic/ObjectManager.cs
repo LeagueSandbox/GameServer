@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore;
 using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
@@ -41,7 +42,7 @@ namespace LeagueSandbox.GameServer.Logic
                 _visionUnits.Add(team, new Dictionary<uint, AttackableUnit>());
             }
         }
-        
+
         public void Update(float diff)
         {
             var temp = GetObjects();
@@ -214,7 +215,7 @@ namespace LeagueSandbox.GameServer.Logic
                 _champions.Remove(champion.NetId);
             }
         }
-        
+
         public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
         {
             var ret = new Dictionary<uint, AttackableUnit>();
@@ -387,7 +388,7 @@ namespace LeagueSandbox.GameServer.Logic
             try
             {
                 var enemyUnits = GetObjects();
-                var team = target.Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE;
+                var team = target.Team.GetEnemyTeam();
                 count = enemyUnits.Count(x =>
                     x.Value is ObjAiBase aiBase &&
                     aiBase.Team == team &&

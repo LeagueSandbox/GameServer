@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer
 #endif
             }
         }
-        
+
         public void StartNetworkLoop()
         {
             try

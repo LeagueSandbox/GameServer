@@ -404,7 +404,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 DamageSource.DAMAGE_SOURCE_ATTACK,
                 _isNextAutoCrit);
         }
-        
+
         public void UpdateAutoAttackTarget(float diff)
         {
             if (HasCrowdControl(CrowdControlType.DISARM) || HasCrowdControl(CrowdControlType.STUN))
@@ -529,7 +529,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 _autoAttackCurrentCooldown -= diff / 1000.0f;
             }
         }
-        
+
         public override void Update(float diff)
         {
             foreach (var cc in _crowdControlList)
@@ -570,7 +570,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         public bool RecalculateAttackPosition()
         {
-            if(Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
+            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
             {
                 return false;
             }
@@ -578,13 +578,12 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             List<CirclePoly> UsedPositions = new List<CirclePoly>();
             var isCurrentlyOverlapping = false;
 
-            var thisCollisionCircle = new CirclePoly((Target != null ? Target.GetPosition() : GetPosition()), CollisionRadius + 10, 20);
-            
+            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
+
             foreach (var gameObject in objects)
             {
                 var unit = gameObject.Value as AttackableUnit;
-                if (
-                    unit == null ||
+                if (unit == null ||
                     unit.NetId == NetId ||
                     unit.IsDead ||
                     unit.Team != Team ||
@@ -592,8 +591,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                 )
                 {
                     continue;
-                }                    
-                var targetCollisionCircle = new CirclePoly((u.Target != null ? u.Target.GetPosition() : u.GetPosition()), u.CollisionRadius + 10, 20);                
+                }
+                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
                 if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
                 {
                     isCurrentlyOverlapping = true;
@@ -602,7 +601,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             }
             if (isCurrentlyOverlapping)
             {
-                var targetCircle = new CirclePoly((TargetUnit.Target != null ? TargetUnit.Target.GetPosition() : TargetUnit.GetPosition()), Stats.Range.Total, 72);
+                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {
@@ -618,7 +617,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
                         }
                         if (!positionUsed)
                         {
-                            SetWaypoints(new List<Vector2>() { GetPosition(), point });
+                            SetWaypoints(new List<Vector2> { GetPosition(), point });
                             return true;
                         }
                     }
@@ -630,11 +629,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         /// <summary> TODO: Probably not the best place to have this, but still better than packet notifier </summary>
         public void TeleportTo(float x, float y)
         {
-            // Can't teleport to this point of the map
             if (!_game.Map.NavGrid.IsWalkable(x, y))
             {
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, X);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, Y);
+                var walkableSpot = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(x, y));
+                SetPosition(walkableSpot);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, walkableSpot.X);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, walkableSpot.Y);
             }
             else
             {
