@@ -35,7 +35,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             }
         }
 
-        public EnterVisionAgain(INavGrid navGrid, IChampion c) 
+        public EnterVisionAgain(INavGrid navGrid, IChampion c)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
         {
             Write((short)0); // extraInfo

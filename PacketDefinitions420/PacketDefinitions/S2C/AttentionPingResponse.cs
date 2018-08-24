@@ -6,7 +6,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class AttentionPingResponse : BasePacket
     {
-        public AttentionPingResponse(ClientInfo player, AttentionPingRequest ping) : 
+        public AttentionPingResponse(ClientInfo player, AttentionPingRequest ping) :
             base(PacketCmd.PKT_S2C_ATTENTION_PING)
         {
             Write((float)ping.X);

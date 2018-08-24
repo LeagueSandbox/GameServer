@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using GameServerCore.Logic.Domain.GameObjects;
 using GameServerCore.Logic.Enums;
-using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
-using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
@@ -87,7 +86,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-
             if (!IsDead)
             {
                 if (IsDashing || _aiPaused)
@@ -97,52 +95,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
                 if (ScanForTargets()) // returns true if we have a target
                 {
-                    KeepFocussingTarget(); // fight target
+                    if (!RecalculateAttackPosition())
+                    {
+                        KeepFocussingTarget(); // attack target
+                    }
                 }
                 else
                 {
                     WalkToDestination(); // walk to destination (or target)
                 }
             }
-
             Replication.Update();
-        }
-
-        public override void OnCollision(GameObject collider)
-        {
-            if (collider == null || collider == TargetUnit) // If we're colliding with the target, don't do anything.
-            {
-                return;
-            }
-
-            if (collider.GetType() == typeof(Minion))
-            {
-                Vector2 newPos = new Vector2(X + 120, Y + 120);
-                if (SpawnPosition == MinionSpawnPosition.SPAWN_BLUE_MID)
-                {
-                    newPos = new Vector2(X + 120, Y + 50);
-                }
-                try
-                {
-                    Move(250, newPos);
-                }
-                catch
-                {
-                    //Minion died
-                }
-            }
-
-            base.OnCollision(collider);
         }
 
         // AI tasks
         protected bool ScanForTargets()
         {
+            if(TargetUnit != null && !TargetUnit.IsDead)
+            {
+                return true;
+            }
             AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             var objects = _game.ObjectManager.GetObjects();
-            foreach (var it in objects)
+            foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
             {
                 var u = it.Value as AttackableUnit;
 
@@ -176,18 +153,27 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         {
             if (_mainWaypoints.Count > _curMainWaypoint + 1)
             {
-                if (Waypoints.Count == 1 || CurWaypoint == 2 && ++_curMainWaypoint < _mainWaypoints.Count)
+                if (Waypoints.Count == 1 || CurWaypoint >= Waypoints.Count && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    var newWaypoints = new List<Vector2> { new Vector2(X, Y), _mainWaypoints[_curMainWaypoint] };
-                    SetWaypoints(newWaypoints);
+                    SetWaypoints(new List<Vector2>() { GetPosition(), _mainWaypoints[_curMainWaypoint] });
+
+                    //TODO: Here we need a certain way to tell if the Minion is in the path/lane, else use pathfinding to return to the lane.
+                    //I think in league when minion start chasing they save Current Position and
+                    //when it stop chasing the minion return to the last saved position, and then continue main waypoints from there.
+
+                    /*var path = _game.Map.NavGrid.GetPath(GetPosition(), _mainWaypoints[_curMainWaypoint + 1]);
+                    if(path.Count > 1)
+                    {
+                        SetWaypoints(path);
+                    }*/
                 }
             }
         }
 
         protected void KeepFocussingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || GetDistanceTo(TargetUnit) > Stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyStopAutoAttack(this);

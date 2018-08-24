@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore;
 using GameServerCore.Logic.Enums;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
@@ -379,6 +380,17 @@ namespace LeagueSandbox.GameServer.Logic
             }
 
             return false;
+        }
+
+        public int CountUnitsAttackingUnit(AttackableUnit target)
+        {
+            return GetObjects().Count(x =>
+                x.Value is ObjAiBase aiBase &&
+                aiBase.Team == target.Team.GetEnemyTeam() &&
+                !aiBase.IsDead &&
+                aiBase.TargetUnit != null &&
+                aiBase.TargetUnit == target
+            );
         }
     }
 }

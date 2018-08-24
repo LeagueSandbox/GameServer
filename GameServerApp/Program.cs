@@ -74,6 +74,10 @@ namespace LeagueSandbox.GameServerApp
                     _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
                 }
             }
+            else
+            {
+                _logger.Info("Server is ready, clients can now connect.");
+            }
 #endif
             gameServerLauncher.StartNetworkLoop();
         }

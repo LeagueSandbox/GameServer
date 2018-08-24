@@ -141,7 +141,6 @@ namespace LeagueSandbox.GameServer.Logic
         {
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
-
             while (!SetToExit)
             {
                 while (_server.Service(0, out var enetEvent) > 0)
@@ -149,21 +148,25 @@ namespace LeagueSandbox.GameServer.Logic
                     switch (enetEvent.Type)
                     {
                         case EventType.Connect:
+                        {
                             // Set some defaults
                             enetEvent.Peer.Mtu = PEER_MTU;
                             enetEvent.Data = 0;
-                            break;
-
+                        }
+                        break;
                         case EventType.Receive:
+                        {
                             var channel = (Channel)enetEvent.ChannelID;
                             PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
                             // Clean up the packet now that we're done using it.
                             enetEvent.Packet.Dispose();
-                            break;
-
+                        }
+                        break;
                         case EventType.Disconnect:
+                        {
                             HandleDisconnect(enetEvent.Peer);
-                            break;
+                        }
+                        break;
                     }
                 }
 
