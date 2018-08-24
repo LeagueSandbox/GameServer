@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                 return false;
             }
 
-             _game.PacketNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, (byte)s.Level, (byte)s.Owner.GetSkillPoints());
+             _game.PacketNotifier.NotifySkillUp(peer, champion.NetId, request.Skill, s.Level, (byte)s.Owner.SkillPoints);
             champion.Stats.SetSpellEnabled(request.Skill, true);
 
             return true;

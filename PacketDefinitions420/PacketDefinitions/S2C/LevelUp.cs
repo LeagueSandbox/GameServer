@@ -9,7 +9,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_LEVEL_UP, c.NetId)
         {
             Write(c.Stats.Level);
-            Write(c.GetSkillPoints());
+            Write(c.SkillPoints);
         }
     }
 }
