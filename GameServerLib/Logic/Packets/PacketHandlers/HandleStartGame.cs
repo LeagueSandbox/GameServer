@@ -47,11 +47,15 @@ namespace LeagueSandbox.GameServer.Logic.Packets.PacketHandlers
                          _game.PacketNotifier.NotifyDebugMessage(peer, msg);
                     }
 
-                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
+                    _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
                     // TODO: send this in one place only
-                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
-                     _game.PacketNotifier.NotifyBlueTip(player.Item2.Peer, "Server Build Date", ServerContext.BuildDateString,
-                        "", 0, player.Item2.Champion.NetId, _game.NetworkIdManager.GetNewNetId());
+                    _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
+                    _game.PacketNotifier.NotifyBlueTip(player.Item2.Peer, "Welcome to League Sandbox!",
+                        "This is a WIP product.", "", 0, player.Item2.Champion.NetId,
+                        _game.NetworkIdManager.GetNewNetId());
+                    _game.PacketNotifier.NotifyBlueTip(player.Item2.Peer, "Server Build Date",
+                        ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
+                        _game.NetworkIdManager.GetNewNetId());
                 }
 
                 _game.Start();
