@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         private IGameScript _spellGameScript;
 
-        public SpellData SpellData { get; private set; }
+        public SpellData SpellData { get; protected set; }
 
         IChampion ISpell.Owner => Owner;
         IAttackableUnit ISpell.Target => Target;
