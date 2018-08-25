@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -48,6 +49,12 @@
     <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Log4Net.Async, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Log4Net.Async.2.0.4\lib\net40\Log4Net.Async.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.3.2\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
@@ -64,13 +71,15 @@
       <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.1.3.2\lib\dotnet\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RoyT.AStar, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RoyT.AStar.2.1.0\lib\netstandard1.0\RoyT.AStar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -82,11 +91,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Diagnostics.FileVersionInfo, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.FileVersionInfo.4.3.0\lib\net46\System.Diagnostics.FileVersionInfo.dll</HintPath>
       <Private>True</Private>
@@ -94,6 +107,12 @@
     <Reference Include="System.Diagnostics.StackTrace, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.StackTrace.4.3.0\lib\net46\System.Diagnostics.StackTrace.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
     </Reference>
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -103,6 +122,10 @@
       <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
       <Private>True</Private>
@@ -110,6 +133,12 @@
     <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -136,6 +165,11 @@
       <HintPath>..\packages\System.Runtime.InteropServices.4.3.0\lib\net462\System.Runtime.InteropServices.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -152,6 +186,7 @@
       <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Text.Encoding.CodePages, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encoding.CodePages.4.3.0\lib\net46\System.Text.Encoding.CodePages.dll</HintPath>
       <Private>True</Private>
@@ -162,7 +197,6 @@
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
@@ -182,310 +216,144 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logic\Chatbox\DebugMsgType.cs" />
-    <Compile Include="Logic\Content\NavGrid.cs" />
-    <Compile Include="Logic\DependencyInjection\Bindings.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Logic\API\ApiFunctionManager.cs" />
-    <Compile Include="Logic\API\ApiEventManager.cs" />
-    <Compile Include="Logic\API\UnitCrowdControl.cs" />
-    <Compile Include="Logic\Blowfish.cs" />
-    <Compile Include="Logic\Chatbox\ChatCommandManager.cs" />
-    <Compile Include="Logic\Chatbox\ChatCommandBase.cs" />
-    <Compile Include="Logic\Chatbox\Commands\KillCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ChangeTeamCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\RainbowCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ReloadScriptsCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ReviveCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SpawnStateCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\AdCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ApCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ChCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\CoordsCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\GoldCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\HealthCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\HelpCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\InhibCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\JunglespawnCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\LevelCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ManaCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\MobsCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\ModelCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\NewCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\PacketCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SizeCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SkillpointsCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SpawnCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\SpeedCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\TpCommand.cs" />
-    <Compile Include="Logic\Chatbox\Commands\XpCommand.cs" />
-    <Compile Include="Logic\Config.cs" />
-    <Compile Include="Logic\Content\CharData.cs" />
-    <Compile Include="Logic\Content\ContentFile.cs" />
-    <Compile Include="Logic\Content\ContentManager.cs" />
-    <Compile Include="Logic\Content\ContentNotFoundException.cs" />
-    <Compile Include="Logic\Content\HashFunctions.cs" />
-    <Compile Include="Logic\Content\ItemCollection.cs" />
-    <Compile Include="Logic\Content\RuneCollection.cs" />
-    <Compile Include="Logic\Content\SpellData.cs" />
-    <Compile Include="Logic\Enet\ClientInfo.cs" />
-    <Compile Include="Logic\Game.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\ObjBuilding.cs" />
-    <Compile Include="Logic\GameObjects\Missiles\ObjMissile.cs" />
-    <Compile Include="Logic\GameObjects\Other\Announce.cs" />
-    <Compile Include="Logic\GameObjects\Spells\Buff.cs" />
-    <Compile Include="Logic\GameObjects\Stats\Replication.cs" />
-    <Compile Include="Logic\GameObjects\Stats\ReplicationAiTurret.cs" />
-    <Compile Include="Logic\GameObjects\Stats\ReplicationAnimatedBuilding.cs" />
-    <Compile Include="Logic\GameObjects\Stats\ReplicationHero.cs" />
-    <Compile Include="Logic\GameObjects\Stats\ReplicationMinion.cs" />
-    <Compile Include="Logic\GameObjects\Stats\StatsModifier.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\Champion.cs" />
-    <Compile Include="Logic\GameObjects\Other\CollisionHandler.cs" />
-    <Compile Include="Logic\GameObjects\Fountain.cs" />
-    <Compile Include="Logic\GameObjects\GameObject.cs" />
-    <Compile Include="Logic\GameObjects\Missiles\Laser.cs" />
-    <Compile Include="Logic\GameObjects\Particle.cs" />
-    <Compile Include="Logic\GameObjects\Other\Placeable.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Nexus.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Inhibitor.cs" />
-    <Compile Include="Logic\GameObjects\LevelProp.cs" />
-    <Compile Include="Logic\GameObjects\Monster.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\Minion.cs" />
-    <Compile Include="Logic\GameObjects\Missiles\Projectile.cs" />
-    <Compile Include="Logic\GameObjects\Stats\Stat.cs" />
-    <Compile Include="Logic\GameObjects\Stats\StatModifier.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\AzirTurret.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\BaseTurret.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AI\LaneTurret.cs" />
+    <Compile Include="Chatbox\DebugMsgType.cs" />
+    <Compile Include="Content\NavGrid.cs" />
+    <Compile Include="API\ApiFunctionManager.cs" />
+    <Compile Include="API\ApiEventManager.cs" />
+    <Compile Include="API\UnitCrowdControl.cs" />
+    <Compile Include="Blowfish.cs" />
+    <Compile Include="Chatbox\ChatCommandManager.cs" />
+    <Compile Include="Chatbox\ChatCommandBase.cs" />
+    <Compile Include="Chatbox\Commands\KillCommand.cs" />
+    <Compile Include="Chatbox\Commands\ChangeTeamCommand.cs" />
+    <Compile Include="Chatbox\Commands\RainbowCommand.cs" />
+    <Compile Include="Chatbox\Commands\ReloadScriptsCommand.cs" />
+    <Compile Include="Chatbox\Commands\ReviveCommand.cs" />
+    <Compile Include="Chatbox\Commands\SpawnStateCommand.cs" />
+    <Compile Include="Chatbox\Commands\AdCommand.cs" />
+    <Compile Include="Chatbox\Commands\ApCommand.cs" />
+    <Compile Include="Chatbox\Commands\ChCommand.cs" />
+    <Compile Include="Chatbox\Commands\CoordsCommand.cs" />
+    <Compile Include="Chatbox\Commands\GoldCommand.cs" />
+    <Compile Include="Chatbox\Commands\HealthCommand.cs" />
+    <Compile Include="Chatbox\Commands\HelpCommand.cs" />
+    <Compile Include="Chatbox\Commands\InhibCommand.cs" />
+    <Compile Include="Chatbox\Commands\JunglespawnCommand.cs" />
+    <Compile Include="Chatbox\Commands\LevelCommand.cs" />
+    <Compile Include="Chatbox\Commands\ManaCommand.cs" />
+    <Compile Include="Chatbox\Commands\MobsCommand.cs" />
+    <Compile Include="Chatbox\Commands\ModelCommand.cs" />
+    <Compile Include="Chatbox\Commands\NewCommand.cs" />
+    <Compile Include="Chatbox\Commands\PacketCommand.cs" />
+    <Compile Include="Chatbox\Commands\SizeCommand.cs" />
+    <Compile Include="Chatbox\Commands\SkillpointsCommand.cs" />
+    <Compile Include="Chatbox\Commands\SpawnCommand.cs" />
+    <Compile Include="Chatbox\Commands\SpeedCommand.cs" />
+    <Compile Include="Chatbox\Commands\TpCommand.cs" />
+    <Compile Include="Chatbox\Commands\XpCommand.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Content\CharData.cs" />
+    <Compile Include="Content\ContentFile.cs" />
+    <Compile Include="Content\ContentManager.cs" />
+    <Compile Include="Content\ContentNotFoundException.cs" />
+    <Compile Include="Content\ItemCollection.cs" />
+    <Compile Include="Content\RuneCollection.cs" />
+    <Compile Include="Content\SpellData.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
+    <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
+    <Compile Include="GameObjects\AttackableUnits\Buildings\ObjBuilding.cs" />
+    <Compile Include="GameObjects\Missiles\ObjMissile.cs" />
+    <Compile Include="GameObjects\Other\Announce.cs" />
+    <Compile Include="GameObjects\Spells\Buff.cs" />
+    <Compile Include="GameObjects\Stats\ChampionStats.cs" />
+    <Compile Include="GameObjects\Stats\Replication.cs" />
+    <Compile Include="GameObjects\Stats\ReplicationAiTurret.cs" />
+    <Compile Include="GameObjects\Stats\ReplicationAnimatedBuilding.cs" />
+    <Compile Include="GameObjects\Stats\ReplicationHero.cs" />
+    <Compile Include="GameObjects\Stats\ReplicationMinion.cs" />
+    <Compile Include="GameObjects\Stats\StatsModifier.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\Champion.cs" />
+    <Compile Include="GameObjects\Other\CollisionHandler.cs" />
+    <Compile Include="GameObjects\Fountain.cs" />
+    <Compile Include="GameObjects\GameObject.cs" />
+    <Compile Include="GameObjects\Missiles\Laser.cs" />
+    <Compile Include="GameObjects\Particle.cs" />
+    <Compile Include="GameObjects\Other\Placeable.cs" />
+    <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Nexus.cs" />
+    <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Inhibitor.cs" />
+    <Compile Include="GameObjects\LevelProp.cs" />
+    <Compile Include="GameObjects\Monster.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\Minion.cs" />
+    <Compile Include="GameObjects\Missiles\Projectile.cs" />
+    <Compile Include="GameObjects\Stats\Stat.cs" />
+    <Compile Include="GameObjects\Stats\StatModifier.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\AzirTurret.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\BaseTurret.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\LaneTurret.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
-    <Compile Include="Logic\Chatbox\IChatCommand.cs" />
-    <Compile Include="Logic\Handlers\IHandlersProvider.cs" />
-    <Compile Include="Logic\Items\Inventory.cs" />
-    <Compile Include="Logic\Items\InventoryManager.cs" />
-    <Compile Include="Logic\GameObjects\Other\MovementVector.cs" />
-    <Compile Include="Logic\GameObjects\Spells\Spell.cs" />
-    <Compile Include="Logic\GameObjects\Stats\Stats.cs" />
-    <Compile Include="Logic\GameObjects\Other\Target.cs" />
-    <Compile Include="Logic\GameObjects\AttackableUnits\AttackableUnit.cs" />
-    <Compile Include="Logic\Content\ItemManager.cs" />
-    <Compile Include="Logic\Items\Shop.cs" />
-    <Compile Include="Logic\Logger.cs" />
-    <Compile Include="Logic\Maps\Map.cs" />
-    <Compile Include="Logic\ObjectManager.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\EmotionPacketRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\KeyCheckRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\PingLoadInfoRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\SkillUpRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\SwapItemsRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddBuff.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddGold.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddUnitFOW.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AddXP.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AFKWarningWindow.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\Announce.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AttachMinimapIcon.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\AttentionPingRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AttentionPingResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\AutoAttackOption.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\AvatarInfo.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\BasePacket.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\BasicTutorialMessageWindow.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\BasicTutorialMessageWindowClicked.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\BeginAutoAttack.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\BlueTip.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\BlueTipClicked.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\BuyItemResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\BuyItemRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\CastSpellRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\CastSpellResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChampionDeathTimer.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChampionDie.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChampionDie2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChampionRespawn.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChangeCharacterVoice.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChangeCrystalScarNexusHP.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ChangeSpell.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\ChatMessage.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\Click.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\ClientReady.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\CloseGame.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\CreateMonsterCamp.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\CursorPositionOnWorld.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DamageDone.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\Dash.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DebugMessage.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DeleteObjectFromVision.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DestroyObject.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DestroyParticle.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DestroyProjectile.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\DisconnectedAnnouncement.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EditBuff.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EditMessageBoxRight.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EditMessageBoxTop.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EmotionPacketResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EnableFOW.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\EnterVisionAgain.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ExplodeNexus.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FaceDirection.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FloatingText.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FloatingText2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FloatingTextWithValue.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FogUpdate2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ForceTargetSpell.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\FreezeUnitAnimation.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\GameEnd.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\GameSpeed.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\GameTimer.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\GameTimerUpdate.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\HeartBeat.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\HeroSpawn.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\HeroSpawn2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\HideUi.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\HighlightUnit.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\InhibitorDeathAnimation.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\InhibitorStateUpdate.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\KeyCheckResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LeaveVision.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LevelPropAnimation.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LevelPropSpawn.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LevelUp.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LoadScreenInfo.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LoadScreenPlayerChampion.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\LoadScreenPlayerName.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MessageBoxRight.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MessageBoxTop.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MessagesAvailable.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MinionSpawn.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MinionSpawn2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ModifyShield.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MoveCamera.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MoveChampionCameraCenter.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Movement.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\MovementResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\MovementRequest.cs" />
-    <Compile Include="Logic\Packets\NetworkIdManager.cs" />
-    <Compile Include="Logic\Attributes\DisabledHandlerAttribute.cs" />
-    <Compile Include="Logic\Handlers\HandlersProvider.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\NextAutoAttack.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\NpcDie.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\OnAttack.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleExit.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleLockCamera.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleMoveConfirm.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandlePauseReq.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleScoreboard.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleStatsConfirm.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleUnpauseReq.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerBase.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\Pings.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\PacketHeader.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\PacketHelper.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\PauseGame.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\PingLoadInfoResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\PlaySound.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\QueryStatus.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\Quest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\QuestClicked.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RemoveBuff.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RemoveHighlightUnit.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RemoveItem.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RemoveMessageBoxRight.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RemoveMessageBoxTop.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ReplaceStoreItem.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ResourceType.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\RestrictCameraMovement.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\SellItem.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetAnimation.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetCameraPosition.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetCapturePoint.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetCooldown.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetHealth.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetHealthTest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetItemStacks.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetItemStacks2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetModelTransparency.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetScreenTint.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetSpellActiveState.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetTarget.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetTarget2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SetTeam.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ShowHPAndName.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ShowProjectile.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SkillUpResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SoundSettings.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnAzirTurret.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnCampMonster.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnMonster.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnParticle.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnPlaceable.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpawnProjectile.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpellAnimation.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SpellEmpower.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\StatePacket.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\StatePacket2.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\StopAutoAttack.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\Surrender.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SurrenderResult.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SurrenderState.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SwapItemsResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\SynchVersionRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\SynchVersionResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\TeleportRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ToggleInputLockingFlag.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\TurretSpawn.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\UnitAnnounce.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\UnlockCamera.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\UnpauseGame.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\UpdateModel.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\UpdateStats.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\UseObject.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\ViewResponse.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\C2S\ViewRequest.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\S2C\WorldSendGameNumber.cs" />
-    <Compile Include="Logic\Players\PlayerManager.cs" />
-    <Compile Include="Logic\Scripting\CSharp\BuffGameScript.cs" />
-    <Compile Include="Logic\Scripting\CSharp\Benchmark.cs" />
-    <Compile Include="Logic\Scripting\CSharp\BuffGameScriptController.cs" />
-    <Compile Include="Logic\Scripting\CSharp\CSharpScriptEngine.cs" />
-    <Compile Include="Logic\Maps\SummonersRift.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleAutoAttackOption.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleUseObject.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleQuestClicked.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleBlueTipClicked.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSurrender.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\PacketEnum.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\IPacketHandler.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\PacketHandlerManager.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleAttentionPing.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleBuyItem.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleCastSpell.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleChatBoxMessage.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleClick.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleEmotion.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleHeartBeat.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleKeyCheck.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleLoadPing.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleMap.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleMove.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleQueryStatus.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSellItem.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSkillUp.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSpawn.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleStartGame.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSwapItems.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleSync.cs" />
-    <Compile Include="Logic\Packets\PacketHandlers\HandleView.cs" />
-    <Compile Include="Logic\Packets\PacketDefinitions\Packet.cs" />
-    <Compile Include="Logic\Packets\PacketNotifier.cs" />
-    <Compile Include="Logic\Pair.cs" />
-    <Compile Include="Logic\Scripting\CSharp\GameScript.cs" />
-    <Compile Include="Logic\Scripting\CSharp\GameScriptEmpty.cs" />
-    <Compile Include="Logic\Scripting\CSharp\GameScriptTimer.cs" />
-    <Compile Include="Logic\Scripting\CSharp\MapGameScript.cs" />
+    <Compile Include="Chatbox\IChatCommand.cs" />
+    <Compile Include="Items\Inventory.cs" />
+    <Compile Include="Items\InventoryManager.cs" />
+    <Compile Include="GameObjects\Spells\Spell.cs" />
+    <Compile Include="GameObjects\Stats\Stats.cs" />
+    <Compile Include="GameObjects\Other\Target.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AttackableUnit.cs" />
+    <Compile Include="Content\ItemManager.cs" />
+    <Compile Include="Items\Shop.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\ILoggerProvider.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\LoggerProvider.cs" />
+    <Compile Include="Maps\Map.cs" />
+    <Compile Include="ObjectManager.cs" />
+    <Compile Include="Packets\NetworkIdManager.cs" />
+    <Compile Include="Attributes\DisabledHandlerAttribute.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleExit.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleLockCamera.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleMoveConfirm.cs" />
+    <Compile Include="Packets\PacketHandlers\HandlePauseReq.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleScoreboard.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleStatsConfirm.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleUnpauseReq.cs" />
+    <Compile Include="Packets\PacketHandlers\PacketHandlerBase.cs" />
+    <Compile Include="Players\PlayerManager.cs" />
+    <Compile Include="Scripting\CSharp\BuffGameScript.cs" />
+    <Compile Include="Scripting\CSharp\Benchmark.cs" />
+    <Compile Include="Scripting\CSharp\BuffGameScriptController.cs" />
+    <Compile Include="Scripting\CSharp\CSharpScriptEngine.cs" />
+    <Compile Include="Maps\SummonersRift.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleAutoAttackOption.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleUseObject.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleQuestClicked.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleBlueTipClicked.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSurrender.cs" />
+    <Compile Include="Packets\PacketHandlers\IPacketHandler.cs" />
+    <Compile Include="Packets\PacketHandlers\PacketHandlerManager.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleAttentionPing.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleBuyItem.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleCastSpell.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleChatBoxMessage.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleClick.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleEmotion.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleHeartBeat.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleKeyCheck.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleLoadPing.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleMap.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleMove.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleQueryStatus.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSellItem.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSkillUp.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSpawn.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleStartGame.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSwapItems.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleSync.cs" />
+    <Compile Include="Packets\PacketHandlers\HandleView.cs" />
+    <Compile Include="Scripting\CSharp\GameScript.cs" />
+    <Compile Include="Scripting\CSharp\GameScriptEmpty.cs" />
+    <Compile Include="Scripting\CSharp\GameScriptTimer.cs" />
+    <Compile Include="Scripting\CSharp\MapGameScript.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
@@ -504,12 +372,32 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameMaths\GameMaths.csproj">
+      <Project>{12f14e81-7609-43d9-9477-83a0d3de4bbc}</Project>
+      <Name>GameMaths</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj">
+      <Project>{da3de633-d75b-40b0-8833-099abfbf43a2}</Project>
+      <Name>GameServerCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj">
+      <Project>{0B60B297-306B-4317-866A-6DD70A113074}</Project>
+      <Name>PacketDefinitions420</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,0 +1,194 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Interfaces;
+using GameServerCore.Packets.PacketDefinitions.Requests;
+using PacketDefinitions420.Enums;
+using PacketDefinitions420.PacketDefinitions.C2S;
+using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;
+using BuyItemRequest = GameServerCore.Packets.PacketDefinitions.Requests.BuyItemRequest;
+using CastSpellRequest = GameServerCore.Packets.PacketDefinitions.Requests.CastSpellRequest;
+using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.EmotionPacketRequest;
+using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
+using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
+using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
+using SkillUpRequest = GameServerCore.Packets.PacketDefinitions.Requests.SkillUpRequest;
+using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
+using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
+using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
+
+namespace PacketDefinitions420
+{
+    public class PacketReader : IPacketReader
+    {
+        public SwapItemsRequest ReadSwapItemsRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.SwapItemsRequest(data);
+            return new SwapItemsRequest(rq.NetId, rq.SlotFrom, rq.SlotTo);
+        }
+
+        public AttentionPingRequest ReadAttentionPingRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.AttentionPingRequest(data);
+            return new AttentionPingRequest(rq.X, rq.Y, rq.TargetNetId, rq.Type);
+        }
+
+        public AutoAttackOptionRequest ReadAutoAttackOptionRequest(byte[] data)
+        {
+            var rq = new AutoAttackOption(data);
+            return new AutoAttackOptionRequest(rq.Netid, rq.Activated == 1);
+        }
+
+        public BlueTipClickedRequest ReadBlueTipRequest(byte[] data)
+        {
+            var rq = new BlueTipClicked(data);
+            return new BlueTipClickedRequest(rq.Playernetid, rq.Netid);
+        }
+
+        public BuyItemRequest ReadBuyItemRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.BuyItemRequest(data);
+            return new BuyItemRequest(rq.NetId, rq.Id);
+        }
+
+        public CastSpellRequest ReadCastSpellRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.CastSpellRequest(data);
+            return new CastSpellRequest(rq.NetId, rq.SpellSlot, rq.X, rq.Y, rq.X2, rq.Y2, rq.TargetNetId);
+        }
+
+        public ChatMessageRequest ReadChatMessageRequest(byte[] data)
+        {
+            var rq = new ChatMessage(data);
+            return new ChatMessageRequest(rq.Msg, rq.Type);
+        }
+
+        public ClickRequest ReadClickRequest(byte[] data)
+        {
+            var rq = new Click(data);
+            return new ClickRequest(rq.TargetNetId);
+        }
+
+        public CursorPositionOnWorldRequest ReadCursorPositionOnWorldRequest(byte[] data)
+        {
+            var rq = new CursorPositionOnWorld(data);
+            return new CursorPositionOnWorldRequest(rq.NetId, rq.Unk1, rq.X, rq.Z, rq.Y);
+        }
+
+        public EmotionPacketRequest ReadEmotionPacketRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.EmotionPacketRequest(data);
+
+            // Convert packet emotion type to server emotion type
+            // This is done so that when emotion ID changes in other packet versions, its functionality remains the same on server
+            Emotions type;
+            switch (rq.Id)
+            {
+                case EmotionType.DANCE:
+                    type = Emotions.DANCE;
+                    break;
+                case EmotionType.TAUNT:
+                    type = Emotions.TAUNT;
+                    break;
+                case EmotionType.LAUGH:
+                    type = Emotions.LAUGH;
+                    break;
+                case EmotionType.JOKE:
+                    type = Emotions.JOKE;
+                    break;
+                default:
+                    type = Emotions.UNK;
+                    break;
+            }
+
+            return new EmotionPacketRequest(rq.NetId, type);
+        }
+
+        public HeartbeatRequest ReadHeartbeatRequest(byte[] data)
+        {
+            var rq = new HeartBeat(data);
+            return new HeartbeatRequest(rq.NetId, rq.ReceiveTime, rq.AckTime);
+        }
+
+        public KeyCheckRequest ReadKeyCheckRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
+            return new KeyCheckRequest(rq.PlayerNo, rq.UserId, rq.VersionNo, rq.CheckId);
+        }
+
+        public PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.PingLoadInfoRequest(data);
+            return new PingLoadInfoRequest(rq.NetId, rq.Position, rq.UserId, rq.Loaded, rq.Unk2, rq.Ping, rq.Unk3,
+                rq.Unk4);
+        }
+
+        public MovementRequest ReadMovementRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.MovementRequest(data);
+            MoveType type;
+            switch (rq.Type)
+            {
+                case MovementType.EMOTE:
+                    type = MoveType.EMOTE;
+                    break;
+                case MovementType.MOVE:
+                    type = MoveType.MOVE;
+                    break;
+                case MovementType.ATTACK:
+                    type = MoveType.ATTACK;
+                    break;
+                case MovementType.ATTACKMOVE:
+                    type = MoveType.ATTACKMOVE;
+                    break;
+                case MovementType.STOP:
+                    type = MoveType.STOP;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return new MovementRequest(rq.NetIdHeader, type, rq.X, rq.Y, rq.TargetNetId, rq.CoordCount, rq.NetId,
+                rq.MoveData);
+        }
+
+        public QuestClickedRequest ReadQuestClickedRequest(byte[] data)
+        {
+            var rq = new QuestClicked(data);
+            return new QuestClickedRequest(rq.Netid);
+        }
+
+        public ViewRequest ReadViewRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.ViewRequest(data);
+            return new ViewRequest(rq.NetId, rq.X, rq.Zoom, rq.Y, rq.Y2, rq.Width, rq.Height, rq.Unk2, rq.RequestNo);
+        }
+
+        public SellItemRequest ReadSellItemRequest(byte[] data)
+        {
+            var rq = new SellItem(data);
+            return new SellItemRequest(rq.NetId, rq.SlotId);
+        }
+
+        public SkillUpRequest ReadSkillUpRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.SkillUpRequest(data);
+            return new SkillUpRequest(rq.NetId, rq.Skill);
+        }
+
+        public UseObjectRequest ReadUseObjectRequest(byte[] data)
+        {
+            var rq = new UseObject(data);
+            return new UseObjectRequest(rq.TargetNetId);
+        }
+
+        public SynchVersionRequest ReadSynchVersionRequest(byte[] data)
+        {
+            var rq = new PacketDefinitions.C2S.SynchVersionRequest(data);
+            return new SynchVersionRequest(rq.NetId, rq.Unk1, rq.Version);
+        }
+    }
+}

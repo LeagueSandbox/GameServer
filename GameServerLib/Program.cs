@@ -1,9 +1,7 @@
 using System;
 using System.Timers;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.DependencyInjection;
-using Ninject;
+using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer
 {
@@ -13,62 +11,51 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class GameServerLauncher
     {
-        public static void LaunchServer(ushort serverPort, string configJson)
-        {
-            Program.Run(serverPort, configJson);
-        }
-    }
+        private readonly ILogger _logger;
+        private readonly Server _server;
 
-    internal class Program
-    {
-        // TODO: Require consumers of this inject a ServerContext
-        public static string ExecutingDirectory { get; private set; }
-        private static StandardKernel _kernel;
-        public static bool IsSetToExit { get; set; }
-        public static string ConfigJson { get; private set; }
-        public static ushort ServerPort { get; private set; }
+        public Game game;
+        public string ExecutingDirectory { get; private set; }
+        public string ConfigJson { get; private set; }
+        public ushort ServerPort { get; private set; }
 
-        public static void Run(ushort serverPort, string configJson)
+        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey)
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
-
-            _kernel = new StandardKernel();
-            _kernel.Load(new Bindings());
-
-            var context = _kernel.Get<ServerContext>();
-            var server = _kernel.Get<Server>();
-            var itemManager = _kernel.Get<ItemManager>();
-            var logger = _kernel.Get<Logger>();
+            _logger = LoggerProvider.GetLogger();
+            var itemManager = new ItemManager();
+            game = new Game(itemManager);
+            _server = new Server(game, serverPort, configJson, blowfishKey);
 
             try
             {
-                ExecutingDirectory = context.ExecutingDirectory;
+                ExecutingDirectory = ServerContext.ExecutingDirectory;
                 itemManager.LoadItems();
-                server.Start();
+                _server.Start();
             }
             catch (Exception e)
             {
-                logger.LogFatalError("Error: {0}", e.ToString());
+                _logger.Error(e);
 #if DEBUG
                 throw;
 #endif
             }
         }
 
-        public static void SetToExit()
+        public void StartNetworkLoop()
         {
-            var logger = ResolveDependency<Logger>();
-            logger.LogCoreInfo("Game is over. Game Server will exit in 10 seconds.");
-            var timer = new Timer(10000) { AutoReset = false };
-            timer.Elapsed += (a, b) => IsSetToExit = true;
-            timer.Start();
-        }
-
-        [Obsolete("If you find yourself needing this method, do some refactoring so you don't need it. Prefer constructor injection. This will be removed in the future.")]
-        public static T ResolveDependency<T>()
-        {
-            return _kernel.Get<T>();
+            try
+            {
+                _server.StartNetworkLoop();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+#if DEBUG
+                throw;
+#endif
+            }
         }
     }
 }
