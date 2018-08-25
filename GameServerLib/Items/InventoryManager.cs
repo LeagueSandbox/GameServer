@@ -4,6 +4,7 @@ using System.Linq;
 using CommandLine;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -53,8 +54,12 @@ namespace LeagueSandbox.GameServer.Items
 
         public List<Item> GetAvailableItems(ItemRecipe recipe)
         {
-            // todo is it possible to do this without clonging somehow?
-            var tmpInv = (IEnumerable<Item>)_inventory.Items.Clone();
+            var tempInv = new List<Item>(_inventory.GetBaseItems());
+            return GetAvailableItemsRecursive(ref tempInv, recipe);
+        }
+        
+        private List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
+        {
             var result = new List<Item>();
             var tmpRecipe = recipe.GetItems();
             foreach (var component in tmpRecipe)
@@ -63,16 +68,16 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     continue;
                 }
-                var item = tmpInv.FirstOrDefault(i => i != null && i.ItemType == component);
-                if (item == null)
+                var idx = inventoryState.FindIndex(i => i != null && i.ItemType == component);
+                if (idx == -1)
                 {
-                    result = result.Concat(GetAvailableItems(component.Recipe)).ToList();
+                    result = result.Concat(GetAvailableItemsRecursive(ref inventoryState, component.Recipe)).ToList();
                 }
                 else
                 {
-                    result.Add(item);
+                    result.Add(inventoryState[idx]);
                     // remove entry in case that the recipe has the same item more than once in it
-                    tmpInv = tmpInv.Where(i => i != item);
+                    inventoryState[idx] = null;
                 }
             }
             return result;
