@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Logic.Chatbox
     {
         private readonly Game _game;
 
-        public string CommandStarterCharacter = ".";
+        public string CommandStarterCharacter = "!";
 
         private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
 
