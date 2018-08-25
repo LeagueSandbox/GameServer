@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CommandLine;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -58,7 +56,7 @@ namespace LeagueSandbox.GameServer.Items
             return GetAvailableItemsRecursive(ref tempInv, recipe);
         }
         
-        private List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
+        private static List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
         {
             var result = new List<Item>();
             var tmpRecipe = recipe.GetItems();
