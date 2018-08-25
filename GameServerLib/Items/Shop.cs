@@ -1,78 +1,67 @@
-﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class Shop
     {
-        private Champion _owner;
-        private InventoryManager _inventory;
-
-        private Shop(Champion owner)
+        private readonly Champion _owner;
+        private readonly Game _game;
+        
+        private Shop(Champion owner, Game game)
         {
             _owner = owner;
-            _inventory = _owner.Inventory;
+            _game = game;
         }
 
-        /*
         public bool ItemBuyRequest(int itemId)
         {
-            var item = Item.Instantiate(itemId);
-            if (item == null)
+            var itemTemplate = _game.ItemManager.SafeGetItemType(itemId);
+            if (itemTemplate == null)
             {
                 return false;
             }
 
-            var recipeParts = _inventory.GetAvailableRecipeParts(item);
-            var price = item.TotalPrice;
+            var stats = _owner.Stats;
+            var inventory = _owner.Inventory;
+            var price = itemTemplate.TotalPrice;
+            var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe);
             Item i;
 
-            if (recipeParts.Length == 0)
+            if (ownedItems.Count == 0)
             {
-                if (_owner.Stats.Gold < price)
-                {
-                    return true;
-                }
-
-                i = _owner.Inventory.AddItem(item);
-
-                if (i == null)
+                if (stats.Gold < price || (i = inventory.AddItem(itemTemplate)) == null)
                 {
                     return false;
                 }
             }
             else
             {
-                foreach (var instance in recipeParts)
-                {
-                    price -= instance.TotalPrice;
-                }
-
-                if (_owner.Stats.Gold < price)
+                ownedItems.ForEach(item => price -= item.ItemType.TotalPrice);
+                if (stats.Gold < price)
                 {
                     return false;
                 }
-
-                foreach (var instance in recipeParts)
+                
+                foreach (var item in ownedItems)
                 {
-                    _owner.Stats.unapplyStatMods(instance.getTemplate().getStatMods());
-                    _game.PacketNotifier.notifyRemoveItem(_owner, instance.getSlot(), 0);
-                    _owner.Inventory.RemoveItem(instance.getSlot());
+                    stats.RemoveModifier(item.ItemType);
+                    _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
+                    inventory.RemoveItem(item);
                 }
 
-                i = _game.GetPeerInfo(peer).GetChampion().Inventory.AddItem(itemTemplate);
+                i = inventory.AddItem(itemTemplate);
             }
-
-            _owner.Stats.Gold -= price;
-            _owner.Stats.pplyStatMods(itemTemplate.getStatMods());
-            _game.PacketNotifier.NotifyItemBought(_game.GetPeerInfo(peer).GetChampion(), i);
-
+            
+            stats.Gold -= price;
+            stats.AddModifier(itemTemplate);
+            _game.PacketNotifier.NotifyItemBought(_owner, i);
             return true;
         }
-        */
 
-        public static Shop CreateShop(Champion owner)
+        public static Shop CreateShop(Champion owner, Game game)
         {
-            return new Shop(owner);
+            return new Shop(owner, game);
         }
     }
 }

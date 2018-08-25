@@ -53,23 +53,23 @@ namespace LeagueSandbox.GameServer.Items
         public List<Item> GetAvailableItems(ItemRecipe recipe)
         {
             var result = new List<Item>();
-            var tmpRecipe = recipe.GetItems().ToList();
-            foreach (var item in _inventory.Items)
+            var tmpRecipe = recipe.GetItems();
+            foreach (var component in tmpRecipe)
             {
+                if (component == null)
+                {
+                    continue;
+                }
+                var item = _inventory.Items.FirstOrDefault(i => i != null && i.ItemType == component);
                 if (item == null)
                 {
-                    continue;
+                    result = result.Concat(GetAvailableItems(component.Recipe)).ToList();
                 }
-
-                if (!tmpRecipe.Contains(item.ItemType))
+                else
                 {
-                    continue;
+                    result.Add(item);
                 }
-
-                result.Add(item);
-                tmpRecipe.Remove(item.ItemType);
             }
-
             return result;
         }
 
