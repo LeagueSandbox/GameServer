@@ -51,11 +51,12 @@
 
 using System;
 using System.Collections.Generic;
+
 //using System.Text;          //for Int128.AsString() & StringBuilder
 //using System.IO;            //debugging with streamReader & StreamWriter
 //using System.Windows.Forms; //debugging to clipboard
 
-namespace ClipperLib
+namespace GameMaths.Geometry
 {
 
 #if use_int32

@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using GameServerCore.Logic.Domain;
+using GameServerCore.Domain;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C

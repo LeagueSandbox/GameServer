@@ -1,4 +1,4 @@
-using GameServerCore.Logic.Enet;
+using GameServerCore.Enet;
 using GameServerCore.Packets.Enums;
 using PacketDefinitions420.PacketDefinitions.C2S;
 

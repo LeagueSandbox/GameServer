@@ -3,8 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using CommandLine;
 using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Logging;
+using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServerApp.Logic;
 using LeagueSandbox.GameServerApp.Utility;
 

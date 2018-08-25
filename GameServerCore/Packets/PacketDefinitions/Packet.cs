@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GameServerCore.Logic.Content;
-using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 
 namespace GameServerCore.Packets.PacketDefinitions

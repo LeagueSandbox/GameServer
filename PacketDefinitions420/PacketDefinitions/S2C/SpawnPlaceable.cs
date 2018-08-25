@@ -1,4 +1,4 @@
-using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions;
 

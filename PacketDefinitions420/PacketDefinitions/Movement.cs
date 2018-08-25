@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Content;
+using GameServerCore;
+using GameServerCore.Content;
 
 namespace PacketDefinitions420.PacketDefinitions
 {

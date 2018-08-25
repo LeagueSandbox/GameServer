@@ -1,9 +1,9 @@
 using System;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Items;
+using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Items;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LeagueSandbox.GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests.Items
 {
     [TestClass]
     public class InventoryManagerTests

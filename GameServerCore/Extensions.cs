@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Text;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Enums;
+using GameServerCore.Enums;
 using GameServerCore.Packets.PacketDefinitions;
 
 namespace GameServerCore

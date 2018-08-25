@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Enet;
-using GameServerCore.Logic.Enums;
+using GameServerCore;
+using GameServerCore.Enet;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions;
 

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using ENet;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Logging;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer
 {

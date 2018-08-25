@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
-using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LeagueSandbox.GameServerTests.Tests
+namespace LeagueSandbox.GameServerTests.Tests.Blowfish
 {
     [TestClass]
     public class TestBlowfish

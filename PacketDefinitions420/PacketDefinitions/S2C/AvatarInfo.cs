@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GameServerCore.Logic.Enet;
+using GameServerCore.Enet;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
