@@ -15,16 +15,15 @@ namespace GameServerCore.Logic.Domain.GameObjects
         Dictionary<short, ISpell> Spells { get; }
         int Skin { get; }
         IChampionStats ChampStats { get; }
+        byte SkillPoints { get; set; }
 
         void TeleportTo(float x, float y);
         void UpdateSkin(int skinNo);
         int GetChampionHash();
-        short GetSkillPoints();
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
         ISpell GetSpell(byte slot);
-        void SetSkillPoints(int skillPoints);
-        ISpell LevelUpSpell(short slot);
+        ISpell LevelUpSpell(byte slot);
     }
 }

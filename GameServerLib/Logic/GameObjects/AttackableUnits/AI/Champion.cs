@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
         public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
         public ChampionStats ChampStats { get; private set; } = new ChampionStats();
 
-        private short _skillPoints;
+        public byte SkillPoints { get; set; }
         public int Skin { get; set; }
 
         IRuneCollection IChampion.RuneList => RuneList;
@@ -222,11 +222,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return new Vector2(coords.X, coords.Y);
         }
 
-        public Spell GetSpell(byte slot)
-        {
-            return Spells[slot];
-        }
-
         public Spell GetSpellByName(string name)
         {
             foreach (var s in Spells.Values)
@@ -245,24 +240,29 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return null;
         }
 
-        public Spell LevelUpSpell(short slot)
+        public Spell LevelUpSpell(byte slot)
         {
-            if (_skillPoints == 0)
+            if (SkillPoints == 0)
             {
                 return null;
             }
 
-            var s = GetSpell((byte)slot);
+            var s = Spells[slot];
 
-            if (s == null)
+            if (s == null || !CanSpellBeLeveledUp(s))
             {
                 return null;
             }
 
             s.LevelUp();
-            _skillPoints--;
+            SkillPoints--;
 
             return s;
+        }
+
+        public bool CanSpellBeLeveledUp(Spell s)
+        {
+            return CharData.SpellsUpLevels[s.Slot][s.Level] <= Stats.Level;
         }
 
         public override void Update(float diff)
@@ -353,11 +353,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             owner.TeleportTo(spawnPos.X, spawnPos.Y);
         }
 
-        public void SetSkillPoints(int skillPoints)
-        {
-            skillPoints = (short)skillPoints;
-        }
-
         public int GetChampionHash()
         {
             var szSkin = "";
@@ -392,11 +387,6 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             return hash;
         }
 
-        public short GetSkillPoints()
-        {
-            return _skillPoints;
-        }
-
         public bool LevelUp()
         {
             var stats = Stats;
@@ -415,7 +405,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
             {
                 Stats.LevelUp();
                 Logger.Info("Champion " + Model + " leveled up to " + stats.Level);
-                _skillPoints++;
+                SkillPoints++;
             }
 
             return true;
@@ -548,10 +538,10 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI
 
         ISpell IChampion.GetSpell(byte slot)
         {
-            return GetSpell(slot);
+            return Spells[slot];
         }
 
-        ISpell IChampion.LevelUpSpell(short slot)
+        ISpell IChampion.LevelUpSpell(byte slot)
         {
             return LevelUpSpell(slot);
         }

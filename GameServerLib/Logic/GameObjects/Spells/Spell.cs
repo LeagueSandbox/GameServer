@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
         public static bool ManaCostsEnabled;
 
         public Champion Owner { get; private set; }
-        public short Level { get; private set; }
+        public byte Level { get; private set; }
         public byte Slot { get; set; }
         public float CastTime { get; private set; } = 0;
 

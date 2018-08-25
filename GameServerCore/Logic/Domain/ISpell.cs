@@ -11,7 +11,7 @@ namespace GameServerCore.Logic.Domain
     public interface ISpell
     {
         IChampion Owner { get; }
-        short Level { get; }
+        byte Level { get; }
         byte Slot { get; }
         float CastTime { get; }
         string SpellName { get; }
