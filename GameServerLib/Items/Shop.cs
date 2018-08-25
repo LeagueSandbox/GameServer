@@ -1,5 +1,6 @@
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Content;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -47,6 +48,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     stats.RemoveModifier(item.ItemType);
                     _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
+                    ((IChampion)_owner).RemoveSpell((byte)(inventory.GetItemSlot(item) + 6));
                     inventory.RemoveItem(item);
                 }
 
@@ -56,6 +58,12 @@ namespace LeagueSandbox.GameServer.Items
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(_owner, i);
+
+            if (!string.IsNullOrEmpty(i.ItemType.SpellName))
+            {
+                ((IChampion)_owner).AddSpell(i.ItemType.SpellName, (byte)(inventory.GetItemSlot(i) + 6), true);
+            }
+
             return true;
         }
 

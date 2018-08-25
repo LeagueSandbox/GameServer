@@ -67,6 +67,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _spellGameScript.OnActivate(owner);
         }
 
+        void ISpell.Deactivate()
+        {
+            _spellGameScript.OnDeactivate(Owner);
+        }
+
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
@@ -283,11 +288,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 new Target(toX, toY),
                 this,
                 effectName,
-                SpellData.Flags,                
+                SpellData.Flags,
                 affectAsCastIsOver,
                 angleDeg
             );
-            _game.ObjectManager.AddObject(c);            
+            _game.ObjectManager.AddObject(c);
         }
 
         public void SpellAnimation(string animName, AttackableUnit target)

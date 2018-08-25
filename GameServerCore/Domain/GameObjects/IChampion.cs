@@ -19,6 +19,11 @@ namespace GameServerCore.Domain.GameObjects
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
+
+        void AddSpell(string name, byte slot, bool enabled = false);
+        void SwapSpells(byte slot1, byte slot2);
+        void RemoveSpell(byte slot);
+
         ISpell GetSpell(byte slot);
         ISpell LevelUpSpell(byte slot);
     }

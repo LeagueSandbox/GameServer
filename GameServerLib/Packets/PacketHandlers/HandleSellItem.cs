@@ -39,12 +39,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, i.StackSize);
                 if (i.StackSize == 0)
                 {
+                    client.Champion.RemoveSpell((byte)(request.SlotId + 6));
                     client.Champion.Inventory.RemoveItem(request.SlotId);
                 }
             }
             else
             {
                 _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, 0);
+                client.Champion.RemoveSpell((byte)(request.SlotId + 6));
                 client.Champion.Inventory.RemoveItem(request.SlotId);
             }
 
