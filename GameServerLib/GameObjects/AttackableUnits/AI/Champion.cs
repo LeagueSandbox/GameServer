@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory();
-            Shop = Shop.CreateShop(this);
+            Shop = Shop.CreateShop(this, game);
 
             Stats.Gold = 475.0f;
             Stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
