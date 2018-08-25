@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using GameServerCore;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -9,17 +8,19 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBui
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 
+
 namespace LeagueSandbox.GameServer.GameObjects.Missiles
 {
-    internal class Laser : Projectile
+    internal class Cone : Projectile
     {
         private bool _affectAsCastIsOver;
-        private Vector2 _rectangleCornerBegin1;
-        private Vector2 _rectangleCornerBegin2;
-        private Vector2 _rectangleCornerEnd1;
-        private Vector2 _rectangleCornerEnd2;
+        private float _radius;
+        private float _angleDeg;
+        private Vector2 _ownerCoords;
+        private float _beginAngle;
+        private float _endAngle;
 
-        public Laser(
+        public Cone(
             Game game,
             float x,
             float y,
@@ -29,11 +30,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             Spell originSpell,
             string effectName,
             int flags,
-            bool affectAsCastIsOver) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
+            bool affectAsCastIsOver,
+            float angleDeg
+            ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
-            CreateRectangle(new Target(x, y), target);
-            _affectAsCastIsOver = affectAsCastIsOver;            
+            _affectAsCastIsOver = affectAsCastIsOver;
+            _angleDeg = angleDeg;
+            CreateCone(new Target(x, y), target);            
+
         }
 
         public override void Update(float diff)
@@ -51,7 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                     var u = obj as AttackableUnit;
                     if (u != null && CheckIfValidTarget(u))
                     {
-                        if (TargetIsInRectangle(u))
+                        if (TargetIsInCone(u))
                         {
                             ApplyEffects(u);
                         }
@@ -143,7 +148,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             return true;
         }
-
+       
         private void ApplyEffects(AttackableUnit unit)
         {
             ObjectsHit.Add(unit);
@@ -154,71 +159,30 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        /* WARNING!
-         * METHODS BELOW CONTAIN TOO MUCH MATHS.
-         * PLEASE TURN BACK NOW IF YOU DON'T WANT YOUR BRAIN TO BE BLOWN.
-         */
-
-        /// <summary>
-        /// Assigns this <see cref="Laser"/>'s corners to form a rectangle.
-        /// </summary>
-        private void CreateRectangle(Target beginPoint, Target endPoint)
+        private void CreateCone(Target beginPoint, Target endPoint)
         {
             var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
             var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
             var distance = Vector2.Distance(beginCoords, trueEndCoords);
-            var fakeEndCoords = new Vector2(beginCoords.X, beginCoords.Y + distance);
-            var startCorner1 = new Vector2(beginCoords.X + CollisionRadius, beginCoords.Y);
-            var startCorner2 = new Vector2(beginCoords.X - CollisionRadius, beginCoords.Y);
-            var endCorner1 = new Vector2(fakeEndCoords.X + CollisionRadius, fakeEndCoords.Y);
-            var endCorner2 = new Vector2(fakeEndCoords.X - CollisionRadius, fakeEndCoords.Y);
 
-            var angle = fakeEndCoords.AngleBetween(trueEndCoords, beginCoords);
+            float radians = (float)Math.PI / 180.0f * _angleDeg;
+            float middlePointAngle = (float)Math.Acos((endPoint.X - beginPoint.X) / distance);
+            _beginAngle = middlePointAngle - radians;
+            _endAngle = middlePointAngle + radians;
 
-            _rectangleCornerBegin1 = startCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerBegin2 = startCorner2.Rotate(beginCoords, angle);
-            _rectangleCornerEnd1 = endCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerEnd2 = endCorner2.Rotate(beginCoords, angle);
+            _ownerCoords = beginCoords;
+            _radius = distance;
         }
 
-        /// <summary>
-        /// Checks if given target is inside corners of this <see cref="Laser"/>.
-        /// </summary>
-        /// <param name="target">Target to be checked</param>
-        /// <returns>true if target is in rectangle, otherwise false.</returns>
-        private bool TargetIsInRectangle(AttackableUnit target)
+        private bool TargetIsInCone(AttackableUnit target)
         {
             var unitCoords = new Vector2(target.X, target.Y);
+            var targetDistance = Vector2.Distance(_ownerCoords, unitCoords);
 
-            var shortSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerBegin2);
-            var longSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerEnd1);
+            float targetAngle = (float)Math.Acos((target.X - _ownerCoords.X) / targetDistance);
 
-            var totalArea = longSide * shortSide;
-
-            var triangle1Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
-            var triangle2Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
-            var triangle3Area = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
-            var triangle4Area = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
-
-            return totalArea >= triangle1Area + triangle2Area + triangle3Area + triangle4Area;
+            return (targetDistance <= _radius) && (targetAngle >= _beginAngle) && (targetAngle <= _endAngle);
         }
 
-        /// <summary>
-        /// Calculates given triangle's area using Heron's formula.
-        /// </summary>
-        /// <param name="first">First corner of the triangle.</param>
-        /// <param name="second">Second corner of the triangle</param>
-        /// <param name="third">Third corner of the triangle.</param>
-        /// <returns>the area of the triangle.</returns>
-        private float GetTriangleArea(Vector2 first, Vector2 second, Vector2 third)
-        {
-            var line1Length = Vector2.Distance(first, second);
-            var line2Length = Vector2.Distance(second, third);
-            var line3Length = Vector2.Distance(third, first);
-
-            var s = (line1Length + line2Length + line3Length) / 2;
-
-            return (float)Math.Sqrt(s * (s - line1Length) * (s - line2Length) * (s - line3Length));
-        }
     }
 }
