@@ -255,7 +255,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void AddLaser(float toX, float toY, bool affectAsCastIsOver = true)
+        public void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true)
         {
             var l = new Laser(
                 _game,
@@ -265,10 +265,29 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 Owner,
                 new Target(toX, toY),
                 this,
+                effectName,
                 SpellData.Flags,
                 affectAsCastIsOver
             );
             _game.ObjectManager.AddObject(l);
+        }
+
+        public void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true)
+        {
+            var c = new Cone(
+                _game,
+                Owner.X,
+                Owner.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                effectName,
+                SpellData.Flags,                
+                affectAsCastIsOver,
+                angleDeg
+            );
+            _game.ObjectManager.AddObject(c);            
         }
 
         public void SpellAnimation(string animName, AttackableUnit target)

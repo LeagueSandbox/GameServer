@@ -263,6 +263,7 @@
     <Compile Include="GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\ObjBuilding.cs" />
+    <Compile Include="GameObjects\Missiles\Cone.cs" />
     <Compile Include="GameObjects\Missiles\ObjMissile.cs" />
     <Compile Include="GameObjects\Other\Announce.cs" />
     <Compile Include="GameObjects\Spells\Buff.cs" />

@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         public List<GameObject> ObjectsHit { get; private set; }
         public AttackableUnit Owner { get; private set; }
         public int ProjectileId { get; private set; }
-        public SpellData SpellData { get; private set; }
+        public SpellData SpellData { get; protected set; }
 
         List<IGameObject> IProjectile.ObjectsHit => ObjectsHit.Cast<IGameObject>().ToList();
         IAttackableUnit IProjectile.Owner => Owner;
