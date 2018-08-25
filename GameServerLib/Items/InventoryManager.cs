@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using CommandLine;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 
@@ -52,6 +53,8 @@ namespace LeagueSandbox.GameServer.Items
 
         public List<Item> GetAvailableItems(ItemRecipe recipe)
         {
+            // todo is it possible to do this without clonging somehow?
+            var tmpInv = (IEnumerable<Item>)_inventory.Items.Clone();
             var result = new List<Item>();
             var tmpRecipe = recipe.GetItems();
             foreach (var component in tmpRecipe)
@@ -60,7 +63,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     continue;
                 }
-                var item = _inventory.Items.FirstOrDefault(i => i != null && i.ItemType == component);
+                var item = tmpInv.FirstOrDefault(i => i != null && i.ItemType == component);
                 if (item == null)
                 {
                     result = result.Concat(GetAvailableItems(component.Recipe)).ToList();
@@ -68,6 +71,8 @@ namespace LeagueSandbox.GameServer.Items
                 else
                 {
                     result.Add(item);
+                    // remove entry in case that the recipe has the same item more than once in it
+                    tmpInv = tmpInv.Where(i => i != item);
                 }
             }
             return result;
