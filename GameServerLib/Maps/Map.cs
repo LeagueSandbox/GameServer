@@ -29,8 +29,7 @@ namespace LeagueSandbox.GameServer.Maps
             _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
             var path = Path.Combine(
-                ServerContext.ExecutingDirectory,
-                "Content",
+                game.Config.ContentPath,
                 "Data",
                 _game.Config.ContentManager.GameModeName,
                 "AIMesh",

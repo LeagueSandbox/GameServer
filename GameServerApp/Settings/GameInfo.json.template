@@ -53,6 +53,7 @@
         "MANACOSTS_ENABLED": false,
         "COOLDOWNS_ENABLED": false,
         "CHEATS_ENABLED": true,
-        "MINION_SPAWNS_ENABLED": false
+        "MINION_SPAWNS_ENABLED": false,
+        "CONTENT_PATH": "../../Content"
     }
 }
