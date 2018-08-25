@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
@@ -19,6 +20,11 @@ namespace LeagueSandbox.GameServer.Items
             _items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
         }
 
+        public Item[] GetBaseItems()
+        {
+            return _items.Take(BASE_INVENTORY_SIZE).ToArray();
+        }
+        
         public Item AddItem(ItemType item)
         {
             if (item.IsTrinket())

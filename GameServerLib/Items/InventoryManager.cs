@@ -52,24 +52,32 @@ namespace LeagueSandbox.GameServer.Items
 
         public List<Item> GetAvailableItems(ItemRecipe recipe)
         {
+            var tempInv = new List<Item>(_inventory.GetBaseItems());
+            return GetAvailableItemsRecursive(ref tempInv, recipe);
+        }
+        
+        private static List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
+        {
             var result = new List<Item>();
-            var tmpRecipe = recipe.GetItems().ToList();
-            foreach (var item in _inventory.Items)
+            var tmpRecipe = recipe.GetItems();
+            foreach (var component in tmpRecipe)
             {
-                if (item == null)
+                if (component == null)
                 {
                     continue;
                 }
-
-                if (!tmpRecipe.Contains(item.ItemType))
+                var idx = inventoryState.FindIndex(i => i != null && i.ItemType == component);
+                if (idx == -1)
                 {
-                    continue;
+                    result = result.Concat(GetAvailableItemsRecursive(ref inventoryState, component.Recipe)).ToList();
                 }
-
-                result.Add(item);
-                tmpRecipe.Remove(item.ItemType);
+                else
+                {
+                    result.Add(inventoryState[idx]);
+                    // remove entry in case that the recipe has the same item more than once in it
+                    inventoryState[idx] = null;
+                }
             }
-
             return result;
         }
 
