@@ -28,34 +28,35 @@ namespace LeagueSandbox.GameServer
             game = new Game(itemManager);
             _server = new Server(game, serverPort, configJson, blowfishKey);
 
+#if !DEBUG
             try
             {
+#endif
                 ExecutingDirectory = ServerContext.ExecutingDirectory;
-                itemManager.LoadItems();
                 _server.Start();
+#if !DEBUG
             }
             catch (Exception e)
             {
                 _logger.Error(e);
-#if DEBUG
-                throw;
-#endif
             }
+#endif
         }
 
         public void StartNetworkLoop()
         {
+#if !DEBUG
             try
             {
+#endif
                 _server.StartNetworkLoop();
+#if !DEBUG
             }
             catch (Exception e)
             {
                 _logger.Error(e);
-#if DEBUG
-                throw;
-#endif
             }
+#endif
         }
     }
 }

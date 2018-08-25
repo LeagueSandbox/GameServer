@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestAddAndGetItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var inventoryManager = InventoryManager.CreateInventory();
 
@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestItemStacking()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestSetExtraItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -119,7 +119,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestGetItemSlot()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -151,7 +151,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestRemoveItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         public void TestSwapItems()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -229,7 +229,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         {
             var itemManager = new ItemManager();
             itemManager.ResetItems();
-            itemManager.LoadItems();
+            itemManager.LoadItems("Content");
 
             var manager = InventoryManager.CreateInventory();
 

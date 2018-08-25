@@ -15,6 +15,8 @@ namespace LeagueSandbox.GameServer.Content
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
+        private string _contentPath;
+
         private static readonly string[] ContentTypes = {
             "Champions",
             "Items",
@@ -27,8 +29,9 @@ namespace LeagueSandbox.GameServer.Content
         private Dictionary<string, Dictionary<string, List<string>>> _content;
         public string GameModeName { get; }
 
-        private ContentManager(Game game, string gameModeName)
+        private ContentManager(Game game, string gameModeName, string contentPath)
         {
+            _contentPath = contentPath;
             _game = game;
             _logger = LoggerProvider.GetLogger();
 
@@ -48,7 +51,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 contents = contentSet.ToObject<string[]>();
             }
-            else if (contentSet.Value<string>() == "*")
+            else if (contentSet.Value<string>().Equals("*"))
             {
                 var contentPath = GetContentSetPath(packageName, contentType);
                 contents = GetFolderNamesFromPath(contentPath);
@@ -84,21 +87,16 @@ namespace LeagueSandbox.GameServer.Content
             return contents.ToArray();
         }
 
-        private string GetContentRootPath()
-        {
-            return "Content";
-        }
-
         private string GetPackagePath(string packageName)
         {
-            return $"{GetContentRootPath()}/Data/{packageName}";
+            return $"{_contentPath}/Data/{packageName}";
         }
 
         private string GetContentSetPath(string packageName, string contentType)
         {
-            if (packageName == "Self")
+            if (packageName.Equals("Self"))
             {
-                return $"{GetContentRootPath()}/GameMode/{GameModeName}/Data/{contentType}";
+                return $"{_contentPath}/GameMode/{GameModeName}/Data/{contentType}";
             }
 
             return $"{GetPackagePath(packageName)}/{contentType}";
@@ -223,11 +221,11 @@ namespace LeagueSandbox.GameServer.Content
             return _charData[charName];
         }
 
-        public static ContentManager LoadGameMode(Game game, string gameModeName)
+        public static ContentManager LoadGameMode(Game game, string gameModeName, string contentPath)
         {
-            var contentManager = new ContentManager(game, gameModeName);
+            var contentManager = new ContentManager(game, gameModeName, contentPath);
 
-            var gameModeConfigurationPath = $"Content/GameMode/{gameModeName}/GameMode.json";
+            var gameModeConfigurationPath = $"{contentPath}/GameMode/{gameModeName}/GameMode.json";
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
             var dataConfiguration = gameModeConfiguration.SelectToken("data");
 
@@ -253,12 +251,12 @@ namespace LeagueSandbox.GameServer.Content
 
         private static bool ValidatePackageName(string packageName)
         {
-            if (packageName == "Self")
+            if (packageName.Equals("Self"))
             {
                 return true;
             }
 
-            if (packageName.Count(c => c == '-') < 1)
+            if (packageName.All(c => c != '-'))
             {
                 return false;
             }
