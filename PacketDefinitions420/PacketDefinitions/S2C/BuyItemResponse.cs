@@ -1,5 +1,5 @@
-using GameServerCore.Logic.Domain;
-using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C

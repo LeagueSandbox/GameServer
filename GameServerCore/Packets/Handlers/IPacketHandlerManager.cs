@@ -1,6 +1,6 @@
 ﻿using ENet;
-using GameServerCore.Logic.Domain.GameObjects;
-using GameServerCore.Logic.Enums;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 

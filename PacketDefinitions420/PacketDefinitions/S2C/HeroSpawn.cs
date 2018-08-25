@@ -1,5 +1,5 @@
-using GameServerCore.Logic.Enet;
-using GameServerCore.Logic.Enums;
+using GameServerCore.Enet;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C

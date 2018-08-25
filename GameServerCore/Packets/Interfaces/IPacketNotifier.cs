@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using ENet;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Content;
-using GameServerCore.Logic.Domain;
-using GameServerCore.Logic.Domain.GameObjects;
-using GameServerCore.Logic.Enet;
-using GameServerCore.Logic.Enums;
+using GameServerCore.Content;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enet;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 

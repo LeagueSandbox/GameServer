@@ -1,5 +1,5 @@
-using GameServerCore.Logic.Content;
-using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions;
 

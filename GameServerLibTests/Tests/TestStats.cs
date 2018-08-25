@@ -1,4 +1,4 @@
-﻿using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+﻿using LeagueSandbox.GameServer.GameObjects.Stats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests

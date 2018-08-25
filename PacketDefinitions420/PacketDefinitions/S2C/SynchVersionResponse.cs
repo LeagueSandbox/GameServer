@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Enet;
+using GameServerCore;
+using GameServerCore.Enet;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C

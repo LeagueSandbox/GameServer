@@ -1,8 +1,7 @@
 using System;
 using System.Timers;
-using LeagueSandbox.GameServer.Logic;
-using LeagueSandbox.GameServer.Logic.Content;
-using LeagueSandbox.GameServer.Logic.Logging;
+using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer
 {

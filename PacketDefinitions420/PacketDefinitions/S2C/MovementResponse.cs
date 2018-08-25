@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Logic;
-using GameServerCore.Logic.Content;
-using GameServerCore.Logic.Domain.GameObjects;
+using GameServerCore;
+using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
