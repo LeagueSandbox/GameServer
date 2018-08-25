@@ -68,8 +68,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <_ContentSourceDirectory>$(SolutionDir)GameServerApp\Content\.</_ContentSourceDirectory>
-    <_ContentTargetDirectory>$(TargetDir)Content\</_ContentTargetDirectory>
     <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings\.</_SettingsSourceDirectory>
     <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
     <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
@@ -87,7 +85,6 @@
     <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
   </PropertyGroup>
   <Target Name="AfterBuild">
-    <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(_ContentTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(_SettingsTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />

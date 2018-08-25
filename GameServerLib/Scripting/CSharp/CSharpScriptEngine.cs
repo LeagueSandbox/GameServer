@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var references = new List<MetadataReference>();
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (!a.IsDynamic && a.Location != "")
+                if (!a.IsDynamic && !a.Location.Equals(""))
                 {
                     references.Add(MetadataReference.CreateFromFile(a.Location));
                 }
