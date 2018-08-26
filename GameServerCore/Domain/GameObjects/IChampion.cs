@@ -20,7 +20,7 @@ namespace GameServerCore.Domain.GameObjects
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
 
-        void AddSpell(string name, byte slot, bool enabled = false);
+        void SetSpell(string name, byte slot, bool enabled = false);
         void SwapSpells(byte slot1, byte slot2);
         void RemoveSpell(byte slot);
 

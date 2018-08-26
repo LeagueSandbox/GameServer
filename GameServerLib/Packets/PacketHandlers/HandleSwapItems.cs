@@ -1,5 +1,6 @@
 ﻿using ENet;
 using GameServerCore.Packets.Enums;
+using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -30,7 +31,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
             champion.Inventory.SwapItems(request.SlotFrom, request.SlotTo);
-            champion.SwapSpells((byte)(request.SlotFrom + 6), (byte)(request.SlotTo + 6));
+            champion.SwapSpells((byte)(request.SlotFrom + Shop.ITEM_ACTIVE_OFFSET),
+                (byte)(request.SlotTo + Shop.ITEM_ACTIVE_OFFSET));
             _game.PacketNotifier.NotifyItemsSwapped(
                 champion,
                 request.SlotFrom,

@@ -8,6 +8,8 @@ namespace LeagueSandbox.GameServer.Items
     {
         private readonly Champion _owner;
         private readonly Game _game;
+
+        public const byte ITEM_ACTIVE_OFFSET = 6;
         
         private Shop(Champion owner, Game game)
         {
@@ -48,7 +50,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     stats.RemoveModifier(item.ItemType);
                     _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
-                    ((IChampion)_owner).RemoveSpell((byte)(inventory.GetItemSlot(item) + 6));
+                    _owner.RemoveSpell((byte)(inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET));
                     inventory.RemoveItem(item);
                 }
 
@@ -61,7 +63,7 @@ namespace LeagueSandbox.GameServer.Items
 
             if (!string.IsNullOrEmpty(i.ItemType.SpellName))
             {
-                ((IChampion)_owner).AddSpell(i.ItemType.SpellName, (byte)(inventory.GetItemSlot(i) + 6), true);
+                _owner.SetSpell(i.ItemType.SpellName, (byte)(inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
             }
 
             return true;
