@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <_ContentSourceDirectory>$(SolutionDir)GameServerConsole\Content\.</_ContentSourceDirectory>
-    <_ContentTargetDirectory>Content\</_ContentTargetDirectory>
-    <_LeagueContentSourceDirectory>$(SolutionDir)LeagueSandbox-Default\.</_LeagueContentSourceDirectory>
-    <_LeagueContentTargetDirectory>Content\Data\LeagueSandbox-Default</_LeagueContentTargetDirectory>
     <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
     <_SettingsTargetDirectory>Settings\</_SettingsTargetDirectory>
     <_ENetSharpLeagueSourceDirectory>$(NuGetPackageRoot)enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
@@ -48,8 +44,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(_CopyCommand) &quot;$(_ContentSourceDirectory)&quot; &quot;$(TargetDir)$(_ContentTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_LeagueContentSourceDirectory)&quot; &quot;$(TargetDir)$(_LeagueContentTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(TargetDir)$(_SettingsTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(TargetDir)&quot;" />
   </Target>
