@@ -68,13 +68,13 @@ namespace LeagueSandbox.GameServer
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
-
-            // Load items
-            game.ItemManager.LoadItems(ContentPath);
-
+            
             // Read the game configuration
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
+
+            // Load items
+            game.ItemManager.LoadItems(ContentPath, GameConfig.GameMode);
 
             // Read spawns info
             ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
