@@ -222,9 +222,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return new Vector2(coords.X, coords.Y);
         }
 
-        public Spell GetSpell(byte slot)
+        public void StopChampionMovement()
         {
-            return Spells[slot];
+            List<Vector2> l = new List<Vector2>();
+            l.Add(new Vector2(this.X, this.Y));
+            this.SetWaypoints(l);
+            _game.PacketNotifier.NotifyMovement(this);
         }
 
         public Spell GetSpellByName(string name)

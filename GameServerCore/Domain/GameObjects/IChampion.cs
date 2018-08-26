@@ -16,6 +16,7 @@ namespace GameServerCore.Domain.GameObjects
         void TeleportTo(float x, float y);
         void UpdateSkin(int skinNo);
         int GetChampionHash();
+        void StopChampionMovement();
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
