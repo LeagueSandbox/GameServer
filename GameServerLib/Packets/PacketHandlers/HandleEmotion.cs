@@ -1,5 +1,7 @@
 ﻿using ENet;
 using GameServerCore.Packets.Enums;
+using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
 
@@ -23,6 +25,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(Peer peer, byte[] data)
         {
+            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            champion.StopChampionMovement();
             var request = _game.PacketReader.ReadEmotionPacketRequest(data);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
@@ -42,7 +46,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-             _game.PacketNotifier.NotifyEmotions(request.Id, request.NetId);
+            _game.PacketNotifier.NotifyEmotions(request.Id, request.NetId);
             return true;
         }
     }
