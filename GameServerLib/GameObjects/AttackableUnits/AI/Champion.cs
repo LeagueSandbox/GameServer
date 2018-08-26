@@ -222,6 +222,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return new Vector2(coords.X, coords.Y);
         }
 
+        public void StopChampionMovement()
+        {
+            List<Vector2> l = new List<Vector2>();
+            l.Add(new Vector2(this.X, this.Y));
+            this.SetWaypoints(l);
+            _game.PacketNotifier.NotifyMovement(this);
+        }
+
         public Spell GetSpellByName(string name)
         {
             foreach (var s in Spells.Values)
