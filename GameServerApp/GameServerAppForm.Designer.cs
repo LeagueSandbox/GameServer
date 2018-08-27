@@ -144,7 +144,7 @@
             // gamePathTxt
             // 
             this.gamePathTxt.Location = new System.Drawing.Point(68, 6);
-            this.gamePathTxt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gamePathTxt.Margin = new System.Windows.Forms.Padding(2);
             this.gamePathTxt.Name = "gamePathTxt";
             this.gamePathTxt.Size = new System.Drawing.Size(296, 20);
             this.gamePathTxt.TabIndex = 5;
@@ -244,7 +244,7 @@
             // 
             this.gameModeCombo.FormattingEnabled = true;
             this.gameModeCombo.Location = new System.Drawing.Point(448, 7);
-            this.gameModeCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gameModeCombo.Margin = new System.Windows.Forms.Padding(2);
             this.gameModeCombo.Name = "gameModeCombo";
             this.gameModeCombo.Size = new System.Drawing.Size(148, 21);
             this.gameModeCombo.TabIndex = 23;
@@ -254,7 +254,7 @@
             // 
             this.mapCombo.FormattingEnabled = true;
             this.mapCombo.Location = new System.Drawing.Point(470, 33);
-            this.mapCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.mapCombo.Margin = new System.Windows.Forms.Padding(2);
             this.mapCombo.Name = "mapCombo";
             this.mapCombo.Size = new System.Drawing.Size(126, 21);
             this.mapCombo.TabIndex = 25;
@@ -274,7 +274,7 @@
             // 
             this.manaCostsCheckBox.AutoSize = true;
             this.manaCostsCheckBox.Location = new System.Drawing.Point(706, 34);
-            this.manaCostsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.manaCostsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.manaCostsCheckBox.Name = "manaCostsCheckBox";
             this.manaCostsCheckBox.Size = new System.Drawing.Size(82, 17);
             this.manaCostsCheckBox.TabIndex = 26;
@@ -285,7 +285,7 @@
             // 
             this.cooldownsCheckBox.AutoSize = true;
             this.cooldownsCheckBox.Location = new System.Drawing.Point(706, 10);
-            this.cooldownsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cooldownsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.cooldownsCheckBox.Name = "cooldownsCheckBox";
             this.cooldownsCheckBox.Size = new System.Drawing.Size(78, 17);
             this.cooldownsCheckBox.TabIndex = 27;
@@ -296,7 +296,7 @@
             // 
             this.enableCheatsCheckBox.AutoSize = true;
             this.enableCheatsCheckBox.Location = new System.Drawing.Point(607, 35);
-            this.enableCheatsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.enableCheatsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.enableCheatsCheckBox.Name = "enableCheatsCheckBox";
             this.enableCheatsCheckBox.Size = new System.Drawing.Size(95, 17);
             this.enableCheatsCheckBox.TabIndex = 28;
@@ -307,7 +307,7 @@
             // 
             this.spawnMinionsCheckBox.AutoSize = true;
             this.spawnMinionsCheckBox.Location = new System.Drawing.Point(607, 10);
-            this.spawnMinionsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.spawnMinionsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.spawnMinionsCheckBox.Name = "spawnMinionsCheckBox";
             this.spawnMinionsCheckBox.Size = new System.Drawing.Size(98, 17);
             this.spawnMinionsCheckBox.TabIndex = 29;
@@ -318,7 +318,7 @@
             // 
             this.consoleTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.consoleTextBox.Location = new System.Drawing.Point(9, 107);
-            this.consoleTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.consoleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.consoleTextBox.Multiline = true;
             this.consoleTextBox.Name = "consoleTextBox";
             this.consoleTextBox.Size = new System.Drawing.Size(774, 338);
@@ -331,7 +331,7 @@
             this.consoleInfoLogsCheckBox.Checked = true;
             this.consoleInfoLogsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.consoleInfoLogsCheckBox.Location = new System.Drawing.Point(68, 85);
-            this.consoleInfoLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.consoleInfoLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.consoleInfoLogsCheckBox.Name = "consoleInfoLogsCheckBox";
             this.consoleInfoLogsCheckBox.Size = new System.Drawing.Size(70, 17);
             this.consoleInfoLogsCheckBox.TabIndex = 31;
@@ -353,7 +353,7 @@
             // 
             this.consoleDebugLogsCheckBox.AutoSize = true;
             this.consoleDebugLogsCheckBox.Location = new System.Drawing.Point(148, 85);
-            this.consoleDebugLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.consoleDebugLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.consoleDebugLogsCheckBox.Name = "consoleDebugLogsCheckBox";
             this.consoleDebugLogsCheckBox.Size = new System.Drawing.Size(84, 17);
             this.consoleDebugLogsCheckBox.TabIndex = 33;
@@ -364,7 +364,7 @@
             // 
             this.consoleWarningLogsCheckBox.AutoSize = true;
             this.consoleWarningLogsCheckBox.Location = new System.Drawing.Point(244, 85);
-            this.consoleWarningLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.consoleWarningLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.consoleWarningLogsCheckBox.Name = "consoleWarningLogsCheckBox";
             this.consoleWarningLogsCheckBox.Size = new System.Drawing.Size(92, 17);
             this.consoleWarningLogsCheckBox.TabIndex = 34;
@@ -375,7 +375,7 @@
             // 
             this.consoleErrorLogsCheckBox.AutoSize = true;
             this.consoleErrorLogsCheckBox.Location = new System.Drawing.Point(350, 85);
-            this.consoleErrorLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.consoleErrorLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.consoleErrorLogsCheckBox.Name = "consoleErrorLogsCheckBox";
             this.consoleErrorLogsCheckBox.Size = new System.Drawing.Size(74, 17);
             this.consoleErrorLogsCheckBox.TabIndex = 35;
@@ -385,7 +385,7 @@
             // nameTxt
             // 
             this.nameTxt.Location = new System.Drawing.Point(336, 33);
-            this.nameTxt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nameTxt.Margin = new System.Windows.Forms.Padding(2);
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(88, 20);
             this.nameTxt.TabIndex = 37;
@@ -403,6 +403,7 @@
             // 
             // serverHostCombo
             // 
+            this.serverHostCombo.Enabled = false;
             this.serverHostCombo.FormattingEnabled = true;
             this.serverHostCombo.Location = new System.Drawing.Point(877, 367);
             this.serverHostCombo.Name = "serverHostCombo";
@@ -413,6 +414,7 @@
             // allowOnlineConnectionsCheckBox
             // 
             this.allowOnlineConnectionsCheckBox.AutoSize = true;
+            this.allowOnlineConnectionsCheckBox.Enabled = false;
             this.allowOnlineConnectionsCheckBox.Location = new System.Drawing.Point(811, 10);
             this.allowOnlineConnectionsCheckBox.Name = "allowOnlineConnectionsCheckBox";
             this.allowOnlineConnectionsCheckBox.Size = new System.Drawing.Size(146, 17);
@@ -431,6 +433,7 @@
             // 
             // connectedIPsListBox
             // 
+            this.connectedIPsListBox.Enabled = false;
             this.connectedIPsListBox.FormattingEnabled = true;
             this.connectedIPsListBox.Items.AddRange(new object[] {
             "17.281.281.1 - Some Guy - Online",
@@ -452,6 +455,7 @@
             // 
             // addIPButton
             // 
+            this.addIPButton.Enabled = false;
             this.addIPButton.Location = new System.Drawing.Point(811, 315);
             this.addIPButton.Name = "addIPButton";
             this.addIPButton.Size = new System.Drawing.Size(75, 23);
@@ -461,6 +465,7 @@
             // 
             // removeIPButton
             // 
+            this.removeIPButton.Enabled = false;
             this.removeIPButton.Location = new System.Drawing.Point(1017, 315);
             this.removeIPButton.Name = "removeIPButton";
             this.removeIPButton.Size = new System.Drawing.Size(75, 23);
@@ -470,6 +475,7 @@
             // 
             // blockIPToggleButton
             // 
+            this.blockIPToggleButton.Enabled = false;
             this.blockIPToggleButton.Location = new System.Drawing.Point(916, 315);
             this.blockIPToggleButton.Name = "blockIPToggleButton";
             this.blockIPToggleButton.Size = new System.Drawing.Size(75, 23);
@@ -479,6 +485,7 @@
             // 
             // requestOtherConnectionsButton
             // 
+            this.requestOtherConnectionsButton.Enabled = false;
             this.requestOtherConnectionsButton.Location = new System.Drawing.Point(811, 339);
             this.requestOtherConnectionsButton.Name = "requestOtherConnectionsButton";
             this.requestOtherConnectionsButton.Size = new System.Drawing.Size(281, 23);
@@ -497,6 +504,7 @@
             // 
             // lobbyListBox
             // 
+            this.lobbyListBox.Enabled = false;
             this.lobbyListBox.FormattingEnabled = true;
             this.lobbyListBox.Items.AddRange(new object[] {
             "127.0.0.1 - Gan - Blue, Ezreal",
@@ -509,6 +517,7 @@
             // closeLobbyCheckBox
             // 
             this.closeLobbyCheckBox.AutoSize = true;
+            this.closeLobbyCheckBox.Enabled = false;
             this.closeLobbyCheckBox.Location = new System.Drawing.Point(811, 671);
             this.closeLobbyCheckBox.Name = "closeLobbyCheckBox";
             this.closeLobbyCheckBox.Size = new System.Drawing.Size(109, 17);
@@ -527,6 +536,7 @@
             // 
             // onlineChatTextBox
             // 
+            this.onlineChatTextBox.Enabled = false;
             this.onlineChatTextBox.Location = new System.Drawing.Point(12, 515);
             this.onlineChatTextBox.Multiline = true;
             this.onlineChatTextBox.Name = "onlineChatTextBox";
@@ -537,6 +547,7 @@
             // 
             // chatMessageTextBox
             // 
+            this.chatMessageTextBox.Enabled = false;
             this.chatMessageTextBox.Location = new System.Drawing.Point(11, 671);
             this.chatMessageTextBox.Name = "chatMessageTextBox";
             this.chatMessageTextBox.Size = new System.Drawing.Size(694, 20);
@@ -544,6 +555,7 @@
             // 
             // sendChatButton
             // 
+            this.sendChatButton.Enabled = false;
             this.sendChatButton.Location = new System.Drawing.Point(709, 669);
             this.sendChatButton.Name = "sendChatButton";
             this.sendChatButton.Size = new System.Drawing.Size(75, 23);
