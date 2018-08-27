@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -66,6 +69,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -76,5 +80,30 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameServerLib\GameServerLib.csproj">
+      <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
+      <Name>GameServerLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings\.</_SettingsSourceDirectory>
+    <_SettingsTargetDirectory>Settings\</_SettingsTargetDirectory>
+    <_IsMac>false</_IsMac>
+    <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' != 'Unix'">
+    <_CopyCommand>xcopy /s /y /q /d /e /i</_CopyCommand>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Unix'">
+    <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
+    <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(TargetDir)$(_SettingsTargetDirectory)&quot;" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

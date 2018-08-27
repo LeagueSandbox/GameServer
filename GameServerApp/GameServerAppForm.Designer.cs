@@ -83,6 +83,8 @@
             this.summoner2Combo = new System.Windows.Forms.ComboBox();
             this.iconCombo = new System.Windows.Forms.ComboBox();
             this.skinCombo = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.contentPathTxt = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // autoStartServerOnLaunchCheckBox
@@ -146,7 +148,7 @@
             this.gamePathTxt.Location = new System.Drawing.Point(68, 6);
             this.gamePathTxt.Margin = new System.Windows.Forms.Padding(2);
             this.gamePathTxt.Name = "gamePathTxt";
-            this.gamePathTxt.Size = new System.Drawing.Size(296, 20);
+            this.gamePathTxt.Size = new System.Drawing.Size(261, 20);
             this.gamePathTxt.TabIndex = 5;
             this.gamePathTxt.Text = "C:\\LeagueSandbox\\League_Sandbox_Client";
             // 
@@ -163,7 +165,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 61);
+            this.label3.Location = new System.Drawing.Point(502, 34);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 13);
@@ -173,7 +175,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(128, 61);
+            this.label4.Location = new System.Drawing.Point(12, 61);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(28, 13);
@@ -183,7 +185,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(126, 34);
+            this.label5.Location = new System.Drawing.Point(123, 34);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(54, 13);
@@ -193,7 +195,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(494, 61);
+            this.label6.Location = new System.Drawing.Point(290, 61);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 13);
@@ -203,7 +205,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(643, 61);
+            this.label7.Location = new System.Drawing.Point(452, 61);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 13);
@@ -213,7 +215,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(250, 61);
+            this.label8.Location = new System.Drawing.Point(98, 61);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(28, 13);
@@ -223,7 +225,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(376, 61);
+            this.label9.Location = new System.Drawing.Point(187, 61);
             this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(41, 13);
@@ -233,7 +235,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(376, 9);
+            this.label10.Location = new System.Drawing.Point(333, 9);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(65, 13);
@@ -243,7 +245,7 @@
             // gameModeCombo
             // 
             this.gameModeCombo.FormattingEnabled = true;
-            this.gameModeCombo.Location = new System.Drawing.Point(448, 7);
+            this.gameModeCombo.Location = new System.Drawing.Point(400, 6);
             this.gameModeCombo.Margin = new System.Windows.Forms.Padding(2);
             this.gameModeCombo.Name = "gameModeCombo";
             this.gameModeCombo.Size = new System.Drawing.Size(148, 21);
@@ -253,17 +255,17 @@
             // mapCombo
             // 
             this.mapCombo.FormattingEnabled = true;
-            this.mapCombo.Location = new System.Drawing.Point(470, 33);
+            this.mapCombo.Location = new System.Drawing.Point(443, 31);
             this.mapCombo.Margin = new System.Windows.Forms.Padding(2);
             this.mapCombo.Name = "mapCombo";
-            this.mapCombo.Size = new System.Drawing.Size(126, 21);
+            this.mapCombo.Size = new System.Drawing.Size(55, 21);
             this.mapCombo.TabIndex = 25;
             this.mapCombo.Text = "1";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(434, 34);
+            this.label11.Location = new System.Drawing.Point(414, 34);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(28, 13);
@@ -273,7 +275,7 @@
             // manaCostsCheckBox
             // 
             this.manaCostsCheckBox.AutoSize = true;
-            this.manaCostsCheckBox.Location = new System.Drawing.Point(706, 34);
+            this.manaCostsCheckBox.Location = new System.Drawing.Point(620, 60);
             this.manaCostsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.manaCostsCheckBox.Name = "manaCostsCheckBox";
             this.manaCostsCheckBox.Size = new System.Drawing.Size(82, 17);
@@ -284,7 +286,7 @@
             // cooldownsCheckBox
             // 
             this.cooldownsCheckBox.AutoSize = true;
-            this.cooldownsCheckBox.Location = new System.Drawing.Point(706, 10);
+            this.cooldownsCheckBox.Location = new System.Drawing.Point(620, 34);
             this.cooldownsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.cooldownsCheckBox.Name = "cooldownsCheckBox";
             this.cooldownsCheckBox.Size = new System.Drawing.Size(78, 17);
@@ -295,7 +297,7 @@
             // enableCheatsCheckBox
             // 
             this.enableCheatsCheckBox.AutoSize = true;
-            this.enableCheatsCheckBox.Location = new System.Drawing.Point(607, 35);
+            this.enableCheatsCheckBox.Location = new System.Drawing.Point(706, 60);
             this.enableCheatsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.enableCheatsCheckBox.Name = "enableCheatsCheckBox";
             this.enableCheatsCheckBox.Size = new System.Drawing.Size(95, 17);
@@ -306,7 +308,7 @@
             // spawnMinionsCheckBox
             // 
             this.spawnMinionsCheckBox.AutoSize = true;
-            this.spawnMinionsCheckBox.Location = new System.Drawing.Point(607, 10);
+            this.spawnMinionsCheckBox.Location = new System.Drawing.Point(706, 33);
             this.spawnMinionsCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.spawnMinionsCheckBox.Name = "spawnMinionsCheckBox";
             this.spawnMinionsCheckBox.Size = new System.Drawing.Size(98, 17);
@@ -384,17 +386,17 @@
             // 
             // nameTxt
             // 
-            this.nameTxt.Location = new System.Drawing.Point(336, 33);
+            this.nameTxt.Location = new System.Drawing.Point(311, 30);
             this.nameTxt.Margin = new System.Windows.Forms.Padding(2);
             this.nameTxt.Name = "nameTxt";
-            this.nameTxt.Size = new System.Drawing.Size(88, 20);
+            this.nameTxt.Size = new System.Drawing.Size(99, 20);
             this.nameTxt.TabIndex = 37;
             this.nameTxt.Text = "Gan";
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(294, 34);
+            this.label13.Location = new System.Drawing.Point(275, 34);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(35, 13);
@@ -566,88 +568,109 @@
             // championCombo
             // 
             this.championCombo.FormattingEnabled = true;
-            this.championCombo.Location = new System.Drawing.Point(184, 32);
+            this.championCombo.Location = new System.Drawing.Point(177, 31);
             this.championCombo.Margin = new System.Windows.Forms.Padding(2);
             this.championCombo.Name = "championCombo";
-            this.championCombo.Size = new System.Drawing.Size(106, 21);
+            this.championCombo.Size = new System.Drawing.Size(92, 21);
             this.championCombo.TabIndex = 54;
             this.championCombo.Text = "Ezreal";
             // 
             // rankCombo
             // 
             this.rankCombo.FormattingEnabled = true;
-            this.rankCombo.Location = new System.Drawing.Point(45, 31);
+            this.rankCombo.Location = new System.Drawing.Point(40, 31);
             this.rankCombo.Margin = new System.Windows.Forms.Padding(2);
             this.rankCombo.Name = "rankCombo";
-            this.rankCombo.Size = new System.Drawing.Size(73, 21);
+            this.rankCombo.Size = new System.Drawing.Size(78, 21);
             this.rankCombo.TabIndex = 55;
             this.rankCombo.Text = "Diamond";
             // 
             // teamCombo
             // 
             this.teamCombo.FormattingEnabled = true;
-            this.teamCombo.Location = new System.Drawing.Point(45, 58);
+            this.teamCombo.Location = new System.Drawing.Point(536, 32);
             this.teamCombo.Margin = new System.Windows.Forms.Padding(2);
             this.teamCombo.Name = "teamCombo";
-            this.teamCombo.Size = new System.Drawing.Size(73, 21);
+            this.teamCombo.Size = new System.Drawing.Size(71, 21);
             this.teamCombo.TabIndex = 56;
             this.teamCombo.Text = "Blue";
             // 
             // ribbonCombo
             // 
             this.ribbonCombo.FormattingEnabled = true;
-            this.ribbonCombo.Location = new System.Drawing.Point(421, 58);
+            this.ribbonCombo.Location = new System.Drawing.Point(228, 58);
             this.ribbonCombo.Margin = new System.Windows.Forms.Padding(2);
             this.ribbonCombo.Name = "ribbonCombo";
-            this.ribbonCombo.Size = new System.Drawing.Size(69, 21);
+            this.ribbonCombo.Size = new System.Drawing.Size(55, 21);
             this.ribbonCombo.TabIndex = 57;
             this.ribbonCombo.Text = "2";
             // 
             // summoner1Combo
             // 
             this.summoner1Combo.FormattingEnabled = true;
-            this.summoner1Combo.Location = new System.Drawing.Point(564, 58);
+            this.summoner1Combo.Location = new System.Drawing.Point(355, 58);
             this.summoner1Combo.Margin = new System.Windows.Forms.Padding(2);
             this.summoner1Combo.Name = "summoner1Combo";
-            this.summoner1Combo.Size = new System.Drawing.Size(69, 21);
+            this.summoner1Combo.Size = new System.Drawing.Size(87, 21);
             this.summoner1Combo.TabIndex = 58;
             this.summoner1Combo.Text = "Smite";
             // 
             // summoner2Combo
             // 
             this.summoner2Combo.FormattingEnabled = true;
-            this.summoner2Combo.Location = new System.Drawing.Point(713, 59);
+            this.summoner2Combo.Location = new System.Drawing.Point(522, 58);
             this.summoner2Combo.Margin = new System.Windows.Forms.Padding(2);
             this.summoner2Combo.Name = "summoner2Combo";
-            this.summoner2Combo.Size = new System.Drawing.Size(69, 21);
+            this.summoner2Combo.Size = new System.Drawing.Size(85, 21);
             this.summoner2Combo.TabIndex = 59;
             this.summoner2Combo.Text = "Ignite";
             // 
             // iconCombo
             // 
             this.iconCombo.FormattingEnabled = true;
-            this.iconCombo.Location = new System.Drawing.Point(163, 58);
+            this.iconCombo.Location = new System.Drawing.Point(40, 58);
             this.iconCombo.Margin = new System.Windows.Forms.Padding(2);
             this.iconCombo.Name = "iconCombo";
-            this.iconCombo.Size = new System.Drawing.Size(83, 21);
+            this.iconCombo.Size = new System.Drawing.Size(54, 21);
             this.iconCombo.TabIndex = 60;
             this.iconCombo.Text = "0";
             // 
             // skinCombo
             // 
             this.skinCombo.FormattingEnabled = true;
-            this.skinCombo.Location = new System.Drawing.Point(282, 58);
+            this.skinCombo.Location = new System.Drawing.Point(126, 58);
             this.skinCombo.Margin = new System.Windows.Forms.Padding(2);
             this.skinCombo.Name = "skinCombo";
-            this.skinCombo.Size = new System.Drawing.Size(83, 21);
+            this.skinCombo.Size = new System.Drawing.Size(54, 21);
             this.skinCombo.TabIndex = 61;
             this.skinCombo.Text = "0";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(552, 9);
+            this.label18.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(69, 13);
+            this.label18.TabIndex = 62;
+            this.label18.Text = "Content Path";
+            // 
+            // contentPathTxt
+            // 
+            this.contentPathTxt.Location = new System.Drawing.Point(624, 6);
+            this.contentPathTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.contentPathTxt.Name = "contentPathTxt";
+            this.contentPathTxt.Size = new System.Drawing.Size(159, 20);
+            this.contentPathTxt.TabIndex = 63;
+            this.contentPathTxt.Text = "../../../..";
             // 
             // GameServerAppForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 698);
+            this.Controls.Add(this.contentPathTxt);
+            this.Controls.Add(this.label18);
             this.Controls.Add(this.skinCombo);
             this.Controls.Add(this.iconCombo);
             this.Controls.Add(this.summoner2Combo);
@@ -767,6 +790,8 @@
         private System.Windows.Forms.ComboBox summoner2Combo;
         private System.Windows.Forms.ComboBox iconCombo;
         private System.Windows.Forms.ComboBox skinCombo;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox contentPathTxt;
     }
 }
 
