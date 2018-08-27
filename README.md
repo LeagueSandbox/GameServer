@@ -7,11 +7,11 @@ Project chat on Discord: https://discord.gg/Bz3znAM
 
 # Contributing
 
-If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know. You will need to PM a moderator to get access to development channels.
+Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CONTRIBUTING.md)
 
 # Setup guide
-* Install Microsoft Visual Studio 2015 or newer (Community Edition is fine)
-* Install DotNet 4.6.1 Framework
+* Install Microsoft Visual Studio 2017 or newer (Community Edition is fine)
+* Install latest .NET Framework (VS Installer should let you do that)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 	* This is strongly encouraged to follow the 120 character limit per line guideline
 	
@@ -35,56 +35,6 @@ Click the debug button.
 ```
 start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
 ```
-
-# Project policies
-* Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
-* Pull requests must be approved before they can be merged
-* Pull requests should not be merged before the build has passed
-    * If the build fails, ping the pull request creator and tell him to fix it
-* Files and folders in `PascalCase`
-* JSON dictionary keys in `PascalCase`
-* Keep the code as simple and clear to read as possible
-* Each separate feature should be developed in their own branch
-* Commits should be in logical small pieces
-* Pull requests should be kept as small as possible, generally one feature per pull requests
-    * Instead of submitting one huge pull request with 3 features, submit each feature individually
-
-# C# guidelines
-* Function names in `PascalCase`
-* Constants in `ALL_CAPS`
-* Private variables in `_camelCaseWithUnderscore`
-* Public properties as getters / setters in `PascalCase`
-* Acronyms should be consider a single word when capitalizing
-	* `configJson` instead of `configJSON`
-* All public variable access should happen through getters / setters
-* Regions shouldn't be used, instead split code into classes/files when needed
-* Dictionaries preferred over switches and long if/else statements
-* Boolean variable names should be prefixed with a question (is/can/should)
-* Conditional operator should be avoided. `condition ? option1 : option2`
-    * This is fine to use in some niche cases where you can't avoid using it
-* String inetpolation with embedded logic should not be used
-	* It's fine to use string interpolation for variable substitution
-
-# Development flow and how to use git shell
-**Using git shell is strongly encouraged**
-
-1. Pull latest version of indev
-    * `git fetch -p`
-    * `git pull origin indev`
-2. Checkout to a new branch
-    * `git checkout -b <branch_name>`
-3. Make changes, do commits
-    * `git status` - List of changed files
-    * `git add <filename>` - Stage file for commit
-    * `git add -u` - Stage all updated files for commit
-    * `git add -A` - Stage all unstaged files for commit
-    * `git commit -m "<commit message>"` - Create commit
-4. Push to github
-    * `git push origin <branch_name>`
-5. Create pull request
-6. Checkout back to indev
-    * `git checkout indev`
-7. Repeat
 
 # License
 
