@@ -73,12 +73,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         }
 
         public bool IsGeneratingGold { get; set; } // Used to determine if the Stats update should include generating gold. Changed in Champion.h
-        protected float _spellCostReduction; //URF Buff/Lissandra's passive
-        public float SpellCostReduction
-        {
-            get => Spell.ManaCostsEnabled ? _spellCostReduction : 1;
-            set => _spellCostReduction = value;
-        }
+        public float SpellCostReduction { get; set; } //URF Buff/Lissandra's passive
 
         IStat IStats.AbilityPower => AbilityPower;
         IStat IStats.Armor => Armor;
@@ -104,7 +99,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public Stats()
         {
-            _spellCostReduction = 0;
+            SpellCostReduction = 0;
             ManaCost = new float[64];
             ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.UNKNOWN;
             IsTargetable = true;

@@ -544,6 +544,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Skin = skinNo;
         }
 
+        public void SetSpell(string name, byte slot, bool enabled)
+        {
+            Spells[slot] = new Spell(_game, this, name, (byte)slot);
+            Stats.SetSpellEnabled((byte)slot, enabled);
+        }
+
+        public void SwapSpells(byte slot1, byte slot2)
+        {
+            var enabledBuffer = Stats.GetSpellEnabled(slot1);
+            var buffer = Spells[slot1];
+            Spells[slot1] = Spells[slot2];
+            Spells[slot2] = buffer;
+            Stats.SetSpellEnabled(slot1, Stats.GetSpellEnabled(slot2));
+            Stats.SetSpellEnabled(slot2, enabledBuffer);
+        }
+
+        public void RemoveSpell(byte slot)
+        {
+            ((ISpell)Spells[slot]).Deactivate();
+            Spells[slot] = new Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
+            Stats.SetSpellEnabled(slot, false);
+        }
+
         ISpell IChampion.GetSpell(byte slot)
         {
             return Spells[slot];
