@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configs\GameInfoConfig.cs" />
     <Compile Include="Configs\GameServerAppConfig.cs" />
     <Compile Include="GameServerAppForm.cs">
       <SubType>Form</SubType>
