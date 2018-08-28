@@ -11,7 +11,7 @@ namespace GameServerApp.Configs
         public string ContentPath { get; set; } = "../../../..";
         public string Rank { get; set; } = "Diamond";
         public string Champion { get; set; } = "Ezreal";
-        public string Name { get; set; } = "Lame";
+        public string Name { get; set; } = "Giggle Bear";
         public int Map { get; set; } = 1;
         public string Team { get; set; } = "Blue";
         public int Icon { get; set; } = 0;

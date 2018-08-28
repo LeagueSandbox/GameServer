@@ -98,6 +98,7 @@
             this.autoStartServerOnLaunchCheckBox.TabIndex = 0;
             this.autoStartServerOnLaunchCheckBox.Text = "Auto Start Server on Launch";
             this.autoStartServerOnLaunchCheckBox.UseVisualStyleBackColor = true;
+            this.autoStartServerOnLaunchCheckBox.CheckedChanged += new System.EventHandler(this.autoStartServerOnLaunchCheckBox_CheckedChanged);
             // 
             // startServerButton
             // 
@@ -121,6 +122,7 @@
             this.autoStartGameWithServerCheckBox.TabIndex = 2;
             this.autoStartGameWithServerCheckBox.Text = "Auto Start Game with Server";
             this.autoStartGameWithServerCheckBox.UseVisualStyleBackColor = true;
+            this.autoStartGameWithServerCheckBox.CheckedChanged += new System.EventHandler(this.autoStartGameWithServerCheckBox_CheckedChanged);
             // 
             // startGameButton
             // 
@@ -151,6 +153,7 @@
             this.gamePathTxt.Size = new System.Drawing.Size(261, 20);
             this.gamePathTxt.TabIndex = 5;
             this.gamePathTxt.Text = "C:\\LeagueSandbox\\League_Sandbox_Client";
+            this.gamePathTxt.TextChanged += new System.EventHandler(this.gamePathTxt_TextChanged);
             // 
             // label2
             // 
@@ -251,6 +254,7 @@
             this.gameModeCombo.Size = new System.Drawing.Size(148, 21);
             this.gameModeCombo.TabIndex = 23;
             this.gameModeCombo.Text = "LeagueSandbox-Default";
+            this.gameModeCombo.SelectedIndexChanged += new System.EventHandler(this.gameModeCombo_SelectedIndexChanged);
             // 
             // mapCombo
             // 
@@ -261,6 +265,7 @@
             this.mapCombo.Size = new System.Drawing.Size(55, 21);
             this.mapCombo.TabIndex = 25;
             this.mapCombo.Text = "1";
+            this.mapCombo.SelectedIndexChanged += new System.EventHandler(this.mapCombo_SelectedIndexChanged);
             // 
             // label11
             // 
@@ -282,6 +287,7 @@
             this.manaCostsCheckBox.TabIndex = 26;
             this.manaCostsCheckBox.Text = "Mana Costs";
             this.manaCostsCheckBox.UseVisualStyleBackColor = true;
+            this.manaCostsCheckBox.CheckedChanged += new System.EventHandler(this.manaCostsCheckBox_CheckedChanged);
             // 
             // cooldownsCheckBox
             // 
@@ -293,6 +299,7 @@
             this.cooldownsCheckBox.TabIndex = 27;
             this.cooldownsCheckBox.Text = "Cooldowns";
             this.cooldownsCheckBox.UseVisualStyleBackColor = true;
+            this.cooldownsCheckBox.CheckedChanged += new System.EventHandler(this.cooldownsCheckBox_CheckedChanged);
             // 
             // enableCheatsCheckBox
             // 
@@ -304,6 +311,7 @@
             this.enableCheatsCheckBox.TabIndex = 28;
             this.enableCheatsCheckBox.Text = "Enable Cheats";
             this.enableCheatsCheckBox.UseVisualStyleBackColor = true;
+            this.enableCheatsCheckBox.CheckedChanged += new System.EventHandler(this.enableCheatsCheckBox_CheckedChanged);
             // 
             // spawnMinionsCheckBox
             // 
@@ -315,6 +323,7 @@
             this.spawnMinionsCheckBox.TabIndex = 29;
             this.spawnMinionsCheckBox.Text = "Spawn Minions";
             this.spawnMinionsCheckBox.UseVisualStyleBackColor = true;
+            this.spawnMinionsCheckBox.CheckedChanged += new System.EventHandler(this.spawnMinionsCheckBox_CheckedChanged);
             // 
             // consoleTextBox
             // 
@@ -339,6 +348,7 @@
             this.consoleInfoLogsCheckBox.TabIndex = 31;
             this.consoleInfoLogsCheckBox.Text = "Info Logs";
             this.consoleInfoLogsCheckBox.UseVisualStyleBackColor = true;
+            this.consoleInfoLogsCheckBox.CheckedChanged += new System.EventHandler(this.consoleInfoLogsCheckBox_CheckedChanged);
             // 
             // label12
             // 
@@ -361,6 +371,7 @@
             this.consoleDebugLogsCheckBox.TabIndex = 33;
             this.consoleDebugLogsCheckBox.Text = "Debug Logs";
             this.consoleDebugLogsCheckBox.UseVisualStyleBackColor = true;
+            this.consoleDebugLogsCheckBox.CheckedChanged += new System.EventHandler(this.consoleDebugLogsCheckBox_CheckedChanged);
             // 
             // consoleWarningLogsCheckBox
             // 
@@ -372,6 +383,7 @@
             this.consoleWarningLogsCheckBox.TabIndex = 34;
             this.consoleWarningLogsCheckBox.Text = "Warning Logs";
             this.consoleWarningLogsCheckBox.UseVisualStyleBackColor = true;
+            this.consoleWarningLogsCheckBox.CheckedChanged += new System.EventHandler(this.consoleWarningLogsCheckBox_CheckedChanged);
             // 
             // consoleErrorLogsCheckBox
             // 
@@ -383,6 +395,7 @@
             this.consoleErrorLogsCheckBox.TabIndex = 35;
             this.consoleErrorLogsCheckBox.Text = "Error Logs";
             this.consoleErrorLogsCheckBox.UseVisualStyleBackColor = true;
+            this.consoleErrorLogsCheckBox.CheckedChanged += new System.EventHandler(this.consoleErrorLogsCheckBox_CheckedChanged);
             // 
             // nameTxt
             // 
@@ -392,6 +405,7 @@
             this.nameTxt.Size = new System.Drawing.Size(99, 20);
             this.nameTxt.TabIndex = 37;
             this.nameTxt.Text = "Gan";
+            this.nameTxt.TextChanged += new System.EventHandler(this.nameTxt_TextChanged);
             // 
             // label13
             // 
@@ -574,6 +588,7 @@
             this.championCombo.Size = new System.Drawing.Size(92, 21);
             this.championCombo.TabIndex = 54;
             this.championCombo.Text = "Ezreal";
+            this.championCombo.SelectedIndexChanged += new System.EventHandler(this.championCombo_SelectedIndexChanged);
             // 
             // rankCombo
             // 
@@ -584,6 +599,7 @@
             this.rankCombo.Size = new System.Drawing.Size(78, 21);
             this.rankCombo.TabIndex = 55;
             this.rankCombo.Text = "Diamond";
+            this.rankCombo.SelectedIndexChanged += new System.EventHandler(this.rankCombo_SelectedIndexChanged);
             // 
             // teamCombo
             // 
@@ -594,6 +610,7 @@
             this.teamCombo.Size = new System.Drawing.Size(71, 21);
             this.teamCombo.TabIndex = 56;
             this.teamCombo.Text = "Blue";
+            this.teamCombo.SelectedIndexChanged += new System.EventHandler(this.teamCombo_SelectedIndexChanged);
             // 
             // ribbonCombo
             // 
@@ -604,6 +621,7 @@
             this.ribbonCombo.Size = new System.Drawing.Size(55, 21);
             this.ribbonCombo.TabIndex = 57;
             this.ribbonCombo.Text = "2";
+            this.ribbonCombo.SelectedIndexChanged += new System.EventHandler(this.ribbonCombo_SelectedIndexChanged);
             // 
             // summoner1Combo
             // 
@@ -614,6 +632,7 @@
             this.summoner1Combo.Size = new System.Drawing.Size(87, 21);
             this.summoner1Combo.TabIndex = 58;
             this.summoner1Combo.Text = "Smite";
+            this.summoner1Combo.SelectedIndexChanged += new System.EventHandler(this.summoner1Combo_SelectedIndexChanged);
             // 
             // summoner2Combo
             // 
@@ -624,6 +643,7 @@
             this.summoner2Combo.Size = new System.Drawing.Size(85, 21);
             this.summoner2Combo.TabIndex = 59;
             this.summoner2Combo.Text = "Ignite";
+            this.summoner2Combo.SelectedIndexChanged += new System.EventHandler(this.summoner2Combo_SelectedIndexChanged);
             // 
             // iconCombo
             // 
@@ -634,6 +654,7 @@
             this.iconCombo.Size = new System.Drawing.Size(54, 21);
             this.iconCombo.TabIndex = 60;
             this.iconCombo.Text = "0";
+            this.iconCombo.SelectedIndexChanged += new System.EventHandler(this.iconCombo_SelectedIndexChanged);
             // 
             // skinCombo
             // 
@@ -644,6 +665,7 @@
             this.skinCombo.Size = new System.Drawing.Size(54, 21);
             this.skinCombo.TabIndex = 61;
             this.skinCombo.Text = "0";
+            this.skinCombo.SelectedIndexChanged += new System.EventHandler(this.skinCombo_SelectedIndexChanged);
             // 
             // label18
             // 
@@ -663,6 +685,7 @@
             this.contentPathTxt.Size = new System.Drawing.Size(159, 20);
             this.contentPathTxt.TabIndex = 63;
             this.contentPathTxt.Text = "../../../..";
+            this.contentPathTxt.TextChanged += new System.EventHandler(this.contentPathTxt_TextChanged);
             // 
             // GameServerAppForm
             // 
