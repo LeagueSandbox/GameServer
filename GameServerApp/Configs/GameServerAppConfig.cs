@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LeagueSandbox.GameServerApp.Logic
+namespace GameServerApp.Configs
 {
     public class GameServerAppConfig
     {
@@ -30,30 +30,29 @@ namespace LeagueSandbox.GameServerApp.Logic
         public bool AutoStartServerOnLaunch { get; set; } = true;
         public bool AutoStartGameWithServer { get; set; } = true;
 
-        private GameServerAppConfig()
+        public GameServerAppConfig()
         {
         }
 
-        public static GameServerAppConfig Default()
+        public void LoadFromJson(string json)
         {
-            return new GameServerAppConfig();
+            LoadConfig(json);
         }
 
-        public static GameServerAppConfig LoadFromJson(string json)
+        public void LoadFromFile(string path)
         {
-            var result = new GameServerAppConfig();
-            result.LoadConfig(json);
-            return result;
-        }
-
-        public static GameServerAppConfig LoadFromFile(string path)
-        {
-            var result = new GameServerAppConfig();
             if (File.Exists(path))
             {
-                result.LoadConfig(File.ReadAllText(path));
+                LoadConfig(File.ReadAllText(path));
+            } else
+            {
+                SaveToFile(path);
             }
-            return result;
+        }
+
+        public void SaveToFile(string path)
+        {
+            SaveConfig(path);
         }
 
         private void LoadConfig(string json)
@@ -88,8 +87,8 @@ namespace LeagueSandbox.GameServerApp.Logic
         private void SaveConfig(string path)
         {
             JsonSerializer serializer = new JsonSerializer();
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-
+            serializer.Formatting = Formatting.Indented;
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (StreamWriter sw = new StreamWriter(path))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
