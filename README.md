@@ -39,4 +39,4 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 # License
 
 This repository is under the [AGPL-3.0](LICENSE) license.
-This means that you must make your changes public even if you don't directly give the code to your users but only run it on cloud/remote server etc.
+This essentially means that all changes that are made on top of this repository are required to be made public, regardless of where the code is being ran.
