@@ -51,7 +51,6 @@
             this.cooldownsCheckBox = new System.Windows.Forms.CheckBox();
             this.enableCheatsCheckBox = new System.Windows.Forms.CheckBox();
             this.spawnMinionsCheckBox = new System.Windows.Forms.CheckBox();
-            this.consoleTextBox = new System.Windows.Forms.TextBox();
             this.consoleInfoLogsCheckBox = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.consoleDebugLogsCheckBox = new System.Windows.Forms.CheckBox();
@@ -85,6 +84,7 @@
             this.skinCombo = new System.Windows.Forms.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
             this.contentPathTxt = new System.Windows.Forms.TextBox();
+            this.consoleTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // autoStartServerOnLaunchCheckBox
@@ -325,17 +325,6 @@
             this.spawnMinionsCheckBox.Text = "Spawn Minions";
             this.spawnMinionsCheckBox.UseVisualStyleBackColor = true;
             this.spawnMinionsCheckBox.CheckedChanged += new System.EventHandler(this.spawnMinionsCheckBox_CheckedChanged);
-            // 
-            // consoleTextBox
-            // 
-            this.consoleTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.consoleTextBox.Location = new System.Drawing.Point(9, 107);
-            this.consoleTextBox.Margin = new System.Windows.Forms.Padding(2);
-            this.consoleTextBox.Multiline = true;
-            this.consoleTextBox.Name = "consoleTextBox";
-            this.consoleTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.consoleTextBox.Size = new System.Drawing.Size(774, 338);
-            this.consoleTextBox.TabIndex = 30;
             // 
             // consoleInfoLogsCheckBox
             // 
@@ -688,11 +677,22 @@
             this.contentPathTxt.Text = "../../../..";
             this.contentPathTxt.TextChanged += new System.EventHandler(this.contentPathTxt_TextChanged);
             // 
+            // consoleTextBox
+            // 
+            this.consoleTextBox.Location = new System.Drawing.Point(9, 107);
+            this.consoleTextBox.Name = "consoleTextBox";
+            this.consoleTextBox.ReadOnly = true;
+            this.consoleTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.consoleTextBox.Size = new System.Drawing.Size(774, 338);
+            this.consoleTextBox.TabIndex = 64;
+            this.consoleTextBox.Text = "";
+            // 
             // GameServerAppForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 700);
+            this.Controls.Add(this.consoleTextBox);
             this.Controls.Add(this.contentPathTxt);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.skinCombo);
@@ -726,7 +726,6 @@
             this.Controls.Add(this.consoleDebugLogsCheckBox);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.consoleInfoLogsCheckBox);
-            this.Controls.Add(this.consoleTextBox);
             this.Controls.Add(this.spawnMinionsCheckBox);
             this.Controls.Add(this.enableCheatsCheckBox);
             this.Controls.Add(this.cooldownsCheckBox);
@@ -782,7 +781,6 @@
         private System.Windows.Forms.CheckBox cooldownsCheckBox;
         private System.Windows.Forms.CheckBox enableCheatsCheckBox;
         private System.Windows.Forms.CheckBox spawnMinionsCheckBox;
-        private System.Windows.Forms.TextBox consoleTextBox;
         private System.Windows.Forms.CheckBox consoleInfoLogsCheckBox;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.CheckBox consoleDebugLogsCheckBox;
@@ -816,6 +814,7 @@
         private System.Windows.Forms.ComboBox skinCombo;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox contentPathTxt;
+        private System.Windows.Forms.RichTextBox consoleTextBox;
     }
 }
 
