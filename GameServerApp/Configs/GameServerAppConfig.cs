@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using LeagueSandbox.GameServer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -8,7 +10,7 @@ namespace GameServerApp.Configs
     {
         public string GamePath { get; set; } = "C:\\LeagueSandbox\\League_Sandbox_Client";
         public string GameMode { get; set; } = "LeagueSandbox-Default";
-        public string ContentPath { get; set; } = "../../../..";
+        public string ContentPath { get; set; } = "../../..";
         public string Rank { get; set; } = "Diamond";
         public string Champion { get; set; } = "Ezreal";
         public string Name { get; set; } = "Giggle Bear";
@@ -121,6 +123,32 @@ namespace GameServerApp.Configs
                     }
                 );
             }
+        }
+
+        public Config CreateGameServerConfig()
+        {
+            Config config = new Config();
+            config.CooldownsEnabled = EnableCooldowns;
+            config.ManaCostsEnabled = EnableManaCosts;
+            config.ChatCheatsEnabled = EnableCheats;
+            config.ContentPath = ContentPath;
+            config.GameConfig = new GameConfig(Map, GameMode);
+
+            Dictionary<string, PlayerConfig> players = new Dictionary<string, PlayerConfig>();
+            var playerConfig = new PlayerConfig();
+            playerConfig.Champion = Champion;
+            playerConfig.Icon = Icon;
+            playerConfig.Name = Name;
+            playerConfig.Rank = Rank;
+            playerConfig.Ribbon = (short)Ribbon;
+            playerConfig.Skin = (short)Skin;
+            playerConfig.Summoner1 = Summoner1;
+            playerConfig.Summoner2 = Summoner2;
+            playerConfig.Team = Team;
+            players.Add($"player1", playerConfig);
+            config.Players = players;
+
+            return config;
         }
     }
 }

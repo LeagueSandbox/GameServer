@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             SpellName = spellName;
             Slot = slot;
             _game = game;
-            SpellData = game.Config.ContentManager.GetSpellData(spellName);
+            SpellData = game.ContentManager.GetSpellData(spellName);
             _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
 

@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetSpellDataPath(name);
+                var path = _game.ContentManager.GetSpellDataPath(name);
                 _logger.Info($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);

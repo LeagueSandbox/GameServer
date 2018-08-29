@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.ExceptionServices;
 using ENet;
 using LeagueSandbox.GameServer.Logging;
@@ -16,13 +17,13 @@ namespace LeagueSandbox.GameServer
         private Config _config;
         private ushort _serverPort { get; }
 
-        public Server(Game game, ushort port, string configJson, string blowfishKey)
+        public Server(Game game, ushort port, Config config, string blowfishKey)
         {
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _serverPort = port;
             _blowfishKey = blowfishKey;
-            _config = Config.LoadFromJson(game, configJson);
+            _config = config;
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -31,7 +32,13 @@ namespace LeagueSandbox.GameServer
         public void Start()
         {
             var build = $"League Sandbox Build {ServerContext.BuildDateString}";
-            Console.Title = build;
+            try
+            {
+                Console.Title = build;
+            } catch (IOException)
+            {
+                //Not a console app
+            }
             _logger.Info(build);
             _logger.Info($"Yorick {_serverVersion}");
             _logger.Info($"Game started on port: {_serverPort}");

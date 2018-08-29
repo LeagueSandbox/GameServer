@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float angleDeg
             ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(effectName);
+            SpellData = _game.ContentManager.GetSpellData(effectName);
             _affectAsCastIsOver = affectAsCastIsOver;
             _angleDeg = angleDeg;
             CreateCone(new Target(x, y), target);            

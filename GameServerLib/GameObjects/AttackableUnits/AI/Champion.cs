@@ -195,8 +195,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             var spawnsByTeam = new Dictionary<TeamId, Dictionary<int, PlayerSpawns>>
             {
-                {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
-                {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
+                {TeamId.TEAM_BLUE, _game.MapSpawns.Blue},
+                {TeamId.TEAM_PURPLE, _game.MapSpawns.Purple}
             };
 
             var spawns = spawnsByTeam[Team];

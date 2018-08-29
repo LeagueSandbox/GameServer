@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, spawnType);
 
             // Fix issues induced by having an empty model string
-            CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
+            CollisionRadius = _game.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 
             // If we have lane path instructions from the map
             if (mainWaypoints.Count > 0)

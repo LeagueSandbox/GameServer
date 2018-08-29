@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using ENet;
 using GameServerCore;
@@ -19,6 +20,7 @@ using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using Newtonsoft.Json.Linq;
 using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
@@ -50,6 +52,8 @@ namespace LeagueSandbox.GameServer
         public IPacketHandlerManager PacketHandlerManager { get; private set; }
         public IPacketReader PacketReader { get; private set; }
         public Config Config { get; protected set; }
+        public MapSpawns MapSpawns { get; private set; }
+        public ContentManager ContentManager { get; private set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
@@ -82,6 +86,27 @@ namespace LeagueSandbox.GameServer
         {
             _logger.Info("Loading Config.");
             Config = config;
+
+            // Load items
+            ItemManager.LoadItems(Config.ContentPath, Config.GameConfig.GameMode);
+
+            // Read spawns info
+            ContentManager = ContentManager.LoadGameMode(this, Config.GameConfig.GameMode, Config.ContentPath);
+            var mapPath = ContentManager.GetMapDataPath(Config.GameConfig.Map);
+            var mapData = JObject.Parse(File.ReadAllText(mapPath));
+            var spawns = mapData.SelectToken("spawns");
+
+            MapSpawns = new MapSpawns();
+            foreach (JProperty teamSpawn in spawns)
+            {
+                var team = teamSpawn.Name;
+                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
+                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
+                {
+                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
+                    MapSpawns.SetSpawns(team, playerSpawns, i);
+                }
+            }
 
             _gameScriptTimers = new List<GameScriptTimer>();
 

@@ -16,17 +16,21 @@ namespace LeagueSandbox.GameServer
 
         public Game game;
         public string ExecutingDirectory { get; private set; }
-        public string ConfigJson { get; private set; }
         public ushort ServerPort { get; private set; }
 
-        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey)
+        public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey) :
+            this(serverPort, Config.LoadFromJson(configJson), blowfishKey)
         {
-            ConfigJson = configJson;
+
+        }
+
+        public GameServerLauncher(ushort serverPort, Config config, string blowfishKey)
+        {
             ServerPort = serverPort;
             _logger = LoggerProvider.GetLogger();
             var itemManager = new ItemManager();
             game = new Game(itemManager);
-            _server = new Server(game, serverPort, configJson, blowfishKey);
+            _server = new Server(game, serverPort, config, blowfishKey);
 
 #if !DEBUG
             try

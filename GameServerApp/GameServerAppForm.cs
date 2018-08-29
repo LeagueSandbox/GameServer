@@ -1,4 +1,6 @@
 ﻿using GameServerApp.Configs;
+using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,15 +8,30 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using log4net;
+using log4net.Appender;
+using log4net.Core;
+using System.Timers;
+using Timer = System.Timers.Timer;
+using log4net.Layout;
 
 namespace GameServerApp
 {
     public partial class GameServerAppForm : Form
     {
+        LeagueSandbox.GameServer.Logging.ILogger logger = LoggerProvider.GetLogger();
         const string CONFIG_PATH = "./GameServerAppConfig.json";
+        MemoryAppender memoryAppender;
+        List<LoggingEvent> logEvents = new List<LoggingEvent>();
         GameServerAppConfig gameServerAppConfig;
+        string blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
+        GameServerLauncher gameServerLauncher;
+        Thread gameServerThread = null;
+        Timer consoleTimer;
 
         public GameServerAppForm()
         {
@@ -44,6 +61,40 @@ namespace GameServerApp
             consoleErrorLogsCheckBox.Checked = gameServerAppConfig.DisplayErrorLogs;
             autoStartServerOnLaunchCheckBox.Checked = gameServerAppConfig.AutoStartServerOnLaunch;
             autoStartGameWithServerCheckBox.Checked = gameServerAppConfig.AutoStartGameWithServer;
+
+            memoryAppender = new MemoryAppender();
+            memoryAppender.Layout = new PatternLayout("%date %-5level [%logger]%message%newline");
+            var repository = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
+            repository.Root.AddAppender(memoryAppender);
+            
+            consoleTimer = new Timer(50);
+            consoleTimer.SynchronizingObject = this;
+            consoleTimer.Elapsed += (object o, ElapsedEventArgs e) => GetNewLogEvents();
+            consoleTimer.AutoReset = true;
+            consoleTimer.Start();
+        }
+
+        private void GetNewLogEvents()
+        {
+            var events = memoryAppender.GetEvents();
+            if (events.Count() == 0)
+            {
+                return;
+            }
+            logEvents.AddRange(events);
+
+            string result = "";
+            using (var writer = new System.IO.StringWriter())
+            {
+                foreach (var ev in events)
+                {
+                    memoryAppender.Layout.Format(writer, ev);
+                }
+                result = writer.ToString();
+            }
+            consoleTextBox.AppendText(result);
+
+            memoryAppender.Clear();
         }
 
         private void GameServerAppForm_Load(object sender, EventArgs e)
@@ -204,6 +255,20 @@ namespace GameServerApp
         {
             gameServerAppConfig.AutoStartGameWithServer = autoStartGameWithServerCheckBox.Checked;
             SaveConfigSettings();
+        }
+
+        private void startServerButton_Click(object sender, EventArgs e)
+        {
+            new Thread(() =>
+            {
+                gameServerLauncher = new GameServerLauncher(5119, gameServerAppConfig.CreateGameServerConfig(), blowfishKey);
+                gameServerThread = new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    gameServerLauncher.StartNetworkLoop();
+                });
+                gameServerThread.Start();
+            }).Start();
         }
     }
 }
