@@ -74,10 +74,8 @@ namespace LeagueSandbox.GameServerApp
                         return;
                     }
                 }
-                else
-                {
-                    configGameServerSettings = GameServerConfig.LoadFromFile(parsedArgs.GameServerSettingsJsonPath);
-                }
+
+                configGameServerSettings = GameServerConfig.LoadFromFile(parsedArgs.GameServerSettingsJsonPath);
             }
             else
             {
