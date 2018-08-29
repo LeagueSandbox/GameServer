@@ -139,10 +139,10 @@ namespace LeagueSandbox.GameServerApp
 
     public class ArgsOptions
     {
-        [Option("config", DefaultValue = "Settings\\GameInfo.json")]
+        [Option("config", DefaultValue = "Settings/GameInfo.json")]
         public string GameInfoJsonPath { get; set; }
 
-        [Option("config-gameserver", DefaultValue = "Settings\\GameServerSettings.json")]
+        [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
         public string GameServerSettingsJsonPath { get; set; }
 
         [Option("config-json", DefaultValue = "")]
