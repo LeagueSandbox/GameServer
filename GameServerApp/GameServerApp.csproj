@@ -64,8 +64,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Settings\GameInfo.json" />
-    <None Include="Settings\GameServerSettings.json" />
+    <None Include="Settings\GameInfo.json.template" />
+    <None Include="Settings\GameServerSettings.json.template" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameServerLib\GameServerLib.csproj">
