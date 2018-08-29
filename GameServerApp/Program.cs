@@ -20,72 +20,23 @@ namespace LeagueSandbox.GameServerApp
             _logger = LoggerProvider.GetLogger();
 
             var parsedArgs = ArgsOptions.Parse(args);
-            var settingsPath = Path.Combine(Directory.GetCurrentDirectory(), "Settings");
 
-            if (string.IsNullOrEmpty(parsedArgs.GameInfoJson))
-            {
-                if (!File.Exists(parsedArgs.GameInfoJsonPath))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(settingsPath);
-
-                        parsedArgs.GameInfoJsonPath = Path.Combine(settingsPath, "GameInfo.json");
-
-                        var gameInfoSettings = Encoding.UTF8.GetString(Resources.GameInfo);
-
-                        parsedArgs.GameInfoJson = gameInfoSettings;
-
-                        File.WriteAllText(parsedArgs.GameInfoJsonPath, gameInfoSettings);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e);
-                        return;
-                    }
-                }
-                else
-                {
-                    parsedArgs.GameInfoJson = File.ReadAllText(parsedArgs.GameInfoJsonPath);
-                }
-            }
-
-            var configGameServerSettings = GameServerConfig.Default();
-
-            if (string.IsNullOrEmpty(parsedArgs.GameServerSettingsJson))
-            {
-                if (!File.Exists(parsedArgs.GameServerSettingsJsonPath))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(settingsPath);
-
-                        parsedArgs.GameServerSettingsJsonPath = Path.Combine(settingsPath, "GameServerSettings.json");
-
-                        var gameServerSettings = Encoding.UTF8.GetString(Resources.GameServerSettings);
-
-                        parsedArgs.GameServerSettingsJson = gameServerSettings;
-
-                        File.WriteAllText(parsedArgs.GameServerSettingsJsonPath, gameServerSettings);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e);
-                        return;
-                    }
-                }
-
-                configGameServerSettings = GameServerConfig.LoadFromFile(parsedArgs.GameServerSettingsJsonPath);
-            }
-            else
-            {
-                configGameServerSettings = GameServerConfig.LoadFromJson(parsedArgs.GameServerSettingsJson);
-            }
+            parsedArgs.GameInfoJson = LoadConfig(
+                parsedArgs.GameInfoJsonPath,
+                parsedArgs.GameInfoJson,
+                Encoding.UTF8.GetString(Resources.GameInfo));
 
             var gameServerBlowFish = "17BLOhi6KZsTtldTsizvHg==";
-            var gameServerLauncher = new GameServerLauncher(parsedArgs.ServerPort, parsedArgs.GameInfoJson, gameServerBlowFish);
+            var gameServerLauncher = new GameServerLauncher(
+                parsedArgs.ServerPort,
+                parsedArgs.GameInfoJson,
+                gameServerBlowFish);
 
 #if DEBUG
+            var configGameServerSettings = GameServerConfig.LoadFromJson(LoadConfig(
+                parsedArgs.GameServerSettingsJsonPath,
+                parsedArgs.GameServerSettingsJson,
+                Encoding.UTF8.GetString(Resources.GameServerSettings)));
             if (configGameServerSettings.AutoStartClient)
             {
                 var leaguePath = configGameServerSettings.ClientLocation;
@@ -132,6 +83,32 @@ namespace LeagueSandbox.GameServerApp
             }
 #endif
             gameServerLauncher.StartNetworkLoop();
+        }
+
+        private static string LoadConfig(string filePath, string currentJsonString, string defaultJsonString)
+        {
+            if (!string.IsNullOrEmpty(currentJsonString))
+                return currentJsonString;
+
+            try
+            {
+                if (File.Exists(filePath))
+                    return File.ReadAllText(filePath);
+
+                var settingsDirectory = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrEmpty(settingsDirectory))
+                    throw new Exception(string.Format("Creating Config File failed. Invalid Path: {0}", filePath));
+
+                Directory.CreateDirectory(settingsDirectory);
+
+                File.WriteAllText(filePath, defaultJsonString);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+
+            return defaultJsonString;
         }
     }
 
