@@ -64,7 +64,7 @@ namespace GameServerApp
             autoStartGameWithServerCheckBox.Checked = gameServerAppConfig.AutoStartGameWithServer;
 
             memoryAppender = new MemoryAppender();
-            memoryAppender.Layout = new PatternLayout("%date %-5level [%logger]%message%newline");
+            memoryAppender.Layout = new PatternLayout("%date %message%newline");
             var repository = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
             repository.Root.AddAppender(memoryAppender);
             
@@ -89,8 +89,9 @@ namespace GameServerApp
 
         private void RedrawConsoleText()
         {
+            var result = GetLogEventsAsString(logEvents);
             consoleTextBox.Text = "";
-            consoleTextBox.AppendText(GetLogEventsAsString(logEvents));
+            consoleTextBox.AppendText(result);
         }
 
         private string GetLogEventsAsString(IEnumerable<LoggingEvent> list)
