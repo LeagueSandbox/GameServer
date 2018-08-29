@@ -24,11 +24,7 @@ namespace LeagueSandbox.GameServerApp
 
             if (string.IsNullOrEmpty(parsedArgs.GameInfoJson))
             {
-                if (File.Exists(parsedArgs.GameInfoJsonPath))
-                {
-                    parsedArgs.GameInfoJson = File.ReadAllText(parsedArgs.GameInfoJsonPath);
-                }
-                else
+                if (!File.Exists(parsedArgs.GameInfoJsonPath))
                 {
                     try
                     {
@@ -48,17 +44,17 @@ namespace LeagueSandbox.GameServerApp
                         return;
                     }
                 }
+                else
+                {
+                    parsedArgs.GameInfoJson = File.ReadAllText(parsedArgs.GameInfoJsonPath);
+                }
             }
 
             var configGameServerSettings = GameServerConfig.Default();
 
             if (string.IsNullOrEmpty(parsedArgs.GameServerSettingsJson))
             {
-                if (File.Exists(parsedArgs.GameServerSettingsJsonPath))
-                {
-                    configGameServerSettings = GameServerConfig.LoadFromFile(parsedArgs.GameServerSettingsJsonPath);
-                }
-                else
+                if (!File.Exists(parsedArgs.GameServerSettingsJsonPath))
                 {
                     try
                     {
@@ -77,6 +73,10 @@ namespace LeagueSandbox.GameServerApp
                         _logger.Error(e);
                         return;
                     }
+                }
+                else
+                {
+                    configGameServerSettings = GameServerConfig.LoadFromFile(parsedArgs.GameServerSettingsJsonPath);
                 }
             }
             else
