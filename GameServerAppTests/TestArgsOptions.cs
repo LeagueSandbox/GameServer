@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServerAppTests
             };
             var options = ArgsOptions.Parse(args);
             Assert.AreEqual(port, options.ServerPort);
-            Assert.AreEqual(config, options.ConfigPath);
+            Assert.AreEqual(config, options.GameInfoJsonPath);
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServerAppTests
         {
             var options = ArgsOptions.Parse(new string[0]);
             Assert.IsTrue(options.ServerPort > 0);
-            Assert.IsFalse(string.IsNullOrEmpty(options.ConfigPath));
+            Assert.IsFalse(string.IsNullOrEmpty(options.GameInfoJsonPath));
         }
     }
 }
