@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using CommandLine;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServerApp.Logic;
+using LeagueSandbox.GameServerApp.Properties;
 using LeagueSandbox.GameServerApp.Utility;
 
 namespace LeagueSandbox.GameServerApp
@@ -15,44 +17,46 @@ namespace LeagueSandbox.GameServerApp
 
         private static void Main(string[] args)
         {
-            var options = ArgsOptions.Parse(args);
-
-            var configJson = options.ConfigJson;
-            if (string.IsNullOrEmpty(configJson))
-            {
-                configJson = File.ReadAllText(options.ConfigPath);
-            }
-
-            var configGameServerSettingsJson = options.ConfigGameServerSettingsJson;
-            GameServerConfig configGameServerSettings;
-            if (string.IsNullOrEmpty(configGameServerSettingsJson))
-            {
-                configGameServerSettings = GameServerConfig.LoadFromFile(options.ConfigGameServerPath);
-            }
-            else
-            {
-                configGameServerSettings = GameServerConfig.Default();
-            }
-
-            string blowfishKey = "17BLOhi6KZsTtldTsizvHg==";
-
             _logger = LoggerProvider.GetLogger();
-            var gameServerLauncher = new GameServerLauncher(options.ServerPort, configJson, blowfishKey);
+
+            var parsedArgs = ArgsOptions.Parse(args);
+
+            parsedArgs.GameInfoJson = LoadConfig(
+                parsedArgs.GameInfoJsonPath,
+                parsedArgs.GameInfoJson,
+                Encoding.UTF8.GetString(Resources.GameInfo));
+
+            var gameServerBlowFish = "17BLOhi6KZsTtldTsizvHg==";
+            var gameServerLauncher = new GameServerLauncher(
+                parsedArgs.ServerPort,
+                parsedArgs.GameInfoJson,
+                gameServerBlowFish);
+
 #if DEBUG
+            var configGameServerSettings = GameServerConfig.LoadFromJson(LoadConfig(
+                parsedArgs.GameServerSettingsJsonPath,
+                parsedArgs.GameServerSettingsJson,
+                Encoding.UTF8.GetString(Resources.GameServerSettings)));
             if (configGameServerSettings.AutoStartClient)
             {
-                string leaguePath = configGameServerSettings.ClientLocation;
+                var leaguePath = configGameServerSettings.ClientLocation;
                 if (Directory.Exists(leaguePath))
                 {
                     leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
                 }
                 if (File.Exists(leaguePath))
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
-                    startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", options.ServerPort, blowfishKey);
-                    startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
+                    var startInfo = new ProcessStartInfo(leaguePath)
+                    {
+                        Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"",
+                            parsedArgs.ServerPort, gameServerBlowFish),
+                        WorkingDirectory = Path.GetDirectoryName(leaguePath)
+                    };
+
                     var leagueProcess = Process.Start(startInfo);
+
                     _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
+
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
                         Environment.OSVersion.Platform == PlatformID.Win32S ||
                         Environment.OSVersion.Platform == PlatformID.Win32Windows ||
@@ -80,21 +84,47 @@ namespace LeagueSandbox.GameServerApp
 #endif
             gameServerLauncher.StartNetworkLoop();
         }
+
+        private static string LoadConfig(string filePath, string currentJsonString, string defaultJsonString)
+        {
+            if (!string.IsNullOrEmpty(currentJsonString))
+                return currentJsonString;
+
+            try
+            {
+                if (File.Exists(filePath))
+                    return File.ReadAllText(filePath);
+
+                var settingsDirectory = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrEmpty(settingsDirectory))
+                    throw new Exception(string.Format("Creating Config File failed. Invalid Path: {0}", filePath));
+
+                Directory.CreateDirectory(settingsDirectory);
+
+                File.WriteAllText(filePath, defaultJsonString);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+
+            return defaultJsonString;
+        }
     }
 
     public class ArgsOptions
     {
         [Option("config", DefaultValue = "Settings/GameInfo.json")]
-        public string ConfigPath { get; set; }
+        public string GameInfoJsonPath { get; set; }
 
         [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
-        public string ConfigGameServerPath { get; set; }
+        public string GameServerSettingsJsonPath { get; set; }
 
         [Option("config-json", DefaultValue = "")]
-        public string ConfigJson { get; set; }
+        public string GameInfoJson { get; set; }
 
         [Option("config-gameserver-json", DefaultValue = "")]
-        public string ConfigGameServerSettingsJson { get; set; }
+        public string GameServerSettingsJson { get; set; }
 
         [Option("port", DefaultValue = (ushort)5119)]
         public ushort ServerPort { get; set; }
