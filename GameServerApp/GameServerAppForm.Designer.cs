@@ -345,7 +345,7 @@
             this.consoleInfoLogsCheckBox.AutoSize = true;
             this.consoleInfoLogsCheckBox.Checked = true;
             this.consoleInfoLogsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.consoleInfoLogsCheckBox.Location = new System.Drawing.Point(136, 163);
+            this.consoleInfoLogsCheckBox.Location = new System.Drawing.Point(322, 164);
             this.consoleInfoLogsCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.consoleInfoLogsCheckBox.Name = "consoleInfoLogsCheckBox";
             this.consoleInfoLogsCheckBox.Size = new System.Drawing.Size(132, 29);
@@ -368,7 +368,7 @@
             // consoleDebugLogsCheckBox
             // 
             this.consoleDebugLogsCheckBox.AutoSize = true;
-            this.consoleDebugLogsCheckBox.Location = new System.Drawing.Point(296, 163);
+            this.consoleDebugLogsCheckBox.Location = new System.Drawing.Point(136, 163);
             this.consoleDebugLogsCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.consoleDebugLogsCheckBox.Name = "consoleDebugLogsCheckBox";
             this.consoleDebugLogsCheckBox.Size = new System.Drawing.Size(160, 29);
@@ -380,7 +380,7 @@
             // consoleWarningLogsCheckBox
             // 
             this.consoleWarningLogsCheckBox.AutoSize = true;
-            this.consoleWarningLogsCheckBox.Location = new System.Drawing.Point(488, 163);
+            this.consoleWarningLogsCheckBox.Location = new System.Drawing.Point(477, 164);
             this.consoleWarningLogsCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.consoleWarningLogsCheckBox.Name = "consoleWarningLogsCheckBox";
             this.consoleWarningLogsCheckBox.Size = new System.Drawing.Size(177, 29);
@@ -392,7 +392,7 @@
             // consoleErrorLogsCheckBox
             // 
             this.consoleErrorLogsCheckBox.AutoSize = true;
-            this.consoleErrorLogsCheckBox.Location = new System.Drawing.Point(700, 163);
+            this.consoleErrorLogsCheckBox.Location = new System.Drawing.Point(686, 164);
             this.consoleErrorLogsCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.consoleErrorLogsCheckBox.Name = "consoleErrorLogsCheckBox";
             this.consoleErrorLogsCheckBox.Size = new System.Drawing.Size(144, 29);

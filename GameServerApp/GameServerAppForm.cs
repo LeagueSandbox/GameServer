@@ -18,6 +18,7 @@ using log4net.Core;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using log4net.Layout;
+using System.Collections;
 
 namespace GameServerApp
 {
@@ -82,19 +83,32 @@ namespace GameServerApp
                 return;
             }
             logEvents.AddRange(events);
+            consoleTextBox.AppendText(GetLogEventsAsString(events));
+            memoryAppender.Clear();
+        }
 
-            string result = "";
+        private void RedrawConsoleText()
+        {
+            consoleTextBox.Text = "";
+            consoleTextBox.AppendText(GetLogEventsAsString(logEvents));
+        }
+
+        private string GetLogEventsAsString(IEnumerable<LoggingEvent> list)
+        {
             using (var writer = new System.IO.StringWriter())
             {
-                foreach (var ev in events)
+                foreach (var ev in list)
                 {
-                    memoryAppender.Layout.Format(writer, ev);
+                    if (ev.Level == Level.Debug && consoleDebugLogsCheckBox.Checked ||
+                        ev.Level == Level.Info && consoleInfoLogsCheckBox.Checked ||
+                        ev.Level == Level.Warn && consoleWarningLogsCheckBox.Checked ||
+                        ev.Level == Level.Error && consoleErrorLogsCheckBox.Checked)
+                    {
+                        memoryAppender.Layout.Format(writer, ev);
+                    }
                 }
-                result = writer.ToString();
+                return writer.ToString();
             }
-            consoleTextBox.AppendText(result);
-
-            memoryAppender.Clear();
         }
 
         private void GameServerAppForm_Load(object sender, EventArgs e)
@@ -224,24 +238,28 @@ namespace GameServerApp
         private void consoleInfoLogsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             gameServerAppConfig.DisplayInfoLogs = consoleInfoLogsCheckBox.Checked;
+            RedrawConsoleText();
             SaveConfigSettings();
         }
 
         private void consoleDebugLogsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             gameServerAppConfig.DisplayDebugLogs = consoleDebugLogsCheckBox.Checked;
+            RedrawConsoleText();
             SaveConfigSettings();
         }
 
         private void consoleWarningLogsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             gameServerAppConfig.DisplayWarningLogs = consoleWarningLogsCheckBox.Checked;
+            RedrawConsoleText();
             SaveConfigSettings();
         }
 
         private void consoleErrorLogsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             gameServerAppConfig.DisplayErrorLogs = consoleErrorLogsCheckBox.Checked;
+            RedrawConsoleText();
             SaveConfigSettings();
         }
 
