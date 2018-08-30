@@ -750,6 +750,7 @@
             this.Controls.Add(this.autoStartGameWithServerCheckBox);
             this.Controls.Add(this.startServerButton);
             this.Controls.Add(this.autoStartServerOnLaunchCheckBox);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GameServerAppForm";
             this.Text = "League Sandbox Game Server App";
