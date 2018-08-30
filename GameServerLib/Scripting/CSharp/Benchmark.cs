@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => _logger.Info(text));
+            var t = Task.Factory.StartNew(() => _logger.Debug(text));
         }
     }
 }

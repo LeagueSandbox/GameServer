@@ -308,7 +308,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapGameScript.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
-                Logger.Info("Generating Gold!");
+                Logger.Debug("Generating Gold!");
             }
 
             if (RespawnTimer > 0)
@@ -412,7 +412,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
             {
                 Stats.LevelUp();
-                Logger.Info("Champion " + Model + " leveled up to " + stats.Level);
+                Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
                 SkillPoints++;
             }
 
@@ -441,7 +441,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (KillDeathCounter < 0)
                 {
                     ChampionGoldFromMinions += gold;
-                    Logger.Info($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
+                    Logger.Debug($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
                 }
 
                 if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
@@ -465,7 +465,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (cKiller == null && _championHitFlagTimer > 0)
             {
                 cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
-                Logger.Info("Killed by turret, minion or monster, but still  give gold to the enemy.");
+                Logger.Debug("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
             if (cKiller == null)
@@ -479,7 +479,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: add assists
 
             var gold = _game.Map.MapGameScript.GetGoldFor(this);
-            Logger.Info($"Before: getGoldFromChamp: {gold} Killer: {cKiller.KillDeathCounter} Victim {KillDeathCounter}");
+            Logger.Debug($"Before: getGoldFromChamp: {gold} Killer: {cKiller.KillDeathCounter} Victim {KillDeathCounter}");
 
             if (cKiller.KillDeathCounter < 0)
                 cKiller.KillDeathCounter = 0;

@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
-            _logger.Info("Current map: " + mapId);
+            _logger.Debug("Current map: " + mapId);
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             else
             {
-                _logger.Info("Accepted client version (" + request.Version + ")");
+                _logger.Debug("Accepted client version (" + request.Version + ")");
             }
 
             foreach (var player in _playerManager.GetPlayers())

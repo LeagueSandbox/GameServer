@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Content
             try
             {
                 var path = _game.ContentManager.GetUnitStatPath(name);
-                _logger.Info($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
+                _logger.Debug($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }

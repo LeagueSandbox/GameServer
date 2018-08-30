@@ -34,6 +34,16 @@ namespace LeagueSandbox.GameServer.API
             _logger = LoggerProvider.GetLogger();
         }
 
+        public static void LogDebug(string format)
+        {
+            _logger.Debug(format);
+        }
+
+        public static void LogDebug(string format, params object[] args)
+        {
+            _logger.Debug(string.Format(format, args));
+        }
+
         public static void LogInfo(string format)
         {
             _logger.Info(format);

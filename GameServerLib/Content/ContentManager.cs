@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Content
 
             foreach (var content in contents)
             {
-                _logger.Info($"Mapped Content [{packageName}][{contentType}][{content}]");
+                _logger.Debug($"Mapped Content [{packageName}][{contentType}][{content}]");
                 if (!_content[contentType].ContainsKey(content))
                 {
                     _content[contentType][content] = new List<string>();
@@ -122,7 +122,7 @@ namespace LeagueSandbox.GameServer.Content
                 throw new ContentNotFoundException("Failed to load content [" + contentType + "][" + fileName + "]");
             }
 
-            _logger.Info($"Loaded content [{contentPackages[depth]}][{contentType}][{fileName}]");
+            _logger.Debug($"Loaded content [{contentPackages[depth]}][{contentType}][{fileName}]");
             return path;
         }
 

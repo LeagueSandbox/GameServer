@@ -33,6 +33,8 @@ namespace GameServerApp
         GameServerLauncher gameServerLauncher;
         Thread gameServerThread = null;
         Timer consoleTimer;
+        Font boldFont = new Font("Verdana", 10, FontStyle.Bold);
+        Font regularFont = new Font("Verdana", 10, FontStyle.Regular);
 
         public GameServerAppForm()
         {
@@ -83,33 +85,55 @@ namespace GameServerApp
                 return;
             }
             logEvents.AddRange(events);
-            consoleTextBox.AppendText(GetLogEventsAsString(events));
             memoryAppender.Clear();
+            WriteEventsToRichTextBox(events);
         }
 
         private void RedrawConsoleText()
         {
-            var result = GetLogEventsAsString(logEvents);
             consoleTextBox.Text = "";
-            consoleTextBox.AppendText(result);
+            WriteEventsToRichTextBox(logEvents);
         }
 
-        private string GetLogEventsAsString(IEnumerable<LoggingEvent> list)
+        private void WriteEventsToRichTextBox(IEnumerable<LoggingEvent> list)
         {
-            using (var writer = new System.IO.StringWriter())
+            foreach (var ev in list)
             {
-                foreach (var ev in list)
+                if (ev.Level == Level.Debug && consoleDebugLogsCheckBox.Checked ||
+                    ev.Level == Level.Info && consoleInfoLogsCheckBox.Checked ||
+                    ev.Level == Level.Warn && consoleWarningLogsCheckBox.Checked ||
+                    ev.Level == Level.Error && consoleErrorLogsCheckBox.Checked)
                 {
-                    if (ev.Level == Level.Debug && consoleDebugLogsCheckBox.Checked ||
-                        ev.Level == Level.Info && consoleInfoLogsCheckBox.Checked ||
-                        ev.Level == Level.Warn && consoleWarningLogsCheckBox.Checked ||
-                        ev.Level == Level.Error && consoleErrorLogsCheckBox.Checked)
+                    consoleTextBox.SelectionColor = Color.Black;
+                    consoleTextBox.SelectionFont = regularFont;
+                    consoleTextBox.AppendText(ev.TimeStamp.ToLongTimeString() + " " + GetStackFrameString(ev.LocationInformation.StackFrames[1]));
+                    consoleTextBox.AppendText(Environment.NewLine);
+                    if (ev.Level == Level.Debug)
                     {
-                        memoryAppender.Layout.Format(writer, ev);
+                        consoleTextBox.SelectionColor = Color.Blue;
+                    } else
+                    if (ev.Level == Level.Info)
+                    {
+                        consoleTextBox.SelectionColor = Color.Green;
+                    } else
+                    if (ev.Level == Level.Warn)
+                    {
+                        consoleTextBox.SelectionColor = Color.DarkOrange;
+                    } else
+                    if (ev.Level == Level.Error)
+                    {
+                        consoleTextBox.SelectionColor = Color.Red;
                     }
+                    consoleTextBox.SelectionFont = boldFont;
+                    consoleTextBox.AppendText("[" + ev.Level.DisplayName + "] " + ev.RenderedMessage);
+                    consoleTextBox.AppendText(Environment.NewLine);
                 }
-                return writer.ToString();
             }
+        }
+
+        private string GetStackFrameString(StackFrameItem item)
+        {
+            return "(" + item.ClassName + "." + item.Method.Name + ":" + item.LineNumber + ")";
         }
 
         private void GameServerAppForm_Load(object sender, EventArgs e)

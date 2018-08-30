@@ -52,7 +52,7 @@ namespace GameServerConsole
                         startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", options.ServerPort, blowfishKey);
                         startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
                         var leagueProcess = Process.Start(startInfo);
-                        _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
+                        _logger.Warning("Launching League of Legends. You can disable this in GameServerSettings.json.");
                         if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
                             Environment.OSVersion.Platform == PlatformID.Win32S ||
                             Environment.OSVersion.Platform == PlatformID.Win32Windows ||

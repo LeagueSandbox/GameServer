@@ -679,6 +679,8 @@
             // 
             // consoleTextBox
             // 
+            this.consoleTextBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.consoleTextBox.HideSelection = false;
             this.consoleTextBox.Location = new System.Drawing.Point(9, 107);
             this.consoleTextBox.Name = "consoleTextBox";
             this.consoleTextBox.ReadOnly = true;
