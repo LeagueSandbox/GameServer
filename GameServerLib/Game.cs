@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer
             ScriptEngine = new CSharpScriptEngine();
         }
 
-        public void Initialize(Address address, string blowfishKey, Config config)
+        public void Initialize(Address address, string blowfishKey, Config config, Action readyCallback)
         {
             _logger.Info("Loading Config.");
             Config = config;
@@ -153,6 +153,7 @@ namespace LeagueSandbox.GameServer
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             _logger.Info("Game is ready.");
+            readyCallback();
         }
 
         public bool LoadScripts()

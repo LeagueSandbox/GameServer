@@ -3,13 +3,9 @@ using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using log4net;
@@ -18,7 +14,7 @@ using log4net.Core;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using log4net.Layout;
-using System.Collections;
+using System.IO;
 
 namespace GameServerApp
 {
@@ -26,6 +22,7 @@ namespace GameServerApp
     {
         LeagueSandbox.GameServer.Logging.ILogger logger = LoggerProvider.GetLogger();
         const string CONFIG_PATH = "./GameServerAppConfig.json";
+        const int SERVER_PORT = 5119;
         MemoryAppender memoryAppender;
         List<LoggingEvent> logEvents = new List<LoggingEvent>();
         GameServerAppConfig gameServerAppConfig;
@@ -35,10 +32,22 @@ namespace GameServerApp
         Timer consoleTimer;
         Font boldFont = new Font("Verdana", 10, FontStyle.Bold);
         Font regularFont = new Font("Verdana", 10, FontStyle.Regular);
+        Process leagueClientProcess = null;
 
         public GameServerAppForm()
         {
             InitializeComponent();
+            rankCombo.TextChanged += rankCombo_SelectedIndexChanged;
+            championCombo.TextChanged += championCombo_SelectedIndexChanged;
+            gameModeCombo.TextChanged += gameModeCombo_SelectedIndexChanged;
+            mapCombo.TextChanged += mapCombo_SelectedIndexChanged;
+            teamCombo.TextChanged += teamCombo_SelectedIndexChanged;
+            iconCombo.TextChanged += iconCombo_SelectedIndexChanged;
+            skinCombo.TextChanged += skinCombo_SelectedIndexChanged;
+            ribbonCombo.TextChanged += ribbonCombo_SelectedIndexChanged;
+            summoner1Combo.TextChanged += summoner1Combo_SelectedIndexChanged;
+            summoner2Combo.TextChanged += summoner2Combo_SelectedIndexChanged;
+
             gameServerAppConfig = new GameServerAppConfig();
             gameServerAppConfig.LoadFromFile(CONFIG_PATH);
             gamePathTxt.Text = gameServerAppConfig.GamePath;
@@ -65,16 +74,29 @@ namespace GameServerApp
             autoStartServerOnLaunchCheckBox.Checked = gameServerAppConfig.AutoStartServerOnLaunch;
             autoStartGameWithServerCheckBox.Checked = gameServerAppConfig.AutoStartGameWithServer;
 
+            FormClosed += (o, e) =>
+            {
+                stopClient();
+            };
+        }
+
+        private void GameServerAppForm_Shown(object sender, EventArgs e)
+        {
             memoryAppender = new MemoryAppender();
             memoryAppender.Layout = new PatternLayout("%date %message%newline");
             var repository = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
             repository.Root.AddAppender(memoryAppender);
-            
+
             consoleTimer = new Timer(50);
             consoleTimer.SynchronizingObject = this;
-            consoleTimer.Elapsed += (object o, ElapsedEventArgs e) => GetNewLogEvents();
+            consoleTimer.Elapsed += (object o, ElapsedEventArgs e2) => GetNewLogEvents();
             consoleTimer.AutoReset = true;
             consoleTimer.Start();
+
+            if (autoStartServerOnLaunchCheckBox.Checked)
+            {
+                startServer();
+            }
         }
 
         private void GetNewLogEvents()
@@ -84,9 +106,12 @@ namespace GameServerApp
             {
                 return;
             }
-            logEvents.AddRange(events);
             memoryAppender.Clear();
-            WriteEventsToRichTextBox(events);
+            this.Invoke((MethodInvoker)delegate
+            {
+                logEvents.AddRange(events);
+                WriteEventsToRichTextBox(events);
+            });
         }
 
         private void RedrawConsoleText()
@@ -111,15 +136,18 @@ namespace GameServerApp
                     if (ev.Level == Level.Debug)
                     {
                         consoleTextBox.SelectionColor = Color.Blue;
-                    } else
+                    }
+                    else
                     if (ev.Level == Level.Info)
                     {
                         consoleTextBox.SelectionColor = Color.Green;
-                    } else
+                    }
+                    else
                     if (ev.Level == Level.Warn)
                     {
                         consoleTextBox.SelectionColor = Color.DarkOrange;
-                    } else
+                    }
+                    else
                     if (ev.Level == Level.Error)
                     {
                         consoleTextBox.SelectionColor = Color.Red;
@@ -129,16 +157,13 @@ namespace GameServerApp
                     consoleTextBox.AppendText(Environment.NewLine);
                 }
             }
+            consoleTextBox.SelectionStart = consoleTextBox.Text.Length;
+            consoleTextBox.ScrollToCaret();
         }
 
         private string GetStackFrameString(StackFrameItem item)
         {
             return "(" + item.ClassName + "." + item.Method.Name + ":" + item.LineNumber + ")";
-        }
-
-        private void GameServerAppForm_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void gamePathTxt_TextChanged(object sender, EventArgs e)
@@ -304,24 +329,94 @@ namespace GameServerApp
         {
             if (gameServerLauncher == null)
             {
-                startServerButton.Text = "Stop";
-                startServerButton.BackColor = Color.LightBlue;
-                new Thread(() =>
-                {
-                    gameServerLauncher = new GameServerLauncher(5119, gameServerAppConfig.CreateGameServerConfig(), blowfishKey);
-                    gameServerThread = new Thread(() =>
-                    {
-                        Thread.CurrentThread.IsBackground = true;
-                        gameServerLauncher.StartNetworkLoop();
-                    });
-                    gameServerThread.Start();
-                }).Start();
-            } else
+                startServer();
+            }
+            else
             {
-                startServerButton.Text = "Start";
-                startServerButton.BackColor = Color.LightCoral;
-                gameServerLauncher.Stop();
-                gameServerLauncher = null;
+                stopServer();
+            }
+        }
+
+        private void startServer()
+        {
+            startServerButton.Text = "Stop Server";
+            startServerButton.BackColor = Color.LightBlue;
+            new Thread(() =>
+            {
+                gameServerLauncher = new GameServerLauncher(SERVER_PORT, gameServerAppConfig.CreateGameServerConfig(), blowfishKey, () =>
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        if (gameServerAppConfig.AutoStartGameWithServer)
+                        {
+                            startClient();
+                        }
+                    });
+                });
+                gameServerThread = new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    gameServerLauncher.StartNetworkLoop();
+                });
+                gameServerThread.Start();
+            }).Start();
+        }
+
+        private void stopServer()
+        {
+            startServerButton.Text = "Start Server";
+            startServerButton.BackColor = Color.LightCoral;
+            gameServerLauncher.Stop();
+            gameServerLauncher = null;
+            stopClient();
+        }
+
+        private void startGameButton_Click(object sender, EventArgs e)
+        {
+            if (leagueClientProcess == null)
+            {
+                startClient();
+            }
+            else
+            {
+                stopClient();
+            }
+        }
+
+        private void startClient()
+        {
+            stopClient();
+            string leaguePath = gameServerAppConfig.GamePath;
+            if (Directory.Exists(leaguePath))
+            {
+                leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
+            }
+            if (File.Exists(leaguePath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(leaguePath);
+                startInfo.Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"", SERVER_PORT, blowfishKey);
+                startInfo.WorkingDirectory = Path.GetDirectoryName(leaguePath);
+                leagueClientProcess = Process.Start(startInfo);
+                logger.Info("Launching League of Legends.");
+
+                startGameButton.Text = "Stop Client";
+                startGameButton.BackColor = Color.LightBlue;
+            }
+            else
+            {
+                logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+            }
+        }
+
+        private void stopClient()
+        {
+            if (leagueClientProcess != null && !leagueClientProcess.HasExited)
+            {
+                leagueClientProcess.Kill();
+                leagueClientProcess = null;
+                startGameButton.Text = "Start Client";
+                startGameButton.BackColor = Color.LightCoral;
+                logger.Info("Closed League of Legends.");
             }
         }
     }

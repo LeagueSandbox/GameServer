@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
-        public void Start()
+        public void Start(Action readyCallback)
         {
             var build = $"League Sandbox Build {ServerContext.BuildDateString}";
             try
@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer
             _logger.Info(build);
             _logger.Info($"Yorick {_serverVersion}");
             _logger.Info($"Game started on port: {_serverPort}");
-            _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
+            _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config, readyCallback);
         }
 
         public void StartNetworkLoop()

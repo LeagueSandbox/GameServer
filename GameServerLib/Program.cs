@@ -19,12 +19,12 @@ namespace LeagueSandbox.GameServer
         public ushort ServerPort { get; private set; }
 
         public GameServerLauncher(ushort serverPort, string configJson, string blowfishKey) :
-            this(serverPort, Config.LoadFromJson(configJson), blowfishKey)
+            this(serverPort, Config.LoadFromJson(configJson), blowfishKey, () => { })
         {
 
         }
 
-        public GameServerLauncher(ushort serverPort, Config config, string blowfishKey)
+        public GameServerLauncher(ushort serverPort, Config config, string blowfishKey, Action readyCallback)
         {
             ServerPort = serverPort;
             _logger = LoggerProvider.GetLogger();
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer
             {
 #endif
                 ExecutingDirectory = ServerContext.ExecutingDirectory;
-                _server.Start();
+                _server.Start(readyCallback);
 #if !DEBUG
             }
             catch (Exception e)

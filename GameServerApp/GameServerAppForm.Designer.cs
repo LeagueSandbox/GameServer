@@ -135,6 +135,7 @@
             this.startGameButton.TabIndex = 3;
             this.startGameButton.Text = "Start Game";
             this.startGameButton.UseVisualStyleBackColor = false;
+            this.startGameButton.Click += new System.EventHandler(this.startGameButton_Click);
             // 
             // label1
             // 
@@ -149,7 +150,7 @@
             // gamePathTxt
             // 
             this.gamePathTxt.Location = new System.Drawing.Point(68, 6);
-            this.gamePathTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.gamePathTxt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gamePathTxt.Name = "gamePathTxt";
             this.gamePathTxt.Size = new System.Drawing.Size(261, 20);
             this.gamePathTxt.TabIndex = 5;
@@ -250,7 +251,7 @@
             // 
             this.gameModeCombo.FormattingEnabled = true;
             this.gameModeCombo.Location = new System.Drawing.Point(400, 6);
-            this.gameModeCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.gameModeCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gameModeCombo.Name = "gameModeCombo";
             this.gameModeCombo.Size = new System.Drawing.Size(148, 21);
             this.gameModeCombo.TabIndex = 23;
@@ -261,7 +262,7 @@
             // 
             this.mapCombo.FormattingEnabled = true;
             this.mapCombo.Location = new System.Drawing.Point(443, 31);
-            this.mapCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.mapCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.mapCombo.Name = "mapCombo";
             this.mapCombo.Size = new System.Drawing.Size(55, 21);
             this.mapCombo.TabIndex = 25;
@@ -282,7 +283,7 @@
             // 
             this.manaCostsCheckBox.AutoSize = true;
             this.manaCostsCheckBox.Location = new System.Drawing.Point(620, 60);
-            this.manaCostsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.manaCostsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.manaCostsCheckBox.Name = "manaCostsCheckBox";
             this.manaCostsCheckBox.Size = new System.Drawing.Size(82, 17);
             this.manaCostsCheckBox.TabIndex = 26;
@@ -294,7 +295,7 @@
             // 
             this.cooldownsCheckBox.AutoSize = true;
             this.cooldownsCheckBox.Location = new System.Drawing.Point(620, 34);
-            this.cooldownsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.cooldownsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cooldownsCheckBox.Name = "cooldownsCheckBox";
             this.cooldownsCheckBox.Size = new System.Drawing.Size(78, 17);
             this.cooldownsCheckBox.TabIndex = 27;
@@ -306,7 +307,7 @@
             // 
             this.enableCheatsCheckBox.AutoSize = true;
             this.enableCheatsCheckBox.Location = new System.Drawing.Point(706, 60);
-            this.enableCheatsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.enableCheatsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.enableCheatsCheckBox.Name = "enableCheatsCheckBox";
             this.enableCheatsCheckBox.Size = new System.Drawing.Size(95, 17);
             this.enableCheatsCheckBox.TabIndex = 28;
@@ -318,7 +319,7 @@
             // 
             this.spawnMinionsCheckBox.AutoSize = true;
             this.spawnMinionsCheckBox.Location = new System.Drawing.Point(706, 33);
-            this.spawnMinionsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.spawnMinionsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.spawnMinionsCheckBox.Name = "spawnMinionsCheckBox";
             this.spawnMinionsCheckBox.Size = new System.Drawing.Size(98, 17);
             this.spawnMinionsCheckBox.TabIndex = 29;
@@ -332,7 +333,7 @@
             this.consoleInfoLogsCheckBox.Checked = true;
             this.consoleInfoLogsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.consoleInfoLogsCheckBox.Location = new System.Drawing.Point(161, 85);
-            this.consoleInfoLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.consoleInfoLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.consoleInfoLogsCheckBox.Name = "consoleInfoLogsCheckBox";
             this.consoleInfoLogsCheckBox.Size = new System.Drawing.Size(70, 17);
             this.consoleInfoLogsCheckBox.TabIndex = 31;
@@ -355,7 +356,7 @@
             // 
             this.consoleDebugLogsCheckBox.AutoSize = true;
             this.consoleDebugLogsCheckBox.Location = new System.Drawing.Point(68, 85);
-            this.consoleDebugLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.consoleDebugLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.consoleDebugLogsCheckBox.Name = "consoleDebugLogsCheckBox";
             this.consoleDebugLogsCheckBox.Size = new System.Drawing.Size(84, 17);
             this.consoleDebugLogsCheckBox.TabIndex = 33;
@@ -367,7 +368,7 @@
             // 
             this.consoleWarningLogsCheckBox.AutoSize = true;
             this.consoleWarningLogsCheckBox.Location = new System.Drawing.Point(238, 85);
-            this.consoleWarningLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.consoleWarningLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.consoleWarningLogsCheckBox.Name = "consoleWarningLogsCheckBox";
             this.consoleWarningLogsCheckBox.Size = new System.Drawing.Size(92, 17);
             this.consoleWarningLogsCheckBox.TabIndex = 34;
@@ -379,7 +380,7 @@
             // 
             this.consoleErrorLogsCheckBox.AutoSize = true;
             this.consoleErrorLogsCheckBox.Location = new System.Drawing.Point(343, 85);
-            this.consoleErrorLogsCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.consoleErrorLogsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.consoleErrorLogsCheckBox.Name = "consoleErrorLogsCheckBox";
             this.consoleErrorLogsCheckBox.Size = new System.Drawing.Size(74, 17);
             this.consoleErrorLogsCheckBox.TabIndex = 35;
@@ -390,11 +391,10 @@
             // nameTxt
             // 
             this.nameTxt.Location = new System.Drawing.Point(311, 30);
-            this.nameTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.nameTxt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(99, 20);
             this.nameTxt.TabIndex = 37;
-            this.nameTxt.Text = "Gan";
             this.nameTxt.TextChanged += new System.EventHandler(this.nameTxt_TextChanged);
             // 
             // label13
@@ -573,7 +573,7 @@
             // 
             this.championCombo.FormattingEnabled = true;
             this.championCombo.Location = new System.Drawing.Point(177, 31);
-            this.championCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.championCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.championCombo.Name = "championCombo";
             this.championCombo.Size = new System.Drawing.Size(92, 21);
             this.championCombo.TabIndex = 54;
@@ -584,18 +584,17 @@
             // 
             this.rankCombo.FormattingEnabled = true;
             this.rankCombo.Location = new System.Drawing.Point(40, 31);
-            this.rankCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.rankCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rankCombo.Name = "rankCombo";
             this.rankCombo.Size = new System.Drawing.Size(78, 21);
             this.rankCombo.TabIndex = 55;
-            this.rankCombo.Text = "Diamond";
             this.rankCombo.SelectedIndexChanged += new System.EventHandler(this.rankCombo_SelectedIndexChanged);
             // 
             // teamCombo
             // 
             this.teamCombo.FormattingEnabled = true;
             this.teamCombo.Location = new System.Drawing.Point(536, 32);
-            this.teamCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.teamCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.teamCombo.Name = "teamCombo";
             this.teamCombo.Size = new System.Drawing.Size(71, 21);
             this.teamCombo.TabIndex = 56;
@@ -606,7 +605,7 @@
             // 
             this.ribbonCombo.FormattingEnabled = true;
             this.ribbonCombo.Location = new System.Drawing.Point(228, 58);
-            this.ribbonCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.ribbonCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ribbonCombo.Name = "ribbonCombo";
             this.ribbonCombo.Size = new System.Drawing.Size(55, 21);
             this.ribbonCombo.TabIndex = 57;
@@ -617,7 +616,7 @@
             // 
             this.summoner1Combo.FormattingEnabled = true;
             this.summoner1Combo.Location = new System.Drawing.Point(355, 58);
-            this.summoner1Combo.Margin = new System.Windows.Forms.Padding(2);
+            this.summoner1Combo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.summoner1Combo.Name = "summoner1Combo";
             this.summoner1Combo.Size = new System.Drawing.Size(87, 21);
             this.summoner1Combo.TabIndex = 58;
@@ -628,7 +627,7 @@
             // 
             this.summoner2Combo.FormattingEnabled = true;
             this.summoner2Combo.Location = new System.Drawing.Point(522, 58);
-            this.summoner2Combo.Margin = new System.Windows.Forms.Padding(2);
+            this.summoner2Combo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.summoner2Combo.Name = "summoner2Combo";
             this.summoner2Combo.Size = new System.Drawing.Size(85, 21);
             this.summoner2Combo.TabIndex = 59;
@@ -639,7 +638,7 @@
             // 
             this.iconCombo.FormattingEnabled = true;
             this.iconCombo.Location = new System.Drawing.Point(40, 58);
-            this.iconCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.iconCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.iconCombo.Name = "iconCombo";
             this.iconCombo.Size = new System.Drawing.Size(54, 21);
             this.iconCombo.TabIndex = 60;
@@ -650,7 +649,7 @@
             // 
             this.skinCombo.FormattingEnabled = true;
             this.skinCombo.Location = new System.Drawing.Point(126, 58);
-            this.skinCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.skinCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.skinCombo.Name = "skinCombo";
             this.skinCombo.Size = new System.Drawing.Size(54, 21);
             this.skinCombo.TabIndex = 61;
@@ -670,7 +669,7 @@
             // contentPathTxt
             // 
             this.contentPathTxt.Location = new System.Drawing.Point(624, 6);
-            this.contentPathTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.contentPathTxt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.contentPathTxt.Name = "contentPathTxt";
             this.contentPathTxt.Size = new System.Drawing.Size(159, 20);
             this.contentPathTxt.TabIndex = 63;
@@ -754,7 +753,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GameServerAppForm";
             this.Text = "League Sandbox Game Server App";
-            this.Load += new System.EventHandler(this.GameServerAppForm_Load);
+            this.Shown += new System.EventHandler(this.GameServerAppForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
