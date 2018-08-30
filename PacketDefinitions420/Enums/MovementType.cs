@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PacketDefinitions420.Enums
+﻿namespace PacketDefinitions420.Enums
 {
     public enum MovementType : byte
     {

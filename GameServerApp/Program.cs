@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CommandLine;
 using LeagueSandbox.GameServer;
@@ -48,8 +49,8 @@ namespace LeagueSandbox.GameServerApp
                 {
                     var startInfo = new ProcessStartInfo(leaguePath)
                     {
-                        Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"",
-                            parsedArgs.ServerPort, gameServerBlowFish),
+                        Arguments = "\"8394\" \"LoLLauncher.exe\" \"\" " +
+                                    $"\"127.0.0.1 {parsedArgs.ServerPort} {gameServerBlowFish} 1\"",
                         WorkingDirectory = Path.GetDirectoryName(leaguePath)
                     };
 
@@ -57,12 +58,17 @@ namespace LeagueSandbox.GameServerApp
 
                     _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
 
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
-                        Environment.OSVersion.Platform == PlatformID.Win32S ||
-                        Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-                        Environment.OSVersion.Platform == PlatformID.WinCE)
+                    var windowsVersions = new[]
                     {
-                        WindowsConsoleCloseDetection.SetCloseHandler((_) =>
+                        PlatformID.Win32NT,
+                        PlatformID.Win32S,
+                        PlatformID.Win32Windows,
+                        PlatformID.WinCE
+                    };
+
+                    if (windowsVersions.Contains(Environment.OSVersion.Platform))
+                    {
+                        WindowsConsoleCloseDetection.SetCloseHandler(delegate
                         {
                             if (!leagueProcess.HasExited)
                             {
@@ -74,7 +80,9 @@ namespace LeagueSandbox.GameServerApp
                 }
                 else
                 {
-                    _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                    _logger.Info("Unable to find League of Legends.exe." +
+                                 "Check the GameServerSettings.json settings and your League location."
+                                );
                 }
             }
             else
@@ -88,16 +96,22 @@ namespace LeagueSandbox.GameServerApp
         private static string LoadConfig(string filePath, string currentJsonString, string defaultJsonString)
         {
             if (!string.IsNullOrEmpty(currentJsonString))
+            {
                 return currentJsonString;
+            }
 
             try
             {
                 if (File.Exists(filePath))
+                {
                     return File.ReadAllText(filePath);
+                }
 
                 var settingsDirectory = Path.GetDirectoryName(filePath);
                 if (string.IsNullOrEmpty(settingsDirectory))
-                    throw new Exception(string.Format("Creating Config File failed. Invalid Path: {0}", filePath));
+                {
+                    throw new Exception($"Creating Config File failed. Invalid Path: {filePath}");
+                }
 
                 Directory.CreateDirectory(settingsDirectory);
 
@@ -114,25 +128,25 @@ namespace LeagueSandbox.GameServerApp
 
     public class ArgsOptions
     {
-        [Option("config", DefaultValue = "Settings/GameInfo.json")]
+        [Option("config", Default = "Settings/GameInfo.json")]
         public string GameInfoJsonPath { get; set; }
 
-        [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
+        [Option("config-gameserver", Default = "Settings/GameServerSettings.json")]
         public string GameServerSettingsJsonPath { get; set; }
 
-        [Option("config-json", DefaultValue = "")]
+        [Option("config-json", Default = "")]
         public string GameInfoJson { get; set; }
 
-        [Option("config-gameserver-json", DefaultValue = "")]
+        [Option("config-gameserver-json", Default = "")]
         public string GameServerSettingsJson { get; set; }
 
-        [Option("port", DefaultValue = (ushort)5119)]
+        [Option("port", Default = (ushort)5119)]
         public ushort ServerPort { get; set; }
 
         public static ArgsOptions Parse(string[] args)
         {
             var options = new ArgsOptions();
-            Parser.Default.ParseArguments(args, options);
+            Parser.Default.ParseArguments<ArgsOptions>(args).WithParsed(o => options = o);
             return options;
         }
     }
