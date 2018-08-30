@@ -166,57 +166,61 @@ namespace LeagueSandbox.GameServer
             _lastMapDurationWatch.Start();
             while (!SetToExit)
             {
-                while (_server.Service(0, out var enetEvent) > 0)
+                lock (this)
                 {
-                    switch (enetEvent.Type)
+                    while (_server.Service(0, out var enetEvent) > 0)
                     {
-                        case EventType.Connect:
+                        switch (enetEvent.Type)
                         {
-                            // Set some defaults
-                            enetEvent.Peer.Mtu = PEER_MTU;
-                            enetEvent.Data = 0;
+                            case EventType.Connect:
+                                {
+                                    // Set some defaults
+                                    enetEvent.Peer.Mtu = PEER_MTU;
+                                    enetEvent.Data = 0;
+                                }
+                                break;
+                            case EventType.Receive:
+                                {
+                                    var channel = (Channel)enetEvent.ChannelID;
+                                    PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
+                                    // Clean up the packet now that we're done using it.
+                                    enetEvent.Packet.Dispose();
+                                }
+                                break;
+                            case EventType.Disconnect:
+                                {
+                                    HandleDisconnect(enetEvent.Peer);
+                                }
+                                break;
                         }
-                        break;
-                        case EventType.Receive:
-                        {
-                            var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
-                            // Clean up the packet now that we're done using it.
-                            enetEvent.Packet.Dispose();
-                        }
-                        break;
-                        case EventType.Disconnect:
-                        {
-                            HandleDisconnect(enetEvent.Peer);
-                        }
-                        break;
                     }
-                }
 
-                if (IsPaused)
-                {
-                    _lastMapDurationWatch.Stop();
-                    _pauseTimer.Enabled = true;
-                    if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                    if (IsPaused)
                     {
-                        PacketHandlerManager.UnpauseGame();
-                        _autoResumeCheck = true;
+                        _lastMapDurationWatch.Stop();
+                        _pauseTimer.Enabled = true;
+                        if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                        {
+                            PacketHandlerManager.UnpauseGame();
+                            _autoResumeCheck = true;
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
-                {
-                    var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    _lastMapDurationWatch.Restart();
-                    if (IsRunning)
+                    if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                     {
-                        Update((float)sinceLastMapTime);
-
+                        var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                        _lastMapDurationWatch.Restart();
+                        if (IsRunning)
+                        {
+                            Update((float)sinceLastMapTime);
+                        }
                     }
                 }
                 Thread.Sleep(1);
             }
+            _logger.Info("Closing server.");
+            _server.Dispose();
         }
 
         public void Update(float diff)
@@ -251,14 +255,22 @@ namespace LeagueSandbox.GameServer
             PlayersReady++;
         }
 
-        public void Start()
+        public void StartUpdateLoop()
         {
             IsRunning = true;
         }
 
-        public void Stop()
+        public void StopUpdateLoop()
         {
             IsRunning = false;
+        }
+
+        public void Stop()
+        {
+            lock (this)
+            {
+                SetToExit = true;
+            }
         }
 
         public void Pause()

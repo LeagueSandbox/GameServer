@@ -50,6 +50,11 @@ namespace LeagueSandbox.GameServer
             _game.NetLoop();
         }
 
+        public void Stop()
+        {
+            _game.Stop();
+        }
+
         public void Dispose()
         {
             // PathNode.DestroyTable();

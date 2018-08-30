@@ -62,5 +62,10 @@ namespace LeagueSandbox.GameServer
             }
 #endif
         }
+
+        public void Stop()
+        {
+            _server.Stop();
+        }
     }
 }

@@ -302,16 +302,27 @@ namespace GameServerApp
 
         private void startServerButton_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
+            if (gameServerLauncher == null)
             {
-                gameServerLauncher = new GameServerLauncher(5119, gameServerAppConfig.CreateGameServerConfig(), blowfishKey);
-                gameServerThread = new Thread(() =>
+                startServerButton.Text = "Stop";
+                startServerButton.BackColor = Color.LightBlue;
+                new Thread(() =>
                 {
-                    Thread.CurrentThread.IsBackground = true;
-                    gameServerLauncher.StartNetworkLoop();
-                });
-                gameServerThread.Start();
-            }).Start();
+                    gameServerLauncher = new GameServerLauncher(5119, gameServerAppConfig.CreateGameServerConfig(), blowfishKey);
+                    gameServerThread = new Thread(() =>
+                    {
+                        Thread.CurrentThread.IsBackground = true;
+                        gameServerLauncher.StartNetworkLoop();
+                    });
+                    gameServerThread.Start();
+                }).Start();
+            } else
+            {
+                startServerButton.Text = "Start";
+                startServerButton.BackColor = Color.LightCoral;
+                gameServerLauncher.Stop();
+                gameServerLauncher = null;
+            }
         }
     }
 }
