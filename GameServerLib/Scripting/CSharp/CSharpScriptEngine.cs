@@ -22,7 +22,17 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public bool LoadSubdirectoryScripts(string folder)
         {
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories);
+            var basePath = Path.GetFullPath(folder);
+            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where((string pathString) => {
+                var fileBasePath = Path.GetFullPath(pathString);
+                var trimmedPath = fileBasePath.Remove(0, basePath.Length);
+                string[] directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
+                if (directories.Contains("bin") || directories.Contains("obj"))
+                {
+                    return false;
+                }
+                return true;
+            });
             return Load(new List<string>(allfiles));
         }
 
