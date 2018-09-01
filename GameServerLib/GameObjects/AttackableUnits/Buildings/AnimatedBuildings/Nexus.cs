@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         public override void Die(AttackableUnit killer)
         {
             var cameraPosition = _game.Map.MapGameScript.GetEndGameCameraPosition(Team);
-            _game.Stop();
+            _game.StopUpdateLoop();
             _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
             _game.SetGameToExit();
         }

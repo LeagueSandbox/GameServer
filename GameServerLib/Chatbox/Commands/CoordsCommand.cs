@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
             var champion = _playerManager.GetPeerInfo(peer).Champion;
-            _logger.Info($"At {champion.X}; {champion.Y}");
+            _logger.Debug($"At {champion.X}; {champion.Y}");
             var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()}";
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
         }
