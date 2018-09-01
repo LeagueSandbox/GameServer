@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer
     {
         private struct ImageFileHeader
         {
+            #pragma warning disable 0649
             public ushort Machine;
             public ushort NumberOfSections;
             public uint TimeDateStamp;

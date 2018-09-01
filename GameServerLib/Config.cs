@@ -9,38 +9,36 @@ namespace LeagueSandbox.GameServer
 {
     public class Config
     {
-        public Dictionary<string, PlayerConfig> Players { get; private set; }
-        public GameConfig GameConfig { get; private set; }
-        public MapSpawns MapSpawns { get; private set; }
-        public ContentManager ContentManager { get; private set; }
+        public Dictionary<string, PlayerConfig> Players { get; set; }
+        public GameConfig GameConfig { get; set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
         public static readonly Version VERSION = new Version(4, 20, 0, 315);
 
-        public bool CooldownsEnabled { get; private set; }
-        public bool ManaCostsEnabled { get; private set; }
-        public bool ChatCheatsEnabled { get; private set; }
-        public bool MinionSpawnsEnabled { get; private set; }
-        public string ContentPath { get; private set; }
+        public bool CooldownsEnabled { get; set; }
+        public bool ManaCostsEnabled { get; set; }
+        public bool ChatCheatsEnabled { get; set; }
+        public bool MinionSpawnsEnabled { get; set; }
+        public string ContentPath { get; set; }
 
-        private Config()
+        public Config()
         {
         }
 
-        public static Config LoadFromJson(Game game, string json)
+        public static Config LoadFromJson(string json)
         {
             var result = new Config();
-            result.LoadConfig(game, json);
+            result.LoadConfig(json);
             return result;
         }
 
-        public static Config LoadFromFile(Game game, string path)
+        public static Config LoadFromFile(string path)
         {
             var result = new Config();
-            result.LoadConfig(game, File.ReadAllText(path));
+            result.LoadConfig(File.ReadAllText(path));
             return result;
         }
 
-        private void LoadConfig(Game game, string json)
+        private void LoadConfig(string json)
         {
             Players = new Dictionary<string, PlayerConfig>();
 
@@ -68,31 +66,11 @@ namespace LeagueSandbox.GameServer
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
-
-            // Load items
-            game.ItemManager.LoadItems(ContentPath);
-
+            
             // Read the game configuration
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
-
-            // Read spawns info
-            ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
-            var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
-            var mapData = JObject.Parse(File.ReadAllText(mapPath));
-            var spawns = mapData.SelectToken("spawns");
-
-            MapSpawns = new MapSpawns();
-            foreach (JProperty teamSpawn in spawns)
-            {
-                var team = teamSpawn.Name;
-                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
-                {
-                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
-                    MapSpawns.SetSpawns(team, playerSpawns, i);
-                }
-            }
+            
         }
     }
 
@@ -131,45 +109,57 @@ namespace LeagueSandbox.GameServer
 
     public class GameConfig
     {
-        public int Map => (int)_gameData.SelectToken("map");
-        public string GameMode => (string)_gameData.SelectToken("gameMode");
+        public int Map;
+        public string GameMode;
 
-        private JToken _gameData;
-
-        public GameConfig(JToken gameData)
+        public GameConfig(JToken gameData) : this((int)gameData.SelectToken("map"), (string)gameData.SelectToken("gameMode"))
         {
-            _gameData = gameData;
+        }
+
+        public GameConfig(int map, string gameMode)
+        {
+            Map = map;
+            GameMode = gameMode;
         }
     }
 
 
     public class PlayerConfig
     {
-        public string Rank => (string)_playerData.SelectToken("rank");
-        public string Name => (string)_playerData.SelectToken("name");
-        public string Champion => (string)_playerData.SelectToken("champion");
-        public string Team => (string)_playerData.SelectToken("team");
-        public short Skin => (short)_playerData.SelectToken("skin");
-        public string Summoner1 => (string)_playerData.SelectToken("summoner1");
-        public string Summoner2 => (string)_playerData.SelectToken("summoner2");
-        public short Ribbon => (short)_playerData.SelectToken("ribbon");
-        public int Icon => (int)_playerData.SelectToken("icon");
-        public RuneCollection Runes => _runeList;
+        public string Rank;
+        public string Name;
+        public string Champion;
+        public string Team;
+        public short Skin;
+        public string Summoner1;
+        public string Summoner2;
+        public short Ribbon;
+        public int Icon;
+        public RuneCollection Runes = new RuneCollection();
 
-        private JToken _playerData;
-        private RuneCollection _runeList;
+        public PlayerConfig()
+        {
+        }
 
         public PlayerConfig(JToken playerData)
         {
-            _playerData = playerData;
+             Rank = (string)playerData.SelectToken("rank");
+             Name = (string)playerData.SelectToken("name");
+             Champion = (string)playerData.SelectToken("champion");
+             Team = (string)playerData.SelectToken("team");
+             Skin = (short)playerData.SelectToken("skin");
+             Summoner1 = (string)playerData.SelectToken("summoner1");
+             Summoner2 = (string)playerData.SelectToken("summoner2");
+             Ribbon = (short)playerData.SelectToken("ribbon");
+             Icon = (int)playerData.SelectToken("icon");
+
             try
             {
-                var runes = _playerData.SelectToken("runes");
-                _runeList = new RuneCollection();
+                var runes = playerData.SelectToken("runes");
 
                 foreach (JProperty runeCategory in runes)
                 {
-                    _runeList.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
+                    Runes.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
                 }
             }
             catch (Exception)

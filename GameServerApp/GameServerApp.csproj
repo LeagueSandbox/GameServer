@@ -1,71 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeagueSandbox.GameServerApp</RootNamespace>
+    <ProjectGuid>{46467621-BABA-47C7-A7BB-9FF1FBA00BF6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>GameServerApp</RootNamespace>
     <AssemblyName>GameServerApp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logic\GameServerConfig.cs" />
+    <Compile Include="Configs\GameServerAppConfig.cs" />
+    <Compile Include="GameServerAppForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GameServerAppForm.Designer.cs">
+      <DependentUpon>GameServerAppForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GameServerAppForm.resx">
+      <DependentUpon>GameServerAppForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utility\WindowsConsoleCloseDetection.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="Settings\GameInfo.json.template" />
-    <None Include="Settings\GameServerSettings.json.template" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameServerLib\GameServerLib.csproj">
@@ -74,32 +85,33 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <PackageReference Include="log4net">
+      <Version>2.0.8</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
+    </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings\.</_SettingsSourceDirectory>
-    <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-    <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
-    <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-    <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-    <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
+    <_SettingsTargetDirectory>Settings\</_SettingsTargetDirectory>
+    <_ENetSharpLeagueSourceDirectory>$(NuGetPackageRoot)enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
     <_IsMac>false</_IsMac>
     <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Unix'">
-    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
+    <_CopyCommand>xcopy /s /y /q /d /e /i</_CopyCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
     <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
   </PropertyGroup>
-  <Target Name="AfterBuild">
-    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(TargetDir)$(_SettingsTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(TargetDir)&quot;" />
   </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
