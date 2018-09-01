@@ -126,16 +126,16 @@ namespace LeagueSandbox.GameServer
 
     public class PlayerConfig
     {
-        public string Rank;
-        public string Name;
-        public string Champion;
-        public string Team;
-        public short Skin;
-        public string Summoner1;
-        public string Summoner2;
-        public short Ribbon;
-        public int Icon;
-        public RuneCollection Runes = new RuneCollection();
+        public string Rank { get; set; }
+        public string Name { get; set; }
+        public string Champion { get; set; }
+        public string Team { get; set; }
+        public short Skin { get; set; }
+        public string Summoner1 { get; set; }
+        public string Summoner2 { get; set; }
+        public short Ribbon { get; set; }
+        public int Icon { get; set; }
+        public RuneCollection Runes { get; set; } = new RuneCollection();
 
         public PlayerConfig()
         {

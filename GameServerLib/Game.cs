@@ -28,6 +28,7 @@ namespace LeagueSandbox.GameServer
 {
     public class Game : IGame
     {
+        private readonly object netLoopLock = new object();
         private Host _server;
         private ILogger _logger;
         public BlowFish Blowfish { get; private set; }
@@ -167,7 +168,7 @@ namespace LeagueSandbox.GameServer
             _lastMapDurationWatch.Start();
             while (!SetToExit)
             {
-                lock (this)
+                lock (netLoopLock)
                 {
                     while (_server.Service(0, out var enetEvent) > 0)
                     {
@@ -268,7 +269,7 @@ namespace LeagueSandbox.GameServer
 
         public void Stop()
         {
-            lock (this)
+            lock (netLoopLock)
             {
                 SetToExit = true;
             }
