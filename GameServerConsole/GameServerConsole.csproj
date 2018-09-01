@@ -6,15 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Content\**" />
-    <Compile Remove="Settings\**" />
-    <EmbeddedResource Remove="Content\**" />
-    <EmbeddedResource Remove="Settings\**" />
-    <None Remove="Content\**" />
-    <None Remove="Settings\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
@@ -26,12 +17,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
-    <_SettingsTargetDirectory>Settings\</_SettingsTargetDirectory>
     <_ENetSharpLeagueSourceDirectory>$(NuGetPackageRoot)enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
     <_IsMac>false</_IsMac>
     <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
-    <StartupObject>GameServerConsole.Program</StartupObject>
+    <StartupObject>LeagueSandbox.GameServerConsole.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Unix'">
     <_CopyCommand>xcopy /s /y /q /d /e /i</_CopyCommand>
@@ -44,7 +33,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(TargetDir)$(_SettingsTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(TargetDir)&quot;" />
   </Target>
 </Project>

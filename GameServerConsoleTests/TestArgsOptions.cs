@@ -1,8 +1,8 @@
 ﻿using CommandLine;
-using GameServerConsole;
+using LeagueSandbox.GameServerConsole;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LeagueSandbox.GameServerAppTests
+namespace LeagueSandbox.GameServerConsoleTests
 {
     [TestClass]
     public class TestArgsOptions
