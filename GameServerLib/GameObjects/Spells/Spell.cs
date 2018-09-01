@@ -15,8 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
     public class Spell : ISpell
     {
-        public static bool CooldownsEnabled;
-        public static bool ManaCostsEnabled;
 
         public Champion Owner { get; private set; }
         public byte Level { get; private set; }
@@ -67,6 +65,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _spellGameScript.OnActivate(owner);
         }
 
+        void ISpell.Deactivate()
+        {
+            _spellGameScript.OnDeactivate(Owner);
+        }
+
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
@@ -84,7 +87,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 return false;
             }
 
-            stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction);
+            if (_game.Config.ManaCostsEnabled)
+            {
+                stats.CurrentMana = stats.CurrentMana - SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction);
+            }
+
             X = x;
             Y = y;
             X2 = x2;
@@ -283,11 +290,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 new Target(toX, toY),
                 this,
                 effectName,
-                SpellData.Flags,                
+                SpellData.Flags,
                 affectAsCastIsOver,
                 angleDeg
             );
-            _game.ObjectManager.AddObject(c);            
+            _game.ObjectManager.AddObject(c);
         }
 
         public void SpellAnimation(string animName, AttackableUnit target)
@@ -322,7 +329,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public float GetCooldown()
         {
-            return CooldownsEnabled ? SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction.Total) : 0;
+            return _game.Config.CooldownsEnabled ? SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction.Total) : 0;
         }
 
         public virtual void LevelUp()

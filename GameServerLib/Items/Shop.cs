@@ -1,5 +1,6 @@
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Content;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -7,6 +8,8 @@ namespace LeagueSandbox.GameServer.Items
     {
         private readonly Champion _owner;
         private readonly Game _game;
+
+        public const byte ITEM_ACTIVE_OFFSET = 6;
         
         private Shop(Champion owner, Game game)
         {
@@ -47,6 +50,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     stats.RemoveModifier(item.ItemType);
                     _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
+                    _owner.RemoveSpell((byte)(inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET));
                     inventory.RemoveItem(item);
                 }
 
@@ -56,6 +60,12 @@ namespace LeagueSandbox.GameServer.Items
             stats.Gold -= price;
             stats.AddModifier(itemTemplate);
             _game.PacketNotifier.NotifyItemBought(_owner, i);
+
+            if (!string.IsNullOrEmpty(i.ItemType.SpellName))
+            {
+                _owner.SetSpell(i.ItemType.SpellName, (byte)(inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+            }
+
             return true;
         }
 

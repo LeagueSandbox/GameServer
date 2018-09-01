@@ -67,6 +67,7 @@ namespace LeagueSandbox.GameServer.Content
         public int MaxStack { get; private set; }
         public int Price { get; private set; }
         public string ItemGroup { get; private set; }
+        public string SpellName { get; private set; }
         public float SellBackModifier { get; private set; }
 
         // Recipes
@@ -99,6 +100,7 @@ namespace LeagueSandbox.GameServer.Content
                 MaxStack = itemInfo.GetInt("Data", "MaxStack"),
                 Price = itemInfo.GetInt("Data", "Price"),
                 ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
+                SpellName = itemInfo.GetString("Data", "SpellName"),
                 SellBackModifier = itemInfo.GetFloat("Data", "SellBackModifier", 0.7f),
 
                 RecipeItem1 = itemInfo.GetInt("Data", "RecipeItem1", -1),
@@ -164,6 +166,10 @@ namespace LeagueSandbox.GameServer.Content
                 {
                     FlatBonus = itemInfo.GetFloat("Data", "FlatCritDamageMod"),
                     PercentBonus = itemInfo.GetFloat("Data", "PercentCritDamageMod")
+                },
+                LifeSteel =
+                {
+                    FlatBonus = itemInfo.GetFloat("Data", "PercentLifeStealMod")
                 }
             };
 

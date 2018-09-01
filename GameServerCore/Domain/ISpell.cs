@@ -25,5 +25,6 @@ namespace GameServerCore.Domain
 
         int GetId();
         float GetCooldown();
+        void Deactivate();
     }
 }
