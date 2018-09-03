@@ -1,11 +1,12 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class JunglespawnCommand : ChatCommandBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public override string Command => "junglespawn";
         public override string Syntax => $"{Command}";
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            _logger.Info($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
+            _logger.Warn($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
         }
     }

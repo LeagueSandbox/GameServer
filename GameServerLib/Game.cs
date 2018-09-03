@@ -19,6 +19,7 @@ using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using log4net;
 using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer
     public class Game : IGame
     {
         private Host _server;
-        private ILogger _logger;
+        private ILog _logger;
         public BlowFish Blowfish { get; private set; }
 
         public bool IsRunning { get; private set; }

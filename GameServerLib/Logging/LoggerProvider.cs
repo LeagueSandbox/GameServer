@@ -3,22 +3,17 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.Logging
 {
-    public class LoggerProvider : ILoggerProvider
+    public class LoggerProvider
     {
         static LoggerProvider()
         {
             log4net.Config.XmlConfigurator.Configure();
         }
 
-        public static ILogger GetLogger()
+        public static ILog GetLogger()
         {
             var caller = new StackTrace().GetFrame(1).GetMethod().DeclaringType;
-            return new Logger(LogManager.GetLogger(caller));
-        }
-
-        ILogger ILoggerProvider.GetLogger()
-        {
-            return GetLogger();
+            return LogManager.GetLogger(caller);
         }
     }
 }

@@ -2,13 +2,14 @@
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleUseObject : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_USE_OBJECT;
@@ -26,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var request = _game.PacketReader.ReadUseObjectRequest(data);
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             var msg = $"Object {champion.NetId} is trying to use (right clicked) {request.TargetNetId}";
-            _logger.Info(msg);
+            _logger.Debug(msg);
 
             return true;
         }

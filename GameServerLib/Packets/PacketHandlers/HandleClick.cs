@@ -3,6 +3,7 @@ using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Attributes;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -10,7 +11,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandleClick : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly PlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLICK;
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var request = _game.PacketReader.ReadClickRequest(data);
             var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {request.TargetNetId}";
-            _logger.Info(msg);
+            _logger.Debug(msg);
 
             return true;
         }

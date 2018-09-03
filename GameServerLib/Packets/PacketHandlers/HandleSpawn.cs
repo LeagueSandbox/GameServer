@@ -9,12 +9,13 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBui
 using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSpawn : PacketHandlerBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly PlayerManager _playerManager;
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
              _game.PacketNotifier.NotifySpawnStart(peer);
-            _logger.Info("Spawning map");
+            _logger.Debug("Spawning map");
 
             var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())
@@ -114,7 +115,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
                 else
                 {
-                    _logger.Warning("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
+                    _logger.Warn("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
 

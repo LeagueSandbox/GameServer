@@ -270,9 +270,6 @@
     <Compile Include="GameObjects\AttackableUnits\AttackableUnit.cs" />
     <Compile Include="Content\ItemManager.cs" />
     <Compile Include="Items\Shop.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\ILoggerProvider.cs" />
-    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="ObjectManager.cs" />

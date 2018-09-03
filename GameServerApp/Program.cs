@@ -8,12 +8,13 @@ using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServerApp.Logic;
 using LeagueSandbox.GameServerApp.Properties;
 using LeagueSandbox.GameServerApp.Utility;
+using log4net;
 
 namespace LeagueSandbox.GameServerApp
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static ILog _logger;
 
         private static void Main(string[] args)
         {
@@ -73,7 +74,7 @@ namespace LeagueSandbox.GameServerApp
                 }
                 else
                 {
-                    _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                    _logger.Warn("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
                 }
             }
             else
