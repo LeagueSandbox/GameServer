@@ -4,6 +4,7 @@ using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -12,7 +13,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly PlayerManager _playerManager;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
         public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
@@ -57,7 +58,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                     catch
                     {
-                        _logger.Warning(command + " sent an exception.");
+                        _logger.Warn(command + " sent an exception.");
                          _game.PacketNotifier.NotifyDebugMessage(peer, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;

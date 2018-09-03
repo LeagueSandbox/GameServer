@@ -2,6 +2,7 @@
 using System.IO;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Content
     public class CharData
     {
         private readonly Game _game;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public CharData(Game game)
         {
@@ -87,7 +88,7 @@ namespace LeagueSandbox.GameServer.Content
             }
             catch (ContentNotFoundException notfound)
             {
-                _logger.Warning($"Stats for {name} was not found: {notfound.Message}");
+                _logger.Warn($"Stats for {name} was not found: {notfound.Message}");
                 return;
             }
 

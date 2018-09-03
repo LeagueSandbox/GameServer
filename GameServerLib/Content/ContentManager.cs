@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
     public class ContentManager
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private Game _game;
 
         private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();

@@ -2,13 +2,14 @@
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleScoreboard : PacketHandlerBase
     {
         private readonly PlayerManager _playerManager;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Game _game;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;

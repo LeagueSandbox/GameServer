@@ -2,13 +2,14 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class Benchmark
     {
         private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public Benchmark(Game game)
         {

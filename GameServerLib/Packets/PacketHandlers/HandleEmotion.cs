@@ -4,6 +4,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
         public override Channel PacketChannel => Channel.CHL_C2S;

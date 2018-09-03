@@ -2,6 +2,7 @@ using System;
 using System.Timers;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer
 {
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class GameServerLauncher
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Server _server;
 
         public Game game;

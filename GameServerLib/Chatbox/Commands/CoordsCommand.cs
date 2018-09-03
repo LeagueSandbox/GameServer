@@ -1,12 +1,13 @@
 ﻿using ENet;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class CoordsCommand : ChatCommandBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly PlayerManager _playerManager;
 
         public override string Command => "coords";

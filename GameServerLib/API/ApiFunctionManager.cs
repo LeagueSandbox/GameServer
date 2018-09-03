@@ -11,13 +11,14 @@ using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using log4net;
 
 namespace LeagueSandbox.GameServer.API
 {
     public static class ApiFunctionManager
     {
         private static Game _game;
-        private static ILogger _logger;
+        private static ILog _logger;
 
         public static byte[] StringToByteArray(string hex)
         {

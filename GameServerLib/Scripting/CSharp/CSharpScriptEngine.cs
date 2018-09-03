@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -12,7 +13,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class CSharpScriptEngine
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private Assembly _scriptAssembly;
 
         public CSharpScriptEngine()
@@ -136,7 +137,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
             if (classType == null)
             {
-                _logger.Warning($"Failed to load script: {scriptNamespace}.{scriptClass}");
+                _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
             return (T)Activator.CreateInstance(classType);

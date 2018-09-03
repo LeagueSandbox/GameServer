@@ -2,12 +2,13 @@
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -34,7 +35,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             if (request.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.Warning($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
+                _logger.Warn($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
             }
             else
             {

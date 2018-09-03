@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -31,7 +32,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        protected readonly ILogger Logger;
+        protected readonly ILog Logger;
         public InventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
