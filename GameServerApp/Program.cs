@@ -20,7 +20,6 @@ namespace LeagueSandbox.GameServerApp
             _logger = LoggerProvider.GetLogger();
 
             var parsedArgs = ArgsOptions.Parse(args);
-
             parsedArgs.GameInfoJson = LoadConfig(
                 parsedArgs.GameInfoJsonPath,
                 parsedArgs.GameInfoJson,
@@ -114,25 +113,25 @@ namespace LeagueSandbox.GameServerApp
 
     public class ArgsOptions
     {
-        [Option("config", DefaultValue = "Settings/GameInfo.json")]
+        [Option("config", Default = "Settings/GameInfo.json")]
         public string GameInfoJsonPath { get; set; }
 
-        [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
+        [Option("config-gameserver", Default = "Settings/GameServerSettings.json")]
         public string GameServerSettingsJsonPath { get; set; }
 
-        [Option("config-json", DefaultValue = "")]
+        [Option("config-json", Default = "")]
         public string GameInfoJson { get; set; }
 
-        [Option("config-gameserver-json", DefaultValue = "")]
+        [Option("config-gameserver-json", Default = "")]
         public string GameServerSettingsJson { get; set; }
 
-        [Option("port", DefaultValue = (ushort)5119)]
+        [Option("port", Default = (ushort)5119)]
         public ushort ServerPort { get; set; }
 
         public static ArgsOptions Parse(string[] args)
         {
-            var options = new ArgsOptions();
-            Parser.Default.ParseArguments(args, options);
+            ArgsOptions options = null;
+            Parser.Default.ParseArguments<ArgsOptions>(args).WithParsed(argOptions => options = argOptions);
             return options;
         }
     }
