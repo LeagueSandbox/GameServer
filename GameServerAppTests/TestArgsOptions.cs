@@ -17,19 +17,17 @@ namespace LeagueSandbox.GameServerAppTests
                 "--port", port.ToString(),
                 "--config", config
             };
-            ArgsOptions.Parse(args).WithParsed((options) => {
-                Assert.AreEqual(port, options.ServerPort);
-                Assert.AreEqual(config, options.GameInfoJsonPath);
-            });
+            var options = ArgsOptions.Parse(args);
+            Assert.AreEqual(port, options.ServerPort);
+            Assert.AreEqual(config, options.GameInfoJsonPath);
         }
 
         [TestMethod]
         public void TestDefaults()
         {
-            ArgsOptions.Parse(new string[0]).WithParsed((options) => {
-                Assert.IsTrue(options.ServerPort > 0);
-                Assert.IsFalse(string.IsNullOrEmpty(options.GameInfoJsonPath));
-            });
+            var options = ArgsOptions.Parse(new string[0]);
+            Assert.IsTrue(options.ServerPort > 0);
+            Assert.IsFalse(string.IsNullOrEmpty(options.GameInfoJsonPath));
         }
     }
 }
