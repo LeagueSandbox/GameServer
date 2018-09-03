@@ -19,70 +19,70 @@ namespace LeagueSandbox.GameServerApp
         {
             _logger = LoggerProvider.GetLogger();
 
-            var parsedArgs = ArgsOptions.Parse(args);
+            ArgsOptions.Parse(args).WithParsed((parsedArgs) => {
+                parsedArgs.GameInfoJson = LoadConfig(
+                    parsedArgs.GameInfoJsonPath,
+                    parsedArgs.GameInfoJson,
+                    Encoding.UTF8.GetString(Resources.GameInfo));
 
-            parsedArgs.GameInfoJson = LoadConfig(
-                parsedArgs.GameInfoJsonPath,
-                parsedArgs.GameInfoJson,
-                Encoding.UTF8.GetString(Resources.GameInfo));
+                var gameServerBlowFish = "17BLOhi6KZsTtldTsizvHg==";
+                var gameServerLauncher = new GameServerLauncher(
+                    parsedArgs.ServerPort,
+                    parsedArgs.GameInfoJson,
+                    gameServerBlowFish);
 
-            var gameServerBlowFish = "17BLOhi6KZsTtldTsizvHg==";
-            var gameServerLauncher = new GameServerLauncher(
-                parsedArgs.ServerPort,
-                parsedArgs.GameInfoJson,
-                gameServerBlowFish);
-
-#if DEBUG
-            var configGameServerSettings = GameServerConfig.LoadFromJson(LoadConfig(
-                parsedArgs.GameServerSettingsJsonPath,
-                parsedArgs.GameServerSettingsJson,
-                Encoding.UTF8.GetString(Resources.GameServerSettings)));
-            if (configGameServerSettings.AutoStartClient)
-            {
-                var leaguePath = configGameServerSettings.ClientLocation;
-                if (Directory.Exists(leaguePath))
+    #if DEBUG
+                var configGameServerSettings = GameServerConfig.LoadFromJson(LoadConfig(
+                    parsedArgs.GameServerSettingsJsonPath,
+                    parsedArgs.GameServerSettingsJson,
+                    Encoding.UTF8.GetString(Resources.GameServerSettings)));
+                if (configGameServerSettings.AutoStartClient)
                 {
-                    leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
-                }
-                if (File.Exists(leaguePath))
-                {
-                    var startInfo = new ProcessStartInfo(leaguePath)
+                    var leaguePath = configGameServerSettings.ClientLocation;
+                    if (Directory.Exists(leaguePath))
                     {
-                        Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"",
-                            parsedArgs.ServerPort, gameServerBlowFish),
-                        WorkingDirectory = Path.GetDirectoryName(leaguePath)
-                    };
-
-                    var leagueProcess = Process.Start(startInfo);
-
-                    _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
-
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
-                        Environment.OSVersion.Platform == PlatformID.Win32S ||
-                        Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-                        Environment.OSVersion.Platform == PlatformID.WinCE)
+                        leaguePath = Path.Combine(leaguePath, "League of Legends.exe");
+                    }
+                    if (File.Exists(leaguePath))
                     {
-                        WindowsConsoleCloseDetection.SetCloseHandler((_) =>
+                        var startInfo = new ProcessStartInfo(leaguePath)
                         {
-                            if (!leagueProcess.HasExited)
+                            Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"",
+                                parsedArgs.ServerPort, gameServerBlowFish),
+                            WorkingDirectory = Path.GetDirectoryName(leaguePath)
+                        };
+
+                        var leagueProcess = Process.Start(startInfo);
+
+                        _logger.Info("Launching League of Legends. You can disable this in GameServerSettings.json.");
+
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
+                            Environment.OSVersion.Platform == PlatformID.Win32S ||
+                            Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+                            Environment.OSVersion.Platform == PlatformID.WinCE)
+                        {
+                            WindowsConsoleCloseDetection.SetCloseHandler((_) =>
                             {
-                                leagueProcess.Kill();
-                            }
-                            return true;
-                        });
+                                if (!leagueProcess.HasExited)
+                                {
+                                    leagueProcess.Kill();
+                                }
+                                return true;
+                            });
+                        }
+                    }
+                    else
+                    {
+                        _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
                     }
                 }
                 else
                 {
-                    _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                    _logger.Info("Server is ready, clients can now connect.");
                 }
-            }
-            else
-            {
-                _logger.Info("Server is ready, clients can now connect.");
-            }
-#endif
-            gameServerLauncher.StartNetworkLoop();
+    #endif
+                gameServerLauncher.StartNetworkLoop();
+            });
         }
 
         private static string LoadConfig(string filePath, string currentJsonString, string defaultJsonString)
@@ -114,26 +114,24 @@ namespace LeagueSandbox.GameServerApp
 
     public class ArgsOptions
     {
-        [Option("config", DefaultValue = "Settings/GameInfo.json")]
+        [Option("config", Default = "Settings/GameInfo.json")]
         public string GameInfoJsonPath { get; set; }
 
-        [Option("config-gameserver", DefaultValue = "Settings/GameServerSettings.json")]
+        [Option("config-gameserver", Default = "Settings/GameServerSettings.json")]
         public string GameServerSettingsJsonPath { get; set; }
 
-        [Option("config-json", DefaultValue = "")]
+        [Option("config-json", Default = "")]
         public string GameInfoJson { get; set; }
 
-        [Option("config-gameserver-json", DefaultValue = "")]
+        [Option("config-gameserver-json", Default = "")]
         public string GameServerSettingsJson { get; set; }
 
-        [Option("port", DefaultValue = (ushort)5119)]
+        [Option("port", Default = (ushort)5119)]
         public ushort ServerPort { get; set; }
 
-        public static ArgsOptions Parse(string[] args)
+        public static ParserResult<ArgsOptions> Parse(string[] args)
         {
-            var options = new ArgsOptions();
-            Parser.Default.ParseArguments(args, options);
-            return options;
+            return Parser.Default.ParseArguments<ArgsOptions>(args);
         }
     }
 }
