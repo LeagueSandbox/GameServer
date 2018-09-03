@@ -63,14 +63,14 @@ namespace LeagueSandbox.GameServer.API
             return newTimer;
         }
 
-        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, float removeAfter = -1.0f)
         {
-            return AddBuffHudVisual(buffName, duration, stacks, onto, onto, removeAfter);
+            return AddBuffHudVisual(buffName, duration, stacks, buffType, onto, onto, removeAfter);
         }
 
-        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
         {
-            var b = new Buff(_game, buffName, duration, stacks, onto, from);
+            var b = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
             if (removeAfter >= 0)
             {
@@ -114,9 +114,9 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, int stacks, ObjAiBase onto, ObjAiBase from)
+        public static void AddBuff(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, onto, from);
+            var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
             onto.AddBuff(buff);
             _game.PacketNotifier.NotifyAddBuff(buff);
         }
