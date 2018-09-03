@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
         {
-            _logger.Info($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
+            _logger.Debug($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");
         }
     }

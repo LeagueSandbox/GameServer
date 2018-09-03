@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace LeagueSandbox.GameServerApp.Utility
+namespace LeagueSandbox.GameServerConsole.Utility
 {
     public class WindowsConsoleCloseDetection
     {

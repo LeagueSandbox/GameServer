@@ -33,16 +33,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             switch (request.Id)
             {
                 case Emotions.DANCE:
-                    _logger.Info("Player " + playerName + " is dancing.");
+                    _logger.Debug("Player " + playerName + " is dancing.");
                     break;
                 case Emotions.TAUNT:
-                    _logger.Info("Player " + playerName + " is taunting.");
+                    _logger.Debug("Player " + playerName + " is taunting.");
                     break;
                 case Emotions.LAUGH:
-                    _logger.Info("Player " + playerName + " is laughing.");
+                    _logger.Debug("Player " + playerName + " is laughing.");
                     break;
                 case Emotions.JOKE:
-                    _logger.Info("Player " + playerName + " is joking.");
+                    _logger.Debug("Player " + playerName + " is joking.");
                     break;
             }
 

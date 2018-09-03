@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         _game.NetworkIdManager.GetNewNetId());
                 }
 
-                _game.Start();
+                _game.StartUpdateLoop();
             }
 
             if (_game.IsRunning)

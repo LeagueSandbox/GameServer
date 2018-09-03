@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var request = _game.PacketReader.ReadClickRequest(data);
             var msg = $"Object {_playerManager.GetPeerInfo(peer).Champion.NetId} clicked on {request.TargetNetId}";
-            _logger.Info(msg);
+            _logger.Debug(msg);
 
             return true;
         }
