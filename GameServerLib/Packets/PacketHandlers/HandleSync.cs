@@ -2,12 +2,13 @@
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -27,18 +28,18 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
-            _logger.Info("Current map: " + mapId);
+            _logger.Debug("Current map: " + mapId);
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
             if (request.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.Warning($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
+                _logger.Warn($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
-                _logger.Info("Accepted client version (" + request.Version + ")");
+                _logger.Debug("Accepted client version (" + request.Version + ")");
             }
 
             foreach (var player in _playerManager.GetPlayers())

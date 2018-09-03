@@ -7,13 +7,14 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Maps
 {
     public class Map : IMap
     {
         protected Game _game;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public List<Announce> AnnouncerEvents { get; private set; }
         public NavGrid NavGrid { get; private set; }

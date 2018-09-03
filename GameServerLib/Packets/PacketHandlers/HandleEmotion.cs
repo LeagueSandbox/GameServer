@@ -4,6 +4,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -33,16 +34,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             switch (request.Id)
             {
                 case Emotions.DANCE:
-                    _logger.Info("Player " + playerName + " is dancing.");
+                    _logger.Debug("Player " + playerName + " is dancing.");
                     break;
                 case Emotions.TAUNT:
-                    _logger.Info("Player " + playerName + " is taunting.");
+                    _logger.Debug("Player " + playerName + " is taunting.");
                     break;
                 case Emotions.LAUGH:
-                    _logger.Info("Player " + playerName + " is laughing.");
+                    _logger.Debug("Player " + playerName + " is laughing.");
                     break;
                 case Emotions.JOKE:
-                    _logger.Info("Player " + playerName + " is joking.");
+                    _logger.Debug("Player " + playerName + " is joking.");
                     break;
             }
 

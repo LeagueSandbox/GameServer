@@ -2,6 +2,7 @@
 using System.Numerics;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
@@ -58,7 +59,7 @@ namespace LeagueSandbox.GameServer.Content
     public class SpellData : ISpellData
     {
         private readonly Game _game;
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
 
         public SpellData(Game game)
         {
@@ -244,14 +245,14 @@ namespace LeagueSandbox.GameServer.Content
             try
             {
                 var path = _game.Config.ContentManager.GetSpellDataPath(name);
-                _logger.Info($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
+                _logger.Debug($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
                 var text = File.ReadAllText(Path.GetFullPath(path));
                 file = JsonConvert.DeserializeObject<ContentFile>(text);
             }
 
             catch (ContentNotFoundException)
             {
-                _logger.Warning($"Spell data for {name} was not found.");
+                _logger.Warn($"Spell data for {name} was not found.");
                 return;
             }
 

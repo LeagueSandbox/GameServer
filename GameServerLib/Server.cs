@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using ENet;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer
 {
@@ -11,7 +12,7 @@ namespace LeagueSandbox.GameServer
         private string _blowfishKey;
         private uint _serverHost = Address.IPv4HostAny;
         private string _serverVersion = "0.2.0";
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private Game _game;
         private Config _config;
         private ushort _serverPort { get; }
@@ -32,8 +33,8 @@ namespace LeagueSandbox.GameServer
         {
             var build = $"League Sandbox Build {ServerContext.BuildDateString}";
             Console.Title = build;
-            _logger.Info(build);
-            _logger.Info($"Yorick {_serverVersion}");
+            _logger.Debug(build);
+            _logger.Debug($"Yorick {_serverVersion}");
             _logger.Info($"Game started on port: {_serverPort}");
             _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
         }

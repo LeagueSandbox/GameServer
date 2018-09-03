@@ -2,12 +2,13 @@
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Players;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleKeyCheck : PacketHandlerBase
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private readonly Game _game;
         private readonly PlayerManager _playerManager;
 
@@ -28,7 +29,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if (userId != request.UserId)
             {
-                _logger.Warning("Client has sent wrong blowfish data.");
+                _logger.Warn("Client has sent wrong blowfish data.");
                 return false;
             }
 
@@ -43,7 +44,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if (!player.IsDisconnected)
                         {
-                            _logger.Warning($"Ignoring new player {userId}, already connected!");
+                            _logger.Warn($"Ignoring new player {userId}, already connected!");
                             return false;
                         }
                     }

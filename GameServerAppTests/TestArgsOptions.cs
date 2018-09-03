@@ -1,5 +1,6 @@
 ﻿using LeagueSandbox.GameServerApp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CommandLine;
 
 namespace LeagueSandbox.GameServerAppTests
 {

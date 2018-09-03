@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -12,7 +13,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class CSharpScriptEngine
     {
-        private readonly ILogger _logger;
+        private readonly ILog _logger;
         private Assembly _scriptAssembly;
 
         public CSharpScriptEngine()
@@ -22,7 +23,17 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public bool LoadSubdirectoryScripts(string folder)
         {
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories);
+            var basePath = Path.GetFullPath(folder);
+            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where((string pathString) => {
+                var fileBasePath = Path.GetFullPath(pathString);
+                var trimmedPath = fileBasePath.Remove(0, basePath.Length);
+                string[] directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
+                if (directories.Contains("bin") || directories.Contains("obj"))
+                {
+                    return false;
+                }
+                return true;
+            });
             return Load(new List<string>(allfiles));
         }
 
@@ -33,7 +44,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var treeList = new List<SyntaxTree>();
             Parallel.For(0, scriptLocations.Count, i =>
             {
-                _logger.Info($"Loading script: {scriptLocations[i]}");
+                _logger.Debug($"Loading script: {scriptLocations[i]}");
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
                     // Read the stream to a string, and write the string to the console.
@@ -117,7 +128,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             scriptClass = scriptClass.Replace(" ", "_");
-            _logger.Info("Loading game script for: " + scriptNamespace + ", " + scriptClass);
+            _logger.Debug("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
             {
                 return default(T);
@@ -126,7 +137,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
             if (classType == null)
             {
-                _logger.Warning($"Failed to load script: {scriptNamespace}.{scriptClass}");
+                _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
             return (T)Activator.CreateInstance(classType);

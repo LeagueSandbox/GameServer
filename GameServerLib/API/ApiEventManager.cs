@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 /*
  * Possible Events:
@@ -54,7 +55,7 @@ namespace LeagueSandbox.GameServer.API
     public static class ApiEventManager
     {
         private static Game _game;
-        private static ILogger _logger;
+        private static ILog _logger;
 
         internal static void SetGame(Game game)
         {
