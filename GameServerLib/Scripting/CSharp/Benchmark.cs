@@ -29,14 +29,14 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             stopwatch.Stop();
             var t = Task.Factory.StartNew(() =>
             {
-                _logger.Info($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000 / stopwatch.Elapsed.TotalMilliseconds}");
+                _logger.Debug($"{label} Elapsed(MS) = {stopwatch.Elapsed.TotalMilliseconds} - FPS: {1000 / stopwatch.Elapsed.TotalMilliseconds}");
             });
             _map.Remove(label);
         }
 
         public void Log(string text)
         {
-            var t = Task.Factory.StartNew(() => _logger.Info(text));
+            var t = Task.Factory.StartNew(() => _logger.Debug(text));
         }
     }
 }

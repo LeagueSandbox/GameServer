@@ -44,6 +44,16 @@ namespace LeagueSandbox.GameServer.API
             _logger.Info(string.Format(format, args));
         }
 
+        public static void LogDebug(string format)
+        {
+            _logger.Debug(format);
+        }
+
+        public static void LogDebug(string format, params object[] args)
+        {
+            _logger.Debug(string.Format(format, args));
+        }
+
         public static GameScriptTimer CreateTimer(float duration, Action callback)
         {
             var newTimer = new GameScriptTimer(duration, callback);

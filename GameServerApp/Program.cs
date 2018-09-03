@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServerApp
                 }
                 else
                 {
-                    _logger.Info("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
+                    _logger.Warning("Unable to find League of Legends.exe. Check the GameServerSettings.json settings and your League location.");
                 }
             }
             else

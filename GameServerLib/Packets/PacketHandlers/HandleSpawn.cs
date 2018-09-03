@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(Peer peer, byte[] data)
         {
              _game.PacketNotifier.NotifySpawnStart(peer);
-            _logger.Info("Spawning map");
+            _logger.Debug("Spawning map");
 
             var playerId = 0;
             foreach (var p in _playerManager.GetPlayers())

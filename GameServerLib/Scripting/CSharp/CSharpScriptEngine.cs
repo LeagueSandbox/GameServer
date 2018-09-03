@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var treeList = new List<SyntaxTree>();
             Parallel.For(0, scriptLocations.Count, i =>
             {
-                _logger.Info($"Loading script: {scriptLocations[i]}");
+                _logger.Debug($"Loading script: {scriptLocations[i]}");
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
                     // Read the stream to a string, and write the string to the console.
@@ -127,7 +127,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             scriptClass = scriptClass.Replace(" ", "_");
-            _logger.Info("Loading game script for: " + scriptNamespace + ", " + scriptClass);
+            _logger.Debug("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
             {
                 return default(T);
