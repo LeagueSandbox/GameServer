@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private string GetPackagePath(string packageName)
         {
-            return $"{_contentPath}/Data/{packageName}";
+            return $"{_contentPath}/{packageName}";
         }
 
         private string GetContentSetPath(string packageName, string contentType)

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json.Linq;
 
-namespace LeagueSandbox.GameServerApp.Logic
+namespace LeagueSandbox.GameServerConsole.Logic
 {
     public class GameServerConfig
     {

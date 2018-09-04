@@ -5,12 +5,12 @@ using System.Text;
 using CommandLine;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServerApp.Logic;
-using LeagueSandbox.GameServerApp.Properties;
-using LeagueSandbox.GameServerApp.Utility;
+using LeagueSandbox.GameServerConsole.Logic;
+using LeagueSandbox.GameServerConsole.Properties;
+using LeagueSandbox.GameServerConsole.Utility;
 using log4net;
 
-namespace LeagueSandbox.GameServerApp
+namespace LeagueSandbox.GameServerConsole
 {
     internal class Program
     {
