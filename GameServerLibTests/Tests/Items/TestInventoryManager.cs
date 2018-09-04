@@ -9,7 +9,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
     public class InventoryManagerTests
     {
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestAddAndGetItem()
         {
             var itemManager = new ItemManager();
@@ -48,7 +47,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestItemStacking()
         {
             var itemManager = new ItemManager();
@@ -89,7 +87,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestSetExtraItem()
         {
             var itemManager = new ItemManager();
@@ -115,7 +112,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestGetItemSlot()
         {
             var itemManager = new ItemManager();
@@ -147,7 +143,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
             var itemManager = new ItemManager();
@@ -173,7 +168,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestSwapItems()
         {
             var itemManager = new ItemManager();
@@ -224,7 +218,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestGetAvailableItems()
         {
             var itemManager = new ItemManager();
