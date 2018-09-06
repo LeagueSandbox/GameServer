@@ -182,7 +182,7 @@ namespace PacketDefinitions420
         public UseObjectRequest ReadUseObjectRequest(byte[] data)
         {
             var rq = new UseObject(data);
-            return new UseObjectRequest(rq.TargetNetId);
+            return new UseObjectRequest(rq.NetId, rq.TargetNetId);
         }
 
         public SynchVersionRequest ReadSynchVersionRequest(byte[] data)

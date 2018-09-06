@@ -2,10 +2,12 @@
 {
     public class UseObjectRequest
     {
+        public uint NetId { get; }
         public uint TargetNetId { get; }
 
-        public UseObjectRequest(uint targetNetId)
+        public UseObjectRequest(uint netId, uint targetNetId)
         {
+            NetId = netId;
             TargetNetId = targetNetId;
         }
     }

@@ -6,7 +6,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
     public class UseObject
     {
         private PacketCmd _cmd;
-        private int _netId;
+        public uint NetId;
         public uint TargetNetId; // netId of the object used
 
         public UseObject(byte[] data)
@@ -14,7 +14,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
             using (var reader = new BinaryReader(new MemoryStream(data)))
             {
                 _cmd = (PacketCmd)reader.ReadByte();
-                _netId = reader.ReadInt32();
+                NetId = reader.ReadUInt32();
                 TargetNetId = reader.ReadUInt32();
             }
         }
