@@ -7,8 +7,8 @@
 
         public SelectObjectRequest(uint client, long netId, uint versionNo, ulong checkId)
         {
-            ClientId = ClientId;
-            netId = NetIdSelected;
+            ClientId = client;
+            NetIdSelected = netId;
         }
     }
 }
