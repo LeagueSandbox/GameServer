@@ -1,3 +1,4 @@
-[submodule "LeagueSandbox-Default"]
-	path = LeagueSandbox-Default
+[submodule "Content/LeagueSandbox-Default"]
+	path = Content/LeagueSandbox-Default
 	url = https://github.com/LeagueSandbox/LeagueSandbox-Default.git
+	branch = indev
