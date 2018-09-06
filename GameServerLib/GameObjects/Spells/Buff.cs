@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto, ObjAiBase from)
+        public Buff(Game game, string buffName, float dur, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from)
         {
             _game = game;
             _scriptEngine = game.ScriptEngine;
@@ -41,12 +41,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
-            BuffType = BuffType.AURA;
+            BuffType = buffType;
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, ObjAiBase onto)
-               : this(game, buffName, dur, stacks, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, int stacks, BuffType buffType, ObjAiBase onto)
+               : this(game, buffName, dur, stacks, buffType, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
         public void Update(float diff)
