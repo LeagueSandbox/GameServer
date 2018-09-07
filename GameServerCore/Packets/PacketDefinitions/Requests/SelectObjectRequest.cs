@@ -5,7 +5,7 @@
         public uint ClientId { get; }
         public uint NetIdSelected { get; }
 
-        public SelectObjectRequest(uint client, long netId, uint versionNo, ulong checkId)
+        public SelectObjectRequest(uint client, uint netId)
         {
             ClientId = client;
             NetIdSelected = netId;
