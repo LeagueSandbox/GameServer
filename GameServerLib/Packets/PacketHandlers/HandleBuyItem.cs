@@ -1,8 +1,8 @@
 ﻿using ENet;
 using GameServerCore.Packets.Enums;
-using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
