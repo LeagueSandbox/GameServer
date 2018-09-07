@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
 {

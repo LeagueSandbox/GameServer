@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
-using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
 {
