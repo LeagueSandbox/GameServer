@@ -1,3 +1,4 @@
+using System.Linq;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Items
@@ -15,6 +16,26 @@ namespace LeagueSandbox.GameServer.Items
             _game = game;
         }
 
+        public bool ItemSellRequest(byte slotId)
+        {
+            var inventory = _owner.Inventory;
+            var i = inventory.GetItem(slotId);
+            if (i == null)
+            {
+                return false;
+            }
+
+            var sellPrice = i.TotalPrice * i.ItemType.SellBackModifier;
+            _owner.Stats.Gold += sellPrice;
+
+            if (i.ItemType.MaxStack > 1)
+            {
+                i.DecrementStackSize();
+            }
+            RemoveItem(i, slotId, i.StackSize);
+            return true;
+        }
+
         public bool ItemBuyRequest(int itemId)
         {
             var itemTemplate = _game.ItemManager.SafeGetItemType(itemId);
@@ -30,7 +51,7 @@ namespace LeagueSandbox.GameServer.Items
 
             if (ownedItems.Count != 0)
             {
-                ownedItems.ForEach(item => price -= item.ItemType.TotalPrice);
+                price -= ownedItems.Sum(item => item.ItemType.TotalPrice);
                 if (stats.Gold < price)
                 {
                     return false;
@@ -38,7 +59,7 @@ namespace LeagueSandbox.GameServer.Items
 
                 foreach (var item in ownedItems)
                 {
-                    RemoveItem(item);
+                    RemoveItem(item, inventory.GetItemSlot(item));
                 }
 
                 AddItem(itemTemplate);
@@ -52,12 +73,12 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(Item item)
+        private void RemoveItem(Item item, int slotId, byte stackSize = 0)
         {
             var inventory = _owner.Inventory;
             _owner.Stats.RemoveModifier(item.ItemType);
-            _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
-            _owner.RemoveSpell((byte)(inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET));
+            _game.PacketNotifier.NotifyRemoveItem(_owner, (byte)slotId, stackSize);
+            _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
             inventory.RemoveItem(item);
         }
 

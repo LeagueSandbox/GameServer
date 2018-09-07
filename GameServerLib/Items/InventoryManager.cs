@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Items
             return _inventory.AddItem(item);
         }
 
-        public Item SetExtraItem(byte slot, ItemType item)
+        public Item SetExtraItem(int slot, ItemType item)
         {
             return _inventory.SetExtraItem(slot, item);
         }
@@ -40,9 +40,9 @@ namespace LeagueSandbox.GameServer.Items
             _inventory.RemoveItem(item);
         }
 
-        public byte GetItemSlot(Item item)
+        public int GetItemSlot(Item item)
         {
-            return (byte)_inventory.GetItemSlot(item);
+            return _inventory.GetItemSlot(item);
         }
 
         public void SwapItems(int slot1, int slot2)
@@ -91,12 +91,12 @@ namespace LeagueSandbox.GameServer.Items
             return _inventory.Items.GetEnumerator();
         }
 
-        byte IInventoryManager.GetItemSlot(IItem item)
+        int IInventoryManager.GetItemSlot(IItem item)
         {
             return GetItemSlot((Item)item);
         }
 
-        IItem IInventoryManager.SetExtraItem(byte slot, IItemType item)
+        IItem IInventoryManager.SetExtraItem(int slot, IItemType item)
         {
             return SetExtraItem(slot, (ItemType)item);
         }
