@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26020.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerApp", "GameServerApp\GameServerApp.csproj", "{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerConsole", "GameServerConsole\GameServerConsole.csproj", "{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerAppTests", "GameServerAppTests\GameServerAppTests.csproj", "{77FE4FF5-3B1C-42A5-B56F-4CAD91013410}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerConsoleTests", "GameServerConsoleTests\GameServerConsoleTests.csproj", "{77FE4FF5-3B1C-42A5-B56F-4CAD91013410}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLib", "GameServerLib\GameServerLib.csproj", "{CB004023-B938-4EC6-B036-29EE2F55CFA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLibTests", "GameServerLibTests\GameServerLibTests.csproj", "{56E885A9-FC37-4ABB-B9CC-822DAC13CC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "GameServerApp\Content\Data\LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "Content/LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packets", "Packets", "{2576843A-B620-4B3A-8272-E3DCBBB17AD5}"
 EndProject

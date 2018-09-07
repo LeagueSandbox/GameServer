@@ -9,11 +9,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
     public class InventoryManagerTests
     {
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestAddAndGetItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var inventoryManager = InventoryManager.CreateInventory();
 
@@ -48,11 +47,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestItemStacking()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -89,11 +87,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestSetExtraItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -115,11 +112,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestGetItemSlot()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -147,11 +143,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestRemoveItem()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -173,11 +168,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestSwapItems()
         {
             var itemManager = new ItemManager();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 
@@ -224,12 +218,11 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         }
 
         [TestMethod]
-        [DeploymentItem("Content", "Content")]
         public void TestGetAvailableItems()
         {
             var itemManager = new ItemManager();
             itemManager.ResetItems();
-            itemManager.LoadItems("Content");
+            itemManager.LoadItems("../../../Content");
 
             var manager = InventoryManager.CreateInventory();
 

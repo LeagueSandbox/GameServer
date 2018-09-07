@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Content
         public void LoadItems(string contentPath)
         {
             var itemContentCollection = ItemContentCollection.LoadItemsFrom(
-                $"{contentPath}/Data/LeagueSandbox-Default/Items"
+                $"{contentPath}/LeagueSandbox-Default/Items"
             );
 
             foreach (var entry in itemContentCollection)

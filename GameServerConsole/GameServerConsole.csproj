@@ -7,8 +7,8 @@
     <ProjectGuid>{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeagueSandbox.GameServerApp</RootNamespace>
-    <AssemblyName>GameServerApp</AssemblyName>
+    <RootNamespace>LeagueSandbox.GameServerConsole</RootNamespace>
+    <AssemblyName>GameServerConsole</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -103,7 +103,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerApp\Settings\.</_SettingsSourceDirectory>
+    <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
     <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
     <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
     <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>

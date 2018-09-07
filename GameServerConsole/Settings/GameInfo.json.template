@@ -54,6 +54,6 @@
         "COOLDOWNS_ENABLED": false,
         "CHEATS_ENABLED": true,
         "MINION_SPAWNS_ENABLED": false,
-        "CONTENT_PATH": "../../Content"
+        "CONTENT_PATH": "../../../Content"
     }
 }
