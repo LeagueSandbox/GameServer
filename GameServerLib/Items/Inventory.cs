@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Items
             return AddNewItem(item);
         }
 
-        public Item SetExtraItem(byte slot, ItemType item)
+        public Item SetExtraItem(int slot, ItemType item)
         {
             if (slot < BASE_INVENTORY_SIZE)
             {
@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Items
             return SetItem(slot, item);
         }
 
-        private Item SetItem(byte slot, ItemType item)
+        private Item SetItem(int slot, ItemType item)
         {
             _items[slot] = Item.CreateFromType(this, item);
             return _items[slot];
@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                return SetItem((byte)i, item);
+                return SetItem(i, item);
             }
 
             return null;
