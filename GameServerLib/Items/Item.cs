@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Items
     public class Item : IItem
     {
         public byte StackSize { get; private set; }
-        public int TotalPrice { get; private set; }
+        public int TotalPrice => ItemType.TotalPrice;
         public ItemType ItemType { get; private set; }
 
         IItemType IItem.ItemType => ItemType;

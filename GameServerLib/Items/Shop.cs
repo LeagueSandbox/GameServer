@@ -1,6 +1,4 @@
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Content;
-using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -29,43 +27,53 @@ namespace LeagueSandbox.GameServer.Items
             var inventory = _owner.Inventory;
             var price = itemTemplate.TotalPrice;
             var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe);
-            Item i;
 
-            if (ownedItems.Count == 0)
-            {
-                if (stats.Gold < price || (i = inventory.AddItem(itemTemplate)) == null)
-                {
-                    return false;
-                }
-            }
-            else
+            if (ownedItems.Count != 0)
             {
                 ownedItems.ForEach(item => price -= item.ItemType.TotalPrice);
                 if (stats.Gold < price)
                 {
                     return false;
                 }
-                
+
                 foreach (var item in ownedItems)
                 {
-                    stats.RemoveModifier(item.ItemType);
-                    _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
-                    _owner.RemoveSpell((byte)(inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET));
-                    inventory.RemoveItem(item);
+                    RemoveItem(item);
                 }
 
-                i = inventory.AddItem(itemTemplate);
+                AddItem(itemTemplate);
+            }
+            else if (stats.Gold < price || !AddItem(itemTemplate))
+            {
+                return false;
             }
             
             stats.Gold -= price;
-            stats.AddModifier(itemTemplate);
-            _game.PacketNotifier.NotifyItemBought(_owner, i);
+            return true;
+        }
 
+        private void RemoveItem(Item item)
+        {
+            var inventory = _owner.Inventory;
+            _owner.Stats.RemoveModifier(item.ItemType);
+            _game.PacketNotifier.NotifyRemoveItem(_owner, inventory.GetItemSlot(item), 0);
+            _owner.RemoveSpell((byte)(inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET));
+            inventory.RemoveItem(item);
+        }
+
+        private bool AddItem(ItemType itemType)
+        {
+            var i = _owner.Inventory.AddItem(itemType);
+            if (i == null)
+            {
+                return false;
+            }
+            _owner.Stats.AddModifier(itemType);
+            _game.PacketNotifier.NotifyItemBought(_owner, i);
             if (!string.IsNullOrEmpty(i.ItemType.SpellName))
             {
-                _owner.SetSpell(i.ItemType.SpellName, (byte)(inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+                _owner.SetSpell(i.ItemType.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
             }
-
             return true;
         }
 

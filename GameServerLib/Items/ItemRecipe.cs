@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemRecipe
     {
-        private ItemType _owner;
+        private readonly ItemType _itemType;
         private ItemType[] _items;
         private int _totalPrice;
         private ItemManager _itemManager;
@@ -23,9 +23,9 @@ namespace LeagueSandbox.GameServer.Items
             }
         }
 
-        private ItemRecipe(ItemType owner, ItemManager manager)
+        private ItemRecipe(ItemType itemType, ItemManager manager)
         {
-            _owner = owner;
+            _itemType = itemType;
             _totalPrice = -1;
             _itemManager = manager;
         }
@@ -45,11 +45,11 @@ namespace LeagueSandbox.GameServer.Items
             // TODO: Figure out how to refactor this.
             _items = new[]
             {
-                itemManager.SafeGetItemType(_owner.RecipeItem1),
-                itemManager.SafeGetItemType(_owner.RecipeItem2),
-                itemManager.SafeGetItemType(_owner.RecipeItem3),
-                itemManager.SafeGetItemType(_owner.RecipeItem4)
-            };
+                itemManager.SafeGetItemType(_itemType.RecipeItem1),
+                itemManager.SafeGetItemType(_itemType.RecipeItem2),
+                itemManager.SafeGetItemType(_itemType.RecipeItem3),
+                itemManager.SafeGetItemType(_itemType.RecipeItem4)
+            }.Where(i => i != null).ToArray();
         }
 
         private void FindPrice()
@@ -57,13 +57,10 @@ namespace LeagueSandbox.GameServer.Items
             _totalPrice = 0;
             foreach (var item in GetItems())
             {
-                if (item != null)
-                {
-                    _totalPrice += item.TotalPrice;
-                }
+                _totalPrice += item.TotalPrice;
             }
 
-            _totalPrice += _owner.Price;
+            _totalPrice += _itemType.Price;
         }
 
         public static ItemRecipe FromItemType(ItemType type, ItemManager manager)
