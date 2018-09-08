@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Game settings files
+GameServerApp/Settings/
+
 # User-specific files
 *.suo
 *.user
@@ -306,6 +309,6 @@ OpenCover/
 
 # Custom stuff
 GameServer/Settings/GameInfo.json
-GameServerApp/Settings/GameInfo.json
-GameServerApp/Settings/GameServerSettings.json
+GameServerConsole/Settings/GameInfo.json
+GameServerConsole/Settings/GameServerSettings.json
 MigrationBackup/

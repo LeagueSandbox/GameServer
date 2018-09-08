@@ -3,11 +3,14 @@
     public class CastSpellRequest
     {
         public int NetId { get; }
+        // TODO: use Spell class instead of the slot
         public byte SpellSlot { get; }
+        // TODO: change to 2 Vector2D, start and end
         public float X { get; }
         public float Y { get; }
         public float X2 { get; }
         public float Y2 { get; }
+        // TODO: change type to IAttackableUnit
         public uint TargetNetId { get; }
 
         public CastSpellRequest(int netId, byte spellSlot, float x, float y, float x2, float y2, uint targetNetId)

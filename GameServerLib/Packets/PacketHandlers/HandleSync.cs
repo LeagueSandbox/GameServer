@@ -1,7 +1,7 @@
-﻿using ENet;
-using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
+using GameServerCore;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly ILog _logger;
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SYNCH_VERSION;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadSynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
@@ -44,14 +44,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             foreach (var player in _playerManager.GetPlayers())
             {
-                if (player.Item1 == peer.Address.port)
+                if (player.Item1 == userId)
                 {
                     player.Item2.IsMatchingVersion = versionMatch;
                     break;
                 }
             }
 
-             _game.PacketNotifier.NotifySynchVersion(peer, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
+             _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
                 mapId);
 
             return true;

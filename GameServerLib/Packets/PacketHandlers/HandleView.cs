@@ -1,5 +1,5 @@
-﻿using ENet;
-using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -15,10 +15,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadViewRequest(data);
-             _game.PacketNotifier.NotifyViewResponse(peer, request);
+             _game.PacketNotifier.NotifyViewResponse(userId, request);
             return true;
         }
     }

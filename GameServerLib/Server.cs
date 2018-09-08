@@ -1,16 +1,14 @@
-﻿using System;
+﻿using LeagueSandbox.GameServer.Logging;
+using log4net;
+using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
-using ENet;
-using LeagueSandbox.GameServer.Logging;
-using log4net;
 
 namespace LeagueSandbox.GameServer
 {
     internal class Server : IDisposable
     {
         private string _blowfishKey;
-        private uint _serverHost = Address.IPv4HostAny;
         private string _serverVersion = "0.2.0";
         private readonly ILog _logger;
         private Game _game;
@@ -36,12 +34,12 @@ namespace LeagueSandbox.GameServer
             _logger.Debug(build);
             _logger.Debug($"Yorick {_serverVersion}");
             _logger.Info($"Game started on port: {_serverPort}");
-            _game.Initialize(new Address(_serverHost, _serverPort), _blowfishKey, _config);
+            _game.Initialize(_serverPort, _blowfishKey, _config);
         }
 
         public void StartNetworkLoop()
         {
-            _game.NetLoop();
+            _game.GameLoop();
         }
 
         public void Dispose()

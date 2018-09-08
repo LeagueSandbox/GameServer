@@ -1,12 +1,11 @@
-﻿using ENet;
+﻿using GameServerCore;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class InhibCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "inhib";
         public override string Syntax => $"{Command}";
@@ -17,9 +16,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var sender = _playerManager.GetPeerInfo(peer);
+            var sender = _playerManager.GetPeerInfo(userId);
             var min = new Monster(
                 Game,
                 sender.Champion.X,

@@ -15,7 +15,6 @@ namespace GameServerCore.Packets.Interfaces
         CursorPositionOnWorldRequest ReadCursorPositionOnWorldRequest(byte[] data);
         EmotionPacketRequest ReadEmotionPacketRequest(byte[] data);
         HeartbeatRequest ReadHeartbeatRequest(byte[] data);
-        KeyCheckRequest ReadKeyCheckRequest(byte[] data);
         PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data);
         MovementRequest ReadMovementRequest(byte[] data);
         QuestClickedRequest ReadQuestClickedRequest(byte[] data);

@@ -1,11 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SpeedCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "speed";
         public override string Syntax => $"{Command} speed";
@@ -16,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -27,7 +26,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (float.TryParse(split[1], out var speed))
             {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.MoveSpeed.FlatBonus += speed;
+                _playerManager.GetPeerInfo(userId).Champion.Stats.MoveSpeed.FlatBonus += speed;
             }
             else
             {
