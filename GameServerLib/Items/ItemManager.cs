@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Items
             _itemTypes.Clear();
         }
 
-        public void LoadItems(ItemContentCollection contentCollection)
+        public void AddItems(ItemContentCollection contentCollection)
         {
             foreach (var entry in contentCollection)
             {

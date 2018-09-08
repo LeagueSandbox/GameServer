@@ -271,6 +271,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemManager.cs" />
     <Compile Include="Items\ItemRecipe.cs" />
+    <Compile Include="Items\ItemSlot.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />

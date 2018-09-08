@@ -2,10 +2,10 @@
 {
     public interface IInventoryManager
     {
-        IItem GetItem(int slot);
-        void RemoveItem(int slot);
+        IItem GetItem(byte slot);
+        void RemoveItem(byte slot);
         int GetItemSlot(IItem item);
-        IItem SetExtraItem(int slot, IItemType item);
-        void SwapItems(int slot1, int slot2);
+        IItem SetExtraItem(byte slot, IItemType item);
+        void SwapItems(byte slot1, byte slot2);
     }
 }

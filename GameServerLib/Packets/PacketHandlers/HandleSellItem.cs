@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var request = _game.PacketReader.ReadSellItemRequest(data);
             var champion = (Champion)_playerManager.GetPeerInfo(peer).Champion;
-            return champion.Shop.ItemSellRequest(request.SlotId);
+            return champion.Shop.HandleItemSellRequest(request.SlotId);
         }
     }
 }

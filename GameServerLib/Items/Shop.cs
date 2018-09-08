@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Items
             _game = game;
         }
 
-        public bool ItemSellRequest(byte slotId)
+        public bool HandleItemSellRequest(byte slotId)
         {
             var inventory = _owner.Inventory;
             var i = inventory.GetItem(slotId);
@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public bool ItemBuyRequest(int itemId)
+        public bool HandleItemBuyRequest(int itemId)
         {
             var itemTemplate = _game.ItemManager.SafeGetItemType(itemId);
             if (itemTemplate == null)
@@ -73,12 +73,12 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(Item item, int slotId, byte stackSize = 0)
+        private void RemoveItem(Item item, byte slotId, byte stackSize = 0)
         {
             var inventory = _owner.Inventory;
             _owner.Stats.RemoveModifier(item.ItemType);
-            _game.PacketNotifier.NotifyRemoveItem(_owner, (byte)slotId, stackSize);
-            _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
+            _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, stackSize);
+            _owner.RemoveSpell(slotId + ITEM_ACTIVE_OFFSET);
             inventory.RemoveItem(item);
         }
 
@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Items
             _game.PacketNotifier.NotifyItemBought(_owner, i);
             if (!string.IsNullOrEmpty(i.ItemType.SpellName))
             {
-                _owner.SetSpell(i.ItemType.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+                _owner.SetSpell(i.ItemType.SpellName, _owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET, true);
             }
             return true;
         }

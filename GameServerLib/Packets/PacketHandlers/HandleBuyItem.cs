@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var request = _game.PacketReader.ReadBuyItemRequest(data);
             var champion = (Champion)_playerManager.GetPeerInfo(peer).Champion;
-            return champion.Shop.ItemBuyRequest(request.ItemId);
+            return champion.Shop.HandleItemBuyRequest(request.ItemId);
         }
     }
 }
