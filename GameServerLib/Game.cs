@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using ENet;
 using GameServerCore;
@@ -20,6 +21,7 @@ using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
+using Newtonsoft.Json.Linq;
 using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
@@ -51,6 +53,8 @@ namespace LeagueSandbox.GameServer
         public IPacketHandlerManager PacketHandlerManager { get; private set; }
         public IPacketReader PacketReader { get; private set; }
         public Config Config { get; protected set; }
+        public MapSpawns MapSpawns { get; private set; }
+        public ContentManager ContentManager { get; private set; }
         protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
@@ -79,10 +83,31 @@ namespace LeagueSandbox.GameServer
             ScriptEngine = new CSharpScriptEngine();
         }
 
-        public void Initialize(Address address, string blowfishKey, Config config)
+        public void Initialize(Address address, string blowfishKey, Config config, Action readyCallback)
         {
             _logger.Info("Loading Config.");
             Config = config;
+
+            // Load items
+            ItemManager.LoadItems(Config.ContentPath, Config.GameConfig.GameMode);
+
+            // Read spawns info
+            ContentManager = ContentManager.LoadGameMode(this, Config.GameConfig.GameMode, Config.ContentPath);
+            var mapPath = ContentManager.GetMapDataPath(Config.GameConfig.Map);
+            var mapData = JObject.Parse(File.ReadAllText(mapPath));
+            var spawns = mapData.SelectToken("spawns");
+
+            MapSpawns = new MapSpawns();
+            foreach (JProperty teamSpawn in spawns)
+            {
+                var team = teamSpawn.Name;
+                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
+                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
+                {
+                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
+                    MapSpawns.SetSpawns(team, playerSpawns, i);
+                }
+            }
 
             _gameScriptTimers = new List<GameScriptTimer>();
 
@@ -129,6 +154,7 @@ namespace LeagueSandbox.GameServer
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             _logger.Info("Game is ready.");
+            readyCallback();
         }
 
         public bool LoadScripts()
@@ -142,57 +168,61 @@ namespace LeagueSandbox.GameServer
             _lastMapDurationWatch.Start();
             while (!SetToExit)
             {
-                while (_server.Service(0, out var enetEvent) > 0)
+                lock (this)
                 {
-                    switch (enetEvent.Type)
+                    while (_server.Service(0, out var enetEvent) > 0)
                     {
-                        case EventType.Connect:
+                        switch (enetEvent.Type)
                         {
-                            // Set some defaults
-                            enetEvent.Peer.Mtu = PEER_MTU;
-                            enetEvent.Data = 0;
+                            case EventType.Connect:
+                                {
+                                    // Set some defaults
+                                    enetEvent.Peer.Mtu = PEER_MTU;
+                                    enetEvent.Data = 0;
+                                }
+                                break;
+                            case EventType.Receive:
+                                {
+                                    var channel = (Channel)enetEvent.ChannelID;
+                                    PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
+                                    // Clean up the packet now that we're done using it.
+                                    enetEvent.Packet.Dispose();
+                                }
+                                break;
+                            case EventType.Disconnect:
+                                {
+                                    HandleDisconnect(enetEvent.Peer);
+                                }
+                                break;
                         }
-                        break;
-                        case EventType.Receive:
-                        {
-                            var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
-                            // Clean up the packet now that we're done using it.
-                            enetEvent.Packet.Dispose();
-                        }
-                        break;
-                        case EventType.Disconnect:
-                        {
-                            HandleDisconnect(enetEvent.Peer);
-                        }
-                        break;
                     }
-                }
 
-                if (IsPaused)
-                {
-                    _lastMapDurationWatch.Stop();
-                    _pauseTimer.Enabled = true;
-                    if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                    if (IsPaused)
                     {
-                        PacketHandlerManager.UnpauseGame();
-                        _autoResumeCheck = true;
+                        _lastMapDurationWatch.Stop();
+                        _pauseTimer.Enabled = true;
+                        if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                        {
+                            PacketHandlerManager.UnpauseGame();
+                            _autoResumeCheck = true;
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
-                {
-                    var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    _lastMapDurationWatch.Restart();
-                    if (IsRunning)
+                    if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                     {
-                        Update((float)sinceLastMapTime);
-
+                        var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                        _lastMapDurationWatch.Restart();
+                        if (IsRunning)
+                        {
+                            Update((float)sinceLastMapTime);
+                        }
                     }
                 }
                 Thread.Sleep(1);
             }
+            _logger.Info("Closing server.");
+            _server.Dispose();
         }
 
         public void Update(float diff)
@@ -227,14 +257,22 @@ namespace LeagueSandbox.GameServer
             PlayersReady++;
         }
 
-        public void Start()
+        public void StartUpdateLoop()
         {
             IsRunning = true;
         }
 
-        public void Stop()
+        public void StopUpdateLoop()
         {
             IsRunning = false;
+        }
+
+        public void Stop()
+        {
+            lock (this)
+            {
+                SetToExit = true;
+            }
         }
 
         public void Pause()

@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                 _game.PacketNotifier.NotifyGameStart();
+                _game.PacketNotifier.NotifyGameStart();
 
                 foreach (var player in _playerManager.GetPlayers())
                 {
@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";
-                         _game.PacketNotifier.NotifyDebugMessage(peer, msg);
+                        _game.PacketNotifier.NotifyDebugMessage(peer, msg);
                     }
 
                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         _game.NetworkIdManager.GetNewNetId());
                 }
 
-                _game.Start();
+                _game.StartUpdateLoop();
             }
 
             if (_game.IsRunning)
@@ -67,14 +67,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                             _game.PacketNotifier.NotifyHeroSpawn2(peer, player.Item2.Champion);
+                            _game.PacketNotifier.NotifyHeroSpawn2(peer, player.Item2.Champion);
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */
-                             _game.PacketNotifier.NotifyLevelUp(player.Item2.Champion);
+                            _game.PacketNotifier.NotifyLevelUp(player.Item2.Champion);
                             if (_game.IsPaused)
                             {
-                                 _game.PacketNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);
+                                _game.PacketNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);
                             }
                         }
                     }
@@ -83,8 +83,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;
-                     _game.PacketNotifier.NotifyGameTimer(peer, gameTime);
-                     _game.PacketNotifier.NotifyGameTimerUpdate(peer, gameTime);
+                    _game.PacketNotifier.NotifyGameTimer(peer, gameTime);
+                    _game.PacketNotifier.NotifyGameTimerUpdate(peer, gameTime);
 
                     return true;
                 }
@@ -95,8 +95,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;
-                     _game.PacketNotifier.NotifyGameTimer(p.Item2.Peer, gameTime);
-                     _game.PacketNotifier.NotifyGameTimerUpdate(p.Item2.Peer, gameTime);
+                    _game.PacketNotifier.NotifyGameTimer(p.Item2.Peer, gameTime);
+                    _game.PacketNotifier.NotifyGameTimerUpdate(p.Item2.Peer, gameTime);
                 }
             }
 

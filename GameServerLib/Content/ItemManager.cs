@@ -40,10 +40,10 @@ namespace LeagueSandbox.GameServer.Content
             _itemTypes.Clear();
         }
 
-        public void LoadItems(string contentPath)
+        public void LoadItems(string contentPath, string gameMode)
         {
             var itemContentCollection = ItemContentCollection.LoadItemsFrom(
-                $"{contentPath}/LeagueSandbox-Default/Items"
+                $"{contentPath}/{gameMode}/Items"
             );
 
             foreach (var entry in itemContentCollection)

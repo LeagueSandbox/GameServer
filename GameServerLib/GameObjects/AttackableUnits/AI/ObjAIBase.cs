@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
-            CharData = _game.Config.ContentManager.GetCharData(Model);
+            CharData = _game.ContentManager.GetCharData(Model);
             Stats.LoadStats(CharData);
 
             if (CharData.PathfindingCollisionRadius > 0)
@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentHealth = stats.HealthPoints.Total;
             if (!string.IsNullOrEmpty(model))
             {
-                AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
+                AaSpellData = _game.ContentManager.GetSpellData(model + "BasicAttack");
                 AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
