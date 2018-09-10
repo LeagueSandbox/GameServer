@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Inventory = InventoryManager.CreateInventory();
             Shop = Shop.CreateShop(this, game);
 
-            Stats.Gold = 475.0f;
+            Stats.Gold = _game.Map.MapGameScript.StartingGold;
             Stats.GoldPerSecond.BaseValue = _game.Map.MapGameScript.GoldPerSecond;
             Stats.IsGeneratingGold = false;
 

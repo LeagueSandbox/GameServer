@@ -12,6 +12,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         List<int> ExpToLevelUp { get; set; }
         float GoldPerSecond { get; set; }
+        float StartingGold { get; set; }
         bool HasFirstBloodHappened { get; set; }
         bool IsKillGoldRewardReductionActive { get; set; }
         int BluePillId { get; set; }
