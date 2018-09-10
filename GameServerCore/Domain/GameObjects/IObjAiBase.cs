@@ -13,5 +13,6 @@ namespace GameServerCore.Domain.GameObjects
         bool IsCastingSpell { get; }
         bool IsMelee { get; }
         void UpdateTargetUnit(IAttackableUnit unit);
+        void StopMovement();
     }
 }

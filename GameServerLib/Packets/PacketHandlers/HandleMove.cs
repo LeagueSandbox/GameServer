@@ -40,42 +40,26 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             switch (request.Type)
             {
                 case MoveType.STOP:
-                    //TODO anticheat, currently it trusts client 100%
-
-                    peerInfo.Champion.SetPosition(request.X, request.Y);
-                    var x = (request.X - _game.Map.NavGrid.MapWidth) / 2;
-                    var y = (request.Y - _game.Map.NavGrid.MapHeight) / 2;
-
-                    for (var i = 0; i < vMoves.Count; i++)
-                    {
-                        var v = vMoves[i];
-                        v.X = (short)request.X;
-                        v.Y = (short)request.Y;
-                    }
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    champion.StopMovement();
                     break;
                 case MoveType.EMOTE:
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    peerInfo.Champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+                    vMoves[0] = new Vector2(champion.X,champion.Y);
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+                    champion.SetWaypoints(vMoves);
                     break;
                 case MoveType.MOVE:
-                    peerInfo.Champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    vMoves[0] = new Vector2(champion.X, champion.Y);
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    champion.SetWaypoints(vMoves);
                     break;
             }
 
-            vMoves[0] = new Vector2(peerInfo.Champion.X, peerInfo.Champion.Y);
-            peerInfo.Champion.SetWaypoints(vMoves);
-
             var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as IAttackableUnit;
-            if (u == null)
-            {
-                peerInfo.Champion.UpdateTargetUnit(null);
-                return true;
-            }
-
-            peerInfo.Champion.UpdateTargetUnit(u);
-
+            champion.UpdateTargetUnit(u);
             return true;
         }
 
