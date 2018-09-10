@@ -177,6 +177,7 @@ namespace LeagueSandbox.GameServer.Maps
         };
 
         public float GoldPerSecond { get; set; } = 1.9f;
+        public float StartingGold { get; set; } = 475.0f;
         public bool HasFirstBloodHappened { get; set; } = false;
         public bool IsKillGoldRewardReductionActive { get; set; } = true;
         public int BluePillId { get; set; } = 2001;
