@@ -306,6 +306,6 @@ OpenCover/
 
 # Custom stuff
 GameServer/Settings/GameInfo.json
-GameServerApp/Settings/GameInfo.json
-GameServerApp/Settings/GameServerSettings.json
+GameServerConsole/Settings/GameInfo.json
+GameServerConsole/Settings/GameServerSettings.json
 MigrationBackup/
