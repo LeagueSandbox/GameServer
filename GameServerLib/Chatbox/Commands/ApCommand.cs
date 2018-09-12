@@ -1,11 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ApCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "ap";
         public override string Syntax => $"{Command} bonusAp";
@@ -16,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -26,7 +25,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out var ap))
             {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.AbilityPower.FlatBonus += ap;
+                _playerManager.GetPeerInfo(userId).Champion.Stats.AbilityPower.FlatBonus += ap;
             }
         }
     }

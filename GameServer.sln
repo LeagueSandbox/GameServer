@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLib", "GameServer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLibTests", "GameServerLibTests\GameServerLibTests.csproj", "{56E885A9-FC37-4ABB-B9CC-822DAC13CC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "Content/LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "Content\LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packets", "Packets", "{2576843A-B620-4B3A-8272-E3DCBBB17AD5}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerCore", "GameServerCore\GameServerCore.csproj", "{DA3DE633-D75B-40B0-8833-099ABFBF43A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaths", "GameMaths\GameMaths.csproj", "{12F14E81-7609-43D9-9477-83A0D3DE4BBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketDefinitionsTests", "PacketDefinitionsTests\PacketDefinitionsTests.csproj", "{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,12 +60,17 @@ Global
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12F14E81-7609-43D9-9477-83A0D3DE4BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0B60B297-306B-4317-866A-6DD70A113074} = {2576843A-B620-4B3A-8272-E3DCBBB17AD5}
+		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1} = {2576843A-B620-4B3A-8272-E3DCBBB17AD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71A77B24-C1A3-4F0A-8449-A61B947C3130}

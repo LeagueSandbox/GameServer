@@ -45,8 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blowfish.cs" />
     <Compile Include="Enums\Emotions.cs" />
     <Compile Include="Enums\MovementType.cs" />
+    <Compile Include="Exceptions\InvalidKeyException.cs" />
+    <Compile Include="IPacketHandlerManager.cs" />
     <Compile Include="PacketDefinitions\BasePacket.cs" />
     <Compile Include="PacketDefinitions\C2S\AttentionPingRequest.cs" />
     <Compile Include="PacketDefinitions\C2S\AutoAttackOption.cs" />
@@ -204,8 +207,10 @@
     <Compile Include="PacketDefinitions\S2C\UpdateStats.cs" />
     <Compile Include="PacketDefinitions\S2C\ViewResponse.cs" />
     <Compile Include="PacketDefinitions\S2C\WorldSendGameNumber.cs" />
+    <Compile Include="PacketHandlerManager.cs" />
     <Compile Include="PacketNotifier.cs" />
     <Compile Include="PacketReader.cs" />
+    <Compile Include="PacketServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

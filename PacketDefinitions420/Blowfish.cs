@@ -16,7 +16,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace LeagueSandbox.GameServer
+namespace PacketDefinitions420
 {
     public class BlowFish
     {

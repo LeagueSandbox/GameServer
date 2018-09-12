@@ -1,17 +1,15 @@
-﻿using System.Linq;
-using ENet;
-using GameServerCore;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Players;
+using System.Linq;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class MobsCommand : ChatCommandBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "mobs";
         public override string Syntax => $"{Command} teamNumber";
@@ -23,7 +21,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -42,7 +40,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 .Where(xx => xx.Value.Team == team.ToTeamId())
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
-            var client = _playerManager.GetPeerInfo(peer);
+            var client = _playerManager.GetPeerInfo(userId);
             foreach (var unit in units)
             {
                  _game.PacketNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);

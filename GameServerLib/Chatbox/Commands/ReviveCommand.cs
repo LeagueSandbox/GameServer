@@ -1,12 +1,11 @@
-﻿using ENet;
+﻿using GameServerCore;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ReviveCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "revive";
         public override string Syntax => $"{Command}";
@@ -17,9 +16,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var champ = (Champion)_playerManager.GetPeerInfo(peer).Champion;
+            var champ = (Champion)_playerManager.GetPeerInfo(userId).Champion;
             if (!champ.IsDead)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion is already alive.");

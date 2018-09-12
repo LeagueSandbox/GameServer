@@ -1,5 +1,4 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Logging;
+﻿using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
@@ -17,7 +16,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             _logger.Warn($"{ChatCommandManager.CommandStarterCharacter}{Command} command not implemented");
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Command not implemented");

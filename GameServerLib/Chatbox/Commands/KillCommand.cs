@@ -1,12 +1,11 @@
-﻿using ENet;
+﻿using GameServerCore;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class KillCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "kill";
         public override string Syntax => $"{Command} minions";
@@ -17,7 +16,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
 
@@ -33,7 +32,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 {
                     if (o.Value is Minion minion)
                     {
-                        minion.Die((Champion)_playerManager.GetPeerInfo(peer).Champion); // :(
+                        minion.Die((Champion)_playerManager.GetPeerInfo(userId).Champion); // :(
                     }
                 }
             }

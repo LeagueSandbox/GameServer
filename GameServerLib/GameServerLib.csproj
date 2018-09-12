@@ -45,9 +45,6 @@
     <Reference Include="Crc32.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=dc0b95cf99bf4e99, processorArchitecture=MSIL">
       <HintPath>..\packages\Crc32.NET.1.2.0\lib\net20\Crc32.NET.dll</HintPath>
     </Reference>
-    <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -189,7 +186,6 @@
     <Compile Include="API\ApiFunctionManager.cs" />
     <Compile Include="API\ApiEventManager.cs" />
     <Compile Include="API\UnitCrowdControl.cs" />
-    <Compile Include="Blowfish.cs" />
     <Compile Include="Chatbox\ChatCommandManager.cs" />
     <Compile Include="Chatbox\ChatCommandBase.cs" />
     <Compile Include="Chatbox\Commands\KillCommand.cs" />
@@ -260,7 +256,6 @@
     <Compile Include="GameObjects\AttackableUnits\AI\AzirTurret.cs" />
     <Compile Include="GameObjects\AttackableUnits\AI\BaseTurret.cs" />
     <Compile Include="GameObjects\AttackableUnits\AI\LaneTurret.cs" />
-    <Compile Include="Exceptions\InvalidKeyException.cs" />
     <Compile Include="Chatbox\IChatCommand.cs" />
     <Compile Include="Items\Inventory.cs" />
     <Compile Include="Items\InventoryManager.cs" />
@@ -283,7 +278,6 @@
     <Compile Include="Packets\PacketHandlers\HandleScoreboard.cs" />
     <Compile Include="Packets\PacketHandlers\HandleStatsConfirm.cs" />
     <Compile Include="Packets\PacketHandlers\HandleUnpauseReq.cs" />
-    <Compile Include="Packets\PacketHandlers\PacketHandlerBase.cs" />
     <Compile Include="Players\PlayerManager.cs" />
     <Compile Include="Scripting\CSharp\BuffGameScript.cs" />
     <Compile Include="Scripting\CSharp\Benchmark.cs" />
@@ -295,8 +289,6 @@
     <Compile Include="Packets\PacketHandlers\HandleQuestClicked.cs" />
     <Compile Include="Packets\PacketHandlers\HandleBlueTipClicked.cs" />
     <Compile Include="Packets\PacketHandlers\HandleSurrender.cs" />
-    <Compile Include="Packets\PacketHandlers\IPacketHandler.cs" />
-    <Compile Include="Packets\PacketHandlers\PacketHandlerManager.cs" />
     <Compile Include="Packets\PacketHandlers\HandleAttentionPing.cs" />
     <Compile Include="Packets\PacketHandlers\HandleBuyItem.cs" />
     <Compile Include="Packets\PacketHandlers\HandleCastSpell.cs" />
@@ -304,7 +296,6 @@
     <Compile Include="Packets\PacketHandlers\HandleClick.cs" />
     <Compile Include="Packets\PacketHandlers\HandleEmotion.cs" />
     <Compile Include="Packets\PacketHandlers\HandleHeartBeat.cs" />
-    <Compile Include="Packets\PacketHandlers\HandleKeyCheck.cs" />
     <Compile Include="Packets\PacketHandlers\HandleLoadPing.cs" />
     <Compile Include="Packets\PacketHandlers\HandleMap.cs" />
     <Compile Include="Packets\PacketHandlers\HandleMove.cs" />
@@ -351,6 +342,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,14 +1,14 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
-using LeagueSandbox.GameServer.Players;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleExit : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EXIT;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -19,9 +19,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
-            var peerinfo = _playerManager.GetPeerInfo(peer);
+            var peerinfo = _playerManager.GetPeerInfo(userId);
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
             peerinfo.IsDisconnected = true;
 
