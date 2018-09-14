@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         RuneCollection runeList,
                         ClientInfo clientInfo,
                         uint netId = 0)
-            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId)
+            : base(game, new Vector2(0, 0), model, new Stats.Stats(), 30, 1200, netId)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -213,19 +213,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 var p = config.Players[playerIndex];
             }
 
-            var coords = new Vector2
-            {
-                X = _game.Map.MapGameScript.GetRespawnLocation(Team).X,
-                Y = _game.Map.MapGameScript.GetRespawnLocation(Team).Y
-            };
-
-            return new Vector2(coords.X, coords.Y);
+            return _game.Map.MapGameScript.GetRespawnLocation(Team).Position;
         }
 
         public void StopChampionMovement()
         {
             List<Vector2> l = new List<Vector2>();
-            l.Add(new Vector2(this.X, this.Y));
+            l.Add(Position);
             this.SetWaypoints(l);
             _game.PacketNotifier.NotifyMovement(this);
         }

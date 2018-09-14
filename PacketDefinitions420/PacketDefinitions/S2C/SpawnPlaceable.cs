@@ -24,9 +24,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 
             Write((byte)0x40);
 
-            Write(p.X); //x
+            Write(p.Position.X); //x
             Write(p.GetZ()); //z
-            Write(p.Y); //y
+            Write(p.Position.Y); //y
 
             Fill(0, 8);
 
@@ -61,8 +61,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x18); //    |
             Write((byte)0x00); // <--|
 
-            Write(p.X);
-            Write(p.Y);
+            Write(p.Position.X);
+            Write(p.Position.Y);
 
             Write((byte)0x00); // 0.0f
             Write((byte)0x00); // Probably a float, see SpawnMonster

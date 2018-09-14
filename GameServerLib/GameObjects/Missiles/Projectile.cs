@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -27,8 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Projectile(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             AttackableUnit owner,
             Target target,
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             string projectileName,
             int flags = 0,
             uint netId = 0
-        ) : base(game, x, y, collisionRadius, 0, netId)
+        ) : base(game, position, collisionRadius, 0, netId)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             _originSpell = originSpell;

@@ -13,8 +13,15 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         IChampion IParticle.Owner => Owner;
 
-        public Particle(Game game, Champion owner, Target t, string particleName, float size = 1.0f, string boneName = "", uint netId = 0)
-               : base(game, t.X, t.Y, 0, 0, netId)
+        public Particle(
+            Game game,
+            Champion owner,
+            Target t,
+            string particleName,
+            float size = 1.0f,
+            string boneName = "",
+            uint netId = 0
+        ) : base(game, t.Position, 0, 0, netId)
         {
             Owner = owner;
             Target = t;

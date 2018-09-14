@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -17,8 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public LevelProp(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             float z,
             float dirX,
             float dirY,
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             string model,
             byte skin = 0,
             uint netId = 0
-        ) : base(game, x, y, 0, 0, netId)
+        ) : base(game, position, 0, 0, netId)
         {
             Z = z;
             DirX = dirX;

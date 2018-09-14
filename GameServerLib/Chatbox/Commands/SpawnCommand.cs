@@ -65,10 +65,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             const int X = 400;
             foreach (var minion in minions)
             {
-                minion.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                minion.SetPosition(champion.Position + new Vector2(random.Next(-X, X), random.Next(-X, X)));
                 minion.PauseAi(true);
                 minion.SetWaypoints(
-                    new List<Vector2> {new Vector2(minion.X, minion.Y), new Vector2(minion.X, minion.Y)});
+                    new List<Vector2> { minion.Position, minion.Position});
                 minion.SetVisibleByTeam(team, true);
                 Game.ObjectManager.AddObject(minion);
             }

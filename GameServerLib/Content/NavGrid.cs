@@ -447,7 +447,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(GameObject a, GameObject b)
         {
-            return CastRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            return CastRaySqr(a.Position, b.Position) <= (b.Position - a.Position).SqrLength();
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)

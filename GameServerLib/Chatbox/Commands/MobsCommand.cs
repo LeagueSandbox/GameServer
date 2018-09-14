@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var client = _playerManager.GetPeerInfo(peer);
             foreach (var unit in units)
             {
-                 _game.PacketNotifier.NotifyPing(client, unit.Value.X, unit.Value.Y, 0, Pings.PING_DANGER);
+                 _game.PacketNotifier.NotifyPing(client, unit.Value.Position.X, unit.Value.Position.Y, 0, Pings.PING_DANGER);
             }
         }
     }

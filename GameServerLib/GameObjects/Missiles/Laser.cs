@@ -21,19 +21,18 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Laser(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             AttackableUnit owner,
             Target target,
             Spell originSpell,
             string effectName,
             int flags,
-            bool affectAsCastIsOver) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
+            bool affectAsCastIsOver) : base(game, position, collisionRadius, owner, target, originSpell, 0, effectName, flags)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
-            CreateRectangle(new Target(x, y), target);
-            _affectAsCastIsOver = affectAsCastIsOver;            
+            CreateRectangle(new Target(position), target);
+            _affectAsCastIsOver = affectAsCastIsOver;
         }
 
         public override void Update(float diff)
@@ -164,21 +163,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// </summary>
         private void CreateRectangle(Target beginPoint, Target endPoint)
         {
-            var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
-            var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
-            var distance = Vector2.Distance(beginCoords, trueEndCoords);
-            var fakeEndCoords = new Vector2(beginCoords.X, beginCoords.Y + distance);
-            var startCorner1 = new Vector2(beginCoords.X + CollisionRadius, beginCoords.Y);
-            var startCorner2 = new Vector2(beginCoords.X - CollisionRadius, beginCoords.Y);
+            var distance = Vector2.Distance(beginPoint.Position, endPoint.Position);
+            var fakeEndCoords = new Vector2(beginPoint.Position.X, beginPoint.Position.Y + distance);
+            var startCorner1 = new Vector2(beginPoint.Position.X + CollisionRadius, beginPoint.Position.Y);
+            var startCorner2 = new Vector2(beginPoint.Position.X - CollisionRadius, beginPoint.Position.Y);
             var endCorner1 = new Vector2(fakeEndCoords.X + CollisionRadius, fakeEndCoords.Y);
             var endCorner2 = new Vector2(fakeEndCoords.X - CollisionRadius, fakeEndCoords.Y);
 
-            var angle = fakeEndCoords.AngleBetween(trueEndCoords, beginCoords);
+            var angle = fakeEndCoords.AngleBetween(endPoint.Position, beginPoint.Position);
 
-            _rectangleCornerBegin1 = startCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerBegin2 = startCorner2.Rotate(beginCoords, angle);
-            _rectangleCornerEnd1 = endCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerEnd2 = endCorner2.Rotate(beginCoords, angle);
+            _rectangleCornerBegin1 = startCorner1.Rotate(beginPoint.Position, angle);
+            _rectangleCornerBegin2 = startCorner2.Rotate(beginPoint.Position, angle);
+            _rectangleCornerEnd1 = endCorner1.Rotate(beginPoint.Position, angle);
+            _rectangleCornerEnd2 = endCorner2.Rotate(beginPoint.Position, angle);
         }
 
         /// <summary>
@@ -188,17 +185,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// <returns>true if target is in rectangle, otherwise false.</returns>
         private bool TargetIsInRectangle(AttackableUnit target)
         {
-            var unitCoords = new Vector2(target.X, target.Y);
-
             var shortSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerBegin2);
             var longSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerEnd1);
 
             var totalArea = longSide * shortSide;
 
-            var triangle1Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
-            var triangle2Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
-            var triangle3Area = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
-            var triangle4Area = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
+            var triangle1Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, target.Position);
+            var triangle2Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, target.Position);
+            var triangle3Area = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, target.Position);
+            var triangle4Area = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, target.Position);
 
             return totalArea >= triangle1Area + triangle2Area + triangle3Area + triangle4Area;
         }

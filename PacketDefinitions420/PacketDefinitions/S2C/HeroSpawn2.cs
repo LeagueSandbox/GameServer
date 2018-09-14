@@ -13,8 +13,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Fill(0, 13);
             Write((byte)3); // unk
             Write((uint)1); // unk
-            Write(p.X);
-            Write(p.Y);
+            Write(p.Position.X);
+            Write(p.Position.Y);
             Write((float)0x3F441B7D); // z ?
             Write((float)0x3F248DBB); // Rotation ?
         }

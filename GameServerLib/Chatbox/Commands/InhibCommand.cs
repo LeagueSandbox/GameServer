@@ -22,10 +22,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var sender = _playerManager.GetPeerInfo(peer);
             var min = new Monster(
                 Game,
-                sender.Champion.X,
-                sender.Champion.Y,
-                sender.Champion.X,
-                sender.Champion.Y,
+                sender.Champion.Position,
+                sender.Champion.Position,
                 "Worm",
                 "Worm"
                 );

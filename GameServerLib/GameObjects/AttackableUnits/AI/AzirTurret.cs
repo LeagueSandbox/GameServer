@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -12,13 +13,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public AzirTurret(
             Game game,
             AttackableUnit owner,
+            Vector2 position,
             string name,
             string model,
-            float x = 0,
-            float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(game, name, model, x, y, team, netId)
+        ) : base(game, position, name, model, team, netId)
         {
             Owner = owner;
 

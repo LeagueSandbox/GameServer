@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Timers;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -19,14 +20,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         // TODO assists
         public Inhibitor(
             Game game,
+            Vector2 position,
             string model,
             TeamId team,
             int collisionRadius = 40,
-            float x = 0,
-            float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, position, model, new Stats.Stats(), collisionRadius, visionRadius, netId)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;

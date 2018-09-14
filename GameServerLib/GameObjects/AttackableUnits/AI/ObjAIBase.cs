@@ -53,9 +53,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         private Random _random = new Random();
 
-        public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
-            base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
+        public ObjAiBase(
+            Game game,
+            Vector2 position,
+            string model,
+            Stats.Stats stats,
+            int collisionRadius = 40,
+            int visionRadius = 0,
+            uint netId = 0
+        ) : base(game, position, model, stats, collisionRadius, visionRadius, netId)
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
@@ -253,7 +259,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void StopMovement()
         {
-            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
+            SetWaypoints(new List<Vector2> { Position, Position });
         }
 
         public virtual void RefreshWaypoints()
@@ -265,11 +271,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2f)
             {
-                SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
+                SetWaypoints(new List<Vector2> { Position });
             }
             else
             {
-                SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
+                SetWaypoints(new List<Vector2>() { Position, TargetUnit.Position });
                 /* TODO: Soon we will use path finding for this.
                  * if(CurWaypoint >= Waypoints.Count)
                 {
@@ -443,8 +449,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         {
                             var p = new Projectile(
                                 _game,
-                                X,
-                                Y,
+                                Position,
                                 5,
                                 this,
                                 AutoAttackTarget,
@@ -569,7 +574,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool RecalculateAttackPosition()
         {
-            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
+            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.Position) <= Stats.Range.Total)//If we are already where we should be, do not move.
             {
                 return false;
             }
@@ -577,7 +582,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             List<CirclePoly> UsedPositions = new List<CirclePoly>();
             var isCurrentlyOverlapping = false;
 
-            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
+            var thisCollisionCircle = new CirclePoly(Target?.Position ?? Position, CollisionRadius + 10);
 
             foreach (var gameObject in objects)
             {
@@ -591,7 +596,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     continue;
                 }
-                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
+                var targetCollisionCircle = new CirclePoly(unit.Target?.Position ?? unit.Position, unit.CollisionRadius + 10);
                 if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
                 {
                     isCurrentlyOverlapping = true;
@@ -600,9 +605,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             if (isCurrentlyOverlapping)
             {
-                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
+                var targetCircle = new CirclePoly(TargetUnit.Target?.Position ?? TargetUnit.Position, Stats.Range.Total, 72);
                 //Find optimal position...
-                foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
+                foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(Position)))
                 {
                     if (_game.Map.NavGrid.IsWalkable(point))
                     {
@@ -616,7 +621,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                         if (!positionUsed)
                         {
-                            SetWaypoints(new List<Vector2> { GetPosition(), point });
+                            SetWaypoints(new List<Vector2> { Position, point });
                             return true;
                         }
                     }

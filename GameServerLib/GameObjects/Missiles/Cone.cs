@@ -22,8 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Cone(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             AttackableUnit owner,
             Target target,
@@ -32,13 +31,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             int flags,
             bool affectAsCastIsOver,
             float angleDeg
-            ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
+            ) : base(game, position, collisionRadius, owner, target, originSpell, 0, effectName, flags)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
             _affectAsCastIsOver = affectAsCastIsOver;
             _angleDeg = angleDeg;
-            CreateCone(new Target(x, y), target);            
-
+            CreateCone(new Target(position), target);
         }
 
         public override void Update(float diff)
@@ -161,25 +159,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         private void CreateCone(Target beginPoint, Target endPoint)
         {
-            var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
-            var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
-            var distance = Vector2.Distance(beginCoords, trueEndCoords);
+            var distance = Vector2.Distance(beginPoint.Position, endPoint.Position);
 
             float radians = (float)Math.PI / 180.0f * _angleDeg;
-            float middlePointAngle = (float)Math.Acos((endPoint.X - beginPoint.X) / distance);
+            float middlePointAngle = (float)Math.Acos((endPoint.Position.X - beginPoint.Position.X) / distance);
             _beginAngle = middlePointAngle - radians;
             _endAngle = middlePointAngle + radians;
 
-            _ownerCoords = beginCoords;
+            _ownerCoords = beginPoint.Position;
             _radius = distance;
         }
 
         private bool TargetIsInCone(AttackableUnit target)
         {
-            var unitCoords = new Vector2(target.X, target.Y);
-            var targetDistance = Vector2.Distance(_ownerCoords, unitCoords);
+            var targetDistance = Vector2.Distance(_ownerCoords, target.Position);
 
-            float targetAngle = (float)Math.Acos((target.X - _ownerCoords.X) / targetDistance);
+            float targetAngle = (float)Math.Acos((target.Position.X - _ownerCoords.X) / targetDistance);
 
             return (targetDistance <= _radius) && (targetAngle >= _beginAngle) && (targetAngle <= _endAngle);
         }

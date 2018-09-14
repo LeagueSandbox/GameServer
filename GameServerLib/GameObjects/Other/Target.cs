@@ -6,46 +6,48 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 {
     public class Target : ITarget
     {
-        public float X { get; protected set; }
-        public float Y { get; protected set; }
+        public Vector2 Position { get; protected set; }
 
         public virtual bool IsSimpleTarget => true;
 
         public Target(float x, float y)
         {
-            X = x;
-            Y = y;
+            Position = new Vector2(x, y);
         }
 
-        public Target(Vector2 vec)
+        public Target(Vector2 position)
         {
-            X = vec.X;
-            Y = vec.Y;
+            Position = position;
         }
 
         public float GetDistanceTo(Target target)
         {
-            return GetDistanceTo(target.X, target.Y);
+            return GetDistanceTo(target.Position);
         }
 
-        public float GetDistanceTo(float xtarget, float ytarget)
+        public float GetDistanceTo(Vector2 position)
         {
-            return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));
+            return GetDistanceTo(position.X, position.Y);
+        }
+
+        public float GetDistanceTo(float x, float y)
+        {
+            return (float)Math.Sqrt(GetDistanceToSqr(x, y));
         }
 
         public float GetDistanceToSqr(Target target)
         {
-            return GetDistanceToSqr(target.X, target.Y);
+            return GetDistanceToSqr(target.Position);
         }
 
-        public float GetDistanceToSqr(float xtarget, float ytarget)
+        public float GetDistanceToSqr(Vector2 position)
         {
-            return (X - xtarget) * (X - xtarget) + (Y - ytarget) * (Y - ytarget);
+            return GetDistanceToSqr(position.X, position.Y);
         }
 
-        public Vector2 GetPosition()
+        public float GetDistanceToSqr(float x, float y)
         {
-            return new Vector2(X, Y);
+            return (Position.X - x) * (Position.X - x) + (Position.Y - y) * (Position.Y - y);
         }
     }
 }

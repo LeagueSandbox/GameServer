@@ -127,9 +127,9 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
-        public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static Particle AddParticle(Champion champion, string particle, Vector2 to, float size = 1.0f, string bone = "")
         {
-            var t = new Target(toX, toY);
+            var t = new Target(to);
             var p = new Particle(_game, champion, t, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
             return p;
@@ -197,7 +197,7 @@ namespace LeagueSandbox.GameServer.API
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(target.Position);
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(

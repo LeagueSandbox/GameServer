@@ -1,9 +1,10 @@
-﻿namespace GameServerCore.Domain.GameObjects
+﻿using System.Numerics;
+
+namespace GameServerCore.Domain.GameObjects
 {
     public interface ITarget
     {
-        float X { get; }
-        float Y { get; }
+        Vector2 Position { get; }
         bool IsSimpleTarget { get; }
     }
 }

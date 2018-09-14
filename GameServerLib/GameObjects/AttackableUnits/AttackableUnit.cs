@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -44,14 +45,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public AttackableUnit(
             Game game,
+            Vector2 position,
             string model,
             Stats.Stats stats,
             int collisionRadius = 40,
-            float x = 0,
-            float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, x, y, collisionRadius, visionRadius, netId)
+        ) : base(game, position, collisionRadius, visionRadius, netId)
 
         {
             Logger = LoggerProvider.GetLogger();

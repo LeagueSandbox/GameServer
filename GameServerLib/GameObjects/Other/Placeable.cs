@@ -1,6 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
@@ -14,12 +15,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         public Placeable(
             Game game,
             ObjAiBase owner,
-            float x,
-            float y,
+            Vector2 position,
             string model,
             string name,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), 40, x, y, 0, netId)
+        ) : base(game, position, model, new Stats.Stats(), 40, 0, netId)
         {
             SetTeam(owner.Team);
 

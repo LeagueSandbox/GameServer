@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
@@ -11,14 +12,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public LaneTurret(
             Game game,
+            Vector2 position,
             string name,
-            float x = 0,
-            float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
             uint netId = 0
-        ) : base(game, name, "", x, y, team, netId)
+        ) : base(game, position, name, "", team, netId)
         {
             Type = type;
             if (items != null)

@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
@@ -7,14 +8,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
     {
         public Nexus(
             Game game,
+            Vector2 position,
             string model,
             TeamId team,
             int collisionRadius = 40,
-            float x = 0,
-            float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, position, model, new Stats.Stats(), collisionRadius, visionRadius, netId)
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;

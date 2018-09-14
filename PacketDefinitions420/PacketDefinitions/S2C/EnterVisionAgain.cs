@@ -26,8 +26,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             WriteNetId(m);
             // TODO: Check if Movement.EncodeWaypoints is what we need to use here
             Write((byte)0); // movement mask
-            Write(MovementVector.TargetXToNormalFormat(navGrid, m.X));
-            Write(MovementVector.TargetYToNormalFormat(navGrid, m.Y));
+            Write(MovementVector.TargetXToNormalFormat(navGrid, m.Position.X));
+            Write(MovementVector.TargetYToNormalFormat(navGrid, m.Position.Y));
             for (var i = m.CurWaypoint; i < waypoints.Count; i++)
             {
                 Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].X));
@@ -70,8 +70,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)((waypoints.Count - c.CurWaypoint + 1) * 2)); // coordCount
             WriteNetId(c);
             Write((byte)0); // movement mask; 1=KeepMoving?
-            Write(MovementVector.TargetXToNormalFormat(navGrid, c.X));
-            Write(MovementVector.TargetYToNormalFormat(navGrid, c.Y));
+            Write(MovementVector.TargetXToNormalFormat(navGrid, c.Position.X));
+            Write(MovementVector.TargetYToNormalFormat(navGrid, c.Position.Y));
             for (var i = c.CurWaypoint; i < waypoints.Count; ++i)
             {
                 Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].X));

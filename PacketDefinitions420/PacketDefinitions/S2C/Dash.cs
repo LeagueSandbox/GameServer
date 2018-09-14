@@ -26,8 +26,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             WriteNetId(u);
             Write(dashSpeed);
             Write(leapHeight);
-            Write(u.X);
-            Write(u.Y);
+            Write(u.Position.X);
+            Write(u.Position.Y);
             Write((byte)(keepFacingLastDirection ? 0x01 : 0x00));
             if (t.IsSimpleTarget)
             {
@@ -44,8 +44,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 
             var waypoints = new List<Vector2>
             {
-                new Vector2(u.X, u.Y),
-                new Vector2(t.X, t.Y)
+                u.Position,
+                t.Position
             };
 
             Write(Movement.EncodeWaypoints(navGrid, waypoints));

@@ -17,8 +17,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             WriteNetId(unit); // Fog Attached, when unit dies it disappears
             Write(newFogId); //Fog NetID
             Write(0);
-            Write(unit.X);
-            Write(unit.Y);
+            Write(unit.Position.X);
+            Write(unit.Position.Y);
             Write((float)2500);
             Write(88.4f);
             Write((float)130);

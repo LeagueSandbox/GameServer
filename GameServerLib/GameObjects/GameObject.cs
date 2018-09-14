@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         ITarget IGameObject.Target => Target;
 
-        public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
+        public GameObject(Game game, Vector2 position, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(position)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
@@ -103,9 +103,8 @@ namespace LeagueSandbox.GameServer.GameObjects
                 _direction = new Vector2();
                 return;
             }
-
-            var to = new Vector2(Target.X, Target.Y);
-            Move(diff, to);
+            
+            Move(diff, Target.Position);
         }
 
         /// <summary>
@@ -119,9 +118,8 @@ namespace LeagueSandbox.GameServer.GameObjects
                 _direction = new Vector2();
                 return;
             }
-            var cur = new Vector2(X, Y); //?
 
-            var goingTo = to - cur;
+            var goingTo = to - Position;
             _direction = Vector2.Normalize(goingTo);
             if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
             {
@@ -139,8 +137,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             var xx = _direction.X * deltaMovement;
             var yy = _direction.Y * deltaMovement;
 
-            X += xx;
-            Y += yy;
+            Position = new Vector2(Position.X + xx, Position.Y + yy);
 
             // If the target was a simple point, stop when it is reached
 
@@ -181,8 +178,8 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void CalculateVector(float xtarget, float ytarget)
         {
-            _xvector = xtarget - X;
-            _yvector = ytarget - Y;
+            _xvector = xtarget - Position.X;
+            _yvector = ytarget - Position.Y;
 
             if (_xvector == 0 && _yvector == 0)
             {
@@ -242,22 +239,19 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void SetPosition(float x, float y)
         {
-            X = x;
-            Y = y;
-
+            Position = new Vector2(x, y);
             Target = null;
         }
 
         public virtual void SetPosition(Vector2 vec)
         {
-            X = vec.X;
-            Y = vec.Y;
+            Position = vec;
             Target = null;
         }
 
         public virtual float GetZ()
         {
-            return _game.Map.NavGrid.GetHeightAtLocation(X, Y);
+            return _game.Map.NavGrid.GetHeightAtLocation(Position);
         }
 
         public bool IsCollidingWith(GameObject o)

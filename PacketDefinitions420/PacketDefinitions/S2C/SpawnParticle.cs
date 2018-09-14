@@ -32,12 +32,12 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 
             for (var i = 0; i < 3; ++i)
             {
-                var ownerHeight = navGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
-                var particleHeight = navGrid.GetHeightAtLocation(particle.X, particle.Y);
+                var ownerHeight = navGrid.GetHeightAtLocation(particle.Owner.Position.X, particle.Owner.Position.Y);
+                var particleHeight = navGrid.GetHeightAtLocation(particle.Position.X, particle.Position.Y);
                 var higherValue = Math.Max(ownerHeight, particleHeight);
-                Write((short)((particle.Target.X - navGrid.MapWidth / 2) / 2));
+                Write((short)((particle.Target.Position.X - navGrid.MapWidth / 2) / 2));
                 Write(higherValue);
-                Write((short)((particle.Target.Y - navGrid.MapHeight / 2) / 2));
+                Write((short)((particle.Target.Position.Y - navGrid.MapHeight / 2) / 2));
             }
 
             Write((uint)0); // unk

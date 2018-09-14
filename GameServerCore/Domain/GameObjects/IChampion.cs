@@ -16,6 +16,7 @@ namespace GameServerCore.Domain.GameObjects
         void TeleportTo(float x, float y);
         void UpdateSkin(int skinNo);
         int GetChampionHash();
+        // Is this needed? We also have StopMovement() in ObjAiBase
         void StopChampionMovement();
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);

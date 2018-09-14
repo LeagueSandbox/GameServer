@@ -1,12 +1,19 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings
 {
     public class ObjBuilding : AttackableUnit, IObjBuilding
     {
-        public ObjBuilding(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
-            base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
+        public ObjBuilding(
+            Game game,
+            Vector2 position,
+            string model,
+            Stats.Stats stats,
+            int collisionRadius = 40,
+            int visionRadius = 0,
+            uint netId = 0
+        ) : base(game, position, model, stats, collisionRadius, visionRadius, netId)
         {
         }
     }

@@ -47,12 +47,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    vMoves[0] = new Vector2(champion.X,champion.Y);
+                    vMoves[0] = champion.Position;
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     champion.SetWaypoints(vMoves);
                     break;
                 case MoveType.MOVE:
-                    vMoves[0] = new Vector2(champion.X, champion.Y);
+                    vMoves[0] = champion.Position;
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
                     champion.SetWaypoints(vMoves);
                     break;

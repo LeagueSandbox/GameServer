@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
-                Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
+                Owner.SetPosition(Owner.Position); //stop moving serverside too. TODO: check for each spell if they stop movement or not
                 State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
             }
@@ -224,8 +224,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             var p = new Projectile(
                 _game,
-                Owner.X,
-                Owner.Y,
+                Owner.Position,
                 (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),
@@ -245,8 +244,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             var p = new Projectile(
                 _game,
-                Owner.X,
-                Owner.Y,
+                Owner.Position,
                 (int)SpellData.LineWidth,
                 Owner,
                 target,
@@ -266,8 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             var l = new Laser(
                 _game,
-                Owner.X,
-                Owner.Y,
+                Owner.Position,
                 (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),
@@ -283,8 +280,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             var c = new Cone(
                 _game,
-                Owner.X,
-                Owner.Y,
+                Owner.Position,
                 (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),

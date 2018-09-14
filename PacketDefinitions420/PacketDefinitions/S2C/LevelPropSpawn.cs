@@ -14,9 +14,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0);
             Write((byte)0);
             Write((byte)0); // Unk
-            Write(lp.X);
+            Write(lp.Position.X);
             Write(lp.Z);
-            Write(lp.Y);
+            Write(lp.Position.Y);
             Write(0.0f); // Rotation Y
 
             Write(lp.DirX);

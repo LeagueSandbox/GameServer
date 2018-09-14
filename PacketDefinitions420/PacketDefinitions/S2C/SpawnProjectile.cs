@@ -9,29 +9,29 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         public SpawnProjectile(INavGrid navGrid, IProjectile p)
             : base(PacketCmd.PKT_S2C_SPAWN_PROJECTILE, p.NetId)
         {
-            var targetZ = navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y);
+            var targetZ = navGrid.GetHeightAtLocation(p.Target.Position.X, p.Target.Position.Y);
 
-            Write(p.X);
+            Write(p.Position.X);
             Write(p.GetZ() + 100.0f);
-            Write(p.Y);
-            Write(p.X);
+            Write(p.Position.Y);
+            Write(p.Position.X);
             Write(p.GetZ());
-            Write(p.Y);
+            Write(p.Position.Y);
             Write(-0.992436f); // Rotation X
             Write(0); // Rotation Z
             Write(-0.122766f); // Rotation Y
             Write(-1984.871338f); // Unk
             Write(-166.666656f); // Unk
             Write(-245.531418f); // Unk
-            Write(p.X);
+            Write(p.Position.X);
             Write(p.GetZ() + 100.0f);
-            Write(p.Y);
-            Write(p.Target.X);
-            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
-            Write(p.Target.Y);
-            Write(p.X);
+            Write(p.Position.Y);
+            Write(p.Target.Position.X);
+            Write(navGrid.GetHeightAtLocation(p.Target.Position.X, p.Target.Position.Y));
+            Write(p.Target.Position.Y);
+            Write(p.Position.X);
             Write(p.GetZ());
-            Write(p.Y);
+            Write(p.Position.Y);
             Write(0); // Unk ((float)castDelay ?)
             Write(p.GetMoveSpeed()); // Projectile speed
             Write(0); // Unk
@@ -63,12 +63,12 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             }
 
             WriteNetId(p);
-            Write(p.Target.X);
-            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y));
-            Write(p.Target.Y);
-            Write(p.Target.X);
-            Write(navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y) + 100.0f);
-            Write(p.Target.Y);
+            Write(p.Target.Position.X);
+            Write(navGrid.GetHeightAtLocation(p.Target.Position.X, p.Target.Position.Y));
+            Write(p.Target.Position.Y);
+            Write(p.Target.Position.X);
+            Write(navGrid.GetHeightAtLocation(p.Target.Position.X, p.Target.Position.Y) + 100.0f);
+            Write(p.Target.Position.Y);
             if (!p.Target.IsSimpleTarget)
             {
                 Write((byte)0x01); // numTargets
@@ -87,9 +87,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x00); // flags?
             Write((byte)0x30); // slot?
             Write(0.0f); // manaCost?
-            Write(p.X);
+            Write(p.Position.X);
             Write(p.GetZ());
-            Write(p.Y);
+            Write(p.Position.Y);
             Write(0); // Unk
             Write(0); // Unk
         }

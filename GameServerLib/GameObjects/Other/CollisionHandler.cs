@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     continue;
                 }
 
-                if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
+                if (!_game.Map.NavGrid.IsWalkable(obj.Position))
                 {
                     obj.OnCollision(null);
                 }
