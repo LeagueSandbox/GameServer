@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                return i;
+                return (byte)i;
             }
 
             throw new Exception("Specified item doesn't exist in the inventory!");
@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                return SetItem(i, item);
+                return SetItem((byte)i, item);
             }
 
             return null;

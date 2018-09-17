@@ -4,7 +4,7 @@
     {
         IItem GetItem(byte slot);
         void RemoveItem(byte slot);
-        int GetItemSlot(IItem item);
+        byte GetItemSlot(IItem item);
         IItem SetExtraItem(byte slot, IItemType item);
         void SwapItems(byte slot1, byte slot2);
     }
