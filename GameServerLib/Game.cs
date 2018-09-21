@@ -11,7 +11,6 @@ using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Chatbox;
-using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Maps;
@@ -20,6 +19,7 @@ using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
+using LeagueSandbox.GameServer.Items;
 using PacketDefinitions420;
 using Timer = System.Timers.Timer;
 
