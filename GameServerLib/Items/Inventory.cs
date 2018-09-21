@@ -72,14 +72,14 @@ namespace LeagueSandbox.GameServer.Items
 
         public byte GetItemSlot(Item item)
         {
-            for (var i = 0; i < _items.Length; i++)
+            for (byte i = 0; i < _items.Length; i++)
             {
                 if (_items[i] != item)
                 {
                     continue;
                 }
 
-                return (byte)i;
+                return i;
             }
 
             throw new Exception("Specified item doesn't exist in the inventory!");
