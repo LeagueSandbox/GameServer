@@ -8,20 +8,17 @@ namespace LeagueSandbox.GameServerTests.Tests.Chatbox
         [TestMethod]
         public void AddCommandTest()
         {
-            /*
             var chatboxManager = _kernel.Get<ChatCommandManager>();
             var command = new TestCommand(chatboxManager, "ChatboxManagerTestsTestCommand", "");
             var result = chatboxManager.AddCommand(command);
             Assert.AreEqual(true, result);
             result = chatboxManager.AddCommand(command);
             Assert.AreEqual(false, result);
-            */
         }
 
         [TestMethod]
         public void RemoveCommandTest()
         {
-            /*
             var chatboxManager = _kernel.Get<ChatCommandManager>();
 
             var command = new TestCommand(chatboxManager, "ChatboxManagerTestsTestCommand", "");
@@ -35,7 +32,6 @@ namespace LeagueSandbox.GameServerTests.Tests.Chatbox
             {
                 Assert.Fail();
             }
-            */
         }
     }
 }
