@@ -1,6 +1,4 @@
-﻿using ENet;
-
-namespace LeagueSandbox.GameServer.Chatbox.Commands
+﻿namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class NewCommand : ChatCommandBase
     {
@@ -12,7 +10,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var msg = $"The new command added by {ChatCommandManager.CommandStarterCharacter}help has been executed";
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using LeagueSandbox.GameServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServerTests.Tests.Blowfish
 {

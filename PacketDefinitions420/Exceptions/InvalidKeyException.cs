@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace LeagueSandbox.GameServer.Exceptions
+namespace PacketDefinitions420.Exceptions
 {
     [Serializable]
     internal class InvalidKeyException : Exception

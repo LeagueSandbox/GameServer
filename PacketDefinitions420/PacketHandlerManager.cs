@@ -1,63 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using ENet;
+﻿using ENet;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.Players;
+using PacketDefinitions420.PacketDefinitions.S2C;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
-namespace LeagueSandbox.GameServer.Packets.PacketHandlers
+namespace PacketDefinitions420
 {
+    // TODO: refactor this class, get rid of IGame, use generic API requests+responses also for disconnect and unpause
     public class PacketHandlerManager : IPacketHandlerManager
     {
         private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
+        // should be one-to-one, no two users for the same Peer
+        private readonly Dictionary<int, Peer> _peers;
+        private readonly Dictionary<int, int> _playerNum;
         private readonly List<TeamId> _teamsEnumerator;
+        private readonly IPlayerManager _playerManager;
         private readonly BlowFish _blowfish;
         private readonly Host _server;
-        private readonly PlayerManager _playerManager;
-        private readonly Game _game;
+        private readonly IGame _game;
 
-        public PacketHandlerManager(BlowFish blowfish, Host server, Game game)
+        private int _curPlayerNum = 0;
+
+        public PacketHandlerManager(BlowFish blowfish, Host server, IGame game)
         {
             _blowfish = blowfish;
             _server = server;
-            _playerManager = game.PlayerManager;
             _game = game;
+            _peers = new Dictionary<int, Peer>();
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
+            _playerNum = new Dictionary<int, int>();
+            _playerManager = _game.PlayerManager;
 
-            _handlerTable = GetAllPacketHandlers(ServerLibAssemblyDefiningType.Assembly);
-        }
-
-        private Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers(Assembly loadFrom)
-        {
-            var inst = GetInstances<PacketHandlerBase>(loadFrom, _game);
-            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
-            foreach (var pktCmd in inst)
-            {
-                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
-                {
-                    {
-                        pktCmd.PacketChannel, pktCmd
-                    }
-                });
-            }
-            return dict;
-        }
-
-        private static List<T> GetInstances<T>(Assembly a, Game g)
-        {
-            return (Assembly.GetCallingAssembly()
-                .GetTypes()
-                .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
+            _handlerTable = _game.GetAllPacketHandlers();
         }
 
         internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelId)
@@ -92,40 +75,33 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             return null;
         }
 
-        public bool SendPacket(Peer peer, Packet packet, Channel channelNo,
+        public bool SendPacket(int userId, Packet packet, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            return SendPacket(peer, packet.GetBytes(), channelNo, flag);
+            return SendPacket(userId, packet.GetBytes(), channelNo, flag);
         }
 
         public void UnpauseGame()
         {
-            GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)
-                .HandlePacket(null, new byte[0]);
+            // FIXME: test this
+            GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S).HandlePacket(0, new byte[0]);
         }
 
         private void PrintPacket(byte[] buffer, string str)
         {
-            //string hex = BitConverter.ToString(buffer);
-            // System.Diagnostics.Debug.WriteLine(str + hex.Replace("-", " "));
-            lock (ServerContext.ExecutingDirectory)
+            // FIXME: currently lock disabled, not needed?
+            Debug.Write(str);
+            foreach (var b in buffer)
             {
-                Debug.Write(str);
-                foreach (var b in buffer)
-                {
-                    Debug.Write(b.ToString("X2") + " ");
-                }
-
-                Debug.WriteLine("");
-                Debug.WriteLine("--------");
+                Debug.Write(b.ToString("X2") + " ");
             }
+
+            Debug.WriteLine("");
+            Debug.WriteLine("--------");
         }
 
-        public bool SendPacket(Peer peer, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool SendPacket(int userId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            ////PDEBUG_LOG_LINE(Logging," Sending packet:\n");
-            //if(length < 300)
-            //printPacket(source, "Sent: ");
             byte[] temp;
             if (source.Length >= 8)
             {
@@ -135,14 +111,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 temp = source;
             }
-
-            return peer.Send((byte)channelNo, temp);
+            // sometimes we want to send packets to some user but this user doesn't exist (like in broadcast when not all players connected)
+            if(_peers.ContainsKey(userId))
+            {
+                return _peers[userId].Send((byte)channelNo, temp);
+            }
+            return false;
         }
 
         public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            ////PDEBUG_LOG_LINE(Logging," Broadcast packet:\n");
-            //printPacket(data, "Broadcast: ");
             byte[] temp;
             if (data.Length >= 8)
             {
@@ -166,14 +144,15 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         }
 
 
+        // TODO: find a way with no need of player manager
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
             foreach (var ci in _playerManager.GetPlayers())
             {
-                if (ci.Item2.Peer != null && ci.Item2.Team == team)
+                if (ci.Item2 != null && ci.Item2.Team == team)
                 {
-                    SendPacket(ci.Item2.Peer, data, channelNo, flag);
+                    SendPacket((int)ci.Item2.UserId, data, channelNo, flag);
                 }
             }
 
@@ -202,7 +181,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     continue;
                 }
 
-                if (_game.ObjectManager.TeamHasVisionOn(team, (GameObject)o))
+                if (_game.ObjectManager.TeamHasVisionOn(team, o))
                 {
                     BroadcastPacketTeam(team, data, channelNo, flag);
                 }
@@ -226,24 +205,67 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if (handler != null)
             {
-                return handler.HandlePacket(peer, data);
+                //TODO: improve dictionary reverse search
+                int userId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
+                return handler.HandlePacket(userId, data);
             }
 
             PrintPacket(data, "Error: ");
             return false;
         }
-
+        public bool HandleDisconnect(Peer peer)
+        {
+            int userId = _peers.FirstOrDefault(x => x.Value == peer).Key;
+            return _game.HandleDisconnect(userId);
+        }
         public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
         {
             var data = new byte[packet.Length];
             Marshal.Copy(packet.Data, data, 0, data.Length);
 
-            if (data.Length >= 8 && _playerManager.GetPeerInfo(peer) != null)
+            // if channel id is HANDSHAKE we should initialize blowfish key and return
+            if(channelId == Channel.CHL_HANDSHAKE)
             {
-                data = _blowfish.Decrypt(data);
+                return HandleHandshake(peer, data);
             }
 
+            // every packet that is not blowfish go here
+            if (data.Length >= 8)
+            {
+                // TODO: each user will have his unique key
+                data = _blowfish.Decrypt(data);
+            }
             return HandlePacket(peer, data, channelId);
+        }
+        private bool HandleHandshake(Peer peer, byte[] data)
+        {
+            var request = PacketReader.ReadKeyCheckRequest(data);
+            // TODO: keys for every player
+            int userId = (int)_blowfish.Decrypt(request.CheckId);
+
+            if(request.UserId != userId)
+            {
+                // wrong blowfish key
+                return false;
+            }
+            // TODO: removed code that return if player connected, check if there is no problem
+
+            if (!_peers.ContainsKey(userId))
+            {
+                _playerNum[userId] = _curPlayerNum;
+                _curPlayerNum++;
+            }
+            _peers[userId] = peer;
+
+            bool result = true;
+            // inform players about their player numbers
+            foreach (var user in _peers.Keys.ToArray())
+            {
+                var response = new KeyCheckResponse(user, _playerNum[user]);
+                result = result && SendPacket((int)request.UserId, response.GetBytes(), Channel.CHL_HANDSHAKE);
+            }
+            // only if all packets were sent successfully return true
+            return result;
         }
     }
 }

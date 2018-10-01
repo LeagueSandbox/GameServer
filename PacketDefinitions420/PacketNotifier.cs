@@ -51,8 +51,8 @@ namespace PacketDefinitions420
             foreach (var p in players)
             {
                 var cam = new MoveCamera(p.Item2.Champion, cameraPosition.X, cameraPosition.Y, cameraPosition.Z, 2);
-                _packetHandlerManager.SendPacket(p.Item2.Peer, cam, Channel.CHL_S2C);
-                _packetHandlerManager.SendPacket(p.Item2.Peer, new HideUi(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.UserId, cam, Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.UserId, new HideUi(), Channel.CHL_S2C);
             }
 
             _packetHandlerManager.BroadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
@@ -93,10 +93,10 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
         }
 
-        public void NotifySkillUp(Peer peer, uint netId, byte skill, byte level, byte pointsLeft)
+        public void NotifySkillUp(int userId, uint netId, byte skill, byte level, byte pointsLeft)
         {
             var skillUpResponse = new SkillUpResponse(netId, skill, level, pointsLeft);
-            _packetHandlerManager.SendPacket(peer, skillUpResponse, Channel.CHL_GAMEPLAY);
+            _packetHandlerManager.SendPacket(userId, skillUpResponse, Channel.CHL_GAMEPLAY);
         }
 
         public void NotifySetTeam(IAttackableUnit unit, TeamId team)
@@ -113,11 +113,11 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
 
-        public void NotifyBlueTip(Peer peer, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
+        public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
             uint targetNetId)
         {
             var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
-            _packetHandlerManager.SendPacket(peer, packet, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, packet, Channel.CHL_S2C);
         }
 
         public void NotifyEmotions(Emotions type, uint netId)
@@ -149,16 +149,11 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
         }
 
+        // TODO: check if this is broadcast or not
         public void NotifyKeyCheck(long userId, int playerNo)
         {
             var response = new KeyCheckResponse(userId, playerNo);
-            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_HANDSHAKE);
-        }
-
-        public void NotifyKeyCheck(Peer peer, long userId, int playerNo)
-        {
-            var response = new KeyCheckResponse(userId, playerNo);
-            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_HANDSHAKE);
+            _packetHandlerManager.SendPacket((int)userId, response, Channel.CHL_HANDSHAKE);
         }
 
         public void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId)
@@ -170,7 +165,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
         }
 
-        public void NotifyViewResponse(Peer peer, ViewRequest request)
+        public void NotifyViewResponse(int userId, ViewRequest request)
         {
             var answer = new ViewResponse(request.NetId);
             if (request.RequestNo == 0xFE)
@@ -182,37 +177,37 @@ namespace PacketDefinitions420
                 answer.SetRequestNo(request.RequestNo);
             }
 
-            _packetHandlerManager.SendPacket(peer, answer, Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.SendPacket(userId, answer, Channel.CHL_S2C, PacketFlags.None);
         }
 
-        public void NotifySynchVersion(Peer peer, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId)
+        public void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId)
         {
             var response = new SynchVersionResponse(players, version, "CLASSIC", mapId);
-            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
-        public void NotifyLoadScreenInfo(Peer peer, List<Pair<uint, ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players)
         {
             var screenInfo = new LoadScreenInfo(players);
-            _packetHandlerManager.SendPacket(peer, screenInfo, Channel.CHL_LOADING_SCREEN);
+            _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerName(Peer peer, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player)
         {
             var loadName = new LoadScreenPlayerName(player);
-            _packetHandlerManager.SendPacket(peer, loadName, Channel.CHL_LOADING_SCREEN);
+            _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerChampion(Peer peer, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player)
         {
             var loadChampion = new LoadScreenPlayerChampion(player);
-            _packetHandlerManager.SendPacket(peer, loadChampion, Channel.CHL_LOADING_SCREEN);
+            _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyQueryStatus(Peer peer)
+        public void NotifyQueryStatus(int userId)
         {
             var response = new QueryStatus();
-            _packetHandlerManager.SendPacket(peer, response, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
         public void NotifyPlayerStats(IChampion champion)
@@ -220,6 +215,11 @@ namespace PacketDefinitions420
             var response = new PlayerStats(champion);
             // TODO: research how to send the packet
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+        }
+
+        public void NotifyUnpauseGame()
+        {
+            _packetHandlerManager.UnpauseGame();
         }
 
         public void NotifySurrender(IChampion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team,
@@ -235,94 +235,94 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(start, Channel.CHL_S2C);
         }
 
-        public void NotifyHeroSpawn2(Peer peer, IChampion champion)
+        public void NotifyHeroSpawn2(int userId, IChampion champion)
         {
             var heroSpawnPacket = new HeroSpawn2(champion);
-            _packetHandlerManager.SendPacket(peer, heroSpawnPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, heroSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyGameTimer(Peer peer, float time)
+        public void NotifyGameTimer(int userId, float time)
         {
             var timer = new GameTimer(time / 1000.0f);
-            _packetHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
         }
 
-        public void NotifyGameTimerUpdate(Peer peer, float time)
+        public void NotifyGameTimerUpdate(int userId, float time)
         {
             var timer = new GameTimerUpdate(time / 1000.0f);
-            _packetHandlerManager.SendPacket(peer, timer, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
         }
 
-        public void NotifySpawnStart(Peer peer)
+        public void NotifySpawnStart(int userId)
         {
             var start = new StatePacket2(PacketCmd.PKT_S2C_START_SPAWN);
-            _packetHandlerManager.SendPacket(peer, start, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, start, Channel.CHL_S2C);
         }
 
-        public void NotifySpawnEnd(Peer peer)
+        public void NotifySpawnEnd(int userId)
         {
             var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2C_END_SPAWN);
-            _packetHandlerManager.SendPacket(peer, endSpawnPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, endSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyHeroSpawn(Peer peer, ClientInfo client, int playerId)
+        public void NotifyHeroSpawn(int userId, ClientInfo client, int playerId)
         {
             var spawn = new HeroSpawn(client, playerId);
-            _packetHandlerManager.SendPacket(peer, spawn, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, spawn, Channel.CHL_S2C);
         }
 
-        public void NotifyAvatarInfo(Peer peer, ClientInfo client)
+        public void NotifyAvatarInfo(int userId, ClientInfo client)
         {
             var info = new AvatarInfo(client);
-            _packetHandlerManager.SendPacket(peer, info, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, info, Channel.CHL_S2C);
         }
 
-        public void NotifyBuyItem(Peer peer, IChampion champion, IItem itemInstance)
+        public void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance)
         {
             var buyItem = new BuyItemResponse(champion, itemInstance);
-            _packetHandlerManager.SendPacket(peer, buyItem, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, buyItem, Channel.CHL_S2C);
         }
 
-        public void NotifyTurretSpawn(Peer peer, ILaneTurret turret)
+        public void NotifyTurretSpawn(int userId, ILaneTurret turret)
         {
             var turretSpawn = new TurretSpawn(turret);
-            _packetHandlerManager.SendPacket(peer, turretSpawn, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, turretSpawn, Channel.CHL_S2C);
         }
 
-        public void NotifySetHealth(Peer peer, IAttackableUnit unit)
+        public void NotifySetHealth(int userId, IAttackableUnit unit)
         {
             var setHealthPacket = new SetHealth(unit);
-            _packetHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, setHealthPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyLevelPropSpawn(Peer peer, ILevelProp levelProp)
+        public void NotifyLevelPropSpawn(int userId, ILevelProp levelProp)
         {
             var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
-            _packetHandlerManager.SendPacket(peer, levelPropSpawnPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, levelPropSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyEnterVision(Peer peer, IChampion champion)
+        public void NotifyEnterVision(int userId, IChampion champion)
         {
             var enterVisionPacket = new EnterVisionAgain(_navGrid, champion);
-            _packetHandlerManager.SendPacket(peer, enterVisionPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, enterVisionPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyStaticObjectSpawn(Peer peer, uint netId)
+        public void NotifyStaticObjectSpawn(int userId, uint netId)
         {
             var minionSpawnPacket = new MinionSpawn2(netId);
-            _packetHandlerManager.SendPacket(peer, minionSpawnPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, minionSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifySetHealth(Peer peer, uint netId)
+        public void NotifySetHealth(int userId, uint netId)
         {
             var setHealthPacket = new SetHealth(netId);
-            _packetHandlerManager.SendPacket(peer, setHealthPacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, setHealthPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyProjectileSpawn(Peer peer, IProjectile projectile)
+        public void NotifyProjectileSpawn(int userId, IProjectile projectile)
         {
             var spawnProjectilePacket = new SpawnProjectile(_navGrid, projectile);
-            _packetHandlerManager.SendPacket(peer, spawnProjectilePacket, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, spawnProjectilePacket, Channel.CHL_S2C);
         }
 
         public void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
@@ -365,10 +365,10 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(add, Channel.CHL_S2C);
         }
 
-        public void NotifyDebugMessage(Peer peer, string message)
+        public void NotifyDebugMessage(int userId, string message)
         {
             var dm = new DebugMessage(message);
-            _packetHandlerManager.SendPacket(peer, dm, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(userId, dm, Channel.CHL_S2C);
         }
 
         public void NotifyDebugMessage(TeamId team, string message)
@@ -698,6 +698,12 @@ namespace PacketDefinitions420
             var setAnimation = new SetAnimation(u, animationPairs);
             _packetHandlerManager.BroadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
         }
+
+        public void NotifyDebugPacket(int userId, byte[] data)
+        {
+            _packetHandlerManager.SendPacket(userId, data, Channel.CHL_S2C);
+        }
+
 
         public void NotifyDash(IAttackableUnit u,
                                ITarget t,

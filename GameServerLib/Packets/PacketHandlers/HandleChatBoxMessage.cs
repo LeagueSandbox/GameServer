@@ -1,10 +1,10 @@
-﻿using ENet;
-using GameServerCore;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
 using log4net;
+using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadChatMessageRequest(data);
             var split = request.Message.Split(' ');
@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (int.TryParse(split[1], out var y))
                     {
-                        var client = _playerManager.GetPeerInfo(peer);
+                        var client = _playerManager.GetPeerInfo(userId);
                          _game.PacketNotifier.NotifyPing(client, x, y, 0, Pings.PING_DEFAULT);
                     }
                 }
@@ -54,12 +54,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     try
                     {
-                        command.Execute(peer, true, msg);
+                        command.Execute(userId, true, msg);
                     }
                     catch
                     {
                         _logger.Warn(command + " sent an exception.");
-                         _game.PacketNotifier.NotifyDebugMessage(peer, "Something went wrong...Did you wrote the command well ? ");
+                         _game.PacketNotifier.NotifyDebugMessage(userId, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;
                 }
@@ -74,12 +74,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var debugMessage =
-                $"{_playerManager.GetPeerInfo(peer).Name} ({_playerManager.GetPeerInfo(peer).Champion.Model}): </font><font color=\"#FFFFFF\">{request.Message}";
+                $"{_playerManager.GetPeerInfo(userId).Name} ({_playerManager.GetPeerInfo(userId).Champion.Model}): </font><font color=\"#FFFFFF\">{request.Message}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = teamChatColor + "[All] " + debugMessage;
             var dmEnemy = enemyChatColor + "[All] " + debugMessage;
-            var ownTeam = _playerManager.GetPeerInfo(peer).Team;
+            var ownTeam = _playerManager.GetPeerInfo(userId).Team;
             var enemyTeam = CustomConvert.GetEnemyTeam(ownTeam);
 
             if (_game.Config.ChatCheatsEnabled)
@@ -99,8 +99,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
                     return true;
                 default:
-                    //Logging.errorLine("Unknown ChatMessageType");
-                    return _game.PacketHandlerManager.SendPacket(peer, data, Channel.CHL_COMMUNICATION);
+                    _logger.Error("Unknown ChatMessageType:" +request.Type.ToString());
+                    return false;
             }
         }
     }

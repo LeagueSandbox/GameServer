@@ -13,5 +13,10 @@ namespace GameServerCore.Domain.GameObjects
         bool IsCastingSpell { get; }
         bool IsMelee { get; }
         void UpdateTargetUnit(IAttackableUnit unit);
+        void StopMovement();
+
+        // buffs
+        bool HasBuffGameScriptActive(string buffNamespace, string buffClass);
+        void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false);
     }
 }
