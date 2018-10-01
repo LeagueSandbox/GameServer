@@ -1,12 +1,10 @@
-﻿using ENet;
-using GameServerCore;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ChangeTeamCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "changeteam";
         public override string Syntax => $"{Command} teamNumber";
@@ -17,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -33,7 +31,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
 
             var team = t.ToTeamId();
-            _playerManager.GetPeerInfo(peer).Champion.SetTeam(team);
+            _playerManager.GetPeerInfo(userId).Champion.SetTeam(team);
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using ENet;
-using GameServerCore;
+﻿using GameServerCore;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using GameServerCore.Packets.Enums;
@@ -12,28 +7,31 @@ using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.Exceptions;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Maps;
 using LeagueSandbox.GameServer.Packets;
-using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using PacketDefinitions420;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Timer = System.Timers.Timer;
 
 namespace LeagueSandbox.GameServer
 {
     public class Game : IGame
     {
-        private Host _server;
+        
         private ILog _logger;
-        public BlowFish Blowfish { get; private set; }
 
         public bool IsRunning { get; private set; }
-
         public bool IsPaused { get; set; }
+
         private Timer _pauseTimer;
         public long PauseTimeLeft { get; private set; }
         private bool _autoResumeCheck;
@@ -44,21 +42,20 @@ namespace LeagueSandbox.GameServer
         public float GameTime { get; private set; }
         private float _nextSyncTime = 10 * 1000;
 
-
-        public ObjectManager ObjectManager { get; private set; }
-        public Map Map { get; private set; }
-        public IPacketNotifier PacketNotifier { get; private set; }
-        public IPacketHandlerManager PacketHandlerManager { get; private set; }
+        private PacketServer _packetServer;
         public IPacketReader PacketReader { get; private set; }
+        public IPacketNotifier PacketNotifier { get; private set; }
+        public IObjectManager ObjectManager { get; private set; }
+        public Map Map { get; private set; }
+        
         public Config Config { get; protected set; }
-        protected const int PEER_MTU = 996;
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
         // Object managers
         internal ItemManager ItemManager { get; private set; }
         // Other managers
         internal ChatCommandManager ChatCommandManager { get; private set; }
-        internal PlayerManager PlayerManager { get; private set; }
+        public IPlayerManager PlayerManager { get; private set; }
         internal NetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
@@ -79,7 +76,7 @@ namespace LeagueSandbox.GameServer
             ScriptEngine = new CSharpScriptEngine();
         }
 
-        public void Initialize(Address address, string blowfishKey, Config config)
+        public void Initialize(ushort port, string blowfishKey, Config config)
         {
             _logger.Info("Loading Config.");
             Config = config;
@@ -87,23 +84,9 @@ namespace LeagueSandbox.GameServer
             _gameScriptTimers = new List<GameScriptTimer>();
 
             ChatCommandManager.LoadCommands();
-            _server = new Host();
-            _server.Create(address, 32, 32, 0, 0);
-
-            var key = Convert.FromBase64String(blowfishKey);
-            if (key.Length <= 0)
-            {
-                throw new InvalidKeyException("Invalid blowfish key supplied");
-            }
-
-            Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, this);
 
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
-
-            PacketReader = new PacketReader();
-            PacketNotifier = new PacketNotifier(PacketHandlerManager, Map.NavGrid);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
@@ -114,9 +97,10 @@ namespace LeagueSandbox.GameServer
 
             Map.Init();
 
+            _logger.Info("Add players");
             foreach (var p in Config.Players)
             {
-                PlayerManager.AddPlayer(p);
+                ((PlayerManager)PlayerManager).AddPlayer(p);
             }
 
             _pauseTimer = new Timer
@@ -128,6 +112,12 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
+            _packetServer = new PacketServer();
+            _packetServer.InitServer(port, blowfishKey, this);
+            PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
+            // TODO: make lib to only get API types and not byte[], start from removing this line
+            PacketReader = new PacketReader();
+
             _logger.Info("Game is ready.");
         }
 
@@ -136,46 +126,20 @@ namespace LeagueSandbox.GameServer
             return ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{Config.GameConfig.GameMode}/");
         }
 
-        public void NetLoop()
+        public void GameLoop()
         {
             _lastMapDurationWatch = new Stopwatch();
             _lastMapDurationWatch.Start();
             while (!SetToExit)
             {
-                while (_server.Service(0, out var enetEvent) > 0)
-                {
-                    switch (enetEvent.Type)
-                    {
-                        case EventType.Connect:
-                        {
-                            // Set some defaults
-                            enetEvent.Peer.Mtu = PEER_MTU;
-                            enetEvent.Data = 0;
-                        }
-                        break;
-                        case EventType.Receive:
-                        {
-                            var channel = (Channel)enetEvent.ChannelID;
-                            PacketHandlerManager.HandlePacket(enetEvent.Peer, enetEvent.Packet, channel);
-                            // Clean up the packet now that we're done using it.
-                            enetEvent.Packet.Dispose();
-                        }
-                        break;
-                        case EventType.Disconnect:
-                        {
-                            HandleDisconnect(enetEvent.Peer);
-                        }
-                        break;
-                    }
-                }
-
+                _packetServer.NetLoop();
                 if (IsPaused)
                 {
                     _lastMapDurationWatch.Stop();
                     _pauseTimer.Enabled = true;
                     if (PauseTimeLeft <= 0 && !_autoResumeCheck)
                     {
-                        PacketHandlerManager.UnpauseGame();
+                        PacketNotifier.NotifyUnpauseGame();
                         _autoResumeCheck = true;
                     }
                     continue;
@@ -193,12 +157,12 @@ namespace LeagueSandbox.GameServer
                 }
                 Thread.Sleep(1);
             }
-        }
 
+        }
         public void Update(float diff)
         {
             GameTime += diff;
-            ObjectManager.Update(diff);
+            ((ObjectManager)ObjectManager).Update(diff);
             Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
@@ -254,9 +218,9 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Enabled = false;
         }
 
-        private bool HandleDisconnect(Peer peer)
+        public bool HandleDisconnect(int userId)
         {
-            var peerinfo = PlayerManager.GetPeerInfo(peer);
+            var peerinfo = PlayerManager.GetPeerInfo(userId);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)
@@ -266,6 +230,30 @@ namespace LeagueSandbox.GameServer
                 peerinfo.IsDisconnected = true;
             }
             return true;
+        }
+
+        // for reflection to work we need it to be called from lib
+        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers()
+        {
+            var inst = GetInstances<PacketHandlerBase>(this);
+            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
+            foreach (var pktCmd in inst)
+            {
+                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
+                {
+                    {
+                        pktCmd.PacketChannel, pktCmd
+                    }
+                });
+            }
+            return dict;
+        }
+        private static List<T> GetInstances<T>(IGame g)
+        {
+            return (Assembly.GetCallingAssembly()
+                .GetTypes()
+                .Where(t => t.BaseType == (typeof(T)))
+                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
         }
 
         public void SetGameToExit()

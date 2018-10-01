@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using ENet;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -25,7 +24,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext);
         void NotifyDash(IAttackableUnit u, ITarget t, float dashSpeed, bool keepFacingLastDirection, float leapHeight, float followTargetMaxDistance, float backDistance, float travelTime);
         void NotifyDebugMessage(string htmlDebugMessage);
-        void NotifyDebugMessage(Peer peer, string message);
+        void NotifyDebugMessage(int userId, string message);
         void NotifyDebugMessage(TeamId team, string message);
         void NotifyEditBuff(IBuff b, int stacks);
         void NotifyEnterVision(IGameObject o, TeamId team);
@@ -67,39 +66,43 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyUpdatedStats(IAttackableUnit u, bool partial = true);
         void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type);
         void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a);
-        void NotifySkillUp(Peer peer, uint netId, byte skill, byte level, byte pointsLeft);
+        void NotifySkillUp(int userId, uint netId, byte skill, byte level, byte pointsLeft);
         void NotifySetTeam(IAttackableUnit unit, TeamId team);
         void NotifyCastSpell(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId);
 
         /// <summary> TODO: tipCommand should be an lib/core enum that gets translated into league version specific packet enum as it may change over time </summary>
-        void NotifyBlueTip(Peer peer, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
+        void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
         void NotifyEmotions(Emotions type, uint netId);
+        // TODO: move handling to PacketDefinitions
         void NotifyKeyCheck(long userId, int playerNo);
-        void NotifyKeyCheck(Peer peer, long userId, int playerNo);
         void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId);
-        void NotifyViewResponse(Peer peer, ViewRequest request);
-        void NotifySynchVersion(Peer peer, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
-        void NotifyLoadScreenInfo(Peer peer, List<Pair<uint, ClientInfo>> players);
-        void NotifyLoadScreenPlayerName(Peer peer, Pair<uint, ClientInfo> player);
-        void NotifyLoadScreenPlayerChampion(Peer peer, Pair<uint, ClientInfo> player);
-        void NotifyQueryStatus(Peer peer);
+        void NotifyViewResponse(int userId, ViewRequest request);
+        void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
+        void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players);
+        void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player);
+        void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player);
+        void NotifyQueryStatus(int userId);
         void NotifyPlayerStats(IChampion champion);
         void NotifySurrender(IChampion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut);
         void NotifyGameStart();
-        void NotifyHeroSpawn2(Peer peer, IChampion champion);
-        void NotifyGameTimer(Peer peer, float time);
-        void NotifyGameTimerUpdate(Peer peer, float time);
-        void NotifySpawnStart(Peer peer);
-        void NotifySpawnEnd(Peer peer);
-        void NotifyHeroSpawn(Peer peer, ClientInfo client, int playerId);
-        void NotifyAvatarInfo(Peer peer, ClientInfo client);
-        void NotifyBuyItem(Peer peer, IChampion champion, IItem itemInstance);
-        void NotifyTurretSpawn(Peer peer, ILaneTurret turret);
-        void NotifySetHealth(Peer peer, IAttackableUnit unit);
-        void NotifyLevelPropSpawn(Peer peer, ILevelProp levelProp);
-        void NotifyEnterVision(Peer peer, IChampion champion);
-        void NotifyStaticObjectSpawn(Peer peer, uint netId);
-        void NotifySetHealth(Peer peer, uint netId);
-        void NotifyProjectileSpawn(Peer peer, IProjectile projectile);
+        void NotifyHeroSpawn2(int userId, IChampion champion);
+        void NotifyGameTimer(int userId, float time);
+        void NotifyGameTimerUpdate(int userId, float time);
+        void NotifySpawnStart(int userId);
+        void NotifySpawnEnd(int userId);
+        void NotifyHeroSpawn(int userId, ClientInfo client, int playerId);
+        void NotifyAvatarInfo(int userId, ClientInfo client);
+        void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance);
+        void NotifyTurretSpawn(int userId, ILaneTurret turret);
+        void NotifySetHealth(int userId, IAttackableUnit unit);
+        void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
+        void NotifyEnterVision(int userId, IChampion champion);
+        void NotifyStaticObjectSpawn(int userId, uint netId);
+        void NotifySetHealth(int userId, uint netId);
+        void NotifyProjectileSpawn(int userId, IProjectile projectile);
+        void NotifyUnpauseGame();
+
+        // TODO: only in deubg mode
+        void NotifyDebugPacket(int userId, byte[] data);
     }
 }

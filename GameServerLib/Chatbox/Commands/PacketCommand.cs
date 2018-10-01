@@ -1,14 +1,14 @@
-﻿using System;
-using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
-using LeagueSandbox.GameServer.Players;
+using System;
 using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class PacketCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
+        private readonly Game _game;
 
         public override string Command => "packet";
         public override string Syntax => $"{Command} XX XX XX...";
@@ -17,9 +17,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             : base(chatCommandManager, game)
         {
             _playerManager = game.PlayerManager;
+            _game = game;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             try
             {
@@ -38,7 +39,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 {
                     if (s[i].Equals("netid"))
                     {
-                        packet.Write(_playerManager.GetPeerInfo(peer).Champion.NetId);
+                        packet.Write(_playerManager.GetPeerInfo(userId).Champion.NetId);
                     }
                     else
                     {
@@ -46,7 +47,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     }
                 }
 
-                Game.PacketHandlerManager.SendPacket(peer, packet, Channel.CHL_S2C);
+                _game.PacketNotifier.NotifyDebugPacket(userId, packet.GetBytes());
             }
             catch
             {

@@ -1,15 +1,15 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Items;
-using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSellItem : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SELL_ITEM;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -20,12 +20,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadSellItemRequest(data);
-            var client = _playerManager.GetPeerInfo(peer);
+            var client = _playerManager.GetPeerInfo(userId);
 
-            var i = _playerManager.GetPeerInfo(peer).Champion.Inventory.GetItem(request.SlotId) as Item;
+            var i = _playerManager.GetPeerInfo(userId).Champion.Inventory.GetItem(request.SlotId) as Item;
             if (i == null)
             {
                 return false;

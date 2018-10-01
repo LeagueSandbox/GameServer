@@ -1,5 +1,5 @@
-﻿using ENet;
-using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _chatCommandManager = game.ChatCommandManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             //TODO: implement this
             var autoAttackOption = _game.PacketReader.ReadAutoAttackOptionRequest(data);

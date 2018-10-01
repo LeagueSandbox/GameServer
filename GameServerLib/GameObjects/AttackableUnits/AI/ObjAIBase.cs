@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
@@ -97,7 +98,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Buffs = new Dictionary<string, Buff>();
         }
 
-        public BuffGameScriptController AddBuffGameScript(string buffNamespace, string buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        public void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false)
         {
             if (isUnique)
             {
@@ -105,11 +106,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var buffController =
-                new BuffGameScriptController(_game, this, buffNamespace, buffClass, ownerSpell, removeAfter);
+                new BuffGameScriptController(_game, this, buffNamespace, buffClass, (Spell)ownerSpell, removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
-            return buffController;
+            // TODO: should handle the controllers in the class, and don't pass them outside
         }
 
         public void RemoveBuffGameScript(BuffGameScriptController buffController)
@@ -545,9 +546,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             UpdateAutoAttackTarget(diff);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void Die(IAttackableUnit killer)
         {
-            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnDie");
+            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
             base.Die(killer);
         }
@@ -577,7 +578,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             List<CirclePoly> UsedPositions = new List<CirclePoly>();
             var isCurrentlyOverlapping = false;
 
-            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
+            var thisCollisionCircle = new CirclePoly(((Target)Target)?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
 
             foreach (var gameObject in objects)
             {
@@ -591,7 +592,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     continue;
                 }
-                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
+                var targetCollisionCircle = new CirclePoly(((Target)unit.Target)?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
                 if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
                 {
                     isCurrentlyOverlapping = true;
@@ -600,7 +601,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             if (isCurrentlyOverlapping)
             {
-                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
+                var targetCircle = new CirclePoly(((Target)TargetUnit.Target)?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {

@@ -1,14 +1,15 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Items;
-using LeagueSandbox.GameServer.Players;
+
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSwapItems : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_SWAP_ITEMS;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -19,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadSwapItemsRequest(data);
             if (request.SlotFrom > 6 || request.SlotTo > 6)
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
             champion.Inventory.SwapItems(request.SlotFrom, request.SlotTo);

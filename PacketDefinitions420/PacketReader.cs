@@ -113,7 +113,7 @@ namespace PacketDefinitions420
             return new HeartbeatRequest(rq.NetId, rq.ReceiveTime, rq.AckTime);
         }
 
-        public KeyCheckRequest ReadKeyCheckRequest(byte[] data)
+        public static KeyCheckRequest ReadKeyCheckRequest(byte[] data)
         {
             var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
             return new KeyCheckRequest(rq.PlayerNo, rq.UserId, rq.VersionNo, rq.CheckId);

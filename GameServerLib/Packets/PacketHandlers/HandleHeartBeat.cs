@@ -1,7 +1,7 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly ILog _logger;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_HEART_BEAT;
         public override Channel PacketChannel => Channel.CHL_GAMEPLAY;
@@ -22,13 +22,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadHeartbeatRequest(data);
             var diff = request.AckTime - request.ReceiveTime;
             if (request.ReceiveTime > request.AckTime)
             {
-                var peerInfo = _playerManager.GetPeerInfo(peer);
+                var peerInfo = _playerManager.GetPeerInfo(userId);
                 var msg = $"Player {peerInfo.UserId} sent an invalid heartbeat - Timestamp error (diff: {diff})";
                 _logger.Warn(msg);
             }

@@ -1,5 +1,3 @@
-using System;
-using System.Timers;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
 using log4net;

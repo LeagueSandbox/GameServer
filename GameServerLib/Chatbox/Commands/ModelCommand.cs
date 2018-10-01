@@ -1,11 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ModelCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "model";
         public override string Syntax => $"{Command} modelName";
@@ -16,12 +15,12 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.Split(' ');
             if (split.Length >= 2)
             {
-                _playerManager.GetPeerInfo(peer).Champion.Model = split[1];
+                _playerManager.GetPeerInfo(userId).Champion.Model = split[1];
             }
             else
             {

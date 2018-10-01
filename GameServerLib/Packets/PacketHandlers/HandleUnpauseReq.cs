@@ -1,15 +1,15 @@
 ﻿using System.Timers;
-using ENet;
+using GameServerCore.Packets.Handlers;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
-using LeagueSandbox.GameServer.Players;
+using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleUnpauseReq : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSE_GAME;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             if (!_game.IsPaused)
             {
@@ -28,10 +28,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             IChampion unpauser = null;
-            if (peer != null)
-            {
-                unpauser = _playerManager.GetPeerInfo(peer).Champion;
-            }
+
+            unpauser = _playerManager.GetPeerInfo(userId).Champion;
 
             _game.PacketNotifier.NotifyResumeGame(unpauser, true);
             var timer = new Timer

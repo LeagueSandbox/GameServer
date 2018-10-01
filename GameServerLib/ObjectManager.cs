@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -11,14 +12,15 @@ using LeagueSandbox.GameServer.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer
 {
-    public class ObjectManager
+    // TODO: refactor this class
+    public class ObjectManager : IObjectManager
     {
         private Game _game;
 
-        private Dictionary<uint, GameObject> _objects;
-        private Dictionary<uint, Champion> _champions;
-        private Dictionary<uint, Inhibitor> _inhibitors;
-        private Dictionary<TeamId, Dictionary<uint, AttackableUnit>> _visionUnits;
+        private Dictionary<uint, IGameObject> _objects;
+        private Dictionary<uint, IChampion> _champions;
+        private Dictionary<uint, IInhibitor> _inhibitors;
+        private Dictionary<TeamId, Dictionary<uint, IAttackableUnit>> _visionUnits;
 
         private object _objectsLock = new object();
         private object _inhibitorsLock = new object();
@@ -30,16 +32,16 @@ namespace LeagueSandbox.GameServer
         public ObjectManager(Game game)
         {
             _game = game;
-            _objects = new Dictionary<uint, GameObject>();
-            _inhibitors = new Dictionary<uint, Inhibitor>();
-            _champions = new Dictionary<uint, Champion>();
-            _visionUnits = new Dictionary<TeamId, Dictionary<uint, AttackableUnit>>();
+            _objects = new Dictionary<uint, IGameObject>();
+            _inhibitors = new Dictionary<uint, IInhibitor>();
+            _champions = new Dictionary<uint, IChampion>();
+            _visionUnits = new Dictionary<TeamId, Dictionary<uint, IAttackableUnit>>();
 
             Teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             foreach (var team in Teams)
             {
-                _visionUnits.Add(team, new Dictionary<uint, AttackableUnit>());
+                _visionUnits.Add(team, new Dictionary<uint, IAttackableUnit>());
             }
         }
 
@@ -48,14 +50,14 @@ namespace LeagueSandbox.GameServer
             var temp = GetObjects();
             foreach (var obj in temp.Values)
             {
-                if (obj.IsToRemove())
+                if (((GameObject)obj).IsToRemove())
                 {
                     if (obj.AttackerCount == 0)
                         RemoveObject(obj);
                     continue;
                 }
 
-                obj.Update(diff);
+                ((GameObject)obj).Update(diff);
 
                 if (!(obj is AttackableUnit))
                     continue;
@@ -122,15 +124,15 @@ namespace LeagueSandbox.GameServer
                     u.IsModelUpdated = false;
                 }
 
-                if (obj.IsMovementUpdated())
+                if (((GameObject)obj).IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(obj);
-                    obj.ClearMovementUpdated();
+                    ((GameObject)obj).ClearMovementUpdated();
                 }
             }
         }
 
-        public GameObject GetObjectById(uint id)
+        public IGameObject GetObjectById(uint id)
         {
             if (!_objects.ContainsKey(id))
             {
@@ -140,7 +142,7 @@ namespace LeagueSandbox.GameServer
             return _objects[id];
         }
 
-        public Inhibitor GetInhibitorById(uint id)
+        public IInhibitor GetInhibitorById(uint id)
         {
             if (!_inhibitors.ContainsKey(id))
             {
@@ -162,7 +164,7 @@ namespace LeagueSandbox.GameServer
             return true;
         }
 
-        public void AddObject(GameObject o)
+        public void AddObject(IGameObject o)
         {
             if (o == null)
                 return;
@@ -175,7 +177,7 @@ namespace LeagueSandbox.GameServer
             o.OnAdded();
         }
 
-        public void AddInhibitor(Inhibitor inhib)
+        public void AddInhibitor(IInhibitor inhib)
         {
             lock (_inhibitorsLock)
             {
@@ -183,7 +185,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void RemoveInhibitor(Inhibitor inhib)
+        public void RemoveInhibitor(IInhibitor inhib)
         {
             lock (_inhibitorsLock)
             {
@@ -191,7 +193,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void RemoveObject(GameObject o)
+        public void RemoveObject(IGameObject o)
         {
             lock (_objectsLock)
             {
@@ -200,7 +202,7 @@ namespace LeagueSandbox.GameServer
             o.OnRemoved();
         }
 
-        public void AddChampion(Champion champion)
+        public void AddChampion(IChampion champion)
         {
             lock (_championsLock)
             {
@@ -208,7 +210,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void RemoveChampion(Champion champion)
+        public void RemoveChampion(IChampion champion)
         {
             lock (_championsLock)
             {
@@ -216,9 +218,9 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public Dictionary<uint, AttackableUnit> GetVisionUnits(TeamId team)
+        public Dictionary<uint, IAttackableUnit> GetVisionUnits(TeamId team)
         {
-            var ret = new Dictionary<uint, AttackableUnit>();
+            var ret = new Dictionary<uint, IAttackableUnit>();
             lock (_visionLock)
             {
                 var visionUnitsTeam = _visionUnits[team];
@@ -231,7 +233,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void AddVisionUnit(AttackableUnit unit)
+        public void AddVisionUnit(IAttackableUnit unit)
         {
             lock (_visionLock)
             {
@@ -239,7 +241,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void RemoveVisionUnit(AttackableUnit unit)
+        public void RemoveVisionUnit(IAttackableUnit unit)
         {
             RemoveVisionUnit(unit.Team, unit.NetId);
         }
@@ -252,9 +254,9 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public Dictionary<uint, GameObject> GetObjects()
+        public Dictionary<uint, IGameObject> GetObjects()
         {
-            var ret = new Dictionary<uint, GameObject>();
+            var ret = new Dictionary<uint, IGameObject>();
             lock (_objectsLock)
             {
                 foreach (var obj in _objects)
@@ -266,7 +268,7 @@ namespace LeagueSandbox.GameServer
             return ret;
         }
 
-        public void StopTargeting(AttackableUnit target)
+        public void StopTargeting(IAttackableUnit target)
         {
             lock (_objectsLock)
             {
@@ -291,9 +293,9 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public List<Champion> GetAllChampionsFromTeam(TeamId team)
+        public List<IChampion> GetAllChampionsFromTeam(TeamId team)
         {
-            var champs = new List<Champion>();
+            var champs = new List<IChampion>();
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
@@ -305,20 +307,20 @@ namespace LeagueSandbox.GameServer
             return champs;
         }
 
-        public List<Champion> GetChampionsInRange(float x, float y, float range, bool onlyAlive = false)
+        public List<IChampion> GetChampionsInRange(float x, float y, float range, bool onlyAlive = false)
         {
             return GetChampionsInRange(new Target(x, y), range, onlyAlive);
         }
 
-        public List<Champion> GetChampionsInRange(Target t, float range, bool onlyAlive = false)
+        public List<IChampion> GetChampionsInRange(ITarget t, float range, bool onlyAlive = false)
         {
-            var champs = new List<Champion>();
+            var champs = new List<IChampion>();
             lock (_championsLock)
             {
                 foreach (var kv in _champions)
                 {
                     var c = kv.Value;
-                    if (t.GetDistanceTo(c) <= range)
+                    if (((Target)t).GetDistanceTo(((Target)c)) <= range)
                         if (onlyAlive && !c.IsDead || !onlyAlive)
                             champs.Add(c);
                 }
@@ -326,20 +328,20 @@ namespace LeagueSandbox.GameServer
             return champs;
         }
 
-        public List<AttackableUnit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false)
+        public List<IAttackableUnit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false)
         {
             return GetUnitsInRange(new Target(x, y), range, onlyAlive);
         }
 
-        public List<AttackableUnit> GetUnitsInRange(Target t, float range, bool onlyAlive = false)
+        public List<IAttackableUnit> GetUnitsInRange(ITarget t, float range, bool onlyAlive = false)
         {
-            var units = new List<AttackableUnit>();
+            var units = new List<IAttackableUnit>();
             lock (_objectsLock)
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as AttackableUnit;
-                    if (u != null && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
+                    var u = kv.Value as IAttackableUnit;
+                    if (u != null && ((Target) t).GetDistanceTo(((Target)u)) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
                     {
                         units.Add(u);
                     }
@@ -349,7 +351,7 @@ namespace LeagueSandbox.GameServer
             return units;
         }
 
-        public bool TeamHasVisionOn(TeamId team, GameObject o)
+        public bool TeamHasVisionOn(TeamId team, IGameObject o)
         {
             if (o == null)
             {
@@ -365,8 +367,8 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
+                    if (kv.Value.Team == team && ((Target)kv.Value).GetDistanceTo((GameObject)o) < kv.Value.VisionRadius &&
+                        !_game.Map.NavGrid.IsAnythingBetween((GameObject)kv.Value, (GameObject)o))
                     {
                         var unit = kv.Value as AttackableUnit;
                         if (unit != null && unit.IsDead)
@@ -382,7 +384,7 @@ namespace LeagueSandbox.GameServer
             return false;
         }
 
-        public int CountUnitsAttackingUnit(AttackableUnit target)
+        public int CountUnitsAttackingUnit(IAttackableUnit target)
         {
             return GetObjects().Count(x =>
                 x.Value is ObjAiBase aiBase &&

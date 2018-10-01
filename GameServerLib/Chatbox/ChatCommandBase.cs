@@ -1,6 +1,4 @@
-﻿using ENet;
-
-namespace LeagueSandbox.GameServer.Chatbox
+﻿namespace LeagueSandbox.GameServer.Chatbox
 {
     public abstract class ChatCommandBase : IChatCommand
     {
@@ -18,7 +16,7 @@ namespace LeagueSandbox.GameServer.Chatbox
             Game = game;
         }
 
-        public abstract void Execute(Peer peer, bool hasReceivedArguments, string arguments = "");
+        public abstract void Execute(int userId, bool hasReceivedArguments, string arguments = "");
 
         public void ShowSyntax()
         {
