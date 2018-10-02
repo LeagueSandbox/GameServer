@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Items
         public int RecipeItem4 { get; private set; }
 
         // Not from data
-        public ItemRecipe Recipe { get; private set; }
+        public IItemRecipe Recipe { get; private set; }
         public int TotalPrice => Recipe.TotalPrice;
 
         private ItemType(ItemContentCollectionEntry itemInfo)
@@ -127,11 +127,6 @@ namespace LeagueSandbox.GameServer.Items
 
             result.CreateRecipe(owner);
             return result;
-        }
-
-        public bool IsTrinket()
-        {
-            return ItemGroup.ToLower().Equals("relicbase");
         }
     }
 

@@ -6,15 +6,10 @@ namespace LeagueSandbox.GameServer.Items
     {
         public byte StackSize { get; private set; }
         public int TotalPrice => ItemType.TotalPrice;
-        public ItemType ItemType { get; private set; }
+        public IItemType ItemType { get; }
 
-        IItemType IItem.ItemType => ItemType;
-
-        private Inventory _owner;
-
-        private Item(Inventory owner, ItemType type)
+        private Item(IItemType type)
         {
-            _owner = owner;
             ItemType = type;
             StackSize = 1;
         }
@@ -41,9 +36,9 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public static Item CreateFromType(Inventory inventory, ItemType item)
+        public static Item CreateFromType(IItemType item)
         {
-            return new Item(inventory, item);
+            return new Item(item);
         }
     }
 }

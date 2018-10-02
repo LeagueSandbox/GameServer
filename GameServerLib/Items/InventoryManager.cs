@@ -14,17 +14,17 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public Item AddItem(ItemType item)
+        public IItem AddItem(IItemType item)
         {
             return _inventory.AddItem(item);
         }
 
-        public Item SetExtraItem(byte slot, ItemType item)
+        public IItem SetExtraItem(byte slot, IItemType item)
         {
             return _inventory.SetExtraItem(slot, item);
         }
 
-        public Item GetItem(byte slot)
+        public IItem GetItem(byte slot)
         {
             return _inventory.GetItem(slot);
         }
@@ -34,12 +34,12 @@ namespace LeagueSandbox.GameServer.Items
             _inventory.RemoveItem(slot);
         }
 
-        public void RemoveItem(Item item)
+        public void RemoveItem(IItem item)
         {
             _inventory.RemoveItem(item);
         }
 
-        public byte GetItemSlot(Item item)
+        public byte GetItemSlot(IItem item)
         {
             return _inventory.GetItemSlot(item);
         }
@@ -49,15 +49,15 @@ namespace LeagueSandbox.GameServer.Items
             _inventory.SwapItems(slot1, slot2);
         }
 
-        public List<Item> GetAvailableItems(ItemRecipe recipe)
+        public List<IItem> GetAvailableItems(IItemRecipe recipe)
         {
-            var tempInv = new List<Item>(_inventory.GetBaseItems());
+            var tempInv = new List<IItem>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, recipe);
         }
         
-        private static List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
+        private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IItemRecipe recipe)
         {
-            var result = new List<Item>();
+            var result = new List<IItem>();
             var tmpRecipe = recipe.GetItems();
             foreach (var component in tmpRecipe)
             {
@@ -88,21 +88,6 @@ namespace LeagueSandbox.GameServer.Items
         public IEnumerator GetEnumerator()
         {
             return _inventory.Items.GetEnumerator();
-        }
-
-        byte IInventoryManager.GetItemSlot(IItem item)
-        {
-            return GetItemSlot((Item)item);
-        }
-
-        IItem IInventoryManager.SetExtraItem(byte slot, IItemType item)
-        {
-            return SetExtraItem(slot, (ItemType)item);
-        }
-
-        IItem IInventoryManager.GetItem(byte slot)
-        {
-            return GetItem(slot);
         }
     }
 }

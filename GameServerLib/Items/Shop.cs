@@ -1,4 +1,5 @@
 using System.Linq;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Items
@@ -73,7 +74,7 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(Item item, byte slotId, byte stackSize = 0)
+        private void RemoveItem(IItem item, byte slotId, byte stackSize = 0)
         {
             var inventory = _owner.Inventory;
             _owner.Stats.RemoveModifier(item.ItemType);
@@ -82,7 +83,7 @@ namespace LeagueSandbox.GameServer.Items
             inventory.RemoveItem(item);
         }
 
-        private bool AddItem(ItemType itemType)
+        private bool AddItem(IItemType itemType)
         {
             var i = _owner.Inventory.AddItem(itemType);
             if (i == null)

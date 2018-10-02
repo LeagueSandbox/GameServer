@@ -66,6 +66,10 @@
     <Compile Include="Tests\TestStatModificator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj">
+      <Project>{da3de633-d75b-40b0-8833-099abfbf43a2}</Project>
+      <Name>GameServerCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameServerLib\GameServerLib.csproj">
       <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
       <Name>GameServerLib</Name>

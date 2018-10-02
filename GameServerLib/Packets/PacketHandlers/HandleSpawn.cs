@@ -1,4 +1,5 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
@@ -86,7 +87,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     foreach (var item in turret.Inventory)
                     {
                         if (item == null) continue;
-                         _game.PacketNotifier.NotifyItemBought(turret, item as Item);
+                         _game.PacketNotifier.NotifyItemBought(turret, item as IItem);
                     }
                 }
                 else if (kv.Value is LevelProp levelProp)
