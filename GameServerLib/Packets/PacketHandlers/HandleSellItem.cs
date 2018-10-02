@@ -1,7 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -23,37 +23,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadSellItemRequest(data);
-            var client = _playerManager.GetPeerInfo(userId);
-
-            var i = _playerManager.GetPeerInfo(userId).Champion.Inventory.GetItem(request.SlotId) as Item;
-            if (i == null)
-            {
-                return false;
-            }
-
-            var sellPrice = i.ItemType.TotalPrice * i.ItemType.SellBackModifier;
-            client.Champion.Stats.Gold += sellPrice;
-
-            if (i.ItemType.MaxStack > 1)
-            {
-                i.DecrementStackSize();
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, i.StackSize);
-                if (i.StackSize == 0)
-                {
-                    client.Champion.RemoveSpell((byte)(request.SlotId + Shop.ITEM_ACTIVE_OFFSET));
-                    client.Champion.Inventory.RemoveItem(request.SlotId);
-                }
-            }
-            else
-            {
-                _game.PacketNotifier.NotifyRemoveItem(client.Champion, request.SlotId, 0);
-                client.Champion.RemoveSpell((byte)(request.SlotId + Shop.ITEM_ACTIVE_OFFSET));
-                client.Champion.Inventory.RemoveItem(request.SlotId);
-            }
-
-            client.Champion.Stats.RemoveModifier(i.ItemType);
-
-            return true;
+            var champion = (Champion)_playerManager.GetPeerInfo(userId).Champion;
+            return champion.Shop.HandleItemSellRequest(request.SlotId);
         }
     }
 }

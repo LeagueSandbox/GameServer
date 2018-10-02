@@ -70,7 +70,10 @@ namespace LeagueSandbox.GameServer
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
 
             // Load items
-            game.ItemManager.LoadItems(ContentPath);
+            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
+                // todo: remove this hardcoded path with content pipeline refactor
+                $"{ContentPath}/LeagueSandbox-Default/Items"
+            ));
 
             // Read the game configuration
             var gameToken = data.SelectToken("game");

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
-using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class Inventory
     {
-        private const int TRINKET_SLOT = 6;
-        private const int BASE_INVENTORY_SIZE = 7; // Includes trinket
-        private const int EXTRA_INVENTORY_SIZE = 7;
-        private const int RUNE_INVENTORY_SIZE = 30;
+        private const byte TRINKET_SLOT = 6;
+        private const byte BASE_INVENTORY_SIZE = 7; // Includes trinket
+        private const byte EXTRA_INVENTORY_SIZE = 7;
+        private const byte RUNE_INVENTORY_SIZE = 30;
         private Item[] _items;
         private InventoryManager _owner;
         public Item[] Items => _items;
@@ -56,12 +55,12 @@ namespace LeagueSandbox.GameServer.Items
             return _items[slot];
         }
 
-        public Item GetItem(int slot)
+        public Item GetItem(byte slot)
         {
             return _items[slot];
         }
 
-        public void RemoveItem(int slot)
+        public void RemoveItem(byte slot)
         {
             _items[slot] = null;
         }
@@ -71,9 +70,9 @@ namespace LeagueSandbox.GameServer.Items
             RemoveItem(GetItemSlot(item));
         }
 
-        public int GetItemSlot(Item item)
+        public byte GetItemSlot(Item item)
         {
-            for (var i = 0; i < _items.Length; i++)
+            for (byte i = 0; i < _items.Length; i++)
             {
                 if (_items[i] != item)
                 {
@@ -86,7 +85,7 @@ namespace LeagueSandbox.GameServer.Items
             throw new Exception("Specified item doesn't exist in the inventory!");
         }
 
-        public void SwapItems(int slot1, int slot2)
+        public void SwapItems(byte slot1, byte slot2)
         {
             if (slot1 == TRINKET_SLOT || slot2 == TRINKET_SLOT)
             {

@@ -1,6 +1,6 @@
-using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer
 {

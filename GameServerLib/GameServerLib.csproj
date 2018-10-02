@@ -263,7 +263,10 @@
     <Compile Include="GameObjects\Stats\Stats.cs" />
     <Compile Include="GameObjects\Other\Target.cs" />
     <Compile Include="GameObjects\AttackableUnits\AttackableUnit.cs" />
-    <Compile Include="Content\ItemManager.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ItemManager.cs" />
+    <Compile Include="Items\ItemRecipe.cs" />
+    <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
