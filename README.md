@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=indev)](https://travis-ci.org/LeagueSandbox/GameServer)
 [![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=indev)](https://codecov.io/github/LeagueSandbox/GameServer?branch=indev)
 # The League Sandbox project's game server
-Project website along with more specifications can be fround from: https://leaguesandbox.github.io/  
+Project website along with more specifications can be found from: https://leaguesandbox.github.io/  
 Project chat on Discord: https://discord.gg/Bz3znAM
 
 # Contributing
