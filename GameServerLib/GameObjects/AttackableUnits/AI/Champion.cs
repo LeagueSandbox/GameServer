@@ -415,7 +415,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return true;
         }
 
-        public void OnKill(AttackableUnit killed)
+        public void OnKill(IAttackableUnit killed)
         {
             if (killed is Minion)
             {
@@ -517,7 +517,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void OnCollision(GameObject collider)
+        public override void OnCollision(IGameObject collider)
         {
             base.OnCollision(collider);
             if (collider == null)

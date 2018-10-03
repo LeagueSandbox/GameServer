@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             _game.PacketNotifier.NotifyProjectileDestroy(this);
         }
 
-        private bool CheckIfValidTarget(AttackableUnit unit)
+        private bool CheckIfValidTarget(IAttackableUnit unit)
         {
             if (!Target.IsSimpleTarget)
             {
@@ -188,7 +188,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// </summary>
         /// <param name="target">Target to be checked</param>
         /// <returns>true if target is in rectangle, otherwise false.</returns>
-        private bool TargetIsInRectangle(AttackableUnit target)
+        private bool TargetIsInRectangle(IAttackableUnit target)
         {
             var unitCoords = new Vector2(target.X, target.Y);
 

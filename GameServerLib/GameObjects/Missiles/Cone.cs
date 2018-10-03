@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             _game.PacketNotifier.NotifyProjectileDestroy(this);
         }
 
-        private bool CheckIfValidTarget(AttackableUnit unit)
+        private bool CheckIfValidTarget(IAttackableUnit unit)
         {
             if (!Target.IsSimpleTarget)
             {
@@ -151,7 +151,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             return true;
         }
        
-        private void ApplyEffects(AttackableUnit unit)
+        private void ApplyEffects(IAttackableUnit unit)
         {
             ObjectsHit.Add(unit);
             var attackableUnit = unit;

@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             base.Update(diff);
         }
 
-        public override void OnCollision(GameObject collider)
+        public override void OnCollision(IGameObject collider)
         {
             base.OnCollision(collider);
             if (Target != null && Target.IsSimpleTarget && !IsToRemove())
@@ -92,7 +92,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             return _moveSpeed;
         }
 
-        protected virtual void CheckFlagsForUnit(AttackableUnit unit)
+        protected virtual void CheckFlagsForUnit(IAttackableUnit unit)
         {
             if (Target == null)
             {

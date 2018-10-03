@@ -551,7 +551,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Die(killer);
         }
 
-        public override void OnCollision(GameObject collider)
+        public override void OnCollision(IGameObject collider)
         {
             base.OnCollision(collider);
             if (collider == null)

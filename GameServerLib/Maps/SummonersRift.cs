@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -319,7 +320,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
         }
 
-        public Target GetRespawnLocation(TeamId team)
+        public ITarget GetRespawnLocation(TeamId team)
         {
             if (!SpawnsByTeam.ContainsKey(team))
             {
@@ -353,7 +354,7 @@ namespace LeagueSandbox.GameServer.Maps
             return $"{teamDictionary[team]}_Minion_{typeDictionary[type]}";
         }
 
-        public float GetGoldFor(AttackableUnit u)
+        public float GetGoldFor(IAttackableUnit u)
         {
             if (!(u is Minion m))
             {
@@ -424,7 +425,7 @@ namespace LeagueSandbox.GameServer.Maps
             return dic[m.MinionSpawnType];
         }
 
-        public float GetExperienceFor(AttackableUnit u)
+        public float GetExperienceFor(IAttackableUnit u)
         {
             if (!(u is Minion m))
             {
@@ -467,7 +468,7 @@ namespace LeagueSandbox.GameServer.Maps
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
 
-        public void SetMinionStats(Minion m)
+        public void SetMinionStats(IMinion m)
         {
             // Same for all minions
             m.Stats.MoveSpeed.BaseValue = 325.0f;

@@ -7,11 +7,11 @@ namespace GameServerCore.Domain.GameObjects
         IAttackableUnit TargetUnit { get; set;  }
         IAttackableUnit AutoAttackTarget { get; }
 
-        float AutoAttackDelay { get; }
-        float AutoAttackProjectileSpeed { get; }
+        float AutoAttackDelay { get; set;  }
+        float AutoAttackProjectileSpeed { get; set;  }
         MoveOrder MoveOrder { get; }
         bool IsCastingSpell { get; set;  }
-        bool IsMelee { get; }
+        bool IsMelee { get; set; }
         void UpdateTargetUnit(IAttackableUnit unit);
         void StopMovement();
         void TeleportTo(float x, float y);

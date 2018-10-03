@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _game.Map.CollisionHandler.RemoveObject(this);
         }
 
-        public virtual void OnCollision(GameObject collider)
+        public virtual void OnCollision(IGameObject collider)
         {
         }
 
