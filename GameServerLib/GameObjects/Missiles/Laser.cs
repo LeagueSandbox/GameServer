@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Numerics;
 using GameServerCore;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -24,9 +26,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float x,
             float y,
             int collisionRadius,
-            AttackableUnit owner,
-            Target target,
-            Spell originSpell,
+            IAttackableUnit owner,
+            ITarget target,
+            ISpell originSpell,
             string effectName,
             int flags,
             bool affectAsCastIsOver) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
@@ -162,7 +164,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// <summary>
         /// Assigns this <see cref="Laser"/>'s corners to form a rectangle.
         /// </summary>
-        private void CreateRectangle(Target beginPoint, Target endPoint)
+        private void CreateRectangle(ITarget beginPoint, ITarget endPoint)
         {
             var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
             var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);

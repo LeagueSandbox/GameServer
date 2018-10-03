@@ -7,5 +7,6 @@
         IReplicate[,] Values { get; }
         bool Changed { get; }
         void MarkAsUnchanged();
+        void Update();
     }
 }

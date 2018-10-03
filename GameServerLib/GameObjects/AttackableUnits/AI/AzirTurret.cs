@@ -5,9 +5,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class AzirTurret : BaseTurret, IAzirTurret
     {
-        public AttackableUnit Owner { get; private set; }
-
-        IAttackableUnit IAzirTurret.Owner => Owner;
+        public IAttackableUnit Owner { get; private set; }
 
         public AzirTurret(
             Game game,

@@ -13,6 +13,9 @@ namespace GameServerCore.Domain
         string Name { get; }
         int Stacks { get; }
         byte Slot { get; }
-
+        void Update(float diff);
+        void ResetDuration();
+        void SetStacks(int newStacks);
+        bool Elapsed();
     }
 }

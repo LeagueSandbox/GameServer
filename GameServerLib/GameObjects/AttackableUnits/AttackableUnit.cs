@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        public Stats.Stats Stats { get; protected set; }
+        public IStats Stats { get; protected set; }
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
@@ -33,14 +33,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         }
 
         protected readonly ILog Logger;
-        public InventoryManager Inventory { get; protected set; }
+        public IInventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; protected set; }
         public int MinionCounter { get; protected set; }
-        public Replication Replication { get; protected set; }
-
-        IReplication IAttackableUnit.Replication => Replication;
-        IStats IAttackableUnit.Stats => Stats;
-        IInventoryManager IAttackableUnit.Inventory => Inventory;
+        public IReplication Replication { get; protected set; }
 
         public AttackableUnit(
             Game game,

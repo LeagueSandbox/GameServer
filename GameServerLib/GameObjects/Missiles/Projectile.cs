@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Content;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
@@ -14,25 +15,23 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 {
     public class Projectile : ObjMissile, IProjectile
     {
-        public List<GameObject> ObjectsHit { get; private set; }
-        public AttackableUnit Owner { get; private set; }
+        public List<IGameObject> ObjectsHit { get; private set; }
+        public IAttackableUnit Owner { get; private set; }
         public int ProjectileId { get; private set; }
         public SpellData SpellData { get; protected set; }
 
-        List<IGameObject> IProjectile.ObjectsHit => ObjectsHit.Cast<IGameObject>().ToList();
-        IAttackableUnit IProjectile.Owner => Owner;
 
         protected float _moveSpeed;
-        protected Spell _originSpell;
+        protected ISpell _originSpell;
 
         public Projectile(
             Game game,
             float x,
             float y,
             int collisionRadius,
-            AttackableUnit owner,
-            Target target,
-            Spell originSpell,
+            IAttackableUnit owner,
+            ITarget target,
+            ISpell originSpell,
             float moveSpeed,
             string projectileName,
             int flags = 0,
@@ -49,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             {
                 VisionRadius = SpellData.MissilePerceptionBubbleRadius;
             }
-            ObjectsHit = new List<GameObject>();
+            ObjectsHit = new List<IGameObject>();
 
             Target = target;
 

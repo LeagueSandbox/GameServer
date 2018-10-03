@@ -17,12 +17,10 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly ILog _logger;
 
         public List<Announce> AnnouncerEvents { get; private set; }
-        public NavGrid NavGrid { get; private set; }
+        public INavGrid NavGrid { get; private set; }
         public CollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; }
         public IMapGameScript MapGameScript { get; private set; }
-
-        INavGrid IMap.NavGrid => NavGrid;
 
         public Map(Game game)
         {

@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer
                     var tempBuffs = ai.GetBuffs();
                     foreach (var buff in tempBuffs.Values)
                     {
-                        if (buff.NeedsToRemove())
+                        if (buff.Elapsed())
                         {
                             if (buff.Name != "")
                             {

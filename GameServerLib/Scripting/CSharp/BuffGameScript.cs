@@ -1,4 +1,5 @@
-﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+﻿using GameServerCore.Domain;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
@@ -7,7 +8,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         void OnUpdate(double diff);
 
-        void OnActivate(ObjAiBase unit, Spell ownerSpell);
+        void OnActivate(ObjAiBase unit, ISpell ownerSpell);
 
         void OnDeactivate(ObjAiBase unit);
     }

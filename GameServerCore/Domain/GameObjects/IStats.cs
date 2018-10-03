@@ -13,8 +13,8 @@ namespace GameServerCore.Domain.GameObjects
         bool IsPhysicalImmune { get; }
         bool IsLifestealImmune { get; }
         bool IsTargetable { get; }
-        IsTargetableToTeamFlags IsTargetableToTeam { get; }
-        float AttackSpeedFlat { get; }
+        IsTargetableToTeamFlags IsTargetableToTeam { get; set; }
+        float AttackSpeedFlat { get; set; }
         float HealthPerLevel { get; }
         float ManaPerLevel { get; }
         float AdPerLevel { get; }
@@ -22,7 +22,7 @@ namespace GameServerCore.Domain.GameObjects
         float MagicResistPerLevel { get; }
         float HealthRegenerationPerLevel { get; }
         float ManaRegenerationPerLevel { get; }
-        float GrowthAttackSpeed { get; }
+        float GrowthAttackSpeed { get; set; }
         float[] ManaCost { get; }
         IStat AbilityPower { get; }
         IStat Armor { get; }
@@ -50,14 +50,17 @@ namespace GameServerCore.Domain.GameObjects
         float Experience { get; set; }
         float CurrentHealth { get; set; }
         float CurrentMana { get; set; }
-        bool IsGeneratingGold { get; }
+        bool IsGeneratingGold { get; set; }
         float SpellCostReduction { get; }
-
+        
+        float GetTotalAttackSpeed();
         bool GetSpellEnabled(byte id);
         void SetSpellEnabled(byte id, bool enabled);
         bool GetSummonerSpellEnabled(byte id);
         void SetSummonerSpellEnabled(byte id, bool enabled);
         void AddModifier(IStatsModifier modifier);
         void RemoveModifier(IStatsModifier modifier);
+        void Update(float diff);
+        void LevelUp();
     }
 }

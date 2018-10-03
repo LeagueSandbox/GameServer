@@ -26,5 +26,8 @@ namespace GameServerCore.Domain
         int GetId();
         float GetCooldown();
         void Deactivate();
+        void ApplyEffects(IAttackableUnit u, IProjectile p);
+        void LevelUp();
+        void Update(float diff);
     }
 }

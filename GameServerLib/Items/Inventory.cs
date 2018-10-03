@@ -10,19 +10,18 @@ namespace LeagueSandbox.GameServer.Items
         private const byte BASE_INVENTORY_SIZE = 7; // Includes trinket
         private const byte EXTRA_INVENTORY_SIZE = 7;
         private const byte RUNE_INVENTORY_SIZE = 30;
-        private IItem[] _items;
         private InventoryManager _owner;
-        public IItem[] Items => _items;
+        public IItem[] Items { get; }
 
         public Inventory(InventoryManager owner)
         {
             _owner = owner;
-            _items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
+            Items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
         }
 
         public IItem[] GetBaseItems()
         {
-            return _items.Take(BASE_INVENTORY_SIZE).ToArray();
+            return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
         
         public IItem AddItem(IItemType item)
@@ -52,18 +51,18 @@ namespace LeagueSandbox.GameServer.Items
 
         private IItem SetItem(byte slot, IItemType item)
         {
-            _items[slot] = Item.CreateFromType(item);
-            return _items[slot];
+            Items[slot] = Item.CreateFromType(item);
+            return Items[slot];
         }
 
         public IItem GetItem(byte slot)
         {
-            return _items[slot];
+            return Items[slot];
         }
 
         public void RemoveItem(byte slot)
         {
-            _items[slot] = null;
+            Items[slot] = null;
         }
 
         public void RemoveItem(IItem item)
@@ -73,9 +72,9 @@ namespace LeagueSandbox.GameServer.Items
 
         public byte GetItemSlot(IItem item)
         {
-            for (byte i = 0; i < _items.Length; i++)
+            for (byte i = 0; i < Items.Length; i++)
             {
-                if (_items[i] != item)
+                if (Items[i] != item)
                 {
                     continue;
                 }
@@ -93,14 +92,14 @@ namespace LeagueSandbox.GameServer.Items
                 throw new Exception("Can't swap to or from the trinket slot");
             }
 
-            var buffer = _items[slot1];
-            _items[slot1] = _items[slot2];
-            _items[slot2] = buffer;
+            var buffer = Items[slot1];
+            Items[slot1] = Items[slot2];
+            Items[slot2] = buffer;
         }
 
         private IItem AddTrinketItem(IItemType item)
         {
-            if (_items[TRINKET_SLOT] != null)
+            if (Items[TRINKET_SLOT] != null)
             {
                 return null;
             }
@@ -112,19 +111,19 @@ namespace LeagueSandbox.GameServer.Items
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
-                if (_items[i] == null)
+                if (Items[i] == null)
                 {
                     continue;
                 }
 
-                if (item.ItemId != _items[i].ItemType.ItemId)
+                if (item.ItemId != Items[i].ItemType.ItemId)
                 {
                     continue;
                 }
 
-                if (_items[i].IncrementStackSize())
+                if (Items[i].IncrementStackSize())
                 {
-                    return _items[i];
+                    return Items[i];
                 }
 
                 return null;
@@ -141,7 +140,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                if (_items[i] != null)
+                if (Items[i] != null)
                 {
                     continue;
                 }

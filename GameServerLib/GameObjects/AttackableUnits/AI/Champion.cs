@@ -19,16 +19,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
-        public RuneCollection RuneList { get; set; }
-        public Dictionary<short, Spell> Spells { get; private set; } = new Dictionary<short, Spell>();
-        public ChampionStats ChampStats { get; private set; } = new ChampionStats();
+        public IRuneCollection RuneList { get; set; }
+        public Dictionary<short, ISpell> Spells { get; private set; } = new Dictionary<short, ISpell>();
+        public IChampionStats ChampStats { get; private set; } = new ChampionStats();
 
         public byte SkillPoints { get; set; }
         public int Skin { get; set; }
-
-        IRuneCollection IChampion.RuneList => RuneList;
-        Dictionary<short, ISpell> IChampion.Spells => Spells.ToDictionary(x => x.Key, x => (ISpell)x.Value);
-        IChampionStats IChampion.ChampStats => ChampStats;
 
         private float _championHitFlagTimer;
         /// <summary>
@@ -230,7 +226,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.PacketNotifier.NotifyMovement(this);
         }
 
-        public Spell GetSpellByName(string name)
+        public ISpell GetSpellByName(string name)
         {
             foreach (var s in Spells.Values)
             {
@@ -248,7 +244,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return null;
         }
 
-        public Spell LevelUpSpell(byte slot)
+        public ISpell LevelUpSpell(byte slot)
         {
             if (SkillPoints == 0)
             {
@@ -268,7 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return s;
         }
 
-        public bool CanSpellBeLeveledUp(Spell s)
+        public bool CanSpellBeLeveledUp(ISpell s)
         {
             return CharData.SpellsUpLevels[s.Slot][s.Level] <= Stats.Level;
         }

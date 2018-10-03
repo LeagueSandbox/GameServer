@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Numerics;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -25,9 +27,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float x,
             float y,
             int collisionRadius,
-            AttackableUnit owner,
-            Target target,
-            Spell originSpell,
+            IAttackableUnit owner,
+            ITarget target,
+            ISpell originSpell,
             string effectName,
             int flags,
             bool affectAsCastIsOver,
@@ -159,7 +161,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        private void CreateCone(Target beginPoint, Target endPoint)
+        private void CreateCone(ITarget beginPoint, ITarget endPoint)
         {
             var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
             var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
@@ -174,7 +176,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             _radius = distance;
         }
 
-        private bool TargetIsInCone(AttackableUnit target)
+        private bool TargetIsInCone(IAttackableUnit target)
         {
             var unitCoords = new Vector2(target.X, target.Y);
             var targetDistance = Vector2.Distance(_ownerCoords, unitCoords);

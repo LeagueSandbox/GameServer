@@ -23,5 +23,8 @@ namespace GameServerCore.Domain.GameObjects
         void SetTeam(TeamId team);
         void OnAdded();
         void OnRemoved();
+        void IncrementAttackerCount();
+        void DecrementAttackerCount();
+        Vector2 GetPosition();
     }
 }

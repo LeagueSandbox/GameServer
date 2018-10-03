@@ -16,11 +16,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public uint NetId { get; private set; }
         protected float _xvector, _yvector;
 
-        /// <summary>
-        /// Current target the object running to (can be coordinates or an object)
-        /// </summary>
-        public ITarget Target { get; set; }
-
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
         public TeamId Team { get; protected set; }
@@ -49,7 +44,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
 
-        ITarget IGameObject.Target => Target;
+        /// <summary>
+        /// Current target the object running to (can be coordinates or an object)
+        /// </summary>
+        public ITarget Target { get; set; }
 
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {

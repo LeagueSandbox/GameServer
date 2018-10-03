@@ -10,7 +10,7 @@ namespace GameServerCore.Domain.GameObjects
         float AutoAttackDelay { get; }
         float AutoAttackProjectileSpeed { get; }
         MoveOrder MoveOrder { get; }
-        bool IsCastingSpell { get; }
+        bool IsCastingSpell { get; set;  }
         bool IsMelee { get; }
         void UpdateTargetUnit(IAttackableUnit unit);
         void StopMovement();
@@ -18,5 +18,6 @@ namespace GameServerCore.Domain.GameObjects
         // buffs
         bool HasBuffGameScriptActive(string buffNamespace, string buffClass);
         void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false);
+        void RemoveBuffSlot(IBuff b);
     }
 }

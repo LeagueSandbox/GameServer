@@ -21,10 +21,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class ObjAiBase : AttackableUnit, IObjAiBase
     {
-        private Buff[] AppliedBuffs { get; }
+        private IBuff[] AppliedBuffs { get; }
         private List<BuffGameScriptController> BuffGameScriptControllers { get; }
         private object BuffsLock { get; }
-        private Dictionary<string, Buff> Buffs { get; }
+        private Dictionary<string, IBuff> Buffs { get; }
 
         private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
         protected ItemManager _itemManager;
@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
             CharData = _game.Config.ContentManager.GetCharData(Model);
-            Stats.LoadStats(CharData);
+            stats.LoadStats(CharData);
 
             if (CharData.PathfindingCollisionRadius > 0)
             {
@@ -93,10 +93,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsMelee = true;
             }
 
-            AppliedBuffs = new Buff[256];
+            AppliedBuffs = new IBuff[256];
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             BuffsLock = new object();
-            Buffs = new Dictionary<string, Buff>();
+            Buffs = new Dictionary<string, IBuff>();
         }
 
         public void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false)
@@ -143,9 +143,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return BuffGameScriptControllers;
         }
 
-        public Dictionary<string, Buff> GetBuffs()
+        public Dictionary<string, IBuff> GetBuffs()
         {
-            var toReturn = new Dictionary<string, Buff>();
+            var toReturn = new Dictionary<string, IBuff>();
             lock (BuffsLock)
             {
                 foreach (var buff in Buffs)
@@ -163,7 +163,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         //todo: use statmods
-        public Buff GetBuff(string name)
+        public IBuff GetBuff(string name)
         {
             lock (BuffsLock)
             {
@@ -195,12 +195,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 else
                 {
-                    Buffs[b.Name].TimeElapsed = 0; // if buff already exists, just restart its timer
+                    Buffs[b.Name].ResetDuration(); // if buff already exists, just restart its timer
                 }
             }
         }
 
-        public void RemoveBuff(Buff b)
+        public void RemoveBuff(IBuff b)
         {
             //TODO add every stat
             RemoveBuff(b.Name);
@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return slot;
         }
 
-        public void RemoveBuffSlot(Buff b)
+        public void RemoveBuffSlot(IBuff b)
         {
             var slot = GetBuffSlot(b);
             AppliedBuffs[slot] = null;
@@ -366,7 +366,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RefreshWaypoints();
         }
 
-        private byte GetBuffSlot(Buff buffToLookFor = null)
+        private byte GetBuffSlot(IBuff buffToLookFor = null)
         {
             for (byte i = 1; i < AppliedBuffs.Length; i++) // Find the first open slot or the slot corresponding to buff
             {

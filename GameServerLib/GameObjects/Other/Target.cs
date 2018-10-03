@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));
         }
 
-        public float GetDistanceToSqr(Target target)
+        public float GetDistanceToSqr(ITarget target)
         {
             return GetDistanceToSqr(target.X, target.Y);
         }
