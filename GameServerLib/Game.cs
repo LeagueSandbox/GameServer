@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Timer = System.Timers.Timer;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace LeagueSandbox.GameServer
 {
@@ -87,7 +88,7 @@ namespace LeagueSandbox.GameServer
 
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
-            ApiFunctionManager.SetGame(this);
+            SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
 

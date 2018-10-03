@@ -1,6 +1,7 @@
 ﻿using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Spells;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
             if (_duration >= 0)
             {
-                ApiFunctionManager.CreateTimer(_duration, DeactivateBuff);
+                CreateTimer(_duration, DeactivateBuff);
             }
         }
 

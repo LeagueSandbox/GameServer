@@ -10,6 +10,7 @@ using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
@@ -214,7 +215,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
-                ApiFunctionManager.AddParticleTarget(Owner, SpellData.HitEffectName, u);
+                AddParticleTarget(Owner, SpellData.HitEffectName, u);
             }
 
             _spellGameScript.ApplyEffects(Owner, u, this, p);
