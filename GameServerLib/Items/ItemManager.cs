@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemManager
     {
-        private Dictionary<int, IItemType> _itemTypes;
+        private readonly Dictionary<int, IItemType> _itemTypes;
 
         public ItemManager()
         {

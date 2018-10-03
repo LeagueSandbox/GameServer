@@ -16,5 +16,6 @@ namespace GameServerCore.Domain.GameObjects
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageText damageText);
         void Die(IAttackableUnit killer);
+        bool IsInDistress();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
@@ -125,14 +126,14 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnChampionDamageTaken
     {
-        private List<Tuple<object, Champion, Action>> _listeners = new List<Tuple<object, Champion, Action>>();
-        public void AddListener(object owner, Champion champion, Action callback)
+        private List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
+        public void AddListener(object owner, IChampion champion, Action callback)
         {
-            var listenerTuple = new Tuple<object, Champion, Action>(owner, champion, callback);
+            var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);
             _listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(object owner, Champion champion)
+        public void RemoveListener(object owner, IChampion champion)
         {
             _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
         }
@@ -142,7 +143,7 @@ namespace LeagueSandbox.GameServer.API
             _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
 
-        public void Publish(Champion champion)
+        public void Publish(IChampion champion)
         {
             _listeners.ForEach(listener =>
             {

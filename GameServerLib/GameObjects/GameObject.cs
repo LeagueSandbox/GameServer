@@ -288,7 +288,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
         }
 
-        public void DashToTarget(Target t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
+        public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
         {
             // TODO: Take into account the rest of the arguments
             IsDashing = true;

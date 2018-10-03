@@ -351,7 +351,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
-        public void Recall(ObjAiBase owner)
+        public void Recall(IObjAiBase owner)
         {
             var spawnPos = GetRespawnPosition();
             owner.TeleportTo(spawnPos.X, spawnPos.Y);

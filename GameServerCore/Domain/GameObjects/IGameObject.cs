@@ -21,6 +21,9 @@ namespace GameServerCore.Domain.GameObjects
         void SetPosition(float x, float y);
         void SetWaypoints(List<Vector2> newWaypoints);
         void SetTeam(TeamId team);
+        void SetToRemove();
+        void SetDashingState(bool state);
+        void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
         void OnAdded();
         void OnRemoved();
         void IncrementAttackerCount();

@@ -21,6 +21,8 @@ namespace GameServerCore.Domain.GameObjects
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
+        void Recall(IObjAiBase owner);
+        void Respawn();
 
         // spells
         void SetSpell(string name, byte slot, bool enabled = false);

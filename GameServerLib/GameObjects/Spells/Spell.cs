@@ -237,7 +237,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void AddProjectileTarget(string nameMissile, Target target, bool isServerOnly = false)
+        public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
         {
             var p = new Projectile(
                 _game,
@@ -293,7 +293,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _game.ObjectManager.AddObject(c);
         }
 
-        public void SpellAnimation(string animName, AttackableUnit target)
+        public void SpellAnimation(string animName, IAttackableUnit target)
         {
             _game.PacketNotifier.NotifySpellAnimation(target, animName);
         }

@@ -26,15 +26,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private object BuffsLock { get; }
         private Dictionary<string, IBuff> Buffs { get; }
 
-        private List<UnitCrowdControl> _crowdControlList = new List<UnitCrowdControl>();
+        private List<ICrowdControl> _crowdControlList = new List<ICrowdControl>();
         protected ItemManager _itemManager;
         protected CSharpScriptEngine _scriptEngine;
 
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
-        public AttackableUnit TargetUnit { get; set; }
-        public AttackableUnit AutoAttackTarget { get; set; }
+        public IAttackableUnit TargetUnit { get; set; }
+        public IAttackableUnit AutoAttackTarget { get; set; }
         public CharData CharData { get; protected set; }
         public SpellData AaSpellData { get; protected set; }
         private bool _isNextAutoCrit;
@@ -50,8 +50,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool IsCastingSpell { get; set; }
         public bool IsMelee { get; set; }
 
-        IAttackableUnit IObjAiBase.TargetUnit => TargetUnit;
-        IAttackableUnit IObjAiBase.AutoAttackTarget => AutoAttackTarget;
 
         private Random _random = new Random();
 
@@ -175,17 +173,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public void AddStatModifier(StatsModifier statModifier)
+        public void AddStatModifier(IStatsModifier statModifier)
         {
             Stats.AddModifier(statModifier);
         }
 
-        public void RemoveStatModifier(StatsModifier statModifier)
+        public void RemoveStatModifier(IStatsModifier statModifier)
         {
             Stats.RemoveModifier(statModifier);
         }
 
-        public void AddBuff(Buff b)
+        public void AddBuff(IBuff b)
         {
             lock (BuffsLock)
             {
@@ -215,7 +213,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public byte GetNewBuffSlot(Buff b)
+        public byte GetNewBuffSlot(IBuff b)
         {
             var slot = GetBuffSlot();
             AppliedBuffs[slot] = b;
@@ -228,7 +226,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             AppliedBuffs[slot] = null;
         }
 
-        public void ApplyCrowdControl(UnitCrowdControl cc)
+        public void ApplyCrowdControl(ICrowdControl cc)
         {
             if (cc.IsTypeOf(CrowdControlType.STUN) || cc.IsTypeOf(CrowdControlType.ROOT))
             {
@@ -238,7 +236,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _crowdControlList.Add(cc);
         }
 
-        public void RemoveCrowdControl(UnitCrowdControl cc)
+        public void RemoveCrowdControl(ICrowdControl cc)
         {
             _crowdControlList.Remove(cc);
         }
@@ -284,7 +282,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public ClassifyUnit ClassifyTarget(AttackableUnit target)
+        public ClassifyUnit ClassifyTarget(IAttackableUnit target)
         {
             if (target is ObjAiBase ai)
             {
@@ -359,7 +357,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return ClassifyUnit.DEFAULT;
         }
 
-
         public void SetTargetUnit(AttackableUnit target)
         {
             TargetUnit = target;
@@ -382,7 +379,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// This is called by the AA projectile when it hits its target
         /// </summary>
-        public virtual void AutoAttackHit(AttackableUnit target)
+        public virtual void AutoAttackHit(IAttackableUnit target)
         {
             if (HasCrowdControl(CrowdControlType.BLIND))
             {
@@ -398,7 +395,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 damage *= Stats.CriticalDamage.Total;
             }
 
-            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
+            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
             target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,

@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
+    <Compile Include="Enums\CrowdControlType.cs" />
     <Compile Include="Enums\DamageSource.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Content\HashFunctions.cs" />

@@ -25,9 +25,15 @@ namespace GameServerCore.Domain
 
         int GetId();
         float GetCooldown();
+        void LowerCooldown(float lowerValue);
         void Deactivate();
         void ApplyEffects(IAttackableUnit u, IProjectile p);
         void LevelUp();
         void Update(float diff);
+        void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false);
+        void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false);
+        void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true);
+        void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true);
+        void SpellAnimation(string animName, IAttackableUnit target);
     }
 }
