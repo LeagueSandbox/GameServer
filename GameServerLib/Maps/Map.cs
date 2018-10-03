@@ -29,23 +29,7 @@ namespace LeagueSandbox.GameServer.Maps
             _game = game;
             _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
-            var path = Path.Combine(
-                game.Config.ContentPath,
-                _game.Config.ContentManager.GameModeName,
-                "AIMesh",
-                "Map" + Id,
-                "AIPath.aimesh_ngrid"
-            );
-
-            if (File.Exists(path))
-            {
-                NavGrid = NavGridReader.ReadBinary(path);
-            }
-            else
-            {
-                _logger.Error("Failed to load navigation graph. Aborting map load.");
-                return;
-            }
+            NavGrid = _game.Config.ContentManager.GetNavGrid(Id);
 
             AnnouncerEvents = new List<Announce>();
             CollisionHandler = new CollisionHandler(_game, this);

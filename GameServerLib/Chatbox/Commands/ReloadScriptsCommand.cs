@@ -12,7 +12,7 @@
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            if (Game.LoadScripts())
+            if (Game.LoadScripts(true))
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts reloaded.");
             }

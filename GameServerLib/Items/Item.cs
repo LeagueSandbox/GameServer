@@ -5,23 +5,23 @@ namespace LeagueSandbox.GameServer.Items
     public class Item : IItem
     {
         public byte StackSize { get; private set; }
-        public int TotalPrice => ItemType.TotalPrice;
-        public ItemType ItemType { get; private set; }
+        public int TotalPrice { get; private set; }
+        public ItemData ItemData { get; private set; }
 
-        IItemType IItem.ItemType => ItemType;
+        IItemData IItem.ItemData => ItemData;
 
         private Inventory _owner;
 
-        private Item(Inventory owner, ItemType type)
+        private Item(Inventory owner, ItemData data)
         {
             _owner = owner;
-            ItemType = type;
+            ItemData = data;
             StackSize = 1;
         }
 
         public bool IncrementStackSize()
         {
-            if (StackSize >= ItemType.MaxStack)
+            if (StackSize >= ItemData.MaxStack)
             {
                 return false;
             }
@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public static Item CreateFromType(Inventory inventory, ItemType item)
+        public static Item CreateFromType(Inventory inventory, ItemData item)
         {
             return new Item(inventory, item);
         }

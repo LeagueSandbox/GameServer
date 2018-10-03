@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Domain
 {
-    public interface IItemType
+    public interface IItemData
     {
         int ItemId { get; }
         string Name { get; }

@@ -14,7 +14,7 @@ namespace PacketDefinitions420
         private uint _serverHost = Address.IPv4HostAny;
 
         public IPacketHandlerManager PacketHandlerManager { get; private set; }
-        
+
 
         private IGame _game;
 
@@ -35,7 +35,7 @@ namespace PacketDefinitions420
 
             Blowfish = new BlowFish(key);
             PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, game);
-            
+
         }
         public void NetLoop()
         {

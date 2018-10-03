@@ -23,8 +23,8 @@ namespace LeagueSandbox.GameServer.Items
         {
             return _items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
-        
-        public Item AddItem(ItemType item)
+
+        public Item AddItem(ItemData item)
         {
             if (item.IsTrinket())
             {
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Items
             return AddNewItem(item);
         }
 
-        public Item SetExtraItem(byte slot, ItemType item)
+        public Item SetExtraItem(byte slot, ItemData item)
         {
             if (slot < BASE_INVENTORY_SIZE)
             {
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Items
             return SetItem(slot, item);
         }
 
-        private Item SetItem(byte slot, ItemType item)
+        private Item SetItem(byte slot, ItemData item)
         {
             _items[slot] = Item.CreateFromType(this, item);
             return _items[slot];
@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Items
             _items[slot2] = buffer;
         }
 
-        private Item AddTrinketItem(ItemType item)
+        private Item AddTrinketItem(ItemData item)
         {
             if (_items[TRINKET_SLOT] != null)
             {
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Items
             return SetItem(TRINKET_SLOT, item);
         }
 
-        private Item AddStackingItem(ItemType item)
+        private Item AddStackingItem(ItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                if (item.ItemId != _items[i].ItemType.ItemId)
+                if (item.ItemId != _items[i].ItemData.ItemId)
                 {
                     continue;
                 }
@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.Items
             return AddNewItem(item);
         }
 
-        private Item AddNewItem(ItemType item)
+        private Item AddNewItem(ItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {

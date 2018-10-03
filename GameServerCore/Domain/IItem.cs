@@ -4,6 +4,6 @@
     {
         byte StackSize { get; }
         int TotalPrice { get; }
-        IItemType ItemType { get; }
+        IItemData ItemData { get; }
     }
 }

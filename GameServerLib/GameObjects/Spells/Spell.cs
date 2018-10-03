@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             SpellName = spellName;
             Slot = slot;
             _game = game;
-            SpellData = game.Config.ContentManager.GetSpellData(spellName);
+            SpellData = game.Config.ContentManager.GetSpellData(owner.Model, spellName);
             _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
 
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             _spellGameScript.OnStartCasting(Owner, this, Target);
 
-            if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
+            if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.INSTANT_CAST) == 0)
             {
                 Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
                 State = SpellState.STATE_CASTING;

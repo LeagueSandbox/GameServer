@@ -14,12 +14,12 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public Item AddItem(ItemType item)
+        public Item AddItem(ItemData item)
         {
             return _inventory.AddItem(item);
         }
 
-        public Item SetExtraItem(byte slot, ItemType item)
+        public Item SetExtraItem(byte slot, ItemData item)
         {
             return _inventory.SetExtraItem(slot, item);
         }
@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Items
             var tempInv = new List<Item>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, recipe);
         }
-        
+
         private static List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, ItemRecipe recipe)
         {
             var result = new List<Item>();
@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     continue;
                 }
-                var idx = inventoryState.FindIndex(i => i != null && i.ItemType == component);
+                var idx = inventoryState.FindIndex(i => i != null && i.ItemData == component);
                 if (idx == -1)
                 {
                     result = result.Concat(GetAvailableItemsRecursive(ref inventoryState, component.Recipe)).ToList();
@@ -95,9 +95,9 @@ namespace LeagueSandbox.GameServer.Items
             return GetItemSlot((Item)item);
         }
 
-        IItem IInventoryManager.SetExtraItem(byte slot, IItemType item)
+        IItem IInventoryManager.SetExtraItem(byte slot, IItemData item)
         {
-            return SetExtraItem(slot, (ItemType)item);
+            return SetExtraItem(slot, (ItemData)item);
         }
 
         IItem IInventoryManager.GetItem(byte slot)

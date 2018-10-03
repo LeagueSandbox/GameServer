@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentHealth = stats.HealthPoints.Total;
             if (!string.IsNullOrEmpty(model))
             {
-                AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
+                AaSpellData = _game.Config.ContentManager.GetSpellData(model, model + "BasicAttack");
                 AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;

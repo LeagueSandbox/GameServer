@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using GameServerCore.Enums;
+using IniParser;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Exceptions;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
@@ -78,13 +80,17 @@ namespace LeagueSandbox.GameServer.Content
                 return;
             }
 
-            var file = new ContentFile();
+            ContentFile file;
             try
             {
                 var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.Debug($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                var iniParser = new FileIniDataParser();
+                _logger.Debug($"Loading {name}'s Stats from path: {path}!");
+                using (var stream = new StreamReader(new MemoryStream(_game.Config.ContentManager.Content[path])))
+                {
+                    var iniData = iniParser.ReadData(stream);
+                    file = new ContentFile(ContentManager.ParseIniFile(iniData));
+                }
             }
             catch (ContentNotFoundException notfound)
             {
@@ -110,10 +116,11 @@ namespace LeagueSandbox.GameServer.Content
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
-            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").Equals("yes");
+            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").ToLowerInvariant().Equals("yes");
             PathfindingCollisionRadius =
                 file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
+
             Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
                 out var tempPar);
             ParType = tempPar;
