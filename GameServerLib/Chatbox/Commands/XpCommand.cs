@@ -1,11 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class XpCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "xp";
         public override string Syntax => $"{Command} xp";
@@ -16,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             if (split.Length < 2)
@@ -28,7 +27,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (float.TryParse(split[1], out var xp))
             {
-                _playerManager.GetPeerInfo(peer).Champion.Stats.Experience += xp;
+                _playerManager.GetPeerInfo(userId).Champion.Stats.Experience += xp;
             }
         }
     }

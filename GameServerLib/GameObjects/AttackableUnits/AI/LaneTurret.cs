@@ -40,8 +40,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public int GetEnemyChampionsCount()
         {
-            var blueTeam = new List<Champion>();
-            var purpTeam = new List<Champion>();
+            var blueTeam = new List<IChampion>();
+            var purpTeam = new List<IChampion>();
             foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE))
             {
                 blueTeam.Add(player);

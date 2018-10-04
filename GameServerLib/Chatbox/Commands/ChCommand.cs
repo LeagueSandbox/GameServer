@@ -1,13 +1,12 @@
-﻿using ENet;
+﻿using GameServerCore;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ChCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "ch";
         public override string Syntax => $"{Command} championName";
@@ -18,7 +17,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.Split(' ');
             if (split.Length < 2)
@@ -27,27 +26,27 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            var currentChampion = _playerManager.GetPeerInfo(peer).Champion;
+            var currentChampion = _playerManager.GetPeerInfo(userId).Champion;
 
             var c = new Champion(
                 Game,
                 split[1],
-                (uint)_playerManager.GetPeerInfo(peer).UserId,
+                (uint)_playerManager.GetPeerInfo(userId).UserId,
                 0, // Doesnt matter at this point
                 (RuneCollection)currentChampion.RuneList,
                 _playerManager.GetClientInfoByChampion((Champion)currentChampion),
                 currentChampion.NetId
             );
             c.SetPosition(
-                _playerManager.GetPeerInfo(peer).Champion.X,
-                _playerManager.GetPeerInfo(peer).Champion.Y
+                _playerManager.GetPeerInfo(userId).Champion.X,
+                _playerManager.GetPeerInfo(userId).Champion.Y
             );
 
             c.Model = split[1]; // trigger the "modelUpdate" proc
-            c.SetTeam(_playerManager.GetPeerInfo(peer).Champion.Team);
-            Game.ObjectManager.RemoveObject((Champion)_playerManager.GetPeerInfo(peer).Champion);
+            c.SetTeam(_playerManager.GetPeerInfo(userId).Champion.Team);
+            Game.ObjectManager.RemoveObject((Champion)_playerManager.GetPeerInfo(userId).Champion);
             Game.ObjectManager.AddObject(c);
-            _playerManager.GetPeerInfo(peer).Champion = c;
+            _playerManager.GetPeerInfo(userId).Champion = c;
         }
     }
 }

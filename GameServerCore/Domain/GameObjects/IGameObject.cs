@@ -21,5 +21,7 @@ namespace GameServerCore.Domain.GameObjects
         void SetPosition(float x, float y);
         void SetWaypoints(List<Vector2> newWaypoints);
         void SetTeam(TeamId team);
+        void OnAdded();
+        void OnRemoved();
     }
 }

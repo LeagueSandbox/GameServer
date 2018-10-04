@@ -1,14 +1,14 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleScoreboard : PacketHandlerBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
         private readonly Game _game;
 
@@ -22,11 +22,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
-            _logger.Debug($"Player {_playerManager.GetPeerInfo(peer).Name} has looked at the scoreboard.");
+            _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
              _game.PacketNotifier.NotifyPlayerStats(champion);
             return true;
         }

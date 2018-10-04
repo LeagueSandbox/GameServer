@@ -1,12 +1,11 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SkillpointsCommand : ChatCommandBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "skillpoints";
         public override string Syntax => $"{Command}";
@@ -18,12 +17,12 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             champion.SkillPoints = 17;
 
-            _game.PacketNotifier.NotifySkillUp(peer, champion.NetId, 0, 0, 17);
+            _game.PacketNotifier.NotifySkillUp(userId, champion.NetId, 0, 0, 17);
         }
     }
 }

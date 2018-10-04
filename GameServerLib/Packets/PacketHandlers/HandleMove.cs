@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Numerics;
-using ENet;
+﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Maps;
-using LeagueSandbox.GameServer.Players;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleMove : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
         public override Channel PacketChannel => Channel.CHL_C2S;
@@ -25,9 +25,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
-            var peerInfo = _playerManager.GetPeerInfo(peer);
+            var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
             {

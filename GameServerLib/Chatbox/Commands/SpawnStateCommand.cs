@@ -1,6 +1,4 @@
-﻿using ENet;
-
-namespace LeagueSandbox.GameServer.Chatbox.Commands
+﻿namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SpawnStateCommand : ChatCommandBase
     {
@@ -13,7 +11,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
 

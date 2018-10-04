@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -45,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\DamageSource.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Content\HashFunctions.cs" />
     <Compile Include="Content\INavGrid.cs" />
@@ -101,8 +99,12 @@
     <Compile Include="Enums\TurretType.cs" />
     <Compile Include="Enums\UnitAnnounces.cs" />
     <Compile Include="IGame.cs" />
+    <Compile Include="IObjectManager.cs" />
+    <Compile Include="IPlayerManager.cs" />
     <Compile Include="Maps\IMap.cs" />
     <Compile Include="MovementVector.cs" />
+    <Compile Include="Packets\Handlers\IPacketHandler.cs" />
+    <Compile Include="Packets\Handlers\PacketHandlerBase.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\SelectObjectRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\UndoItemRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\UseItemRequest.cs" />
@@ -115,7 +117,6 @@
     <Compile Include="Packets\Enums\PacketCmd.cs" />
     <Compile Include="Packets\Enums\Pings.cs" />
     <Compile Include="Packets\Enums\SummonerSpellIds.cs" />
-    <Compile Include="Packets\Handlers\IPacketHandlerManager.cs" />
     <Compile Include="Packets\Interfaces\IPacketNotifier.cs" />
     <Compile Include="Packets\Interfaces\IPacketReader.cs" />
     <Compile Include="Packets\PacketDefinitions\Packet.cs" />
