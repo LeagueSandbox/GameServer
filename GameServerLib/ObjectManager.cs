@@ -108,9 +108,11 @@ namespace LeagueSandbox.GameServer
                             {
                                 _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
                             }
+
                             ai.RemoveBuff(buff);
                             continue;
                         }
+
                         buff.Update(diff);
                     }
                 }
@@ -161,6 +163,7 @@ namespace LeagueSandbox.GameServer
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -174,6 +177,7 @@ namespace LeagueSandbox.GameServer
             {
                 _objects.Add(o.NetId, o);
             }
+
             o.OnAdded();
         }
 
@@ -199,6 +203,7 @@ namespace LeagueSandbox.GameServer
             {
                 _objects.Remove(o.NetId);
             }
+
             o.OnRemoved();
         }
 
@@ -279,6 +284,7 @@ namespace LeagueSandbox.GameServer
                     {
                         continue;
                     }
+
                     var ai = u as IObjAiBase;
                     if (ai != null)
                     {
@@ -304,6 +310,7 @@ namespace LeagueSandbox.GameServer
                     champs.Add(c);
                 }
             }
+
             return champs;
         }
 
@@ -320,11 +327,12 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _champions)
                 {
                     var c = kv.Value;
-                    if ((t.GetDistanceTo(c)) <= range)
+                    if (t.GetDistanceTo(c) <= range)
                         if (onlyAlive && !c.IsDead || !onlyAlive)
                             champs.Add(c);
                 }
             }
+
             return champs;
         }
 
@@ -367,7 +375,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && (kv.Value).GetDistanceTo(o) < kv.Value.VisionRadius &&
+                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
                         !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as IAttackableUnit;

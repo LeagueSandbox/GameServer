@@ -100,9 +100,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            if ((killer != null) && (killer is IChampion))
+            if (killer != null && killer is IChampion champion)
             {
-                ((IChampion)killer).OnKill(this);
+                champion.OnKill(this);
             }
         }
 

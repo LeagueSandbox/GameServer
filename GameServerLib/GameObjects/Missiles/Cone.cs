@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             float targetAngle = (float)Math.Acos((target.X - _ownerCoords.X) / targetDistance);
 
-            return (targetDistance <= _radius) && (targetAngle >= _beginAngle) && (targetAngle <= _endAngle);
+            return targetDistance <= _radius && targetAngle >= _beginAngle && targetAngle <= _endAngle;
         }
 
     }

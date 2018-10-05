@@ -542,8 +542,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void SetSpell(string name, byte slot, bool enabled)
         {
-            Spells[slot] = new Spell(_game, this, name, (byte)slot);
-            Stats.SetSpellEnabled((byte)slot, enabled);
+            Spells[slot] = new Spell(_game, this, name, slot);
+            Stats.SetSpellEnabled(slot, enabled);
         }
 
         public void SwapSpells(byte slot1, byte slot2)

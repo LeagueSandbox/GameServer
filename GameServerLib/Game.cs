@@ -249,10 +249,10 @@ namespace LeagueSandbox.GameServer
         }
         private static List<T> GetInstances<T>(IGame g)
         {
-            return (Assembly.GetCallingAssembly()
+            return Assembly.GetCallingAssembly()
                 .GetTypes()
-                .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
+                .Where(t => t.BaseType == typeof(T))
+                .Select(t => (T)Activator.CreateInstance(t, g)).ToList();
         }
 
         public void SetGameToExit()

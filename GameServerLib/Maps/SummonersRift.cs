@@ -571,7 +571,7 @@ namespace LeagueSandbox.GameServer.Maps
                 var waypoints = spawnToWaypoints[pos].Item1;
                 var inhibitorId = spawnToWaypoints[pos].Item2;
                 var inhibitor = _game.ObjectManager.GetInhibitorById(inhibitorId);
-                var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !(inhibitor).RespawnAnnounced;
+                var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
                 var oppositeTeam = TeamId.TEAM_BLUE;
                 if (inhibitor.Team == TeamId.TEAM_PURPLE)
@@ -579,7 +579,7 @@ namespace LeagueSandbox.GameServer.Maps
                     oppositeTeam = TeamId.TEAM_PURPLE;
                 }
 
-                var areAllInhibitorsDead = _game.ObjectManager.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !(inhibitor).RespawnAnnounced;
+                var areAllInhibitorsDead = _game.ObjectManager.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !inhibitor.RespawnAnnounced;
 
                 var list = RegularMinionWave;
                 if (_cannonMinionCount >= cannonMinionCap)
