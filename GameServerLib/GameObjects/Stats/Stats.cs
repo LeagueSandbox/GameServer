@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public bool IsInvulnerable { get; set; }
         public bool IsPhysicalImmune { get; set; }
         public bool IsLifestealImmune { get; set; }
-        public bool IsTargetable { get; set; }
+        public bool IsTargetable { get; }
         public IsTargetableToTeamFlags IsTargetableToTeam { get; set; }
 
         public float AttackSpeedFlat { get; set; }
@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float HealthRegenerationPerLevel { get; set; }
         public float ManaRegenerationPerLevel { get; set; }
         public float GrowthAttackSpeed { get; set; }
-        public float[] ManaCost { get; set; }
+        public float[] ManaCost { get; }
 
         public IStat AbilityPower { get; }
         public IStat Armor { get; }

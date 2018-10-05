@@ -3,6 +3,6 @@
     public interface IItem: IStackable
     {
         int TotalPrice { get; }
-        IItemType ItemType { get; }
+        IItemData ItemData { get; }
     }
 }

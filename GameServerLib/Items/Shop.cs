@@ -26,10 +26,10 @@ namespace LeagueSandbox.GameServer.Items
                 return false;
             }
 
-            var sellPrice = i.TotalPrice * i.ItemType.SellBackModifier;
+            var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
 
-            if (i.ItemType.MaxStack > 1)
+            if (i.ItemData.MaxStack > 1)
             {
                 i.DecrementStackCount();
             }
@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Items
 
             if (ownedItems.Count != 0)
             {
-                price -= ownedItems.Sum(item => item.ItemType.TotalPrice);
+                price -= ownedItems.Sum(item => item.ItemData.TotalPrice);
                 if (stats.Gold < price)
                 {
                     return false;
@@ -77,24 +77,24 @@ namespace LeagueSandbox.GameServer.Items
         private void RemoveItem(IItem item, byte slotId, byte stackSize = 0)
         {
             var inventory = _owner.Inventory;
-            _owner.Stats.RemoveModifier(item.ItemType);
+            _owner.Stats.RemoveModifier(item.ItemData);
             _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, stackSize);
             _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
             inventory.RemoveItem(item);
         }
 
-        private bool AddItem(IItemType itemType)
+        private bool AddItem(IItemData itemData)
         {
-            var i = _owner.Inventory.AddItem(itemType);
+            var i = _owner.Inventory.AddItem(itemData);
             if (i == null)
             {
                 return false;
             }
-            _owner.Stats.AddModifier(itemType);
+            _owner.Stats.AddModifier(itemData);
             _game.PacketNotifier.NotifyItemBought(_owner, i);
-            if (!string.IsNullOrEmpty(i.ItemType.SpellName))
+            if (!string.IsNullOrEmpty(i.ItemData.SpellName))
             {
-                _owner.SetSpell(i.ItemType.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+                _owner.SetSpell(i.ItemData.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
             }
             return true;
         }

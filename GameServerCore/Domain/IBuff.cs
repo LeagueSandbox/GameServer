@@ -3,7 +3,7 @@ using GameServerCore.Enums;
 
 namespace GameServerCore.Domain
 {
-    public interface IBuff: IStackable
+    public interface IBuff: IStackable, IUpdate
     {
         float Duration { get; }
         float TimeElapsed { get; }
@@ -12,7 +12,6 @@ namespace GameServerCore.Domain
         BuffType BuffType { get; }
         string Name { get; }
         byte Slot { get; }
-        void Update(float diff);
         void ResetDuration();
         bool Elapsed();
     }

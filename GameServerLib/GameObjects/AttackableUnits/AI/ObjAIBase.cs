@@ -35,8 +35,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         public IAttackableUnit AutoAttackTarget { get; set; }
-        public CharData CharData { get; protected set; }
-        public ISpellData AaSpellData { get; protected set; }
+        public CharData CharData { get; }
+        public ISpellData AaSpellData { get; }
         private bool _isNextAutoCrit;
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
@@ -50,8 +50,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool IsCastingSpell { get; set; }
         public bool IsMelee { get; set; }
         public bool IsDashing { get; protected set; }
-        protected float _dashSpeed;
-
 
         private Random _random = new Random();
 
@@ -287,43 +285,43 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public ClassifyUnit ClassifyTarget(IAttackableUnit target)
         {
-            if (target is ObjAiBase ai)
+            if (target is IObjAiBase ai)
             {
                 if (ai.TargetUnit != null && ai.TargetUnit.IsInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
                 {
-                    if (target is Champion && ai.TargetUnit is Champion) // If it's a champion attacking an allied champion
+                    if (target is IChampion && ai.TargetUnit is IChampion) // If it's a champion attacking an allied champion
                     {
                         return ClassifyUnit.CHAMPION_ATTACKING_CHAMPION;
                     }
 
-                    if (target is Minion && ai.TargetUnit is Champion) // If it's a minion attacking an allied champion.
+                    if (target is IMinion && ai.TargetUnit is IChampion) // If it's a minion attacking an allied champion.
                     {
                         return ClassifyUnit.MINION_ATTACKING_CHAMPION;
                     }
 
-                    if (target is Minion && ai.TargetUnit is Minion) // Minion attacking minion
+                    if (target is IMinion && ai.TargetUnit is IMinion) // Minion attacking minion
                     {
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     }
 
-                    if (target is IBaseTurret && ai.TargetUnit is Minion) // Turret attacking minion
+                    if (target is IBaseTurret && ai.TargetUnit is IMinion) // Turret attacking minion
                     {
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                     }
 
-                    if (target is Champion && ai.TargetUnit is Minion) // Champion attacking minion
+                    if (target is IChampion && ai.TargetUnit is IMinion) // Champion attacking minion
                     {
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     }
                 }
             }
 
-            if (target is Placeable)
+            if (target is IPlaceable)
             {
                 return ClassifyUnit.PLACEABLE;
             }
 
-            if (target is Minion m)
+            if (target is IMinion m)
             {
                 switch (m.MinionSpawnType)
                 {
@@ -342,7 +340,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return ClassifyUnit.TURRET;
             }
 
-            if (target is Champion)
+            if (target is IChampion)
             {
                 return ClassifyUnit.CHAMPION;
             }
@@ -352,7 +350,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return ClassifyUnit.INHIBITOR;
             }
 
-            if (target is Nexus)
+            if (target is INexus)
             {
                 return ClassifyUnit.NEXUS;
             }
@@ -576,7 +574,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return false;
             }
             var objects = _game.ObjectManager.GetObjects();
-            List<CirclePoly> UsedPositions = new List<CirclePoly>();
+            List<CirclePoly> usedPositions = new List<CirclePoly>();
             var isCurrentlyOverlapping = false;
 
             var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
@@ -598,7 +596,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     isCurrentlyOverlapping = true;
                 }
-                UsedPositions.Add(targetCollisionCircle);
+                usedPositions.Add(targetCollisionCircle);
             }
             if (isCurrentlyOverlapping)
             {
@@ -609,7 +607,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (_game.Map.NavGrid.IsWalkable(point))
                     {
                         var positionUsed = false;
-                        foreach (var circlePoly in UsedPositions)
+                        foreach (var circlePoly in usedPositions)
                         {
                             if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
                             {
@@ -658,7 +656,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             // TODO: Take into account the rest of the arguments
             IsDashing = true;
-            _dashSpeed = dashSpeed;
             Target = t;
             Waypoints.Clear();
         }

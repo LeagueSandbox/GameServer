@@ -3,7 +3,7 @@ using GameServerCore.Enums;
 
 namespace GameServerCore.Domain
 {
-    public interface ISpell
+    public interface ISpell: IUpdate
     {
         IChampion Owner { get; }
         byte Level { get; }
@@ -30,7 +30,6 @@ namespace GameServerCore.Domain
         void Deactivate();
         void ApplyEffects(IAttackableUnit u, IProjectile p);
         void LevelUp();
-        void Update(float diff);
         void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false);
         void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false);
         void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true);

@@ -7,8 +7,8 @@ namespace LeagueSandbox.GameServer.Items
     public class ItemRecipe: IItemRecipe
     {
         private const int RECIPE_ITEM_MAX = 4;
-        private readonly IItemType _itemType;
-        private IItemType[] _items;
+        private readonly IItemData _itemData;
+        private IItemData[] _items;
         private int _totalPrice;
         private readonly ItemManager _itemManager;
 
@@ -25,14 +25,14 @@ namespace LeagueSandbox.GameServer.Items
             }
         }
 
-        private ItemRecipe(IItemType itemType, ItemManager manager)
+        private ItemRecipe(IItemData itemData, ItemManager manager)
         {
-            _itemType = itemType;
+            _itemData = itemData;
             _totalPrice = -1;
             _itemManager = manager;
         }
 
-        public IEnumerable<IItemType> GetItems()
+        public IEnumerable<IItemData> GetItems()
         {
             if (_items == null)
             {
@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Items
 
         private void FindRecipeItems(ItemManager itemManager)
         {
-            _items = _itemType.RecipeItem.AsEnumerable()
+            _items = _itemData.RecipeItem.AsEnumerable()
                 .Select(itemManager.SafeGetItemType)
                 .Where(i => i != null).ToArray();
         }
@@ -57,12 +57,12 @@ namespace LeagueSandbox.GameServer.Items
                 _totalPrice += item.TotalPrice;
             }
 
-            _totalPrice += _itemType.Price;
+            _totalPrice += _itemData.Price;
         }
 
-        public static ItemRecipe FromItemType(IItemType type, ItemManager manager)
+        public static ItemRecipe FromItemType(IItemData data, ItemManager manager)
         {
-            return new ItemRecipe(type, manager);
+            return new ItemRecipe(data, manager);
         }
     }
 }

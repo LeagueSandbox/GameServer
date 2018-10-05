@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Domain
 {
-    public interface IItemType: IStatsModifier
+    public interface IItemData: IStatsModifier
     {
         int ItemId { get; }
         string Name { get; }

@@ -13,11 +13,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 {
     public class Projectile : ObjMissile, IProjectile
     {
-        public List<IGameObject> ObjectsHit { get; private set; }
-        public IAttackableUnit Owner { get; private set; }
-        public int ProjectileId { get; private set; }
+        public List<IGameObject> ObjectsHit { get; }
+        public IAttackableUnit Owner { get; }
+        public int ProjectileId { get; }
         public ISpellData SpellData { get; protected set; }
-
 
         protected float _moveSpeed;
         protected ISpell _originSpell;

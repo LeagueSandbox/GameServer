@@ -14,11 +14,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         protected List<Vector2> _mainWaypoints;
         protected int _curMainWaypoint;
-        public MinionSpawnPosition SpawnPosition { get; private set; }
-        public MinionSpawnType MinionSpawnType { get; protected set; }
+        public MinionSpawnPosition SpawnPosition { get; }
+        public MinionSpawnType MinionSpawnType { get; }
         protected bool _aiPaused;
-
-        private int HitBox => 60;
 
         public Minion(
             Game game,

@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Items
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
         
-        public IItem AddItem(IItemType item)
+        public IItem AddItem(IItemData item)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Items
             return AddNewItem(item);
         }
 
-        public IItem SetExtraItem(byte slot, IItemType item)
+        public IItem SetExtraItem(byte slot, IItemData item)
         {
             if (slot < BASE_INVENTORY_SIZE)
             {
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.Items
             return SetItem(slot, item);
         }
 
-        private IItem SetItem(byte slot, IItemType item)
+        private IItem SetItem(byte slot, IItemData item)
         {
             Items[slot] = Item.CreateFromType(item);
             return Items[slot];
@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Items
             Items[slot2] = buffer;
         }
 
-        private IItem AddTrinketItem(IItemType item)
+        private IItem AddTrinketItem(IItemData item)
         {
             if (Items[TRINKET_SLOT] != null)
             {
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Items
             return SetItem(TRINKET_SLOT, item);
         }
 
-        private IItem AddStackingItem(IItemType item)
+        private IItem AddStackingItem(IItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                if (item.ItemId != Items[i].ItemType.ItemId)
+                if (item.ItemId != Items[i].ItemData.ItemId)
                 {
                     continue;
                 }
@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.Items
             return AddNewItem(item);
         }
 
-        private IItem AddNewItem(IItemType item)
+        private IItem AddNewItem(IItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {

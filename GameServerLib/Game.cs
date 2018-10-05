@@ -60,8 +60,6 @@ namespace LeagueSandbox.GameServer
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
 
-        IMap IGame.Map => Map;
-
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;

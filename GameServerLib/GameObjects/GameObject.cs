@@ -13,13 +13,14 @@ namespace LeagueSandbox.GameServer.GameObjects
 {
     public class GameObject : Target, IGameObject
     {
-        public uint NetId { get; private set; }
-        protected float _xvector, _yvector;
+        protected bool _movementUpdated;
+        protected bool _toRemove;
+        public uint NetId { get; }
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
+        
         public TeamId Team { get; protected set; }
-
         public void SetTeam(TeamId team)
         {
             _visibleByTeam[Team] = false;
@@ -31,12 +32,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
         }
 
-        protected bool _movementUpdated;
-        protected bool _toRemove;
         public float CollisionRadius { get; set; }
-        protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
         public override bool IsSimpleTarget => false;
+        protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
@@ -149,21 +148,6 @@ namespace LeagueSandbox.GameServer.GameObjects
                     Target = new Target(Waypoints[CurWaypoint]);
                 }
             }
-        }
-
-        public void CalculateVector(float xtarget, float ytarget)
-        {
-            _xvector = xtarget - X;
-            _yvector = ytarget - Y;
-
-            if (_xvector == 0 && _yvector == 0)
-            {
-                return;
-            }
-
-            var toDivide = Math.Abs(_xvector) + Math.Abs(_yvector);
-            _xvector /= toDivide;
-            _yvector /= toDivide;
         }
 
         public virtual void Update(float diff)

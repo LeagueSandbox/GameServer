@@ -14,12 +14,12 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public IItem AddItem(IItemType item)
+        public IItem AddItem(IItemData item)
         {
             return _inventory.AddItem(item);
         }
 
-        public IItem SetExtraItem(byte slot, IItemType item)
+        public IItem SetExtraItem(byte slot, IItemData item)
         {
             return _inventory.SetExtraItem(slot, item);
         }
@@ -49,13 +49,13 @@ namespace LeagueSandbox.GameServer.Items
             _inventory.SwapItems(slot1, slot2);
         }
 
-        public List<IItem> GetAvailableItems(IEnumerable<IItemType> items)
+        public List<IItem> GetAvailableItems(IEnumerable<IItemData> items)
         {
             var tempInv = new List<IItem>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, items);
         }
         
-        private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IEnumerable<IItemType> items)
+        private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IEnumerable<IItemData> items)
         {
             var result = new List<IItem>();
             foreach (var component in items)
@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     continue;
                 }
-                var idx = inventoryState.FindIndex(i => i != null && i.ItemType == component);
+                var idx = inventoryState.FindIndex(i => i != null && i.ItemData == component);
                 if (idx == -1)
                 {
                     result = result.Concat(GetAvailableItemsRecursive(ref inventoryState, component.Recipe.GetItems())).ToList();

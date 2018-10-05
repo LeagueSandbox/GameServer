@@ -4,7 +4,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class ItemType : StatsModifier, IItemType
+    public class ItemData : StatsModifier, IItemData
     {
         // Meta
         public int ItemId { get; private set; }
@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.Items
         public IItemRecipe Recipe { get; private set; }
         public int TotalPrice => Recipe.TotalPrice;
 
-        private ItemType()
+        private ItemData()
         {
             
         }
@@ -51,10 +51,10 @@ namespace LeagueSandbox.GameServer.Items
             Recipe = ItemRecipe.FromItemType(this, manager);
         }
 
-        public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
+        public static ItemData Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
-            var result = new ItemType()
+            var result = new ItemData()
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,

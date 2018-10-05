@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     public class Announce: IAnnounce
     {
         public bool IsAnnounced { get; private set; }
-        public long EventTime { get; private set; }
+        public long EventTime { get; }
         private Announces _messageId;
         private bool _isMapSpecific;
         private Game _game;

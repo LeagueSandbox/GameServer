@@ -6,8 +6,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 {
     public class Placeable : ObjAiBase, IPlaceable
     {
-        public string Name { get; private set; }
-        public IObjAiBase Owner { get; private set; } // We'll probably want to change this in the future
+        public string Name { get; }
+        public IObjAiBase Owner { get; } // We'll probably want to change this in the future
 
         public Placeable(
             Game game,
