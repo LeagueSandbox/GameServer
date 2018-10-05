@@ -6,7 +6,7 @@ namespace GameServerCore.Domain.GameObjects
     {
         bool RespawnAnnounced { get; }
         InhibitorState InhibitorState { get; }
-        void SetState(InhibitorState state, IGameObject killer = null);
+        void SetState(InhibitorState state, IGameObject killer);
         double GetRespawnTimer();
     }
 }

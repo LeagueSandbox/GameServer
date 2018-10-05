@@ -101,9 +101,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             if (killer != null && killer is IChampion champion)
-            {
                 champion.OnKill(this);
-            }
         }
 
         public virtual bool IsInDistress()

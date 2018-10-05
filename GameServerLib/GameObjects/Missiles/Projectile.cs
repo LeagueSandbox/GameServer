@@ -82,6 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             return _moveSpeed;
         }
 
+        // todo refactor this
         protected virtual void CheckFlagsForUnit(IAttackableUnit unit)
         {
             if (Target == null)
@@ -91,60 +92,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             if (Target.IsSimpleTarget)
             { // Skillshot
-                if (unit == null || ObjectsHit.Contains(unit))
-                {
+                if (!CheckIfValidTarget(unit))
                     return;
-                }
-
-                if (unit.Team == Owner.Team
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_FRIENDS) > 0))
-                {
-                    return;
-                }
-
-                if (unit.Team == TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NEUTRAL) > 0))
-                {
-                    return;
-                }
-
-                if (unit.Team != Owner.Team
-                    && unit.Team != TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
-                {
-                    return;
-                }
-
-
-                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_DEAD) > 0))
-                {
-                    return;
-                }
-
-                if (unit is IMinion m && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
-                {
-                    return;
-                }
-
-                if (unit is IPlaceable p && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
-                {
-                    return;
-                }
-
-                if (unit is IBaseTurret t && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
-                {
-                    return;
-                }
-
-                if ((unit is IInhibitor i || unit is INexus n) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
-                {
-                    return;
-                }
-
-                if (unit is IChampion c && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
-                {
-                    return;
-                }
 
                 ObjectsHit.Add(unit);
                 var attackableUnit = unit;
@@ -177,6 +126,53 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         {
             base.SetToRemove();
             _game.PacketNotifier.NotifyProjectileDestroy(this);
+        }
+        
+        protected bool CheckIfValidTarget(IAttackableUnit unit)
+        {
+            if (!Target.IsSimpleTarget || unit == null || ObjectsHit.Contains(unit))
+            {
+                return false;
+            }
+
+            if (unit.Team == Owner.Team
+                && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_FRIENDS) > 0))
+            {
+                return false;
+            }
+
+            if (unit.Team == TeamId.TEAM_NEUTRAL
+                && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NEUTRAL) > 0))
+            {
+                return false;
+            }
+
+            if (unit.Team != Owner.Team
+                && unit.Team != TeamId.TEAM_NEUTRAL
+                && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
+            {
+                return false;
+            }
+
+            if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_DEAD) > 0))
+            {
+                return false;
+            }
+
+            switch (unit)
+            {
+                case IMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
+                case IPlaceable _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
+                case IBaseTurret _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0):
+                    return false;
+            }
+
+            if ((unit is IInhibitor || unit is INexus) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
+            {
+                return false;
+            }
+
+            return unit is IChampion || (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0;
         }
     }
 }

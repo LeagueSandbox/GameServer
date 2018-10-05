@@ -119,13 +119,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
             {
-                // Targets have to be:
-                if (!(it.Value is IAttackableUnit u) ||                          // a unit
-                    u.IsDead ||                          // alive
-                    u.Team == Team ||                    // not on our team
-                    GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
-                    continue;                             // If not, look for something else
+                if (!(it.Value is IAttackableUnit u) ||
+                    u.IsDead ||
+                    u.Team == Team ||
+                    GetDistanceTo(u) > DETECT_RANGE ||
+                    !_game.ObjectManager.TeamHasVisionOn(Team, u))
+                    continue;
 
                 var priority = (int)ClassifyTarget(u);  // get the priority.
                 if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously

@@ -285,74 +285,53 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public ClassifyUnit ClassifyTarget(IAttackableUnit target)
         {
-            if (target is IObjAiBase ai)
+            if (target is IObjAiBase ai && ai.TargetUnit != null && ai.TargetUnit.IsInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
             {
-                if (ai.TargetUnit != null && ai.TargetUnit.IsInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
+                switch (target)
                 {
-                    if (target is IChampion && ai.TargetUnit is IChampion) // If it's a champion attacking an allied champion
-                    {
+                    // If it's a champion attacking an allied champion
+                    case IChampion _ when ai.TargetUnit is IChampion:
                         return ClassifyUnit.CHAMPION_ATTACKING_CHAMPION;
-                    }
-
-                    if (target is IMinion && ai.TargetUnit is IChampion) // If it's a minion attacking an allied champion.
-                    {
+                    // If it's a minion attacking an allied champion.
+                    case IMinion _ when ai.TargetUnit is IChampion:
                         return ClassifyUnit.MINION_ATTACKING_CHAMPION;
-                    }
-
-                    if (target is IMinion && ai.TargetUnit is IMinion) // Minion attacking minion
-                    {
+                    // Minion attacking minion
+                    case IMinion _ when ai.TargetUnit is IMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
-                    }
-
-                    if (target is IBaseTurret && ai.TargetUnit is IMinion) // Turret attacking minion
-                    {
+                    // Turret attacking minion
+                    case IBaseTurret _ when ai.TargetUnit is IMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
-                    }
-
-                    if (target is IChampion && ai.TargetUnit is IMinion) // Champion attacking minion
-                    {
+                    // Champion attacking minion
+                    case IChampion _ when ai.TargetUnit is IMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
+                }
+            }
+        
+            switch (target)
+            {
+                case IPlaceable _:
+                    return ClassifyUnit.PLACEABLE;
+                case IMinion m:
+                    switch (m.MinionSpawnType)
+                    {
+                        case MinionSpawnType.MINION_TYPE_MELEE:
+                            return ClassifyUnit.MELEE_MINION;
+                        case MinionSpawnType.MINION_TYPE_CASTER:
+                            return ClassifyUnit.CASTER_MINION;
+                        case MinionSpawnType.MINION_TYPE_CANNON:
+                        case MinionSpawnType.MINION_TYPE_SUPER:
+                            return ClassifyUnit.SUPER_OR_CANNON_MINION;
                     }
-                }
-            }
 
-            if (target is IPlaceable)
-            {
-                return ClassifyUnit.PLACEABLE;
-            }
-
-            if (target is IMinion m)
-            {
-                switch (m.MinionSpawnType)
-                {
-                    case MinionSpawnType.MINION_TYPE_MELEE:
-                        return ClassifyUnit.MELEE_MINION;
-                    case MinionSpawnType.MINION_TYPE_CASTER:
-                        return ClassifyUnit.CASTER_MINION;
-                    case MinionSpawnType.MINION_TYPE_CANNON:
-                    case MinionSpawnType.MINION_TYPE_SUPER:
-                        return ClassifyUnit.SUPER_OR_CANNON_MINION;
-                }
-            }
-
-            if (target is IBaseTurret)
-            {
-                return ClassifyUnit.TURRET;
-            }
-
-            if (target is IChampion)
-            {
-                return ClassifyUnit.CHAMPION;
-            }
-
-            if (target is IInhibitor && !target.IsDead)
-            {
-                return ClassifyUnit.INHIBITOR;
-            }
-
-            if (target is INexus)
-            {
-                return ClassifyUnit.NEXUS;
+                    break;
+                case IBaseTurret _:
+                    return ClassifyUnit.TURRET;
+                case IChampion _:
+                    return ClassifyUnit.CHAMPION;
+                case IInhibitor _ when !target.IsDead:
+                    return ClassifyUnit.INHIBITOR;
+                case INexus _:
+                    return ClassifyUnit.NEXUS;
             }
 
             return ClassifyUnit.DEFAULT;
@@ -604,22 +583,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {
-                    if (_game.Map.NavGrid.IsWalkable(point))
+                    if (!_game.Map.NavGrid.IsWalkable(point))
+                        continue;
+                    var positionUsed = false;
+                    foreach (var circlePoly in usedPositions)
                     {
-                        var positionUsed = false;
-                        foreach (var circlePoly in usedPositions)
+                        if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
                         {
-                            if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
-                            {
-                                positionUsed = true;
-                            }
-                        }
-                        if (!positionUsed)
-                        {
-                            SetWaypoints(new List<Vector2> { GetPosition(), point });
-                            return true;
+                            positionUsed = true;
                         }
                     }
+
+                    if (positionUsed)
+                        continue;
+                    SetWaypoints(new List<Vector2> { GetPosition(), point });
+                    return true;
                 }
             }
             return false;

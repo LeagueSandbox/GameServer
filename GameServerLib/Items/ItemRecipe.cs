@@ -6,7 +6,6 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemRecipe: IItemRecipe
     {
-        private const int RECIPE_ITEM_MAX = 4;
         private readonly IItemData _itemData;
         private IItemData[] _items;
         private int _totalPrice;

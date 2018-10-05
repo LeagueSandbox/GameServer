@@ -385,29 +385,27 @@ namespace LeagueSandbox.GameServer.Maps
                     return 500.0f;
                 }
 
-                if (c.KillDeathCounter < 0)
+                if (c.KillDeathCounter >= 0)
+                    return 0.0f;
+                
+                var firstDeathGold = gold - gold * 0.085f;
+
+                if (c.KillDeathCounter == -1)
                 {
-                    var firstDeathGold = gold - gold * 0.085f;
-
-                    if (c.KillDeathCounter == -1)
-                    {
-                        return firstDeathGold;
-                    }
-
-                    for (var i = c.KillDeathCounter; i < -1; ++i)
-                    {
-                        firstDeathGold -= firstDeathGold * 0.2f;
-                    }
-
-                    if (firstDeathGold < 50)
-                    {
-                        firstDeathGold = 50;
-                    }
-
                     return firstDeathGold;
                 }
 
-                return 0.0f;
+                for (var i = c.KillDeathCounter; i < -1; ++i)
+                {
+                    firstDeathGold -= firstDeathGold * 0.2f;
+                }
+
+                if (firstDeathGold < 50)
+                {
+                    firstDeathGold = 50;
+                }
+
+                return firstDeathGold;
             }
 
             var dic = new Dictionary<MinionSpawnType, float>

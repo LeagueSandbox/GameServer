@@ -348,8 +348,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as IAttackableUnit;
-                    if (u != null && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
+                    if (kv.Value is IAttackableUnit u && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
                     {
                         units.Add(u);
                     }

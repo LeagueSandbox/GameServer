@@ -23,7 +23,7 @@ namespace GameServerCore.Domain
         float Y2 { get; }
         ISpellData SpellData { get; }
 
-        bool Cast(float x, float y, float x2, float y2, IAttackableUnit u = null);
+        bool Cast(float x, float y, float x2, float y2, IAttackableUnit u);
         int GetId();
         float GetCooldown();
         void LowerCooldown(float lowerValue);

@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnUnitDamageTaken
     {
-        private List<Tuple<object, IAttackableUnit, Action>> _listeners = new List<Tuple<object, IAttackableUnit, Action>>();
+        private readonly List<Tuple<object, IAttackableUnit, Action>> _listeners = new List<Tuple<object, IAttackableUnit, Action>>();
         public void AddListener(object owner, IAttackableUnit unit, Action callback)
         {
             var listenerTuple = new Tuple<object, IAttackableUnit, Action>(owner, unit, callback);
@@ -118,15 +118,13 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.ForEach(listener => listener.Item3());
             if (unit is IChampion champion)
-            {
                 ApiEventManager.OnChampionDamageTaken.Publish(champion);
-            }
         }
     }
 
     public class EventOnChampionDamageTaken
     {
-        private List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
+        private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
         public void AddListener(object owner, IChampion champion, Action callback)
         {
             var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);

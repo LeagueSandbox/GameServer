@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     {
         private Game _game;
 
-        private List<IGameObject> _objects = new List<IGameObject>();
+        private readonly List<IGameObject> _objects = new List<IGameObject>();
 
         public CollisionHandler(Game game, IMap map)
         {

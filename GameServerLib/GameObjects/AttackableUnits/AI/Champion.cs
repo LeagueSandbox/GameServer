@@ -282,16 +282,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 foreach (var it in objects)
                 {
-                    if (!(it.Value is IAttackableUnit u) || u.IsDead || u.Team == Team || GetDistanceTo(u) > range)
-                    {
+                    if (!(it.Value is IAttackableUnit u) ||
+                        u.IsDead ||
+                        u.Team == Team ||
+                        GetDistanceTo(u) > range)
                         continue;
-                    }
 
-                    if (GetDistanceTo(u) < distanceToTarget)
-                    {
-                        distanceToTarget = GetDistanceTo(u);
-                        nextTarget = u;
-                    }
+                    if (!(GetDistanceTo(u) < distanceToTarget))
+                        continue;
+                    distanceToTarget = GetDistanceTo(u);
+                    nextTarget = u;
                 }
 
                 if (nextTarget != null)

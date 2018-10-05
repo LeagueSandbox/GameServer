@@ -40,10 +40,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             foreach (var it in objects)
             {
-                if (!(it.Value is IAttackableUnit u) || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
-                {
+                if (!(it.Value is IAttackableUnit u) ||
+                    u.IsDead ||
+                    u.Team == Team || 
+                    GetDistanceTo(u) > Stats.Range.Total)
                     continue;
-                }
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
@@ -59,25 +60,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else
                 {
                     // Is the current target a champion? If it is, don't do anything
-                    if (!(TargetUnit is IChampion targetIsChampion))
+                    if (!(TargetUnit is IChampion))
                         continue;
                     // Find the next champion in range targeting an enemy champion who is also in range
                     if (!(u is IChampion enemyChamp) || enemyChamp.TargetUnit == null)
                         continue;
                     if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
-                        !(enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.Stats.Range.Total) ||
-                        !(GetDistanceTo(enemyChampTarget) <= Stats.Range.Total))
+                        enemyChamp.GetDistanceTo(enemyChampTarget) > enemyChamp.Stats.Range.Total ||
+                        GetDistanceTo(enemyChampTarget) > Stats.Range.Total)
                         continue;
                     nextTarget = enemyChamp; // No priority required
                     break;
                 }
             }
 
-            if (nextTarget != null)
-            {
-                TargetUnit = nextTarget;
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
-            }
+            if (nextTarget == null)
+                return;
+            TargetUnit = nextTarget;
+            _game.PacketNotifier.NotifySetTarget(this, nextTarget);
         }
 
         public override void Update(float diff)
