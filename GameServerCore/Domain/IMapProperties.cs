@@ -1,15 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
 
-namespace LeagueSandbox.GameServer.Scripting.CSharp
+namespace GameServerCore.Domain
 {
-    public interface IMapGameScript
+    public interface IMapProperties: IUpdate
     {
         List<int> ExpToLevelUp { get; set; }
         float GoldPerSecond { get; set; }
@@ -21,7 +18,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         bool SpawnEnabled { get; set; }
 
         void Init();
-        void Update(float diff);
 
         Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition);
 

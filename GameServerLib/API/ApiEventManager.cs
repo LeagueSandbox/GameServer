@@ -97,14 +97,14 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnUnitDamageTaken
     {
-        private List<Tuple<object, AttackableUnit, Action>> _listeners = new List<Tuple<object, AttackableUnit, Action>>();
-        public void AddListener(object owner, AttackableUnit unit, Action callback)
+        private List<Tuple<object, IAttackableUnit, Action>> _listeners = new List<Tuple<object, IAttackableUnit, Action>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action callback)
         {
-            var listenerTuple = new Tuple<object, AttackableUnit, Action>(owner, unit, callback);
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action>(owner, unit, callback);
             _listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(object owner, AttackableUnit unit)
+        public void RemoveListener(object owner, IAttackableUnit unit)
         {
             _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
         }
@@ -114,10 +114,10 @@ namespace LeagueSandbox.GameServer.API
             _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
 
-        public void Publish(AttackableUnit unit)
+        public void Publish(IAttackableUnit unit)
         {
             _listeners.ForEach(listener => listener.Item3());
-            if (unit is Champion champion)
+            if (unit is IChampion champion)
             {
                 ApiEventManager.OnChampionDamageTaken.Publish(champion);
             }

@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Content
 {
     public class RuneCollection : IRuneCollection
     {
-        public Dictionary<int, int> Runes { get; set; }
+        public Dictionary<int, int> Runes { get; }
 
         public RuneCollection()
         {

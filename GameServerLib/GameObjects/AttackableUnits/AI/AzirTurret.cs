@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public AzirTurret(
             Game game,
-            AttackableUnit owner,
+            IAttackableUnit owner,
             string name,
             string model,
             float x = 0,

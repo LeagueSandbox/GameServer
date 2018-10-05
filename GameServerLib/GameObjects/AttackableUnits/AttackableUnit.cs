@@ -21,27 +21,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
 
-        private string _model;
-        public string Model
-        {
-            get => _model;
-            set
-            {
-                _model = value;
-                IsModelUpdated = true;
-            }
-        }
+        public string Model { get; protected set; }
 
         protected readonly ILog Logger;
         public IInventoryManager Inventory { get; protected set; }
-        public int KillDeathCounter { get; protected set; }
+        public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
 
         public AttackableUnit(
             Game game,
             string model,
-            Stats.Stats stats,
+            IStats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
@@ -94,7 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            var exp = _game.Map.MapGameScript.GetExperienceFor(this);
+            var exp = _game.Map.MapProperties.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
@@ -109,16 +100,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            if ((killer != null) && (killer is Champion))
+            if ((killer != null) && (killer is IChampion))
             {
-                ((Champion)killer).OnKill(this);
+                ((IChampion)killer).OnKill(this);
             }
-            IsDashing = false;
         }
 
         public virtual bool IsInDistress()
         {
             return false; //return DistressCause;
+        }
+
+        public bool ChangeModel(string model)
+        {
+            if (Model.Equals(model))
+                return false;
+            IsModelUpdated = true;
+            Model = model;
+            return true;
         }
 
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,

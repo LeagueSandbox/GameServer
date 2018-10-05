@@ -5,6 +5,6 @@ namespace GameServerCore.Domain
     public interface IItemRecipe
     {
         int TotalPrice { get; }
-        List<IItemType> GetItems();
+        IEnumerable<IItemType> GetItems();
     }
 }

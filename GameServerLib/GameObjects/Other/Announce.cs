@@ -1,8 +1,9 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Domain;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
-    public class Announce
+    public class Announce: IAnnounce
     {
         public bool IsAnnounced { get; private set; }
         public long EventTime { get; private set; }

@@ -4,17 +4,15 @@ using GameServerCore.Enums;
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IGameObject : ITarget
+    public interface IGameObject : ITarget, IUpdate
     {
         uint NetId { get; }
         ITarget Target { get; }
         List<Vector2> Waypoints { get; }
         int CurWaypoint { get; }
         TeamId Team { get; }
-        int AttackerCount { get; }
         float CollisionRadius { get; }
         float VisionRadius { get; }
-        bool IsDashing { get; }
 
         float GetZ();
         float GetMoveSpeed();
@@ -22,12 +20,14 @@ namespace GameServerCore.Domain.GameObjects
         void SetWaypoints(List<Vector2> newWaypoints);
         void SetTeam(TeamId team);
         void SetToRemove();
-        void SetDashingState(bool state);
-        void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
         void OnAdded();
         void OnRemoved();
-        void IncrementAttackerCount();
-        void DecrementAttackerCount();
-        Vector2 GetPosition();
+        bool IsVisibleByTeam(TeamId team);
+        void SetVisibleByTeam(TeamId team, bool visible);
+        void OnCollision(IGameObject collider);
+        bool IsCollidingWith(IGameObject o);
+        bool IsToRemove();
+        bool IsMovementUpdated();
+        void ClearMovementUpdated();
     }
 }

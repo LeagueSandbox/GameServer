@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using GameServerCore.Maps;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -63,7 +64,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             return true;
         }
 
-        private List<Vector2> ReadWaypoints(byte[] buffer, int coordCount, Map map)
+        private List<Vector2> ReadWaypoints(byte[] buffer, int coordCount, IMap map)
         {
             if (coordCount % 2 > 0)
             {

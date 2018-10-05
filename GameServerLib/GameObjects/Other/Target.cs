@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             return GetDistanceTo(target.X, target.Y);
         }
-
+        
         public float GetDistanceTo(float xtarget, float ytarget)
         {
             return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));

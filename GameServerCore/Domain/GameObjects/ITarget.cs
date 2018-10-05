@@ -1,4 +1,6 @@
-﻿namespace GameServerCore.Domain.GameObjects
+﻿using System.Numerics;
+
+namespace GameServerCore.Domain.GameObjects
 {
     public interface ITarget
     {
@@ -7,6 +9,6 @@
         bool IsSimpleTarget { get; }
 
         float GetDistanceTo(ITarget target);
-
+        Vector2 GetPosition();
     }
 }

@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer
         public IPacketReader PacketReader { get; private set; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
-        public Map Map { get; private set; }
+        public IMap Map { get; private set; }
         
         public Config Config { get; protected set; }
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -159,10 +159,11 @@ namespace LeagueSandbox.GameServer
             }
 
         }
+        
         public void Update(float diff)
         {
             GameTime += diff;
-            ((ObjectManager)ObjectManager).Update(diff);
+            ObjectManager.Update(diff);
             Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());

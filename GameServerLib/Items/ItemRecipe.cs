@@ -6,10 +6,11 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemRecipe: IItemRecipe
     {
+        private const int RECIPE_ITEM_MAX = 4;
         private readonly IItemType _itemType;
         private IItemType[] _items;
         private int _totalPrice;
-        private ItemManager _itemManager;
+        private readonly ItemManager _itemManager;
 
         public int TotalPrice
         {
@@ -31,26 +32,21 @@ namespace LeagueSandbox.GameServer.Items
             _itemManager = manager;
         }
 
-        public List<IItemType> GetItems()
+        public IEnumerable<IItemType> GetItems()
         {
             if (_items == null)
             {
                 FindRecipeItems(_itemManager);
             }
 
-            return _items.ToList();
+            return _items;
         }
 
         private void FindRecipeItems(ItemManager itemManager)
         {
-            // TODO: Figure out how to refactor this.
-            _items = new[]
-            {
-                itemManager.SafeGetItemType(_itemType.RecipeItem1),
-                itemManager.SafeGetItemType(_itemType.RecipeItem2),
-                itemManager.SafeGetItemType(_itemType.RecipeItem3),
-                itemManager.SafeGetItemType(_itemType.RecipeItem4)
-            }.Where(i => i != null).ToArray();
+            _items = _itemType.RecipeItem.AsEnumerable()
+                .Select(itemManager.SafeGetItemType)
+                .Where(i => i != null).ToArray();
         }
 
         private void FindPrice()

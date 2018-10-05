@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using System.Dynamic;
+using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Domain
 {
@@ -11,10 +12,7 @@ namespace GameServerCore.Domain
         string ItemGroup { get; }
         string SpellName { get; }
         float SellBackModifier { get; }
-        int RecipeItem1 { get; }
-        int RecipeItem2 { get; }
-        int RecipeItem3 { get; }
-        int RecipeItem4 { get; }
+        int[] RecipeItem { get; }
         IItemRecipe Recipe { get; }
         int TotalPrice { get; }
     }

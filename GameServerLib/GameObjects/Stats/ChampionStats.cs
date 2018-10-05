@@ -217,7 +217,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         // TODO: move to universal serializer
         // also code here is unsafe, but thats prefered than just
         // write a function that simply dumps all the variables
-        public static byte[] GetBytes(ChampionStats stats)
+        public static byte[] GetBytes(IChampionStats stats)
         {
             int size = Marshal.SizeOf(stats);
             byte[] arr = new byte[size];

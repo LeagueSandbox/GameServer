@@ -6,8 +6,8 @@ namespace GameServerCore.Domain.GameObjects
     {
         bool IsModelUpdated { get; set; }
         bool IsDead { get; }
-        string Model { get; set; }
-        int KillDeathCounter { get; }
+        string Model { get; }
+        int KillDeathCounter { get; set; }
         int MinionCounter { get; }
         IReplication Replication { get; }
         IStats Stats { get; }
@@ -17,5 +17,6 @@ namespace GameServerCore.Domain.GameObjects
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageText damageText);
         void Die(IAttackableUnit killer);
         bool IsInDistress();
+        bool ChangeModel(string model);
     }
 }

@@ -42,8 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\IAnnounce.cs" />
     <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
+    <Compile Include="Domain\IMapProperties.cs" />
+    <Compile Include="Domain\IShop.cs" />
+    <Compile Include="Domain\IStackable.cs" />
+    <Compile Include="Domain\IUpdate.cs" />
     <Compile Include="Enums\CrowdControlType.cs" />
     <Compile Include="Enums\DamageSource.cs" />
     <Compile Include="Extensions.cs" />
@@ -101,6 +106,7 @@
     <Compile Include="Enums\TeamId.cs" />
     <Compile Include="Enums\TurretType.cs" />
     <Compile Include="Enums\UnitAnnounces.cs" />
+    <Compile Include="ICollisionHandler.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="IObjectManager.cs" />
     <Compile Include="IPlayerManager.cs" />

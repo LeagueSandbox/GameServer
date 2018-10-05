@@ -36,19 +36,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IAttackableUnit TargetUnit { get; set; }
         public IAttackableUnit AutoAttackTarget { get; set; }
         public CharData CharData { get; protected set; }
-        public SpellData AaSpellData { get; protected set; }
+        public ISpellData AaSpellData { get; protected set; }
         private bool _isNextAutoCrit;
         public float AutoAttackDelay { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
         private float _autoAttackCurrentDelay;
-        public bool IsAttacking { protected get; set; }
-        protected internal bool HasMadeInitialAttack;
+        public bool IsAttacking { get; set; }
+        public bool HasMadeInitialAttack { get; set; }
         private bool _nextAttackFlag;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
         public bool IsCastingSpell { get; set; }
         public bool IsMelee { get; set; }
+        public bool IsDashing { get; protected set; }
+        protected float _dashSpeed;
 
 
         private Random _random = new Random();
@@ -95,6 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             BuffGameScriptControllers = new List<BuffGameScriptController>();
             BuffsLock = new object();
             Buffs = new Dictionary<string, IBuff>();
+            IsDashing = false;
         }
 
         public void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false)
@@ -105,7 +108,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var buffController =
-                new BuffGameScriptController(_game, this, buffNamespace, buffClass, (Spell)ownerSpell, removeAfter);
+                new BuffGameScriptController(_game, this, buffNamespace, buffClass, ownerSpell, removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
@@ -303,7 +306,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     }
 
-                    if (target is BaseTurret && ai.TargetUnit is Minion) // Turret attacking minion
+                    if (target is IBaseTurret && ai.TargetUnit is Minion) // Turret attacking minion
                     {
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                     }
@@ -334,7 +337,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
-            if (target is BaseTurret)
+            if (target is IBaseTurret)
             {
                 return ClassifyUnit.TURRET;
             }
@@ -344,7 +347,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return ClassifyUnit.CHAMPION;
             }
 
-            if (target is Inhibitor && !target.IsDead)
+            if (target is IInhibitor && !target.IsDead)
             {
                 return ClassifyUnit.INHIBITOR;
             }
@@ -357,7 +360,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return ClassifyUnit.DEFAULT;
         }
 
-        public void SetTargetUnit(AttackableUnit target)
+        public void SetTargetUnit(IAttackableUnit target)
         {
             TargetUnit = target;
             RefreshWaypoints();
@@ -537,7 +540,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _crowdControlList.RemoveAll(cc => cc.IsRemoved);
 
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<AttackableUnit, double>>(Model, "Passive", "OnUpdate");
+            var onUpdate = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
             BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
             base.Update(diff);
@@ -546,7 +549,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void Die(IAttackableUnit killer)
         {
-            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
+            var onDie = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
             base.Die(killer);
         }
@@ -556,13 +559,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.OnCollision(collider);
             if (collider == null)
             {
-                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<AttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
+                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<IAttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
             }
             else
             {
-                var onCollide = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "onCollide");
-                onCollide?.Invoke(this, collider as AttackableUnit);
+                var onCollide = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "onCollide");
+                onCollide?.Invoke(this, collider as IAttackableUnit);
             }
         }
 
@@ -576,11 +579,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             List<CirclePoly> UsedPositions = new List<CirclePoly>();
             var isCurrentlyOverlapping = false;
 
-            var thisCollisionCircle = new CirclePoly(((Target)Target)?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
+            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
 
             foreach (var gameObject in objects)
             {
-                var unit = gameObject.Value as AttackableUnit;
+                var unit = gameObject.Value as IAttackableUnit;
                 if (unit == null ||
                     unit.NetId == NetId ||
                     unit.IsDead ||
@@ -590,7 +593,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     continue;
                 }
-                var targetCollisionCircle = new CirclePoly(((Target)unit.Target)?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
+                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
                 if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
                 {
                     isCurrentlyOverlapping = true;
@@ -599,7 +602,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             if (isCurrentlyOverlapping)
             {
-                var targetCircle = new CirclePoly(((Target)TargetUnit.Target)?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
+                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {
@@ -648,7 +651,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void UpdateTargetUnit(IAttackableUnit unit)
         {
-            TargetUnit = (AttackableUnit)unit;
+            TargetUnit = unit;
+        }
+
+        public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
+        {
+            // TODO: Take into account the rest of the arguments
+            IsDashing = true;
+            _dashSpeed = dashSpeed;
+            Target = t;
+            Waypoints.Clear();
+        }
+
+        public void SetDashingState(bool state)
+        {
+            IsDashing = state;
         }
     }
 }

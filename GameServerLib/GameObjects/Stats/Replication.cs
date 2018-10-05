@@ -12,20 +12,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             public uint Value { get; set; }
             public bool IsFloat { get; set; }
             public bool Changed { get; set; }
-
-            public void MarkAsUnchanged()
-            {
-                Changed = false;
-            }
         }
 
-        protected Replication(AttackableUnit owner)
+        protected Replication(IAttackableUnit owner)
         {
             Owner = owner;
             Update();
         }
 
-        protected readonly AttackableUnit Owner;
+        protected readonly IAttackableUnit Owner;
         protected IStats Stats => Owner.Stats;
 
         public uint NetId => Owner.NetId;
@@ -79,7 +74,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             foreach (var x in Values)
             {
-                x?.MarkAsUnchanged();
+                if (x != null) 
+                    x.Changed = false;
             }
 
             Changed = false;

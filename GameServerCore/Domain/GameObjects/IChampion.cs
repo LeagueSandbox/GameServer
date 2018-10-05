@@ -5,8 +5,9 @@ namespace GameServerCore.Domain.GameObjects
 {
     public interface IChampion : IObjAiBase
     {
+        IShop Shop { get; }
         float RespawnTimer { get; }
-        float ChampionGoldFromMinions { get; }
+        float ChampionGoldFromMinions { get; set; }
         IRuneCollection RuneList { get; }
         Dictionary<short, ISpell> Spells { get; }
         int Skin { get; }
@@ -14,14 +15,13 @@ namespace GameServerCore.Domain.GameObjects
         byte SkillPoints { get; set; }
 
         // basic
-        void TeleportTo(float x, float y);
         void UpdateSkin(int skinNo);
         int GetChampionHash();
         void StopChampionMovement();
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);
         bool CanCast();
-        void Recall(IObjAiBase owner);
+        void Recall();
         void Respawn();
 
         // spells
@@ -31,6 +31,6 @@ namespace GameServerCore.Domain.GameObjects
         ISpell GetSpell(byte slot);
         ISpell LevelUpSpell(byte slot);
 
-        
+        void OnKill(IAttackableUnit killed);
     }
 }

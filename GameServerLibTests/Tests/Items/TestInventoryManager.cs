@@ -67,19 +67,19 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             Assert.AreEqual(item2, manager.GetItem(1));
 
             // Check stack sizes
-            Assert.AreEqual(1, item1.StackSize);
-            Assert.AreEqual(1, item2.StackSize);
+            Assert.AreEqual(1, item1.StackCount);
+            Assert.AreEqual(1, item2.StackCount);
 
             // Stack the second item, and make sure the second gets stacked
             for(var i = 0; i < itemType2.MaxStack - 1; i++)
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);
-                Assert.AreEqual(1 + i + 1, item2.StackSize);
+                Assert.AreEqual(1 + i + 1, item2.StackCount);
             }
 
             // Make sure the first item's stack is unchanged
-            Assert.AreEqual(1, item1.StackSize);
+            Assert.AreEqual(1, item1.StackCount);
 
             // Make sure we can't add any more of the second item to the stack
             var shouldBeNull = manager.AddItem(itemType2);
@@ -232,25 +232,25 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
 
             // Get zephyr and make sure we have no items available to it's recipe
             var zephyr = itemManager.GetItemType(zephyrId);
-            var availableItems = manager.GetAvailableItems(zephyr.Recipe);
+            var availableItems = manager.GetAvailableItems(zephyr.Recipe.GetItems());
             Assert.AreEqual(0, availableItems.Count);
 
             // Add a component and make sure we get it from the available items function
             var component1 = manager.AddItem(itemManager.GetItemType(componentId1));
-            var available = manager.GetAvailableItems(zephyr.Recipe);
+            var available = manager.GetAvailableItems(zephyr.Recipe.GetItems());
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component1, available[0]);
 
             // Add another component and make sure we get that as well
             var component2 = manager.AddItem(itemManager.GetItemType(componentId2));
-            available = manager.GetAvailableItems(zephyr.Recipe);
+            available = manager.GetAvailableItems(zephyr.Recipe.GetItems());
             Assert.AreEqual(2, available.Count);
             Assert.AreEqual(component1, available[0]);
             Assert.AreEqual(component2, available[1]);
 
             // Remove the first component and make sure we still have everything correctly
             manager.RemoveItem(manager.GetItemSlot(component1));
-            available = manager.GetAvailableItems(zephyr.Recipe);
+            available = manager.GetAvailableItems(zephyr.Recipe.GetItems());
             Assert.AreEqual(1, available.Count);
             Assert.AreEqual(component2, available[0]);
 
@@ -262,7 +262,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             Assert.IsNotNull(manager.GetItem(manager.GetItemSlot(unrelated)));
 
             // Make sure we have no available items, even though there are some in the inventory
-            available = manager.GetAvailableItems(zephyr.Recipe);
+            available = manager.GetAvailableItems(zephyr.Recipe.GetItems());
             Assert.AreEqual(0, available.Count);
         }
     }

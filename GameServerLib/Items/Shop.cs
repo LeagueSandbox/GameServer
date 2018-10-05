@@ -1,17 +1,17 @@
 using System.Linq;
 using GameServerCore.Domain;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class Shop
+    public class Shop: IShop
     {
-        private readonly Champion _owner;
+        private readonly IChampion _owner;
         private readonly Game _game;
 
         public const byte ITEM_ACTIVE_OFFSET = 6;
         
-        private Shop(Champion owner, Game game)
+        private Shop(IChampion owner, Game game)
         {
             _owner = owner;
             _game = game;
@@ -31,9 +31,9 @@ namespace LeagueSandbox.GameServer.Items
 
             if (i.ItemType.MaxStack > 1)
             {
-                i.DecrementStackSize();
+                i.DecrementStackCount();
             }
-            RemoveItem(i, slotId, i.StackSize);
+            RemoveItem(i, slotId, i.StackCount);
             return true;
         }
 
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Items
             var stats = _owner.Stats;
             var inventory = _owner.Inventory;
             var price = itemTemplate.TotalPrice;
-            var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe);
+            var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe.GetItems());
 
             if (ownedItems.Count != 0)
             {
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public static Shop CreateShop(Champion owner, Game game)
+        public static Shop CreateShop(IChampion owner, Game game)
         {
             return new Shop(owner, game);
         }

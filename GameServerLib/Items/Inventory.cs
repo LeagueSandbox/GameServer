@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                if (Items[i].IncrementStackSize())
+                if (Items[i].IncrementStackCount())
                 {
                     return Items[i];
                 }

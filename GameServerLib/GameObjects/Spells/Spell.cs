@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public ISpellData SpellData { get; private set; }
 
-        public Spell(Game game, Champion owner, string spellName, byte slot)
+        public Spell(Game game, IChampion owner, string spellName, byte slot)
         {
             Owner = owner;
             SpellName = spellName;
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool Cast(float x, float y, float x2, float y2, AttackableUnit u = null)
+        public virtual bool Cast(float x, float y, float x2, float y2, IAttackableUnit u = null)
         {
             if (HasEmptyScript)
             {

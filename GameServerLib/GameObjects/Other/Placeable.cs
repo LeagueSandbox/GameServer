@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public Placeable(
             Game game,
-            ObjAiBase owner,
+            IObjAiBase owner,
             float x,
             float y,
             string model,

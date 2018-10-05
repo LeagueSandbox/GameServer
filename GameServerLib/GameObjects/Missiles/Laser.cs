@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 var objects = _game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
                 {
-                    var u = obj as AttackableUnit;
+                    var u = obj as IAttackableUnit;
                     if (u != null && CheckIfValidTarget(u))
                     {
                         if (TargetIsInRectangle(u))
@@ -64,17 +64,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        public override void SetToRemove()
+        /*public override void SetToRemove()
         {
-            if (Target != null && !Target.IsSimpleTarget)
-            {
-                (Target as GameObject).DecrementAttackerCount();
-            }
-
-            Owner.DecrementAttackerCount();
             base.SetToRemove();
             _game.PacketNotifier.NotifyProjectileDestroy(this);
-        }
+        }*/
 
         private bool CheckIfValidTarget(IAttackableUnit unit)
         {
@@ -124,35 +118,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 return false;
             }
 
-            var t = unit as BaseTurret;
+            var t = unit as IBaseTurret;
             if (t != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
             {
                 return false;
             }
 
-            var i = unit as Inhibitor;
-            var n = unit as Nexus;
+            var i = unit as IInhibitor;
+            var n = unit as INexus;
             if ((i != null || n != null) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
             {
                 return false;
             }
 
-            var c = unit as Champion;
-            if (c != null && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
-            {
-                return false;
-            }
-
-            return true;
+            return !(unit is IChampion c) || (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0;
         }
 
-        private void ApplyEffects(AttackableUnit unit)
+        private void ApplyEffects(IAttackableUnit unit)
         {
             ObjectsHit.Add(unit);
-            var attackableUnit = unit;
-            if (attackableUnit != null)
+            if (unit != null)
             {
-                _originSpell.ApplyEffects(attackableUnit, this);
+                _originSpell.ApplyEffects(unit, this);
             }
         }
 

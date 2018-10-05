@@ -313,7 +313,6 @@
     <Compile Include="Scripting\CSharp\GameScript.cs" />
     <Compile Include="Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Scripting\CSharp\GameScriptTimer.cs" />
-    <Compile Include="Scripting\CSharp\MapGameScript.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
