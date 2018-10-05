@@ -39,15 +39,10 @@ namespace LeagueSandbox.GameServer.Content
                 $"LEVELS/map{mapId}/Map{mapId}.json"
             };
 
-            foreach (var path in possibilities)
-            {
-                if (Content.ContainsKey(path))
-                {
-                    return path;
-                }
-            }
-
-            throw new ContentNotFoundException($"Map configuration for Map {mapId} was not found in the content.");
+            return possibilities.FirstOrDefault(path => Content.ContainsKey(path))
+                ?? throw new ContentNotFoundException(
+                       $"Map configuration for Map {mapId} was not found in the content."
+                   );
         }
 
         public string GetUnitStatPath(string model)
@@ -70,15 +65,8 @@ namespace LeagueSandbox.GameServer.Content
                 $"DATA/Spells/{spellName}.ini"
             };
 
-            foreach (var path in possibilities)
-            {
-                if (Content.ContainsKey(path))
-                {
-                    return path;
-                }
-            }
-
-            throw new ContentNotFoundException($"Spell data for {spellName} was not found.");
+            return possibilities.FirstOrDefault(path => Content.ContainsKey(path))
+                ?? throw new ContentNotFoundException($"Spell data for {spellName} was not found.");
         }
 
         public SpellData GetSpellData(string champ, string spellName)
@@ -112,6 +100,7 @@ namespace LeagueSandbox.GameServer.Content
                 $"LEVELS/Map{mapId}/AIPath.aimesh_ngrid",
                 $"LEVELS/map{mapId}/AIPath.aimesh_ngrid"
             };
+
             foreach (var path in possibilities)
             {
                 if (_navGrids.ContainsKey(path))

@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Items
             {
                 return false;
             }
-            
+
             stats.Gold -= price;
             return true;
         }
@@ -82,14 +82,14 @@ namespace LeagueSandbox.GameServer.Items
             inventory.RemoveItem(item);
         }
 
-        private bool AddItem(ItemData ıtemData)
+        private bool AddItem(ItemData itemData)
         {
-            var i = _owner.Inventory.AddItem(ıtemData);
+            var i = _owner.Inventory.AddItem(itemData);
             if (i == null)
             {
                 return false;
             }
-            _owner.Stats.AddModifier(ıtemData);
+            _owner.Stats.AddModifier(itemData);
             _game.PacketNotifier.NotifyItemBought(_owner, i);
             if (!string.IsNullOrEmpty(i.ItemData.SpellName))
             {

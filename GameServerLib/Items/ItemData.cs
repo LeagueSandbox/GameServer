@@ -17,11 +17,8 @@ namespace LeagueSandbox.GameServer.Items
         public string SpellName { get; private set; }
         public float SellBackModifier { get; private set; }
 
-        // Recipes
-        public int RecipeItem1 { get; private set; }
-        public int RecipeItem2 { get; private set; }
-        public int RecipeItem3 { get; private set; }
-        public int RecipeItem4 { get; private set; }
+        // Recipe
+        public int[] RecipeItems { get; private set; } = new int[4];
 
         // Not from data
         public ItemRecipe Recipe { get; private set; }
@@ -44,11 +41,6 @@ namespace LeagueSandbox.GameServer.Items
                 ItemGroup = content.GetString("Data", "ItemGroup"),
                 SpellName = content.GetString("Data", "SpellName"),
                 SellBackModifier = content.GetFloat("Data", "SellBackModifier", 0.7f),
-
-                RecipeItem1 = content.GetInt("Data", "RecipeItem1", -1),
-                RecipeItem2 = content.GetInt("Data", "RecipeItem2", -1),
-                RecipeItem3 = content.GetInt("Data", "RecipeItem3", -1),
-                RecipeItem4 = content.GetInt("Data", "RecipeItem4", -1),
                 Armor =
                 {
                     FlatBonus = content.GetFloat("Data", "FlatArmorMod"),
@@ -115,6 +107,11 @@ namespace LeagueSandbox.GameServer.Items
                 }
             };
 
+            for (var i = 0; i < 4; i++)
+            {
+                result.RecipeItems[i] = content.GetInt("Data", $"RecipeItem{i + 1}", -1);
+            }
+
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
 
             result.CreateRecipe(owner);
@@ -123,7 +120,7 @@ namespace LeagueSandbox.GameServer.Items
 
         public bool IsTrinket()
         {
-            return ItemGroup.ToLower().Equals("relicbase");
+            return ItemGroup.ToLowerInvariant().Equals("relicbase");
         }
     }
 }
