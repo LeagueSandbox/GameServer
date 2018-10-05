@@ -43,9 +43,9 @@ namespace LeagueSandbox.GameServer.Items
         private void FindRecipeItems(ItemManager itemManager)
         {
             // TODO: Figure out how to refactor this.
-            _items = new ItemData[4];
+            _items = new ItemData[8];
 
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 8; i++)
             {
                 _items[i] = itemManager.SafeGetItemType(_owner.RecipeItems[i]);
             }

@@ -23,7 +23,7 @@
             uint hash = 0;
             foreach (var c in data)
             {
-                hash = char.ToLower(c) + 65599 * hash;
+                hash = char.ToLowerInvariant(c) + 65599 * hash;
             }
 
             return hash;

@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Items
         public float SellBackModifier { get; private set; }
 
         // Recipe
-        public int[] RecipeItems { get; private set; } = new int[4];
+        public int[] RecipeItems { get; private set; } = new int[8];
 
         // Not from data
         public ItemRecipe Recipe { get; private set; }
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Items
                 }
             };
 
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 8; i++)
             {
                 result.RecipeItems[i] = content.GetInt("Data", $"RecipeItem{i + 1}", -1);
             }

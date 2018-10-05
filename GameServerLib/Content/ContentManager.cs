@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -7,7 +6,6 @@ using IniParser.Model;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using LeagueSandbox.GameServer.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -41,8 +39,8 @@ namespace LeagueSandbox.GameServer.Content
 
             return possibilities.FirstOrDefault(path => Content.ContainsKey(path))
                 ?? throw new ContentNotFoundException(
-                       $"Map configuration for Map {mapId} was not found in the content."
-                   );
+                        $"Map configuration for Map {mapId} was not found in the content."
+                );
         }
 
         public string GetUnitStatPath(string model)
