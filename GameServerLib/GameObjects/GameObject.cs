@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameMaths;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -184,7 +185,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _xvector = xtarget - X;
             _yvector = ytarget - Y;
 
-            if (_xvector == 0 && _yvector == 0)
+            if (_xvector.IsZero() && _yvector.IsZero())
             {
                 return;
             }
