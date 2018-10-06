@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             _logger.Debug($"At {champion.Position.X}; {champion.Position.Y}");
             var msg = $"At Coords - X: {champion.Position.X} Y: {champion.Position.Y} Z: {champion.GetZ()}";
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
