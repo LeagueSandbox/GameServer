@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Content
         public float HpRegenPerLevel { get; private set; }
         public float MpRegenPerLevel { get; private set; }
         public float AttackSpeedPerLevel { get; private set; }
-        public bool IsMelee { get; private set; } //Yes or no
+        public bool IsMelee { get; private set; } //Yes or No
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
