@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             Position = position;
         }
 
-        public float GetDistanceTo(Target target)
+        public float GetDistanceTo(ITarget target)
         {
             return GetDistanceTo(target.Position);
         }

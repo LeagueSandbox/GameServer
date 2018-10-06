@@ -6,5 +6,8 @@ namespace GameServerCore.Domain.GameObjects
     {
         Vector2 Position { get; }
         bool IsSimpleTarget { get; }
+
+        float GetDistanceTo(ITarget target);
+
     }
 }

@@ -1,9 +1,7 @@
-﻿using ENet;
+﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
-using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -11,7 +9,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandleEmotion : PacketHandlerBase
     {
         private readonly Game _game;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
 
         public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
@@ -24,13 +22,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             champion.StopChampionMovement();
             var request = _game.PacketReader.ReadEmotionPacketRequest(data);
             //for later use -> tracking, etc.
-            var playerName = _playerManager.GetPeerInfo(peer).Champion.Model;
+            var playerName = _playerManager.GetPeerInfo(userId).Champion.Model;
             switch (request.Id)
             {
                 case Emotions.DANCE:

@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using ENet;
-using GameServerCore;
+﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enet;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Players
 {
-    public class PlayerManager
+    public class PlayerManager : IPlayerManager
     {
         private NetworkIdManager _networkIdManager;
         private Game _game;
@@ -64,16 +64,16 @@ namespace LeagueSandbox.GameServer.Players
             c.LevelUp();
 
             player.Champion = c;
-            var pair = new Pair<uint, ClientInfo> {Item2 = player};
+            var pair = new Pair<uint, ClientInfo> {Item1=(uint)player.UserId,Item2 = player};
             _players.Add(pair);
         }
 
         // GetPlayerFromPeer
-        public ClientInfo GetPeerInfo(Peer peer)
+        public ClientInfo GetPeerInfo(int userId)
         {
             foreach (var player in _players)
             {
-                if (player.Item1 == peer.Address.port)
+                if (player.Item2.UserId == userId)
                 {
                     return player.Item2;
                 }
@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Players
             return null;
         }
 
-        public ClientInfo GetClientInfoByChampion(Champion champ)
+        public ClientInfo GetClientInfoByChampion(IChampion champ)
         {
             return GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }

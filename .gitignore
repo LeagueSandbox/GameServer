@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Game settings files
+GameServerApp/Settings/
+
 # User-specific files
 *.suo
 *.user

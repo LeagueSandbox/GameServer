@@ -1,5 +1,4 @@
-﻿using ENet;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
 namespace GameServerCore.Enet
@@ -28,8 +27,6 @@ namespace GameServerCore.Enet
                 _champion.UpdateSkin(SkinNo);
             }
         }
-
-        public Peer Peer { get; set; }
 
         public ClientInfo(string rank,
                           TeamId team,

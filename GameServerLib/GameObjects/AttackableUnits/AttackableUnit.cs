@@ -91,7 +91,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return Stats.MoveSpeed.Total;
         }
 
-        public virtual void Die(AttackableUnit killer)
+        public virtual void Die(IAttackableUnit killer)
         {
             SetToRemove();
             _game.ObjectManager.StopTargeting(this);
@@ -125,7 +125,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false; //return DistressCause;
         }
 
-        public virtual void TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source,
+        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
             DamageText damageText)
         {
             float defense = 0;
@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        public virtual void TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             var text = DamageText.DAMAGE_TEXT_NORMAL;
 
@@ -263,13 +263,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         INHIBITOR = 12,
         NEXUS = 13,
         DEFAULT = 14
-    }
-
-    public enum DamageSource
-    {
-        DAMAGE_SOURCE_ATTACK,
-        DAMAGE_SOURCE_SPELL,
-        DAMAGE_SOURCE_SUMMONER_SPELL, // Ignite shouldn't destroy Banshee's
-        DAMAGE_SOURCE_PASSIVE // Red/Thornmail shouldn't as well
     }
 }

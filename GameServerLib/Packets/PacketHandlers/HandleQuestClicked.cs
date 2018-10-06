@@ -1,6 +1,6 @@
-﻿using ENet;
-using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Chatbox;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _chatCommandManager = game.ChatCommandManager;
         }
 
-        public override bool HandlePacket(Peer peer, byte[] data)
+        public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadQuestClickedRequest(data);
             var msg = $"Clicked quest with netid: {request.QuestNetId}";

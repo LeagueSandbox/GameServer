@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Current target the object running to (can be coordinates or an object)
         /// </summary>
-        public Target Target { get; set; }
+        public ITarget Target { get; set; }
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }

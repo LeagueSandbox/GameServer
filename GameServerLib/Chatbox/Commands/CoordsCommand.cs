@@ -1,6 +1,5 @@
-﻿using ENet;
+﻿using GameServerCore;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Players;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
@@ -8,7 +7,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
     public class CoordsCommand : ChatCommandBase
     {
         private readonly ILog _logger;
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "coords";
         public override string Syntax => $"{Command}";
@@ -20,7 +19,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var champion = _playerManager.GetPeerInfo(peer).Champion;
             _logger.Debug($"At {champion.Position.X}; {champion.Position.Y}");

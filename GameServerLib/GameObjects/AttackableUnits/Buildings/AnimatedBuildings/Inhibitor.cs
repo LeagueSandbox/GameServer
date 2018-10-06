@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             _game.ObjectManager.AddInhibitor(this);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void Die(IAttackableUnit killer)
         {
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             base.Die(killer);
         }
 
-        public void SetState(InhibitorState state, GameObject killer = null)
+        public void SetState(InhibitorState state, IGameObject killer = null)
         {
             if (_respawnTimer != null && state == InhibitorState.ALIVE)
             {

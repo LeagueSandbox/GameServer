@@ -12,18 +12,31 @@ For more detailed project specifications head over to https://leaguesandbox.gith
 If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know.
 
 # Commits
-* All commits must refer to an issue.
-* Commits should look like this:
 
+## Always create an issue before committing
+
+All commits should refer to issues. This is simply so that we can better track what is being worked on or what should be worked on.
+
+## Commit Structure:
 ```
-Resolve/Progress #ReferedIssue -- Fixed/Added Feature
+Issue Reference -- Title of the commit
 
-A short but good description
-Refs #ReferedIssue
+Description of the commit
+
+Issue reference
+```
+For example:
+```
+Resolve #123 -- Implement a foobar
+
+Implement foo to the bar module
+
+Refs #123
 ```
 
-* A commit should have only work about fixing/adding one feature. Different features/additions should go into their own commit ***AND*** PR. Although, if a commit requires another commit, they can be in the same PR.
+You can also use `Progress` in place of `Resolve`, in case the issue was not resolved yet.
 
+**THIS GUIDE CONCERNS _COMMIT_ MESSAGES, AND NOT _PULL REQUEST_ MESSAGES**
 # Project policies
 * Line length should be 120 characters maximum whenever possible (use Editor Guidelines plugin for a ruler)
 * Pull requests must be approved before they can be merged

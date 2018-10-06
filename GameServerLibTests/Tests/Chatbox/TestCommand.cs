@@ -1,5 +1,4 @@
-﻿using ENet;
-using LeagueSandbox.GameServer;
+﻿using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServerTests.Tests.Chatbox
@@ -16,7 +15,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Chatbox
             Syntax = syntax;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
 
         }

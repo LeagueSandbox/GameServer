@@ -1,5 +1,3 @@
-using ENet;
-
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class HelpCommand : ChatCommandBase
@@ -17,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             if (!Game.Config.ChatCheatsEnabled)
             {

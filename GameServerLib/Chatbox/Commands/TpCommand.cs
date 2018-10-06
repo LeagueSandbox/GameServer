@@ -1,11 +1,10 @@
-﻿using ENet;
-using LeagueSandbox.GameServer.Players;
+﻿using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class TpCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "tp";
         public override string Syntax => $"{Command} x y";
@@ -16,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
             float x, y;
@@ -29,7 +28,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
             {
-                _playerManager.GetPeerInfo(peer).Champion.TeleportTo(x, y);
+                _playerManager.GetPeerInfo(userId).Champion.TeleportTo(x, y);
             }
         }
     }

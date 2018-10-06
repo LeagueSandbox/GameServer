@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.GameObjects;
@@ -135,7 +136,7 @@ namespace LeagueSandbox.GameServer.API
             return p;
         }
 
-        public static Particle AddParticleTarget(Champion champion, string particle, Target target, float size = 1.0f, string bone = "")
+        public static Particle AddParticleTarget(IChampion champion, string particle, ITarget target, float size = 1.0f, string bone = "")
         {
             var p = new Particle(_game, champion, target, particle, size, bone);
             _game.PacketNotifier.NotifyParticleSpawn(p);
@@ -158,12 +159,12 @@ namespace LeagueSandbox.GameServer.API
             // todo change units direction
         }
 
-        public static List<AttackableUnit> GetUnitsInRange(Target target, float range, bool isAlive)
+        public static List<IAttackableUnit> GetUnitsInRange(Target target, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
         }
 
-        public static List<Champion> GetChampionsInRange(Target target, float range, bool isAlive)
+        public static List<IChampion> GetChampionsInRange(Target target, float range, bool isAlive)
         {
             return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
         }
@@ -251,12 +252,6 @@ namespace LeagueSandbox.GameServer.API
                 backDistance,
                 travelTime
             );
-        }
-
-        public static void SendPacket(string packetString)
-        {
-            var packet = StringToByteArray(packetString);
-            _game.PacketHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
         }
     }
 }

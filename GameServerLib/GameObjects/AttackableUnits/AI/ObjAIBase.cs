@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
@@ -13,6 +14,7 @@ using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
@@ -103,7 +105,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Buffs = new Dictionary<string, Buff>();
         }
 
-        public BuffGameScriptController AddBuffGameScript(string buffNamespace, string buffClass, Spell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        public void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false)
         {
             if (isUnique)
             {
@@ -111,11 +113,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var buffController =
-                new BuffGameScriptController(_game, this, buffNamespace, buffClass, ownerSpell, removeAfter);
+                new BuffGameScriptController(_game, this, buffNamespace, buffClass, (Spell)ownerSpell, removeAfter);
             BuffGameScriptControllers.Add(buffController);
             buffController.ActivateBuff();
 
-            return buffController;
+            // TODO: should handle the controllers in the class, and don't pass them outside
         }
 
         public void RemoveBuffGameScript(BuffGameScriptController buffController)
@@ -550,9 +552,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             UpdateAutoAttackTarget(diff);
         }
 
-        public override void Die(AttackableUnit killer)
+        public override void Die(IAttackableUnit killer)
         {
-            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnDie");
+            var onDie = _scriptEngine.GetStaticMethod<Action<AttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
             base.Die(killer);
         }

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using ENet;
+﻿using GameServerCore;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Players;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SpawnCommand : ChatCommandBase
     {
-        private readonly PlayerManager _playerManager;
+        private readonly IPlayerManager _playerManager;
 
         public override string Command => "spawn";
         public override string Syntax => $"{Command} minionsblue minionspurple";
@@ -21,7 +20,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             _playerManager = game.PlayerManager;
         }
 
-        public override void Execute(Peer peer, bool hasReceivedArguments, string arguments = "")
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
 
@@ -39,11 +38,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     ShowSyntax();
                 }
 
-                SpawnMinionsForTeam(team, peer);
+                SpawnMinionsForTeam(team, userId);
             }
         }
 
-        public void SpawnMinionsForTeam(TeamId team, Peer peer)
+        public void SpawnMinionsForTeam(TeamId team, int userId)
         {
             var spawnPositions = new Dictionary<TeamId, MinionSpawnPosition>
             {
@@ -51,7 +50,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
             };
 
-            var champion = _playerManager.GetPeerInfo(peer).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             var random = new Random();
 
             var minions = new[]
