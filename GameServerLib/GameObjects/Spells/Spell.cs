@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             var stats = Owner.Stats;
             if (SpellData.ManaCost[Level] * (1 - stats.SpellCostReduction) >= stats.CurrentMana ||
-                State != SpellState.STATE_READY)
+                State != SpellState.STATE_READY || Owner.IsCastingSpell && Slot != 4 && Slot != 5)
             {
                 return false;
             }
