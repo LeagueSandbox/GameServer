@@ -48,7 +48,7 @@ namespace GameServerCore
 
         public static Vector2 Rotate(this Vector2 v, float angle)
         {
-            return v.Rotate(new Vector2(0, 0), angle);
+            return v.Rotate(Vector2.Zero, angle);
         }
 
         public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle, Vector2 origin)
@@ -81,7 +81,7 @@ namespace GameServerCore
 
         public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
         {
-            return v.AngleBetween(vectorToGetAngle, new Vector2(0, 0));
+            return v.AngleBetween(vectorToGetAngle, Vector2.Zero);
         }
 
         public static double DegreeToRadian(double angle)

@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         RuneCollection runeList,
                         ClientInfo clientInfo,
                         uint netId = 0)
-            : base(game, new Vector2(0, 0), model, new Stats.Stats(), 30, 1200, netId)
+            : base(game, Vector2.Zero, model, new Stats.Stats(), 30, 1200, netId)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;

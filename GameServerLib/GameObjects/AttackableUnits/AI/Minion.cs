@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             MinionSpawnPosition position,
             List<Vector2> mainWaypoints,
             uint netId = 0
-        ) : base(game, new Vector2(0, 0), "", new Stats.Stats(), 40, 1100, netId)
+        ) : base(game, Vector2.Zero, "", new Stats.Stats(), 40, 1100, netId)
         {
             MinionSpawnType = spawnType;
             SpawnPosition = position;

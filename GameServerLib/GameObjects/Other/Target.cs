@@ -27,12 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public float GetDistanceTo(Vector2 position)
         {
-            return GetDistanceTo(position.X, position.Y);
-        }
-
-        public float GetDistanceTo(float x, float y)
-        {
-            return (float)Math.Sqrt(GetDistanceToSqr(x, y));
+            return (Position - position).Length();
         }
 
         public float GetDistanceToSqr(Target target)
@@ -42,12 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public float GetDistanceToSqr(Vector2 position)
         {
-            return GetDistanceToSqr(position.X, position.Y);
-        }
-
-        public float GetDistanceToSqr(float x, float y)
-        {
-            return (Position.X - x) * (Position.X - x) + (Position.Y - y) * (Position.Y - y);
+            return (Position - position).LengthSquared();
         }
     }
 }

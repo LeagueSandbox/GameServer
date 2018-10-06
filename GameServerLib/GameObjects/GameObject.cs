@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _direction = Vector2.Normalize(goingTo);
             if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
             {
-                _direction = new Vector2(0, 0);
+                _direction = Vector2.Zero;
             }
 
             var moveSpeed = GetMoveSpeed();
