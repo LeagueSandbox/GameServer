@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             uint netId = 0
         ) : base(game, x, y, collisionRadius, 0, netId)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
+            SpellData = _game.Config.ContentManager.GetSpellData(owner.Model, projectileName);
             _originSpell = originSpell;
             _moveSpeed = moveSpeed;
             Owner = owner;
@@ -108,51 +108,51 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 }
 
                 if (unit.Team == Owner.Team
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_FRIENDS) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.AFFECT_FRIENDS) > 0))
                 {
                     return;
                 }
 
                 if (unit.Team == TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NEUTRAL) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.AFFECT_NEUTRAL) > 0))
                 {
                     return;
                 }
 
                 if (unit.Team != Owner.Team
                     && unit.Team != TeamId.TEAM_NEUTRAL
-                    && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
+                    && !((SpellData.Flags & (int)SpellFlag.AFFECT_ENEMIES) > 0))
                 {
                     return;
                 }
 
 
-                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_DEAD) > 0))
+                if (unit.IsDead && !((SpellData.Flags & (int)SpellFlag.AFFECT_DEAD) > 0))
                 {
                     return;
                 }
 
-                if (unit is Minion m && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0))
+                if (unit is Minion m && !((SpellData.Flags & (int)SpellFlag.AFFECT_MINIONS) > 0))
                 {
                     return;
                 }
 
-                if (unit is Placeable p && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
+                if (unit is Placeable p && !((SpellData.Flags & (int)SpellFlag.AFFECT_USEABLE) > 0))
                 {
                     return;
                 }
 
-                if (unit is BaseTurret t && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0))
+                if (unit is BaseTurret t && !((SpellData.Flags & (int)SpellFlag.AFFECT_TURRETS) > 0))
                 {
                     return;
                 }
 
-                if ((unit is Inhibitor i || unit is Nexus n) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
+                if ((unit is Inhibitor i || unit is Nexus n) && !((SpellData.Flags & (int)SpellFlag.AFFECT_BUILDINGS) > 0))
                 {
                     return;
                 }
 
-                if (unit is Champion c && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0))
+                if (unit is Champion c && !((SpellData.Flags & (int)SpellFlag.AFFECT_HEROES) > 0))
                 {
                     return;
                 }

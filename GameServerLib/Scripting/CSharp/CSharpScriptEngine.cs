@@ -21,31 +21,15 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             _logger = LoggerProvider.GetLogger();
         }
 
-        public bool LoadSubdirectoryScripts(string folder)
-        {
-            var basePath = Path.GetFullPath(folder);
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where((string pathString) => {
-                var fileBasePath = Path.GetFullPath(pathString);
-                var trimmedPath = fileBasePath.Remove(0, basePath.Length);
-                string[] directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
-                if (directories.Contains("bin") || directories.Contains("obj"))
-                {
-                    return false;
-                }
-                return true;
-            });
-            return Load(new List<string>(allfiles));
-        }
-
         //Takes about 300 milliseconds for a single script
-        public bool Load(List<string> scriptLocations)
+        public bool LoadFromData(Dictionary<string, byte[]> scriptFiles)
         {
             bool compiledSuccessfully;
             var treeList = new List<SyntaxTree>();
-            Parallel.For(0, scriptLocations.Count, i =>
+            Parallel.ForEach(scriptFiles, keyValuePair =>
             {
-                _logger.Debug($"Loading script: {scriptLocations[i]}");
-                using (var sr = new StreamReader(scriptLocations[i]))
+                _logger.Debug($"Loading script: {keyValuePair.Key}");
+                using (var sr = new StreamReader(new MemoryStream(keyValuePair.Value)))
                 {
                     // Read the stream to a string, and write the string to the console.
                     var syntaxTree = CSharpSyntaxTree.ParseText(sr.ReadToEnd());
@@ -55,6 +39,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                     }
                 }
             });
+
             var assemblyName = Path.GetRandomFileName();
 
             var references = new List<MetadataReference>();

@@ -74,7 +74,7 @@
     <Compile Include="Domain\IBuff.cs" />
     <Compile Include="Domain\IInventoryManager.cs" />
     <Compile Include="Domain\IItem.cs" />
-    <Compile Include="Domain\IItemType.cs" />
+    <Compile Include="Domain\IItemData.cs" />
     <Compile Include="Domain\IReplicate.cs" />
     <Compile Include="Domain\IReplication.cs" />
     <Compile Include="Domain\IRuneCollection.cs" />
@@ -143,9 +143,6 @@
     <Compile Include="Packets\PacketDefinitions\Requests\UseObjectRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\ViewRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

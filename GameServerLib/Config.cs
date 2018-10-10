@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Text;
 using LeagueSandbox.GameServer.Content;
 using Newtonsoft.Json.Linq;
 
@@ -69,21 +70,23 @@ namespace LeagueSandbox.GameServer
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
 
-            // Load items
-            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                // todo: remove this hardcoded path with content pipeline refactor
-                $"{ContentPath}/LeagueSandbox-Default/Items"
-            ));
-
             // Read the game configuration
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
 
             // Read spawns info
             ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
-            var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
-            var mapData = JObject.Parse(File.ReadAllText(mapPath));
+            var mapPath = ContentManager.GetMapConfigPath(GameConfig.Map);
+            JObject mapData;
+            using (var stream = new BinaryReader(ContentManager.Content[mapPath].ReadFile()))
+            {
+                mapData = JObject.Parse(Encoding.UTF8.GetString(stream.ReadBytes((int)stream.BaseStream.Length)));
+            }
+            
             var spawns = mapData.SelectToken("spawns");
+
+            // Load items
+            game.ItemManager.LoadItems(ContentManager);
 
             MapSpawns = new MapSpawns();
             foreach (JProperty teamSpawn in spawns)

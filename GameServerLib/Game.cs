@@ -26,7 +26,6 @@ namespace LeagueSandbox.GameServer
 {
     public class Game : IGame
     {
-        
         private ILog _logger;
 
         public bool IsRunning { get; private set; }
@@ -47,7 +46,7 @@ namespace LeagueSandbox.GameServer
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
         public Map Map { get; private set; }
-        
+
         public Config Config { get; protected set; }
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
@@ -121,9 +120,30 @@ namespace LeagueSandbox.GameServer
             _logger.Info("Game is ready.");
         }
 
-        public bool LoadScripts()
+        public bool LoadScripts(bool doReloadContent = false)
         {
-            return ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{Config.GameConfig.GameMode}/");
+            // todo: use the optional arg to *actually* reload the scripts
+            // current code only takes what was loaded in the startup and loads them back in, so it does nothing
+
+            var scripts = new Dictionary<string, byte[]>();
+            foreach (var contentData in Config.ContentManager.Content)
+            {
+                if (!contentData.Key.EndsWith(".cs"))
+                {
+                    continue;
+                }
+
+                byte[] data;
+                using (var stream = contentData.Value.ReadFile())
+                {
+                    data = new byte[stream.Length];
+                    stream.Read(data, 0, (int)stream.Length);
+                }
+
+                scripts.Add(contentData.Key, data);
+            }
+
+            return ScriptEngine.LoadFromData(scripts);
         }
 
         public void GameLoop()

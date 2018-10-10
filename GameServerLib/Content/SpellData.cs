@@ -1,59 +1,61 @@
 ﻿using System.IO;
 using System.Numerics;
 using GameServerCore.Domain;
+using IniParser;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Exceptions;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
     public enum SpellFlag : uint
     {
-        SPELL_FLAG_AUTO_CAST = 0x00000002,
-        SPELL_FLAG_INSTANT_CAST = 0x00000004,
-        SPELL_FLAG_PERSIST_THROUGH_DEATH = 0x00000008,
-        SPELL_FLAG_NON_DISPELLABLE = 0x00000010,
-        SPELL_FLAG_NO_CLICK = 0x00000020,
-        SPELL_FLAG_AFFECT_IMPORTANT_BOT_TARGETS = 0x00000040,
-        SPELL_FLAG_ALLOW_WHILE_TAUNTED = 0x00000080,
-        SPELL_FLAG_NOT_AFFECT_ZOMBIE = 0x00000100,
-        SPELL_FLAG_AFFECT_UNTARGETABLE = 0x00000200,
-        SPELL_FLAG_AFFECT_ENEMIES = 0x00000400,
-        SPELL_FLAG_AFFECT_FRIENDS = 0x00000800,
-        SPELL_FLAG_AFFECT_BUILDINGS = 0x00001000,
-        SPELL_FLAG_NOT_AFFECT_SELF = 0x00002000,
-        SPELL_FLAG_AFFECT_NEUTRAL = 0x00004000,
-        SPELL_FLAG_AFFECT_ALL_SIDES = 0x00004C00,
-        SPELL_FLAG_AFFECT_MINIONS = 0x00008000,
-        SPELL_FLAG_AFFECT_HEROES = 0x00010000,
-        SPELL_FLAG_AFFECT_TURRETS = 0x00020000,
-        SPELL_FLAG_AFFECT_ALL_UNIT_TYPES = 0x00038000,
-        SPELL_FLAG_ALWAYS_SELF = 0x00040000,
-        SPELL_FLAG_AFFECT_DEAD = 0x00080000,
-        SPELL_FLAG_AFFECT_NOT_PET = 0x00100000,
-        SPELL_FLAG_AFFECT_BARRACKS_ONLY = 0x00200000,
-        SPELL_FLAG_IGNORE_VISIBILITY_CHECK = 0x00400000,
-        SPELL_FLAG_NON_TARGETABLE_ALLY = 0x00800000,
-        SPELL_FLAG_NON_TARGETABLE_ENEMY = 0x01000000,
-        SPELL_FLAG_NON_TARGETABLE_ALL = 0x01800000,
-        SPELL_FLAG_TARGETABLE_TO_ALL = 0x02000000,
-        SPELL_FLAG_AFFECT_WARDS = 0x04000000,
-        SPELL_FLAG_AFFECT_USEABLE = 0x08000000,
-        SPELL_FLAG_IGNORE_ALLY_MINION = 0x10000000,
-        SPELL_FLAG_IGNORE_ENEMY_MINION = 0x20000000,
-        SPELL_FLAG_IGNORE_LANE_MINION = 0x40000000,
-        SPELL_FLAG_IGNORE_CLONES = 0x80000000
+        AUTO_CAST = 1u << 1,
+        INSTANT_CAST = 1u << 2,
+        PERSIST_THROUGH_DEATH = 1u << 3,
+        NON_DISPELLABLE = 1u << 4,
+        NO_CLICK = 1u << 5,
+        AFFECT_IMPORTANT_BOT_TARGETS = 1u << 6,
+        ALLOW_WHILE_TAUNTED = 1u << 7,
+        NOT_AFFECT_ZOMBIE = 1u << 8,
+        AFFECT_UNTARGETABLE = 1u << 9,
+        AFFECT_ENEMIES = 1u << 10,
+        AFFECT_FRIENDS = 1u << 11,
+        AFFECT_BUILDINGS = 1u << 12,
+        NOT_AFFECT_SELF = 1u << 13,
+        AFFECT_NEUTRAL = 1u << 14,
+        AFFECT_ALL_SIDES = AFFECT_ENEMIES | AFFECT_FRIENDS | AFFECT_NEUTRAL,
+        AFFECT_MINIONS = 1u << 15,
+        AFFECT_HEROES = 1u << 16,
+        AFFECT_TURRETS = 1u << 17,
+        AFFECT_ALL_UNIT_TYPES = AFFECT_MINIONS | AFFECT_HEROES | AFFECT_TURRETS,
+        ALWAYS_SELF = 1u << 18,
+        AFFECT_DEAD = 1u << 19,
+        AFFECT_NOT_PET = 1u << 20,
+        AFFECT_BARRACKS_ONLY = 1u << 21,
+        IGNORE_VISIBILITY_CHECK = 1u << 22,
+        NON_TARGETABLE_ALLY = 1u << 23,
+        NON_TARGETABLE_ENEMY = 1u << 24,
+        NON_TARGETABLE_ALL = NON_TARGETABLE_ALLY | NON_TARGETABLE_ENEMY,
+        TARGETABLE_TO_ALL = 1u << 25,
+        AFFECT_WARDS = 1u << 26,
+        AFFECT_USEABLE = 1u << 27,
+        IGNORE_ALLY_MINION = 1u << 28,
+        IGNORE_ENEMY_MINION = 1u << 29,
+        IGNORE_LANE_MINION = 1u << 30,
+        IGNORE_CLONES = 1u << 31
     }
 
     public enum SpellTargetType
     {
-        TARGET_SELF = 0, // teemo W ; xin Q
-        TARGET_UNIT = 1, // Taric E ; Annie Q ; teemo Q ; xin E
-        TARGET_LOC_AOE = 2, // Lux E, Ziggs R
-        TARGET_CONE = 3, // Annie W, Kass E
-        TARGET_SELF_AOE = 4, // sivir R, Gangplanck E
-        TARGET_LOC = 6, // Ez Q, W, E, R ; Mundo Q
-        TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
+        SELF = 0, // teemo W ; xin Q
+        UNIT = 1, // Taric E ; Annie Q ; teemo Q ; xin E
+        LOC_AOE = 2, // Lux E, Ziggs R
+        CONE = 3, // Annie W, Kass E
+        SELF_AOE = 4, // sivir R, Gangplanck E
+        LOC = 6, // Ez Q, W, E, R ; Mundo Q
+        LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
     }
 
     public class SpellData : ISpellData
@@ -234,25 +236,28 @@ namespace LeagueSandbox.GameServer.Content
             return (1.0f + DelayCastOffsetPercent) / 2.0f;
         }
 
-        public void Load(string name)
+        public void Load(string champion, string spell)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(champion) || string.IsNullOrEmpty(spell))
             {
                 return;
             }
 
-            var file = new ContentFile();
+            ContentFile file;
             try
             {
-                var path = _game.Config.ContentManager.GetSpellDataPath(name);
-                _logger.Debug($"Loading spell {name} data from path: {Path.GetFullPath(path)}!");
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                var path = _game.Config.ContentManager.GetSpellDataPath(champion, spell);
+                _logger.Debug($"Loading spell {spell} data from path: {path}!");
+                using (var stream = new StreamReader(_game.Config.ContentManager.Content[path].ReadFile()))
+                {
+                    var iniParser = new FileIniDataParser();
+                    var iniData = iniParser.ReadData(stream);
+                    file = new ContentFile(ContentManager.ParseIniFile(iniData));
+                }
             }
-
             catch (ContentNotFoundException)
             {
-                _logger.Warn($"Spell data for {name} was not found.");
+                _logger.Warn($"Spell data for {spell} was not found.");
                 return;
             }
 
@@ -263,7 +268,7 @@ namespace LeagueSandbox.GameServer.Content
             //AIRange
             //AISendEvent
             //AISpeed
-            AlternateName = file.GetString("SpellData", "AlternateName", name);
+            AlternateName = file.GetString("SpellData", "AlternateName", spell);
             AlwaysSnapFacing = file.GetBool("SpellData", "AlwaysSnapFacing", AlwaysSnapFacing);
             //AmmoCountHiddenInUI
             AmmoRechargeTime = file.GetMultiFloat("SpellData", "AmmoRechargeTime", 6, AmmoRechargeTime[0]);

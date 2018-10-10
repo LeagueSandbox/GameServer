@@ -29,6 +29,6 @@ namespace GameServerCore.Domain.GameObjects
         ISpell GetSpell(byte slot);
         ISpell LevelUpSpell(byte slot);
 
-        
+
     }
 }

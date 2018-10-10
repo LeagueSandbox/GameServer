@@ -45,6 +45,9 @@
     <Reference Include="Crc32.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=dc0b95cf99bf4e99, processorArchitecture=MSIL">
       <HintPath>..\packages\Crc32.NET.1.2.0\lib\net20\Crc32.NET.dll</HintPath>
     </Reference>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -182,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chatbox\DebugMsgType.cs" />
+    <Compile Include="Content\FileEntry.cs" />
     <Compile Include="Content\NavGrid.cs" />
     <Compile Include="API\ApiFunctionManager.cs" />
     <Compile Include="API\ApiEventManager.cs" />
@@ -219,10 +223,9 @@
     <Compile Include="Content\CharData.cs" />
     <Compile Include="Content\ContentFile.cs" />
     <Compile Include="Content\ContentManager.cs" />
-    <Compile Include="Content\ContentNotFoundException.cs" />
-    <Compile Include="Content\ItemCollection.cs" />
     <Compile Include="Content\RuneCollection.cs" />
     <Compile Include="Content\SpellData.cs" />
+    <Compile Include="Exceptions\ContentNotFoundException.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
@@ -266,7 +269,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemManager.cs" />
     <Compile Include="Items\ItemRecipe.cs" />
-    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\ItemData.cs" />
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
@@ -346,9 +349,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

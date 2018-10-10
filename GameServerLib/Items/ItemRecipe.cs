@@ -5,8 +5,8 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemRecipe
     {
-        private readonly ItemType _itemType;
-        private ItemType[] _items;
+        private ItemData _owner;
+        private ItemData[] _items;
         private int _totalPrice;
         private ItemManager _itemManager;
 
@@ -23,14 +23,14 @@ namespace LeagueSandbox.GameServer.Items
             }
         }
 
-        private ItemRecipe(ItemType itemType, ItemManager manager)
+        private ItemRecipe(ItemData owner, ItemManager manager)
         {
-            _itemType = itemType;
+            _owner = owner;
             _totalPrice = -1;
             _itemManager = manager;
         }
 
-        public List<ItemType> GetItems()
+        public List<ItemData> GetItems()
         {
             if (_items == null)
             {
@@ -43,13 +43,12 @@ namespace LeagueSandbox.GameServer.Items
         private void FindRecipeItems(ItemManager itemManager)
         {
             // TODO: Figure out how to refactor this.
-            _items = new[]
+            _items = new ItemData[8];
+
+            for (var i = 0; i < 8; i++)
             {
-                itemManager.SafeGetItemType(_itemType.RecipeItem1),
-                itemManager.SafeGetItemType(_itemType.RecipeItem2),
-                itemManager.SafeGetItemType(_itemType.RecipeItem3),
-                itemManager.SafeGetItemType(_itemType.RecipeItem4)
-            }.Where(i => i != null).ToArray();
+                _items[i] = itemManager.SafeGetItemType(_owner.RecipeItems[i]);
+            }
         }
 
         private void FindPrice()
@@ -57,13 +56,16 @@ namespace LeagueSandbox.GameServer.Items
             _totalPrice = 0;
             foreach (var item in GetItems())
             {
-                _totalPrice += item.TotalPrice;
+                if (item != null)
+                {
+                    _totalPrice += item.TotalPrice;
+                }
             }
 
-            _totalPrice += _itemType.Price;
+            _totalPrice += _owner.Price;
         }
 
-        public static ItemRecipe FromItemType(ItemType type, ItemManager manager)
+        public static ItemRecipe FromItemType(ItemData type, ItemManager manager)
         {
             return new ItemRecipe(type, manager);
         }

@@ -1,31 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using GameServerCore.Content;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer.Content
 {
     public class ContentFile
     {
         public Dictionary<string, Dictionary<string, string>> Values { get; set; }
-            = new Dictionary<string, Dictionary<string, string>>();
 
-        public Dictionary<string, object> MetaData { get; set; }
-            = new Dictionary<string, object>();
-
-        private uint Hash(string section, string name)
+        public ContentFile(Dictionary<string, Dictionary<string, string>> data)
         {
-            uint hash = 0;
-            foreach (var c in section)
-            {
-                hash = char.ToLower(c) + 65599 * hash;
-            }
-            hash = char.ToLower('*') + 65599 * hash;
-            foreach (var c in name)
-            {
-                hash = char.ToLower(c) + 65599 * hash;
-            }
+            Values = data;
+        }
 
-            return hash;
+        public ContentFile() : this(new Dictionary<string, Dictionary<string, string>>())
+        {
         }
 
         public string GetObject(string section, string name)
@@ -41,7 +31,8 @@ namespace LeagueSandbox.GameServer.Content
                 var hash = HashFunctions.HashStringSdbm(section, name).ToString();
                 if (Values["UNKNOWN_HASHES"].ContainsKey(hash))
                 {
-                    //TODO: Log that unkown hash was found!
+                    LoggerProvider.GetLogger().Info($"UNKNOWN HASH {hash} WAS FOUND TO BE {section}*{name}!" +
+                                                    "PLEASE SHOW THIS LOG TO A DEVELOPER.");
                     return Values["UNKNOWN_HASHES"][hash];
                 }
             }
@@ -84,7 +75,7 @@ namespace LeagueSandbox.GameServer.Content
                 var list = obj.Split(' ');
                 if (defaultValue.Length == list.Length)
                 {
-                    for (var i = 0; i<defaultValue.Length; i++)
+                    for (var i = 0; i < defaultValue.Length; i++)
                     {
                         float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
@@ -104,9 +95,10 @@ namespace LeagueSandbox.GameServer.Content
                 {
                     for (var i = 0; i < defaultValue.Length; i++)
                     {
-                        float value;
-                        if (float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+                        if (float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out var value))
+                        {
                             defaultValue[i] = (int)value;
+                        }
                     }
                 }
             }
