@@ -619,16 +619,16 @@ namespace LeagueSandbox.GameServer.Content
     {
         public static NavGrid ReadBinary(string filePath)
         {
-            FileStream stream = null;
             try
             {
-                stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-                var b = new NavBinaryReader(stream);
-                return ReadData(b);
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    return ReadData(new NavBinaryReader(stream));
+                }
             }
-            finally
+            catch
             {
-                stream?.Dispose();
+                return null;
             }
         }
 
