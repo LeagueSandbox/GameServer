@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Items
                 var itemIdStr = split.Last().Replace(".ini", "");
 
                 ContentFile contentFile;
-                using (var stream = new StreamReader(new MemoryStream(content.Value)))
+                using (var stream = new StreamReader(content.Value.ReadFile()))
                 {
                     var iniData = iniParser.ReadData(stream);
                     contentFile = new ContentFile(ContentManager.ParseIniFile(iniData));

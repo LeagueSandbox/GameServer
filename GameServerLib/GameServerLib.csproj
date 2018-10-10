@@ -185,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chatbox\DebugMsgType.cs" />
+    <Compile Include="Content\FileEntry.cs" />
     <Compile Include="Content\NavGrid.cs" />
     <Compile Include="API\ApiFunctionManager.cs" />
     <Compile Include="API\ApiEventManager.cs" />

@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.Content
                 var path = _game.Config.ContentManager.GetUnitStatPath(name);
                 var iniParser = new FileIniDataParser();
                 _logger.Debug($"Loading {name}'s Stats from path: {path}!");
-                using (var stream = new StreamReader(new MemoryStream(_game.Config.ContentManager.Content[path])))
+                using (var stream = new StreamReader(_game.Config.ContentManager.Content[path].ReadFile()))
                 {
                     var iniData = iniParser.ReadData(stream);
                     file = new ContentFile(ContentManager.ParseIniFile(iniData));

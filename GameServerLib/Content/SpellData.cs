@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 var path = _game.Config.ContentManager.GetSpellDataPath(champion, spell);
                 _logger.Debug($"Loading spell {spell} data from path: {path}!");
-                using (var stream = new StreamReader(new MemoryStream(_game.Config.ContentManager.Content[path])))
+                using (var stream = new StreamReader(_game.Config.ContentManager.Content[path].ReadFile()))
                 {
                     var iniParser = new FileIniDataParser();
                     var iniData = iniParser.ReadData(stream);

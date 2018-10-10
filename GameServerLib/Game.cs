@@ -133,7 +133,14 @@ namespace LeagueSandbox.GameServer
                     continue;
                 }
 
-                scripts.Add(contentData.Key, contentData.Value);
+                byte[] data;
+                using (var stream = contentData.Value.ReadFile())
+                {
+                    data = new byte[stream.Length];
+                    stream.Read(data, 0, (int)stream.Length);
+                }
+
+                scripts.Add(contentData.Key, data);
             }
 
             return ScriptEngine.LoadFromData(scripts);
