@@ -243,7 +243,7 @@ namespace PacketDefinitions420
             // TODO: keys for every player
             int userId = (int)_blowfish.Decrypt(request.CheckId);
 
-            if(request.UserId != userId)
+            if (request.UserId != userId)
             {
                 // wrong blowfish key
                 return false;
