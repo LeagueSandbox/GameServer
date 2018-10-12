@@ -179,7 +179,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(attacker);
             }
 
-            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText);
+            int attackerId = 0, targetId = 0;
+
+            // todo: check if damage dealt by disconnected players cause anything bad 
+            if (attacker is IChampion attackerChamp)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).UserId;
+            }
+
+            if (this is IChampion targetChamp)
+            {
+                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
+            }
+
+            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
+                _game.Config.IsDamageTextGlobal, attackerId, targetId);
             // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
 
