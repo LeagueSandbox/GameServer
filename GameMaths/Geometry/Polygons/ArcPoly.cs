@@ -69,6 +69,7 @@ namespace GameMaths.Geometry.Polygons
         /// <param name="quality">
         ///     Quality of the Arc
         /// </param>
+        /// my changes.
         public ArcPoly(Vector2 start, Vector2 end, float angle, float radius, int quality = 20)
         {
             StartPos = start;
