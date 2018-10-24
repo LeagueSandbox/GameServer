@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
@@ -288,7 +289,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             if (Type == TurretType.FOUNTAIN_TURRET)
             {
-                target.TakeDamage(this, 1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                Damage damage = new Damage(1000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                target.TakeDamage(this, damage);
             }
             else
             {

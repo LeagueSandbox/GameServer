@@ -13,8 +13,8 @@ namespace GameServerCore.Domain.GameObjects
         IStats Stats { get; }
         IInventoryManager Inventory { get; }
 
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageText damageText);
+        void TakeDamage(IAttackableUnit attacker, Damage damage);
+        void TakeDamage(IAttackableUnit attacker, Damage damage, DamageText damageText);
         void Die(IAttackableUnit killer);
     }
 }

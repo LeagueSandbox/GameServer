@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Damage.cs" />
     <Compile Include="Enums\DamageSource.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Content\HashFunctions.cs" />

@@ -384,26 +384,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(AttackableUnit target)
         {
+            var damage = new Damage(Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, 
+                DamageSource.DAMAGE_SOURCE_ATTACK, _isNextAutoCrit);
             if (HasCrowdControl(CrowdControlType.BLIND))
             {
-                target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
-                                             DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageText.DAMAGE_TEXT_MISS);
+                damage.DamageValue = 0;
+                target.TakeDamage(this, damage, DamageText.DAMAGE_TEXT_MISS);
                 return;
             }
-
-            var damage = Stats.AttackDamage.Total;
+            
             if (_isNextAutoCrit)
             {
-                damage *= Stats.CriticalDamage.Total;
+                damage.DamageValue *= Stats.CriticalDamage.Total;
             }
 
             var onAutoAttack = _scriptEngine.GetStaticMethod<Action<AttackableUnit, AttackableUnit>>(Model, "Passive", "OnAutoAttack");
             onAutoAttack?.Invoke(this, target);
 
-            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                DamageSource.DAMAGE_SOURCE_ATTACK,
-                _isNextAutoCrit);
+            target.TakeDamage(this, damage);
         }
 
         public void UpdateAutoAttackTarget(float diff)

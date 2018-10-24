@@ -400,9 +400,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
+        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, Damage damage, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
-            var dd = new DamageDone(source, target, amount, type, damagetext);
+            var dd = new DamageDone(source, target, damage.DamageValue, damage.DamageType, damagetext);
             if (isGlobal)
             {
                 _packetHandlerManager.BroadcastPacket(dd, Channel.CHL_S2C);

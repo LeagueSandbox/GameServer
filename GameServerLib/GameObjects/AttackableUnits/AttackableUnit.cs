@@ -1,4 +1,5 @@
 ﻿using System;
+using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -125,14 +126,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false; //return DistressCause;
         }
 
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
-            DamageText damageText)
+        public virtual void TakeDamage(IAttackableUnit attacker, Damage damage, DamageText damageText)
         {
             float defense = 0;
             float regain = 0;
+            float damageDealt = damage.DamageValue;
             var attackerStats = attacker.Stats;
 
-            switch (type)
+            switch (damage.DamageType)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
                     defense = Stats.Armor.Total;
@@ -148,10 +149,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 case DamageType.DAMAGE_TYPE_TRUE:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    throw new ArgumentOutOfRangeException(nameof(damage.DamageType), damage.DamageType, null);
             }
 
-            switch (source)
+            switch (damage.DamageSource)
             {
                 case DamageSource.DAMAGE_SOURCE_SPELL:
                     regain = attackerStats.SpellVamp.Total;
@@ -164,15 +165,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 case DamageSource.DAMAGE_SOURCE_PASSIVE:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+                    throw new ArgumentOutOfRangeException(nameof(damage.DamageSource), damage.DamageSource, null);
             }
 
             //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            damage.DamageValue = defense >= 0 ? 100 / (100 + defense) * damage.DamageValue : (2 - 100 / (100 - defense)) * damage.DamageValue;
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
-            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
+            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage.DamageValue);
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
@@ -192,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
             }
 
-            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
+            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, damageText,
                 _game.Config.IsDamageTextGlobal, attackerId, targetId);
             // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
@@ -201,22 +202,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (regain > 0)
             {
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * damage);
+                    attackerStats.CurrentHealth + regain * damage.DamageValue);
                 // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
 
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public virtual void TakeDamage(IAttackableUnit attacker, Damage damage)
         {
             var text = DamageText.DAMAGE_TEXT_NORMAL;
 
-            if (isCrit)
+            if (damage.IsCritical)
             {
                 text = DamageText.DAMAGE_TEXT_CRITICAL;
             }
 
-            TakeDamage(attacker, damage, type, source, text);
+            TakeDamage(attacker, damage, text);
         }
 
         public bool GetIsTargetableToTeam(TeamId team)
