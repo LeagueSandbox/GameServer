@@ -21,7 +21,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill);
         void NotifyChampionRespawn(IChampion c);
         void NotifyChampionSpawned(IChampion c, TeamId team);
-        void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext);
+        void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0);
         void NotifyDash(IAttackableUnit u, ITarget t, float dashSpeed, bool keepFacingLastDirection, float leapHeight, float followTargetMaxDistance, float backDistance, float travelTime);
         void NotifyDebugMessage(string htmlDebugMessage);
         void NotifyDebugMessage(int userId, string message);
