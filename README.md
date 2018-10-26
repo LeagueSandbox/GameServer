@@ -1,7 +1,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7olahkndcs3r295p/branch/indev?svg=true)](https://ci.appveyor.com/project/MythicManiac/gameserver/branch/indev)
 [![Build Status](https://travis-ci.org/LeagueSandbox/GameServer.svg?branch=indev)](https://travis-ci.org/LeagueSandbox/GameServer)
 [![codecov.io](https://codecov.io/github/LeagueSandbox/GameServer/coverage.svg?branch=indev)](https://codecov.io/github/LeagueSandbox/GameServer?branch=indev)
-# The League Sandbox project's game server
+# The League Sandbox Project's Game Server
 Project website along with more specifications can be found from: https://leaguesandbox.github.io/  
 Project chat on Discord: https://discord.gg/Bz3znAM
 
@@ -9,7 +9,7 @@ Project chat on Discord: https://discord.gg/Bz3znAM
 
 Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CONTRIBUTING.md)
 
-# Setup guide
+# Setup Guide
 * Install Microsoft Visual Studio 2017 or newer (Community Edition is fine)
 * Install latest .NET Framework (VS Installer should let you do that)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
@@ -25,13 +25,13 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 * Modify the file copied in the last step as required
 * Build and run
 
-# Running the client
+# Running the Client
 
 #### Automatically Launching from Visual Studio
 Click the debug button.
 > Auto run settings are located in Settings/GameServerSettings.json.
 
-#### Manually Launching from command line
+#### Manually Launching from Command Line
 ```
 start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/League of Legends.exe" "8394" "LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
 ```
