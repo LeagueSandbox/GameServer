@@ -130,7 +130,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             float defense = 0;
             float regain = 0;
-            float damageDealt = damage.DamageValue;
             var attackerStats = attacker.Stats;
 
             switch (damage.DamageType)
