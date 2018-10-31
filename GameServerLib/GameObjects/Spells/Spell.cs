@@ -347,7 +347,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void SetCooldown(byte slot, float newCd)
         {
-            var targetSpell = Owner.Spells[slot];
+            var targetSpell = Owner.GetSpellBySlot(slot);
 
             if (newCd <= 0)
             {
@@ -365,7 +365,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void LowerCooldown(byte slot, float lowerValue)
         {
-            SetCooldown(slot, Owner.Spells[slot].CurrentCooldown - lowerValue);
+            SetCooldown(slot, Owner.GetSpellBySlot(slot).CurrentCooldown - lowerValue);
         }
     }
 }
