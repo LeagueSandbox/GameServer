@@ -1,4 +1,6 @@
-﻿namespace LeagueSandbox.GameServer.API
+﻿using System;
+
+namespace LeagueSandbox.GameServer.API
 {
     public enum CrowdControlType
     {
@@ -21,7 +23,7 @@
         public void Update(float diff)
         {
             CurrentTime += diff / 1000.0f;
-            if (CurrentTime >= Duration && !IsRemoved && Duration != -1)
+            if (CurrentTime >= Duration && !IsRemoved && Math.Abs(Duration - (-1)) > float.Epsilon * 3)
             {
                 IsRemoved = true;
             }

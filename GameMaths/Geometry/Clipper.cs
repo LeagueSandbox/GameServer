@@ -755,10 +755,11 @@ namespace GameMaths.Geometry
             for (; ; )
             {
                 while (E.Bot != E.Prev.Bot || E.Curr == E.Top) E = E.Next;
-                if (E.Dx != horizontal && E.Prev.Dx != horizontal) break;
-                while (E.Prev.Dx == horizontal) E = E.Prev;
+                if (Math.Abs(E.Dx - horizontal) > float.Epsilon * 3 && 
+                    Math.Abs(E.Prev.Dx - horizontal) > float.Epsilon * 3) break;
+                while (Math.Abs(E.Prev.Dx - horizontal) < float.Epsilon * 3) E = E.Prev;
                 E2 = E;
-                while (E.Dx == horizontal) E = E.Next;
+                while (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3) E = E.Next;
                 if (E.Top.Y == E.Prev.Bot.Y) continue; //ie just an intermediate horz.
                 if (E2.Prev.Bot.X < E.Bot.X) E = E2;
                 break;
@@ -780,12 +781,12 @@ namespace GameMaths.Geometry
                 if (LeftBoundIsForward)
                 {
                     while (E.Top.Y == E.Next.Bot.Y) E = E.Next;
-                    while (E != Result && E.Dx == horizontal) E = E.Prev;
+                    while (E != Result && Math.Abs(E.Dx - horizontal) < float.Epsilon * 3) E = E.Prev;
                 }
                 else
                 {
                     while (E.Top.Y == E.Prev.Bot.Y) E = E.Prev;
-                    while (E != Result && E.Dx == horizontal) E = E.Next;
+                    while (E != Result && Math.Abs(E.Dx - horizontal) < float.Epsilon * 3) E = E.Next;
                 }
                 if (E == Result)
                 {
@@ -811,14 +812,14 @@ namespace GameMaths.Geometry
                 return Result;
             }
 
-            if (E.Dx == horizontal)
+            if (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3)
             {
                 //We need to be careful with open paths because this may not be a
                 //true local minima (ie E may be following a skip edge).
                 //Also, consecutive horz. edges may start heading left before going right.
                 if (LeftBoundIsForward) EStart = E.Prev;
                 else EStart = E.Next;
-                if (EStart.Dx == horizontal) //ie an adjoining horizontal skip edge
+                if (Math.Abs(EStart.Dx - horizontal) < float.Epsilon * 3) //ie an adjoining horizontal skip edge
                 {
                     if (EStart.Bot.X != E.Bot.X && EStart.Top.X != E.Bot.X)
                         ReverseHorizontal(E);
@@ -832,23 +833,23 @@ namespace GameMaths.Geometry
             {
                 while (Result.Top.Y == Result.Next.Bot.Y && Result.Next.OutIdx != Skip)
                     Result = Result.Next;
-                if (Result.Dx == horizontal && Result.Next.OutIdx != Skip)
+                if (Math.Abs(Result.Dx - horizontal) < float.Epsilon * 3 && Result.Next.OutIdx != Skip)
                 {
                     //nb: at the top of a bound, horizontals are added to the bound
                     //only when the preceding edge attaches to the horizontal's left vertex
                     //unless a Skip edge is encountered when that becomes the top divide
                     Horz = Result;
-                    while (Horz.Prev.Dx == horizontal) Horz = Horz.Prev;
+                    while (Math.Abs(Horz.Prev.Dx - horizontal) < float.Epsilon * 3) Horz = Horz.Prev;
                     if (Horz.Prev.Top.X > Result.Next.Top.X) Result = Horz.Prev;
                 }
                 while (E != Result)
                 {
                     E.NextInLML = E.Next;
-                    if (E.Dx == horizontal && E != EStart && E.Bot.X != E.Prev.Top.X)
+                    if (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3 && E != EStart && E.Bot.X != E.Prev.Top.X)
                         ReverseHorizontal(E);
                     E = E.Next;
                 }
-                if (E.Dx == horizontal && E != EStart && E.Bot.X != E.Prev.Top.X)
+                if (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3 && E != EStart && E.Bot.X != E.Prev.Top.X)
                     ReverseHorizontal(E);
                 Result = Result.Next; //move to the edge just beyond current bound
             }
@@ -856,10 +857,10 @@ namespace GameMaths.Geometry
             {
                 while (Result.Top.Y == Result.Prev.Bot.Y && Result.Prev.OutIdx != Skip)
                     Result = Result.Prev;
-                if (Result.Dx == horizontal && Result.Prev.OutIdx != Skip)
+                if (Math.Abs(Result.Dx - horizontal) < float.Epsilon * 3 && Result.Prev.OutIdx != Skip)
                 {
                     Horz = Result;
-                    while (Horz.Next.Dx == horizontal) Horz = Horz.Next;
+                    while (Math.Abs(Horz.Next.Dx - horizontal) < float.Epsilon * 3) Horz = Horz.Next;
                     if (Horz.Next.Top.X == Result.Prev.Top.X ||
                         Horz.Next.Top.X > Result.Prev.Top.X) Result = Horz.Next;
                 }
@@ -867,11 +868,11 @@ namespace GameMaths.Geometry
                 while (E != Result)
                 {
                     E.NextInLML = E.Prev;
-                    if (E.Dx == horizontal && E != EStart && E.Bot.X != E.Next.Top.X)
+                    if (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3 && E != EStart && E.Bot.X != E.Next.Top.X)
                         ReverseHorizontal(E);
                     E = E.Prev;
                 }
-                if (E.Dx == horizontal && E != EStart && E.Bot.X != E.Next.Top.X)
+                if (Math.Abs(E.Dx - horizontal) < float.Epsilon * 3 && E != EStart && E.Bot.X != E.Next.Top.X)
                     ReverseHorizontal(E);
                 Result = Result.Prev; //move to the edge just beyond current bound
             }
@@ -2263,8 +2264,8 @@ namespace GameMaths.Geometry
             while ((p.Pt == btmPt2.Pt) && (p != btmPt2)) p = p.Next;
             double dx2n = Math.Abs(GetDx(btmPt2.Pt, p.Pt));
 
-            if (Math.Max(dx1p, dx1n) == Math.Max(dx2p, dx2n) &&
-              Math.Min(dx1p, dx1n) == Math.Min(dx2p, dx2n))
+            if (Math.Abs(Math.Max(dx1p, dx1n) - Math.Max(dx2p, dx2n)) < float.Epsilon * 3 &&
+              Math.Abs(Math.Min(dx1p, dx1n) - Math.Min(dx2p, dx2n)) < float.Epsilon * 3)
                 return Area(btmPt1) > 0; //if otherwise identical use orientation
             else
                 return (dx1p >= dx2p && dx1p >= dx2n) || (dx1n >= dx2p && dx1n >= dx2n);
@@ -2925,13 +2926,13 @@ namespace GameMaths.Geometry
 
         private bool IsMaxima(TEdge e, double Y)
         {
-            return (e != null && e.Top.Y == Y && e.NextInLML == null);
+            return (e != null && Math.Abs(e.Top.Y - Y) < float.Epsilon * 3 && e.NextInLML == null);
         }
         //------------------------------------------------------------------------------
 
         private bool IsIntermediate(TEdge e, double Y)
         {
-            return (e.Top.Y == Y && e.NextInLML != null);
+            return (Math.Abs(e.Top.Y - Y) < float.Epsilon * 3 && e.NextInLML != null);
         }
         //------------------------------------------------------------------------------
 
@@ -3105,7 +3106,7 @@ namespace GameMaths.Geometry
             double b1, b2;
             //nb: with very large coordinate values, it's possible for SlopesEqual() to
             //return false but for the edge.Dx value be equal due to double precision rounding.
-            if (edge1.Dx == edge2.Dx)
+            if (Math.Abs(edge1.Dx - edge2.Dx) < float.Epsilon * 3)
             {
                 ip.Y = edge1.Curr.Y;
                 ip.X = TopX(edge1, ip.Y);
@@ -3800,7 +3801,7 @@ namespace GameMaths.Geometry
                         {
                             double d = (double)(ip.X - pt.X) * (ipNext.Y - pt.Y) -
                               (double)(ipNext.X - pt.X) * (ip.Y - pt.Y);
-                            if (d == 0) return -1;
+                            if (Math.Abs(d) < float.Epsilon * 3) return -1;
                             else if ((d > 0) == (ipNext.Y > ip.Y)) result = 1 - result;
                         }
                     }
@@ -3810,7 +3811,7 @@ namespace GameMaths.Geometry
                         {
                             double d = (double)(ip.X - pt.X) * (ipNext.Y - pt.Y) -
                               (double)(ipNext.X - pt.X) * (ip.Y - pt.Y);
-                            if (d == 0) return -1;
+                            if (Math.Abs(d) < float.Epsilon * 3) return -1;
                             else if ((d > 0) == (ipNext.Y > ip.Y)) result = 1 - result;
                         }
                     }
@@ -3849,7 +3850,7 @@ namespace GameMaths.Geometry
                         {
                             double d = (double)(poly0x - ptx) * (poly1y - pty) -
                               (double)(poly1x - ptx) * (poly0y - pty);
-                            if (d == 0) return -1;
+                            if (Math.Abs(d) < float.Epsilon * 3) return -1;
                             if ((d > 0) == (poly1y > poly0y)) result = 1 - result;
                         }
                     }
@@ -3859,7 +3860,7 @@ namespace GameMaths.Geometry
                         {
                             double d = (double)(poly0x - ptx) * (poly1y - pty) -
                               (double)(poly1x - ptx) * (poly0y - pty);
-                            if (d == 0) return -1;
+                            if (Math.Abs(d) < float.Epsilon * 3) return -1;
                             if ((d > 0) == (poly1y > poly0y)) result = 1 - result;
                         }
                     }
@@ -4569,7 +4570,7 @@ namespace GameMaths.Geometry
         {
             double dx = (pt2.X - pt1.X);
             double dy = (pt2.Y - pt1.Y);
-            if ((dx == 0) && (dy == 0)) return new DoublePoint();
+            if ((Math.Abs(dx) < float.Epsilon * 3) && (Math.Abs(dy) < float.Epsilon * 3)) return new DoublePoint();
 
             double f = 1 * 1.0 / Math.Sqrt(dx * dx + dy * dy);
             dx *= f;

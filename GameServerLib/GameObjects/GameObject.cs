@@ -184,7 +184,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _xvector = xtarget - X;
             _yvector = ytarget - Y;
 
-            if (_xvector == 0 && _yvector == 0)
+            if (Math.Abs(_xvector) < float.Epsilon * 3 && Math.Abs(_yvector) < float.Epsilon * 3)
             {
                 return;
             }
