@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LeagueSandbox.GameServer.Core.Logic;
 using LeagueSandbox.GameServer.Core.Logic.PacketHandlers;
 using LeagueSandbox.GameServer.Logic.API;
@@ -137,7 +138,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
                 }
             }
 
-            if (Duration != 0.0f)
+            if (Math.Abs(Duration) > float.Epsilon * 3)
             {
                 if (TimeElapsed >= Duration)
                 {

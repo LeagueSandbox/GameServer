@@ -161,7 +161,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
 
             for (var i = 0; i < _castRange.Length; ++i)
             {
-                if (_rafManager.GetFloatValue(data, "SpellData", "CastRange" + (i + 1)) == 0)
+                if (Math.Abs(_rafManager.GetFloatValue(data, "SpellData", "CastRange" + (i + 1))) < float.Epsilon * 3)
                 {
                     _castRange[i] = _rafManager.GetFloatValue(data, "SpellData", "CastRange");
                 }
@@ -255,7 +255,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _scriptEngine.SetGlobalVariable("spellLevel", Level);
             _scriptEngine.SetGlobalVariable("totalCooldown", getCooldown());
 
-            if (_targetType == 1 && Target != null && Target.GetDistanceTo(Owner) > _castRange[Level - 1])
+            if (Math.Abs(_targetType - 1) < float.Epsilon * 3 && Target != null && Target.GetDistanceTo(Owner) > _castRange[Level - 1])
             {
                 return false;
             }

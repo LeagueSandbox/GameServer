@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Logic
             xvector = xtarget - X;
             yvector = ytarget - Y;
 
-            if (xvector == 0 && yvector == 0)
+            if (Math.Abs(xvector) < float.Epsilon * 3 && Math.Abs(yvector) < float.Epsilon * 3)
                 return;
 
             var toDivide = Math.Abs(xvector) + Math.Abs(yvector);

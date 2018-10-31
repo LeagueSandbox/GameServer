@@ -360,7 +360,7 @@ namespace LeagueSandbox.GameServer.Logic.RAF
             float tempHeight = AIMESH_TEXTURE_SIZE;
             */
 
-            var t_DYResp = deltaPos.y == 0 ? 0 : 1.0f / deltaPos.y;
+            var t_DYResp = Math.Abs(deltaPos.y) < float.Epsilon * 3 ? 0 : 1.0f / deltaPos.y;
             int startY = (int)vertex1.y, endY = (int)vertex2.y;
 
             var x = vertex1.x;

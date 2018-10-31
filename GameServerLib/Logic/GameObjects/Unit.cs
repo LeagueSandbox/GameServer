@@ -463,7 +463,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects
             _game.PacketNotifier.NotifyDamageDone(this, target, damage, type, text);
 
             //Get health from lifesteal/spellvamp
-            if (regain != 0)
+            if (Math.Abs(regain) > float.Epsilon * 3)
             {
                 stats.CurrentHealth = Math.Min(stats.HealthPoints.Total, stats.CurrentHealth + regain * damage);
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
