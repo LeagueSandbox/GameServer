@@ -230,9 +230,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void ApplyCrowdControl(UnitCrowdControl cc)
         {
-            if (cc.IsTypeOf(CrowdControlType.STUN) || cc.IsTypeOf(CrowdControlType.ROOT))
+            if (cc.IsTypeOf(CrowdControlType.ROOT))
             {
-                StopMovement();
+                Stats.SetActionState(ActionState.CAN_MOVE,false);
+                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+                StopMovement(); // doesn't work
             }
 
             _crowdControlList.Add(cc);
@@ -240,7 +242,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void RemoveCrowdControl(UnitCrowdControl cc)
         {
-            _crowdControlList.Remove(cc);
+            if (cc.IsTypeOf(CrowdControlType.ROOT))
+            {
+                Stats.SetActionState(ActionState.CAN_MOVE, true);
+                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+            }
+                _crowdControlList.Remove(cc);
         }
 
         public void ClearAllCrowdControl()

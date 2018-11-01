@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -73,10 +75,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _game.ObjectManager.RemoveVisionUnit(this);
         }
 
+        public void StopMovement()
+        {
+            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
+        }
+
         public override void Update(float diff)
         {
-            base.Update(diff);
-
+            if (!Stats.GetActionState(ActionState.CAN_MOVE) || Stats.GetActionState(ActionState.CAN_NOT_MOVE))
+                StopMovement();
+            else
+                base.Update(diff);
+            
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
             {
