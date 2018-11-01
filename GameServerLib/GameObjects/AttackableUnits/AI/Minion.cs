@@ -146,6 +146,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return true;
             }
 
+            _game.PacketNotifier.NotifyStopAutoAttack(this);
+            IsAttacking = false;
+
             return false;
         }
 
