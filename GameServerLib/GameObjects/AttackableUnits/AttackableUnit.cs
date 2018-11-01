@@ -83,9 +83,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void Update(float diff)
         {
             if (!Stats.GetActionState(ActionState.CAN_MOVE) || Stats.GetActionState(ActionState.CAN_NOT_MOVE))
+            {
                 StopMovement();
+            }
+                
             else
+            {
                 base.Update(diff);
+            }
+                
             
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
