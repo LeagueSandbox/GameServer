@@ -103,6 +103,9 @@
     <Compile Include="IPlayerManager.cs" />
     <Compile Include="Maps\IMap.cs" />
     <Compile Include="MovementVector.cs" />
+    <Compile Include="Packets\Handlers\NetworkHandler.cs" />
+    <Compile Include="Packets\PacketDefinitions\IPacket.cs" />
+    <Compile Include="Packets\PacketDefinitions\ICoreMessage.cs" />
     <Compile Include="Packets\Handlers\IPacketHandler.cs" />
     <Compile Include="Packets\Handlers\PacketHandlerBase.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\SelectObjectRequest.cs" />
