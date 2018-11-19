@@ -163,7 +163,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             GoldPerSecond.ApplyStatModificator(modifier.GoldPerSecond);
             HealthPoints.ApplyStatModificator(modifier.HealthPoints);
             HealthRegeneration.ApplyStatModificator(modifier.HealthRegeneration);
-            LifeSteal.ApplyStatModificator(modifier.LifeSteel);
+            LifeSteal.ApplyStatModificator(modifier.LifeSteal);
             MagicResist.ApplyStatModificator(modifier.MagicResist);
             MagicPenetration.ApplyStatModificator(modifier.MagicPenetration);
             ManaPoints.ApplyStatModificator(modifier.ManaPoints);
@@ -187,7 +187,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             GoldPerSecond.RemoveStatModificator(modifier.GoldPerSecond);
             HealthPoints.RemoveStatModificator(modifier.HealthPoints);
             HealthRegeneration.RemoveStatModificator(modifier.HealthRegeneration);
-            LifeSteal.RemoveStatModificator(modifier.LifeSteel);
+            LifeSteal.RemoveStatModificator(modifier.LifeSteal);
             MagicResist.RemoveStatModificator(modifier.MagicResist);
             MagicPenetration.RemoveStatModificator(modifier.MagicPenetration);
             ManaPoints.RemoveStatModificator(modifier.ManaPoints);
