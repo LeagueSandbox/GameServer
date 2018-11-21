@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStatModifier MagicPenetration { get; } = new StatModifier();
         public IStatModifier ManaPoints { get; } = new StatModifier();
         public IStatModifier ManaRegeneration { get; } = new StatModifier();
-        public IStatModifier LifeSteel { get; } = new StatModifier();
+        public IStatModifier LifeSteal { get; } = new StatModifier();
         public IStatModifier SpellVamp { get; } = new StatModifier();
         public IStatModifier Tenacity { get; } = new StatModifier();
         public IStatModifier Size { get; } = new StatModifier();

@@ -22,6 +22,7 @@ namespace LeagueSandbox.GameServer
         public bool ChatCheatsEnabled { get; private set; }
         public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
+        public bool IsDamageTextGlobal { get; private set; }
 
         private Config()
         {
@@ -69,6 +70,9 @@ namespace LeagueSandbox.GameServer
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
+
+            // Read global damage text setting
+            IsDamageTextGlobal = (bool)gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
 
             // Load items
             game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(

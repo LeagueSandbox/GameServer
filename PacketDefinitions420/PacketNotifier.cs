@@ -108,7 +108,6 @@ namespace PacketDefinitions420
         public void NotifyCastSpell(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId,
             uint spellNetId)
         {
-
             var response = new CastSpellResponse(navGrid, s, x, y, xDragEnd, yDragEnd, futureProjNetId, spellNetId);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
@@ -401,10 +400,25 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext)
+        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
             var dd = new DamageDone(source, target, amount, type, damagetext);
-            _packetHandlerManager.BroadcastPacket(dd, Channel.CHL_S2C);
+            if (isGlobal)
+            {
+                _packetHandlerManager.BroadcastPacket(dd, Channel.CHL_S2C);
+            }
+            else
+            {
+                if (sourceId != 0)
+                {
+                    _packetHandlerManager.SendPacket(sourceId, dd, Channel.CHL_S2C);
+                }
+
+                if (targetId != 0)
+                {
+                    _packetHandlerManager.SendPacket(targetId, dd, Channel.CHL_S2C);
+                }
+            }
         }
 
         public void NotifyModifyShield(IAttackableUnit unit, float amount, ShieldType type)

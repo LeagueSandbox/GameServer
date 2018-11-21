@@ -128,7 +128,7 @@ namespace LeagueSandbox.GameServer.Items
                     FlatBonus = itemInfo.GetFloat("Data", "FlatCritDamageMod"),
                     PercentBonus = itemInfo.GetFloat("Data", "PercentCritDamageMod")
                 },
-                LifeSteel =
+                LifeSteal =
                 {
                     FlatBonus = itemInfo.GetFloat("Data", "PercentLifeStealMod")
                 }

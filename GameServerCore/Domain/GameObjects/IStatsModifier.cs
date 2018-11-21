@@ -15,7 +15,7 @@
         IStatModifier MagicPenetration { get; }
         IStatModifier ManaPoints { get; }
         IStatModifier ManaRegeneration { get; }
-        IStatModifier LifeSteel { get; }
+        IStatModifier LifeSteal { get; }
         IStatModifier SpellVamp { get; }
         IStatModifier Tenacity { get; }
         IStatModifier Size { get; }

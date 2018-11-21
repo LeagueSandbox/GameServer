@@ -19,8 +19,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IShop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
-        public IRuneCollection RuneList { get; set; }
-        public Dictionary<short, ISpell> Spells { get; private set; } = new Dictionary<short, ISpell>();
+        public IRuneCollection RuneList { get; }
+        public Dictionary<short, ISpell> Spells { get; }
         public IChampionStats ChampStats { get; private set; } = new ChampionStats();
 
         public byte SkillPoints { get; set; }
@@ -50,6 +50,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
+
+            Spells = new Dictionary<short, ISpell>();
 
             Inventory = InventoryManager.CreateInventory();
             Shop = Items.Shop.CreateShop(this, game);
@@ -224,6 +226,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             l.Add(new Vector2(this.X, this.Y));
             this.SetWaypoints(l);
             _game.PacketNotifier.NotifyMovement(this);
+        }
+
+        public ISpell GetSpellBySlot(byte slot)
+        {
+            return Spells[slot];
         }
 
         public ISpell GetSpellByName(string name)
