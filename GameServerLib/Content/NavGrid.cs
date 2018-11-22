@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
 using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects;
 using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
@@ -445,7 +446,7 @@ namespace LeagueSandbox.GameServer.Content
             return CastRaySqr(a, b) <= (b - a).SqrLength();
         }
 
-        public bool IsAnythingBetween(GameObject a, GameObject b)
+        public bool IsAnythingBetween(IGameObject a, IGameObject b)
         {
             return CastRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength();
         }

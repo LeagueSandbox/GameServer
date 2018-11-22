@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class ItemRecipe
+    public class ItemRecipe: IItemRecipe
     {
-        private readonly ItemType _itemType;
-        private ItemType[] _items;
+        private readonly IItemData _itemData;
+        private IItemData[] _items;
         private int _totalPrice;
-        private ItemManager _itemManager;
+        private readonly ItemManager _itemManager;
 
         public int TotalPrice
         {
@@ -23,33 +24,28 @@ namespace LeagueSandbox.GameServer.Items
             }
         }
 
-        private ItemRecipe(ItemType itemType, ItemManager manager)
+        private ItemRecipe(IItemData itemData, ItemManager manager)
         {
-            _itemType = itemType;
+            _itemData = itemData;
             _totalPrice = -1;
             _itemManager = manager;
         }
 
-        public List<ItemType> GetItems()
+        public IEnumerable<IItemData> GetItems()
         {
             if (_items == null)
             {
                 FindRecipeItems(_itemManager);
             }
 
-            return _items.ToList();
+            return _items;
         }
 
         private void FindRecipeItems(ItemManager itemManager)
         {
-            // TODO: Figure out how to refactor this.
-            _items = new[]
-            {
-                itemManager.SafeGetItemType(_itemType.RecipeItem1),
-                itemManager.SafeGetItemType(_itemType.RecipeItem2),
-                itemManager.SafeGetItemType(_itemType.RecipeItem3),
-                itemManager.SafeGetItemType(_itemType.RecipeItem4)
-            }.Where(i => i != null).ToArray();
+            _items = _itemData.RecipeItem.AsEnumerable()
+                .Select(itemManager.SafeGetItemType)
+                .Where(i => i != null).ToArray();
         }
 
         private void FindPrice()
@@ -60,12 +56,12 @@ namespace LeagueSandbox.GameServer.Items
                 _totalPrice += item.TotalPrice;
             }
 
-            _totalPrice += _itemType.Price;
+            _totalPrice += _itemData.Price;
         }
 
-        public static ItemRecipe FromItemType(ItemType type, ItemManager manager)
+        public static ItemRecipe FromItemType(IItemData data, ItemManager manager)
         {
-            return new ItemRecipe(type, manager);
+            return new ItemRecipe(data, manager);
         }
     }
 }

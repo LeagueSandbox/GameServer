@@ -4,11 +4,8 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class ItemType : StatsModifier, IItemType
+    public class ItemData : StatsModifier, IItemData
     {
-        //private ItemManager _owner;
-        private ItemContentCollectionEntry _itemInfo;
-
         // Meta
         public int ItemId { get; private set; }
         public string Name { get; private set; }
@@ -21,18 +18,32 @@ namespace LeagueSandbox.GameServer.Items
         public float SellBackModifier { get; private set; }
 
         // Recipes
-        public int RecipeItem1 { get; private set; }
-        public int RecipeItem2 { get; private set; }
-        public int RecipeItem3 { get; private set; }
-        public int RecipeItem4 { get; private set; }
+        private int RecipeItem1 { get; set; }
+        private int RecipeItem2 { get; set; }
+        private int RecipeItem3 { get; set; }
+        private int RecipeItem4 { get; set; }
+
+        public int[] RecipeItem
+        {
+            get
+            {
+                return new int[4]
+                {
+                    RecipeItem1,
+                    RecipeItem2,
+                    RecipeItem3,
+                    RecipeItem4,
+                };
+            }
+        }
 
         // Not from data
-        public ItemRecipe Recipe { get; private set; }
+        public IItemRecipe Recipe { get; private set; }
         public int TotalPrice => Recipe.TotalPrice;
 
-        private ItemType(ItemContentCollectionEntry itemInfo)
+        private ItemData()
         {
-            _itemInfo = itemInfo;
+            
         }
 
         private void CreateRecipe(ItemManager manager)
@@ -40,10 +51,10 @@ namespace LeagueSandbox.GameServer.Items
             Recipe = ItemRecipe.FromItemType(this, manager);
         }
 
-        public static ItemType Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
+        public static ItemData Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
-            var result = new ItemType(itemInfo)
+            var result = new ItemData()
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
@@ -127,11 +138,6 @@ namespace LeagueSandbox.GameServer.Items
 
             result.CreateRecipe(owner);
             return result;
-        }
-
-        public bool IsTrinket()
-        {
-            return ItemGroup.ToLower().Equals("relicbase");
         }
     }
 

@@ -4,24 +4,35 @@ using GameServerCore.Enums;
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IGameObject : ITarget
+    public interface IGameObject : ITarget, IUpdate
     {
         uint NetId { get; }
-        ITarget Target { get; }
-        List<Vector2> Waypoints { get; }
         int CurWaypoint { get; }
+        List<Vector2> Waypoints { get; }
+        ITarget Target { get; }
         TeamId Team { get; }
-        int AttackerCount { get; }
         float CollisionRadius { get; }
         float VisionRadius { get; }
-        bool IsDashing { get; }
 
         float GetZ();
         float GetMoveSpeed();
-        void SetPosition(float x, float y);
-        void SetWaypoints(List<Vector2> newWaypoints);
-        void SetTeam(TeamId team);
+        
+        void ClearMovementUpdated();
+        
         void OnAdded();
+        void OnCollision(IGameObject collider);
         void OnRemoved();
+        
+        void SetPosition(float x, float y);
+        void SetPosition(Vector2 vec);
+        void SetTeam(TeamId team);
+        void SetToRemove();
+        void SetVisibleByTeam(TeamId team, bool visible);
+        void SetWaypoints(List<Vector2> newWaypoints);
+        
+        bool IsCollidingWith(IGameObject o);
+        bool IsMovementUpdated();
+        bool IsToRemove();
+        bool IsVisibleByTeam(TeamId team);
     }
 }

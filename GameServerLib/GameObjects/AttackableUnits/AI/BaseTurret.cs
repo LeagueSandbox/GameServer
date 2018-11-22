@@ -35,17 +35,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void CheckForTargets()
         {
             var objects = _game.ObjectManager.GetObjects();
-            AttackableUnit nextTarget = null;
+            IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             foreach (var it in objects)
             {
-                var u = it.Value as AttackableUnit;
-
-                if (u == null || u.IsDead || u.Team == Team || GetDistanceTo(u) > Stats.Range.Total)
-                {
+                if (!(it.Value is IAttackableUnit u) ||
+                    u.IsDead ||
+                    u.Team == Team || 
+                    GetDistanceTo(u) > Stats.Range.Total)
                     continue;
-                }
 
                 // Note: this method means that if there are two champions within turret range,
                 // The player to have been added to the game first will always be targeted before the others
@@ -60,33 +59,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 else
                 {
-                    var targetIsChampion = TargetUnit as Champion;
-
                     // Is the current target a champion? If it is, don't do anything
-                    if (targetIsChampion != null)
-                    {
-                        // Find the next champion in range targeting an enemy champion who is also in range
-                        var enemyChamp = u as Champion;
-                        if (enemyChamp != null && enemyChamp.TargetUnit != null)
-                        {
-                            var enemyChampTarget = enemyChamp.TargetUnit as Champion;
-                            if (enemyChampTarget != null && // Enemy Champion is targeting an ally
-                                enemyChamp.GetDistanceTo(enemyChampTarget) <= enemyChamp.Stats.Range.Total && // Enemy within range of ally
-                                GetDistanceTo(enemyChampTarget) <= Stats.Range.Total) // Enemy within range of this turret
-                            {
-                                nextTarget = enemyChamp; // No priority required
-                                break;
-                            }
-                        }
-                    }
+                    if (!(TargetUnit is IChampion))
+                        continue;
+                    // Find the next champion in range targeting an enemy champion who is also in range
+                    if (!(u is IChampion enemyChamp) || enemyChamp.TargetUnit == null)
+                        continue;
+                    if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
+                        enemyChamp.GetDistanceTo(enemyChampTarget) > enemyChamp.Stats.Range.Total ||
+                        GetDistanceTo(enemyChampTarget) > Stats.Range.Total)
+                        continue;
+                    nextTarget = enemyChamp; // No priority required
+                    break;
                 }
             }
 
-            if (nextTarget != null)
-            {
-                TargetUnit = nextTarget;
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
-            }
+            if (nextTarget == null)
+                return;
+            TargetUnit = nextTarget;
+            _game.PacketNotifier.NotifySetTarget(this, nextTarget);
         }
 
         public override void Update(float diff)

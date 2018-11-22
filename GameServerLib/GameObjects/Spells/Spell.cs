@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
     public class Spell : ISpell
     {
 
-        public Champion Owner { get; private set; }
+        public IChampion Owner { get; private set; }
         public byte Level { get; private set; }
         public byte Slot { get; set; }
         public float CastTime { get; private set; } = 0;
@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public uint FutureProjNetId { get; protected set; }
         public uint SpellNetId { get; protected set; }
 
-        public AttackableUnit Target { get; private set; }
+        public IAttackableUnit Target { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
         public float X2 { get; private set; }
@@ -43,13 +43,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         private IGameScript _spellGameScript;
 
-        public SpellData SpellData { get; private set; }
+        public ISpellData SpellData { get; private set; }
 
-        IChampion ISpell.Owner => Owner;
-        IAttackableUnit ISpell.Target => Target;
-        ISpellData ISpell.SpellData => SpellData;
-
-        public Spell(Game game, Champion owner, string spellName, byte slot)
+        public Spell(Game game, IChampion owner, string spellName, byte slot)
         {
             Owner = owner;
             SpellName = spellName;
@@ -73,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// <summary>
         /// Called when the character casts the spell
         /// </summary>
-        public virtual bool Cast(float x, float y, float x2, float y2, AttackableUnit u = null)
+        public virtual bool Cast(float x, float y, float x2, float y2, IAttackableUnit u = null)
         {
             if (HasEmptyScript)
             {
@@ -210,7 +206,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        public void ApplyEffects(AttackableUnit u, Projectile p = null)
+        public void ApplyEffects(IAttackableUnit u, IProjectile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
@@ -241,7 +237,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void AddProjectileTarget(string nameMissile, Target target, bool isServerOnly = false)
+        public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
         {
             var p = new Projectile(
                 _game,
@@ -297,7 +293,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _game.ObjectManager.AddObject(c);
         }
 
-        public void SpellAnimation(string animName, AttackableUnit target)
+        public void SpellAnimation(string animName, IAttackableUnit target)
         {
             _game.PacketNotifier.NotifySpellAnimation(target, animName);
         }
@@ -332,7 +328,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             return _game.Config.CooldownsEnabled ? SpellData.Cooldown[Level] * (1 - Owner.Stats.CooldownReduction.Total) : 0;
         }
 
-        public virtual void LevelUp()
+        public void LevelUp()
         {
             if (Level <= 5)
             {
@@ -345,27 +341,25 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void SetCooldown(byte slot, float newCd)
+        public void SetCooldown(float newCd)
         {
-            var targetSpell = Owner.GetSpellBySlot(slot);
-
             if (newCd <= 0)
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, slot, 0, 0);
-                targetSpell.State = SpellState.STATE_READY;
-                targetSpell.CurrentCooldown = 0;
+                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, 0, 0);
+                State = SpellState.STATE_READY;
+                CurrentCooldown = 0;
             }
             else
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, slot, newCd, targetSpell.GetCooldown());
-                targetSpell.State = SpellState.STATE_COOLDOWN;
-                targetSpell.CurrentCooldown = newCd;
+                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, newCd, GetCooldown());
+                State = SpellState.STATE_COOLDOWN;
+                CurrentCooldown = newCd;
             }
         }
 
-        public void LowerCooldown(byte slot, float lowerValue)
+        public void LowerCooldown(float lowerValue)
         {
-            SetCooldown(slot, Owner.GetSpellBySlot(slot).CurrentCooldown - lowerValue);
+            SetCooldown(CurrentCooldown - lowerValue);
         }
     }
 }

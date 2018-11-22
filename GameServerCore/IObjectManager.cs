@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
 namespace GameServerCore
 {
-    public interface IObjectManager
+    public interface IObjectManager: IUpdate
     {
         List<TeamId> Teams { get; }
 

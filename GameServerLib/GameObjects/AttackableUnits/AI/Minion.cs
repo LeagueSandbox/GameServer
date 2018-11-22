@@ -14,11 +14,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         protected List<Vector2> _mainWaypoints;
         protected int _curMainWaypoint;
-        public MinionSpawnPosition SpawnPosition { get; private set; }
-        public MinionSpawnType MinionSpawnType { get; protected set; }
+        public MinionSpawnPosition SpawnPosition { get; }
+        public MinionSpawnType MinionSpawnType { get; }
         protected bool _aiPaused;
-
-        private int HitBox => 60;
 
         public Minion(
             Game game,
@@ -34,14 +32,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _curMainWaypoint = 0;
             _aiPaused = false;
 
-            var spawnSpecifics = _game.Map.MapGameScript.GetMinionSpawnPosition(SpawnPosition);
+            var spawnSpecifics = _game.Map.MapProperties.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
             SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            _game.Map.MapGameScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
+            _game.Map.MapProperties.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             // Set model
-            Model = _game.Map.MapGameScript.GetMinionModel(spawnSpecifics.Item1, spawnType);
+            Model = _game.Map.MapProperties.GetMinionModel(spawnSpecifics.Item1, spawnType);
 
             // Fix issues induced by having an empty model string
             CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
@@ -115,21 +113,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return true;
             }
-            AttackableUnit nextTarget = null;
+            IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
 
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
             {
-                var u = it.Value as AttackableUnit;
-
-                // Targets have to be:
-                if (u == null ||                          // a unit
-                    u.IsDead ||                          // alive
-                    u.Team == Team ||                    // not on our team
-                    GetDistanceTo(u) > DETECT_RANGE ||   // in range
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)) // visible to this minion
-                    continue;                             // If not, look for something else
+                if (!(it.Value is IAttackableUnit u) ||
+                    u.IsDead ||
+                    u.Team == Team ||
+                    GetDistanceTo(u) > DETECT_RANGE ||
+                    !_game.ObjectManager.TeamHasVisionOn(Team, u))
+                    continue;
 
                 var priority = (int)ClassifyTarget(u);  // get the priority.
                 if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously

@@ -1,4 +1,6 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -26,14 +28,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var request = _game.PacketReader.ReadCastSpellRequest(data);
             var targetObj = _game.ObjectManager.GetObjectById(request.TargetNetId);
-            var targetUnit = targetObj as AttackableUnit;
+            var targetUnit = targetObj as IAttackableUnit;
             var owner = _playerManager.GetPeerInfo(userId).Champion;
             if (owner == null || !owner.CanCast())
             {
                 return false;
             }
 
-            var s = owner.GetSpell(request.SpellSlot) as Spell;
+            var s = owner.GetSpell(request.SpellSlot);
             if (s == null)
             {
                 return false;

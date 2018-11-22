@@ -266,7 +266,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemManager.cs" />
     <Compile Include="Items\ItemRecipe.cs" />
-    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\ItemData.cs" />
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
@@ -313,7 +313,6 @@
     <Compile Include="Scripting\CSharp\GameScript.cs" />
     <Compile Include="Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Scripting\CSharp\GameScriptTimer.cs" />
-    <Compile Include="Scripting\CSharp\MapGameScript.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

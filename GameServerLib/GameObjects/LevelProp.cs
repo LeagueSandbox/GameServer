@@ -5,15 +5,15 @@ namespace LeagueSandbox.GameServer.GameObjects
 {
     public class LevelProp : GameObject, ILevelProp
     {
-        public string Name { get; private set; }
-        public string Model { get; private set; }
-        public float Z { get; private set; }
-        public float DirX { get; private set; }
-        public float DirY { get; private set; }
-        public float DirZ { get; private set; }
-        public float Unk1 { get; private set; }
-        public float Unk2 { get; private set; }
-        public byte SkinId { get; private set; }
+        public string Name { get; }
+        public string Model { get; }
+        public float Z { get; }
+        public float DirX { get; }
+        public float DirY { get; }
+        public float DirZ { get; }
+        public float Unk1 { get; }
+        public float Unk2 { get; }
+        public byte SkinId { get; }
 
         public LevelProp(
             Game game,

@@ -1,4 +1,6 @@
-﻿using LeagueSandbox.GameServer.API;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 
@@ -6,16 +8,16 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class BuffGameScriptController
     {
-        public ObjAiBase Unit { get; private set; }
+        public IObjAiBase Unit { get; private set; }
         public IBuffGameScript GameScript { get; private set; }
         public string BuffNamespace { get; private set; }
         public string BuffClass { get; private set; }
-        public Spell OwnerSpell { get; private set; }
+        public ISpell OwnerSpell { get; private set; }
         private bool _remove;
         private float _duration = -1f;
         protected CSharpScriptEngine _scriptEngine;
 
-        public BuffGameScriptController(Game game, ObjAiBase unit, string buffNamespace, string buffClass, Spell ownerSpell, float duration = -1f)
+        public BuffGameScriptController(Game game, IObjAiBase unit, string buffNamespace, string buffClass, ISpell ownerSpell, float duration = -1f)
         {
             _scriptEngine = game.ScriptEngine;
             BuffNamespace = buffNamespace;

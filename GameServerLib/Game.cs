@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer
         public IPacketReader PacketReader { get; private set; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
-        public Map Map { get; private set; }
+        public IMap Map { get; private set; }
         
         public Config Config { get; protected set; }
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -59,8 +59,6 @@ namespace LeagueSandbox.GameServer
         internal NetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
-
-        IMap IGame.Map => Map;
 
         private Stopwatch _lastMapDurationWatch;
 
@@ -159,10 +157,11 @@ namespace LeagueSandbox.GameServer
             }
 
         }
+        
         public void Update(float diff)
         {
             GameTime += diff;
-            ((ObjectManager)ObjectManager).Update(diff);
+            ObjectManager.Update(diff);
             Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
@@ -250,10 +249,10 @@ namespace LeagueSandbox.GameServer
         }
         private static List<T> GetInstances<T>(IGame g)
         {
-            return (Assembly.GetCallingAssembly()
+            return Assembly.GetCallingAssembly()
                 .GetTypes()
-                .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
+                .Where(t => t.BaseType == typeof(T))
+                .Select(t => (T)Activator.CreateInstance(t, g)).ToList();
         }
 
         public void SetGameToExit()

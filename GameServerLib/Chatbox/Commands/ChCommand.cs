@@ -1,4 +1,5 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
@@ -33,8 +34,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 split[1],
                 (uint)_playerManager.GetPeerInfo(userId).UserId,
                 0, // Doesnt matter at this point
-                (RuneCollection)currentChampion.RuneList,
-                _playerManager.GetClientInfoByChampion((Champion)currentChampion),
+                currentChampion.RuneList,
+                _playerManager.GetClientInfoByChampion(currentChampion),
                 currentChampion.NetId
             );
             c.SetPosition(
@@ -42,9 +43,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 _playerManager.GetPeerInfo(userId).Champion.Y
             );
 
-            c.Model = split[1]; // trigger the "modelUpdate" proc
+            c.ChangeModel(split[1]); // trigger the "modelUpdate" proc
             c.SetTeam(_playerManager.GetPeerInfo(userId).Champion.Team);
-            Game.ObjectManager.RemoveObject((Champion)_playerManager.GetPeerInfo(userId).Champion);
+            Game.ObjectManager.RemoveObject(_playerManager.GetPeerInfo(userId).Champion);
             Game.ObjectManager.AddObject(c);
             _playerManager.GetPeerInfo(userId).Champion = c;
         }

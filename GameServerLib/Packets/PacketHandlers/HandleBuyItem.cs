@@ -1,4 +1,5 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -25,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, byte[] data)
         {
             var request = _game.PacketReader.ReadBuyItemRequest(data);
-            var champion = (Champion)_playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             return champion.Shop.HandleItemBuyRequest(request.ItemId);
         }
     }

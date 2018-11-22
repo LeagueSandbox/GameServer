@@ -1,4 +1,6 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
@@ -46,7 +48,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
-            var bluePill = _itemManager.GetItemType(_game.Map.MapGameScript.BluePillId);
+            var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
              _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
@@ -73,7 +75,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var objects = _game.ObjectManager.GetObjects();
             foreach (var kv in objects)
             {
-                if (kv.Value is LaneTurret turret)
+                if (kv.Value is ILaneTurret turret)
                 {
                      _game.PacketNotifier.NotifyTurretSpawn(userId, turret);
 
@@ -86,27 +88,27 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     foreach (var item in turret.Inventory)
                     {
                         if (item == null) continue;
-                         _game.PacketNotifier.NotifyItemBought(turret, item as Item);
+                         _game.PacketNotifier.NotifyItemBought(turret, item as IItem);
                     }
                 }
-                else if (kv.Value is LevelProp levelProp)
+                else if (kv.Value is ILevelProp levelProp)
                 {
                      _game.PacketNotifier.NotifyLevelPropSpawn(userId, levelProp);
                 }
-                else if (kv.Value is Champion champion)
+                else if (kv.Value is IChampion champion)
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
                          _game.PacketNotifier.NotifyEnterVision(userId, champion);
                     }
                 }
-                else if (kv.Value is Inhibitor || kv.Value is Nexus)
+                else if (kv.Value is IInhibitor || kv.Value is INexus)
                 {
-                    var inhibtor = (AttackableUnit)kv.Value;
+                    var inhibtor = (IAttackableUnit)kv.Value;
                      _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
                      _game.PacketNotifier.NotifySetHealth(userId, inhibtor.NetId);
                 }
-                else if (kv.Value is Projectile projectile)
+                else if (kv.Value is IProjectile projectile)
                 {
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {

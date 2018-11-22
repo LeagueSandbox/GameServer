@@ -360,7 +360,7 @@ namespace PacketDefinitions420
 
         public void NotifyAddBuff(IBuff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, b.BuffType, b.Name, b.Slot);
+            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.StackCount, b.Duration, b.BuffType, b.Name, b.Slot);
             _packetHandlerManager.BroadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -378,7 +378,7 @@ namespace PacketDefinitions420
 
         public void NotifyEditBuff(IBuff b, int stacks)
         {
-            var edit = new EditBuff(b.TargetUnit, b.Slot, (byte)b.Stacks);
+            var edit = new EditBuff(b.TargetUnit, b.Slot, b.StackCount);
             _packetHandlerManager.BroadcastPacket(edit, Channel.CHL_S2C);
         }
 

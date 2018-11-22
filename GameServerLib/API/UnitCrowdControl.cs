@@ -1,14 +1,12 @@
-﻿namespace LeagueSandbox.GameServer.API
-{
-    public enum CrowdControlType
-    {
-        AIRBORNE, BLIND, DISARM, GROUND, INVULNERABLE, NEARSIGHT, ROOT, SILENCE, STASIS, STUN, SUPPRESSION, SNARE
-    }
+﻿using GameServerCore.Domain;
+using GameServerCore.Enums;
 
-    public class UnitCrowdControl
+namespace LeagueSandbox.GameServer.API
+{
+    public class UnitCrowdControl: ICrowdControl
     {
-        public CrowdControlType Type { get; private set; }
-        public float Duration { get; private set; }
+        public CrowdControlType Type { get; }
+        public float Duration { get; }
         public float CurrentTime { get; private set; }
         public bool IsRemoved { get; private set; }
 

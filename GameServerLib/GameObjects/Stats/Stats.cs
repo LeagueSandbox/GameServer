@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public bool IsInvulnerable { get; set; }
         public bool IsPhysicalImmune { get; set; }
         public bool IsLifestealImmune { get; set; }
-        public bool IsTargetable { get; set; }
+        public bool IsTargetable { get; }
         public IsTargetableToTeamFlags IsTargetableToTeam { get; set; }
 
         public float AttackSpeedFlat { get; set; }
@@ -30,29 +30,29 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float HealthRegenerationPerLevel { get; set; }
         public float ManaRegenerationPerLevel { get; set; }
         public float GrowthAttackSpeed { get; set; }
-        public float[] ManaCost { get; set; }
+        public float[] ManaCost { get; }
 
-        public Stat AbilityPower { get; }
-        public Stat Armor { get; }
-        public Stat ArmorPenetration { get; }
-        public Stat AttackDamage { get; }
-        public Stat AttackSpeedMultiplier { get; }
-        public Stat CooldownReduction { get; }
-        public Stat CriticalChance { get; }
-        public Stat CriticalDamage { get; }
-        public Stat GoldPerSecond { get; }
-        public Stat HealthPoints { get; }
-        public Stat HealthRegeneration { get; }
-        public Stat LifeSteal { get; }
-        public Stat MagicResist { get; }
-        public Stat MagicPenetration { get; }
-        public Stat ManaPoints { get; }
-        public Stat ManaRegeneration { get; }
-        public Stat MoveSpeed { get; }
-        public Stat Range { get; }
-        public Stat Size { get; }
-        public Stat SpellVamp { get; }
-        public Stat Tenacity { get; }
+        public IStat AbilityPower { get; }
+        public IStat Armor { get; }
+        public IStat ArmorPenetration { get; }
+        public IStat AttackDamage { get; }
+        public IStat AttackSpeedMultiplier { get; }
+        public IStat CooldownReduction { get; }
+        public IStat CriticalChance { get; }
+        public IStat CriticalDamage { get; }
+        public IStat GoldPerSecond { get; }
+        public IStat HealthPoints { get; }
+        public IStat HealthRegeneration { get; }
+        public IStat LifeSteal { get; }
+        public IStat MagicResist { get; }
+        public IStat MagicPenetration { get; }
+        public IStat ManaPoints { get; }
+        public IStat ManaRegeneration { get; }
+        public IStat MoveSpeed { get; }
+        public IStat Range { get; }
+        public IStat Size { get; }
+        public IStat SpellVamp { get; }
+        public IStat Tenacity { get; }
 
         public float Gold { get; set; }
         public byte Level { get; set; }
@@ -74,28 +74,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public bool IsGeneratingGold { get; set; } // Used to determine if the Stats update should include generating gold. Changed in Champion.h
         public float SpellCostReduction { get; set; } //URF Buff/Lissandra's passive
-
-        IStat IStats.AbilityPower => AbilityPower;
-        IStat IStats.Armor => Armor;
-        IStat IStats.ArmorPenetration => ArmorPenetration;
-        IStat IStats.AttackDamage => AttackDamage;
-        IStat IStats.AttackSpeedMultiplier => AttackSpeedMultiplier;
-        IStat IStats.CooldownReduction => CooldownReduction;
-        IStat IStats.CriticalChance => CriticalChance;
-        IStat IStats.CriticalDamage => CriticalDamage;
-        IStat IStats.GoldPerSecond => GoldPerSecond;
-        IStat IStats.HealthPoints => HealthPoints;
-        IStat IStats.HealthRegeneration => HealthRegeneration;
-        IStat IStats.LifeSteal => LifeSteal;
-        IStat IStats.MagicResist => MagicResist;
-        IStat IStats.MagicPenetration => MagicPenetration;
-        IStat IStats.ManaPoints => ManaPoints;
-        IStat IStats.ManaRegeneration => ManaRegeneration;
-        IStat IStats.MoveSpeed => MoveSpeed;
-        IStat IStats.Range => Range;
-        IStat IStats.Size => Size;
-        IStat IStats.SpellVamp => SpellVamp;
-        IStat IStats.Tenacity => Tenacity;
 
         public Stats()
         {

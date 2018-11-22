@@ -27,13 +27,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             return GetDistanceTo(target.X, target.Y);
         }
-
+        
         public float GetDistanceTo(float xtarget, float ytarget)
         {
             return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));
         }
 
-        public float GetDistanceToSqr(Target target)
+        public float GetDistanceToSqr(ITarget target)
         {
             return GetDistanceToSqr(target.X, target.Y);
         }

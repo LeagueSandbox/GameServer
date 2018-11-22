@@ -1,9 +1,8 @@
 ﻿namespace GameServerCore.Domain
 {
-    public interface IItem
+    public interface IItem: IStackable
     {
-        byte StackSize { get; }
         int TotalPrice { get; }
-        IItemType ItemType { get; }
+        IItemData ItemData { get; }
     }
 }
