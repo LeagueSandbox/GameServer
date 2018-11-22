@@ -69,12 +69,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        /*public override void SetToRemove()
-        {
-            base.SetToRemove();
-            _game.PacketNotifier.NotifyProjectileDestroy(this);
-        }*/
-
         private void ApplyEffects(IAttackableUnit unit)
         {
             ObjectsHit.Add(unit);
