@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class SellItemRequest
+    public class SellItemRequest : ICoreRequest
     {
         public int NetId { get; }
         public byte SlotId { get; }

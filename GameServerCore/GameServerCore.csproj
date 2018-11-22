@@ -113,6 +113,8 @@
     <Compile Include="Maps\IMap.cs" />
     <Compile Include="MovementVector.cs" />
     <Compile Include="Packets\Handlers\NetworkHandler.cs" />
+    <Compile Include="Packets\PacketDefinitions\ICoreRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\ICoreResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\IPacket.cs" />
     <Compile Include="Packets\PacketDefinitions\ICoreMessage.cs" />
     <Compile Include="Packets\Handlers\IPacketHandler.cs" />
@@ -120,6 +122,13 @@
     <Compile Include="Packets\PacketDefinitions\Requests\SelectObjectRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\UndoItemRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\UseItemRequest.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\ChangeHealthResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\AddBuffResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\GameEndResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\MinionSpawnResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\PingResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\SetTeamResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\SkillUpResponse.cs" />
     <Compile Include="Pair.cs" />
     <Compile Include="Packets\Enums\Channel.cs" />
     <Compile Include="Packets\Enums\ChatType.cs" />
@@ -159,5 +168,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

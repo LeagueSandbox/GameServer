@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class UseObjectRequest
+    public class UseObjectRequest : ICoreRequest
     {
         public uint NetId { get; }
         public uint TargetNetId { get; }

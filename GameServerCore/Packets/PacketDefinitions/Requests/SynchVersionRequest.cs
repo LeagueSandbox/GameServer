@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class SynchVersionRequest
+    public class SynchVersionRequest : ICoreRequest
     {
         public int NetId { get; }
         public int Unk1 { get; }

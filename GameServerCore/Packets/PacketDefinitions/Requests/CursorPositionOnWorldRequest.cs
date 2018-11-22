@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class CursorPositionOnWorldRequest
+    public class CursorPositionOnWorldRequest : ICoreRequest
     {
         public uint NetId { get; }
         /// <summary>
