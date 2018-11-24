@@ -21,12 +21,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Timer = System.Timers.Timer;
+using GameServerCore.Packets.PacketDefinitions;
+using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer
 {
     public class Game : IGame
     {
-        
+
         private ILog _logger;
 
         public bool IsRunning { get; private set; }
@@ -44,6 +47,8 @@ namespace LeagueSandbox.GameServer
 
         private PacketServer _packetServer;
         public IPacketReader PacketReader { get; private set; }
+        public NetworkHandler<ICoreRequest> RequestHandler {get; }
+        public NetworkHandler<ICoreResponse> ResponseHandler { get; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
         public IMap Map { get; private set; }
@@ -72,6 +77,8 @@ namespace LeagueSandbox.GameServer
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine();
+            RequestHandler = new NetworkHandler<ICoreRequest>();
+            ResponseHandler = new NetworkHandler<ICoreResponse>();
         }
 
         public void Initialize(ushort port, string blowfishKey, Config config)
@@ -115,8 +122,13 @@ namespace LeagueSandbox.GameServer
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
             // TODO: make lib to only get API types and not byte[], start from removing this line
             PacketReader = new PacketReader();
+            InitializePacketHandlers();
 
             _logger.Info("Game is ready.");
+        }
+        public void InitializePacketHandlers()
+        {
+            RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
         }
 
         public bool LoadScripts()
@@ -232,7 +244,7 @@ namespace LeagueSandbox.GameServer
         }
 
         // for reflection to work we need it to be called from lib
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers()
+        /*public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers()
         {
             var inst = GetInstances<PacketHandlerBase>(this);
             var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
@@ -246,7 +258,7 @@ namespace LeagueSandbox.GameServer
                 });
             }
             return dict;
-        }
+        }*/
         private static List<T> GetInstances<T>(IGame g)
         {
             return Assembly.GetCallingAssembly()

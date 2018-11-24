@@ -18,6 +18,6 @@ namespace GameServerCore
         bool SetToExit { get; set; }
 
         bool HandleDisconnect(int userId);
-        Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers();
+        //Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers();
     }
 }
