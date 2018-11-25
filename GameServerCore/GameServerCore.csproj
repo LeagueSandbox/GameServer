@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\Color.cs" />
     <Compile Include="Domain\IAnnounce.cs" />
     <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
@@ -131,6 +132,25 @@
     <Compile Include="Packets\PacketDefinitions\Responses\AnnounceEventResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\ChampionDieResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\BuyItemResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\BeginAutoAttackResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\CastSpellResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\BlueTipResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\ChampionDeathTimerResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\MovementResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\ModelUpdateResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\LevelUpResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\DebugMessageHtmlResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\PingLoadInfoResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\ViewResponseResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\SurrenderResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\SynchVersionResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\TintResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\RemoveItemResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\DashResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\DamageDoneResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\UnitAnnounceEventResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\SetCooldownResponse.cs" />
+    <Compile Include="Packets\PacketDefinitions\Responses\FaceDirectionResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\HeroSpawnResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\TeleportResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\RemoveBuffResponse.cs" />
