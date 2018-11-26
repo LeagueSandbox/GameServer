@@ -2,11 +2,12 @@
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUnpauseReq : PacketHandlerBase
+    public class HandleUnpauseReq : PacketHandlerBase<UnpauseRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, UnpauseRequest req)
         {
             if (!_game.IsPaused)
             {

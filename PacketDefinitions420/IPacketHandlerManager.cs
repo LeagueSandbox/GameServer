@@ -18,6 +18,7 @@ namespace PacketDefinitions420
         bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId);
         bool SendPacket(int userId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable);
         bool SendPacket(int userId, Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable);
+        // TODO: is this really should be in PacketHandler?
         void UnpauseGame();
         bool HandleDisconnect(Peer peer);
     }

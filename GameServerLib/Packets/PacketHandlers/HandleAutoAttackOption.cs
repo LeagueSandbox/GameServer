@@ -1,10 +1,11 @@
 ﻿using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Chatbox;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleAutoAttackOption : PacketHandlerBase
+    public class HandleAutoAttackOption : PacketHandlerBase<AutoAttackOptionRequest>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -18,12 +19,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _chatCommandManager = game.ChatCommandManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, AutoAttackOptionRequest req)
         {
-            //TODO: implement this
-            var autoAttackOption = _game.PacketReader.ReadAutoAttackOptionRequest(data);
             var state = "Deactivated";
-            if (autoAttackOption.Activated)
+            if (req.Activated)
             {
                 state = "Activated";
             }

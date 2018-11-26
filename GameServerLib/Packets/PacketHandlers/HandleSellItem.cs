@@ -3,10 +3,11 @@ using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Items;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSellItem : PacketHandlerBase
+    public class HandleSellItem : PacketHandlerBase<SellItemRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -20,11 +21,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, SellItemRequest req)
         {
-            var request = _game.PacketReader.ReadSellItemRequest(data);
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            return champion.Shop.HandleItemSellRequest(request.SlotId);
+            return champion.Shop.HandleItemSellRequest(req.SlotId);
         }
     }
 }

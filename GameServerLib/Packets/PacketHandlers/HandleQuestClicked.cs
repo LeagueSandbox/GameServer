@@ -1,10 +1,11 @@
 ﻿using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Chatbox;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleQuestClicked : PacketHandlerBase
+    public class HandleQuestClicked : PacketHandlerBase<QuestClickedRequest>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -18,10 +19,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _chatCommandManager = game.ChatCommandManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, QuestClickedRequest req)
         {
-            var request = _game.PacketReader.ReadQuestClickedRequest(data);
-            var msg = $"Clicked quest with netid: {request.QuestNetId}";
+            var msg = $"Clicked quest with netid: {req.QuestNetId}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

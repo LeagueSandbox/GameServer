@@ -4,11 +4,12 @@ using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Attributes;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     [DisabledHandler]
-    public class HandleClick : PacketHandlerBase
+    public class HandleClick : PacketHandlerBase<ClickRequest>
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -24,10 +25,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, ClickRequest req)
         {
-            var request = _game.PacketReader.ReadClickRequest(data);
-            var msg = $"Object {_playerManager.GetPeerInfo(userId).Champion.NetId} clicked on {request.TargetNetId}";
+            var msg = $"Object {_playerManager.GetPeerInfo(userId).Champion.NetId} clicked on {req.TargetNetId}";
             _logger.Debug(msg);
 
             return true;

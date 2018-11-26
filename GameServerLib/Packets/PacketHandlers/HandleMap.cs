@@ -1,10 +1,11 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleMap : PacketHandlerBase
+    public class HandleMap : PacketHandlerBase<MapRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, MapRequest req)
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player

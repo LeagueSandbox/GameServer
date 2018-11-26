@@ -7,7 +7,7 @@ using GameServerCore.Packets.Enums;
 
 namespace GameServerCore.Packets.PacketDefinitions
 {
-    public class Packet
+    public class Packet : IPacket
     {
         protected List<byte> _bytes = new List<byte>();
 

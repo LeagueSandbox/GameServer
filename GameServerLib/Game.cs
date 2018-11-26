@@ -118,17 +118,50 @@ namespace LeagueSandbox.GameServer
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             _packetServer = new PacketServer();
-            _packetServer.InitServer(port, blowfishKey, this);
+            _packetServer.InitServer(port, blowfishKey, this, RequestHandler, ResponseHandler);
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
-            // TODO: make lib to only get API types and not byte[], start from removing this line
-            PacketReader = new PacketReader();
             InitializePacketHandlers();
 
             _logger.Info("Game is ready.");
         }
         public void InitializePacketHandlers()
         {
+            // maybe use reflection, the problem is that Register is generic and so it needs to know its type at 
+            // compile time, maybe just use interface and in runetime figure out the type - and again there is
+            // a problem with passing generic delegate to non-generic function, if we try to only constraint the
+            // argument to interface ICoreRequest we will get error cause our generic handlers use generic type
+            // even with where statement that doesn't work
             RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
+            RequestHandler.Register<AutoAttackOptionRequest>(new HandleAutoAttackOption(this).HandlePacket);
+            RequestHandler.Register<BlueTipClickedRequest>(new HandleBlueTipClicked(this).HandlePacket);
+            RequestHandler.Register<BuyItemRequest>(new HandleBuyItem(this).HandlePacket);
+            RequestHandler.Register<CastSpellRequest>(new HandleCastSpell(this).HandlePacket);
+            RequestHandler.Register<ChatMessageRequest>(new HandleChatBoxMessage(this).HandlePacket);
+            RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
+            RequestHandler.Register<CursorPositionOnWorldRequest>(new HandleCursorPositionOnWorld(this).HandlePacket);
+            RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
+            RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
+            RequestHandler.Register<HeartbeatRequest>(new HandleHeartBeat(this).HandlePacket);
+            RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
+            RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
+            RequestHandler.Register<MapRequest>(new HandleMap(this).HandlePacket);
+            RequestHandler.Register<MovementRequest>(new HandleMove(this).HandlePacket);
+            RequestHandler.Register<MoveConfirmRequest>(new HandleMoveConfirm(this).HandlePacket);
+            RequestHandler.Register<PauseRequest>(new HandlePauseReq(this).HandlePacket);
+            RequestHandler.Register<QueryStatusRequest>(new HandleQueryStatus(this).HandlePacket);
+            RequestHandler.Register<QuestClickedRequest>(new HandleQuestClicked(this).HandlePacket);
+            RequestHandler.Register<ScoreboardRequest>(new HandleScoreboard(this).HandlePacket);
+            RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
+            RequestHandler.Register<SkillUpRequest>(new HandleSkillUp(this).HandlePacket);
+            RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
+            RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
+            RequestHandler.Register<StatsConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
+            RequestHandler.Register<SurrenderRequest>(new HandleSurrender(this).HandlePacket);
+            RequestHandler.Register<SwapItemsRequest>(new HandleSwapItems(this).HandlePacket);
+            RequestHandler.Register<SynchVersionRequest>(new HandleSync(this).HandlePacket);
+            RequestHandler.Register<UnpauseRequest>(new HandleUnpauseReq(this).HandlePacket);
+            RequestHandler.Register<UseObjectRequest>(new HandleUseObject(this).HandlePacket);
+            RequestHandler.Register<ViewRequest>(new HandleView(this).HandlePacket);
         }
 
         public bool LoadScripts()

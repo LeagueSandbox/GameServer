@@ -4,11 +4,12 @@ using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleChatBoxMessage : PacketHandlerBase
+    public class HandleChatBoxMessage : PacketHandlerBase<ChatMessageRequest>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -26,10 +27,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, ChatMessageRequest req)
         {
-            var request = _game.PacketReader.ReadChatMessageRequest(data);
-            var split = request.Message.Split(' ');
+            var split = req.Message.Split(' ');
             if (split.Length > 1)
             {
                 if (int.TryParse(split[0], out var x))
@@ -44,9 +44,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             // Execute commands
             var commandStarterCharacter = _chatCommandManager.CommandStarterCharacter;
-            if (request.Message.StartsWith(commandStarterCharacter))
+            if (req.Message.StartsWith(commandStarterCharacter))
             {
-                var msg = request.Message.Remove(0, 1);
+                var msg = req.Message.Remove(0, 1);
                 split = msg.ToLower().Split(' ');
 
                 var command = _chatCommandManager.GetCommand(split[0]);
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var debugMessage =
-                $"{_playerManager.GetPeerInfo(userId).Name} ({_playerManager.GetPeerInfo(userId).Champion.Model}): </font><font color=\"#FFFFFF\">{request.Message}";
+                $"{_playerManager.GetPeerInfo(userId).Name} ({_playerManager.GetPeerInfo(userId).Champion.Model}): </font><font color=\"#FFFFFF\">{req.Message}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = teamChatColor + "[All] " + debugMessage;
@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return true;
             }
 
-            switch (request.Type)
+            switch (req.Type)
             {
                 case ChatType.CHAT_ALL:
                      _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
                     return true;
                 default:
-                    _logger.Error("Unknown ChatMessageType:" +request.Type.ToString());
+                    _logger.Error("Unknown ChatMessageType:" + req.Type.ToString());
                     return false;
             }
         }

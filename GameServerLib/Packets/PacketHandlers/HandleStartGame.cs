@@ -3,10 +3,11 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.GameObjects;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleStartGame : PacketHandlerBase
+    public class HandleStartGame : PacketHandlerBase<StartGameRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, StartGameRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
 

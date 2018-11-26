@@ -2,6 +2,7 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.GameObjects;
@@ -15,7 +16,7 @@ using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSpawn : PacketHandlerBase
+    public class HandleSpawn : PacketHandlerBase<SpawnRequest>
     {
         private readonly ILog _logger;
         private readonly Game _game;
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _networkIdManager = game.NetworkIdManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, SpawnRequest req)
         {
              _game.PacketNotifier.NotifySpawnStart(userId);
             _logger.Debug("Spawning map");

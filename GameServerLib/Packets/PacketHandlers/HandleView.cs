@@ -1,9 +1,10 @@
 ﻿using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleView : PacketHandlerBase
+    public class HandleView : PacketHandlerBase<ViewRequest>
     {
         private readonly Game _game;
 
@@ -15,10 +16,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, ViewRequest req)
         {
-            var request = _game.PacketReader.ReadViewRequest(data);
-             _game.PacketNotifier.NotifyViewResponse(userId, request);
+             _game.PacketNotifier.NotifyViewResponse(userId, req);
             return true;
         }
     }

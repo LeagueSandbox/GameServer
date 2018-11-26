@@ -1,18 +1,18 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Maps;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Maps;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using GameServerCore.Maps;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleMove : PacketHandlerBase
+    public class HandleMove : PacketHandlerBase<MovementRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, MovementRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
@@ -34,11 +34,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 return true;
             }
+            var vMoves = ReadWaypoints(req.MoveData, req.CoordCount, _game.Map);
 
-            var request = _game.PacketReader.ReadMovementRequest(data);
-            var vMoves = ReadWaypoints(request.MoveData, request.CoordCount, _game.Map);
-
-            switch (request.Type)
+            switch (req.Type)
             {
                 case MoveType.STOP:
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
@@ -59,7 +57,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-            var u = _game.ObjectManager.GetObjectById(request.TargetNetId) as IAttackableUnit;
+            var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
             champion.UpdateTargetUnit(u);
             return true;
         }

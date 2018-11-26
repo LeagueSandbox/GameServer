@@ -14,20 +14,17 @@ namespace GameServerCore.Packets.Handlers
         public void Register<T>(MessageHandler<T> handler) where T: MessageType
         {
             if (handler == null) return;
-            _handlers[typeof(T)].Add(handler);
+            if (!_handlers.ContainsKey(typeof(T))) _handlers.Add(typeof(T), new List<Delegate>());
+            _handlers[typeof(T)].Add(handler); 
         }
         // every message (bridge->server or server->bridge) pass should pass here
         public bool OnMessage<T>(int userId, T req) where T: MessageType
         {
-            return Handle(userId, req);
-        }
-        private bool Handle<T>(int userId, T message) where T: MessageType
-        {
-            List<MessageHandler<T>> handlerList = _handlers[typeof(T)] as List<MessageHandler<T>>;
+            var handlerList = _handlers[req.GetType()];
             bool success = true;
-            foreach(MessageHandler<T> handler in handlerList)
+            foreach (MessageHandler<T> handler in handlerList)
             {
-                success = handler(userId, message) && success;
+                success = handler(userId, req) && success;
             }
             return success;
         }
