@@ -2,8 +2,5 @@
 {
     public class UnpauseGameResponse : ICoreResponse
     {
-        public UnpauseGameResponse()
-        {
-        }
     }
 }

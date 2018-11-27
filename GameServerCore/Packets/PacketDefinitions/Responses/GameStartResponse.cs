@@ -2,8 +2,5 @@
 {
     public class GameStartResponse : ICoreResponse
     {
-        public GameStartResponse()
-        {
-        }
     }
 };

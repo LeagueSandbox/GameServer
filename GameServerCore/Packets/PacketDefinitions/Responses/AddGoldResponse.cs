@@ -11,7 +11,7 @@ namespace GameServerCore.Packets.PacketDefinitions.Responses
         {
             Champ = c;
             Died = died;
-            Gold = Gold;
+            Gold = gold;
         }
     }
 }

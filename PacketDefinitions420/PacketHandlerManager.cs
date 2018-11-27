@@ -29,8 +29,8 @@ namespace PacketDefinitions420
         private readonly Host _server;
         private readonly IGame _game;
 
-        private NetworkHandler<ICoreRequest> _netReq;
-        private NetworkHandler<ICoreResponse> _netResp;
+        private readonly NetworkHandler<ICoreRequest> _netReq;
+        private readonly NetworkHandler<ICoreResponse> _netResp;
 
         private int _curPlayerNum = 0;
 
@@ -92,9 +92,9 @@ namespace PacketDefinitions420
             return null;
         }
 
-        public bool SendPacket(int userId, Packet packet, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool SendPacket(int userId, Packet packet, Channel channelNo)
         {
-            return SendPacket(userId, packet.GetBytes(), channelNo, flag);
+            return SendPacket(userId, packet.GetBytes(), channelNo, PacketFlags.Reliable);
         }
 
         public void UnpauseGame()

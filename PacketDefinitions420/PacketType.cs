@@ -9,10 +9,11 @@ namespace PacketDefinitions420
         public PacketCmd PacketId { get; }
         public Channel ChannelId { get; }
 
-        public PacketType(PacketCmd packetId, Channel channel = Channel.CHL_C2S)
+        public PacketType(PacketCmd packetId, Channel channel)
         {
             PacketId = packetId;
             ChannelId = channel;
         }
+        public PacketType(PacketCmd packetId) : this(packetId, Channel.CHL_C2S) { }
     }
 }
