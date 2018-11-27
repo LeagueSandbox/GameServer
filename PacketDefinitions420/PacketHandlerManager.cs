@@ -56,7 +56,7 @@ namespace PacketDefinitions420
                 {
                     if (attr is PacketType)
                     {
-                        var key = new Tuple<PacketCmd, Channel>(((PacketType)attr).PacketId, Channel.CHL_C2S);
+                        var key = new Tuple<PacketCmd, Channel>(((PacketType)attr).PacketId, ((PacketType)attr).ChannelId);
                         var method = (RequestConvertor) Delegate.CreateDelegate(typeof(RequestConvertor), m);
                         _convertorTable.Add(key, method);
                     }

@@ -117,8 +117,10 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
+            // TODO: GameApp should send the Response/Request handlers
             _packetServer = new PacketServer();
             _packetServer.InitServer(port, blowfishKey, this, RequestHandler, ResponseHandler);
+            // TODO: switch the notifier with ResponseHandler
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
             InitializePacketHandlers();
 
@@ -129,7 +131,7 @@ namespace LeagueSandbox.GameServer
             // maybe use reflection, the problem is that Register is generic and so it needs to know its type at 
             // compile time, maybe just use interface and in runetime figure out the type - and again there is
             // a problem with passing generic delegate to non-generic function, if we try to only constraint the
-            // argument to interface ICoreRequest we will get error cause our generic handlers use generic type
+            // argument to interface ICoreRequest we will get an error cause our generic handlers use generic type
             // even with where statement that doesn't work
             RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
             RequestHandler.Register<AutoAttackOptionRequest>(new HandleAutoAttackOption(this).HandlePacket);
@@ -275,23 +277,6 @@ namespace LeagueSandbox.GameServer
             }
             return true;
         }
-
-        // for reflection to work we need it to be called from lib
-        /*public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers()
-        {
-            var inst = GetInstances<PacketHandlerBase>(this);
-            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
-            foreach (var pktCmd in inst)
-            {
-                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
-                {
-                    {
-                        pktCmd.PacketChannel, pktCmd
-                    }
-                });
-            }
-            return dict;
-        }*/
         private static List<T> GetInstances<T>(IGame g)
         {
             return Assembly.GetCallingAssembly()

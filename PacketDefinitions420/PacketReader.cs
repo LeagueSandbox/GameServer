@@ -30,7 +30,7 @@ namespace PacketDefinitions420
         {
             return new LockCameraRequest();
         }
-        [PacketType(PacketCmd.PKT_C2S_CLIENT_READY)]
+        [PacketType(PacketCmd.PKT_C2S_CLIENT_READY, Channel.CHL_LOADING_SCREEN)]
         public static MapRequest ReadClientReadyRequest(byte[] data)
         {
             return new MapRequest();
@@ -123,7 +123,7 @@ namespace PacketDefinitions420
             return new CastSpellRequest(rq.NetId, rq.SpellSlot, rq.X, rq.Y, rq.X2, rq.Y2, rq.TargetNetId);
         }
 
-        [PacketType(PacketCmd.PKT_CHAT_BOX_MESSAGE)]
+        [PacketType(PacketCmd.PKT_CHAT_BOX_MESSAGE, Channel.CHL_COMMUNICATION)]
         public static ChatMessageRequest ReadChatMessageRequest(byte[] data)
         {
             var rq = new ChatMessage(data);
