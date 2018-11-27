@@ -94,7 +94,12 @@ namespace PacketDefinitions420
 
         public bool SendPacket(int userId, Packet packet, Channel channelNo)
         {
-            return SendPacket(userId, packet.GetBytes(), channelNo, PacketFlags.Reliable);
+            return SendPacket(userId, packet, channelNo, PacketFlags.Reliable);
+        }
+
+        public bool SendPacket(int userId, Packet packet, Channel channelNo, PacketFlags flags)
+        {
+            return SendPacket(userId, packet.GetBytes(), channelNo, flags);
         }
 
         public void UnpauseGame()
