@@ -448,7 +448,74 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)
         {
-            return CastRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            var MidOrderInhibitorCorner1 = new Vector2(2770f, 2400f);
+            var MidOrderInhibitorCorner2 = new Vector2(2140f, 2930f);
+            var MidOrderInhibitorCorner3 = new Vector2(2800f, 3550f);
+            var MidOrderInhibitorCorner4 = new Vector2(3430f, 2910f);
+            var TopOrderInhibitorCorner1 = new Vector2(1315f, 2910f);
+            var TopOrderInhibitorCorner2 = new Vector2(450f, 2850f);
+            var TopOrderInhibitorCorner3 = new Vector2(440f, 3800f);
+            var TopOrderInhibitorCorner4 = new Vector2(1270f, 3800f);
+            var BotOrderInhibitorCorner1 = new Vector2(2680f, 1470f);
+            var BotOrderInhibitorCorner2 = new Vector2(3450f, 1430f);
+            var BotOrderInhibitorCorner3 = new Vector2(3450f, 610f);
+            var BotOrderInhibitorCorner4 = new Vector2(2610f, 600f);
+            var MidChaosInhibitorCorner1 = new Vector2(10640f, 11500f);
+            var MidChaosInhibitorCorner2 = new Vector2(11180f, 10950f);
+            var MidChaosInhibitorCorner3 = new Vector2(11830f, 11430f);
+            var MidChaosInhibitorCorner4 = new Vector2(11270f, 12040f);
+            var TopChaosInhibitorCorner1 = new Vector2(11390f, 13100f);
+            var TopChaosInhibitorCorner2 = new Vector2(11390f, 13820f);
+            var TopChaosInhibitorCorner3 = new Vector2(10590f, 13880f);
+            var TopChaosInhibitorCorner4 = new Vector2(10550f, 13080f);
+            var BotChaosInhibitorCorner1 = new Vector2(13610f, 10720f);
+            var BotChaosInhibitorCorner2 = new Vector2(13640f, 11600f);
+            var BotChaosInhibitorCorner3 = new Vector2(12850f, 11650f);
+            var BotChaosInhibitorCorner4 = new Vector2(12800f, 10870f);
+            var OrderNexusCorner1 = new Vector2(105f, 1970f);
+            var OrderNexusCorner2 = new Vector2(930f, 3110f);
+            var OrderNexusCorner3 = new Vector2(2870f, 1380f);
+            var OrderNexusCorner4 = new Vector2(1640f, 440f);
+            var ChaosNexusCorner1 = new Vector2(13370f, 11350f);
+            var ChaosNexusCorner2 = new Vector2(13800f, 12900f);
+            var ChaosNexusCorner3 = new Vector2(12330f, 14070f);
+            var ChaosNexusCorner4 = new Vector2(11050f, 13170f);
+            if ((((a.GetPosition().X >= MidOrderInhibitorCorner2.X) && (a.GetPosition().X <= MidOrderInhibitorCorner4.X)) && ((a.GetPosition().Y >= MidOrderInhibitorCorner1.Y) && (a.GetPosition().Y <= MidOrderInhibitorCorner3.Y))) && (((b.GetPosition().X >= MidOrderInhibitorCorner2.X) && (b.GetPosition().X <= MidOrderInhibitorCorner4.X)) && ((b.GetPosition().Y >= MidOrderInhibitorCorner1.Y) && (b.GetPosition().Y <= MidOrderInhibitorCorner3.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= TopOrderInhibitorCorner3.X) && (a.GetPosition().X <= TopOrderInhibitorCorner1.X)) && ((a.GetPosition().Y >= TopOrderInhibitorCorner1.Y) && (a.GetPosition().Y <= TopOrderInhibitorCorner3.Y))) && (((b.GetPosition().X >= TopOrderInhibitorCorner3.X) && (b.GetPosition().X <= TopOrderInhibitorCorner1.X)) && ((b.GetPosition().Y >= TopOrderInhibitorCorner1.Y) && (b.GetPosition().Y <= TopOrderInhibitorCorner3.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= BotOrderInhibitorCorner4.X) && (a.GetPosition().X <= BotOrderInhibitorCorner2.X)) && ((a.GetPosition().Y >= BotOrderInhibitorCorner4.Y) && (a.GetPosition().Y <= BotOrderInhibitorCorner1.Y))) && (((b.GetPosition().X >= BotOrderInhibitorCorner4.X) && (b.GetPosition().X <= BotOrderInhibitorCorner2.X)) && ((b.GetPosition().Y >= BotOrderInhibitorCorner4.Y) && (b.GetPosition().Y <= BotOrderInhibitorCorner1.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= MidChaosInhibitorCorner1.X) && (a.GetPosition().X <= MidChaosInhibitorCorner3.X)) && ((a.GetPosition().Y >= MidChaosInhibitorCorner2.Y) && (a.GetPosition().Y <= MidChaosInhibitorCorner4.Y))) && (((b.GetPosition().X >= MidChaosInhibitorCorner1.X) && (b.GetPosition().X <= MidChaosInhibitorCorner3.X)) && ((b.GetPosition().Y >= MidChaosInhibitorCorner2.Y) && (b.GetPosition().Y <= MidChaosInhibitorCorner4.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= TopChaosInhibitorCorner4.X) && (a.GetPosition().X <= TopChaosInhibitorCorner1.X)) && ((a.GetPosition().Y >= TopChaosInhibitorCorner4.Y) && (a.GetPosition().Y <= TopChaosInhibitorCorner3.Y))) && (((b.GetPosition().X >= TopChaosInhibitorCorner4.X) && (b.GetPosition().X <= TopChaosInhibitorCorner1.X)) && ((b.GetPosition().Y >= TopChaosInhibitorCorner4.Y) && (b.GetPosition().Y <= TopChaosInhibitorCorner3.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= BotChaosInhibitorCorner4.X) && (a.GetPosition().X <= BotChaosInhibitorCorner2.X)) && ((a.GetPosition().Y >= BotChaosInhibitorCorner1.Y) && (a.GetPosition().Y <= BotChaosInhibitorCorner3.Y))) && (((b.GetPosition().X >= BotChaosInhibitorCorner4.X) && (b.GetPosition().X <= BotChaosInhibitorCorner2.X)) && ((b.GetPosition().Y >= BotChaosInhibitorCorner1.Y) && (b.GetPosition().Y <= BotChaosInhibitorCorner3.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= OrderNexusCorner1.X) && (a.GetPosition().X <= OrderNexusCorner3.X)) && ((a.GetPosition().Y >= OrderNexusCorner4.Y) && (a.GetPosition().Y <= OrderNexusCorner2.Y))) && (((b.GetPosition().X >= OrderNexusCorner1.X) && (b.GetPosition().X <= OrderNexusCorner3.X)) && ((b.GetPosition().Y >= OrderNexusCorner4.Y) && (b.GetPosition().Y <= OrderNexusCorner2.Y))))
+            {
+                return false;
+            }
+            if ((((a.GetPosition().X >= ChaosNexusCorner4.X) && (a.GetPosition().X <= ChaosNexusCorner2.X)) && ((a.GetPosition().Y >= ChaosNexusCorner1.Y) && (a.GetPosition().Y <= ChaosNexusCorner3.Y))) && (((b.GetPosition().X >= ChaosNexusCorner4.X) && (b.GetPosition().X <= ChaosNexusCorner2.X)) && ((b.GetPosition().Y >= ChaosNexusCorner1.Y) && (b.GetPosition().Y <= ChaosNexusCorner3.Y))))
+            {
+                return false;
+            }
+            else
+            {
+                return CastRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            }
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)
