@@ -1,6 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;

@@ -2,9 +2,9 @@
 {
     public class Color
     {
-        public byte R { get; }
-        public byte G { get; }
-        public byte B { get; }
-        public float A { get; }
+        public byte R { get; set; }
+        public byte G { get; set; }
+        public byte B { get; set; }
+        public byte A { get; set; }
     }
 }

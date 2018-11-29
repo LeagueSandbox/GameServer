@@ -1,5 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using System.Numerics;
 

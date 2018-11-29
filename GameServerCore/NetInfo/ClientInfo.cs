@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
-namespace GameServerCore.Enet
+namespace GameServerCore.NetInfo
 {
     public class ClientInfo
     {

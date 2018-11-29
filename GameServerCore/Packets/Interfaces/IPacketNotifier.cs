@@ -3,7 +3,7 @@ using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
@@ -21,7 +21,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary> TODO: tipCommand should be an lib/core enum that gets translated into league version specific packet enum as it may change over time </summary>
         void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
         void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance);
-        void NotifyCastSpell(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId);
+        void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId, uint spellNetId);
         void NotifyChampionDeathTimer(IChampion die);
         void NotifyChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill);
         void NotifyChampionRespawn(IChampion c);
@@ -68,7 +68,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyParticleDestroy(IParticle particle);
         void NotifyParticleSpawn(IParticle particle);
         void NotifyPauseGame(int seconds, bool showWindow);
-        void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type);
+        void NotifyPing(ClientInfo client, Vector2 position, int targetNetId, Pings type);
         void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId);
         void NotifyPlayerStats(IChampion champion);
         void NotifyProjectileDestroy(IProjectile p);
@@ -95,8 +95,8 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyStopAutoAttack(IAttackableUnit attacker);
         void NotifySurrender(IChampion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut);
         void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
-        void NotifyTeleport(IAttackableUnit u, float x, float y);
-        void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a);
+        void NotifyTeleport(IAttackableUnit u, Vector2 pos);
+        void NotifyTint(TeamId team, bool enable, float speed, Color color);
         void NotifyTurretSpawn(int userId, ILaneTurret turret);
         void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null);
         void NotifyUnpauseGame();

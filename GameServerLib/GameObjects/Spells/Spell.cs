@@ -10,6 +10,7 @@ using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
@@ -114,7 +115,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 FinishCasting();
             }
 
-            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, x, y, x2, y2, FutureProjNetId, SpellNetId);
+            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, new Vector2(x, y) , new Vector2(x2, y2), FutureProjNetId, SpellNetId);
             return true;
         }
 

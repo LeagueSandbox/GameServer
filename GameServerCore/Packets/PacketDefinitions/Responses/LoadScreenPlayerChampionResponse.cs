@@ -1,4 +1,4 @@
-﻿using GameServerCore.Enet;
+﻿using GameServerCore.NetInfo;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
