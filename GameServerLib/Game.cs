@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer
             ResponseHandler = new NetworkHandler<ICoreResponse>();
         }
 
-        public void Initialize(ushort port, string blowfishKey, Config config)
+        public void Initialize(Config config, PacketServer server)
         {
             _logger.Info("Loading Config.");
             Config = config;
@@ -118,8 +118,7 @@ namespace LeagueSandbox.GameServer
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             // TODO: GameApp should send the Response/Request handlers
-            _packetServer = new PacketServer();
-            _packetServer.InitServer(port, blowfishKey, this, RequestHandler, ResponseHandler);
+            _packetServer = server;
             // TODO: switch the notifier with ResponseHandler
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
             InitializePacketHandlers();

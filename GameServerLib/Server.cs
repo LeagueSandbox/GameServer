@@ -1,5 +1,8 @@
-﻿using LeagueSandbox.GameServer.Logging;
+﻿using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions;
+using LeagueSandbox.GameServer.Logging;
 using log4net;
+using PacketDefinitions420;
 using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
@@ -34,7 +37,9 @@ namespace LeagueSandbox.GameServer
             _logger.Debug(build);
             _logger.Debug($"Yorick {_serverVersion}");
             _logger.Info($"Game started on port: {_serverPort}");
-            _game.Initialize(_serverPort, _blowfishKey, _config);
+            var _packetServer = new PacketServer();
+            _packetServer.InitServer(_serverPort, _blowfishKey, _game, _game.RequestHandler, _game.ResponseHandler);
+            _game.Initialize(_config, _packetServer);
         }
 
         public void StartNetworkLoop()
