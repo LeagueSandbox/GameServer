@@ -1,5 +1,4 @@
-﻿using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions;
+﻿using GameServerCore.Packets.PacketDefinitions;
 
 namespace GameServerCore.Packets.Handlers
 {
