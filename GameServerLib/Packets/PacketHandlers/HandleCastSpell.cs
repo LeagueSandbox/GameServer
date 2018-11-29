@@ -1,10 +1,6 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -14,9 +10,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CAST_SPELL;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleCastSpell(Game game)
         {

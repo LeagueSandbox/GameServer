@@ -1,5 +1,4 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
@@ -9,9 +8,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLIENT_READY;
-        public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
 
         public HandleMap(Game game)
         {

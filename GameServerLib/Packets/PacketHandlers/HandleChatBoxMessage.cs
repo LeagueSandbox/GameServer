@@ -16,9 +16,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_CHAT_BOX_MESSAGE;
-        public override Channel PacketChannel => Channel.CHL_COMMUNICATION;
-
         public HandleChatBoxMessage(Game game)
         {
             _game = game;

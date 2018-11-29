@@ -1,9 +1,8 @@
-﻿using System.Timers;
-using GameServerCore.Packets.Handlers;
+﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -11,9 +10,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_UNPAUSE_GAME;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleUnpauseReq(Game game)
         {

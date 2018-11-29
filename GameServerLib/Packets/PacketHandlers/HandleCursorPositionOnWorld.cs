@@ -1,5 +1,4 @@
-﻿using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
+﻿using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -7,8 +6,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandleCursorPositionOnWorld : PacketHandlerBase<CursorPositionOnWorldRequest>
     {
         private readonly Game _game;
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleCursorPositionOnWorld(Game game)
         {

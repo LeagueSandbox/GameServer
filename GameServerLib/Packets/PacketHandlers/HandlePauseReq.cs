@@ -1,5 +1,4 @@
-﻿using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
+﻿using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -7,9 +6,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandlePauseReq : PacketHandlerBase<PauseRequest>
     {
         private readonly Game _game;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_PAUSE_GAME;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandlePauseReq(Game game)
         {

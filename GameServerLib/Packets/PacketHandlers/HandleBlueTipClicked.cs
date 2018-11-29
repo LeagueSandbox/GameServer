@@ -1,8 +1,7 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Chatbox;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -11,9 +10,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BLUE_TIP_CLICKED;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleBlueTipClicked(Game game)
         {

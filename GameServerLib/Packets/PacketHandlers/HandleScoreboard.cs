@@ -1,9 +1,8 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -12,9 +11,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
         private readonly Game _game;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleScoreboard(Game game)
         {

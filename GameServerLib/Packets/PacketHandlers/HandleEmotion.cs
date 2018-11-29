@@ -1,8 +1,8 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Logging;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -12,9 +12,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleEmotion(Game game)
         {

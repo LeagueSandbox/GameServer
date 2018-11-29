@@ -17,9 +17,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
 
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_MOVE_REQ;
-        public override Channel PacketChannel => Channel.CHL_C2S;
-
         public HandleMove(Game game)
         {
             _game = game;

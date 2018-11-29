@@ -1,6 +1,5 @@
-﻿using GameServerCore.Packets.Enums;
+﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -9,9 +8,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly IPlayerManager _pm;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SURRENDER;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSurrender(Game game)
         {

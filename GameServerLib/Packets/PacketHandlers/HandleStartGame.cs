@@ -1,8 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.GameObjects;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -11,9 +9,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_START_GAME;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleStartGame(Game game)
         {

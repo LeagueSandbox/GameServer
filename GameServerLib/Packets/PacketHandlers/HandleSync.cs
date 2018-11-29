@@ -1,8 +1,7 @@
-﻿using GameServerCore.Packets.Enums;
+﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Logging;
-using GameServerCore;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -12,9 +11,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly ILog _logger;
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SYNCH_VERSION;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSync(Game game)
         {

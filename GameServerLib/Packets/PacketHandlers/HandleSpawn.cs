@@ -2,17 +2,11 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
+using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -23,9 +17,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly ItemManager _itemManager;
         private readonly IPlayerManager _playerManager;
         private readonly NetworkIdManager _networkIdManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CHAR_LOADED;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSpawn(Game game)
         {
