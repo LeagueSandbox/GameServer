@@ -1,11 +1,11 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using System;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     if (int.TryParse(split[1], out var y))
                     {
                         var client = _playerManager.GetPeerInfo(userId);
-                         _game.PacketNotifier.NotifyPing(client, x, y, 0, Pings.PING_DEFAULT);
+                         _game.PacketNotifier.NotifyPing(client, new Vector2(x, y), 0, Pings.PING_DEFAULT);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -18,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, AttentionPingRequest req)
         {
             var client = _playerManager.GetPeerInfo(userId);
-            _game.PacketNotifier.NotifyPing(client, req.X, req.Y, req.TargetNetId, req.Type);
+            _game.PacketNotifier.NotifyPing(client, new Vector2(req.X, req.Y), req.TargetNetId, req.Type);
             return true;
         }
     }
