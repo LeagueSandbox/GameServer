@@ -89,7 +89,7 @@
     <Compile Include="Domain\IRuneCollection.cs" />
     <Compile Include="Domain\ISpell.cs" />
     <Compile Include="Domain\ISpellData.cs" />
-    <Compile Include="Enet\ClientInfo.cs" />
+    <Compile Include="NetInfo\ClientInfo.cs" />
     <Compile Include="Enums\ActionState.cs" />
     <Compile Include="Enums\Announces.cs" />
     <Compile Include="Enums\AttackType.cs" />
