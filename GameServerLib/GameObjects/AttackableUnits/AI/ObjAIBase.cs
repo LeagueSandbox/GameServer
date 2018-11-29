@@ -227,13 +227,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var slot = GetBuffSlot(b);
             AppliedBuffs[slot] = null;
         }
+        
+        public void ChangeMovementState(bool state)
+        {
+        Stats.SetActionState(ActionState.CAN_MOVE, state);
+        Stats.SetActionState(ActionState.CAN_NOT_MOVE, !state);
+        }
 
         public void ApplyCrowdControl(UnitCrowdControl cc)
         {
             if (cc.IsTypeOf(CrowdControlType.ROOT))
             {
-                Stats.SetActionState(ActionState.CAN_MOVE,false);
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+                ChangeMovementState(false);
                 StopMovement(); // doesn't work
             }
 
@@ -244,8 +249,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             if (cc.IsTypeOf(CrowdControlType.ROOT))
             {
-                Stats.SetActionState(ActionState.CAN_MOVE, true);
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+                ChangeMovementState(true);
             }
                 _crowdControlList.Remove(cc);
         }
