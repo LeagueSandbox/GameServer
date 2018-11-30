@@ -34,9 +34,6 @@
     <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
     </Reference>
-    <Reference Include="LeaguePackets">
-      <HintPath>..\..\LeaguePackets\LeaguePackets\bin\Debug\LeaguePackets.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -52,7 +49,6 @@
     <Compile Include="Packet.cs" />
     <Compile Include="PacketDefinitions\PacketCmd.cs" />
     <Compile Include="PacketHeader.cs" />
-    <Compile Include="PacketNotifier417.cs" />
     <Compile Include="PacketType.cs" />
     <Compile Include="Enums\Emotions.cs" />
     <Compile Include="Enums\MovementType.cs" />
