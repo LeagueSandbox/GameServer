@@ -1,7 +1,7 @@
+using PacketDefinitions420.PacketDefinitions;
 using System.IO;
-using GameServerCore.Packets.Enums;
 
-namespace GameServerCore.Packets.PacketDefinitions
+namespace PacketDefinitions420
 {
     public class PacketHeader
     {

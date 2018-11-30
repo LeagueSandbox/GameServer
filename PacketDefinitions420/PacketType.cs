@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Packets.Enums;
+using PacketDefinitions420.PacketDefinitions;
 using System;
 
 namespace PacketDefinitions420

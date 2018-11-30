@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Interfaces;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using PacketDefinitions420.Enums;
+using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using System;
 using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;

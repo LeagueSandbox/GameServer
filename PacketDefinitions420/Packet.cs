@@ -1,11 +1,12 @@
-﻿using System;
+﻿using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Packets.PacketDefinitions;
+using PacketDefinitions420.PacketDefinitions;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using GameServerCore.Content;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Packets.Enums;
 
-namespace GameServerCore.Packets.PacketDefinitions
+namespace PacketDefinitions420
 {
     public class Packet : IPacket
     {

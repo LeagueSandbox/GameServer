@@ -5,13 +5,13 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
+using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace PacketDefinitions420
 {

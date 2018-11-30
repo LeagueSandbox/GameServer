@@ -225,13 +225,10 @@
     <Compile Include="Packets\Enums\Emotions.cs" />
     <Compile Include="Packets\Enums\MasterMask.cs" />
     <Compile Include="Packets\Enums\MoveType.cs" />
-    <Compile Include="Packets\Enums\PacketCmd.cs" />
     <Compile Include="Packets\Enums\Pings.cs" />
     <Compile Include="Packets\Enums\SummonerSpellIds.cs" />
     <Compile Include="Packets\Interfaces\IPacketNotifier.cs" />
     <Compile Include="Packets\Interfaces\IPacketReader.cs" />
-    <Compile Include="Packets\PacketDefinitions\Packet.cs" />
-    <Compile Include="Packets\PacketDefinitions\PacketHeader.cs" />
     <Compile Include="Packets\PacketDefinitions\PacketHelper.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\AttentionPingRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\Requests\AutoAttackOptionRequest.cs" />
