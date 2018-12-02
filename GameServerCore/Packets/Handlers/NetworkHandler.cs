@@ -23,7 +23,7 @@ namespace GameServerCore.Packets.Handlers
         // every message (bridge->server or server->bridge) pass should pass here
         public bool OnMessage<T>(int userId, T req) where T: MessageType
         {
-            List<MessageHandler<T>> handlerList = _handlers[req.GetType()] as List<MessageHandler<T>>;
+            var handlerList = _handlers[req.GetType()];
             bool success = true;
             foreach (MessageHandler<T> handler in handlerList)
             {
