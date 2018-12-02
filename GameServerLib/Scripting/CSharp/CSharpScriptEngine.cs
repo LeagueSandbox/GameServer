@@ -84,37 +84,34 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 {
                     var result = compilation.Emit(ms);
     
-                    if (!result.Success)
-                    {
-                        errored |= true;
-                        var failures = result.Diagnostics.Where(diagnostic =>
-                            diagnostic.IsWarningAsError ||
-                            diagnostic.Severity == DiagnosticSeverity.Error);
-    
-                        var invalidSourceTrees = new List<SyntaxTree>();
-                        foreach (var diagnostic in failures)
-                        {
-                            var loc = diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).Span;
-                            _logger.Error(
-                                $"Script compilation error for {diagnostic.Location.SourceTree.FilePath}: {diagnostic.Id}\n{diagnostic.GetMessage()} on " +
-                                $"Line {loc.Start.Line} pos {loc.Start.Character} to Line {loc.End.Line} pos {loc.End.Character}");
-                            invalidSourceTrees.Add(diagnostic.Location.SourceTree);
-                        }
-
-                        if (invalidSourceTrees.Count == 0)
-                        {
-                            // Shouldnt happen
-                            _logger.Error("Script compilation failed");
-                            return true;
-                        }
-                        compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
-                    }
-                    else
+                    if (result.Success)
                     {
                         ms.Seek(0, SeekOrigin.Begin);
                         _scriptAssembly = Assembly.Load(ms.ToArray());
                         return errored;
                     }
+                    errored |= true;
+                    var failures = result.Diagnostics.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
+                        diagnostic.Severity == DiagnosticSeverity.Error);
+
+                    var invalidSourceTrees = new List<SyntaxTree>();
+                    foreach (var diagnostic in failures)
+                    {
+                        var loc = diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).Span;
+                        _logger.Error(
+                            $"Script compilation error for {diagnostic.Location.SourceTree.FilePath}: {diagnostic.Id}\n{diagnostic.GetMessage()} on " +
+                            $"Line {loc.Start.Line} pos {loc.Start.Character} to Line {loc.End.Line} pos {loc.End.Character}");
+                        invalidSourceTrees.Add(diagnostic.Location.SourceTree);
+                    }
+
+                    if (invalidSourceTrees.Count == 0)
+                    {
+                        // Shouldnt happen
+                        _logger.Error("Script compilation failed");
+                        return true;
+                    }
+                    compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
                 }
             }
         }
