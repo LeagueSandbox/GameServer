@@ -8,6 +8,8 @@ using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Text;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -34,21 +36,19 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 }
                 return true;
             });
-            return Load(new List<string>(allfiles));
+            return !Load(new List<string>(allfiles));
         }
 
         //Takes about 300 milliseconds for a single script
         public bool Load(List<string> scriptLocations)
         {
-            bool compiledSuccessfully;
             var treeList = new List<SyntaxTree>();
             Parallel.For(0, scriptLocations.Count, i =>
             {
-                _logger.Debug($"Loading script: {scriptLocations[i]}");
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
                     // Read the stream to a string, and write the string to the console.
-                    var syntaxTree = CSharpSyntaxTree.ParseText(sr.ReadToEnd());
+                    var syntaxTree = CSharpSyntaxTree.ParseText(sr.ReadToEnd(), null, scriptLocations[i]);
                     lock (treeList)
                     {
                         treeList.Add(syntaxTree);
@@ -77,32 +77,46 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 op
             );
 
-            using (var ms = new MemoryStream())
+            var errored = false;
+            while (true)
             {
-                var result = compilation.Emit(ms);
-
-                if (!result.Success)
+                using (var ms = new MemoryStream())
                 {
-                    compiledSuccessfully = false;
-                    var failures = result.Diagnostics.Where(diagnostic =>
-                        diagnostic.IsWarningAsError ||
-                        diagnostic.Severity == DiagnosticSeverity.Error);
-
-                    foreach (var diagnostic in failures)
+                    var result = compilation.Emit(ms);
+    
+                    if (!result.Success)
                     {
-                        var loc = diagnostic.Location;
-                        _logger.Error($"{diagnostic.Id}: {diagnostic.GetMessage()} with location: {loc.SourceTree}");
+                        errored |= true;
+                        var failures = result.Diagnostics.Where(diagnostic =>
+                            diagnostic.IsWarningAsError ||
+                            diagnostic.Severity == DiagnosticSeverity.Error);
+    
+                        var invalidSourceTrees = new List<SyntaxTree>();
+                        foreach (var diagnostic in failures)
+                        {
+                            var loc = diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).Span;
+                            _logger.Error(
+                                $"Script compilation error for {diagnostic.Location.SourceTree.FilePath}: {diagnostic.Id}\n{diagnostic.GetMessage()} on " +
+                                $"Line {loc.Start.Line} pos {loc.Start.Character} to Line {loc.End.Line} pos {loc.End.Character}");
+                            invalidSourceTrees.Add(diagnostic.Location.SourceTree);
+                        }
+
+                        if (invalidSourceTrees.Count == 0)
+                        {
+                            // Shouldnt happen
+                            _logger.Error("Script compilation failed");
+                            return true;
+                        }
+                        compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
+                    }
+                    else
+                    {
+                        ms.Seek(0, SeekOrigin.Begin);
+                        _scriptAssembly = Assembly.Load(ms.ToArray());
+                        return errored;
                     }
                 }
-                else
-                {
-                    ms.Seek(0, SeekOrigin.Begin);
-                    _scriptAssembly = Assembly.Load(ms.ToArray());
-                    compiledSuccessfully = true;
-                }
             }
-
-            return compiledSuccessfully;
         }
 
         public T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
@@ -128,7 +142,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             scriptClass = scriptClass.Replace(" ", "_");
-            _logger.Debug("Loading game script for: " + scriptNamespace + ", " + scriptClass);
             if (_scriptAssembly == null)
             {
                 return default(T);
