@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Logging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -26,14 +25,12 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool LoadSubdirectoryScripts(string folder)
         {
             var basePath = Path.GetFullPath(folder);
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where((string pathString) => {
+            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where(pathString =>
+            {
                 var fileBasePath = Path.GetFullPath(pathString);
                 var trimmedPath = fileBasePath.Remove(0, basePath.Length);
-                string[] directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
-                if (directories.Contains("bin") || directories.Contains("obj"))
-                {
-                    return false;
-                }
+                var directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
+                if (directories.Contains("bin") || directories.Contains("obj")) return false;
                 return true;
             });
             return !Load(new List<string>(allfiles));
@@ -59,12 +56,8 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
             var references = new List<MetadataReference>();
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
-            {
                 if (!a.IsDynamic && !a.Location.Equals(""))
-                {
                     references.Add(MetadataReference.CreateFromFile(a.Location));
-                }
-            }
             //Now add game reference
             references.Add(MetadataReference.CreateFromFile(typeof(Game).Assembly.Location));
             var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -79,31 +72,19 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
             var errored = false;
             while (true)
-            {
                 using (var ms = new MemoryStream())
                 {
                     var result = compilation.Emit(ms);
-    
+
                     if (result.Success)
                     {
                         ms.Seek(0, SeekOrigin.Begin);
                         _scriptAssembly = Assembly.Load(ms.ToArray());
                         return errored;
                     }
-                    errored |= true;
-                    var failures = result.Diagnostics.Where(diagnostic =>
-                        diagnostic.IsWarningAsError ||
-                        diagnostic.Severity == DiagnosticSeverity.Error);
 
-                    var invalidSourceTrees = new List<SyntaxTree>();
-                    foreach (var diagnostic in failures)
-                    {
-                        var loc = diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).Span;
-                        _logger.Error(
-                            $"Script compilation error for {diagnostic.Location.SourceTree.FilePath}: {diagnostic.Id}\n{diagnostic.GetMessage()} on " +
-                            $"Line {loc.Start.Line} pos {loc.Start.Character} to Line {loc.End.Line} pos {loc.End.Character}");
-                        invalidSourceTrees.Add(diagnostic.Location.SourceTree);
-                    }
+                    errored |= true;
+                    var invalidSourceTrees = GetInvalidSourceTrees(result);
 
                     if (invalidSourceTrees.Count == 0)
                     {
@@ -111,26 +92,37 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                         _logger.Error("Script compilation failed");
                         return true;
                     }
+
                     compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
                 }
-            }
+        }
+
+        private List<SyntaxTree> GetInvalidSourceTrees(EmitResult result)
+        {
+            var failures = result.Diagnostics.Where(diagnostic =>
+                diagnostic.IsWarningAsError ||
+                diagnostic.Severity == DiagnosticSeverity.Error);
+
+            return failures.Select(diagnostic =>
+            {
+                var loc = diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).Span;
+                _logger.Error(
+                    $"Script compilation error in script {diagnostic.Location.SourceTree.FilePath}: {diagnostic.Id}\n{diagnostic.GetMessage()} on " +
+                    $"Line {loc.Start.Line} pos {loc.Start.Character} to Line {loc.End.Line} pos {loc.End.Character}");
+                return diagnostic.Location.SourceTree;
+            }).ToList();
         }
 
         public T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
         {
-            if (_scriptAssembly == null)
-            {
-                return default(T);
-            }
+            if (_scriptAssembly == null) return default(T);
 
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
             if (classType != null)
             {
                 var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
                 if (desiredFunction != null)
-                {
-                    return (T)(object)Delegate.CreateDelegate(typeof(T), desiredFunction, false);
-                }
+                    return (T) (object) Delegate.CreateDelegate(typeof(T), desiredFunction, false);
             }
 
             return default(T);
@@ -139,10 +131,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             scriptClass = scriptClass.Replace(" ", "_");
-            if (_scriptAssembly == null)
-            {
-                return default(T);
-            }
+            if (_scriptAssembly == null) return default(T);
 
             var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
             if (classType == null)
@@ -150,7 +139,8 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
-            return (T)Activator.CreateInstance(classType);
+
+            return (T) Activator.CreateInstance(classType);
         }
 
         public static object RunFunctionOnObject(object obj, string method, params object[] args)
@@ -170,7 +160,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Instance);
 
             var typeParameterType = typeof(T);
-            return (T)(object)Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
+            return (T) (object) Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
         }
     }
 }
