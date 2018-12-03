@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer
             if (e.Exception is InvalidCastException || e.Exception is KeyNotFoundException)
                 return;
 
-            _logger.Error("A first chance exception was thrown", e.Exception);
+            _logger.Error($"A first chance exception was thrown {e.Exception}");
         }
 
         public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs x)
