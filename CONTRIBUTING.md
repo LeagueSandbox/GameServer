@@ -91,8 +91,9 @@ Issues uses tag system that make them easier to identify. Tags are grouped into 
 
 ## Area
 To-what part of the code is relevant?
+
 | Tag label | Description |
-| -------------- | ----------- |
+| -------------- | -------------- |
 | A-ai | Content releated to Artificial Intelligence |
 | A-collision | Content releated to collision |
 | A-connection | Content releated to connection |
@@ -106,6 +107,7 @@ To-what part of the code is relevant?
 
 ## Blocker
 Issue is blocking on something before it can be resolved
+
 | Tag label | Description |
 | -------------- | ----------- |
 | B-reproduce | Blocked on a need to reproduce problem locally |
@@ -113,6 +115,7 @@ Issue is blocking on something before it can be resolved
 
 ## Effort
 The expected complexity of fixing the issue.
+
 | Tag label | Description |
 | -------------- | ----------- |
 | E-easy | Can be easily resolved |
@@ -121,6 +124,7 @@ The expected complexity of fixing the issue.
 
 ## Impact
 The effect of the issue remaining unresolved.
+
 | Tag label | Description |
 | -------------- | ----------- |
 | I-cleanup | No impact; the issue is one of maintainability or tidiness. |
@@ -131,6 +135,7 @@ The effect of the issue remaining unresolved.
 
 ## Priority
 Priority of the issues.
+
 | Tag label | Description |
 | -------------- | ----------- |
 | P-high | High priority |
@@ -138,6 +143,7 @@ Priority of the issues.
 
 ## Status
 Status of the issues.
+
 | Tag label | Description |
 | -------------- | ----------- |
 | S-clarifying | This issue needs clarification |
