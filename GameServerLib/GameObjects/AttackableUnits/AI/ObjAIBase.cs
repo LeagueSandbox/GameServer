@@ -622,7 +622,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, y);
             }
 
-            _game.PacketNotifier.NotifyTeleport(this, x, y);
+            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
         }
 
         public void UpdateTargetUnit(IAttackableUnit unit)

@@ -1,8 +1,4 @@
 ﻿using GameServerCore.Maps;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
-using System.Collections.Generic;
-using System.Reflection;
 using GameServerCore.Domain;
 
 namespace GameServerCore
@@ -18,6 +14,5 @@ namespace GameServerCore
         bool SetToExit { get; set; }
 
         bool HandleDisconnect(int userId);
-        Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers();
     }
 }

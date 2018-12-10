@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Timers;
-using ENet;
+﻿using ENet;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
 using GameServerCore.Enums;
+using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.Interfaces;
 using PacketDefinitions420.Enums;
+using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Timers;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 
@@ -80,16 +80,16 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type)
+        public void NotifyPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type)
         {
-            var ping = new AttentionPingRequest(x, y, targetNetId, type);
+            var ping = new AttentionPingRequest(pos.X, pos.Y, targetNetId, type);
             var response = new AttentionPingResponse(client, ping);
             _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
         }
 
-        public void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
+        public void NotifyTint(TeamId team, bool enable, float speed, Color color)
         {
-            var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
+            var tint = new SetScreenTint(team, enable, speed, color.R, color.G, color.B, color.A);
             _packetHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
         }
 
@@ -105,10 +105,10 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
         }
 
-        public void NotifyCastSpell(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId,
+        public void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId,
             uint spellNetId)
         {
-            var response = new CastSpellResponse(navGrid, s, x, y, xDragEnd, yDragEnd, futureProjNetId, spellNetId);
+            var response = new CastSpellResponse(navGrid, s, start.X, start.Y, end.X, end.Y, futureProjNetId, spellNetId);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
 
@@ -185,19 +185,19 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
-        public void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<Pair<uint,ClientInfo>> players)
         {
             var screenInfo = new LoadScreenInfo(players);
             _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerName(int userId, Pair<uint,ClientInfo> player)
         {
             var loadName = new LoadScreenPlayerName(player);
             _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint,ClientInfo> player)
         {
             var loadChampion = new LoadScreenPlayerChampion(player);
             _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
@@ -218,6 +218,7 @@ namespace PacketDefinitions420
 
         public void NotifyUnpauseGame()
         {
+            // TODO: currently unpause disabled cause it shouldn't handled like this
             _packetHandlerManager.UnpauseGame();
         }
 
@@ -388,9 +389,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(remove, Channel.CHL_S2C);
         }
 
-        public void NotifyTeleport(IAttackableUnit u, float x, float y)
+        public void NotifyTeleport(IAttackableUnit u, Vector2 pos)
         {
-            var packet = new TeleportRequest(u.NetId, x, y, false);
+            var packet = new TeleportRequest(u.NetId, pos.X, pos.Y, false);
             _packetHandlerManager.BroadcastPacketVision(u, packet, Channel.CHL_S2C);
         }
 

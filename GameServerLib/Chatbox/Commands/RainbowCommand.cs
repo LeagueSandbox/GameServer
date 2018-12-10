@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GameServerCore;
+using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
@@ -67,7 +68,12 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void BroadcastTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
         {
-            Game.PacketNotifier.NotifyTint(team, enable, speed, r, g, b, a);
+            Color color = new Color();
+            color.R = r;
+            color.G = g;
+            color.B = b;
+            color.A = (byte) (uint)(a*255.0f);
+            Game.PacketNotifier.NotifyTint(team, enable, speed, color);
         }
     }
 }

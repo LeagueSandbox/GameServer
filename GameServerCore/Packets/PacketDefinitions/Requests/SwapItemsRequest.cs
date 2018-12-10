@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class SwapItemsRequest
+    public class SwapItemsRequest : ICoreRequest
     {
         public int NetId { get; }
         public byte SlotFrom { get; }

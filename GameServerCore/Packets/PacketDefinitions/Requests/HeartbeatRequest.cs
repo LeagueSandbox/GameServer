@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class HeartbeatRequest
+    public class HeartbeatRequest : ICoreRequest
     {
         public int NetId { get; }
         public float ReceiveTime { get; }

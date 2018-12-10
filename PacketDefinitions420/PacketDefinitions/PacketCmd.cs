@@ -1,4 +1,4 @@
-﻿namespace GameServerCore.Packets.Enums
+﻿namespace PacketDefinitions420.PacketDefinitions
 {
     public enum PacketCmd : short
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 
 namespace GameServerCore
 {

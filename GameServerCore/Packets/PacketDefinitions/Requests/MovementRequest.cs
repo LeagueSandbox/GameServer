@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class MovementRequest
+    public class MovementRequest : ICoreRequest
     {
         public int NetIdHeader { get; }
         public MoveType Type { get; } //byte

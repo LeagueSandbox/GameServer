@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class ChatMessageRequest
+    public class ChatMessageRequest : ICoreRequest
     {
         public string Message { get; }
         public ChatType Type { get; }

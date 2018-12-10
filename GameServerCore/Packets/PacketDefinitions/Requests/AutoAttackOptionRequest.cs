@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class AutoAttackOptionRequest
+    public class AutoAttackOptionRequest : ICoreRequest
     {
         public int NetId { get; }
         public bool Activated { get; }

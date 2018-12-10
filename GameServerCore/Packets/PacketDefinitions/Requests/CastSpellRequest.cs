@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class CastSpellRequest
+    public class CastSpellRequest : ICoreRequest
     {
         public int NetId { get; }
         // TODO: use Spell class instead of the slot

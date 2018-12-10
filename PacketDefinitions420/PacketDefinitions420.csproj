@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blowfish.cs" />
+    <Compile Include="Packet.cs" />
+    <Compile Include="PacketDefinitions\PacketCmd.cs" />
+    <Compile Include="PacketHeader.cs" />
+    <Compile Include="PacketType.cs" />
     <Compile Include="Enums\Emotions.cs" />
     <Compile Include="Enums\MovementType.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
@@ -223,5 +227,6 @@
       <Name>GameServerCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

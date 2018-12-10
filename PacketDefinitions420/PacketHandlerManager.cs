@@ -5,20 +5,21 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
+using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
 
 namespace PacketDefinitions420
 {
     // TODO: refactor this class, get rid of IGame, use generic API requests+responses also for disconnect and unpause
     public class PacketHandlerManager : IPacketHandlerManager
     {
-        private readonly Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> _handlerTable;
+        private delegate ICoreRequest RequestConvertor(byte[] data);
+        private readonly Dictionary<Tuple<PacketCmd,Channel>, RequestConvertor> _convertorTable;
         // should be one-to-one, no two users for the same Peer
         private readonly Dictionary<int, Peer> _peers;
         private readonly Dictionary<int, int> _playerNum;
@@ -28,9 +29,12 @@ namespace PacketDefinitions420
         private readonly Host _server;
         private readonly IGame _game;
 
+        private readonly NetworkHandler<ICoreRequest> _netReq;
+        private readonly NetworkHandler<ICoreResponse> _netResp;
+
         private int _curPlayerNum = 0;
 
-        public PacketHandlerManager(BlowFish blowfish, Host server, IGame game)
+        public PacketHandlerManager(BlowFish blowfish, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _blowfish = blowfish;
             _server = server;
@@ -39,11 +43,27 @@ namespace PacketDefinitions420
             _teamsEnumerator = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
             _playerNum = new Dictionary<int, int>();
             _playerManager = _game.PlayerManager;
-
-            _handlerTable = _game.GetAllPacketHandlers();
+            _netReq = netReq;
+            _netResp = netResp;
+            _convertorTable = new Dictionary<Tuple<PacketCmd, Channel>, RequestConvertor>();
+            InitializePacketConvertors();
         }
-
-        internal IPacketHandler GetHandler(PacketCmd cmd, Channel channelId)
+        internal void InitializePacketConvertors()
+        {
+            foreach(var m in typeof(PacketReader).GetMethods())
+            {
+                foreach (Attribute attr in m.GetCustomAttributes(true))
+                {
+                    if (attr is PacketType)
+                    {
+                        var key = new Tuple<PacketCmd, Channel>(((PacketType)attr).PacketId, ((PacketType)attr).ChannelId);
+                        var method = (RequestConvertor) Delegate.CreateDelegate(typeof(RequestConvertor), m);
+                        _convertorTable.Add(key, method);
+                    }
+                }
+            }
+        }
+        private RequestConvertor GetConvertor(PacketCmd cmd, Channel channelId)
         {
             var packetsHandledWhilePaused = new List<PacketCmd>
             {
@@ -63,28 +83,29 @@ namespace PacketDefinitions420
             {
                 return null;
             }
-            if (_handlerTable.ContainsKey(cmd))
+            var key = new Tuple<PacketCmd, Channel>(cmd, channelId);
+            if (_convertorTable.ContainsKey(key))
             {
-                var handlers = _handlerTable[cmd];
-                if (handlers.ContainsKey(channelId))
-                {
-                    return handlers[channelId];
-                }
+                return _convertorTable[key];
             }
 
             return null;
         }
 
-        public bool SendPacket(int userId, Packet packet, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
+        public bool SendPacket(int userId, Packet packet, Channel channelNo)
         {
-            return SendPacket(userId, packet.GetBytes(), channelNo, flag);
+            return SendPacket(userId, packet, channelNo, PacketFlags.Reliable);
+        }
+
+        public bool SendPacket(int userId, Packet packet, Channel channelNo, PacketFlags flags)
+        {
+            return SendPacket(userId, packet.GetBytes(), channelNo, flags);
         }
 
         public void UnpauseGame()
         {
             // FIXME: test this
-            GetHandler(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S).HandlePacket(0, new byte[0]);
+            GetConvertor(PacketCmd.PKT_UNPAUSE_GAME, Channel.CHL_C2S)(new byte[0]);
         }
 
         private void PrintPacket(byte[] buffer, string str)
@@ -193,7 +214,8 @@ namespace PacketDefinitions420
         public bool HandlePacket(Peer peer, byte[] data, Channel channelId)
         {
             var header = new PacketHeader(data);
-            var handler = GetHandler(header.Cmd, channelId);
+            var convertor = GetConvertor(header.Cmd, channelId);
+            
 
             switch (header.Cmd)
             {
@@ -203,11 +225,13 @@ namespace PacketDefinitions420
                     break;
             }
 
-            if (handler != null)
+            if (convertor != null)
             {
                 //TODO: improve dictionary reverse search
                 int userId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
-                return handler.HandlePacket(userId, data);
+                dynamic req = convertor(data);             
+                _netReq.OnMessage(userId, req);
+                return true;
             }
 
             PrintPacket(data, "Error: ");

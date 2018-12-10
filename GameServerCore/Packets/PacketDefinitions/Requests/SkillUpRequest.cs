@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class SkillUpRequest
+    public class SkillUpRequest : ICoreRequest
     {
         public uint NetId { get; }
         public byte Skill { get; }

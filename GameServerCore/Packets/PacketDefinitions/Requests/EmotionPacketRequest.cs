@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class EmotionPacketRequest
+    public class EmotionPacketRequest : ICoreRequest
     {
         public uint NetId;
         public Emotions Id;

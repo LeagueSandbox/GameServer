@@ -1,7 +1,9 @@
 ﻿using ENet;
 using GameServerCore;
 using GameServerCore.Packets.Enums;
+using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.Interfaces;
+using GameServerCore.Packets.PacketDefinitions;
 using PacketDefinitions420.Exceptions;
 using System;
 
@@ -21,7 +23,7 @@ namespace PacketDefinitions420
         protected const int PEER_MTU = 996;
 
 
-        public void InitServer(ushort port, string blowfishKey, IGame game)
+        public void InitServer(ushort port, string blowfishKey, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _game = game;
             _server = new Host();
@@ -34,7 +36,7 @@ namespace PacketDefinitions420
             }
 
             Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, game);
+            PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, game, netReq, netResp);
             
         }
         public void NetLoop()

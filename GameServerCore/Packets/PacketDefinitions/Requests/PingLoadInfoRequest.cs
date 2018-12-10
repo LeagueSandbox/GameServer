@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class PingLoadInfoRequest
+    public class PingLoadInfoRequest : ICoreRequest
     {
         public uint NetId;
         public int Position;
