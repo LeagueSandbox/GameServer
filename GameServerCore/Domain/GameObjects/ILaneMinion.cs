@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IMinion : IObjAiBase
+    public interface ILaneMinion : IObjAiBase
     {
         MinionSpawnPosition SpawnPosition { get; }
         MinionSpawnType MinionSpawnType { get; }
