@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer
         // Other managers
         internal ChatCommandManager ChatCommandManager { get; private set; }
         public IPlayerManager PlayerManager { get; private set; }
-        internal NetworkIdManager NetworkIdManager { get; private set; }
+        internal INetworkIdManager NetworkIdManager { get; private set; }
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
 

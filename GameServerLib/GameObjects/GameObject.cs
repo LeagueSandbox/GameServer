@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -38,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
-        protected NetworkIdManager _networkIdManager;
+        protected INetworkIdManager _networkIdManager;
 
         /// <summary>
         /// Current target the object running to (can be coordinates or an object)

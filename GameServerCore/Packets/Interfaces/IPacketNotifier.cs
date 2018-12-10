@@ -58,7 +58,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players);
         void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player);
         void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player);
-        void NotifyMinionSpawned(IMinion m, TeamId team);
+        void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
         void NotifyModelUpdate(IAttackableUnit obj);
         void NotifyModifyShield(IAttackableUnit unit, float amount, ShieldType type);
         void NotifyMovement(IGameObject o);

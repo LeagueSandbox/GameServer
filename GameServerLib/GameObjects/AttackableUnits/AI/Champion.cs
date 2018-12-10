@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.NetInfo;
@@ -16,6 +17,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Champion : ObjAiBase, IChampion
     {
+        public IGame RefGame { get; }
         public IShop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public float ChampionGoldFromMinions { get; set; }
@@ -47,6 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         uint netId = 0)
             : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId)
         {
+            RefGame = game;
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;

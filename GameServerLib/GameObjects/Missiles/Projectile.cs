@@ -161,8 +161,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             switch (unit)
             {
-                case IMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
-                case IPlaceable _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
+                case ILaneMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
+                case IMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
                 case IBaseTurret _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0):
                     return false;
             }
