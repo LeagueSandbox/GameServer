@@ -1,6 +1,7 @@
-﻿namespace LeagueSandbox.GameServer.Packets
+﻿using GameServerCore;
+namespace LeagueSandbox.GameServer.Packets
 {
-    public class NetworkIdManager
+    public class NetworkIdManager : INetworkIdManager
     {
         protected uint _dwStart = 0x40000000; //new netid
         protected object _lock = new object();

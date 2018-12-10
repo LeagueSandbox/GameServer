@@ -52,13 +52,14 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
         void NotifyKeyCheck(long userId, int playerNo);
+        void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
         void NotifyLeaveVision(IGameObject o, TeamId team);
         void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
         void NotifyLevelUp(IChampion c);
         void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players);
         void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player);
         void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player);
-        void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
+        void NotifyMinionSpawned(IMinion m, TeamId team);
         void NotifyModelUpdate(IAttackableUnit obj);
         void NotifyModifyShield(IAttackableUnit unit, float amount, ShieldType type);
         void NotifyMovement(IGameObject o);

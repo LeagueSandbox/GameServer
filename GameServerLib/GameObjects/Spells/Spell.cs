@@ -1,4 +1,5 @@
-﻿using GameServerCore.Content;
+﻿using GameServerCore;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -40,7 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         private CSharpScriptEngine _scriptEngine;
         private Game _game;
-        protected NetworkIdManager _networkIdManager;
+        protected INetworkIdManager _networkIdManager;
 
         private IGameScript _spellGameScript;
 

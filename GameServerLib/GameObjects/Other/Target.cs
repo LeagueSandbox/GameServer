@@ -47,5 +47,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             return new Vector2(X, Y);
         }
+
+        public bool WithinRange(Vector2 from, Vector2 to, float range)
+        {
+            float v1 = from.X - to.X, v2 = from.Y - to.Y;
+            return ((v1 * v1) + (v2 * v2)) <= (range * range);
+        }
     }
 }

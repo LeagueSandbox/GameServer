@@ -2,7 +2,6 @@
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -33,7 +32,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetVisibleByTeam(Team, true);
 
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
-            Replication = new ReplicationMinion(this);
 
             Name = name;
         }
@@ -46,7 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifyMinionSpawn(this);
+            _game.PacketNotifier.NotifyMinionSpawned(this, Team);
         }
 
         public override void Update(float diff)

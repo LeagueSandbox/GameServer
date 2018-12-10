@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class Minion : ObjAiBase, IMinion
+    public class LaneMinion : ObjAiBase, ILaneMinion
     {
         /// <summary>
         /// Const waypoints that define the minion's route
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public MinionSpawnType MinionSpawnType { get; }
         protected bool _aiPaused;
 
-        public Minion(
+        public LaneMinion(
             Game game,
             MinionSpawnType spawnType,
             MinionSpawnPosition position,
@@ -57,10 +57,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
-            Replication = new ReplicationMinion(this);
+            Replication = new ReplicationLaneMinion(this);
         }
 
-        public Minion(
+        public LaneMinion(
             Game game,
             MinionSpawnType spawnType,
             MinionSpawnPosition position,
@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifyMinionSpawned(this, Team);
+            _game.PacketNotifier.NotifyLaneMinionSpawned(this, Team);
         }
 
         public override void Update(float diff)

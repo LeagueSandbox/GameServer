@@ -4,13 +4,13 @@ using GameServerCore.Packets.PacketDefinitions;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
-    public class SpawnPlaceable : Packet
+    public class SpawnMinion : Packet
     {
-        public SpawnPlaceable(IPlaceable p)
+        public SpawnMinion(IMinion m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
 
-            WriteNetId(p);
+            WriteNetId(m);
 
             Write((byte)0xB5);
             Write((byte)0x00);
@@ -18,19 +18,19 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0x7C);
 
-            WriteNetId(p);
-            WriteNetId(p);
-            WriteNetId(p.Owner);
+            WriteNetId(m);
+            WriteNetId(m);
+            WriteNetId(m.Owner);
 
             Write((byte)0x40);
 
-            Write(p.X); //x
-            Write(p.GetZ()); //z
-            Write(p.Y); //y
+            Write(m.X); //x
+            Write(m.GetZ()); //z
+            Write(m.Y); //y
 
             Fill(0, 8);
 
-            Write((short)p.Team);
+            Write((short)m.Team);
             Write((byte)0x92);
             Write((byte)0x00);
 
@@ -42,9 +42,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x00);
             Write((byte)0x00);
 
-			WriteConstLengthString(p.Name, 64);
+			WriteConstLengthString(m.Name, 64);
 
-			WriteConstLengthString(p.Model, 64);
+			WriteConstLengthString(m.Model, 64);
 
             Write((byte)0x01);
 
@@ -61,8 +61,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x18); //    |
             Write((byte)0x00); // <--|
 
-            Write(p.X);
-            Write(p.Y);
+            Write(m.X);
+            Write(m.Y);
 
             Write((byte)0x00); // 0.0f
             Write((byte)0x00); // Probably a float, see SpawnMonster

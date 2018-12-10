@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandleCastSpell : PacketHandlerBase<CastSpellRequest>
     {
         private readonly Game _game;
-        private readonly NetworkIdManager _networkIdManager;
+        private readonly INetworkIdManager _networkIdManager;
         private readonly IPlayerManager _playerManager;
 
         public HandleCastSpell(Game game)

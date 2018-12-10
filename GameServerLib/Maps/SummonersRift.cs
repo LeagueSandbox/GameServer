@@ -357,7 +357,7 @@ namespace LeagueSandbox.GameServer.Maps
 
         public float GetGoldFor(IAttackableUnit u)
         {
-            if (!(u is IMinion m))
+            if (!(u is ILaneMinion m))
             {
                 if (!(u is IChampion c))
                 {
@@ -426,7 +426,7 @@ namespace LeagueSandbox.GameServer.Maps
 
         public float GetExperienceFor(IAttackableUnit u)
         {
-            if (!(u is IMinion m))
+            if (!(u is ILaneMinion m))
             {
                 return 0.0f;
             }
@@ -467,7 +467,7 @@ namespace LeagueSandbox.GameServer.Maps
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
 
-        public void SetMinionStats(IMinion m)
+        public void SetMinionStats(ILaneMinion m)
         {
             // Same for all minions
             m.Stats.MoveSpeed.BaseValue = 325.0f;
@@ -522,7 +522,7 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
 
-            var m = new Minion(_game, list[minionNo], pos, waypoints);
+            var m = new LaneMinion(_game, list[minionNo], pos, waypoints);
             _game.ObjectManager.AddObject(m);
         }
 
