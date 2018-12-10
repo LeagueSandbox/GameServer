@@ -4,7 +4,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.GameObjects.Other
+namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Minion : ObjAiBase, IMinion
     {
