@@ -12,7 +12,6 @@ using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Common;
-using LeaguePackets.CommonData;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
