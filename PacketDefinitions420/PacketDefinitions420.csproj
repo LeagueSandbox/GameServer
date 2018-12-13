@@ -34,10 +34,10 @@
     <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
     </Reference>
-    <Reference Include="LeaguePackets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="LeaguePackets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\LeaguePackets\lib\Debug\LeaguePackets.dll</HintPath>
-    </Reference>
+      <HintPath>..\packages\LeaguePackets\lib\Debug\LeaguePackets.dll</HintPath>
+	</Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
