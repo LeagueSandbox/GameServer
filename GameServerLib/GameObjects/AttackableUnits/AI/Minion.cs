@@ -22,7 +22,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base((Game)game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
         {
-            SetTeam(owner.Team);
+            if (!(owner == null))
+            {
+                SetTeam(owner.Team);
+            }
 
             Owner = owner;
 

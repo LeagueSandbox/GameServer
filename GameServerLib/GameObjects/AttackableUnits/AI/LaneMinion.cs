@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class LaneMinion : ObjAiBase, ILaneMinion
+    public class LaneMinion : Minion, ILaneMinion
     {
         /// <summary>
         /// Const waypoints that define the minion's route
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             MinionSpawnPosition position,
             List<Vector2> mainWaypoints,
             uint netId = 0
-        ) : base(game, "", new Stats.Stats(), 40, 0, 0, 1100, netId)
+        ) : base(game, null, 0, 0, "", "", 1100, netId)
         {
             MinionSpawnType = spawnType;
             SpawnPosition = position;

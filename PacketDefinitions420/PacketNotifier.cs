@@ -630,7 +630,12 @@ namespace PacketDefinitions420
             var spawnPacket = new LeaguePackets.GamePackets.SpawnMinionS2C();
             spawnPacket.NetID = (NetID)minion.NetId;
             spawnPacket.SenderNetID = (NetID)minion.NetId;
-            spawnPacket.OwnerNetID = (NetID)minion.Owner.NetId;
+            if (minion.Owner == null) {
+                spawnPacket.OwnerNetID = (NetID)minion.NetId;
+            }
+            else {
+                spawnPacket.OwnerNetID = (NetID)minion.Owner.NetId;
+            }
             spawnPacket.NetNodeID = NetNodeID.Spawned;
             spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
             spawnPacket.TeamID = (TeamID)minion.Team;
