@@ -323,6 +323,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <Content Include="GameServer.Core.GPL.txt" />
+    <Compile Include="GameObjects\Stats\ReplicationMinion.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

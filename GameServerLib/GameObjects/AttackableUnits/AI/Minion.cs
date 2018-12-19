@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
@@ -37,6 +38,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
 
             Name = name;
+            Replication = new ReplicationMinion(this);
         }
 
         public void PauseAi(bool b)
