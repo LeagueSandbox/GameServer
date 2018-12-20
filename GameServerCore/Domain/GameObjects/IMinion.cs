@@ -4,5 +4,7 @@
     {
         string Name { get; }
         IObjAiBase Owner { get; }
+        bool IsWard { get; }
+        bool IsPet { get; }
     }
 }

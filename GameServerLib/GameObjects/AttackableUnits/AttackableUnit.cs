@@ -185,6 +185,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
             }
+            // Show damage text for owner of pet
+            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).UserId;
+            }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
                 _game.Config.IsDamageTextGlobal, attackerId, targetId);

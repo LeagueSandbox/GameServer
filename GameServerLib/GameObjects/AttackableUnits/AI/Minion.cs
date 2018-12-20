@@ -10,6 +10,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     {
         public string Name { get; }
         public IObjAiBase Owner { get; } // We'll probably want to change this in the future
+        public bool IsWard { get; }
+        public bool IsPet { get; }
         protected bool _aiPaused;
 
         public Minion(
@@ -23,12 +25,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base((Game)game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
         {
-            if (!(owner == null))
+            if (!(Owner == null))
             {
-                SetTeam(owner.Team);
+                SetTeam(Owner.Team);
+                IsPet = true;
+            }
+            else
+            {
+                IsPet = false;
             }
 
             Owner = owner;
+            //TODO: Implement IsWard
 
             // Fix issues induced by having an empty model string
             CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
