@@ -644,7 +644,13 @@ namespace PacketDefinitions420
             spawnPacket.VisibilitySize = 0;
             spawnPacket.SkinID = 0;
             spawnPacket.IsTargetable = true;
-            spawnPacket.IsWard = true;
+            if (minion.IsWard)
+            {
+                spawnPacket.IsWard = true;
+            }
+            else {
+                spawnPacket.IsWard = false;
+            }
             spawnPacket.IsTargetableToTeam = SpellFlags.TargetableToAll;
             var visionPacket = new LeaguePackets.GamePackets.OnEnterVisiblityClient();
             var vd = new LeaguePackets.CommonData.VisibilityDataAIMinion();

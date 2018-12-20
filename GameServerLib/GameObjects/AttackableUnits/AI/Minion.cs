@@ -25,17 +25,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base((Game)game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
         {
-            if (!(Owner == null))
+            if (!(owner == null) && owner is IChampion)
             {
-                SetTeam(Owner.Team);
+                SetTeam(owner.Team);
                 IsPet = true;
             }
-            else
-            {
+            else {
                 IsPet = false;
             }
 
             Owner = owner;
+
             //TODO: Implement IsWard
 
             // Fix issues induced by having an empty model string
