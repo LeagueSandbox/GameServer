@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Players
 {
     public class PlayerManager : IPlayerManager
     {
-        private INetworkIdManager _networkIdManager;
+        private NetworkIdManager _networkIdManager;
         private Game _game;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();

@@ -271,7 +271,6 @@
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="ObjectManager.cs" />
-    <Compile Include="Packets\INetworkIdManager.cs" />
     <Compile Include="Packets\NetworkIdManager.cs" />
     <Compile Include="Attributes\DisabledHandlerAttribute.cs" />
     <Compile Include="Packets\PacketHandlers\HandleCursorPositionOnWorld.cs" />

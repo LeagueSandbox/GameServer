@@ -5,7 +5,6 @@ namespace GameServerCore.Domain.GameObjects
 {
     public interface IChampion : IObjAiBase
     {
-        IGame RefGame { get; }
         IShop Shop { get; }
         float RespawnTimer { get; }
         float ChampionGoldFromMinions { get; set; }

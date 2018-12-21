@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected bool _aiPaused;
 
         public Minion(
-            IGame game,
+            Game game,
             IObjAiBase owner,
             float x,
             float y,
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string name,
             int visionRadius = 0,
             uint netId = 0
-        ) : base((Game)game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
+        ) : base(game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
         {
             if (!(owner == null) && owner is IChampion)
             {

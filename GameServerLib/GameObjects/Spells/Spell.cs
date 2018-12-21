@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         private CSharpScriptEngine _scriptEngine;
         private Game _game;
-        protected INetworkIdManager _networkIdManager;
+        protected NetworkIdManager _networkIdManager;
 
         private IGameScript _spellGameScript;
 

@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
-        protected INetworkIdManager _networkIdManager;
+        protected NetworkIdManager _networkIdManager;
 
         /// <summary>
         /// Current target the object running to (can be coordinates or an object)

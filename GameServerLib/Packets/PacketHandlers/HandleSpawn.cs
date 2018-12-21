@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly IPlayerManager _playerManager;
-        private readonly INetworkIdManager _networkIdManager;
+        private readonly NetworkIdManager _networkIdManager;
 
         public HandleSpawn(Game game)
         {
