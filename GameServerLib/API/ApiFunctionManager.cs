@@ -149,6 +149,30 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyParticleDestroy(p);
         }
 
+        public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)
+        {
+            var m = new Minion(_game, champion, toX, toY, model, name, visionRadius);
+            _game.ObjectManager.AddObject(m);
+            m.SetVisibleByTeam(champion.Team, true);
+            _game.PacketNotifier.NotifyMinionSpawned(m, champion.Team);
+            return m;
+        }
+
+        public static Minion AddMinionTarget(IChampion champion, string model, string name, ITarget target, int visionRadius = 0)
+        {
+            var m = new Minion(_game, champion, target.X, target.Y, model, name, visionRadius);
+            _game.ObjectManager.AddObject(m);
+            m.SetVisibleByTeam(champion.Team, true);
+            _game.PacketNotifier.NotifyMinionSpawned(m, champion.Team);
+            return m;
+        }
+
+        public static void RemoveMinion(IMinion m, IAttackableUnit killer)
+        {
+            _game.ObjectManager.RemoveObject(m);
+            _game.PacketNotifier.NotifyNpcDie(m, killer);
+        }
+
         public static void PrintChat(string msg)
         {
             _game.PacketNotifier.NotifyDebugMessage(msg);
