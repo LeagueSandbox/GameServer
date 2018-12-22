@@ -37,6 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Owner = owner;
 
             //TODO: Implement IsWard
+            //TODO: Fix health not showing unless visible to enemy and health not updating when taking damage
 
             // Fix issues induced by having an empty model string
             CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
@@ -57,7 +58,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifyMinionSpawned(this, Team);
+            if (!(Owner == null))
+            {
+                _game.PacketNotifier.NotifyMinionSpawned(this, Team);
+            }
         }
 
         public override void Update(float diff)
