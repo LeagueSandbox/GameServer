@@ -6,5 +6,8 @@
         IObjAiBase Owner { get; }
         bool IsWard { get; }
         bool IsPet { get; }
+        bool IsBot { get; }
+        bool IsLaneMinion { get; }
+        bool IsClone { get; }
     }
 }

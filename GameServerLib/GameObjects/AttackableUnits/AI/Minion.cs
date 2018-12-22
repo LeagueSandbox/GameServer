@@ -12,6 +12,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IObjAiBase Owner { get; } // We'll probably want to change this in the future
         public bool IsWard { get; }
         public bool IsPet { get; }
+        public bool IsBot { get; }
+        public bool IsLaneMinion { get; }
+        public bool IsClone { get; }
         protected bool _aiPaused;
 
         public Minion(
@@ -25,18 +28,34 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base(game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
         {
-            if (!(owner == null) && owner is IChampion)
-            {
-                SetTeam(owner.Team);
-                IsPet = true;
-            }
-            else {
-                IsPet = false;
-            }
+            Name = name;
 
             Owner = owner;
 
-            //TODO: Implement IsWard
+            if (!(Owner == null) && Owner is IChampion)
+            {
+                SetTeam(Owner.Team);
+                IsPet = true;
+                if (model == Owner.Model) // Placeholder, should be changed
+                {
+                    IsClone = true;
+                }
+            }
+            else
+            {
+                SetTeam(Team);
+                IsPet = false;
+            }
+
+            if (this is ILaneMinion)
+            {
+                IsLaneMinion = true;
+            }
+            else
+            {
+                IsLaneMinion = false;
+            }
+
             //TODO: Fix health not showing unless visible to enemy and health not updating when taking damage
 
             // Fix issues induced by having an empty model string
@@ -46,7 +65,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
 
-            Name = name;
             Replication = new ReplicationMinion(this);
         }
 

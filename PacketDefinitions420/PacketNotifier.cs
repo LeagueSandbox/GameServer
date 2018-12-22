@@ -627,31 +627,32 @@ namespace PacketDefinitions420
         public void NotifyMinionSpawned(IMinion minion, TeamId team)
         {
             var spawnPacket = new LeaguePackets.GamePackets.SpawnMinionS2C();
-            spawnPacket.NetID = (NetID)minion.NetId;
+            spawnPacket.SkinName = minion.Model;
+            spawnPacket.Name = minion.Name;
+            spawnPacket.VisibilitySize = minion.VisionRadius; // Might be incorrect
+            spawnPacket.IsTargetableToTeam = SpellFlags.TargetableToAll;
+            spawnPacket.IsTargetable = true;
+            spawnPacket.IsBot = minion.IsBot;
+            spawnPacket.IsLaneMinion = minion.IsLaneMinion;
+            spawnPacket.IsWard = minion.IsWard;
+            spawnPacket.IgnoreCollision = false;
+            spawnPacket.TeamID = (TeamID)minion.Team;
+            // CloneNetID, clones not yet implemented
+            spawnPacket.SkinID = 0;
+            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
             spawnPacket.SenderNetID = (NetID)minion.NetId;
-            if (minion.Owner == null) {
-                spawnPacket.OwnerNetID = (NetID)minion.NetId;
-            }
-            else {
+            spawnPacket.NetNodeID = NetNodeID.Spawned;
+            if (minion.IsLaneMinion) // Should probably change/optimize at some point
+            {
                 spawnPacket.OwnerNetID = (NetID)minion.Owner.NetId;
             }
-            spawnPacket.NetNodeID = NetNodeID.Spawned;
-            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
-            spawnPacket.TeamID = (TeamID)minion.Team;
-            spawnPacket.Name = minion.Name;
-            spawnPacket.SkinName = minion.Model;
-            spawnPacket.InitialLevel = 1;
-            spawnPacket.VisibilitySize = 0;
-            spawnPacket.SkinID = 0;
-            spawnPacket.IsTargetable = true;
-            if (minion.IsWard)
+            else
             {
-                spawnPacket.IsWard = true;
+                spawnPacket.OwnerNetID = (NetID)minion.NetId;
             }
-            else {
-                spawnPacket.IsWard = false;
-            }
-            spawnPacket.IsTargetableToTeam = SpellFlags.TargetableToAll;
+            spawnPacket.NetID = (NetID)minion.NetId;
+            // ID, not sure if it should be here
+            spawnPacket.InitialLevel = 1;
             var visionPacket = new LeaguePackets.GamePackets.OnEnterVisiblityClient();
             var vd = new LeaguePackets.CommonData.VisibilityDataAIMinion();
             vd.LookAtPosition = new Vector3(1, 0, 0);
