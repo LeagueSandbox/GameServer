@@ -6,7 +6,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class HeroSpawn : BasePacket
     {
-        public HeroSpawn(ClientInfo player, int playerId)
+        public HeroSpawn(ClientInfo player)
             : base(PacketCmd.PKT_S2C_HERO_SPAWN)
         {
             WriteNetId(player.Champion);

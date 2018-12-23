@@ -265,9 +265,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, endSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyHeroSpawn(int userId, ClientInfo client, int playerId)
+        public void NotifyHeroSpawn(int userId, ClientInfo client)
         {
-            var spawn = new HeroSpawn(client, playerId);
+            var spawn = new HeroSpawn(client);
             _packetHandlerManager.SendPacket(userId, spawn, Channel.CHL_S2C);
         }
 

@@ -44,7 +44,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyGameTimer(float gameTime);
         void NotifyGameTimer(int userId, float time);
         void NotifyGameTimerUpdate(int userId, float time);
-        void NotifyHeroSpawn(int userId, ClientInfo client, int playerId);
+        void NotifyHeroSpawn(int userId, ClientInfo client);
         void NotifyHeroSpawn2(int userId, IChampion champion);
         void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
         void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null);

@@ -27,13 +27,23 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             /* if (_game.IsRunning)
                 return true; */
-
+            
+            // Only one packet enter here
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                 _game.PacketNotifier.NotifyGameStart();
+                _game.PacketNotifier.NotifyGameStart();
 
                 foreach (var player in _playerManager.GetPlayers())
                 {
+                    // Get notified about the spawn of other connected players - IMPORTANT: should only occur one-time
+                    foreach (var p in _playerManager.GetPlayers())
+                    {
+                        if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not get informed about it
+                        if (player.Item2.PlayerId == p.Item2.PlayerId) continue; //Don't self-inform twice
+                        _game.PacketNotifier.NotifyHeroSpawn((int)player.Item2.PlayerId, p.Item2);
+                        _game.PacketNotifier.NotifyAvatarInfo((int)player.Item2.PlayerId, p.Item2);
+                    }
+
                     if (player.Item2.PlayerId == (ulong)userId && !player.Item2.IsMatchingVersion)
                     {
                         var msg = "Your client version does not match the server. " +

@@ -281,6 +281,7 @@ namespace PacketDefinitions420
             {  
                 _playerClient[request.PlayerID] = (uint)_playersConnected;
                 _playerManager.GetPeerInfo(request.PlayerID).ClientId = _playerClient[request.PlayerID];
+                _playerManager.GetPeerInfo(request.PlayerID).IsStartedClient = true;
                 Debug.WriteLine("Connected player No "+ request.PlayerID);
                 _playersConnected++;
 

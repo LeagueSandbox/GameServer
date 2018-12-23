@@ -265,7 +265,7 @@ namespace PacketDefinitions420
         public static SynchVersionRequest ReadSynchVersionRequest(byte[] data)
         {
             var rq = new PacketDefinitions.C2S.SynchVersionRequest(data);
-            return new SynchVersionRequest(rq.NetId, rq.Unk1, rq.Version);
+            return new SynchVersionRequest(rq.NetId, rq.ClientId, rq.Version);
         }
     }
 }

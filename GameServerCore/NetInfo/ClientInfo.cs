@@ -9,6 +9,7 @@ namespace GameServerCore.NetInfo
         public uint ClientId { get; set; }
         public bool IsMatchingVersion { get; set; }
         public bool IsDisconnected { get; set; }
+        public bool IsStartedClient { get; set; }
         public int SkinNo { get; private set; }
         public string[] SummonerSkills { get; private set; }
         public string Name { get; private set; }
@@ -47,6 +48,7 @@ namespace GameServerCore.NetInfo
             Name = name;
             SummonerSkills = summonerSkills;
             PlayerId = playerId;
+            IsStartedClient = false;
         }
     }
 }
