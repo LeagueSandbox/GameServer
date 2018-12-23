@@ -36,14 +36,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
-            /*// Notify all players about the spawn (also self-inform)
-            foreach (var p in _playerManager.GetPlayers())
-            {
-                if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not informing him
-                _game.PacketNotifier.NotifyHeroSpawn((int)p.Item2.PlayerId, peerInfo);
-                _game.PacketNotifier.NotifyAvatarInfo((int)p.Item2.PlayerId, peerInfo);
-            }*/
-
             // self-inform
             _game.PacketNotifier.NotifyHeroSpawn(userId, peerInfo);
             _game.PacketNotifier.NotifyAvatarInfo(userId, peerInfo);
