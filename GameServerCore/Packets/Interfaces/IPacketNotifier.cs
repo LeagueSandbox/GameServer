@@ -51,7 +51,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyItemBought(IAttackableUnit u, IItem i);
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
-        void NotifyKeyCheck(long userId, int playerNo);
+        void NotifyKeyCheck(ulong userId, uint playerNo);
         void NotifyLeaveVision(IGameObject o, TeamId team);
         void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
         void NotifyLevelUp(IChampion c);
@@ -69,7 +69,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyParticleSpawn(IParticle particle);
         void NotifyPauseGame(int seconds, bool showWindow);
         void NotifyPing(ClientInfo client, Vector2 position, int targetNetId, Pings type);
-        void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId);
+        void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo);
         void NotifyPlayerStats(IChampion champion);
         void NotifyProjectileDestroy(IProjectile p);
         void NotifyProjectileSpawn(IProjectile p);

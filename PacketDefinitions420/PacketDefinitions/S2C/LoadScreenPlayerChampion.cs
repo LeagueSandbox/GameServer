@@ -11,7 +11,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_LOAD_HERO)
         {
             var player = p.Item2;
-            Write(player.UserId);
+            Write(player.PlayerId);
             Write(player.SkinNo);
             Write(player.Champion.Model.Length + 1);
 			Write(player.Champion.Model);

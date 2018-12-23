@@ -105,6 +105,7 @@ namespace LeagueSandbox.GameServer
             _logger.Info("Add players");
             foreach (var p in Config.Players)
             {
+                _logger.Info("Player "+p.Value.Name+" Added: "+p.Value.Champion);
                 ((PlayerManager)PlayerManager).AddPlayer(p);
             }
 
@@ -265,7 +266,7 @@ namespace LeagueSandbox.GameServer
 
         public bool HandleDisconnect(int userId)
         {
-            var peerinfo = PlayerManager.GetPeerInfo(userId);
+            var peerinfo = PlayerManager.GetPeerInfo((ulong)userId);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)

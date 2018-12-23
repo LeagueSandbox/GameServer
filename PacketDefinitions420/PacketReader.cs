@@ -185,7 +185,7 @@ namespace PacketDefinitions420
         public static KeyCheckRequest ReadKeyCheckRequest(byte[] data)
         {
             var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
-            return new KeyCheckRequest(rq.PlayerNo, rq.UserId, rq.VersionNo, rq.CheckId);
+            return new KeyCheckRequest(rq.PlayerID, rq.ClientID, rq.VersionNo, rq.CheckId);
         }
 
         [PacketType(PacketCmd.PKT_C2S_PING_LOAD_INFO)]

@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             //!TODO Check if can up skill? :)
 
-            var champion = _playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
             var s = champion.LevelUpSpell(req.Skill);
             if (s == null)
             {
