@@ -30,6 +30,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected ItemManager _itemManager;
         protected CSharpScriptEngine _scriptEngine;
 
+
+        public List<ISpellData> maxAAAnimations;
+        public uint i;
+        Random animationCycler;
+
+
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
@@ -77,6 +83,26 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Stats.CurrentMana = stats.ManaPoints.Total;
             Stats.CurrentHealth = stats.HealthPoints.Total;
+            animationCycler = new Random();
+            maxAAAnimations = new List<ISpellData>();
+            i = 2;
+            maxAAAnimations.Add(_game.Config.ContentManager.GetSpellData(model + "BasicAttack"));
+            while (_game.Config.ContentManager.GetSpellData(model + "BasicAttack" + i) != null)
+            {
+                try
+                {
+                    i++;
+                    maxAAAnimations.Add(_game.Config.ContentManager.GetSpellData(model + "BasicAttack" + i));
+
+                }
+                catch (ContentNotFoundException)
+                {
+                    Console.WriteLine("Number Of Animations - " + maxAAAnimations.Count());
+                    break;
+                }
+                break;
+            }
+
             if (!string.IsNullOrEmpty(model))
             {
                 AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
@@ -361,6 +387,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(IAttackableUnit target)
         {
+            UpdateAAanimation();
             if (HasCrowdControl(CrowdControlType.BLIND))
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
@@ -506,6 +533,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 _autoAttackCurrentCooldown -= diff / 1000.0f;
             }
+        }
+
+        public void UpdateAAanimation()
+        {
+            int newAttackAnim = animationCycler.Next(0, maxAAAnimations.Count);
+            AaSpellData = maxAAAnimations[newAttackAnim];
+            AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
+            AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
+            Console.WriteLine("Playing Animation - " + AaSpellData.AlternateName);
+
         }
 
         public override void Update(float diff)
