@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             var split = arguments.ToLower().Split(' ');
 
-            _me = _playerManager.GetPeerInfo(userId).Champion;
+            _me = _playerManager.GetPeerInfo((ulong)userId).Champion;
 
             if (split.Length > 1)
             {

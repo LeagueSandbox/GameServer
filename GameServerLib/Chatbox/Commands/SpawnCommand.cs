@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
             };
 
-            var champion = _playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
             var random = new Random();
 
             var minions = new[]

@@ -24,8 +24,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var diff = req.AckTime - req.ReceiveTime;
             if (req.ReceiveTime > req.AckTime)
             {
-                var peerInfo = _playerManager.GetPeerInfo(userId);
-                var msg = $"Player {peerInfo.UserId} sent an invalid heartbeat - Timestamp error (diff: {diff})";
+                var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
+                var msg = $"Player {peerInfo.PlayerId} sent an invalid heartbeat - Timestamp error (diff: {diff})";
                 _logger.Warn(msg);
             }
 

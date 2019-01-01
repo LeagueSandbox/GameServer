@@ -8,7 +8,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
     {
         public PacketCmd Cmd;
         public int NetId;
-        public int Unk1;
+        public uint ClientId;
         private byte[] _version = new byte[256]; // version string might be shorter?
         public string Version
         {
@@ -31,7 +31,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
             {
                 Cmd = (PacketCmd)reader.ReadByte();
                 NetId = reader.ReadInt32();
-                Unk1 = reader.ReadInt32();
+                ClientId = reader.ReadUInt32();
                 _version = reader.ReadBytes(256);
             }
         }

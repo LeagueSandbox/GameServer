@@ -161,8 +161,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            if (damage < 0f)
+            {
+                damage = 0f;
+            }
+            else
+            {
+                //Damage dealing. (based on leagueoflegends' wikia)
+                damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            }
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
@@ -178,12 +185,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // todo: check if damage dealt by disconnected players cause anything bad 
             if (attacker is IChampion attackerChamp)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).UserId;
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
             }
 
             if (this is IChampion targetChamp)
             {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
+                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
             if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
