@@ -13,7 +13,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0xFF);
             Write((byte)0xFF);
             Write((byte)0xFF);
-            Write(0);
+            Write(0); //TODO: change to ClientID
             WriteNetId(unit); // Fog Attached, when unit dies it disappears
             Write(newFogId); //Fog NetID
             Write(0);

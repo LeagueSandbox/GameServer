@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
 
             var team = t.ToTeamId();
-            _playerManager.GetPeerInfo(userId).Champion.SetTeam(team);
+            _playerManager.GetPeerInfo((ulong)userId).Champion.SetTeam(team);
         }
     }
 }

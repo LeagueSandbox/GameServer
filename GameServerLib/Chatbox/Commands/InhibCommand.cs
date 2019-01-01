@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var sender = _playerManager.GetPeerInfo(userId);
+            var sender = _playerManager.GetPeerInfo((ulong)userId);
             var min = new Monster(
                 Game,
                 sender.Champion.X,

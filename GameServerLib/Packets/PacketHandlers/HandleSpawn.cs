@@ -32,18 +32,17 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
              _game.PacketNotifier.NotifySpawnStart(userId);
             _logger.Debug("Spawning map");
 
-            var playerId = 0;
-            foreach (var p in _playerManager.GetPlayers())
-            {
-                 _game.PacketNotifier.NotifyHeroSpawn(userId, p.Item2, playerId++);
-                 _game.PacketNotifier.NotifyAvatarInfo(userId, p.Item2);
-            }
-
-            var peerInfo = _playerManager.GetPeerInfo(userId);
+            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
             var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
-             _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
+            // self-inform
+            _game.PacketNotifier.NotifyHeroSpawn(userId, peerInfo);
+            _game.PacketNotifier.NotifyAvatarInfo(userId, peerInfo);
+
+
+
+            _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
 
             // Runes
             byte runeItemSlot = 14;
@@ -51,7 +50,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo(userId).Champion.Stats.AddModifier(runeItem);
+                _playerManager.GetPeerInfo((ulong)userId).Champion.Stats.AddModifier(runeItem);
                 runeItemSlot++;
             }
 

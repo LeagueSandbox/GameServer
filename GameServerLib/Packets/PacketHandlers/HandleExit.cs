@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, ExitRequest req)
         {
-            var peerinfo = _playerManager.GetPeerInfo(userId);
+            var peerinfo = _playerManager.GetPeerInfo((ulong)userId);
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
             peerinfo.IsDisconnected = true;
 

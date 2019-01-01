@@ -17,13 +17,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, PingLoadInfoRequest req)
         {
-            var peerInfo = _playerManager.GetPeerInfo(userId);
+            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
             if (peerInfo == null)
             {
                 return false;
             }
 
-             _game.PacketNotifier.NotifyPingLoadInfo(req, peerInfo.UserId);
+             _game.PacketNotifier.NotifyPingLoadInfo(req, peerInfo);
             return true;
         }
     }

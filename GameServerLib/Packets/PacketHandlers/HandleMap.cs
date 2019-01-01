@@ -24,6 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Distributes each players info by UserId
             foreach (var player in _playerManager.GetPlayers())
             {
+                if (!player.Item2.IsStartedClient) continue; //Don't inform about not started clients
                 // Giving the UserId in loading screen a name
                  _game.PacketNotifier.NotifyLoadScreenPlayerName(userId, player);
                 // Giving the UserId in loading screen a champion
