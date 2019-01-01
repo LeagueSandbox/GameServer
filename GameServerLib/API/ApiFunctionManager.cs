@@ -154,7 +154,6 @@ namespace LeagueSandbox.GameServer.API
             var m = new Minion(_game, champion, toX, toY, model, name, visionRadius);
             _game.ObjectManager.AddObject(m);
             m.SetVisibleByTeam(champion.Team, true);
-            _game.PacketNotifier.NotifyMinionSpawned(m, champion.Team);
             return m;
         }
 
@@ -163,7 +162,6 @@ namespace LeagueSandbox.GameServer.API
             var m = new Minion(_game, champion, target.X, target.Y, model, name, visionRadius);
             _game.ObjectManager.AddObject(m);
             m.SetVisibleByTeam(champion.Team, true);
-            _game.PacketNotifier.NotifyMinionSpawned(m, champion.Team);
             return m;
         }
 

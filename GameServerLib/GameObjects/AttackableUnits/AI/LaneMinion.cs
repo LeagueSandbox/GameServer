@@ -78,7 +78,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifyLaneMinionSpawned(this, Team);
         }
 
         public override void Update(float diff)

@@ -51,7 +51,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyItemBought(IAttackableUnit u, IItem i);
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
-        void NotifyKeyCheck(long userId, int playerNo);
+        void NotifyKeyCheck(ulong userId, uint playerNo);
         void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
         void NotifyLeaveVision(IGameObject o, TeamId team);
         void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);

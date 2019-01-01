@@ -665,6 +665,7 @@ namespace PacketDefinitions420
             visionPacket.Packets.Add(spawnPacket);
             visionPacket.SenderNetID = (NetID)minion.NetId;
             _packetHandlerManager.BroadcastPacketVision(minion, visionPacket.GetBytes(), Channel.CHL_S2C);
+            NotifySetHealth(minion);
             //var spawnPacket = new SpawnMinion(minion);
             //_packetHandlerManager.BroadcastPacketVision(minion, spawnPacket, Channel.CHL_S2C);
         }
