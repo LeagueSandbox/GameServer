@@ -160,8 +160,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            if (damage < 0f)
+            {
+                damage = 0f;
+            }
+            else
+            {
+                //Damage dealing. (based on leagueoflegends' wikia)
+                damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            }
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
