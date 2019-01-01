@@ -5,10 +5,11 @@ namespace GameServerCore.NetInfo
 {
     public class ClientInfo
     {
-        public long UserId { get; private set; }
-        public int PlayerNo { get; set; }
+        public ulong PlayerId { get; private set; }
+        public uint ClientId { get; set; }
         public bool IsMatchingVersion { get; set; }
         public bool IsDisconnected { get; set; }
+        public bool IsStartedClient { get; set; }
         public int SkinNo { get; private set; }
         public string[] SummonerSkills { get; private set; }
         public string Name { get; private set; }
@@ -35,7 +36,7 @@ namespace GameServerCore.NetInfo
                           int skinNo,
                           string name,
                           string[] summonerSkills,
-                          long userId)
+                          ulong playerId)
         {
             Rank = rank;
             Team = team;
@@ -46,7 +47,8 @@ namespace GameServerCore.NetInfo
             IsDisconnected = false;
             Name = name;
             SummonerSkills = summonerSkills;
-            UserId = userId;
+            PlayerId = playerId;
+            IsStartedClient = false;
         }
     }
 }

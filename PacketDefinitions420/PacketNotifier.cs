@@ -51,8 +51,8 @@ namespace PacketDefinitions420
             foreach (var p in players)
             {
                 var cam = new MoveCamera(p.Item2.Champion, cameraPosition.X, cameraPosition.Y, cameraPosition.Z, 2);
-                _packetHandlerManager.SendPacket((int)p.Item2.UserId, cam, Channel.CHL_S2C);
-                _packetHandlerManager.SendPacket((int)p.Item2.UserId, new HideUi(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.PlayerId, cam, Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.PlayerId, new HideUi(), Channel.CHL_S2C);
             }
 
             _packetHandlerManager.BroadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
@@ -149,16 +149,16 @@ namespace PacketDefinitions420
         }
 
         // TODO: check if this is broadcast or not
-        public void NotifyKeyCheck(long userId, int playerNo)
+        public void NotifyKeyCheck(ulong playerId, uint clientId)
         {
-            var response = new KeyCheckResponse(userId, playerNo);
-            _packetHandlerManager.SendPacket((int)userId, response, Channel.CHL_HANDSHAKE);
+            var response = new KeyCheckResponse(playerId, clientId);
+            _packetHandlerManager.SendPacket((int)playerId, response, Channel.CHL_HANDSHAKE);
         }
 
-        public void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId)
+        public void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo)
         {
-            var response = new PingLoadInfoResponse(request.NetId, (uint)request.Position, request.Loaded, request.Unk2,
-                request.Ping, request.Unk3, request.Unk4, userId);
+            var response = new PingLoadInfoResponse(request.NetId, clientInfo.ClientId, request.Loaded, request.Unk2,
+                request.Ping, request.Unk3, request.Unk4, clientInfo.PlayerId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
@@ -265,9 +265,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, endSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyHeroSpawn(int userId, ClientInfo client, int playerId)
+        public void NotifyHeroSpawn(int userId, ClientInfo client)
         {
-            var spawn = new HeroSpawn(client, playerId);
+            var spawn = new HeroSpawn(client);
             _packetHandlerManager.SendPacket(userId, spawn, Channel.CHL_S2C);
         }
 

@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, MovementRequest req)
         {
-            var peerInfo = _playerManager.GetPeerInfo(userId);
+            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
             var champion = peerInfo?.Champion;
             if (peerInfo == null || !champion.CanMove())
             {

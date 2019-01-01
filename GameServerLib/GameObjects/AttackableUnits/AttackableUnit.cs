@@ -184,12 +184,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // todo: check if damage dealt by disconnected players cause anything bad 
             if (attacker is IChampion attackerChamp)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).UserId;
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
             }
 
             if (this is IChampion targetChamp)
             {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
+                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,

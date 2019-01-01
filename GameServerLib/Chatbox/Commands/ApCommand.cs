@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out var ap))
             {
-                _playerManager.GetPeerInfo(userId).Champion.Stats.AbilityPower.FlatBonus += ap;
+                _playerManager.GetPeerInfo((ulong)userId).Champion.Stats.AbilityPower.FlatBonus += ap;
             }
         }
     }

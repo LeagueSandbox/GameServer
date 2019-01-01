@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (int.TryParse(split[1], out var y))
                     {
-                        var client = _playerManager.GetPeerInfo(userId);
+                        var client = _playerManager.GetPeerInfo((ulong)userId);
                          _game.PacketNotifier.NotifyPing(client, new Vector2(x, y), 0, Pings.PING_DEFAULT);
                     }
                 }
@@ -71,12 +71,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var debugMessage =
-                $"{_playerManager.GetPeerInfo(userId).Name} ({_playerManager.GetPeerInfo(userId).Champion.Model}): </font><font color=\"#FFFFFF\">{req.Message}";
+                $"{_playerManager.GetPeerInfo((ulong)userId).Name} ({_playerManager.GetPeerInfo((ulong)userId).Champion.Model}): </font><font color=\"#FFFFFF\">{req.Message}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = teamChatColor + "[All] " + debugMessage;
             var dmEnemy = enemyChatColor + "[All] " + debugMessage;
-            var ownTeam = _playerManager.GetPeerInfo(userId).Team;
+            var ownTeam = _playerManager.GetPeerInfo((ulong)userId).Team;
             var enemyTeam = CustomConvert.GetEnemyTeam(ownTeam);
 
             if (_game.Config.ChatCheatsEnabled)

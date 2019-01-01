@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SurrenderRequest req)
         {
-            var c = _pm.GetPeerInfo(userId).Champion;
+            var c = _pm.GetPeerInfo((ulong)userId).Champion;
              _game.PacketNotifier.NotifySurrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
             return true;
         }

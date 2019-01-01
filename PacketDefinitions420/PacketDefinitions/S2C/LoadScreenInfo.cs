@@ -22,7 +22,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_BLUE)
                 {
-                    Write((ulong)player.UserId);
+                    Write((ulong)player.PlayerId);
                     currentBlue++;
                 }
             }
@@ -38,7 +38,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_PURPLE)
                 {
-                    Write((ulong)player.UserId);
+                    Write((ulong)player.PlayerId);
                     currentPurple++;
                 }
             }
