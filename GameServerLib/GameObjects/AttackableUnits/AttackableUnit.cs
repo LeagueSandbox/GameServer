@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public IReplication Replication { get; protected set; }
 
         public AttackableUnit(
-            IGame game,
+            Game game,
             string model,
             IStats stats,
             int collisionRadius = 40,
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base((Game)game, x, y, collisionRadius, visionRadius, netId)
+        ) : base(game, x, y, collisionRadius, visionRadius, netId)
 
         {
             Logger = LoggerProvider.GetLogger();
