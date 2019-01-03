@@ -165,12 +165,6 @@ namespace LeagueSandbox.GameServer.API
             return m;
         }
 
-        public static void RemoveMinion(IMinion m, IAttackableUnit killer)
-        {
-            _game.ObjectManager.RemoveObject(m);
-            _game.PacketNotifier.NotifyNpcDie(m, killer);
-        }
-
         public static void PrintChat(string msg)
         {
             _game.PacketNotifier.NotifyDebugMessage(msg);
