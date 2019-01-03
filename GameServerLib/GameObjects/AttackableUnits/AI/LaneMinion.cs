@@ -16,7 +16,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected int _curMainWaypoint;
         public MinionSpawnPosition SpawnPosition { get; }
         public MinionSpawnType MinionSpawnType { get; }
-        protected bool _aiPaused;
 
         public LaneMinion(
             Game game,
@@ -68,11 +67,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         ) : this(game, spawnType, position, new List<Vector2>(), netId)
         {
 
-        }
-
-        public void PauseAi(bool b)
-        {
-            _aiPaused = b;
         }
 
         public override void OnAdded()
