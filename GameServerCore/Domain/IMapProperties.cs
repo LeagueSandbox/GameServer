@@ -21,7 +21,7 @@ namespace GameServerCore.Domain
 
         Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition);
 
-        void SetMinionStats(IMinion m);
+        void SetMinionStats(ILaneMinion m);
 
         ITarget GetRespawnLocation(TeamId team);
 

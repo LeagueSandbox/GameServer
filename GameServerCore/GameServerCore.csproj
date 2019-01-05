@@ -65,7 +65,7 @@
     <Compile Include="Domain\GameObjects\IInhibitor.cs" />
     <Compile Include="Domain\GameObjects\ILaneTurret.cs" />
     <Compile Include="Domain\GameObjects\ILevelProp.cs" />
-    <Compile Include="Domain\GameObjects\IMinion.cs" />
+    <Compile Include="Domain\GameObjects\ILaneMinion.cs" />
     <Compile Include="Domain\GameObjects\IMonster.cs" />
     <Compile Include="Domain\GameObjects\INexus.cs" />
     <Compile Include="Domain\GameObjects\IObjAiBase.cs" />
@@ -73,7 +73,7 @@
     <Compile Include="Domain\GameObjects\IObjBuilding.cs" />
     <Compile Include="Domain\GameObjects\IObjMissile.cs" />
     <Compile Include="Domain\GameObjects\IParticle.cs" />
-    <Compile Include="Domain\GameObjects\IPlaceable.cs" />
+    <Compile Include="Domain\GameObjects\IMinion.cs" />
     <Compile Include="Domain\GameObjects\IProjectile.cs" />
     <Compile Include="Domain\GameObjects\IStat.cs" />
     <Compile Include="Domain\GameObjects\IStatModifier.cs" />

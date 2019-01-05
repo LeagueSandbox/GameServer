@@ -1,4 +1,5 @@
 ﻿using System;
+using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -191,6 +192,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
+            // Show damage text for owner of pet
+            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
+            }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
                 _game.Config.IsDamageTextGlobal, attackerId, targetId);
@@ -268,7 +274,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         MINION_ATTACKING_MINION = 3,
         TURRET_ATTACKING_MINION = 4,
         CHAMPION_ATTACKING_MINION = 5,
-        PLACEABLE = 6,
+        MINION = 6,
         SUPER_OR_CANNON_MINION = 7,
         CASTER_MINION = 8,
         MELEE_MINION = 9,

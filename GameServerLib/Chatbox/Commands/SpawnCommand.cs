@@ -55,10 +55,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var minions = new[]
             {
-                new Minion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
             };
 
             const int X = 400;

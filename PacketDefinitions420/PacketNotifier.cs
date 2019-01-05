@@ -11,6 +11,7 @@ using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
+using LeaguePackets.Common;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -31,9 +32,9 @@ namespace PacketDefinitions420
             _navGrid = navGrid;
         }
 
-        public void NotifyMinionSpawned(IMinion m, TeamId team)
+        public void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team)
         {
-            var ms = new MinionSpawn(_navGrid, m);
+            var ms = new LaneMinionSpawn(_navGrid, m);
             _packetHandlerManager.BroadcastPacketTeam(team, ms, Channel.CHL_S2C);
             NotifySetHealth(m);
         }
@@ -87,7 +88,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
         }
 
-        public void NotifyTint(TeamId team, bool enable, float speed, Color color)
+        public void NotifyTint(TeamId team, bool enable, float speed, GameServerCore.Content.Color color)
         {
             var tint = new SetScreenTint(team, enable, speed, color.R, color.G, color.B, color.A);
             _packetHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
@@ -273,7 +274,7 @@ namespace PacketDefinitions420
 
         public void NotifyAvatarInfo(int userId, ClientInfo client)
         {
-            var info = new AvatarInfo(client);
+            var info = new PacketDefinitions.S2C.AvatarInfo(client);
             _packetHandlerManager.SendPacket(userId, info, Channel.CHL_S2C);
         }
 
@@ -401,7 +402,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
+        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, GameServerCore.Enums.DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
             var dd = new DamageDone(source, target, amount, type, damagetext);
             if (isGlobal)
@@ -597,8 +598,8 @@ namespace PacketDefinitions420
         {
             switch (u)
             {
-                case IMinion m:
-                    NotifyMinionSpawned(m, m.Team.GetEnemyTeam());
+                case ILaneMinion m:
+                    NotifyLaneMinionSpawned(m, m.Team.GetEnemyTeam());
                     break;
                 case IChampion c:
                     NotifyChampionSpawned(c, c.Team.GetEnemyTeam());
@@ -606,8 +607,8 @@ namespace PacketDefinitions420
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
                     break;
-                case IPlaceable placeable:
-                    NotifyPlaceableSpawned(placeable);
+                case IMinion minion:
+                    NotifyMinionSpawned(minion, minion.Team.GetEnemyTeam());
                     break;
                 case IAzirTurret azirTurret:
                     NotifyAzirTurretSpawned(azirTurret);
@@ -623,10 +624,50 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(azirTurret, spawnPacket, Channel.CHL_S2C);
         }
 
-        private void NotifyPlaceableSpawned(IPlaceable placeable)
+        public void NotifyMinionSpawned(IMinion minion, TeamId team)
         {
-            var spawnPacket = new SpawnPlaceable(placeable);
-            _packetHandlerManager.BroadcastPacketVision(placeable, spawnPacket, Channel.CHL_S2C);
+            var spawnPacket = new LeaguePackets.GamePackets.SpawnMinionS2C();
+            spawnPacket.SkinName = minion.Model;
+            spawnPacket.Name = minion.Name;
+            spawnPacket.VisibilitySize = minion.VisionRadius; // Might be incorrect
+            spawnPacket.IsTargetableToTeam = SpellFlags.TargetableToAll;
+            spawnPacket.IsTargetable = true;
+            spawnPacket.IsBot = minion.IsBot;
+            spawnPacket.IsLaneMinion = minion.IsLaneMinion;
+            spawnPacket.IsWard = minion.IsWard;
+            spawnPacket.IgnoreCollision = false;
+            spawnPacket.TeamID = (TeamID)minion.Team;
+            // CloneNetID, clones not yet implemented
+            spawnPacket.SkinID = 0;
+            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
+            spawnPacket.SenderNetID = (NetID)minion.NetId;
+            spawnPacket.NetNodeID = NetNodeID.Spawned;
+            if (minion.IsLaneMinion) // Should probably change/optimize at some point
+            {
+                spawnPacket.OwnerNetID = (NetID)minion.Owner.NetId;
+            }
+            else
+            {
+                spawnPacket.OwnerNetID = (NetID)minion.NetId;
+            }
+            spawnPacket.NetID = (NetID)minion.NetId;
+            // ID, not sure if it should be here
+            spawnPacket.InitialLevel = 1;
+            var visionPacket = new LeaguePackets.GamePackets.OnEnterVisiblityClient();
+            var vd = new LeaguePackets.CommonData.VisibilityDataAIMinion();
+            vd.LookAtPosition = new Vector3(1, 0, 0);
+            var md = new LeaguePackets.CommonData.MovementDataStop();
+            md.Position = minion.GetPosition();
+            md.Forward = new Vector2(0, 1);
+            vd.MovementSyncID = 0x0006E4CF;
+            vd.MovementData = md;
+            visionPacket.VisibilityData = vd;
+            visionPacket.Packets.Add(spawnPacket);
+            visionPacket.SenderNetID = (NetID)minion.NetId;
+            _packetHandlerManager.BroadcastPacketVision(minion, visionPacket.GetBytes(), Channel.CHL_S2C);
+            NotifySetHealth(minion);
+            //var spawnPacket = new SpawnMinion(minion);
+            //_packetHandlerManager.BroadcastPacketVision(minion, spawnPacket, Channel.CHL_S2C);
         }
 
         private void NotifyMonsterSpawned(IMonster m)

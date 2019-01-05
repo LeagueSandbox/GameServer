@@ -10,5 +10,6 @@ namespace GameServerCore.Domain.GameObjects
 
         float GetDistanceTo(ITarget target);
         Vector2 GetPosition();
+        bool WithinRange(Vector2 from, Vector2 to, float range);
     }
 }

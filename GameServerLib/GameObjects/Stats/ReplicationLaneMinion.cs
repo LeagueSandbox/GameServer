@@ -2,9 +2,9 @@
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
-    public class ReplicationMinion : Replication
+    public class ReplicationLaneMinion : Replication
     {
-        public ReplicationMinion(Minion owner) : base(owner)
+        public ReplicationLaneMinion(LaneMinion owner) : base(owner)
         {
 
         }

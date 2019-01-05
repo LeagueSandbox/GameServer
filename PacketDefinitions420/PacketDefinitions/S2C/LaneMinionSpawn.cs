@@ -7,9 +7,9 @@ using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
-    public class MinionSpawn : BasePacket
+    public class LaneMinionSpawn : BasePacket
     {
-        public MinionSpawn(INavGrid navGrid, IMinion m)
+        public LaneMinionSpawn(INavGrid navGrid, ILaneMinion m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Write((uint)0x00150017); // unk
