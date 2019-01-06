@@ -11,6 +11,10 @@ Currently the technologies we use include:
 For more detailed project specifications head over to https://leaguesandbox.github.io/  
 If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know.
 
+# Pull requests
+
+All contributors must sign a CLA (Contributor License Agreement) before pull requests can be merged. This will be handled by a bot on the pull request, and the goal is to to ensure the changes being properly transformed to AGPL-3.0 which the project is licensed under.
+
 # Commits
 
 ## An issue should be always created before committing
