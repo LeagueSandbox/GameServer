@@ -161,18 +161,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             switch (unit)
             {
-                case ILaneMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
-                case IMinion _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
-                case IBaseTurret _ when !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0):
+                // Order is important
+                case ILaneMinion _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
+                    return true;
+                case IMinion _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
+                    if (!(unit is ILaneMinion))
+                        return true;
+                    return false; // already got checked in ILaneMinion
+                case IBaseTurret _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_TURRETS) > 0):
+                    return true;
+                case IInhibitor _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0):
+                    return true;
+                case INexus _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0):
+                    return true;
+                case IChampion _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0):
+                    return true;
+                default:
                     return false;
             }
-
-            if ((unit is IInhibitor || unit is INexus) && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_BUILDINGS) > 0))
-            {
-                return false;
-            }
-
-            return unit is IChampion || (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_HEROES) > 0;
         }
     }
 }
