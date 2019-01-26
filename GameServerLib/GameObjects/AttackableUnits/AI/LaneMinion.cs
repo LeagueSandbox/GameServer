@@ -81,6 +81,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (IsDashing || _aiPaused)
                 {
+                    Replication.Update();
                     return;
                 }
 
