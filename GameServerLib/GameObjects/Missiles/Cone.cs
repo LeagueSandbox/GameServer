@@ -33,8 +33,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             string effectName,
             int flags,
             bool affectAsCastIsOver,
-            float angleDeg
-            ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags)
+            float angleDeg,
+            uint netid
+            ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags, netid)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
             _affectAsCastIsOver = affectAsCastIsOver;

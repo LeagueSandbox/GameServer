@@ -230,7 +230,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 this,
                 SpellData.MissileSpeed,
                 nameMissile,
-                SpellData.Flags
+                SpellData.Flags,
+                FutureProjNetId
             );
             _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
@@ -251,7 +252,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 this,
                 SpellData.MissileSpeed,
                 nameMissile,
-                SpellData.Flags
+                SpellData.Flags,
+                FutureProjNetId
             );
             _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
@@ -272,7 +274,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 this,
                 effectName,
                 SpellData.Flags,
-                affectAsCastIsOver
+                affectAsCastIsOver,
+                FutureProjNetId
             );
             _game.ObjectManager.AddObject(l);
         }
@@ -290,7 +293,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 effectName,
                 SpellData.Flags,
                 affectAsCastIsOver,
-                angleDeg
+                angleDeg,
+                FutureProjNetId
             );
             _game.ObjectManager.AddObject(c);
         }
