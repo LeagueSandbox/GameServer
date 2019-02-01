@@ -11,13 +11,15 @@ using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
-using LeaguePackets.Common;
+using LeaguePackets.Game;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
+using LeaguePackets.Game.Common;
+using LeaguePackets.Common;
 
 namespace PacketDefinitions420
 {
@@ -423,10 +425,14 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyModifyShield(IAttackableUnit unit, float amount, ShieldType type)
+        public void NotifyModifyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade)
         {
-            var ms = new ModifyShield(unit, amount, type);
-            _packetHandlerManager.BroadcastPacket(ms, Channel.CHL_S2C);
+            var mods = new LeaguePackets.Game.ModifyShield();
+            mods.SenderNetID = unit.NetId;
+            mods.Physical = IsPhysical;
+            mods.Magical = IsMagical;
+            mods.Ammount = amount;
+            _packetHandlerManager.BroadcastPacket(mods.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyBeginAutoAttack(IAttackableUnit attacker, IAttackableUnit victim, uint futureProjNetId, bool isCritical)
@@ -626,44 +632,42 @@ namespace PacketDefinitions420
 
         public void NotifyMinionSpawned(IMinion minion, TeamId team)
         {
-            var spawnPacket = new LeaguePackets.GamePackets.SpawnMinionS2C();
+            var spawnPacket = new SpawnMinionS2C();
             spawnPacket.SkinName = minion.Model;
             spawnPacket.Name = minion.Name;
             spawnPacket.VisibilitySize = minion.VisionRadius; // Might be incorrect
-            spawnPacket.IsTargetableToTeam = SpellFlags.TargetableToAll;
+            spawnPacket.IsTargetableToTeamSpellFlags = (uint) SpellFlags.TargetableToAll;
             spawnPacket.IsTargetable = true;
             spawnPacket.IsBot = minion.IsBot;
             spawnPacket.IsLaneMinion = minion.IsLaneMinion;
             spawnPacket.IsWard = minion.IsWard;
             spawnPacket.IgnoreCollision = false;
-            spawnPacket.TeamID = (TeamID)minion.Team;
+            spawnPacket.TeamID =(ushort) minion.Team;
             // CloneNetID, clones not yet implemented
             spawnPacket.SkinID = 0;
             spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
-            spawnPacket.SenderNetID = (NetID)minion.NetId;
-            spawnPacket.NetNodeID = NetNodeID.Spawned;
+            spawnPacket.SenderNetID = minion.NetId;
+            spawnPacket.NetNodeID = (byte) NetNodeID.Spawned;
             if (minion.IsLaneMinion) // Should probably change/optimize at some point
             {
-                spawnPacket.OwnerNetID = (NetID)minion.Owner.NetId;
+                spawnPacket.OwnerNetID = minion.Owner.NetId;
             }
             else
             {
-                spawnPacket.OwnerNetID = (NetID)minion.NetId;
+                spawnPacket.OwnerNetID = minion.NetId;
             }
-            spawnPacket.NetID = (NetID)minion.NetId;
+            spawnPacket.NetID = minion.NetId;
             // ID, not sure if it should be here
             spawnPacket.InitialLevel = 1;
-            var visionPacket = new LeaguePackets.GamePackets.OnEnterVisiblityClient();
-            var vd = new LeaguePackets.CommonData.VisibilityDataAIMinion();
-            vd.LookAtPosition = new Vector3(1, 0, 0);
-            var md = new LeaguePackets.CommonData.MovementDataStop();
+            var visionPacket = new OnEnterVisiblityClient();
+            visionPacket.LookAtPosition = new Vector3(1, 0, 0);
+            var md = new MovementDataStop();
             md.Position = minion.GetPosition();
             md.Forward = new Vector2(0, 1);
-            vd.MovementSyncID = 0x0006E4CF;
-            vd.MovementData = md;
-            visionPacket.VisibilityData = vd;
+            md.SyncID = 0x0006E4CF; //TODO: generate real movement SyncId
+            visionPacket.MovementData = md;
             visionPacket.Packets.Add(spawnPacket);
-            visionPacket.SenderNetID = (NetID)minion.NetId;
+            visionPacket.SenderNetID = minion.NetId;
             _packetHandlerManager.BroadcastPacketVision(minion, visionPacket.GetBytes(), Channel.CHL_S2C);
             NotifySetHealth(minion);
             //var spawnPacket = new SpawnMinion(minion);
