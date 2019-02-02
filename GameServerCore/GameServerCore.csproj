@@ -52,6 +52,7 @@
     <Compile Include="Domain\IUpdate.cs" />
     <Compile Include="Enums\CrowdControlType.cs" />
     <Compile Include="Enums\DamageSource.cs" />
+    <Compile Include="Enums\NetNodeID.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Content\HashFunctions.cs" />
     <Compile Include="Content\INavGrid.cs" />
@@ -97,12 +98,11 @@
     <Compile Include="Enums\DamageText.cs" />
     <Compile Include="Enums\DamageType.cs" />
     <Compile Include="Enums\InhibitorState.cs" />
-    <Compile Include="Enums\IsTargetableToTeamFlags.cs" />
+    <Compile Include="Enums\SpellFlags.cs" />
     <Compile Include="Enums\MinionSpawnPosition.cs" />
     <Compile Include="Enums\MinionSpawnType.cs" />
     <Compile Include="Enums\MoveOrder.cs" />
     <Compile Include="Enums\PrimaryAbilityResourceType.cs" />
-    <Compile Include="Enums\ShieldType.cs" />
     <Compile Include="Enums\SpellState.cs" />
     <Compile Include="Enums\TeamId.cs" />
     <Compile Include="Enums\TurretType.cs" />
@@ -182,7 +182,6 @@
     <Compile Include="Packets\PacketDefinitions\Responses\TeleportResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\RemoveBuffResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\OnAttackResponse.cs" />
-    <Compile Include="Packets\PacketDefinitions\Responses\ModifyShieldResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\ItemsSwappedResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\InhibitorStateResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\EmotionsResponse.cs" />

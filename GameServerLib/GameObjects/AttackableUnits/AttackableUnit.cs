@@ -234,10 +234,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (Team == team)
             {
-                return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ALLY);
+                return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableAlly);
             }
 
-            return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY);
+            return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableEnemy);
         }
 
         public void SetIsTargetableToTeam(TeamId team, bool targetable)
@@ -246,22 +246,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (!targetable)
                 {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
+                    Stats.IsTargetableToTeam |= SpellFlags.NonTargetableAlly;
                 }
                 else
                 {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
+                    Stats.IsTargetableToTeam &= ~SpellFlags.NonTargetableAlly;
                 }
             }
             else
             {
                 if (!targetable)
                 {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
+                    Stats.IsTargetableToTeam |= SpellFlags.NonTargetableEnemy;
                 }
                 else
                 {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
+                    Stats.IsTargetableToTeam &= ~SpellFlags.NonTargetableEnemy;
                 }
             }
         }

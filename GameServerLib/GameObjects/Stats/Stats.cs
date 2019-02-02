@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public bool IsPhysicalImmune { get; set; }
         public bool IsLifestealImmune { get; set; }
         public bool IsTargetable { get; }
-        public IsTargetableToTeamFlags IsTargetableToTeam { get; set; }
+        public SpellFlags IsTargetableToTeam { get; set; }
 
         public float AttackSpeedFlat { get; set; }
         public float HealthPerLevel { get; set; }
@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ManaCost = new float[64];
             ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.UNKNOWN;
             IsTargetable = true;
-            IsTargetableToTeam = IsTargetableToTeamFlags.TARGETABLE_TO_ALL;
+            IsTargetableToTeam = SpellFlags.TargetableToAll;
 
             AbilityPower = new Stat();
             Armor = new Stat();

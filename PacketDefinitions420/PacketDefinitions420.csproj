@@ -35,8 +35,7 @@
       <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
     </Reference>
     <Reference Include="LeaguePackets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\LeaguePackets\lib\Debug\LeaguePackets.dll</HintPath>
+      <HintPath>..\packages\LeaguePackets420.0.0.2\lib\net462\LeaguePackets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -150,7 +149,6 @@
     <Compile Include="PacketDefinitions\S2C\MessagesAvailable.cs" />
     <Compile Include="PacketDefinitions\S2C\LaneMinionSpawn.cs" />
     <Compile Include="PacketDefinitions\S2C\MinionSpawn2.cs" />
-    <Compile Include="PacketDefinitions\S2C\ModifyShield.cs" />
     <Compile Include="PacketDefinitions\S2C\MoveCamera.cs" />
     <Compile Include="PacketDefinitions\S2C\MoveChampionCameraCenter.cs" />
     <Compile Include="PacketDefinitions\S2C\MovementResponse.cs" />
