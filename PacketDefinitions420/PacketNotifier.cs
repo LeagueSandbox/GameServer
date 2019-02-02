@@ -278,8 +278,7 @@ namespace PacketDefinitions420
         {
             var avatar = new AvatarInfo_Server();
             avatar.SenderNetID = client.Champion.NetId;
-            var skills = new uint[2] { HashFunctions.HashString(client.SummonerSkills[0]), HashFunctions.HashString(client.SummonerSkills[1]) };
-            Console.WriteLine("Hashes: " + skills[0] + " | " + skills[1]);
+            var skills = new uint[] { HashFunctions.HashString(client.SummonerSkills[0]), HashFunctions.HashString(client.SummonerSkills[1]) };
 
             avatar.SummonerIDs[0] = skills[0];
             avatar.SummonerIDs[1] = skills[1];
