@@ -74,25 +74,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             base.OnRemoved();
             _game.ObjectManager.RemoveVisionUnit(this);
         }
-
-        public void StopMovement()
-        {
-            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
-        }
-
+        
         public override void Update(float diff)
         {
-            if (!Stats.GetActionState(ActionState.CAN_MOVE) || Stats.GetActionState(ActionState.CAN_NOT_MOVE))
-            {
-                StopMovement();
-            }
-                
-            else
-            {
-                base.Update(diff);
-            }
-                
-            
+            //TODO: There must be something like 'stopmovement()' here.
+            //if ActionState.CanMove == false then stopmovement()
+            base.Update(diff);
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
             {
