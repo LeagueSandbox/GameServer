@@ -2,7 +2,9 @@
 {
     public interface IBaseTurret : IObjAiBase
     {
-        string Name { get; }
         uint ParentNetId { get; }
+        string Name { get; }
+        
+        void CheckForTargets();
     }
 }

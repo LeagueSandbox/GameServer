@@ -1,20 +1,18 @@
-﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
-using LeagueSandbox.GameServer.GameObjects.Spells;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public interface IGameScript
     {
-        void OnActivate(Champion owner);
+        void OnActivate(IChampion owner);
 
-        void OnDeactivate(Champion owner);
+        void OnDeactivate(IChampion owner);
 
-        void OnStartCasting(Champion owner, Spell spell, AttackableUnit target);
+        void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target);
 
-        void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target);
+        void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target);
 
-        void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile);
+        void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile);
     }
 }

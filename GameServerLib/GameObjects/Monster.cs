@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Monster : ObjAiBase, IMonster
+    public class Monster : Minion, IMonster
     {
         public Vector2 Facing { get; private set; }
         public string Name { get; private set; }
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), 40, x, y, 0, netId)
+        ) : base(game, null, x, y, model, name, 0, netId)
         {
             SetTeam(TeamId.TEAM_NEUTRAL);
 

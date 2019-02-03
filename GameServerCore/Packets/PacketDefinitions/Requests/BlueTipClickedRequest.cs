@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class BlueTipClickedRequest
+    public class BlueTipClickedRequest : ICoreRequest
     {
         public uint PlayerNetId { get; }
         public uint NetId { get; }

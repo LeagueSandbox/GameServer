@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var champ = (Champion)_playerManager.GetPeerInfo(userId).Champion;
+            var champ = _playerManager.GetPeerInfo((ulong)userId).Champion;
             if (!champ.IsDead)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion is already alive.");

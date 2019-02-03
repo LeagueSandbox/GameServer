@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    class SelectObjectRequest
+    class SelectObjectRequest : ICoreRequest
     {
         public uint ClientId { get; }
         public uint NetIdSelected { get; }

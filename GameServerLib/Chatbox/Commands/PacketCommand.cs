@@ -1,7 +1,6 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using System;
-using Packet = GameServerCore.Packets.PacketDefinitions.Packet;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
@@ -31,23 +30,22 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     ShowSyntax();
                     return;
                 }
-
-                var opcode = Convert.ToByte(s[1], 16);
-                var packet = new Packet((PacketCmd)opcode);
+                List<byte> _bytes = new List<byte>();
+                _bytes.Add(Convert.ToByte(s[1], 16));
 
                 for (var i = 2; i < s.Length; i++)
                 {
                     if (s[i].Equals("netid"))
                     {
-                        packet.Write(_playerManager.GetPeerInfo(userId).Champion.NetId);
+                        _bytes.Add(Convert.ToByte(_playerManager.GetPeerInfo((ulong)userId).Champion.NetId));
                     }
                     else
                     {
-                        packet.Write(Convert.ToByte(s[i], 16));
+                        _bytes.Add(Convert.ToByte(s[i], 16));
                     }
                 }
 
-                _game.PacketNotifier.NotifyDebugPacket(userId, packet.GetBytes());
+                _game.PacketNotifier.NotifyDebugPacket(userId, _bytes.ToArray());
             }
             catch
             {

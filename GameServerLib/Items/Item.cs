@@ -4,46 +4,47 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class Item : IItem
     {
-        public byte StackSize { get; private set; }
-        public int TotalPrice => ItemType.TotalPrice;
-        public ItemType ItemType { get; private set; }
+        public int TotalPrice => ItemData.TotalPrice;
+        public IItemData ItemData { get; }
+        public byte StackCount { get; private set; }
 
-        IItemType IItem.ItemType => ItemType;
 
-        private Inventory _owner;
-
-        private Item(Inventory owner, ItemType type)
+        private Item(IItemData data)
         {
-            _owner = owner;
-            ItemType = type;
-            StackSize = 1;
+            ItemData = data;
+            StackCount = 1;
         }
-
-        public bool IncrementStackSize()
+        
+        public bool IncrementStackCount()
         {
-            if (StackSize >= ItemType.MaxStack)
+            if (StackCount >= ItemData.MaxStack)
             {
                 return false;
             }
 
-            StackSize++;
+            StackCount++;
             return true;
         }
 
-        public bool DecrementStackSize()
+        public bool DecrementStackCount()
         {
-            if (StackSize < 1)
+            if (StackCount < 1)
             {
                 return false;
             }
 
-            StackSize--;
+            StackCount--;
             return true;
         }
 
-        public static Item CreateFromType(Inventory inventory, ItemType item)
+        public void SetStacks(byte newStacks)
         {
-            return new Item(inventory, item);
+            throw new System.NotImplementedException();
+        }
+
+        public static Item CreateFromType(IItemData item)
+        {
+            return new Item(item);
         }
     }
 }

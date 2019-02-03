@@ -1,5 +1,6 @@
 ﻿using System;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
@@ -11,21 +12,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             public uint Value { get; set; }
             public bool IsFloat { get; set; }
             public bool Changed { get; set; }
-
-            public void MarkAsUnchanged()
-            {
-                Changed = false;
-            }
         }
 
-        protected Replication(AttackableUnit owner)
+        protected Replication(IAttackableUnit owner)
         {
             Owner = owner;
             Update();
         }
 
-        protected readonly AttackableUnit Owner;
-        protected Stats Stats => Owner.Stats;
+        protected readonly IAttackableUnit Owner;
+        protected IStats Stats => Owner.Stats;
 
         public uint NetId => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
@@ -78,7 +74,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             foreach (var x in Values)
             {
-                x?.MarkAsUnchanged();
+                if (x != null) 
+                    x.Changed = false;
             }
 
             Changed = false;

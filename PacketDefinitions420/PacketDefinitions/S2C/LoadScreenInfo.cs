@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using GameServerCore;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions;
@@ -22,7 +22,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_BLUE)
                 {
-                    Write((ulong)player.UserId);
+                    Write((ulong)player.PlayerId);
                     currentBlue++;
                 }
             }
@@ -38,7 +38,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
                 var player = p.Item2;
                 if (player.Team == TeamId.TEAM_PURPLE)
                 {
-                    Write((ulong)player.UserId);
+                    Write((ulong)player.PlayerId);
                     currentPurple++;
                 }
             }

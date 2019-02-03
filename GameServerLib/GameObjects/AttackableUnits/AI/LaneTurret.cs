@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class LaneTurret : BaseTurret, ILaneTurret
     {
-        public TurretType Type { get; private set; }
+        public TurretType Type { get; }
         private bool _turretHpUpdated;
 
         public LaneTurret(
@@ -284,7 +284,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return 0;
         }
 
-        public override void AutoAttackHit(AttackableUnit target)
+        public override void AutoAttackHit(IAttackableUnit target)
         {
             if (Type == TurretType.FOUNTAIN_TURRET)
             {

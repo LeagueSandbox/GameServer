@@ -1,3 +1,5 @@
+using GameServerCore.Packets.PacketDefinitions;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using System.IO;
 
 namespace PacketDefinitions420.PacketDefinitions.C2S
@@ -16,11 +18,6 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
                 Netid = reader.ReadInt32();
                 Activated = reader.ReadByte();
             }
-        }
-
-        public AutoAttackOption()
-        {
-
         }
     }
 }

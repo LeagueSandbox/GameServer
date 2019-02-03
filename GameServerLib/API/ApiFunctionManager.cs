@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
@@ -64,12 +65,12 @@ namespace LeagueSandbox.GameServer.API
             return newTimer;
         }
 
-        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, float removeAfter = -1.0f)
         {
             return AddBuffHudVisual(buffName, duration, stacks, buffType, onto, onto, removeAfter);
         }
 
-        public static Buff AddBuffHudVisual(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from, float removeAfter = -1.0f)
+        public static Buff AddBuffHudVisual(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, float removeAfter = -1.0f)
         {
             var b = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
@@ -81,7 +82,7 @@ namespace LeagueSandbox.GameServer.API
             return b;
         }
 
-        public static void RemoveBuffHudVisual(Buff b)
+        public static void RemoveBuffHudVisual(IBuff b)
         {
             _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
             b.TargetUnit.RemoveBuffSlot(b);
@@ -101,7 +102,7 @@ namespace LeagueSandbox.GameServer.API
             return _game.ObjectManager.Teams;
         }
 
-        public static void TeleportTo(ObjAiBase unit, float x, float y)
+        public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
             var coords = new Vector2(x, y);
             var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
@@ -115,20 +116,20 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from)
+        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
             var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
             onto.AddBuff(buff);
             _game.PacketNotifier.NotifyAddBuff(buff);
         }
 
-        public static void EditBuff(Buff b, int newStacks)
+        public static void EditBuff(IBuff b, byte newStacks)
         {
             b.SetStacks(newStacks);
             _game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
-        public static Particle AddParticle(Champion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static Particle AddParticle(IChampion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
             var p = new Particle(_game, champion, t, particle, size, bone);
@@ -148,28 +149,44 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyParticleDestroy(p);
         }
 
+        public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)
+        {
+            var m = new Minion(_game, champion, toX, toY, model, name, visionRadius);
+            _game.ObjectManager.AddObject(m);
+            m.SetVisibleByTeam(champion.Team, true);
+            return m;
+        }
+
+        public static Minion AddMinionTarget(IChampion champion, string model, string name, ITarget target, int visionRadius = 0)
+        {
+            var m = new Minion(_game, champion, target.X, target.Y, model, name, visionRadius);
+            _game.ObjectManager.AddObject(m);
+            m.SetVisibleByTeam(champion.Team, true);
+            return m;
+        }
+
         public static void PrintChat(string msg)
         {
             _game.PacketNotifier.NotifyDebugMessage(msg);
         }
 
-        public static void FaceDirection(AttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
+        public static void FaceDirection(IAttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
         {
             _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime);
             // todo change units direction
         }
 
-        public static List<IAttackableUnit> GetUnitsInRange(Target target, float range, bool isAlive)
+        public static List<IAttackableUnit> GetUnitsInRange(ITarget target, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
         }
 
-        public static List<IChampion> GetChampionsInRange(Target target, float range, bool isAlive)
+        public static List<IChampion> GetChampionsInRange(ITarget target, float range, bool isAlive)
         {
             return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
         }
 
-        public static void CancelDash(ObjAiBase unit)
+        public static void CancelDash(IObjAiBase unit)
         {
             // Allow the user to move the champion
             unit.SetDashingState(false);
@@ -179,8 +196,8 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
-        public static void DashToUnit(ObjAiBase unit,
-                                  Target target,
+        public static void DashToUnit(IObjAiBase unit,
+                                  ITarget target,
                                   float dashSpeed,
                                   bool keepFacingLastDirection,
                                   string animation = null,
@@ -229,7 +246,7 @@ namespace LeagueSandbox.GameServer.API
             unit.TargetUnit = null;
         }
 
-        public static void DashToLocation(ObjAiBase unit,
+        public static void DashToLocation(IObjAiBase unit,
                                  float x,
                                  float y,
                                  float dashSpeed,

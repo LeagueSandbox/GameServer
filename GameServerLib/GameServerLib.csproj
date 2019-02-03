@@ -236,7 +236,7 @@
     <Compile Include="GameObjects\Stats\ReplicationAiTurret.cs" />
     <Compile Include="GameObjects\Stats\ReplicationAnimatedBuilding.cs" />
     <Compile Include="GameObjects\Stats\ReplicationHero.cs" />
-    <Compile Include="GameObjects\Stats\ReplicationMinion.cs" />
+    <Compile Include="GameObjects\Stats\ReplicationLaneMinion.cs" />
     <Compile Include="GameObjects\Stats\StatsModifier.cs" />
     <Compile Include="GameObjects\AttackableUnits\AI\Champion.cs" />
     <Compile Include="GameObjects\Other\CollisionHandler.cs" />
@@ -244,12 +244,12 @@
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\Missiles\Laser.cs" />
     <Compile Include="GameObjects\Particle.cs" />
-    <Compile Include="GameObjects\Other\Placeable.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\Minion.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Nexus.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\Inhibitor.cs" />
     <Compile Include="GameObjects\LevelProp.cs" />
     <Compile Include="GameObjects\Monster.cs" />
-    <Compile Include="GameObjects\AttackableUnits\AI\Minion.cs" />
+    <Compile Include="GameObjects\AttackableUnits\AI\LaneMinion.cs" />
     <Compile Include="GameObjects\Missiles\Projectile.cs" />
     <Compile Include="GameObjects\Stats\Stat.cs" />
     <Compile Include="GameObjects\Stats\StatModifier.cs" />
@@ -266,7 +266,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemManager.cs" />
     <Compile Include="Items\ItemRecipe.cs" />
-    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\ItemData.cs" />
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
@@ -313,7 +313,6 @@
     <Compile Include="Scripting\CSharp\GameScript.cs" />
     <Compile Include="Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Scripting\CSharp\GameScriptTimer.cs" />
-    <Compile Include="Scripting\CSharp\MapGameScript.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
@@ -323,6 +322,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <Content Include="GameServer.Core.GPL.txt" />
+    <Compile Include="GameObjects\Stats\ReplicationMinion.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

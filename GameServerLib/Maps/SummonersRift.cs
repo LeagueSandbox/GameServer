@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -11,7 +13,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Maps
 {
-    internal class SummonersRift : IMapGameScript
+    internal class SummonersRift : IMapProperties
     {
         private static readonly List<Vector2> BlueTopWaypoints = new List<Vector2>
         {
@@ -131,7 +133,7 @@ namespace LeagueSandbox.GameServer.Maps
             { TeamId.TEAM_PURPLE, new Vector3(12800, 13100, 110) }
         };
 
-        private static readonly Dictionary<TeamId, Target> SpawnsByTeam = new Dictionary<TeamId, Target>
+        private static readonly Dictionary<TeamId, ITarget> SpawnsByTeam = new Dictionary<TeamId, ITarget>
         {
             {TeamId.TEAM_BLUE, new Target(25.90f, 280)},
             {TeamId.TEAM_PURPLE, new Target(13948, 14202)}
@@ -319,7 +321,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
         }
 
-        public Target GetRespawnLocation(TeamId team)
+        public ITarget GetRespawnLocation(TeamId team)
         {
             if (!SpawnsByTeam.ContainsKey(team))
             {
@@ -353,11 +355,11 @@ namespace LeagueSandbox.GameServer.Maps
             return $"{teamDictionary[team]}_Minion_{typeDictionary[type]}";
         }
 
-        public float GetGoldFor(AttackableUnit u)
+        public float GetGoldFor(IAttackableUnit u)
         {
-            if (!(u is Minion m))
+            if (!(u is ILaneMinion m))
             {
-                if (!(u is Champion c))
+                if (!(u is IChampion c))
                 {
                     return 0.0f;
                 }
@@ -383,29 +385,27 @@ namespace LeagueSandbox.GameServer.Maps
                     return 500.0f;
                 }
 
-                if (c.KillDeathCounter < 0)
+                if (c.KillDeathCounter >= 0)
+                    return 0.0f;
+                
+                var firstDeathGold = gold - gold * 0.085f;
+
+                if (c.KillDeathCounter == -1)
                 {
-                    var firstDeathGold = gold - gold * 0.085f;
-
-                    if (c.KillDeathCounter == -1)
-                    {
-                        return firstDeathGold;
-                    }
-
-                    for (var i = c.KillDeathCounter; i < -1; ++i)
-                    {
-                        firstDeathGold -= firstDeathGold * 0.2f;
-                    }
-
-                    if (firstDeathGold < 50)
-                    {
-                        firstDeathGold = 50;
-                    }
-
                     return firstDeathGold;
                 }
 
-                return 0.0f;
+                for (var i = c.KillDeathCounter; i < -1; ++i)
+                {
+                    firstDeathGold -= firstDeathGold * 0.2f;
+                }
+
+                if (firstDeathGold < 50)
+                {
+                    firstDeathGold = 50;
+                }
+
+                return firstDeathGold;
             }
 
             var dic = new Dictionary<MinionSpawnType, float>
@@ -424,9 +424,9 @@ namespace LeagueSandbox.GameServer.Maps
             return dic[m.MinionSpawnType];
         }
 
-        public float GetExperienceFor(AttackableUnit u)
+        public float GetExperienceFor(IAttackableUnit u)
         {
-            if (!(u is Minion m))
+            if (!(u is ILaneMinion m))
             {
                 return 0.0f;
             }
@@ -467,7 +467,7 @@ namespace LeagueSandbox.GameServer.Maps
             return new Tuple<TeamId, Vector2>(0, new Vector2());
         }
 
-        public void SetMinionStats(Minion m)
+        public void SetMinionStats(ILaneMinion m)
         {
             // Same for all minions
             m.Stats.MoveSpeed.BaseValue = 325.0f;
@@ -522,7 +522,7 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
 
-            var m = new Minion(_game, list[minionNo], pos, waypoints);
+            var m = new LaneMinion(_game, list[minionNo], pos, waypoints);
             _game.ObjectManager.AddObject(m);
         }
 
@@ -569,7 +569,7 @@ namespace LeagueSandbox.GameServer.Maps
                 var waypoints = spawnToWaypoints[pos].Item1;
                 var inhibitorId = spawnToWaypoints[pos].Item2;
                 var inhibitor = _game.ObjectManager.GetInhibitorById(inhibitorId);
-                var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !((Inhibitor)inhibitor).RespawnAnnounced;
+                var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
                 var oppositeTeam = TeamId.TEAM_BLUE;
                 if (inhibitor.Team == TeamId.TEAM_PURPLE)
@@ -577,7 +577,7 @@ namespace LeagueSandbox.GameServer.Maps
                     oppositeTeam = TeamId.TEAM_PURPLE;
                 }
 
-                var areAllInhibitorsDead = _game.ObjectManager.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !((Inhibitor)inhibitor).RespawnAnnounced;
+                var areAllInhibitorsDead = _game.ObjectManager.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !inhibitor.RespawnAnnounced;
 
                 var list = RegularMinionWave;
                 if (_cannonMinionCount >= cannonMinionCap)

@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class ItemManager
     {
-        private Dictionary<int, ItemType> _itemTypes;
+        private readonly Dictionary<int, IItemData> _itemTypes;
 
         public ItemManager()
         {
-            _itemTypes = new Dictionary<int, ItemType>();
+            _itemTypes = new Dictionary<int, IItemData>();
         }
 
-        public ItemType GetItemType(int itemId)
+        public IItemData GetItemType(int itemId)
         {
             return _itemTypes[itemId];
         }
 
-        public ItemType SafeGetItemType(int itemId, ItemType defaultValue)
+        public IItemData SafeGetItemType(int itemId, IItemData defaultValue)
         {
             if (!_itemTypes.ContainsKey(itemId))
             {
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Items
             return _itemTypes[itemId];
         }
 
-        public ItemType SafeGetItemType(int itemId)
+        public IItemData SafeGetItemType(int itemId)
         {
             return SafeGetItemType(itemId, null);
         }
@@ -41,7 +42,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             foreach (var entry in contentCollection)
             {
-                var itemType = ItemType.Load(this, entry.Value);
+                var itemType = ItemData.Load(this, entry.Value);
                 _itemTypes.Add(entry.Key, itemType);
             }
         }

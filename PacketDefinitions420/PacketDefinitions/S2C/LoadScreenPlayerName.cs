@@ -1,7 +1,5 @@
 using GameServerCore;
-using GameServerCore.Enet;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions;
+using GameServerCore.NetInfo;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
@@ -10,7 +8,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         public LoadScreenPlayerName(Pair<uint, ClientInfo> player)
             : base(PacketCmd.PKT_S2C_LOAD_NAME)
         {
-            Write(player.Item2.UserId);
+            Write(player.Item2.PlayerId);
             Write(0);
             Write(player.Item2.Name.Length + 1);
 			Write(player.Item2.Name);

@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class AttentionPingRequest
+    public class AttentionPingRequest : ICoreRequest
     {
         public float X { get; }
         public float Y { get; }

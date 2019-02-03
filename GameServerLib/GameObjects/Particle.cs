@@ -6,12 +6,10 @@ namespace LeagueSandbox.GameServer.GameObjects
 {
     public class Particle : GameObject, IParticle
     {
-        public IChampion Owner { get; private set; }
-        public string Name { get; private set; }
-        public string BoneName { get; private set; }
-        public float Size { get; private set; }
-
-        IChampion IParticle.Owner => Owner;
+        public IChampion Owner { get; }
+        public string Name { get; }
+        public string BoneName { get; }
+        public float Size { get; }
 
         public Particle(Game game, IChampion owner, ITarget t, string particleName, float size = 1.0f, string boneName = "", uint netId = 0)
                : base(game, t.X, t.Y, 0, 0, netId)

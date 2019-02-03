@@ -10,32 +10,29 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
     {
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
-        public float TimeElapsed { get; set; }
+        public float TimeElapsed { get; private set; }
         protected bool _remove;
-        public ObjAiBase TargetUnit { get; private set; }
-        public ObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public IObjAiBase TargetUnit { get; private set; }
+        public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
         protected CSharpScriptEngine _scriptEngine;
         public string Name { get; private set; }
-        public int Stacks { get; private set; }
+        public byte StackCount { get; private set; }
         public byte Slot { get; private set; }
-
-        IObjAiBase IBuff.TargetUnit => TargetUnit;
-        IObjAiBase IBuff.SourceUnit => SourceUnit;
 
         protected Game _game;
 
-        public bool NeedsToRemove()
+        public bool Elapsed()
         {
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, BuffType buffType, ObjAiBase onto, ObjAiBase from)
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
             _game = game;
             _scriptEngine = game.ScriptEngine;
             Duration = dur;
-            Stacks = stacks;
+            StackCount = stacks;
             Name = buffName;
             TimeElapsed = 0;
             _remove = false;
@@ -45,10 +42,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Slot = onto.GetNewBuffSlot(this);
         }
 
-        public Buff(Game game, string buffName, float dur, int stacks, BuffType buffType, ObjAiBase onto)
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto)
                : this(game, buffName, dur, stacks, buffType, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
+        
         public void Update(float diff)
         {
             TimeElapsed += diff / 1000.0f;
@@ -61,9 +59,30 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void SetStacks(int newStacks)
+        public void ResetDuration()
         {
-            Stacks = newStacks;
+            Duration = 0;
+        }
+
+        public bool IncrementStackCount()
+        {
+            if (StackCount == byte.MaxValue)
+                return false;
+            StackCount++;
+            return true;
+        }
+
+        public bool DecrementStackCount()
+        {
+            if (StackCount <= 0)
+                return false;
+            StackCount--;
+            return true;
+        }
+
+        public void SetStacks(byte newStacks)
+        {
+            StackCount = newStacks;
         }
     }
 }

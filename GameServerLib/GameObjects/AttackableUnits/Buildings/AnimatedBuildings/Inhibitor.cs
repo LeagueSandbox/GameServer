@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             var objects = _game.ObjectManager.GetObjects().Values;
             foreach (var obj in objects)
             {
-                var u = obj as ObjAiBase;
+                var u = obj as IObjAiBase;
                 if (u != null && u.TargetUnit == this)
                 {
                     u.SetTargetUnit(null);
@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             _respawnTimer.Start();
             _timerStartTime = DateTime.Now;
 
-            if (killer is Champion c)
+            if (killer is IChampion c)
             {
                 c.Stats.Gold += GOLD_WORTH;
                 _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
