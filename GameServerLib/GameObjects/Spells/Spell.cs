@@ -240,6 +240,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
+        public void AddProjectileCoords(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                _game,
+                fromX,
+                fromY,
+                (int)SpellData.LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags,
+                FutureProjNetId
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+        }
+
         public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
         {
             var p = new Projectile(
