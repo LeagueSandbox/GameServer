@@ -276,8 +276,20 @@ namespace PacketDefinitions420
 
         public void NotifyAvatarInfo(int userId, ClientInfo client)
         {
-            var info = new PacketDefinitions.S2C.AvatarInfo(client);
-            _packetHandlerManager.SendPacket(userId, info, Channel.CHL_S2C);
+            var avatar = new AvatarInfo_Server();
+            avatar.SenderNetID = client.Champion.NetId;
+            var skills = new uint[] { HashFunctions.HashString(client.SummonerSkills[0]), HashFunctions.HashString(client.SummonerSkills[1]) };
+
+            avatar.SummonerIDs[0] = skills[0];
+            avatar.SummonerIDs[1] = skills[1];
+            for (int i = 0; i < client.Champion.RuneList.Runes.Count; ++i)
+            {
+                int runeValue = 0;
+                client.Champion.RuneList.Runes.TryGetValue(i, out runeValue);
+                avatar.ItemIDs[i] =(uint) runeValue;
+            }
+            // TODO: add talents
+            _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance)
