@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blowfish.cs" />
+    <Compile Include="Convertors.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="PacketDefinitions\PacketCmd.cs" />
     <Compile Include="PacketHeader.cs" />

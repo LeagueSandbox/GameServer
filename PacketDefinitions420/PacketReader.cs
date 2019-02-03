@@ -1,5 +1,7 @@
 ﻿using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets;
+using LeaguePackets.Game;
 using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
@@ -199,31 +201,10 @@ namespace PacketDefinitions420
         [PacketType(PacketCmd.PKT_C2S_MOVE_REQ)]
         public static MovementRequest ReadMovementRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.MovementRequest(data);
-            MoveType type;
-            switch (rq.Type)
-            {
-                case MovementType.EMOTE:
-                    type = MoveType.EMOTE;
-                    break;
-                case MovementType.MOVE:
-                    type = MoveType.MOVE;
-                    break;
-                case MovementType.ATTACK:
-                    type = MoveType.ATTACK;
-                    break;
-                case MovementType.ATTACKMOVE:
-                    type = MoveType.ATTACKMOVE;
-                    break;
-                case MovementType.STOP:
-                    type = MoveType.STOP;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return new MovementRequest(rq.NetIdHeader, type, rq.X, rq.Y, rq.TargetNetId, rq.CoordCount, rq.NetId,
-                rq.MoveData);
+            var rq = new NPC_IssueOrderReq();
+            rq.Read(data);
+            
+            return new MovementRequest(rq.SenderNetID,rq.TargetNetID,rq.Position,(MoveType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(Convertors.WaypointToVector2));
         }
 
         [PacketType(PacketCmd.PKT_C2S_QUEST_CLICKED)]

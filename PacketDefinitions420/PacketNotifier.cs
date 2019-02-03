@@ -318,8 +318,8 @@ namespace PacketDefinitions420
 
         public void NotifyEnterVision(int userId, IChampion champion)
         {
-            var enterVisionPacket = new EnterVisionAgain(_navGrid, champion);
-            _packetHandlerManager.SendPacket(userId, enterVisionPacket, Channel.CHL_S2C);
+            var enterVisionPacket = PrepareVisionPacket(champion, champion.Team);
+            _packetHandlerManager.SendPacket(userId, enterVisionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyStaticObjectSpawn(int userId, uint netId)
@@ -412,8 +412,11 @@ namespace PacketDefinitions420
 
         public void NotifyMovement(IGameObject o)
         {
-            var answer = new MovementResponse(_navGrid, o);
-            _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
+            var packet = new WaypointList();
+            packet.SenderNetID = o.NetId;
+            packet.SyncID = (int) o.SyncId;
+            packet.Waypoints = o.Waypoints;
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
         }
 
         public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, GameServerCore.Enums.DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
@@ -676,7 +679,7 @@ namespace PacketDefinitions420
             var md = new MovementDataStop();
             md.Position = minion.GetPosition();
             md.Forward = new Vector2(0, 1);
-            md.SyncID = 0x0006E4CF; //TODO: generate real movement SyncId
+            md.SyncID = (int)minion.SyncId; //TODO: generate real movement SyncId
             visionPacket.MovementData = md;
             visionPacket.Packets.Add(spawnPacket);
             visionPacket.SenderNetID = minion.NetId;
@@ -706,26 +709,44 @@ namespace PacketDefinitions420
             }
         }
 
+        private OnEnterVisiblityClient PrepareVisionPacket(IGameObject o, TeamId team)
+        {
+            var visionPacket = new OnEnterVisiblityClient();
+            visionPacket.LookAtPosition = new Vector3(1, 0, 0);
+            if (o.Waypoints.Count == 0)
+            {
+                var md = new MovementDataStop();
+                md.Position = o.GetPosition();
+                md.Forward = new Vector2(0, 1);
+                md.SyncID = (int)o.SyncId;
+                visionPacket.MovementData = md;
+
+            }
+            else
+            {
+                var md = new MovementDataNormal();
+                var waypoint = new List<CompressedWaypoint>();
+                var curPos = MovementVector.ToCenteredScaledCoordinates(o.GetPosition(),_navGrid);
+                waypoint.Add(new CompressedWaypoint((short)curPos.X, (short)curPos.Y));
+                // TODO: optimize this by saving these lists in GameObject class
+                foreach (Vector2 v in o.Waypoints)
+                {
+                    var vec = MovementVector.ToCenteredScaledCoordinates(v, _navGrid);
+                    waypoint.Add(new CompressedWaypoint((short)vec.X, (short)vec.Y));
+                }
+                md.Waypoints = waypoint;
+                md.HasTeleportID = false;
+                md.SyncID = (int)o.SyncId;
+                visionPacket.MovementData = md;
+            }
+            visionPacket.SenderNetID = o.NetId;
+            return visionPacket;
+        }
+
         public void NotifyEnterVision(IGameObject o, TeamId team)
         {
-            switch (o)
-            {
-                case IMinion m:
-                    {
-                        var eva = new EnterVisionAgain(_navGrid, m);
-                        _packetHandlerManager.BroadcastPacketTeam(team, eva, Channel.CHL_S2C);
-                        NotifySetHealth(m);
-                        return;
-                    }
-                // TODO: Fix bug where enemy champion is not visible to user when vision is acquired until the enemy champion moves
-                case IChampion c:
-                    {
-                        var eva = new EnterVisionAgain(_navGrid, c);
-                        _packetHandlerManager.BroadcastPacketTeam(team, eva, Channel.CHL_S2C);
-                        NotifySetHealth(c);
-                        break;
-                    }
-            }
+            var visionPacket = PrepareVisionPacket(o, team);
+            _packetHandlerManager.BroadcastPacketTeam(team, visionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyChampionSpawned(IChampion c, TeamId team)

@@ -11,15 +11,17 @@ using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 
 namespace LeagueSandbox.GameServer.GameObjects
-{
+{ 
     public class GameObject : Target, IGameObject
     {
         protected bool _movementUpdated;
         protected bool _toRemove;
         public uint NetId { get; }
+        public uint SyncId { get; }
+
+        private static uint MOVEMENT_EPSILON = 5;
 
         public List<Vector2> Waypoints { get; private set; }
-        public int CurWaypoint { get; private set; }
         
         public TeamId Team { get; protected set; }
         public void SetTeam(TeamId team)
@@ -58,6 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 NetId = _networkIdManager.GetNewNetId(); // Let the base class (this one) asign a netId
             }
+            SyncId = (uint) Environment.TickCount; // TODO: use movement manager to generate those
             Target = null;
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
@@ -91,14 +94,42 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void Move(float diff)
         {
-            if (Target == null)
+            // no waypoints remained - return
+            if (!Waypoints.Any())
             {
                 _direction = new Vector2();
                 return;
             }
+            var next = Waypoints[0];
 
-            var to = new Vector2(Target.X, Target.Y);
-            Move(diff, to);
+            // current position
+            var cur = new Vector2(X, Y);
+            var goingTo = next - cur;
+            _direction = Vector2.Normalize(goingTo);
+            // shouldn't happen usually
+            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            {
+                _direction = new Vector2(0, 0);
+            }
+
+            var moveSpeed = GetMoveSpeed();
+            var deltaMovement = moveSpeed * 0.001f * diff;
+            var xx = _direction.X * deltaMovement;
+            var yy = _direction.Y * deltaMovement;
+            X += xx;
+            Y += yy;
+
+            // now (X,Y) moved towards next position
+            cur = new Vector2(X, Y);
+
+            // Checks if we reached the next waypoint
+            // (deltaMovement * 2) used here is problematic cause if the server lagged, diff is much greater than usual values
+            if ((cur-next).LengthSquared() < MOVEMENT_EPSILON)
+            {
+                Console.WriteLine("Waypoint reached: " + next.X + "," + next.Y);
+                // remove this waypoint cause we reached it
+                Waypoints.RemoveAt(0);
+            }
         }
 
         /// <summary>
@@ -107,48 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
         public void Move(float diff, Vector2 to)
         {
-            if (Target == null)
-            {
-                _direction = new Vector2();
-                return;
-            }
-            var cur = new Vector2(X, Y); //?
-
-            var goingTo = to - cur;
-            _direction = Vector2.Normalize(goingTo);
-            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
-            {
-                _direction = new Vector2(0, 0);
-            }
-
-            var moveSpeed = GetMoveSpeed();
-
-            var deltaMovement = moveSpeed * 0.001f * diff;
-
-            var xx = _direction.X * deltaMovement;
-            var yy = _direction.Y * deltaMovement;
-
-            X += xx;
-            Y += yy;
-
-            // If the target was a simple point, stop when it is reached
-
-            if (GetDistanceTo(Target) < deltaMovement * 2)
-            {
-                if (this is IProjectile && !Target.IsSimpleTarget)
-                {
-                    return;
-                }
-                
-                if (++CurWaypoint >= Waypoints.Count)
-                {
-                    Target = null;
-                }
-                else
-                {
-                    Target = new Target(Waypoints[CurWaypoint]);
-                }
-            }
+            
         }
 
         public virtual void Update(float diff)
@@ -164,17 +154,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
-
-            SetPosition(Waypoints[0].X, Waypoints[0].Y);
+            Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
+            Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
+            
             _movementUpdated = true;
-            if (Waypoints.Count == 1)
-            {
-                Target = null;
-                return;
-            }
-
-            Target = new Target(Waypoints[1]);
-            CurWaypoint = 1;
         }
 
         public bool IsMovementUpdated()

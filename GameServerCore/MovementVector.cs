@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Content;
+using System.Numerics;
 
 namespace GameServerCore
 {
@@ -42,6 +43,11 @@ namespace GameServerCore
         public static short TargetYToNormalFormat(INavGrid navGrid, float value)
         {
             return FormatCoordinate(value, navGrid.MiddleOfMap.Y);
+        }
+        public static Vector2 ToCenteredScaledCoordinates(Vector2 coords, INavGrid navGrid)
+        {
+            Vector2 v = new Vector2(FormatCoordinate(coords.X, navGrid.MiddleOfMap.X), FormatCoordinate(coords.Y, navGrid.MiddleOfMap.Y));
+            return v;
         }
     }
 }

@@ -61,12 +61,12 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 
             var waypoints = m.Waypoints;
 
-            Write((byte)((waypoints.Count - m.CurWaypoint + 1) * 2)); // coordCount
+            Write((byte)((waypoints.Count  + 1) * 2)); // coordCount
             WriteNetId(m);
             Write((byte)0); // movement mask
             Write(MovementVector.TargetXToNormalFormat(navGrid, m.X));
             Write(MovementVector.TargetYToNormalFormat(navGrid, m.Y));
-            for (var i = m.CurWaypoint; i < waypoints.Count; ++i)
+            for (var i = 0; i < waypoints.Count; ++i)
             {
                 Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].X));
                 Write(MovementVector.TargetXToNormalFormat(navGrid, waypoints[i].Y));

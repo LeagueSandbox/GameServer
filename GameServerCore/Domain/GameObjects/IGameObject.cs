@@ -6,14 +6,26 @@ namespace GameServerCore.Domain.GameObjects
 {
     public interface IGameObject : ITarget, IUpdate
     {
+        /// <summary>
+        ///  Identifier unique to this game object.
+        /// </summary>
         uint NetId { get; }
-        int CurWaypoint { get; }
+        /// <summary>
+        /// Waypoints that the game object walking through.
+        /// </summary>
         List<Vector2> Waypoints { get; }
         ITarget Target { get; }
+        /// <summary>
+        /// Team identifier
+        /// </summary>
         TeamId Team { get; }
         float CollisionRadius { get; }
         float VisionRadius { get; }
-
+        /// <summary>
+        /// Used to synchronize movement
+        /// </summary>
+        uint SyncId { get; }
+        // TODO: Change this to property
         float GetZ();
         float GetMoveSpeed();
         
