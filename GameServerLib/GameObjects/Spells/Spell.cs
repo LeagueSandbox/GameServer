@@ -218,12 +218,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _spellGameScript.ApplyEffects(Owner, u, this, p);
         }
 
-        public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
+        public void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false)
         {
             var p = new Projectile(
                 _game,
-                Owner.X,
-                Owner.Y,
+                fromX,
+                fromY,
                 (int)SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),

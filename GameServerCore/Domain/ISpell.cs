@@ -30,7 +30,7 @@ namespace GameServerCore.Domain
         void Deactivate();
         void ApplyEffects(IAttackableUnit u, IProjectile p);
         void LevelUp();
-        void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false);
+        void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false);
         void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false);
         void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true);
         void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true);
