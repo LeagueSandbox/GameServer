@@ -74,7 +74,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// </summary>
         public virtual bool Cast(float x, float y, float x2, float y2, IAttackableUnit u = null)
         {
-            Console.WriteLine("Cast position (start of Cast()): " + Owner.X + ", " + Owner.Y);
             if (HasEmptyScript)
             {
                 return false;

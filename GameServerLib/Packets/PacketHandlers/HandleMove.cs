@@ -30,7 +30,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             // Last waypoint position
             var pos = req.Position;
-            Console.WriteLine(pos.ToString());
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
             translatedWaypoints.Add(pos);
             switch (req.Type)

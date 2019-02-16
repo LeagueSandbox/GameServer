@@ -462,7 +462,7 @@ namespace PacketDefinitions420
             l.Add(o.GetPosition()+new Vector2((float)(dir.X * 0.007 * o.GetMoveSpeed()), (float)(dir.Y * 0.007 * o.GetMoveSpeed())));
             l.AddRange(o.Waypoints);
             packet.Waypoints = l;
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
 
         }
 
