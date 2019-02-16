@@ -406,8 +406,23 @@ namespace PacketDefinitions420
 
         public void NotifyTeleport(IAttackableUnit u, Vector2 pos)
         {
-            var packet = new TeleportRequest(u.NetId, pos.X, pos.Y, false);
-            _packetHandlerManager.BroadcastPacketVision(u, packet, Channel.CHL_S2C);
+            // pos is already in centered format
+            var packet = new WaypointGroup();
+            packet.SenderNetID = u.NetId;
+            packet.SyncID = (int)u.SyncId;
+            packet.Movements = new List<MovementDataNormal>();
+            var tp = new MovementDataNormal();
+            tp.SyncID = (int) u.SyncId;
+            tp.HasTeleportID = true;
+            tp.TeleportID = 2;
+            tp.TeleportNetID = u.NetId;
+            tp.Waypoints = new List<CompressedWaypoint>();
+            // Not needed
+            //var npos = MovementVector.ToCenteredScaledCoordinates(pos, _navGrid);
+            var way = new CompressedWaypoint((short)pos.X,(short)pos.Y);
+            tp.Waypoints.Add(way);
+            packet.Movements.Add(tp);
+            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_GAMEPLAY);
         }
 
         public void NotifyMovement(IGameObject o)

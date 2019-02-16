@@ -27,12 +27,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 return true;
             }
-
+            var pos = req.Position;
+            champion.SetPosition(pos);
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
             switch (req.Type)
             {
                 case MoveType.STOP:
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    
                     champion.StopMovement();
                     break;
                 case MoveType.EMOTE:

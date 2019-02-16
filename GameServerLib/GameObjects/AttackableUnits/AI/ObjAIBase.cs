@@ -254,11 +254,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void StopMovement()
         {
-            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
+            // This should stop movement
+            Waypoints.Clear();
         }
 
         public virtual void RefreshWaypoints()
         {
+            //DEBUG
+            return;
             if (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
             {
                 return;
@@ -605,7 +608,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                     if (positionUsed)
                         continue;
-                    SetWaypoints(new List<Vector2> { GetPosition(), point });
+                    SetWaypoints(new List<Vector2> { point });
                     return true;
                 }
             }

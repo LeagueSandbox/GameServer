@@ -154,9 +154,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
-            Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
-            Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
+
+            // DEBUG: Where is the champino according to client/server
+            //Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
+            //Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
             
+            // Cause a packet sending to update the client - here cause sort of major lag untill the packet actually sent
             _movementUpdated = true;
         }
 
