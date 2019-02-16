@@ -203,7 +203,6 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
-            
             return new MovementRequest(rq.SenderNetID,rq.TargetNetID,rq.Position,(MoveType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(Convertors.WaypointToVector2));
         }
 

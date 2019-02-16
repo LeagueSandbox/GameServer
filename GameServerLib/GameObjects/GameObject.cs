@@ -125,8 +125,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             // REVIEW: (deltaMovement * 2) used here is problematic cause if the server lagged, diff is much greater than usual values
             if ((cur-next).LengthSquared() < MOVEMENT_EPSILON* MOVEMENT_EPSILON)
             {
-                Console.WriteLine("Waypoint reached: " + next.X + "," + next.Y);
-                Console.WriteLine("Position: " + X + "," + Y);
                 // remove this waypoint cause we reached it
                 Waypoints.RemoveAt(0);
             }
@@ -154,10 +152,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
-
-            // DEBUG: Where is the champion according to client/server
-            Console.WriteLine("NextWaypoint:"+Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
-            Console.WriteLine("Position:"+GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
             
             // Cause a packet sending to update the client - here cause sort of major lag untill the packet actually sent
             _movementUpdated = true;

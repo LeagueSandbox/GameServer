@@ -4,6 +4,7 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using System;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             // Last waypoint position
             var pos = req.Position;
-            
+            Console.WriteLine(pos.ToString());
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
             translatedWaypoints.Add(pos);
             switch (req.Type)

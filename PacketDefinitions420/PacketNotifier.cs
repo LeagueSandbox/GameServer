@@ -458,7 +458,7 @@ namespace PacketDefinitions420
             packet.SenderNetID = o.NetId;
             packet.SyncID = (int)o.SyncId;
             var l = new List<Vector2>();
-            l.Add(o.GetPosition());
+            //l.Add(o.GetPosition());
             l.AddRange(o.Waypoints);
             packet.Waypoints = l;
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
