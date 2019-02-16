@@ -118,7 +118,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             var yy = _direction.Y * deltaMovement;
             X += xx;
             Y += yy;
-
+            Console.WriteLine("deltaMovement: " + deltaMovement);
             // now (X,Y) moved towards next position
             cur = new Vector2(X, Y);
 
@@ -127,6 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             if ((cur-next).LengthSquared() < (deltaMovement*2)* (deltaMovement * 2))
             {
                 Console.WriteLine("Waypoint reached: " + next.X + "," + next.Y);
+                Console.WriteLine("Position: " + X + "," + Y);
                 // remove this waypoint cause we reached it
                 Waypoints.RemoveAt(0);
             }

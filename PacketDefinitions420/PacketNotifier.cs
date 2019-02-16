@@ -111,8 +111,35 @@ namespace PacketDefinitions420
         public void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId,
             uint spellNetId)
         {
-            var response = new CastSpellResponse(navGrid, s, start.X, start.Y, end.X, end.Y, futureProjNetId, spellNetId);
-            _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
+            var ownerPos = s.Owner.GetPosition();
+            Console.WriteLine("Cast position: " + ownerPos.X + ", " + ownerPos.Y);
+            var resp = new NPC_CastSpellAns();
+            resp.SenderNetID = s.Owner.NetId;
+            resp.CasterPositionSyncID = (int) s.Owner.SyncId;
+            resp.Unknown1 = false;
+            var cinfo = new CastInfo();
+            cinfo.SpellHash = (uint) s.GetId();
+            cinfo.SpellNetID = spellNetId;
+            cinfo.SpellLevel = (byte)(s.Level - 1); // TODO: fix the -1 in all references
+            cinfo.AttackSpeedModifier = 1.0f; // TODO: use real values
+            cinfo.CasterNetID = s.Owner.NetId;
+            cinfo.SpellChainOwnerNetID = s.Owner.NetId;
+            cinfo.PackageHash = (uint) s.Owner.GetChampionHash();
+            cinfo.MissileNetID = futureProjNetId;
+            cinfo.TargetPosition = new Vector3(ownerPos.X, navGrid.GetHeightAtLocation(ownerPos), ownerPos.Y);//new Vector3(start.X, navGrid.GetHeightAtLocation(start), start.Y);
+            cinfo.TargetPositionEnd = new Vector3(ownerPos.X, navGrid.GetHeightAtLocation(ownerPos), ownerPos.Y);//new Vector3(end.X, navGrid.GetHeightAtLocation(end), end.Y);
+            cinfo.DesignerCastTime = s.SpellData.GetCastTime();
+            cinfo.ExtraCastTime = 0;
+            cinfo.DesignerTotalTime = s.SpellData.GetCastTime();
+            cinfo.Cooldown = s.GetCooldown();
+            cinfo.StartCastTime = 0;
+            cinfo.SpellSlot = s.Slot;
+            cinfo.ManaCost = s.SpellData.ManaCost[s.Level];
+            cinfo.SpellCastLaunchPosition = new Vector3(ownerPos.X, navGrid.GetHeightAtLocation(ownerPos), ownerPos.Y);
+            cinfo.AmmoUsed = 0;
+            cinfo.AmmoRechargeTime = 0;
+            resp.CastInfo = cinfo;
+            _packetHandlerManager.BroadcastPacket(resp.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
@@ -414,7 +441,7 @@ namespace PacketDefinitions420
             var tp = new MovementDataNormal();
             tp.SyncID = (int) u.SyncId;
             tp.HasTeleportID = true;
-            tp.TeleportID = 2;
+            tp.TeleportID = 1;
             tp.TeleportNetID = u.NetId;
             tp.Waypoints = new List<CompressedWaypoint>();
             // Not needed
@@ -429,9 +456,10 @@ namespace PacketDefinitions420
         {
             var packet = new WaypointList();
             packet.SenderNetID = o.NetId;
-            packet.SyncID = (int) o.SyncId;
+            packet.SyncID = (int)o.SyncId;
             packet.Waypoints = o.Waypoints;
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_GAMEPLAY);
+
         }
 
         public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, GameServerCore.Enums.DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)

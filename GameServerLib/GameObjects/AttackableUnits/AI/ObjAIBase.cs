@@ -255,7 +255,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void StopMovement()
         {
             // This should stop movement
-            Waypoints.Clear();
+            var stop = new List<Vector2>();
+            stop.Add(GetPosition());
+            SetWaypoints(stop);
         }
 
         public virtual void RefreshWaypoints()
