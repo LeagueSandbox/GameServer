@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
-            _game.PacketNotifier.NotifyMovement(this);
+            _movementUpdated = true;
         }
 
         public bool IsMovementUpdated()

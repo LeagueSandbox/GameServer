@@ -112,7 +112,6 @@ namespace PacketDefinitions420
             uint spellNetId)
         {
             var ownerPos = s.Owner.GetPosition();
-            Console.WriteLine("Cast position: " + ownerPos.X + ", " + ownerPos.Y);
             var resp = new NPC_CastSpellAns();
             resp.SenderNetID = s.Owner.NetId;
             resp.CasterPositionSyncID = (int) s.Owner.SyncId;
@@ -457,8 +456,10 @@ namespace PacketDefinitions420
             var packet = new WaypointList();
             packet.SenderNetID = o.NetId;
             packet.SyncID = (int)o.SyncId;
+
+            var dir = Vector2.Normalize(o.Waypoints[0] = o.GetPosition());
             var l = new List<Vector2>();
-            //l.Add(o.GetPosition());
+            l.Add(o.GetPosition()+new Vector2((float)(dir.X * 0.007 * o.GetMoveSpeed()), (float)(dir.Y * 0.007 * o.GetMoveSpeed())));
             l.AddRange(o.Waypoints);
             packet.Waypoints = l;
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);

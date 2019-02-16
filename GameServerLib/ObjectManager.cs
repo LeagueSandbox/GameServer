@@ -58,11 +58,11 @@ namespace LeagueSandbox.GameServer
                 }
 
                 // if movement changed - update it first
-                /*if (obj.IsMovementUpdated())
+                if (obj.IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(obj);
                     obj.ClearMovementUpdated();
-                }*/
+                }
 
                 obj.Update(diff);
 
