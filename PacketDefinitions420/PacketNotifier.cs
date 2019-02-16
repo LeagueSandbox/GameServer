@@ -449,7 +449,7 @@ namespace PacketDefinitions420
             var way = new CompressedWaypoint((short)pos.X,(short)pos.Y);
             tp.Waypoints.Add(way);
             packet.Movements.Add(tp);
-            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_GAMEPLAY);
+            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyMovement(IGameObject o)
@@ -457,8 +457,11 @@ namespace PacketDefinitions420
             var packet = new WaypointList();
             packet.SenderNetID = o.NetId;
             packet.SyncID = (int)o.SyncId;
-            packet.Waypoints = o.Waypoints;
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_GAMEPLAY);
+            var l = new List<Vector2>();
+            l.Add(o.GetPosition());
+            l.AddRange(o.Waypoints);
+            packet.Waypoints = l;
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
 
         }
 
@@ -756,16 +759,16 @@ namespace PacketDefinitions420
         {
             var visionPacket = new OnEnterVisiblityClient();
             visionPacket.LookAtPosition = new Vector3(1, 0, 0);
-            if (o.Waypoints.Count == 0)
-            {
+            //if (o.Waypoints.Count == 0)
+            //{
                 var md = new MovementDataStop();
                 md.Position = o.GetPosition();
                 md.Forward = new Vector2(0, 1);
                 md.SyncID = (int)o.SyncId;
                 visionPacket.MovementData = md;
 
-            }
-            else
+            //}
+            /*else
             {
                 var md = new MovementDataNormal();
                 var waypoint = new List<CompressedWaypoint>();
@@ -781,7 +784,7 @@ namespace PacketDefinitions420
                 md.HasTeleportID = false;
                 md.SyncID = (int)o.SyncId;
                 visionPacket.MovementData = md;
-            }
+            }*/
             visionPacket.SenderNetID = o.NetId;
             return visionPacket;
         }

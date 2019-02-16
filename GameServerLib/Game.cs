@@ -192,6 +192,7 @@ namespace LeagueSandbox.GameServer
 
                 if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                 {
+
                     var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
