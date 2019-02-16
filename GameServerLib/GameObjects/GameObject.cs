@@ -118,7 +118,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             var yy = _direction.Y * deltaMovement;
             X += xx;
             Y += yy;
-            Console.WriteLine("deltaMovement: " + deltaMovement);
             // now (X,Y) moved towards next position
             cur = new Vector2(X, Y);
 
@@ -156,9 +155,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             Waypoints = newWaypoints;
 
-            // DEBUG: Where is the champino according to client/server
-            //Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
-            //Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
+            // DEBUG: Where is the champion according to client/server
+            Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
+            Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
             
             // Cause a packet sending to update the client - here cause sort of major lag untill the packet actually sent
             _movementUpdated = true;
@@ -186,6 +185,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void SetPosition(float x, float y)
         {
+            Console.WriteLine("Float Position changed: " + x + "," + y);
             X = x;
             Y = y;
 
@@ -194,6 +194,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void SetPosition(Vector2 vec)
         {
+            Console.WriteLine("Vector Position changed: " + vec.X + "," + vec.Y);
             X = vec.X;
             Y = vec.Y;
             Target = null;

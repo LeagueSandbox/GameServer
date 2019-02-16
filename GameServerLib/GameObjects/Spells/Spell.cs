@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spells
@@ -73,6 +74,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// </summary>
         public virtual bool Cast(float x, float y, float x2, float y2, IAttackableUnit u = null)
         {
+            Console.WriteLine("Cast position (start of Cast()): " + Owner.X + ", " + Owner.Y);
             if (HasEmptyScript)
             {
                 return false;

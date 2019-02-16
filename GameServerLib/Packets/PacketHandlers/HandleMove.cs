@@ -34,7 +34,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 case MoveType.STOP:
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
-                    
                     champion.StopMovement();
                     break;
                 case MoveType.EMOTE:

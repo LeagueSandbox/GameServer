@@ -562,6 +562,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool RecalculateAttackPosition()
         {
+            //DEBUG
+            return true;
             if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
             {
                 return false;

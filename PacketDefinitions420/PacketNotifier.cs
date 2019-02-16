@@ -116,7 +116,7 @@ namespace PacketDefinitions420
             var resp = new NPC_CastSpellAns();
             resp.SenderNetID = s.Owner.NetId;
             resp.CasterPositionSyncID = (int) s.Owner.SyncId;
-            resp.Unknown1 = false;
+            resp.Unknown1 = true;
             var cinfo = new CastInfo();
             cinfo.SpellHash = (uint) s.GetId();
             cinfo.SpellNetID = spellNetId;
