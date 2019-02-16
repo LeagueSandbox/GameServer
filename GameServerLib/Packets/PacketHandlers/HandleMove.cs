@@ -31,18 +31,18 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Last waypoint position
             var pos = req.Position;
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
-            translatedWaypoints.Add(pos);
+            translatedWaypoints.Insert(0, champion.GetPosition());
             switch (req.Type)
             {
                 case MoveType.STOP:
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
-                    champion.SetPosition(pos);
                     champion.StopMovement();
                     break;
                 case MoveType.EMOTE:
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
+
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     champion.SetWaypoints(translatedWaypoints);
                     break;

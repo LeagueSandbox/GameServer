@@ -20,6 +20,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public uint SyncId { get; }
 
         private static uint MOVEMENT_EPSILON = 5;
+        private int _waypointIndex;
 
         public List<Vector2> Waypoints { get; private set; }
         
@@ -65,6 +66,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
             Waypoints = new List<Vector2>();
+            _waypointIndex = 0;
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
@@ -95,12 +97,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void Move(float diff)
         {
             // no waypoints remained - return
-            if (!Waypoints.Any())
+            if (_waypointIndex>=Waypoints.Count)
             {
                 _direction = new Vector2();
                 return;
             }
-            var next = Waypoints[0];
+            var next = Waypoints[_waypointIndex];
 
             // current position
             var cur = new Vector2(X, Y);
@@ -126,7 +128,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             if ((cur-next).LengthSquared() < MOVEMENT_EPSILON* MOVEMENT_EPSILON)
             {
                 // remove this waypoint cause we reached it
-                Waypoints.RemoveAt(0);
+                _waypointIndex++;
             }
         }
 
@@ -152,6 +154,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
+            _waypointIndex = 1;
             _movementUpdated = true;
         }
 
