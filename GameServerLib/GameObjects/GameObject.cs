@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public uint NetId { get; }
         public uint SyncId { get; }
 
-        //private static uint MOVEMENT_EPSILON = 5;
+        private static uint MOVEMENT_EPSILON = 5;
 
         public List<Vector2> Waypoints { get; private set; }
         
@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             // Checks if we reached the next waypoint
             // REVIEW: (deltaMovement * 2) used here is problematic cause if the server lagged, diff is much greater than usual values
-            if ((cur-next).LengthSquared() < (deltaMovement*2)* (deltaMovement * 2))
+            if ((cur-next).LengthSquared() < MOVEMENT_EPSILON* MOVEMENT_EPSILON)
             {
                 Console.WriteLine("Waypoint reached: " + next.X + "," + next.Y);
                 Console.WriteLine("Position: " + X + "," + Y);
