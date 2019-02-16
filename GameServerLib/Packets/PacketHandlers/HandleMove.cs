@@ -27,8 +27,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 return true;
             }
-            var pos = req.Position;  
+            // Last waypoint position
+            var pos = req.Position;
+            
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
+            translatedWaypoints.Add(pos);
             switch (req.Type)
             {
                 case MoveType.STOP:

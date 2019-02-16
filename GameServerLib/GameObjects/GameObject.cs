@@ -156,8 +156,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             Waypoints = newWaypoints;
 
             // DEBUG: Where is the champion according to client/server
-            Console.WriteLine(Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
-            Console.WriteLine(GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
+            Console.WriteLine("NextWaypoint:"+Waypoints[0].X.ToString()+","+Waypoints[0].Y.ToString());
+            Console.WriteLine("Position:"+GetPosition().X.ToString() + "," + GetPosition().Y.ToString());
             
             // Cause a packet sending to update the client - here cause sort of major lag untill the packet actually sent
             _movementUpdated = true;
