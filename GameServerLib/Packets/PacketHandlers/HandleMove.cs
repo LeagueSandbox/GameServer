@@ -31,7 +31,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Last waypoint position
             var pos = req.Position;
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
-            translatedWaypoints.Insert(0, champion.GetPosition());
             switch (req.Type)
             {
                 case MoveType.STOP:
@@ -42,11 +41,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-
+                    translatedWaypoints[0] = champion.GetPosition();
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case MoveType.MOVE:
+                    translatedWaypoints[0] = champion.GetPosition();
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
                     champion.SetWaypoints(translatedWaypoints);
                     break;

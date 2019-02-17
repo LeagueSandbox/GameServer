@@ -155,8 +155,13 @@ namespace LeagueSandbox.GameServer.GameObjects
         { 
             Waypoints = newWaypoints;
             SetPosition(Waypoints[0].X, Waypoints[0].Y);
-            _waypointIndex = 1;
             _movementUpdated = true;
+            if (Waypoints.Count == 1)
+            {
+                Target = null;
+                return;
+            }
+            _waypointIndex = 1;
         }
 
         public bool IsMovementUpdated()
