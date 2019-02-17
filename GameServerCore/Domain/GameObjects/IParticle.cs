@@ -6,5 +6,6 @@
         string Name { get; }
         string BoneName { get; }
         float Size { get; }
+        ITarget Target { get; }
     }
 }

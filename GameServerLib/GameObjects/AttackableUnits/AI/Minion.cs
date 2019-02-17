@@ -3,6 +3,9 @@ using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Enums;
+using GameMaths.Geometry.Polygons;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -31,7 +34,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Name = name;
 
             Owner = owner;
-
             if (!(Owner == null) && Owner is IChampion)
             {
                 SetTeam(Owner.Team);
@@ -71,6 +73,41 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void PauseAi(bool b)
         {
             _aiPaused = b;
+        }
+
+        public override void OnCollision(IGameObject collider)
+        {
+            base.OnCollision(collider);
+            if (collider == null) return;
+            var curCircle = new CirclePoly(GetPosition(), collider.CollisionRadius + 10, 72);
+            var targetCircle = new CirclePoly(GetNextWaypoint(), Stats.Range.Total, 72);
+            var collideCircle = new CirclePoly(collider.GetPosition(), collider.CollisionRadius + 10, 72);
+            //Find optimal position...
+            bool found = false;
+            foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
+            {
+                if (!_game.Map.NavGrid.IsWalkable(point))
+                    continue;
+                var positionCollide = false;
+                if (collideCircle.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
+                {
+                    positionCollide = true;
+                }
+                if (positionCollide)
+                    continue;
+                positionCollide = false;
+                Vector2 toCollide = Vector2.Normalize(collideCircle.Center - curCircle.Center);
+                // Rotate so there isn't little collides (more than orthogonal
+                toCollide = toCollide.Rotate(curCircle.Center, 100.0f);
+                toCollide = curCircle.Center + new Vector2(toCollide.X * curCircle.Radius, toCollide.Y * curCircle.Radius);
+
+                found = true;
+                var newWaypoints = new List<Vector2> { GetPosition(), toCollide };
+                newWaypoints.AddRange(Waypoints.GetRange(WaypointIndex, Waypoints.Count- (WaypointIndex)));
+                SetWaypoints(newWaypoints);
+                break;
+            }
+            if (!found && Waypoints.Any()) StopMovement();
         }
 
         public override void OnAdded()

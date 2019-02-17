@@ -34,7 +34,13 @@ namespace GameServerCore
         {
             list.AddRange(Encoding.BigEndianUnicode.GetBytes(val));
         }
-
+        /// <summary>
+        /// Rotates v clockwise with respect to the origin
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="origin"></param>
+        /// <param name="angle"></param>
+        /// <returns></returns>
         public static Vector2 Rotate(this Vector2 v, Vector2 origin, float angle)
         {
             // Rotating (px,py) around (ox, oy) with angle a

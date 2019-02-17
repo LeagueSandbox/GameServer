@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 
 namespace LeagueSandbox.GameServer.GameObjects
-{ 
+{
     public class GameObject : Target, IGameObject
     {
         protected bool _movementUpdated;
@@ -20,7 +20,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         public uint SyncId { get; }
 
         private static uint MOVEMENT_EPSILON = 5;
-        private int _waypointIndex;
+
+        public int WaypointIndex { get; private set; }
 
         public List<Vector2> Waypoints { get; private set; }
         
@@ -44,11 +45,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
 
-        /// <summary>
-        /// Current target the object running to (can be coordinates or an object)
-        /// </summary>
-        public ITarget Target { get; set; }
-
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
             _game = game;
@@ -62,11 +58,10 @@ namespace LeagueSandbox.GameServer.GameObjects
                 NetId = _networkIdManager.GetNewNetId(); // Let the base class (this one) asign a netId
             }
             SyncId = (uint) Environment.TickCount; // TODO: use movement manager to generate those
-            Target = null;
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
             Waypoints = new List<Vector2>();
-            _waypointIndex = 0;
+            WaypointIndex = 0;
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
@@ -97,12 +92,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void Move(float diff)
         {
             // no waypoints remained - return
-            if (_waypointIndex>=Waypoints.Count)
+            if (WaypointIndex>=Waypoints.Count)
             {
                 _direction = new Vector2();
                 return;
             }
-            var next = Waypoints[_waypointIndex];
+            var next = Waypoints[WaypointIndex];
 
             // current position
             var cur = new Vector2(X, Y);
@@ -128,8 +123,18 @@ namespace LeagueSandbox.GameServer.GameObjects
             if ((cur-next).LengthSquared() < MOVEMENT_EPSILON* MOVEMENT_EPSILON)
             {
                 // remove this waypoint cause we reached it
-                _waypointIndex++;
+                WaypointIndex++;
             }
+        }
+        /// <summary>
+        /// Returns the next waypoint. If all waypoints reached return -inf Vector2
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetNextWaypoint()
+        {
+            if (WaypointIndex < Waypoints.Count) return Waypoints[WaypointIndex];
+            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+
         }
 
         /// <summary>
@@ -158,10 +163,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             _movementUpdated = true;
             if (Waypoints.Count == 1)
             {
-                Target = null;
                 return;
             }
-            _waypointIndex = 1;
+            WaypointIndex = 1;
         }
 
         public bool IsMovementUpdated()
@@ -188,15 +192,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             X = x;
             Y = y;
-
-            Target = null;
         }
 
         public virtual void SetPosition(Vector2 vec)
         {
             X = vec.X;
             Y = vec.Y;
-            Target = null;
         }
 
         public virtual float GetZ()
