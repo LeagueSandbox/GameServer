@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServer
             _lastMapDurationWatch.Start();
             while (!SetToExit)
             {
-                
+                _packetServer.NetLoop();
                 if (IsPaused)
                 {
                     _lastMapDurationWatch.Stop();
@@ -192,7 +192,6 @@ namespace LeagueSandbox.GameServer
 
                 if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                 {
-                    _packetServer.NetLoop();
                     var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
