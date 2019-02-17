@@ -180,7 +180,6 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void SetPosition(float x, float y)
         {
-            Console.WriteLine("Float Position changed: " + x + "," + y);
             X = x;
             Y = y;
 
@@ -189,7 +188,6 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void SetPosition(Vector2 vec)
         {
-            Console.WriteLine("Vector Position changed: " + vec.X + "," + vec.Y);
             X = vec.X;
             Y = vec.Y;
             Target = null;

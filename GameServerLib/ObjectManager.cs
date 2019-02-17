@@ -57,13 +57,6 @@ namespace LeagueSandbox.GameServer
                     continue;
                 }
 
-                // if movement changed - update it first
-                if (obj.IsMovementUpdated())
-                {
-                    _game.PacketNotifier.NotifyMovement(obj);
-                    obj.ClearMovementUpdated();
-                }
-
                 obj.Update(diff);
 
                 if (!(obj is IAttackableUnit))
@@ -131,6 +124,13 @@ namespace LeagueSandbox.GameServer
                 {
                     _game.PacketNotifier.NotifyModelUpdate(u);
                     u.IsModelUpdated = false;
+                }
+
+                // if movement changed
+                if (obj.IsMovementUpdated())
+                {
+                    _game.PacketNotifier.NotifyMovement(obj);
+                    obj.ClearMovementUpdated();
                 }
             }
         }

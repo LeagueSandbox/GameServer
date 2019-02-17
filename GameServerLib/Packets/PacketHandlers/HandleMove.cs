@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             // Last waypoint position
             var pos = req.Position;
-            var translatedWaypoints = req.Waypoints.ConvertAll(TranslateCoordinates);
+            var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
             translatedWaypoints.Insert(0, champion.GetPosition());
             switch (req.Type)
             {
@@ -56,8 +56,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             champion.UpdateTargetUnit(u);
             return true;
         }
-
-        private Vector2 TranslateCoordinates(Vector2 vector)
+        private Vector2 TranslateFromCenteredCoordinates(Vector2 vector)
         {
             // For ???? reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
             // mapSize contains the real center point coordinates, meaning width/2, height/2

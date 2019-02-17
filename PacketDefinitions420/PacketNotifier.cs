@@ -453,14 +453,22 @@ namespace PacketDefinitions420
 
         public void NotifyMovement(IGameObject o)
         {
-            var packet = new WaypointList();
+            var packet = new WaypointGroup();
             packet.SenderNetID = o.NetId;
             packet.SyncID = (int)o.SyncId;
 
-            var dir = Vector2.Normalize(o.Waypoints[0] = o.GetPosition());
+            var move = new MovementDataNormal();
+            move.SyncID = (int)o.SyncId;
+            move.TeleportNetID = o.NetId;
+            move.HasTeleportID = false;
+
             var l = new List<Vector2>();
             l.AddRange(o.Waypoints);
-            packet.Waypoints = l;
+            var waypoints = l.ConvertAll(v => Convertors.Vector2ToWaypoint(Convertors.TranslateToCenteredCoordinates(v, _navGrid)));
+            move.Waypoints = waypoints;
+
+            packet.Movements = new List<MovementDataNormal>() { move };
+
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
 
         }
