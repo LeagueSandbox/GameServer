@@ -47,7 +47,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (mainWaypoints.Count > 0)
             {
                 // Follow these instructions
-                SetWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });
+
+                SetWaypoints(_mainWaypoints);
             }
             else
             {

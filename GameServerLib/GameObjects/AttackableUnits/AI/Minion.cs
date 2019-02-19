@@ -98,12 +98,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 positionCollide = false;
                 Vector2 toCollide = Vector2.Normalize(collideCircle.Center - curCircle.Center);
                 // Rotate so there isn't little collides (more than orthogonal
-                toCollide = toCollide.Rotate(curCircle.Center, 100.0f);
-                toCollide = curCircle.Center + new Vector2(toCollide.X * curCircle.Radius, toCollide.Y * curCircle.Radius);
+                toCollide = toCollide.Rotate(curCircle.Center, 90.0f);
+                toCollide = GetPosition() + new Vector2(toCollide.X * curCircle.Radius, toCollide.Y * curCircle.Radius);
 
                 found = true;
-                var newWaypoints = new List<Vector2> { GetPosition(), toCollide };
-                newWaypoints.AddRange(Waypoints.GetRange(WaypointIndex, Waypoints.Count- (WaypointIndex)));
+                var newWaypoints = new List<Vector2> { toCollide, point };
+                newWaypoints.AddRange(Waypoints.GetRange(WaypointIndex+1, Waypoints.Count- (WaypointIndex+1)));
                 SetWaypoints(newWaypoints);
                 break;
             }
