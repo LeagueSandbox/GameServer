@@ -79,6 +79,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (collider == null)
             {
                 List<Vector2> addedWayPoints = _game.Map.NavGrid.GetPath(_game.Map.NavGrid.GetClosestTerrainExit(GetPosition()), _mainWaypoints[_curMainWaypoint]);
+                if (addedWayPoints.Count >= 128) return;
                 SetWaypoints(addedWayPoints);
                 return;
             }
