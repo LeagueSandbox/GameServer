@@ -767,16 +767,16 @@ namespace PacketDefinitions420
         {
             var visionPacket = new OnEnterVisiblityClient();
             visionPacket.LookAtPosition = new Vector3(1, 0, 0);
-            //if (o.Waypoints.Count == 0)
-            //{
+            if (o.Waypoints.Count == 0)
+            {
                 var md = new MovementDataStop();
                 md.Position = o.GetPosition();
                 md.Forward = new Vector2(0, 1);
                 md.SyncID = (int)o.SyncId;
                 visionPacket.MovementData = md;
 
-            //}
-            /*else
+            }
+            else
             {
                 var md = new MovementDataNormal();
                 var waypoint = new List<CompressedWaypoint>();
@@ -792,7 +792,7 @@ namespace PacketDefinitions420
                 md.HasTeleportID = false;
                 md.SyncID = (int)o.SyncId;
                 visionPacket.MovementData = md;
-            }*/
+            }
             visionPacket.SenderNetID = o.NetId;
             return visionPacket;
         }

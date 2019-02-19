@@ -262,6 +262,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public virtual void RefreshWaypoints()
         {
+            //DEBUG: interfere with waypoint handling
+            return;
             if (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
             {
                 return;
