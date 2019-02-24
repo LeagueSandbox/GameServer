@@ -31,6 +31,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Last waypoint position
             var pos = req.Position;
             var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
+            var nav = _game.Map.NavGrid;
+            translatedWaypoints = nav.GetPath(champion.GetPosition(), nav.GetClosestTerrainExit(req.Position));
             switch (req.Type)
             {
                 case MoveType.STOP:

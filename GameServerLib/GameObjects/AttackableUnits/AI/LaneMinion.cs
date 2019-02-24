@@ -18,6 +18,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected int _curMainWaypoint;
         public MinionSpawnPosition SpawnPosition { get; }
         public MinionSpawnType MinionSpawnType { get; }
+        private bool _terrainCollide;
+
 
         public LaneMinion(
             Game game,
@@ -32,6 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _mainWaypoints = mainWaypoints;
             _curMainWaypoint = 0;
             _aiPaused = false;
+            _terrainCollide = false;
 
             var spawnSpecifics = _game.Map.MapProperties.GetMinionSpawnPosition(SpawnPosition);
             SetTeam(spawnSpecifics.Item1);
@@ -78,11 +81,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             //colliding with map
             if (collider == null)
             {
+                if (_terrainCollide) return;
+                _terrainCollide = true;
                 SetPosition(_game.Map.NavGrid.GetClosestTerrainExit(GetPosition()));
                 List<Vector2> addedWayPoints = _game.Map.NavGrid.GetPath(GetPosition(), _mainWaypoints[_curMainWaypoint]);
                 SetWaypoints(addedWayPoints);
                 return;
             }
+            //_terrainCollide = false;
             var curCircle = new CirclePoly(GetPosition(), collider.CollisionRadius + 10, 72);
             var targetCircle = new CirclePoly(_mainWaypoints[_curMainWaypoint], Stats.Range.Total, 72);
             var collideCircle = new CirclePoly(collider.GetPosition(), collider.CollisionRadius + 10, 72);
@@ -192,6 +198,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (IsPathEnded() && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
+                    _terrainCollide = false;
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
                     SetWaypoints(new List<Vector2>() { GetPosition(), _mainWaypoints[_curMainWaypoint] });
                     //TODO: Here we need a certain way to tell if the Minion is in the path/lane, else use pathfinding to return to the lane.
