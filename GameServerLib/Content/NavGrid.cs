@@ -37,6 +37,8 @@ namespace LeagueSandbox.GameServer.Content
         public const float SCALE = 2f;
         private Grid _grid;
 
+        private const double EPSILON = 0.1;
+
         public void InitializePathfinding()
         {
             _grid = new Grid((int)XCellCount, (int)YCellCount);
@@ -99,7 +101,8 @@ namespace LeagueSandbox.GameServer.Content
                         // calculate the new path and cost +heuristic and add to the priority queue
                         var npath = new Stack<NavGridCell>(new Stack<NavGridCell>(path));
                         npath.Push(ncell);
-                        priorityQueue.Enqueue(npath, curCost + ncell.RefHintWeight+ ncell.Heuristic+ ncell.ArrivalCost + ncell.AdditionalCost + CellDistance(ncell,goal));
+                        // add 1 for every cell used
+                        priorityQueue.Enqueue(npath, curCost + 1 + ncell.Heuristic+ ncell.ArrivalCost + ncell.AdditionalCost + CellDistance(ncell,goal));
                         closedList.Add(ncell.Id, ncell);
                     }
                 }
@@ -118,7 +121,7 @@ namespace LeagueSandbox.GameServer.Content
         }
         private int CellDistance(NavGridCell cell1,NavGridCell cell2)
         {
-            return Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y);
+            return (Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y))/2;
         }
 
         /// <summary>
@@ -532,7 +535,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(Vector2 a, Vector2 b)
         {
-            return CastRaySqr(a, b) <= (b - a).SqrLength();
+            return CastRaySqr(a, b) <= ((b - a).SqrLength()+ EPSILON);
         }
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)
