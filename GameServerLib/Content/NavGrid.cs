@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Content
             _grid = new Grid((int)XCellCount, (int)YCellCount);
             foreach (var cell in Cells)
             {
-                if (cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
+                if (cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || cell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH))
                 {
                     _grid.BlockCell(new Position(cell.X, cell.Y));
                 }
@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 // if the next point in the LOS, remove the current one
                 // TODO: equal of floats should be with epsilon
-                if(CastRaySqr(path[curWaypointToSmooth],path[i]) != 0)
+                if(!IsAnythingBetween(path[curWaypointToSmooth],path[i]))
                 {
                     path.RemoveRange(curWaypointToSmooth+1, i-(curWaypointToSmooth+1));
                     curWaypointToSmooth = i;
