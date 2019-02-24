@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects;
+using Priority_Queue;
 using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
 
@@ -54,24 +56,71 @@ namespace LeagueSandbox.GameServer.Content
             var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
 
             var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
-            var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+            var goal = GetCell((short)vectorTo.X, (short)vectorTo.Y);
 
-            if(cellFrom != null && cellTo != null)
+            if (cellFrom != null && goal != null)
             {
-                var path = _grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
-                if (path != null)
+                SimplePriorityQueue<Stack<NavGridCell>> priorityQueue = new SimplePriorityQueue<Stack<NavGridCell>>();
+                var start = new Stack<NavGridCell>();
+                start.Push(cellFrom);
+                priorityQueue.Enqueue(start, CellDistance(cellFrom, goal));
+
+                Dictionary<int, NavGridCell> closedList = new Dictionary<int, NavGridCell>();
+                closedList.Add(cellFrom.Id, cellFrom);
+
+                Stack<NavGridCell> path = null;
+
+                // while there are still paths to explore
+                while(true)
                 {
-                    foreach (var position in path)
+                    if (!priorityQueue.TryFirst(out path))
                     {
-                        var navGridCell = GetCell(position.X, position.Y);
-                        var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
-                        returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                        // no solution
+                        path = null;
+                        break;
                     }
+                    var curCost = priorityQueue.GetPriority(priorityQueue.First);
+                    priorityQueue.TryDequeue(out path);
+                    var cell = path.Peek();
+                    curCost -= (CellDistance(cell, goal)+cell.Heuristic); // decrease the heuristic to get the cost
+                    // found the min solution return it (path)
+                    if (cell.Id == goal.Id) break;
+                    NavGridCell tempCell = null;
+                    foreach(NavGridCell ncell in GetCellNeighbors(cell))
+                    {
+                        // if the neighbor in the closed list - skip
+                        if (closedList.TryGetValue(ncell.Id,out tempCell)) continue;
+                        // not walkable - skip
+                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH))
+                        {
+                            closedList.Add(ncell.Id, ncell);
+                            continue;
+                        }
+                        // calculate the new path and cost +heuristic and add to the priority queue
+                        var npath = new Stack<NavGridCell>(new Stack<NavGridCell>(path));
+                        npath.Push(ncell);
+                        priorityQueue.Enqueue(npath, curCost + ncell.RefHintWeight+ ncell.Heuristic+ ncell.ArrivalCost + ncell.AdditionalCost + CellDistance(ncell,goal));
+                        closedList.Add(ncell.Id, ncell);
+                    }
+                }
+                // shouldn't happen usually
+                if (path == null) return null;
+                var arr = path.ToArray();
+                Array.Reverse(arr);
+                foreach (var navGridCell in arr)
+                {
+                    var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                    returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
                 }
             }
             //Logging.LoggerProvider.GetLogger().Debug("Found path: "+returnList.ToString());
             return SmoothPath(returnList);
         }
+        private int CellDistance(NavGridCell cell1,NavGridCell cell2)
+        {
+            return Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y);
+        }
+
         /// <summary>
         /// Remove waypoints that have LOS from the waypoint before the waypoint after
         /// </summary>
@@ -300,6 +349,24 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return Cells[index];
+        }
+
+        private List<NavGridCell> GetCellNeighbors(NavGridCell cell)
+        {
+            var x = cell.X;
+            var y = cell.Y;
+            List<NavGridCell> neighbors = new List<NavGridCell>();
+            for (int dirY=-1;dirY<=1;dirY++)
+            {
+                for (int dirX = -1; dirX <= 1; dirX++)
+                {
+                    var nx = x + dirX;
+                    var ny = y + dirY;
+                    var ncell = GetCell(nx, ny);
+                    if(ncell != null) neighbors.Add(ncell);
+                }
+            }
+            return neighbors;
         }
 
         public NavGridCell GetCell(int x, int y)
