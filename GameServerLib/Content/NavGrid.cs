@@ -110,14 +110,17 @@ namespace LeagueSandbox.GameServer.Content
                 if (path == null) return null;
                 var arr = path.ToArray();
                 Array.Reverse(arr);
-                foreach (var navGridCell in arr)
+                var pathList = SmoothPath( new List<NavGridCell>(arr));
+                pathList.RemoveAt(0); // removes the first point
+                foreach (var navGridCell in pathList.ToArray())
                 {
                     var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
                     returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
                 }
+                return returnList;
             }
             //Logging.LoggerProvider.GetLogger().Debug("Found path: "+returnList.ToString());
-            return SmoothPath(returnList);
+            return null;
         }
         private int CellDistance(NavGridCell cell1,NavGridCell cell2)
         {
@@ -129,18 +132,29 @@ namespace LeagueSandbox.GameServer.Content
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private List<Vector2> SmoothPath(List<Vector2> path)
+        private List<NavGridCell> SmoothPath(List<NavGridCell> path)
         {
             int curWaypointToSmooth = 0;
-            for(int i=path.Count-1; i> curWaypointToSmooth+1;--i)
+            int i = path.Count - 1;
+            while(curWaypointToSmooth != path.Count-1)
             {
+                // no waypoint in LOS - continue to smooth the next one
+                if (i <= curWaypointToSmooth+1)
+                {
+                    curWaypointToSmooth++;
+                    i = path.Count - 1;
+                }
                 // if the next point in the LOS, remove the current one
                 // TODO: equal of floats should be with epsilon
-                if(!IsAnythingBetween(path[curWaypointToSmooth],path[i]))
+                else if(!IsAnythingBetween(path[curWaypointToSmooth],path[i]))
                 {
                     path.RemoveRange(curWaypointToSmooth+1, i-(curWaypointToSmooth+1));
-                    curWaypointToSmooth = i;
+                    curWaypointToSmooth++; // the remove function removed all the indexes between them
                     i = path.Count-1;
+                }
+                else
+                {
+                    --i;
                 }
             }
             return path;
@@ -474,6 +488,51 @@ namespace LeagueSandbox.GameServer.Content
         public float CastRay(Vector2 origin, Vector2 destination, bool inverseRay = false)
         {
             return (float)Math.Sqrt(CastRaySqr(origin, destination, inverseRay));
+        }
+
+        public bool IsAnythingBetween(NavGridCell origin, NavGridCell destination)
+        {
+            float x1 = origin.X;
+            float y1 = origin.Y;
+            float x2 = destination.X;
+            float y2 = destination.Y;
+
+            if (x1 < 0 || y1 < 0 || x1 >= MapWidth || y1 >= MapHeight)
+            {
+                return false;
+            }
+
+            var b = x2 - x1;
+            var h = y2 - y1;
+            var l = Math.Abs(b);
+            if (Math.Abs(h) > l)
+            {
+                l = Math.Abs(h);
+            }
+
+            var il = l;
+            float dx = b / l;
+            float dy = h / l;
+            int i;
+            for (i = 0; i <= il; i++)
+            {
+                if( GetCell((short)Math.Ceiling(x1), (short)Math.Ceiling(y1)).HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE)
+                    && GetCell((short)Math.Floor(x1), (short)Math.Ceiling(y1)).HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE)
+                    && GetCell((short)Math.Ceiling(x1), (short)Math.Floor(y1)).HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE)
+                    && GetCell((short)Math.Floor(x1), (short)Math.Floor(y1)).HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
+                {
+                    return true;
+                }
+
+                // Inverse = report on walkable
+                // Normal = report on terrain
+                // so break when isWalkable == true and inverse == true
+                // Break when isWalkable == false and inverse == false
+                x1 += dx;
+                y1 += dy;
+            }
+
+            return false;
         }
 
         public float CastRaySqr(Vector2 origin, Vector2 destination, bool inverseRay = false)
