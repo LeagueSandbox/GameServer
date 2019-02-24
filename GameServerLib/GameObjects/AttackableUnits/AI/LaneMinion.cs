@@ -88,36 +88,28 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetWaypoints(addedWayPoints);
                 return;
             }
-            //_terrainCollide = false;
-            var curCircle = new CirclePoly(GetPosition(), collider.CollisionRadius + 10, 72);
+            _terrainCollide = false;
+            var curCircle = new CirclePoly(GetPosition(), CollisionRadius + 10, 72);
             var targetCircle = new CirclePoly(_mainWaypoints[_curMainWaypoint], Stats.Range.Total, 72);
             var collideCircle = new CirclePoly(collider.GetPosition(), collider.CollisionRadius + 10, 72);
-            //Find optimal position...
-            bool found = false;
-            foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
-            {
-                if (!_game.Map.NavGrid.IsWalkable(point))
-                    continue;
-                var positionCollide = false;
-                if (collideCircle.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
-                {
-                    positionCollide = true;
-                }
-                if (positionCollide)
-                    continue;
-                positionCollide = false;
-                Vector2 toCollide = Vector2.Normalize(collideCircle.Center - curCircle.Center);
-                // Rotate so there isn't little collides (more than orthogonal
-                toCollide = toCollide.Rotate(curCircle.Center, 90.0f);
-                toCollide = GetPosition() + new Vector2(toCollide.X * curCircle.Radius, toCollide.Y * curCircle.Radius);
 
-                found = true;
-                var newWaypoints = new List<Vector2> { toCollide, point };
-                //newWaypoints.AddRange(Waypoints.GetRange(WaypointIndex + 1, Waypoints.Count - (WaypointIndex + 1)));
-                SetWaypoints(newWaypoints);
-                break;
+            var positionCollide = false;
+            if (collideCircle.CheckForOverLaps(targetCircle))
+            {
+                positionCollide = true;
             }
-            if (!found && Waypoints.Any()) StopMovement();
+            if (positionCollide)
+                StopMovement();
+            positionCollide = false;
+            Vector2 toCollide = Vector2.Normalize(collideCircle.Center - curCircle.Center);
+            // Rotate so there isn't little collides (more than orthogonal
+            toCollide = toCollide.Rotate(curCircle.Center, 90.0f);
+            toCollide = _game.Map.NavGrid.GetClosestTerrainExit(GetPosition()) + new Vector2(toCollide.X * curCircle.Radius, toCollide.Y * curCircle.Radius);
+
+            var newWaypoints = _game.Map.NavGrid.GetPath(toCollide, _mainWaypoints[_curMainWaypoint]);
+            if (newWaypoints == null) return;
+            //newWaypoints.AddRange(Waypoints.GetRange(WaypointIndex + 1, Waypoints.Count - (WaypointIndex + 1)));
+            SetWaypoints(newWaypoints);
         }
 
         public override void OnAdded()

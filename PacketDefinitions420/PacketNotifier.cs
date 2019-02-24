@@ -469,7 +469,7 @@ namespace PacketDefinitions420
 
             packet.Movements = new List<MovementDataNormal>() { move };
 
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_GAMEPLAY);
 
         }
 
