@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.Content
         }
         private int CellDistance(NavGridCell cell1,NavGridCell cell2)
         {
-            return (Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y))/2;
+            return (Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y));
         }
 
         /// <summary>
