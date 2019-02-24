@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         private static uint MOVEMENT_EPSILON = 5;
 
-        public int WaypointIndex { get; private set; }
+        protected int WaypointIndex { get; private set; }
 
         public List<Vector2> Waypoints { get; private set; }
         
@@ -136,7 +136,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
 
         }
-
+        protected bool IsPathEnded()
+        {
+            return WaypointIndex >= Waypoints.Count;
+        }
         /// <summary>
         /// Moves the object depending on its target, updating its coordinate.
         /// </summary>

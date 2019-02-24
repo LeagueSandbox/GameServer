@@ -69,7 +69,29 @@ namespace LeagueSandbox.GameServer.Content
                     }
                 }
             }
-            return returnList;
+            //Logging.LoggerProvider.GetLogger().Debug("Found path: "+returnList.ToString());
+            return SmoothPath(returnList);
+        }
+        /// <summary>
+        /// Remove waypoints that have LOS from the waypoint before the waypoint after
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private List<Vector2> SmoothPath(List<Vector2> path)
+        {
+            int curWaypointToSmooth = 0;
+            for(int i=path.Count-1; i> curWaypointToSmooth+1;--i)
+            {
+                // if the next point in the LOS, remove the current one
+                // TODO: equal of floats should be with epsilon
+                if(CastRaySqr(path[curWaypointToSmooth],path[i]) != 0)
+                {
+                    path.RemoveRange(curWaypointToSmooth+1, i-(curWaypointToSmooth+1));
+                    curWaypointToSmooth = i;
+                    i = path.Count-1;
+                }
+            }
+            return path;
         }
 
         public void CreateTranslation()
