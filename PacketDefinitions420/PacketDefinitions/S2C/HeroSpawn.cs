@@ -1,4 +1,4 @@
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 
@@ -6,11 +6,11 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class HeroSpawn : BasePacket
     {
-        public HeroSpawn(ClientInfo player, int playerId)
+        public HeroSpawn(ClientInfo player)
             : base(PacketCmd.PKT_S2C_HERO_SPAWN)
         {
             WriteNetId(player.Champion);
-            Write(playerId); // player Id
+            Write(player.ClientId); // clientId
             Write((byte)40); // netNodeID ?
             Write((byte)0); // botSkillLevel Beginner=0 Intermediate=1
             if (player.Team == TeamId.TEAM_BLUE)

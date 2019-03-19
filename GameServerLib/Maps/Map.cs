@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using GameServerCore;
 using GameServerCore.Content;
+using GameServerCore.Domain;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Other;
@@ -11,18 +13,16 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.Maps
 {
-    public class Map : IMap
+    public class Map: IMap
     {
         protected Game _game;
         private readonly ILog _logger;
 
-        public List<Announce> AnnouncerEvents { get; private set; }
-        public NavGrid NavGrid { get; private set; }
-        public CollisionHandler CollisionHandler { get; private set; }
+        public List<IAnnounce> AnnouncerEvents { get; private set; }
+        public INavGrid NavGrid { get; private set; }
+        public ICollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; }
-        public IMapGameScript MapGameScript { get; private set; }
-
-        INavGrid IMap.NavGrid => NavGrid;
+        public IMapProperties MapProperties { get; private set; }
 
         public Map(Game game)
         {
@@ -47,12 +47,12 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
 
-            AnnouncerEvents = new List<Announce>();
+            AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(_game, this);
-            MapGameScript = GetMapScript(Id);
+            MapProperties = GetMapProperties(Id);
         }
 
-        public IMapGameScript GetMapScript(int mapId)
+        public IMapProperties GetMapProperties(int mapId)
         {
             var dict = new Dictionary<int, Type>
             {
@@ -74,12 +74,12 @@ namespace LeagueSandbox.GameServer.Maps
                 return new SummonersRift(_game);
             }
 
-            return (IMapGameScript)Activator.CreateInstance(dict[mapId], _game);
+            return (IMapProperties)Activator.CreateInstance(dict[mapId], _game);
         }
 
         public void Init()
         {
-            MapGameScript.Init();
+            MapProperties.Init();
         }
 
         public void Update(float diff)
@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
 
-            MapGameScript.Update(diff);
+            MapProperties.Update(diff);
         }
     }
 }

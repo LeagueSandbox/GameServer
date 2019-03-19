@@ -1,10 +1,13 @@
-﻿using GameServerCore.Enums;
-
-namespace GameServerCore.Domain.GameObjects
+﻿namespace GameServerCore.Domain.GameObjects
 {
     public interface IMinion : IObjAiBase
     {
-        MinionSpawnPosition SpawnPosition { get; }
-        MinionSpawnType MinionSpawnType { get; }
+        string Name { get; }
+        IObjAiBase Owner { get; }
+        bool IsWard { get; }
+        bool IsPet { get; }
+        bool IsBot { get; }
+        bool IsLaneMinion { get; }
+        bool IsClone { get; }
     }
 }

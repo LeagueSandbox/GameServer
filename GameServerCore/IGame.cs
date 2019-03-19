@@ -1,12 +1,9 @@
 ﻿using GameServerCore.Maps;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
-using System.Collections.Generic;
-using System.Reflection;
+using GameServerCore.Domain;
 
 namespace GameServerCore
 {
-    public interface IGame
+    public interface IGame: IUpdate
     {
         IMap Map { get; }
         IObjectManager ObjectManager { get; }
@@ -17,6 +14,5 @@ namespace GameServerCore
         bool SetToExit { get; set; }
 
         bool HandleDisconnect(int userId);
-        Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers();
     }
 }

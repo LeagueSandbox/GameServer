@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Timers;
-using ENet;
+﻿using ENet;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
 using GameServerCore.Enums;
+using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.Interfaces;
 using PacketDefinitions420.Enums;
+using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
+using LeaguePackets.Game;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Timers;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
+using LeaguePackets.Game.Common;
+using LeaguePackets.Common;
 
 namespace PacketDefinitions420
 {
@@ -31,9 +34,9 @@ namespace PacketDefinitions420
             _navGrid = navGrid;
         }
 
-        public void NotifyMinionSpawned(IMinion m, TeamId team)
+        public void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team)
         {
-            var ms = new MinionSpawn(_navGrid, m);
+            var ms = new LaneMinionSpawn(_navGrid, m);
             _packetHandlerManager.BroadcastPacketTeam(team, ms, Channel.CHL_S2C);
             NotifySetHealth(m);
         }
@@ -51,8 +54,8 @@ namespace PacketDefinitions420
             foreach (var p in players)
             {
                 var cam = new MoveCamera(p.Item2.Champion, cameraPosition.X, cameraPosition.Y, cameraPosition.Z, 2);
-                _packetHandlerManager.SendPacket((int)p.Item2.UserId, cam, Channel.CHL_S2C);
-                _packetHandlerManager.SendPacket((int)p.Item2.UserId, new HideUi(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.PlayerId, cam, Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)p.Item2.PlayerId, new HideUi(), Channel.CHL_S2C);
             }
 
             _packetHandlerManager.BroadcastPacket(new ExplodeNexus(nexus), Channel.CHL_S2C);
@@ -80,16 +83,16 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyPing(ClientInfo client, float x, float y, int targetNetId, Pings type)
+        public void NotifyPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type)
         {
-            var ping = new AttentionPingRequest(x, y, targetNetId, type);
+            var ping = new AttentionPingRequest(pos.X, pos.Y, targetNetId, type);
             var response = new AttentionPingResponse(client, ping);
             _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
         }
 
-        public void NotifyTint(TeamId team, bool enable, float speed, byte r, byte g, byte b, float a)
+        public void NotifyTint(TeamId team, bool enable, float speed, GameServerCore.Content.Color color)
         {
-            var tint = new SetScreenTint(team, enable, speed, r, g, b, a);
+            var tint = new SetScreenTint(team, enable, speed, color.R, color.G, color.B, color.A);
             _packetHandlerManager.BroadcastPacket(tint, Channel.CHL_S2C);
         }
 
@@ -105,10 +108,10 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
         }
 
-        public void NotifyCastSpell(INavGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId,
+        public void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId,
             uint spellNetId)
         {
-            var response = new CastSpellResponse(navGrid, s, x, y, xDragEnd, yDragEnd, futureProjNetId, spellNetId);
+            var response = new CastSpellResponse(navGrid, s, start.X, start.Y, end.X, end.Y, futureProjNetId, spellNetId);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_S2C);
         }
 
@@ -149,16 +152,16 @@ namespace PacketDefinitions420
         }
 
         // TODO: check if this is broadcast or not
-        public void NotifyKeyCheck(long userId, int playerNo)
+        public void NotifyKeyCheck(ulong playerId, uint clientId)
         {
-            var response = new KeyCheckResponse(userId, playerNo);
-            _packetHandlerManager.SendPacket((int)userId, response, Channel.CHL_HANDSHAKE);
+            var response = new KeyCheckResponse(playerId, clientId);
+            _packetHandlerManager.SendPacket((int)playerId, response, Channel.CHL_HANDSHAKE);
         }
 
-        public void NotifyPingLoadInfo(PingLoadInfoRequest request, long userId)
+        public void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo)
         {
-            var response = new PingLoadInfoResponse(request.NetId, (uint)request.Position, request.Loaded, request.Unk2,
-                request.Ping, request.Unk3, request.Unk4, userId);
+            var response = new PingLoadInfoResponse(request.NetId, clientInfo.ClientId, request.Loaded, request.Unk2,
+                request.Ping, request.Unk3, request.Unk4, clientInfo.PlayerId);
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
@@ -185,19 +188,19 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
-        public void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<Pair<uint,ClientInfo>> players)
         {
             var screenInfo = new LoadScreenInfo(players);
             _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerName(int userId, Pair<uint,ClientInfo> player)
         {
             var loadName = new LoadScreenPlayerName(player);
             _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player)
+        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint,ClientInfo> player)
         {
             var loadChampion = new LoadScreenPlayerChampion(player);
             _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
@@ -218,6 +221,7 @@ namespace PacketDefinitions420
 
         public void NotifyUnpauseGame()
         {
+            // TODO: currently unpause disabled cause it shouldn't handled like this
             _packetHandlerManager.UnpauseGame();
         }
 
@@ -264,16 +268,28 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, endSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyHeroSpawn(int userId, ClientInfo client, int playerId)
+        public void NotifyHeroSpawn(int userId, ClientInfo client)
         {
-            var spawn = new HeroSpawn(client, playerId);
+            var spawn = new HeroSpawn(client);
             _packetHandlerManager.SendPacket(userId, spawn, Channel.CHL_S2C);
         }
 
         public void NotifyAvatarInfo(int userId, ClientInfo client)
         {
-            var info = new AvatarInfo(client);
-            _packetHandlerManager.SendPacket(userId, info, Channel.CHL_S2C);
+            var avatar = new AvatarInfo_Server();
+            avatar.SenderNetID = client.Champion.NetId;
+            var skills = new uint[] { HashFunctions.HashString(client.SummonerSkills[0]), HashFunctions.HashString(client.SummonerSkills[1]) };
+
+            avatar.SummonerIDs[0] = skills[0];
+            avatar.SummonerIDs[1] = skills[1];
+            for (int i = 0; i < client.Champion.RuneList.Runes.Count; ++i)
+            {
+                int runeValue = 0;
+                client.Champion.RuneList.Runes.TryGetValue(i, out runeValue);
+                avatar.ItemIDs[i] =(uint) runeValue;
+            }
+            // TODO: add talents
+            _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance)
@@ -360,7 +376,7 @@ namespace PacketDefinitions420
 
         public void NotifyAddBuff(IBuff b)
         {
-            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.Stacks, b.Duration, b.BuffType, b.Name, b.Slot);
+            var add = new AddBuff(b.TargetUnit, b.SourceUnit, b.StackCount, b.Duration, b.BuffType, b.Name, b.Slot);
             _packetHandlerManager.BroadcastPacket(add, Channel.CHL_S2C);
         }
 
@@ -378,7 +394,7 @@ namespace PacketDefinitions420
 
         public void NotifyEditBuff(IBuff b, int stacks)
         {
-            var edit = new EditBuff(b.TargetUnit, b.Slot, (byte)b.Stacks);
+            var edit = new EditBuff(b.TargetUnit, b.Slot, b.StackCount);
             _packetHandlerManager.BroadcastPacket(edit, Channel.CHL_S2C);
         }
 
@@ -388,9 +404,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(remove, Channel.CHL_S2C);
         }
 
-        public void NotifyTeleport(IAttackableUnit u, float x, float y)
+        public void NotifyTeleport(IAttackableUnit u, Vector2 pos)
         {
-            var packet = new TeleportRequest(u.NetId, x, y, false);
+            var packet = new TeleportRequest(u.NetId, pos.X, pos.Y, false);
             _packetHandlerManager.BroadcastPacketVision(u, packet, Channel.CHL_S2C);
         }
 
@@ -400,7 +416,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
         }
 
-        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
+        public void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, GameServerCore.Enums.DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
             var dd = new DamageDone(source, target, amount, type, damagetext);
             if (isGlobal)
@@ -421,10 +437,14 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyModifyShield(IAttackableUnit unit, float amount, ShieldType type)
+        public void NotifyModifyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade)
         {
-            var ms = new ModifyShield(unit, amount, type);
-            _packetHandlerManager.BroadcastPacket(ms, Channel.CHL_S2C);
+            var mods = new LeaguePackets.Game.ModifyShield();
+            mods.SenderNetID = unit.NetId;
+            mods.Physical = IsPhysical;
+            mods.Magical = IsMagical;
+            mods.Ammount = amount;
+            _packetHandlerManager.BroadcastPacket(mods.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyBeginAutoAttack(IAttackableUnit attacker, IAttackableUnit victim, uint futureProjNetId, bool isCritical)
@@ -596,8 +616,8 @@ namespace PacketDefinitions420
         {
             switch (u)
             {
-                case IMinion m:
-                    NotifyMinionSpawned(m, m.Team.GetEnemyTeam());
+                case ILaneMinion m:
+                    NotifyLaneMinionSpawned(m, m.Team.GetEnemyTeam());
                     break;
                 case IChampion c:
                     NotifyChampionSpawned(c, c.Team.GetEnemyTeam());
@@ -605,8 +625,8 @@ namespace PacketDefinitions420
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
                     break;
-                case IPlaceable placeable:
-                    NotifyPlaceableSpawned(placeable);
+                case IMinion minion:
+                    NotifyMinionSpawned(minion, minion.Team.GetEnemyTeam());
                     break;
                 case IAzirTurret azirTurret:
                     NotifyAzirTurretSpawned(azirTurret);
@@ -622,10 +642,48 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(azirTurret, spawnPacket, Channel.CHL_S2C);
         }
 
-        private void NotifyPlaceableSpawned(IPlaceable placeable)
+        public void NotifyMinionSpawned(IMinion minion, TeamId team)
         {
-            var spawnPacket = new SpawnPlaceable(placeable);
-            _packetHandlerManager.BroadcastPacketVision(placeable, spawnPacket, Channel.CHL_S2C);
+            var spawnPacket = new SpawnMinionS2C();
+            spawnPacket.SkinName = minion.Model;
+            spawnPacket.Name = minion.Name;
+            spawnPacket.VisibilitySize = minion.VisionRadius; // Might be incorrect
+            spawnPacket.IsTargetableToTeamSpellFlags = (uint) SpellFlags.TargetableToAll;
+            spawnPacket.IsTargetable = true;
+            spawnPacket.IsBot = minion.IsBot;
+            spawnPacket.IsLaneMinion = minion.IsLaneMinion;
+            spawnPacket.IsWard = minion.IsWard;
+            spawnPacket.IgnoreCollision = false;
+            spawnPacket.TeamID =(ushort) minion.Team;
+            // CloneNetID, clones not yet implemented
+            spawnPacket.SkinID = 0;
+            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
+            spawnPacket.SenderNetID = minion.NetId;
+            spawnPacket.NetNodeID = (byte) NetNodeID.Spawned;
+            if (minion.IsLaneMinion) // Should probably change/optimize at some point
+            {
+                spawnPacket.OwnerNetID = minion.Owner.NetId;
+            }
+            else
+            {
+                spawnPacket.OwnerNetID = minion.NetId;
+            }
+            spawnPacket.NetID = minion.NetId;
+            // ID, not sure if it should be here
+            spawnPacket.InitialLevel = 1;
+            var visionPacket = new OnEnterVisiblityClient();
+            visionPacket.LookAtPosition = new Vector3(1, 0, 0);
+            var md = new MovementDataStop();
+            md.Position = minion.GetPosition();
+            md.Forward = new Vector2(0, 1);
+            md.SyncID = 0x0006E4CF; //TODO: generate real movement SyncId
+            visionPacket.MovementData = md;
+            visionPacket.Packets.Add(spawnPacket);
+            visionPacket.SenderNetID = minion.NetId;
+            _packetHandlerManager.BroadcastPacketVision(minion, visionPacket.GetBytes(), Channel.CHL_S2C);
+            NotifySetHealth(minion);
+            //var spawnPacket = new SpawnMinion(minion);
+            //_packetHandlerManager.BroadcastPacketVision(minion, spawnPacket, Channel.CHL_S2C);
         }
 
         private void NotifyMonsterSpawned(IMonster m)

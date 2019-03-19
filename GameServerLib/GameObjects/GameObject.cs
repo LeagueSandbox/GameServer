@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -14,18 +14,14 @@ namespace LeagueSandbox.GameServer.GameObjects
 {
     public class GameObject : Target, IGameObject
     {
-        public uint NetId { get; private set; }
-        protected float _xvector, _yvector;
-
-        /// <summary>
-        /// Current target the object running to (can be coordinates or an object)
-        /// </summary>
-        public ITarget Target { get; set; }
+        protected bool _movementUpdated;
+        protected bool _toRemove;
+        public uint NetId { get; }
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
+        
         public TeamId Team { get; protected set; }
-
         public void SetTeam(TeamId team)
         {
             _visibleByTeam[Team] = false;
@@ -33,24 +29,22 @@ namespace LeagueSandbox.GameServer.GameObjects
             _visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
-                _game.PacketNotifier.NotifySetTeam(this as AttackableUnit, team);
+                _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit, team);
             }
         }
 
-        protected bool _movementUpdated;
-        protected bool _toRemove;
-        public int AttackerCount { get; private set; }
         public float CollisionRadius { get; set; }
-        protected Vector2 _direction;
         public float VisionRadius { get; protected set; }
-        public bool IsDashing { get; protected set; }
         public override bool IsSimpleTarget => false;
-        protected float _dashSpeed;
+        protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
 
-        ITarget IGameObject.Target => Target;
+        /// <summary>
+        /// Current target the object running to (can be coordinates or an object)
+        /// </summary>
+        public ITarget Target { get; set; }
 
         public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
         {
@@ -79,8 +73,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             Team = TeamId.TEAM_NEUTRAL;
             _movementUpdated = false;
             _toRemove = false;
-            AttackerCount = 0;
-            IsDashing = false;
         }
 
         public virtual void OnAdded()
@@ -93,7 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _game.Map.CollisionHandler.RemoveObject(this);
         }
 
-        public virtual void OnCollision(GameObject collider)
+        public virtual void OnCollision(IGameObject collider)
         {
         }
 
@@ -130,10 +122,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
 
             var moveSpeed = GetMoveSpeed();
-            if (IsDashing)
-            {
-                moveSpeed = _dashSpeed;
-            }
 
             var deltaMovement = moveSpeed * 0.001f * diff;
 
@@ -147,24 +135,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             if (GetDistanceTo(Target) < deltaMovement * 2)
             {
-                if (this is Projectile && !Target.IsSimpleTarget)
+                if (this is IProjectile && !Target.IsSimpleTarget)
                 {
                     return;
                 }
-
-                if (IsDashing)
-                {
-                    if (this is AttackableUnit)
-                    {
-                        var u = this as AttackableUnit;
-
-                        var animList = new List<string>();
-                        _game.PacketNotifier.NotifySetAnimation(u, animList);
-                    }
-
-                    Target = null;
-                }
-                else if (++CurWaypoint >= Waypoints.Count)
+                
+                if (++CurWaypoint >= Waypoints.Count)
                 {
                     Target = null;
                 }
@@ -172,7 +148,6 @@ namespace LeagueSandbox.GameServer.GameObjects
                 {
                     Target = new Target(Waypoints[CurWaypoint]);
                 }
-
                 if (IsDashing)
                 {
                     IsDashing = false;
@@ -189,10 +164,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 return;
             }
-
-            var toDivide = Math.Abs(_xvector) + Math.Abs(_yvector);
-            _xvector /= toDivide;
-            _yvector /= toDivide;
         }
 
         public virtual void Update(float diff)
@@ -261,18 +232,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             return _game.Map.NavGrid.GetHeightAtLocation(X, Y);
         }
 
-        public bool IsCollidingWith(GameObject o)
+        public bool IsCollidingWith(IGameObject o)
         {
             return GetDistanceToSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
-        }
-
-        public void IncrementAttackerCount()
-        {
-            ++AttackerCount;
-        }
-        public void DecrementAttackerCount()
-        {
-            --AttackerCount;
         }
 
         public bool IsVisibleByTeam(TeamId team)
@@ -284,25 +246,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             _visibleByTeam[team] = visible;
 
-            if (this is AttackableUnit)
+            if (this is IAttackableUnit)
             {
                 // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(this as AttackableUnit, false);
+                _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
             }
-        }
-
-        public void DashToTarget(Target t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
-        {
-            // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            _dashSpeed = dashSpeed;
-            Target = t;
-            Waypoints.Clear();
-        }
-
-        public void SetDashingState(bool state)
-        {
-            IsDashing = state;
         }
     }
 }

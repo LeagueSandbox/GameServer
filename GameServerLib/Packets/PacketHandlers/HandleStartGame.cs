@@ -1,18 +1,14 @@
 ﻿using GameServerCore;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.GameObjects;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleStartGame : PacketHandlerBase
+    public class HandleStartGame : PacketHandlerBase<StartGameRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_START_GAME;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleStartGame(Game game)
         {
@@ -20,9 +16,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, StartGameRequest req)
         {
-            var peerInfo = _playerManager.GetPeerInfo(userId);
+            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
 
             if (!peerInfo.IsDisconnected)
             {
@@ -31,14 +27,24 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             /* if (_game.IsRunning)
                 return true; */
-
+            
+            // Only one packet enter here
             if (_game.PlayersReady == _playerManager.GetPlayers().Count)
             {
-                 _game.PacketNotifier.NotifyGameStart();
+                _game.PacketNotifier.NotifyGameStart();
 
                 foreach (var player in _playerManager.GetPlayers())
                 {
-                    if (player.Item2.UserId == userId && !player.Item2.IsMatchingVersion)
+                    // Get notified about the spawn of other connected players - IMPORTANT: should only occur one-time
+                    foreach (var p in _playerManager.GetPlayers())
+                    {
+                        if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not get informed about it
+                        if (player.Item2.PlayerId == p.Item2.PlayerId) continue; //Don't self-inform twice
+                        _game.PacketNotifier.NotifyHeroSpawn((int)player.Item2.PlayerId, p.Item2);
+                        _game.PacketNotifier.NotifyAvatarInfo((int)player.Item2.PlayerId, p.Item2);
+                    }
+
+                    if (player.Item2.PlayerId == (ulong)userId && !player.Item2.IsMatchingVersion)
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";
@@ -48,11 +54,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     _game.PacketNotifier.NotifySetHealth(player.Item2.Champion);
                     // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
-                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.UserId, "Welcome to League Sandbox!",
+                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
                         "This is a WIP product.", "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
-                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.UserId, "Server Build Date",
+                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.PlayerId, "Server Build Date",
                         ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
+                        _game.NetworkIdManager.GetNewNetId());
+                    _game.PacketNotifier.NotifyBlueTip((int)player.Item2.PlayerId, "Your Champion",
+                        "You play "+ player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
                 }
 
@@ -91,12 +100,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                 foreach (var p in _playerManager.GetPlayers())
                 {
-                    _game.ObjectManager.AddObject((GameObject)p.Item2.Champion);
+                    _game.ObjectManager.AddObject(p.Item2.Champion);
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;
-                     _game.PacketNotifier.NotifyGameTimer((int) p.Item2.UserId, gameTime);
-                     _game.PacketNotifier.NotifyGameTimerUpdate((int) p.Item2.UserId, gameTime);
+                     _game.PacketNotifier.NotifyGameTimer((int) p.Item2.PlayerId, gameTime);
+                     _game.PacketNotifier.NotifyGameTimerUpdate((int) p.Item2.PlayerId, gameTime);
                 }
             }
 

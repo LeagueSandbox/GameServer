@@ -1,19 +1,15 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleBuyItem : PacketHandlerBase
+    public class HandleBuyItem : PacketHandlerBase<BuyItemRequest>
     {
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_BUY_ITEM_REQ;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleBuyItem(Game game)
         {
@@ -22,11 +18,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, BuyItemRequest req)
         {
-            var request = _game.PacketReader.ReadBuyItemRequest(data);
-            var champion = (Champion)_playerManager.GetPeerInfo(userId).Champion;
-            return champion.Shop.HandleItemBuyRequest(request.ItemId);
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            return champion.Shop.HandleItemBuyRequest(req.ItemId);
         }
     }
 }

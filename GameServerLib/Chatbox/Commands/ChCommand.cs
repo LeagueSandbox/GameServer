@@ -1,4 +1,5 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
@@ -26,27 +27,27 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 ShowSyntax();
                 return;
             }
-            var currentChampion = _playerManager.GetPeerInfo(userId).Champion;
+            var currentChampion = _playerManager.GetPeerInfo((ulong)userId).Champion;
 
             var c = new Champion(
                 Game,
                 split[1],
-                (uint)_playerManager.GetPeerInfo(userId).UserId,
+                (uint)_playerManager.GetPeerInfo((ulong)userId).PlayerId,
                 0, // Doesnt matter at this point
-                (RuneCollection)currentChampion.RuneList,
-                _playerManager.GetClientInfoByChampion((Champion)currentChampion),
+                currentChampion.RuneList,
+                _playerManager.GetClientInfoByChampion(currentChampion),
                 currentChampion.NetId
             );
             c.SetPosition(
-                _playerManager.GetPeerInfo(userId).Champion.X,
-                _playerManager.GetPeerInfo(userId).Champion.Y
+                _playerManager.GetPeerInfo((ulong)userId).Champion.X,
+                _playerManager.GetPeerInfo((ulong)userId).Champion.Y
             );
 
-            c.Model = split[1]; // trigger the "modelUpdate" proc
-            c.SetTeam(_playerManager.GetPeerInfo(userId).Champion.Team);
-            Game.ObjectManager.RemoveObject((Champion)_playerManager.GetPeerInfo(userId).Champion);
+            c.ChangeModel(split[1]); // trigger the "modelUpdate" proc
+            c.SetTeam(_playerManager.GetPeerInfo((ulong)userId).Champion.Team);
+            Game.ObjectManager.RemoveObject(_playerManager.GetPeerInfo((ulong)userId).Champion);
             Game.ObjectManager.AddObject(c);
-            _playerManager.GetPeerInfo(userId).Champion = c;
+            _playerManager.GetPeerInfo((ulong)userId).Champion = c;
         }
     }
 }

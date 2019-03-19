@@ -1,19 +1,17 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleEmotion : PacketHandlerBase
+    public class HandleEmotion : PacketHandlerBase<EmotionPacketRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_EMOTION;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleEmotion(Game game)
         {
@@ -22,14 +20,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, EmotionPacketRequest req)
         {
-            var champion = _playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
             champion.StopChampionMovement();
-            var request = _game.PacketReader.ReadEmotionPacketRequest(data);
             //for later use -> tracking, etc.
-            var playerName = _playerManager.GetPeerInfo(userId).Champion.Model;
-            switch (request.Id)
+            var playerName = _playerManager.GetPeerInfo((ulong)userId).Champion.Model;
+            switch (req.Id)
             {
                 case Emotions.DANCE:
                     _logger.Debug("Player " + playerName + " is dancing.");
@@ -45,7 +42,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-            _game.PacketNotifier.NotifyEmotions(request.Id, request.NetId);
+            _game.PacketNotifier.NotifyEmotions(req.Id, req.NetId);
             return true;
         }
     }

@@ -34,6 +34,9 @@
     <Reference Include="ENetCS, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ENetSharpLeague.1.2.1-beta\lib\net461\ENetCS.dll</HintPath>
     </Reference>
+    <Reference Include="LeaguePackets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LeaguePackets420.0.0.2\lib\net462\LeaguePackets.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -46,6 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blowfish.cs" />
+    <Compile Include="Packet.cs" />
+    <Compile Include="PacketDefinitions\PacketCmd.cs" />
+    <Compile Include="PacketHeader.cs" />
+    <Compile Include="PacketType.cs" />
     <Compile Include="Enums\Emotions.cs" />
     <Compile Include="Enums\MovementType.cs" />
     <Compile Include="Exceptions\InvalidKeyException.cs" />
@@ -140,9 +147,8 @@
     <Compile Include="PacketDefinitions\S2C\MessageBoxRight.cs" />
     <Compile Include="PacketDefinitions\S2C\MessageBoxTop.cs" />
     <Compile Include="PacketDefinitions\S2C\MessagesAvailable.cs" />
-    <Compile Include="PacketDefinitions\S2C\MinionSpawn.cs" />
+    <Compile Include="PacketDefinitions\S2C\LaneMinionSpawn.cs" />
     <Compile Include="PacketDefinitions\S2C\MinionSpawn2.cs" />
-    <Compile Include="PacketDefinitions\S2C\ModifyShield.cs" />
     <Compile Include="PacketDefinitions\S2C\MoveCamera.cs" />
     <Compile Include="PacketDefinitions\S2C\MoveChampionCameraCenter.cs" />
     <Compile Include="PacketDefinitions\S2C\MovementResponse.cs" />
@@ -185,7 +191,6 @@
     <Compile Include="PacketDefinitions\S2C\SpawnCampMonster.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnMonster.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnParticle.cs" />
-    <Compile Include="PacketDefinitions\S2C\SpawnPlaceable.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnProjectile.cs" />
     <Compile Include="PacketDefinitions\S2C\SpellAnimation.cs" />
     <Compile Include="PacketDefinitions\S2C\SpellEmpower.cs" />
@@ -223,5 +228,6 @@
       <Name>GameServerCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

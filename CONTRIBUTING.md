@@ -11,9 +11,13 @@ Currently the technologies we use include:
 For more detailed project specifications head over to https://leaguesandbox.github.io/  
 If you're interested in contributing, come find us from [Discord](https://discord.gg/0vmmZ6VAwXB05gB6) and let us know.
 
+# Pull requests
+
+All contributors must sign a CLA (Contributor License Agreement) before pull requests can be merged. This will be handled by a bot on the pull request, and the goal is to to ensure the changes being properly transformed to AGPL-3.0 which the project is licensed under.
+
 # Commits
 
-## Always create an issue before committing
+## An issue should be always created before committing
 
 All commits should refer to issues. This is simply so that we can better track what is being worked on or what should be worked on.
 
@@ -84,3 +88,72 @@ You can also use `Progress` in place of `Resolve`, in case the issue was not res
 6. Checkout back to indev
     * `git checkout indev`
 7. Repeat
+
+# Tag system
+
+Issues uses tag system that make them easier to identify. Tags are grouped into several groups named with first letter of the group name followed by a short-hand descriptive word or phrase. Tags in group are in same color. Every issue should have relevant tags.
+
+## Area
+To-what part of the code is relevant?
+
+| Tag label | Description |
+| -------------- | -------------- |
+| A-ai | Content releated to Artificial Intelligence |
+| A-collision | Content releated to collision |
+| A-connection | Content releated to connection |
+| A-content-pipeline | Content related to loading |
+| A-networking | Content related to networking |
+| A-packets	| Content related to packets | 
+| A-script-engine | Content related to script engine (items, champion's scripts) |
+| A-security | Content related to security |
+| A-tools | Content related to tools |
+| A-vision | Content related to vision |
+
+## Blocker
+Issue is blocking on something before it can be resolved
+
+| Tag label | Description |
+| -------------- | ----------- |
+| B-reproduce | Blocked on a need to reproduce problem locally |
+| B-needs-verification | Blocked due to missing verification |
+
+## Effort
+The expected complexity of fixing the issue.
+
+| Tag label | Description |
+| -------------- | ----------- |
+| E-easy | Can be easily resolved |
+| E-good-first-issue | Issue which will help you get into the project |
+| E-help-wanted | Assignee/Issue creator requests help? |
+
+## Impact
+The effect of the issue remaining unresolved.
+
+| Tag label | Description |
+| -------------- | ----------- |
+| I-cleanup | No impact; the issue is one of maintainability or tidiness. |
+| I-crash | Application crash |
+| I-enhancement | No impact; the issue is a missing or proposed feature |
+| I-performance | Unnecessary memory usage/Performance degradation |
+| I-wrong | An incorrect behaviour is observed (bug) |
+
+## Priority
+Priority of the issues.
+
+| Tag label | Description |
+| -------------- | ----------- |
+| P-high | High priority |
+| hacktoberfest | Hacktoberfest, no prefix cause it's a special github label iirc |
+
+## Status
+Status of the issues.
+
+| Tag label | Description |
+| -------------- | ----------- |
+| S-clarifying | This issue needs clarification |
+| S-has-open-pr | There is a PR open that resolves the issue |
+| S-testing-needed | Needs testing |
+| S-unverified | This issue needs verification |
+| S-verified | This issue has been verified |
+| S-wont-fix | The issue will not be fixed |
+| invalid | Used for mark spam hacktoberfest PR's as invalid (they will not count) |

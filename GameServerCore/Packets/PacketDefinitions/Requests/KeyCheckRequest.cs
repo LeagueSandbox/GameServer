@@ -1,17 +1,17 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class KeyCheckRequest
+    public class KeyCheckRequest : ICoreRequest
     {
         public byte[] PartialKey { get; } = new byte[3];
-        public uint PlayerNo { get; }
-        public long UserId { get; }
+        public uint ClientID { get; }
+        public ulong PlayerID { get; }
         public uint VersionNo { get; }
         public ulong CheckId { get; }
 
-        public KeyCheckRequest(uint playerNo, long userId, uint versionNo, ulong checkId)
+        public KeyCheckRequest(ulong playerNo, uint clientId, uint versionNo, ulong checkId)
         {
-            PlayerNo = playerNo;
-            UserId = userId;
+            PlayerID = playerNo;
+            ClientID = clientId;
             VersionNo = versionNo;
             CheckId = checkId;
         }

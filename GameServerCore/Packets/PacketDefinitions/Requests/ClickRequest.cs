@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class ClickRequest
+    public class ClickRequest : ICoreRequest
     {
         public uint TargetNetId { get; }
 

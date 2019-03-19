@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Content
 {
@@ -28,5 +29,7 @@ namespace GameServerCore.Content
         bool IsWalkable(Vector2 coords);
         bool IsWalkable(float x, float y);
         Vector2 GetSize();
+        bool IsAnythingBetween(IGameObject a, IGameObject b);
+        Vector2 GetClosestTerrainExit(Vector2 location);
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using GameServerCore;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
@@ -18,10 +18,11 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             {
                 var p = player.Item2;
                 var summonerSpells = p.SummonerSkills;
-                Write(p.UserId);
+                Write(p.PlayerId);
                 Write((short)0x1E); // unk
                 WriteStringHash(summonerSpells[0]);
                 WriteStringHash(summonerSpells[1]);
+                // TODO: maybe smite flag here to test with 0xFFFFFFFF
                 Write((byte)0); // bot boolean
                 Write((int)p.Team); // Probably a short
                 Fill(0, 64); // name is no longer here

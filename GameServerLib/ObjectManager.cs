@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
+using LeagueSandbox.GameServer.Logging;
 
 namespace LeagueSandbox.GameServer
 {
@@ -50,19 +51,18 @@ namespace LeagueSandbox.GameServer
             var temp = GetObjects();
             foreach (var obj in temp.Values)
             {
-                if (((GameObject)obj).IsToRemove())
+                if (obj.IsToRemove())
                 {
-                    if (obj.AttackerCount == 0)
-                        RemoveObject(obj);
+                    RemoveObject(obj);
                     continue;
                 }
 
-                ((GameObject)obj).Update(diff);
+                obj.Update(diff);
 
-                if (!(obj is AttackableUnit))
+                if (!(obj is IAttackableUnit))
                     continue;
 
-                var u = obj as AttackableUnit;
+                var u = obj as IAttackableUnit;
                 foreach (var team in Teams)
                 {
                     if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
@@ -96,21 +96,23 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
-                var ai = u as ObjAiBase;
+                var ai = u as IObjAiBase;
                 if (ai != null)
                 {
                     var tempBuffs = ai.GetBuffs();
                     foreach (var buff in tempBuffs.Values)
                     {
-                        if (buff.NeedsToRemove())
+                        if (buff.Elapsed())
                         {
                             if (buff.Name != "")
                             {
                                 _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
                             }
+
                             ai.RemoveBuff(buff);
                             continue;
                         }
+
                         buff.Update(diff);
                     }
                 }
@@ -124,10 +126,10 @@ namespace LeagueSandbox.GameServer
                     u.IsModelUpdated = false;
                 }
 
-                if (((GameObject)obj).IsMovementUpdated())
+                if (obj.IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(obj);
-                    ((GameObject)obj).ClearMovementUpdated();
+                    obj.ClearMovementUpdated();
                 }
             }
         }
@@ -161,6 +163,7 @@ namespace LeagueSandbox.GameServer
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -174,6 +177,7 @@ namespace LeagueSandbox.GameServer
             {
                 _objects.Add(o.NetId, o);
             }
+
             o.OnAdded();
         }
 
@@ -199,6 +203,7 @@ namespace LeagueSandbox.GameServer
             {
                 _objects.Remove(o.NetId);
             }
+
             o.OnRemoved();
         }
 
@@ -274,12 +279,13 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as AttackableUnit;
+                    var u = kv.Value as IAttackableUnit;
                     if (u == null)
                     {
                         continue;
                     }
-                    var ai = u as ObjAiBase;
+
+                    var ai = u as IObjAiBase;
                     if (ai != null)
                     {
                         if (ai.TargetUnit == target)
@@ -304,6 +310,7 @@ namespace LeagueSandbox.GameServer
                     champs.Add(c);
                 }
             }
+
             return champs;
         }
 
@@ -320,11 +327,12 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _champions)
                 {
                     var c = kv.Value;
-                    if (((Target)t).GetDistanceTo(((Target)c)) <= range)
+                    if (t.GetDistanceTo(c) <= range)
                         if (onlyAlive && !c.IsDead || !onlyAlive)
                             champs.Add(c);
                 }
             }
+
             return champs;
         }
 
@@ -340,8 +348,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    var u = kv.Value as IAttackableUnit;
-                    if (u != null && ((Target) t).GetDistanceTo(((Target)u)) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
+                    if (kv.Value is IAttackableUnit u && t.GetDistanceTo(u) <= range && (onlyAlive && !u.IsDead || !onlyAlive))
                     {
                         units.Add(u);
                     }
@@ -367,10 +374,10 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && ((Target)kv.Value).GetDistanceTo((GameObject)o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavGrid.IsAnythingBetween((GameObject)kv.Value, (GameObject)o))
+                    if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
+                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
                     {
-                        var unit = kv.Value as AttackableUnit;
+                        var unit = kv.Value as IAttackableUnit;
                         if (unit != null && unit.IsDead)
                         {
                             continue;
@@ -387,7 +394,7 @@ namespace LeagueSandbox.GameServer
         public int CountUnitsAttackingUnit(IAttackableUnit target)
         {
             return GetObjects().Count(x =>
-                x.Value is ObjAiBase aiBase &&
+                x.Value is IObjAiBase aiBase &&
                 aiBase.Team == target.Team.GetEnemyTeam() &&
                 !aiBase.IsDead &&
                 aiBase.TargetUnit != null &&

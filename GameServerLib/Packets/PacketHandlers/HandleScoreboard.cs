@@ -1,19 +1,16 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleScoreboard : PacketHandlerBase
+    public class HandleScoreboard : PacketHandlerBase<ScoreboardRequest>
     {
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
         private readonly Game _game;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SCOREBOARD;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleScoreboard(Game game)
         {
@@ -22,11 +19,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, ScoreboardRequest req)
         {
-            _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
+            _logger.Debug($"Player {_playerManager.GetPeerInfo((ulong)userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var champion = _playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
              _game.PacketNotifier.NotifyPlayerStats(champion);
             return true;
         }

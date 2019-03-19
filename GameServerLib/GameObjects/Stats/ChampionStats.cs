@@ -10,134 +10,214 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
     public class ChampionStats : IChampionStats
     {
         [FieldOffset(0)]
-        public int Assists;
+        public int _Assists;
         [FieldOffset(8)]
-        public int Kills;
+        public int _Kills;
         [FieldOffset(16)]
-        public int DoubleKills;
+        public int _DoubleKills;
         [FieldOffset(32)]
-        public int UnrealKills;
+        public int _UnrealKills;
         [FieldOffset(36)]
-        public float GoldEarned;
+        public float _GoldEarned;
         [FieldOffset(40)]
-        public float GoldSpent;
+        public float _GoldSpent;
         [FieldOffset(84)]
-        public int CurrentKillingSpree;
+        public int _CurrentKillingSpree;
         [FieldOffset(88)]
-        public float LargestCriticalStrike;
+        public float _LargestCriticalStrike;
         [FieldOffset(92)]
-        public int LargestKillingSpree;
+        public int _LargestKillingSpree;
         [FieldOffset(96)]
-        public int LargestMultiKill;
+        public int _LargestMultiKill;
         [FieldOffset(104)]
-        public float LongestTimeSpentLiving;
+        public float _LongestTimeSpentLiving;
         [FieldOffset(108)]
-        public float MagicDamageDealt;
+        public float _MagicDamageDealt;
         [FieldOffset(112)]
-        public float MagicDamageDealtToChampions;
+        public float _MagicDamageDealtToChampions;
         [FieldOffset(116)]
-        public float MagicDamageTaken;
+        public float _MagicDamageTaken;
         [FieldOffset(120)]
-        public int MinionsKilled;
+        public int _MinionsKilled;
         [FieldOffset(126)]
-        public int NeutralMinionsKilled;
+        public int _NeutralMinionsKilled;
         [FieldOffset(130)]
-        public int NeutralMinionsKilledInEnemyJungle;
+        public int _NeutralMinionsKilledInEnemyJungle;
         [FieldOffset(134)]
-        public int NeutralMinionsKilledInTeamJungle;
+        public int _NeutralMinionsKilledInTeamJungle;
         [FieldOffset(142)]
-        public int Deaths;
+        public int _Deaths;
         [FieldOffset(146)]
-        public int PentaKills;
+        public int _PentaKills;
         [FieldOffset(150)]
-        public float PhysicalDamageDealt;
+        public float _PhysicalDamageDealt;
         [FieldOffset(154)]
-        public float PhysicalDamageDealtToChampions;
+        public float _PhysicalDamageDealtToChampions;
         [FieldOffset(158)]
-        public float PhysicalDamageTaken;
+        public float _PhysicalDamageTaken;
         [FieldOffset(166)]
-        public int QuadraKills;
+        public int _QuadraKills;
         [FieldOffset(206)]
-        public int TeamId;
+        public int _TeamId;
         [FieldOffset(226)]
-        public float TotalDamageDealt;
+        public float _TotalDamageDealt;
         [FieldOffset(230)]
-        public float TotalDamageDealtToChampions;
+        public float _TotalDamageDealtToChampions;
         [FieldOffset(234)]
-        public float TotalDamageTaken;
+        public float _TotalDamageTaken;
         [FieldOffset(238)]
-        public int TotalHeal;
+        public int _TotalHeal;
         [FieldOffset(242)]
-        public float TotalTimeCrowdControlDealt;
+        public float _TotalTimeCrowdControlDealt;
         [FieldOffset(246)]
-        public float TotalTimeSpentDead;
+        public float _TotalTimeSpentDead;
         [FieldOffset(250)]
-        public int TotalUnitsHealed;
+        public int _TotalUnitsHealed;
         [FieldOffset(254)]
-        public int TripleKills;
+        public int _TripleKills;
         [FieldOffset(258)]
-        public float TrueDamageDealt;
+        public float _TrueDamageDealt;
         [FieldOffset(262)]
-        public float TrueDamageDealtToChampions;
+        public float _TrueDamageDealtToChampions;
         [FieldOffset(266)]
-        public float TrueDamageTaken;
+        public float _TrueDamageTaken;
         [FieldOffset(270)]
-        public int TurretsKilled;
+        public int _TurretsKilled;
         [FieldOffset(274)]
-        public int BarracksKilled;
+        public int _BarracksKilled;
         [FieldOffset(282)]
-        public int WardsKilled;
+        public int _WardsKilled;
         [FieldOffset(286)]
-        public int WardsPlaced;
+        public int _WardsPlaced;
         [FieldOffset(298)]
         // sort of length (when above 0 sends malformed buffer error)
         public short Padding;
 
-        int IChampionStats.Assists => Assists;
-        int IChampionStats.Kills => Kills;
-        int IChampionStats.DoubleKills => DoubleKills;
-        int IChampionStats.UnrealKills => UnrealKills;
-        float IChampionStats.GoldEarned => GoldEarned;
-        float IChampionStats.GoldSpent => GoldSpent;
-        int IChampionStats.CurrentKillingSpree => CurrentKillingSpree;
-        float IChampionStats.LargestCriticalStrike => LargestCriticalStrike;
-        int IChampionStats.LargestKillingSpree => LargestKillingSpree;
-        int IChampionStats.LargestMultiKill => LargestMultiKill;
-        float IChampionStats.LongestTimeSpentLiving => LongestTimeSpentLiving;
-        float IChampionStats.MagicDamageDealt => MagicDamageDealt;
-        float IChampionStats.MagicDamageDealtToChampions => MagicDamageDealtToChampions;
-        float IChampionStats.MagicDamageTaken => MagicDamageTaken;
-        int IChampionStats.MinionsKilled => MinionsKilled;
-        int IChampionStats.NeutralMinionsKilled => NeutralMinionsKilled;
-        int IChampionStats.NeutralMinionsKilledInEnemyJungle => NeutralMinionsKilledInEnemyJungle;
-        int IChampionStats.NeutralMinionsKilledInTeamJungle => NeutralMinionsKilledInTeamJungle;
-        int IChampionStats.Deaths => Deaths;
-        int IChampionStats.PentaKills => PentaKills;
-        float IChampionStats.PhysicalDamageDealt => PhysicalDamageDealt;
-        float IChampionStats.PhysicalDamageDealtToChampions => PhysicalDamageDealtToChampions;
-        float IChampionStats.PhysicalDamageTaken => PhysicalDamageTaken;
-        int IChampionStats.QuadraKills => QuadraKills;
-        int IChampionStats.TeamId => TeamId;
-        float IChampionStats.TotalDamageDealt => TotalDamageDealt;
-        float IChampionStats.TotalDamageDealtToChampions => TotalDamageDealtToChampions;
-        float IChampionStats.TotalDamageTaken => TotalDamageTaken;
-        int IChampionStats.TotalHeal => TotalHeal;
-        float IChampionStats.TotalTimeCrowdControlDealt => TotalTimeCrowdControlDealt;
-        float IChampionStats.TotalTimeSpentDead => TotalTimeSpentDead;
-        int IChampionStats.TotalUnitsHealed => TotalUnitsHealed;
-        int IChampionStats.TripleKills => TripleKills;
-        float IChampionStats.TrueDamageDealt => TrueDamageDealt;
-        float IChampionStats.TrueDamageDealtToChampions => TrueDamageDealtToChampions;
-        float IChampionStats.TrueDamageTaken => TrueDamageTaken;
-        int IChampionStats.TurretsKilled => TurretsKilled;
-        int IChampionStats.BarracksKilled => BarracksKilled;
-        int IChampionStats.WardsKilled => WardsKilled;
-        int IChampionStats.WardsPlaced => WardsPlaced;
+        public int Assists { get => _Assists;
+            set => _Assists = value;
+        }
+        public int Kills { get => _Kills;
+            set => _Kills = value;
+        }
+        public int DoubleKills { get => _DoubleKills;
+            set => _DoubleKills = value;
+        }
+        public int UnrealKills { get => _UnrealKills;
+            set => _UnrealKills = value;
+        }
+        public float GoldEarned { get => _GoldEarned;
+            set => _GoldEarned = value;
+        }
+        public float GoldSpent { get => _GoldSpent;
+            set => _GoldSpent = value;
+        }
+        public int CurrentKillingSpree { get => _CurrentKillingSpree;
+            set => _CurrentKillingSpree = value;
+        }
+        public float LargestCriticalStrike { get => _LargestCriticalStrike;
+            set => _LargestCriticalStrike = value;
+        }
+        public int LargestKillingSpree { get => _LargestKillingSpree;
+            set => _LargestKillingSpree = value;
+        }
+        public int LargestMultiKill { get => _LargestMultiKill;
+            set => _LargestMultiKill = value;
+        }
+        public float LongestTimeSpentLiving { get => _LongestTimeSpentLiving;
+            set => _LongestTimeSpentLiving = value;
+        }
+        public float MagicDamageDealt { get => _MagicDamageDealt;
+            set => _MagicDamageDealt = value;
+        }
+        public float MagicDamageDealtToChampions { get => _MagicDamageDealtToChampions;
+            set => _MagicDamageDealtToChampions = value;
+        }
+        public float MagicDamageTaken { get => _MagicDamageTaken;
+            set => _MagicDamageTaken = value;
+        }
+        public int MinionsKilled { get => _MinionsKilled;
+            set => _MinionsKilled = value;
+        }
+        public int NeutralMinionsKilled { get => _NeutralMinionsKilled;
+            set => _NeutralMinionsKilled = value;
+        }
+        public int NeutralMinionsKilledInEnemyJungle { get => _NeutralMinionsKilledInEnemyJungle;
+            set => _NeutralMinionsKilledInEnemyJungle = value;
+        }
+        public int NeutralMinionsKilledInTeamJungle { get => _NeutralMinionsKilledInTeamJungle;
+            set => _NeutralMinionsKilledInTeamJungle = value;
+        }
+        public int Deaths { get => _Deaths;
+            set => _Deaths = value;
+        }
+        public int PentaKills { get => _PentaKills;
+            set => _PentaKills = value;
+        }
+        public float PhysicalDamageDealt { get => _PhysicalDamageDealt;
+            set => _PhysicalDamageDealt = value;
+        }
+        public float PhysicalDamageDealtToChampions { get => _PhysicalDamageDealtToChampions;
+            set => _PhysicalDamageDealtToChampions = value;
+        }
+        public float PhysicalDamageTaken { get => _PhysicalDamageTaken;
+            set => _PhysicalDamageTaken = value;
+        }
+        public int QuadraKills { get => _QuadraKills;
+            set => _QuadraKills = value;
+        }
+        public int TeamId { get => _TeamId;
+            set => _TeamId = value;
+        }
+        public float TotalDamageDealt { get => _TotalDamageDealt;
+            set => _TotalDamageDealt = value;
+        }
+        public float TotalDamageDealtToChampions { get => _TotalDamageDealtToChampions;
+            set => _TotalDamageDealtToChampions = value;
+        }
+        public float TotalDamageTaken { get => _TotalDamageTaken;
+            set => _TotalDamageTaken = value;
+        }
+        public int TotalHeal { get => _TotalHeal;
+            set => _TotalHeal = value;
+        }
+        public float TotalTimeCrowdControlDealt { get => _TotalTimeCrowdControlDealt;
+            set => _TotalTimeCrowdControlDealt = value;
+        }
+        public float TotalTimeSpentDead { get => _TotalTimeSpentDead;
+            set => _TotalTimeSpentDead = value;
+        }
+        public int TotalUnitsHealed { get => _TotalUnitsHealed;
+            set => _TotalUnitsHealed = value;
+        }
+        public int TripleKills { get => _TripleKills;
+            set => _TripleKills = value;
+        }
+        public float TrueDamageDealt { get => _TrueDamageDealt;
+            set => _TrueDamageDealt = value;
+        }
+        public float TrueDamageDealtToChampions { get => _TrueDamageDealtToChampions;
+            set => _TrueDamageDealtToChampions = value;
+        }
+        public float TrueDamageTaken { get => _TrueDamageTaken;
+            set => _TrueDamageTaken = value;
+        }
+        public int TurretsKilled { get => _TurretsKilled;
+            set => _TurretsKilled = value;
+        }
+        public int BarracksKilled { get => _BarracksKilled;
+            set => _BarracksKilled = value;
+        }
+        public int WardsKilled { get => _WardsKilled;
+            set => _WardsKilled = value;
+        }
+        public int WardsPlaced { get => _WardsPlaced;
+            set => _WardsPlaced = value;
+        }
 
         // TODO: move to universal serializer
         // also code here is unsafe, but thats prefered than just
         // write a function that simply dumps all the variables
-        public static byte[] GetBytes(ChampionStats stats)
+        public static byte[] GetBytes(IChampionStats stats)
         {
             int size = Marshal.SizeOf(stats);
             byte[] arr = new byte[size];

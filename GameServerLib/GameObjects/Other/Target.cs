@@ -27,13 +27,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             return GetDistanceTo(target.X, target.Y);
         }
-
+        
         public float GetDistanceTo(float xtarget, float ytarget)
         {
             return (float)Math.Sqrt(GetDistanceToSqr(xtarget, ytarget));
         }
 
-        public float GetDistanceToSqr(Target target)
+        public float GetDistanceToSqr(ITarget target)
         {
             return GetDistanceToSqr(target.X, target.Y);
         }
@@ -46,6 +46,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         public Vector2 GetPosition()
         {
             return new Vector2(X, Y);
+        }
+
+        public bool WithinRange(Vector2 from, Vector2 to, float range)
+        {
+            float v1 = from.X - to.X, v2 = from.Y - to.Y;
+            return ((v1 * v1) + (v2 * v2)) <= (range * range);
         }
     }
 }

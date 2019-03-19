@@ -1,6 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enet;
+using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;
@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Players
         private Game _game;
 
         private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
-        private int _currentId = 1;
+        private ulong _currentId = 1;
         private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
         {
             { TeamId.TEAM_BLUE, 0 },
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
-            var c = new Champion(_game, p.Value.Champion, (uint)player.UserId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
+            var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
             c.SetTeam(teamId);
 
             var pos = c.GetSpawnPosition();
@@ -64,16 +64,16 @@ namespace LeagueSandbox.GameServer.Players
             c.LevelUp();
 
             player.Champion = c;
-            var pair = new Pair<uint, ClientInfo> {Item1=(uint)player.UserId,Item2 = player};
+            var pair = new Pair<uint, ClientInfo> {Item1=(uint)player.PlayerId,Item2 = player};
             _players.Add(pair);
         }
 
         // GetPlayerFromPeer
-        public ClientInfo GetPeerInfo(int userId)
+        public ClientInfo GetPeerInfo(ulong playerId)
         {
             foreach (var player in _players)
             {
-                if (player.Item2.UserId == userId)
+                if (player.Item2.PlayerId == playerId)
                 {
                     return player.Item2;
                 }

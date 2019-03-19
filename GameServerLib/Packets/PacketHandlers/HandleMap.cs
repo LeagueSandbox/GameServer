@@ -1,16 +1,13 @@
 ﻿using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleMap : PacketHandlerBase
+    public class HandleMap : PacketHandlerBase<MapRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_CLIENT_READY;
-        public override Channel PacketChannel => Channel.CHL_LOADING_SCREEN;
 
         public HandleMap(Game game)
         {
@@ -18,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, MapRequest req)
         {
             // Builds team info e.g. first UserId set on Blue has PlayerId 0
             // increment by 1 for each added player
@@ -27,6 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Distributes each players info by UserId
             foreach (var player in _playerManager.GetPlayers())
             {
+                if (!player.Item2.IsStartedClient) continue; //Don't inform about not started clients
                 // Giving the UserId in loading screen a name
                  _game.PacketNotifier.NotifyLoadScreenPlayerName(userId, player);
                 // Giving the UserId in loading screen a champion

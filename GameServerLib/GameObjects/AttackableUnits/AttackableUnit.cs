@@ -1,4 +1,5 @@
 ﻿using System;
+using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -16,36 +17,23 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;
 
-        public Stats.Stats Stats { get; protected set; }
+        public IStats Stats { get; protected set; }
         private float _statUpdateTimer;
         public bool IsModelUpdated { get; set; }
         public bool IsDead { get; protected set; }
 
-        private string _model;
-        public string Model
-        {
-            get => _model;
-            set
-            {
-                _model = value;
-                IsModelUpdated = true;
-            }
-        }
+        public string Model { get; protected set; }
 
         protected readonly ILog Logger;
-        public InventoryManager Inventory { get; protected set; }
-        public int KillDeathCounter { get; protected set; }
+        public IInventoryManager Inventory { get; protected set; }
+        public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
-        public Replication Replication { get; protected set; }
-
-        IReplication IAttackableUnit.Replication => Replication;
-        IStats IAttackableUnit.Stats => Stats;
-        IInventoryManager IAttackableUnit.Inventory => Inventory;
+        public IReplication Replication { get; protected set; }
 
         public AttackableUnit(
             Game game,
             string model,
-            Stats.Stats stats,
+            IStats stats,
             int collisionRadius = 40,
             float x = 0,
             float y = 0,
@@ -98,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             _game.PacketNotifier.NotifyNpcDie(this, killer);
 
-            var exp = _game.Map.MapGameScript.GetExperienceFor(this);
+            var exp = _game.Map.MapProperties.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);
@@ -113,16 +101,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            if ((killer != null) && (killer is Champion))
-            {
-                ((Champion)killer).OnKill(this);
-            }
-            IsDashing = false;
+            if (killer != null && killer is IChampion champion)
+                champion.OnKill(this);
         }
 
         public virtual bool IsInDistress()
         {
             return false; //return DistressCause;
+        }
+
+        public bool ChangeModel(string model)
+        {
+            if (Model.Equals(model))
+                return false;
+            IsModelUpdated = true;
+            Model = model;
+            return true;
         }
 
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
@@ -167,8 +161,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            //Damage dealing. (based on leagueoflegends' wikia)
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            if (damage < 0f)
+            {
+                damage = 0f;
+            }
+            else
+            {
+                //Damage dealing. (based on leagueoflegends' wikia)
+                damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            }
 
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
@@ -184,12 +185,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // todo: check if damage dealt by disconnected players cause anything bad 
             if (attacker is IChampion attackerChamp)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).UserId;
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
             }
 
             if (this is IChampion targetChamp)
             {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).UserId;
+                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
+            }
+            // Show damage text for owner of pet
+            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
 
             _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
@@ -228,10 +234,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (Team == team)
             {
-                return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ALLY);
+                return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableAlly);
             }
 
-            return !Stats.IsTargetableToTeam.HasFlag(IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY);
+            return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableEnemy);
         }
 
         public void SetIsTargetableToTeam(TeamId team, bool targetable)
@@ -240,22 +246,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (!targetable)
                 {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
+                    Stats.IsTargetableToTeam |= SpellFlags.NonTargetableAlly;
                 }
                 else
                 {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ALLY;
+                    Stats.IsTargetableToTeam &= ~SpellFlags.NonTargetableAlly;
                 }
             }
             else
             {
                 if (!targetable)
                 {
-                    Stats.IsTargetableToTeam |= IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
+                    Stats.IsTargetableToTeam |= SpellFlags.NonTargetableEnemy;
                 }
                 else
                 {
-                    Stats.IsTargetableToTeam &= ~IsTargetableToTeamFlags.NON_TARGETABLE_ENEMY;
+                    Stats.IsTargetableToTeam &= ~SpellFlags.NonTargetableEnemy;
                 }
             }
         }
@@ -268,7 +274,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         MINION_ATTACKING_MINION = 3,
         TURRET_ATTACKING_MINION = 4,
         CHAMPION_ATTACKING_MINION = 5,
-        PLACEABLE = 6,
+        MINION = 6,
         SUPER_OR_CANNON_MINION = 7,
         CASTER_MINION = 8,
         MELEE_MINION = 9,

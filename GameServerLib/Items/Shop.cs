@@ -1,16 +1,17 @@
 using System.Linq;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class Shop
+    public class Shop: IShop
     {
-        private readonly Champion _owner;
+        private readonly IChampion _owner;
         private readonly Game _game;
 
         public const byte ITEM_ACTIVE_OFFSET = 6;
         
-        private Shop(Champion owner, Game game)
+        private Shop(IChampion owner, Game game)
         {
             _owner = owner;
             _game = game;
@@ -25,14 +26,14 @@ namespace LeagueSandbox.GameServer.Items
                 return false;
             }
 
-            var sellPrice = i.TotalPrice * i.ItemType.SellBackModifier;
+            var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
 
-            if (i.ItemType.MaxStack > 1)
+            if (i.ItemData.MaxStack > 1)
             {
-                i.DecrementStackSize();
+                i.DecrementStackCount();
             }
-            RemoveItem(i, slotId, i.StackSize);
+            RemoveItem(i, slotId, i.StackCount);
             return true;
         }
 
@@ -47,11 +48,11 @@ namespace LeagueSandbox.GameServer.Items
             var stats = _owner.Stats;
             var inventory = _owner.Inventory;
             var price = itemTemplate.TotalPrice;
-            var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe);
+            var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe.GetItems());
 
             if (ownedItems.Count != 0)
             {
-                price -= ownedItems.Sum(item => item.ItemType.TotalPrice);
+                price -= ownedItems.Sum(item => item.ItemData.TotalPrice);
                 if (stats.Gold < price)
                 {
                     return false;
@@ -73,32 +74,32 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(Item item, byte slotId, byte stackSize = 0)
+        private void RemoveItem(IItem item, byte slotId, byte stackSize = 0)
         {
             var inventory = _owner.Inventory;
-            _owner.Stats.RemoveModifier(item.ItemType);
+            _owner.Stats.RemoveModifier(item.ItemData);
             _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, stackSize);
             _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
             inventory.RemoveItem(item);
         }
 
-        private bool AddItem(ItemType itemType)
+        private bool AddItem(IItemData itemData)
         {
-            var i = _owner.Inventory.AddItem(itemType);
+            var i = _owner.Inventory.AddItem(itemData);
             if (i == null)
             {
                 return false;
             }
-            _owner.Stats.AddModifier(itemType);
+            _owner.Stats.AddModifier(itemData);
             _game.PacketNotifier.NotifyItemBought(_owner, i);
-            if (!string.IsNullOrEmpty(i.ItemType.SpellName))
+            if (!string.IsNullOrEmpty(i.ItemData.SpellName))
             {
-                _owner.SetSpell(i.ItemType.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+                _owner.SetSpell(i.ItemData.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
             }
             return true;
         }
 
-        public static Shop CreateShop(Champion owner, Game game)
+        public static Shop CreateShop(IChampion owner, Game game)
         {
             return new Shop(owner, game);
         }

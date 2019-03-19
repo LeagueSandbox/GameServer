@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
             {
-                _playerManager.GetPeerInfo(userId).Champion.TeleportTo(x, y);
+                _playerManager.GetPeerInfo((ulong)userId).Champion.TeleportTo(x, y);
             }
         }
     }

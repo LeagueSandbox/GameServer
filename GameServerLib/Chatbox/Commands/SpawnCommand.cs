@@ -50,15 +50,15 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
             };
 
-            var champion = _playerManager.GetPeerInfo(userId).Champion;
+            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
             var random = new Random();
 
             var minions = new[]
             {
-                new Minion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
-                new Minion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
             };
 
             const int X = 400;

@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var split = arguments.Split(' ');
             if (split.Length >= 2)
             {
-                _playerManager.GetPeerInfo(userId).Champion.Model = split[1];
+                _playerManager.GetPeerInfo((ulong)userId).Champion.ChangeModel(split[1]);
             }
             else
             {

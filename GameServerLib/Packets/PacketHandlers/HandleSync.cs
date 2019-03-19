@@ -1,19 +1,16 @@
-﻿using GameServerCore.Packets.Enums;
+﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
-using GameServerCore;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSync : PacketHandlerBase
+    public class HandleSync : PacketHandlerBase<SynchVersionRequest>
     {
         private readonly ILog _logger;
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-
-        public override PacketCmd PacketType => PacketCmd.PKT_C2S_SYNCH_VERSION;
-        public override Channel PacketChannel => Channel.CHL_C2S;
 
         public HandleSync(Game game)
         {
@@ -22,9 +19,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, byte[] data)
+        public override bool HandlePacket(int userId, SynchVersionRequest req)
         {
-            var request = _game.PacketReader.ReadSynchVersionRequest(data);
             //Logging->writeLine("Client version: %s", version->version);
 
             var mapId = _game.Config.GameConfig.Map;
@@ -32,14 +28,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             var versionMatch = true;
             // Version might be an invalid value, currently it trusts the client
-            if (request.Version != Config.VERSION_STRING)
+            if (req.Version != Config.VERSION_STRING)
             {
                 versionMatch = false;
-                _logger.Warn($"Client's version ({request.Version}) does not match server's {Config.VERSION}");
+                _logger.Warn($"Client's version ({req.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
-                _logger.Debug("Accepted client version (" + request.Version + ")");
+                _logger.Debug("Accepted client version (" + req.Version + ") from client="+req.ClientId);
             }
 
             foreach (var player in _playerManager.GetPlayers())

@@ -1,7 +1,9 @@
-﻿namespace GameServerCore.Packets.Handlers
+﻿using GameServerCore.Packets.PacketDefinitions;
+
+namespace GameServerCore.Packets.Handlers
 {
-    public interface IPacketHandler
+    public interface IPacketHandler<in T> where T: ICoreRequest
     {
-        bool HandlePacket(int userId, byte[] data);
+        bool HandlePacket(int userId, T req);
     }
 }

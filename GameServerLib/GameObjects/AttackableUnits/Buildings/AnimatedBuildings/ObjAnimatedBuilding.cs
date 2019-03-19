@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
 {
     public class ObjAnimatedBuilding : ObjBuilding, IObjAnimatedBuilding
     {
-        public ObjAnimatedBuilding(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
+        public ObjAnimatedBuilding(Game game, string model, IStats stats, int collisionRadius = 40,
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
         {

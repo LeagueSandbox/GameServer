@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Content
         private readonly ILog _logger;
         private Game _game;
 
-        private Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
+        private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
         private string _contentPath;
@@ -199,7 +200,7 @@ namespace LeagueSandbox.GameServer.Content
             return GetContentPath(contentPackages, contentType, fileName);
         }
 
-        public SpellData GetSpellData(string spellName)
+        public ISpellData GetSpellData(string spellName)
         {
             if (_spellData.ContainsKey(spellName))
             {

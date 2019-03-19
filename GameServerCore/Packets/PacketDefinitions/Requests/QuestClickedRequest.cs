@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class QuestClickedRequest
+    public class QuestClickedRequest : ICoreRequest
     {
         public uint QuestNetId { get; }
 

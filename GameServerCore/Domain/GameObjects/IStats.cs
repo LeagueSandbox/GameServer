@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IStats
+    public interface IStats: IUpdate
     {
         ulong SpellsEnabled { get; }
         ulong SummonerSpellsEnabled { get; }
@@ -13,8 +13,8 @@ namespace GameServerCore.Domain.GameObjects
         bool IsPhysicalImmune { get; }
         bool IsLifestealImmune { get; }
         bool IsTargetable { get; }
-        IsTargetableToTeamFlags IsTargetableToTeam { get; }
-        float AttackSpeedFlat { get; }
+        SpellFlags IsTargetableToTeam { get; set; }
+        float AttackSpeedFlat { get; set; }
         float HealthPerLevel { get; }
         float ManaPerLevel { get; }
         float AdPerLevel { get; }
@@ -22,7 +22,7 @@ namespace GameServerCore.Domain.GameObjects
         float MagicResistPerLevel { get; }
         float HealthRegenerationPerLevel { get; }
         float ManaRegenerationPerLevel { get; }
-        float GrowthAttackSpeed { get; }
+        float GrowthAttackSpeed { get; set; }
         float[] ManaCost { get; }
         IStat AbilityPower { get; }
         IStat Armor { get; }
@@ -50,14 +50,20 @@ namespace GameServerCore.Domain.GameObjects
         float Experience { get; set; }
         float CurrentHealth { get; set; }
         float CurrentMana { get; set; }
-        bool IsGeneratingGold { get; }
+        bool IsGeneratingGold { get; set; }
         float SpellCostReduction { get; }
-
-        bool GetSpellEnabled(byte id);
-        void SetSpellEnabled(byte id, bool enabled);
-        bool GetSummonerSpellEnabled(byte id);
-        void SetSummonerSpellEnabled(byte id, bool enabled);
+        
         void AddModifier(IStatsModifier modifier);
         void RemoveModifier(IStatsModifier modifier);
+        void LevelUp();
+        
+        float GetTotalAttackSpeed();
+        bool GetActionState(ActionState state);
+        bool GetSpellEnabled(byte id);
+        bool GetSummonerSpellEnabled(byte id);
+        
+        void SetActionState(ActionState state, bool enabled);
+        void SetSpellEnabled(byte id, bool enabled);
+        void SetSummonerSpellEnabled(byte id, bool enabled);
     }
 }

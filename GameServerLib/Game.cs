@@ -21,12 +21,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Timer = System.Timers.Timer;
+using GameServerCore.Packets.PacketDefinitions;
+using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer
 {
     public class Game : IGame
     {
-        
+
         private ILog _logger;
 
         public bool IsRunning { get; private set; }
@@ -44,9 +47,11 @@ namespace LeagueSandbox.GameServer
 
         private PacketServer _packetServer;
         public IPacketReader PacketReader { get; private set; }
+        public NetworkHandler<ICoreRequest> RequestHandler {get; }
+        public NetworkHandler<ICoreResponse> ResponseHandler { get; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
-        public Map Map { get; private set; }
+        public IMap Map { get; private set; }
         
         public Config Config { get; protected set; }
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
@@ -60,8 +65,6 @@ namespace LeagueSandbox.GameServer
         //Script Engine
         internal CSharpScriptEngine ScriptEngine { get; private set; }
 
-        IMap IGame.Map => Map;
-
         private Stopwatch _lastMapDurationWatch;
 
         private List<GameScriptTimer> _gameScriptTimers;
@@ -74,9 +77,11 @@ namespace LeagueSandbox.GameServer
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine();
+            RequestHandler = new NetworkHandler<ICoreRequest>();
+            ResponseHandler = new NetworkHandler<ICoreResponse>();
         }
 
-        public void Initialize(ushort port, string blowfishKey, Config config)
+        public void Initialize(Config config, PacketServer server)
         {
             _logger.Info("Loading Config.");
             Config = config;
@@ -100,6 +105,7 @@ namespace LeagueSandbox.GameServer
             _logger.Info("Add players");
             foreach (var p in Config.Players)
             {
+                _logger.Info("Player "+p.Value.Name+" Added: "+p.Value.Champion);
                 ((PlayerManager)PlayerManager).AddPlayer(p);
             }
 
@@ -112,13 +118,52 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
-            _packetServer = new PacketServer();
-            _packetServer.InitServer(port, blowfishKey, this);
+            // TODO: GameApp should send the Response/Request handlers
+            _packetServer = server;
+            // TODO: switch the notifier with ResponseHandler
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
-            // TODO: make lib to only get API types and not byte[], start from removing this line
-            PacketReader = new PacketReader();
+            InitializePacketHandlers();
 
             _logger.Info("Game is ready.");
+        }
+        public void InitializePacketHandlers()
+        {
+            // maybe use reflection, the problem is that Register is generic and so it needs to know its type at 
+            // compile time, maybe just use interface and in runetime figure out the type - and again there is
+            // a problem with passing generic delegate to non-generic function, if we try to only constraint the
+            // argument to interface ICoreRequest we will get an error cause our generic handlers use generic type
+            // even with where statement that doesn't work
+            RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
+            RequestHandler.Register<AutoAttackOptionRequest>(new HandleAutoAttackOption(this).HandlePacket);
+            RequestHandler.Register<BlueTipClickedRequest>(new HandleBlueTipClicked(this).HandlePacket);
+            RequestHandler.Register<BuyItemRequest>(new HandleBuyItem(this).HandlePacket);
+            RequestHandler.Register<CastSpellRequest>(new HandleCastSpell(this).HandlePacket);
+            RequestHandler.Register<ChatMessageRequest>(new HandleChatBoxMessage(this).HandlePacket);
+            RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
+            RequestHandler.Register<CursorPositionOnWorldRequest>(new HandleCursorPositionOnWorld(this).HandlePacket);
+            RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
+            RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
+            RequestHandler.Register<HeartbeatRequest>(new HandleHeartBeat(this).HandlePacket);
+            RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
+            RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
+            RequestHandler.Register<MapRequest>(new HandleMap(this).HandlePacket);
+            RequestHandler.Register<MovementRequest>(new HandleMove(this).HandlePacket);
+            RequestHandler.Register<MoveConfirmRequest>(new HandleMoveConfirm(this).HandlePacket);
+            RequestHandler.Register<PauseRequest>(new HandlePauseReq(this).HandlePacket);
+            RequestHandler.Register<QueryStatusRequest>(new HandleQueryStatus(this).HandlePacket);
+            RequestHandler.Register<QuestClickedRequest>(new HandleQuestClicked(this).HandlePacket);
+            RequestHandler.Register<ScoreboardRequest>(new HandleScoreboard(this).HandlePacket);
+            RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
+            RequestHandler.Register<SkillUpRequest>(new HandleSkillUp(this).HandlePacket);
+            RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
+            RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
+            RequestHandler.Register<StatsConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
+            RequestHandler.Register<SurrenderRequest>(new HandleSurrender(this).HandlePacket);
+            RequestHandler.Register<SwapItemsRequest>(new HandleSwapItems(this).HandlePacket);
+            RequestHandler.Register<SynchVersionRequest>(new HandleSync(this).HandlePacket);
+            RequestHandler.Register<UnpauseRequest>(new HandleUnpauseReq(this).HandlePacket);
+            RequestHandler.Register<UseObjectRequest>(new HandleUseObject(this).HandlePacket);
+            RequestHandler.Register<ViewRequest>(new HandleView(this).HandlePacket);
         }
 
         public bool LoadScripts()
@@ -159,10 +204,11 @@ namespace LeagueSandbox.GameServer
             }
 
         }
+        
         public void Update(float diff)
         {
             GameTime += diff;
-            ((ObjectManager)ObjectManager).Update(diff);
+            ObjectManager.Update(diff);
             Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
@@ -220,7 +266,7 @@ namespace LeagueSandbox.GameServer
 
         public bool HandleDisconnect(int userId)
         {
-            var peerinfo = PlayerManager.GetPeerInfo(userId);
+            var peerinfo = PlayerManager.GetPeerInfo((ulong)userId);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)
@@ -231,29 +277,12 @@ namespace LeagueSandbox.GameServer
             }
             return true;
         }
-
-        // for reflection to work we need it to be called from lib
-        public Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>> GetAllPacketHandlers()
-        {
-            var inst = GetInstances<PacketHandlerBase>(this);
-            var dict = new Dictionary<PacketCmd, Dictionary<Channel, IPacketHandler>>();
-            foreach (var pktCmd in inst)
-            {
-                dict.Add(pktCmd.PacketType, new Dictionary<Channel, IPacketHandler>
-                {
-                    {
-                        pktCmd.PacketChannel, pktCmd
-                    }
-                });
-            }
-            return dict;
-        }
         private static List<T> GetInstances<T>(IGame g)
         {
-            return (Assembly.GetCallingAssembly()
+            return Assembly.GetCallingAssembly()
                 .GetTypes()
-                .Where(t => t.BaseType == (typeof(T)))
-                .Select(t => (T)Activator.CreateInstance(t, g))).ToList();
+                .Where(t => t.BaseType == typeof(T))
+                .Select(t => (T)Activator.CreateInstance(t, g)).ToList();
         }
 
         public void SetGameToExit()

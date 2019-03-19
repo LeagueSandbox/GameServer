@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class ViewRequest
+    public class ViewRequest : ICoreRequest
     {
         public int NetId { get; }
         public float X { get; }
