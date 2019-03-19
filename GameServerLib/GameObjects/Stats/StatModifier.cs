@@ -1,4 +1,4 @@
-using System.Math;
+using System;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore;
 
