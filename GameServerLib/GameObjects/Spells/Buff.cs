@@ -1,4 +1,6 @@
-﻿using GameServerCore.Domain;
+using System;
+using GameServerCore.Domain;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -50,7 +52,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public void Update(float diff)
         {
             TimeElapsed += diff / 1000.0f;
-            if (Duration != 0.0f)
+            if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
                 if (TimeElapsed >= Duration)
                 {

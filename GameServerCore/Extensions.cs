@@ -10,6 +10,8 @@ namespace GameServerCore
 {
     public static class Extensions
     {
+        public const float COMPARE_EPSILON = 0.0001f;
+
         public static float SqrLength(this Vector2 v)
         {
             return v.X * v.X + v.Y * v.Y;

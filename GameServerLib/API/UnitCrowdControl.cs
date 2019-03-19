@@ -1,4 +1,6 @@
-﻿using GameServerCore.Domain;
+using System;
+using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.API
@@ -19,7 +21,7 @@ namespace LeagueSandbox.GameServer.API
         public void Update(float diff)
         {
             CurrentTime += diff / 1000.0f;
-            if (CurrentTime >= Duration && !IsRemoved && Duration != -1)
+            if (CurrentTime >= Duration && !IsRemoved && Math.Abs(Duration - (-1)) > Extensions.COMPARE_EPSILON)
             {
                 IsRemoved = true;
             }
