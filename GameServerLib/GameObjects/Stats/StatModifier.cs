@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+using System.Math;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
