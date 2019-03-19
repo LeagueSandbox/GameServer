@@ -148,21 +148,6 @@ namespace LeagueSandbox.GameServer.GameObjects
                 {
                     Target = new Target(Waypoints[CurWaypoint]);
                 }
-                if (IsDashing)
-                {
-                    IsDashing = false;
-                }
-            }
-        }
-
-        public void CalculateVector(float xtarget, float ytarget)
-        {
-            _xvector = xtarget - X;
-            _yvector = ytarget - Y;
-
-            if (Math.Abs(_xvector) < Extensions.COMPARE_EPSILON && Math.Abs(_yvector) < Extensions.COMPARE_EPSILON)
-            {
-                return;
             }
         }
 
