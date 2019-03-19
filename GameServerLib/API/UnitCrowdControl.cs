@@ -1,4 +1,4 @@
-using System.Math;
+using System;
 using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Enums;
