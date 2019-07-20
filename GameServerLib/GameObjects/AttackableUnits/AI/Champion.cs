@@ -221,10 +221,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return new Vector2(coords.X, coords.Y);
         }
 
-        // TODO: delete this function if this is ok
+        // TODO: delete this function if StopMovement get fixed
         public void StopChampionMovement()
         {
-            StopMovement();
+            List<Vector2> l = new List<Vector2>();
+            l.Add(new Vector2(this.X, this.Y));
+            this.SetWaypoints(l);
+            _game.PacketNotifier.NotifyMovement(this);
         }
 
         public ISpell GetSpellBySlot(byte slot)

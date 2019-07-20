@@ -173,7 +173,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         public void SetWaypoints(List<Vector2> newWaypoints)
-        { 
+        {
             Waypoints = newWaypoints;
             SetPosition(Waypoints[0].X, Waypoints[0].Y);
             _movementUpdated = true;
