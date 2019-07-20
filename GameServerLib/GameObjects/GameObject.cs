@@ -179,8 +179,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             _movementUpdated = true;
             if (Waypoints.Count == 1)
             {
+                Target = null;
                 return;
             }
+            Target = new Target(Waypoints[1]);
             WaypointIndex = 1;
         }
 
@@ -208,12 +210,14 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             X = x;
             Y = y;
+            Target = null;
         }
 
         public virtual void SetPosition(Vector2 vec)
         {
             X = vec.X;
             Y = vec.Y;
+            Target = null;
         }
 
         public virtual float GetZ()

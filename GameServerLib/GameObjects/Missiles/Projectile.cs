@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         public IAttackableUnit Owner { get; }
         public int ProjectileId { get; }
         public ISpellData SpellData { get; protected set; }
-        public ITarget Target { get; protected set; }
 
         protected float _moveSpeed;
         protected ISpell _originSpell;
