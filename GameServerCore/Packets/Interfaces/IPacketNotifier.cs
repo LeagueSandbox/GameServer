@@ -48,6 +48,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyHeroSpawn2(int userId, IChampion champion);
         void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
         void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null);
+        void NotifyInstantStopAttack(IAttackableUnit attacker, bool isSummonerSpell, uint missileNetID = 0);
         void NotifyItemBought(IAttackableUnit u, IItem i);
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
@@ -93,7 +94,6 @@ namespace GameServerCore.Packets.Interfaces
         void NotifySpawnStart(int userId);
         void NotifySpellAnimation(IAttackableUnit u, string animation);
         void NotifyStaticObjectSpawn(int userId, uint netId);
-        void NotifyStopAutoAttack(IAttackableUnit attacker);
         void NotifySurrender(IChampion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut);
         void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
         void NotifyTeleport(IAttackableUnit u, Vector2 pos);

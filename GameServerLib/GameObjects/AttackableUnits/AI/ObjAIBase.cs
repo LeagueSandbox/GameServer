@@ -505,6 +505,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 HasMadeInitialAttack = false;
                 AutoAttackTarget = null;
                 _autoAttackCurrentDelay = 0;
+                _game.PacketNotifier.NotifyInstantStopAttack(this, false);
             }
 
             if (_autoAttackCurrentCooldown > 0)
