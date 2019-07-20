@@ -68,11 +68,13 @@ namespace LeagueSandbox.GameServer.API
         {
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
+            OnChampionMove.RemoveListener(owner);
         }
 
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
+        public static EventOnChampionMove OnChampionMove = new EventOnChampionMove();
         public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
     }
 
@@ -124,6 +126,37 @@ namespace LeagueSandbox.GameServer.API
     }
 
     public class EventOnChampionDamageTaken
+    {
+        private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
+        public void AddListener(object owner, IChampion champion, Action callback)
+        {
+            var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IChampion champion)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IChampion champion)
+        {
+            _listeners.ForEach(listener =>
+            {
+                if (listener.Item2 == champion)
+                {
+                    listener.Item3();
+                }
+            });
+        }
+    }
+
+    public class EventOnChampionMove
     {
         private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
         public void AddListener(object owner, IChampion champion, Action callback)

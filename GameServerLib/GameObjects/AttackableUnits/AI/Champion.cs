@@ -167,6 +167,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void UpdateMoveOrder(MoveOrder order)
         {
             MoveOrder = order;
+
+            ApiEventManager.OnChampionDamageTaken.Publish(this);
         }
 
         public bool CanCast()
