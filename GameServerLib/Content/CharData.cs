@@ -35,6 +35,7 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float AttackDelayOffsetPercent { get; private set; }
+        public float AttackDelayCastOffsetPercent { get; private set; }
         public float HpPerLevel { get; private set; } = 10.0f;
         public float MpPerLevel { get; private set; } = 10.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
@@ -102,6 +103,7 @@ namespace LeagueSandbox.GameServer.Content
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
             AttackDelayOffsetPercent = file.GetFloat("Data", "AttackDelayOffsetPercent", AttackDelayOffsetPercent);
+            AttackDelayCastOffsetPercent = file.GetFloat("Data", "AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
             MpPerLevel = file.GetFloat("Data", "MPPerLevel", MpPerLevel);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
@@ -110,7 +112,7 @@ namespace LeagueSandbox.GameServer.Content
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
-            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").Equals("yes");
+            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
             PathfindingCollisionRadius =
                 file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);

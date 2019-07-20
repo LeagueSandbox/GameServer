@@ -11,7 +11,7 @@ namespace GameServerCore.Domain.GameObjects
         bool IsDashing { get; }
         bool HasMadeInitialAttack { get; set; }
 
-        float AutoAttackDelay { get; set;  }
+        float AutoAttackCastTime { get; set; }
         float AutoAttackProjectileSpeed { get; set;  }
         MoveOrder MoveOrder { get; }
         bool IsCastingSpell { get; set;  }

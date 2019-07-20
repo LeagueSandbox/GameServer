@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public CharData CharData { get; }
         public ISpellData AaSpellData { get; }
         private bool _isNextAutoCrit;
-        public float AutoAttackDelay { get; set; }
+        public float AutoAttackCastTime { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
         private float _autoAttackCurrentCooldown;
         private float _autoAttackCurrentDelay;
@@ -80,13 +80,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!string.IsNullOrEmpty(model))
             {
                 AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
-                AutoAttackDelay = AaSpellData.CastFrame / 30.0f;
+                float baseAttackCooldown = 1.6f * (1.0f + CharData.AttackDelayOffsetPercent);
+                AutoAttackCastTime = baseAttackCooldown * (0.3f + CharData.AttackDelayCastOffsetPercent);
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
             }
             else
             {
-                AutoAttackDelay = 0;
+                AutoAttackCastTime = 0;
                 AutoAttackProjectileSpeed = 500;
                 IsMelee = true;
             }
@@ -425,7 +426,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else if (IsAttacking && AutoAttackTarget != null)
                 {
                     _autoAttackCurrentDelay += diff / 1000.0f;
-                    if (_autoAttackCurrentDelay >= AutoAttackDelay / Stats.AttackSpeedMultiplier.Total)
+                    if (_autoAttackCurrentDelay >= AutoAttackCastTime / Stats.AttackSpeedMultiplier.Total)
                     {
                         if (!IsMelee)
                         {
@@ -498,17 +499,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
 
             }
-            else if (IsAttacking)
+            else
             {
-                if (AutoAttackTarget == null
-                    || AutoAttackTarget.IsDead
-                    || !_game.ObjectManager.TeamHasVisionOn(Team, AutoAttackTarget)
-                )
-                {
-                    IsAttacking = false;
-                    HasMadeInitialAttack = false;
-                    AutoAttackTarget = null;
-                }
+                IsAttacking = false;
+                HasMadeInitialAttack = false;
+                AutoAttackTarget = null;
+                _autoAttackCurrentDelay = 0;
+                _game.PacketNotifier.NotifyInstantStopAttack(this, false);
             }
 
             if (_autoAttackCurrentCooldown > 0)
