@@ -14,6 +14,11 @@ namespace GameServerCore.Domain.GameObjects
         /// Waypoints that the game object walking through.
         /// </summary>
         List<Vector2> Waypoints { get; }
+
+        /// <summary>
+        /// Current target the object running to (can be coordinates or an object)
+        /// </summary>
+        ITarget Target { get; }
         /// <summary>
         /// Team identifier
         /// </summary>

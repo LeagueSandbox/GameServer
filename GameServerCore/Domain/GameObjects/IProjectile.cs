@@ -7,6 +7,5 @@ namespace GameServerCore.Domain.GameObjects
         List<IGameObject> ObjectsHit { get; }
         IAttackableUnit Owner { get; }
         int ProjectileId { get; }
-        ITarget Target { get; }
     }
 }

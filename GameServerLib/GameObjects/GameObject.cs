@@ -24,7 +24,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected int WaypointIndex { get; private set; }
 
         public List<Vector2> Waypoints { get; private set; }
-        
+
+        public ITarget Target { get; set; }
+
         public TeamId Team { get; protected set; }
         public void SetTeam(TeamId team)
         {
@@ -122,8 +124,19 @@ namespace LeagueSandbox.GameServer.GameObjects
             // REVIEW: (deltaMovement * 2) used here is problematic cause if the server lagged, diff is much greater than usual values
             if ((cur-next).LengthSquared() < MOVEMENT_EPSILON* MOVEMENT_EPSILON)
             {
+                if (this is IProjectile && !Target.IsSimpleTarget)
+                {
+                    return;
+                }
                 // remove this waypoint cause we reached it
-                WaypointIndex++;
+                if (++WaypointIndex >= Waypoints.Count)
+                {
+                    Target = null;
+                }
+                else
+                {
+                    Target = new Target(Waypoints[WaypointIndex]);
+                }
             }
         }
         /// <summary>
