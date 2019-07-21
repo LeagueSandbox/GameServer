@@ -282,7 +282,7 @@
     <Compile Include="Packets\PacketHandlers\HandleStatsConfirm.cs" />
     <Compile Include="Packets\PacketHandlers\HandleUnpauseReq.cs" />
     <Compile Include="Players\PlayerManager.cs" />
-    <Compile Include="Scripting\CSharp\BuffGameScript.cs" />
+    <Compile Include="Scripting\CSharp\IBuffGameScript.cs" />
     <Compile Include="Scripting\CSharp\Benchmark.cs" />
     <Compile Include="Scripting\CSharp\BuffGameScriptController.cs" />
     <Compile Include="Scripting\CSharp\CSharpScriptEngine.cs" />
@@ -310,7 +310,7 @@
     <Compile Include="Packets\PacketHandlers\HandleSwapItems.cs" />
     <Compile Include="Packets\PacketHandlers\HandleSync.cs" />
     <Compile Include="Packets\PacketHandlers\HandleView.cs" />
-    <Compile Include="Scripting\CSharp\GameScript.cs" />
+    <Compile Include="Scripting\CSharp\IGameScript.cs" />
     <Compile Include="Scripting\CSharp\GameScriptEmpty.cs" />
     <Compile Include="Scripting\CSharp\GameScriptTimer.cs" />
     <Compile Include="Program.cs" />
