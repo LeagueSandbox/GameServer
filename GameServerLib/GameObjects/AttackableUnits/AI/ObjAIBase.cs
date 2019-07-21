@@ -235,6 +235,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 StopMovement();
             }
 
+            ApiEventManager.OnUnitCrowdControlled.Publish(TargetUnit);
+
             _crowdControlList.Add(cc);
         }
 
