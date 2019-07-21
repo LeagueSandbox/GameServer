@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
                     {
                         u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyEnterVision(u, team);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(u, team);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
