@@ -278,7 +278,7 @@ namespace LeagueSandbox.GameServer.Maps
             _game.ObjectManager.AddObject(new LevelProp(_game, -99.5613f, 855.6632f, 191.4039f, 158.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
 
             //TODO
-            var collisionRadius = 0;
+            var collisionRadius = 400;
             var sightRange = 1700;
 
             _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, collisionRadius, 853.368f, 3345.1645f, sightRange, 0xffd23c3e)); //top exact

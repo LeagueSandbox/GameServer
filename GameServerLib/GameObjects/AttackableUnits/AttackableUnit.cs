@@ -44,7 +44,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Logger = LoggerProvider.GetLogger();
             Stats = stats;
             Model = model;
-            CollisionRadius = 40;
+            if (collisionRadius != 0) CollisionRadius = collisionRadius;
+            else CollisionRadius = 40;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
 
