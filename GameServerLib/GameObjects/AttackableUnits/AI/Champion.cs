@@ -550,10 +550,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Skin = skinNo;
         }
 
-        public void SetSpell(string name, byte slot, bool enabled)
+        public ISpell SetSpell(string name, byte slot, bool enabled)
         {
-            Spells[slot] = new Spell(_game, this, name, slot);
+            ISpell newSpell = new Spell(_game, this, name, slot);
+
+            if (Spells[slot] != null)
+            {
+                newSpell.SetLevel(Spells[slot].Level);
+            }
+
+            Spells[slot] = newSpell;
             Stats.SetSpellEnabled(slot, enabled);
+
+            return newSpell;
         }
 
         public void SwapSpells(byte slot1, byte slot2)
