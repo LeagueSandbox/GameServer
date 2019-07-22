@@ -347,6 +347,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
+        public void SetLevel(byte toLevel)
+        {
+            if (toLevel <= 5)
+            {
+                Level = toLevel;
+            }
+
+            if (Slot < 4)
+            {
+                Owner.Stats.ManaCost[Slot] = SpellData.ManaCost[Level];
+            }
+        }
+
         public void SetCooldown(float newCd)
         {
             if (newCd <= 0)
