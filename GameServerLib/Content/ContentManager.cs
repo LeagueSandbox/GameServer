@@ -29,17 +29,22 @@ namespace LeagueSandbox.GameServer.Content
         };
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
+
         public string GameModeName { get; }
+        public string DataPackageName { get; private set; }
 
         private ContentManager(Game game, string gameModeName, string contentPath)
         {
-            _contentPath = contentPath;
             _game = game;
-            _logger = LoggerProvider.GetLogger();
 
             GameModeName = gameModeName;
 
+            _contentPath = contentPath;
+
+            _logger = LoggerProvider.GetLogger();
+
             _content = new Dictionary<string, Dictionary<string, List<string>>>();
+
             foreach (var contentType in ContentTypes)
             {
                 _content[contentType] = new Dictionary<string, List<string>>();
@@ -91,7 +96,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private string GetPackagePath(string packageName)
         {
-            return $"{_contentPath}/{packageName}";
+            return $"{_contentPath}/Data/{packageName}";
         }
 
         private string GetContentSetPath(string packageName, string contentType)
@@ -231,9 +236,17 @@ namespace LeagueSandbox.GameServer.Content
             var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
             var dataConfiguration = gameModeConfiguration.SelectToken("data");
 
-            foreach (JProperty dataPackage in dataConfiguration)
+            foreach (var jToken in dataConfiguration)
             {
-                if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
+                var dataPackage = (JProperty) jToken;
+                var dataPackageName = dataPackage.Name;
+
+                if (!ValidatePackageName(dataPackageName))
+                {
+                    throw new Exception("Data packages must be namespaced!");
+                }
+
+                contentManager.DataPackageName = $"{contentPath}/Data/{dataPackageName}";
 
                 foreach (var contentType in ContentTypes)
                 {
