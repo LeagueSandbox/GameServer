@@ -47,7 +47,7 @@
     ],
     "game": {
         "map": 1,
-        "gameMode": "LeagueSandbox-Default"
+        "dataPackage": "LeagueSandbox-Default"
     },
     "gameInfo": {
         "MANACOSTS_ENABLED": false,
