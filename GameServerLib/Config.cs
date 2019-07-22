@@ -72,20 +72,22 @@ namespace LeagueSandbox.GameServer
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
 
             // Read global damage text setting
-            IsDamageTextGlobal = (bool)gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
-
-            // Load items
-            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                // todo: remove this hardcoded path with content pipeline refactor
-                $"{ContentPath}/LeagueSandbox-Default/Items"
-            ));
+            IsDamageTextGlobal = (bool) gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
 
             // Read the game configuration
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
 
-            // Read spawns info
+            // Loads gamemode
             ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
+
+            // Load items
+            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
+                // todo: remove this hardcoded path with content pipeline refactor
+                $"{ContentManager.DataPackageName}/Items"
+            ));
+
+            // Read spawns info
             var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
             var mapData = JObject.Parse(File.ReadAllText(mapPath));
             var spawns = mapData.SelectToken("spawns");
