@@ -78,14 +78,24 @@ namespace LeagueSandbox.GameServer
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
 
-            // Loads gamemode
-            ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
+            // Load data package
+            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
             // Load items
-            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                // todo: remove this hardcoded path with content pipeline refactor
-                $"{ContentManager.DataPackageName}/Items"
-            ));
+            foreach (var dataPackage in ContentManager.DataPackageNames)
+            {
+                try
+                {
+                    game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
+                        $"{ContentPath}/Data/{dataPackage}/Items"
+                    ));
+                }
+                catch (DirectoryNotFoundException exception)
+                {
+                    Console.WriteLine($"Package: {dataPackage} does not contain any items, skipping...");
+                    continue;
+                }
+            }
 
             // Read spawns info
             var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
@@ -142,7 +152,7 @@ namespace LeagueSandbox.GameServer
     public class GameConfig
     {
         public int Map => (int)_gameData.SelectToken("map");
-        public string GameMode => (string)_gameData.SelectToken("gameMode");
+        public string DataPackage => (string)_gameData.SelectToken("dataPackage");
 
         private JToken _gameData;
 

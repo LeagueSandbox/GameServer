@@ -30,14 +30,11 @@ namespace LeagueSandbox.GameServer.Content
 
         private Dictionary<string, Dictionary<string, List<string>>> _content;
 
-        public string GameModeName { get; }
-        public string DataPackageName { get; private set; }
+        public List<string> DataPackageNames { get; private set; }
 
-        private ContentManager(Game game, string gameModeName, string contentPath)
+        private ContentManager(Game game, string contentPath)
         {
             _game = game;
-
-            GameModeName = gameModeName;
 
             _contentPath = contentPath;
 
@@ -51,22 +48,10 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        private void AddContent(string packageName, string contentType, JToken contentSet)
+        private void AddContent(string packageName, string contentType)
         {
-            var contents = new string[0];
-            if (contentSet is JArray)
-            {
-                contents = contentSet.ToObject<string[]>();
-            }
-            else if (contentSet.Value<string>().Equals("*"))
-            {
-                var contentPath = GetContentSetPath(packageName, contentType);
-                contents = GetFolderNamesFromPath(contentPath);
-            }
-            else
-            {
-                throw new Exception("Invalid content configuration");
-            }
+            var contentPath = GetContentSetPath(packageName, contentType);
+            var contents = GetFolderNamesFromPath(contentPath);
 
             foreach (var content in contents)
             {
@@ -101,11 +86,6 @@ namespace LeagueSandbox.GameServer.Content
 
         private string GetContentSetPath(string packageName, string contentType)
         {
-            if (packageName.Equals("Self"))
-            {
-                return $"{_contentPath}/GameMode/{GameModeName}/Data/{contentType}";
-            }
-
             return $"{GetPackagePath(packageName)}/{contentType}";
         }
 
@@ -228,36 +208,21 @@ namespace LeagueSandbox.GameServer.Content
             return _charData[charName];
         }
 
-        public static ContentManager LoadGameMode(Game game, string gameModeName, string contentPath)
+        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
         {
-            var contentManager = new ContentManager(game, gameModeName, contentPath);
+            var contentManager = new ContentManager(game, contentPath);
 
-            var gameModeConfigurationPath = $"{contentPath}/GameMode/{gameModeName}/GameMode.json";
-            var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
-            var dataConfiguration = gameModeConfiguration.SelectToken("data");
+            List<string> toLoadPackageList = new List<string>();
 
-            foreach (var jToken in dataConfiguration)
+            contentManager.GetDependenciesRecursively(toLoadPackageList, dataPackageName, contentPath);
+
+            contentManager.DataPackageNames = toLoadPackageList;
+
+            foreach (var dataPackage in toLoadPackageList)
             {
-                var dataPackage = (JProperty) jToken;
-                var dataPackageName = dataPackage.Name;
-
-                if (!ValidatePackageName(dataPackageName))
-                {
-                    throw new Exception("Data packages must be namespaced!");
-                }
-
-                contentManager.DataPackageName = $"{contentPath}/Data/{dataPackageName}";
-
                 foreach (var contentType in ContentTypes)
                 {
-                    var contentSet = dataPackage.Value.SelectToken(contentType);
-
-                    if (contentSet == null)
-                    {
-                        continue;
-                    }
-
-                    contentManager.AddContent(dataPackage.Name, contentType, contentSet);
+                    contentManager.AddContent(dataPackage, contentType);
                 }
             }
 
@@ -286,6 +251,40 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return true;
+        }
+
+        private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)
+        {
+            foreach(var dependency in GetDependenciesFromPackage(packageName, contentPath))
+            {
+                if (!resultList.Contains(dependency))
+                {
+                    resultList.Add(dependency);
+
+                    GetDependenciesRecursively(resultList, dependency, contentPath);
+                }
+            }
+        }
+
+        private List<string> GetDependenciesFromPackage(string packageName, string contentPath)
+        {
+            List<string> dependencyList = new List<string>();
+
+            var dataPackageConfigurationPath = $"{contentPath}/Data/{packageName}/packageInfo.json";
+            var dataPackageConfiguration = JToken.Parse(File.ReadAllText(dataPackageConfigurationPath));
+            var dataPackageDependencies = dataPackageConfiguration.SelectToken("dependencies");
+
+            foreach (var dependencyToken in dataPackageDependencies)
+            {
+                var dependencyName = dependencyToken.Value<string>();
+
+                if (ValidatePackageName(dependencyName))
+                {
+                    dependencyList.Add(dependencyName);
+                }
+            }
+
+            return dependencyList;
         }
     }
 }

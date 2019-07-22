@@ -29,10 +29,11 @@ namespace LeagueSandbox.GameServer.Maps
             _game = game;
             _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
+
             var path = Path.Combine(
                 game.Config.ContentPath,
                 "Data",
-                _game.Config.ContentManager.GameModeName,
+                _game.Config.ContentManager.DataPackageNames[0],
                 "AIMesh",
                 "Map" + Id,
                 "AIPath.aimesh_ngrid"
