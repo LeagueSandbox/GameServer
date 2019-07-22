@@ -32,11 +32,13 @@ namespace LeagueSandbox.GameServer.Content
 
         public List<string> DataPackageNames { get; private set; }
 
-        private ContentManager(Game game, string contentPath)
+        private ContentManager(Game game, string dataPackageName, string contentPath)
         {
             _game = game;
 
             _contentPath = contentPath;
+
+            DataPackageNames = new List<string>{dataPackageName};
 
             _logger = LoggerProvider.GetLogger();
 
@@ -210,15 +212,13 @@ namespace LeagueSandbox.GameServer.Content
 
         public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
         {
-            var contentManager = new ContentManager(game, contentPath);
+            var contentManager = new ContentManager(game, dataPackageName, contentPath);
 
-            List<string> toLoadPackageList = new List<string>();
+            List<string> extraPackageList = new List<string>();
+            contentManager.GetDependenciesRecursively(extraPackageList, dataPackageName, contentPath);
+            contentManager.DataPackageNames.AddRange(extraPackageList);
 
-            contentManager.GetDependenciesRecursively(toLoadPackageList, dataPackageName, contentPath);
-
-            contentManager.DataPackageNames = toLoadPackageList;
-
-            foreach (var dataPackage in toLoadPackageList)
+            foreach (var dataPackage in contentManager.DataPackageNames)
             {
                 foreach (var contentType in ContentTypes)
                 {
