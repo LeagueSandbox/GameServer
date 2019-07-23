@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer
                 try
                 {
                     game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                        $"{ContentPath}/Data/{dataPackage}/Items"
+                        $"{ContentPath}/{dataPackage}/Items"
                     ));
                 }
                 catch (DirectoryNotFoundException exception)

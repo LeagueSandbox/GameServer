@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private string GetPackagePath(string packageName)
         {
-            return $"{_contentPath}/Data/{packageName}";
+            return $"{_contentPath}/{packageName}";
         }
 
         private string GetContentSetPath(string packageName, string contentType)
@@ -270,8 +270,19 @@ namespace LeagueSandbox.GameServer.Content
         {
             List<string> dependencyList = new List<string>();
 
-            var dataPackageConfigurationPath = $"{contentPath}/Data/{packageName}/packageInfo.json";
-            var dataPackageConfiguration = JToken.Parse(File.ReadAllText(dataPackageConfigurationPath));
+            var dataPackageConfigurationPath = $"{contentPath}/{packageName}/packageInfo.json";
+            JToken dataPackageConfiguration = null;
+
+            try
+            {
+                dataPackageConfiguration = JToken.Parse(File.ReadAllText(dataPackageConfigurationPath));
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine($"{dataPackageConfigurationPath} not found, skipping...");
+                return new List<string>();
+            }
+
             var dataPackageDependencies = dataPackageConfiguration.SelectToken("dependencies");
 
             foreach (var dependencyToken in dataPackageDependencies)

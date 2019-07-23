@@ -32,7 +32,6 @@ namespace LeagueSandbox.GameServer.Maps
 
             var path = Path.Combine(
                 game.Config.ContentPath,
-                "Data",
                 _game.Config.ContentManager.DataPackageNames[0],
                 "AIMesh",
                 "Map" + Id,
