@@ -215,8 +215,16 @@ namespace LeagueSandbox.GameServer.Content
             var contentManager = new ContentManager(game, dataPackageName, contentPath);
 
             List<string> extraPackageList = new List<string>();
+
             contentManager.GetDependenciesRecursively(extraPackageList, dataPackageName, contentPath);
-            contentManager.DataPackageNames.AddRange(extraPackageList);
+
+            foreach (var packageName in extraPackageList)
+            {
+                if (!contentManager.DataPackageNames.Contains(packageName))
+                {
+                    contentManager.DataPackageNames.Add(packageName);
+                }
+            }
 
             foreach (var dataPackage in contentManager.DataPackageNames)
             {
