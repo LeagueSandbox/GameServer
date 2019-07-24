@@ -168,7 +168,14 @@ namespace LeagueSandbox.GameServer
 
         public bool LoadScripts()
         {
-            return ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{Config.GameConfig.DataPackage}");
+            List<bool> scriptLoadingResults = new List<bool>();
+
+            foreach (string dataPackageName in Config.ContentManager.DataPackageNames)
+            {
+                scriptLoadingResults.Add(ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{dataPackageName}"));
+            }
+
+            return scriptLoadingResults.Contains(false);
         }
 
         public void GameLoop()
