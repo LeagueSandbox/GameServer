@@ -524,7 +524,8 @@ namespace LeagueSandbox.GameServer.Content
             int i;
             for (i = 0; i < il; i++)
             {
-                if (IsWalkable(x1, y1) == checkWalkable || IsSeeThrough(x1, y1) == checkWalkable || (IsBrush(origin) && IsBrush(x1, y1)) == checkWalkable)
+                //TODO: Implement bush logic (preferably near here)
+                if (IsWalkable(x1, y1) == checkWalkable && IsSeeThrough(x1, y1) == checkWalkable)
                 {
                     break;
                 }
@@ -555,7 +556,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(Vector2 a, Vector2 b)
         {
-            return CastRaySqr(a, b) <= (b - a).SqrLength();
+            return CastRaySqr(a, b) < (b - a).SqrLength();
         }
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)

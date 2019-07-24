@@ -610,7 +610,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {
-                    if (!_game.Map.NavGrid.IsWalkable(point))
+                    if (!_game.Map.NavGrid.IsWalkable(point) && !_game.Map.NavGrid.IsSeeThrough(point))
                         continue;
                     var positionUsed = false;
                     foreach (var circlePoly in usedPositions)
