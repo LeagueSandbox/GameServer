@@ -244,7 +244,7 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                file = _game.Config.ContentManager.GetSpellDataFile(name);
+                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Spells", name);
             }
 
             catch (ContentNotFoundException exception)

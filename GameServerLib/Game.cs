@@ -164,9 +164,9 @@ namespace LeagueSandbox.GameServer
 
         public bool LoadScripts()
         {
-            var scriptLoadingResults = Config.ContentManager.ReloadScripts();
+            var scriptLoadingResults = Config.ContentManager.LoadScripts();
 
-            return scriptLoadingResults.Contains(false);
+            return scriptLoadingResults;
         }
 
         public void GameLoop()

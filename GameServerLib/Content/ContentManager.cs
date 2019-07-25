@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class ContentManager
+    public class ContentManager : IPackage
     {
         private readonly ILog _logger;
         private readonly Game _game;
@@ -21,6 +21,9 @@ namespace LeagueSandbox.GameServer.Content
 
         private readonly List<Package> _loadedPackages;
         private readonly List<string> _dataPackageNames;
+
+        public string PackageName { get; }
+        public string PackagePath { get; }
 
         private ContentManager(Game game, string dataPackageName, string contentPath)
         {
@@ -71,7 +74,7 @@ namespace LeagueSandbox.GameServer.Content
             return $"{_contentPath}/{packageName}";
         }
 
-        public List<bool> ReloadScripts()
+        public bool LoadScripts()
         {
             List<bool> packageLoadingResults = new List<bool>();
 
@@ -80,7 +83,7 @@ namespace LeagueSandbox.GameServer.Content
                 packageLoadingResults.Add(dataPackage.LoadScripts());
             }
 
-            return packageLoadingResults;
+            return packageLoadingResults.Contains(false);
         }
 
         public MapSpawns GetMapSpawns(int mapId)
@@ -100,41 +103,24 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        public ContentFile GetUnitStatFile(string unitName)
+        public IContentFile GetContentFileFromJson(string contentType, string itemName)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                var toReturnContentFile = dataPackage.GetContentFileFromJson("Stats", unitName);
+                var toReturnContentFile = dataPackage.GetContentFileFromJson(contentType, itemName);
 
                 if (toReturnContentFile == null)
                 {
                     continue;
                 }
 
-                return (ContentFile) toReturnContentFile;
+                return (ContentFile)toReturnContentFile;
             }
 
-            throw new ContentNotFoundException($"No unit found with name: {unitName} in any package.");
+            throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
         }
 
-        public ContentFile GetSpellDataFile(string spellName)
-        {
-            foreach (var dataPackage in _loadedPackages)
-            {
-                var toReturnContentFile = dataPackage.GetContentFileFromJson("Spells", spellName);
-
-                if (toReturnContentFile == null)
-                {
-                    continue;
-                }
-
-                return (ContentFile) toReturnContentFile;
-            }
-
-            throw new ContentNotFoundException($"No spell found with name: {spellName} in any package.");
-        }
-
-        public INavGrid GetMapNavGrid(int mapId)
+        public INavGrid GetNavGrid(int mapId)
         {
             foreach (var dataPackage in _loadedPackages)
             {
@@ -266,5 +252,6 @@ namespace LeagueSandbox.GameServer.Content
 
             return dependencyList;
         }
+        
     }
 }

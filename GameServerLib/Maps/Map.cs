@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Maps
 
             try
             {
-                NavGrid = _game.Config.ContentManager.GetMapNavGrid(Id);
+                NavGrid = _game.Config.ContentManager.GetNavGrid(Id);
             }
             catch (ContentNotFoundException exception)
             {

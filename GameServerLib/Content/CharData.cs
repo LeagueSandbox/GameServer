@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                file = _game.Config.ContentManager.GetUnitStatFile(name);
+                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Stats", name);
             }
             catch (ContentNotFoundException exception)
             {
