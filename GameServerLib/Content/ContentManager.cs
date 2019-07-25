@@ -32,6 +32,19 @@ namespace LeagueSandbox.GameServer.Content
             _logger = LoggerProvider.GetLogger();
         }
 
+        public Package GetPackage(string packageName)
+        {
+            foreach (IPackage package in loadedPackages)
+            {
+                if (package.PackageName.Equals(packageName))
+                {
+                    return (Package) package;
+                }
+            }
+
+            return null;
+        }
+
         private void LoadPackages(string packageName)
         {
             string packagePath = GetPackagePath(packageName);
