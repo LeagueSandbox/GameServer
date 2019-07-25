@@ -47,11 +47,13 @@
   <ItemGroup>
     <Compile Include="Content\Color.cs" />
     <Compile Include="Domain\IAnnounce.cs" />
+    <Compile Include="Domain\ICharData.cs" />
     <Compile Include="Domain\IContentFile.cs" />
     <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
     <Compile Include="Domain\IMapProperties.cs" />
     <Compile Include="Domain\IPackage.cs" />
+    <Compile Include="Domain\IPassiveData.cs" />
     <Compile Include="Domain\IShop.cs" />
     <Compile Include="Domain\IStackable.cs" />
     <Compile Include="Domain\IUpdate.cs" />

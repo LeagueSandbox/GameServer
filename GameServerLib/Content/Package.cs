@@ -17,6 +17,9 @@ namespace LeagueSandbox.GameServer.Content
         public string PackagePath { get; private set; }
         public string PackageName { get; private set; }
 
+        private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
+        private readonly Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+
         private readonly Game _game;
         private readonly ILog _logger;
 
@@ -133,6 +136,29 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return NavGridReader.ReadBinary(navgridPath);
+        }
+
+        public ISpellData GetSpellData(string spellName)
+        {
+            if (_spellData.ContainsKey(spellName))
+            {
+                return _spellData[spellName];
+            }
+
+            _spellData[spellName] = new SpellData(_game);
+            _spellData[spellName].Load(spellName);
+            return _spellData[spellName];
+        }
+
+        public ICharData GetCharData(string characterName)
+        {
+            if (_charData.ContainsKey(characterName))
+            {
+                return _charData[characterName];
+            }
+            _charData[characterName] = new CharData(_game);
+            _charData[characterName].Load(characterName);
+            return _charData[characterName];
         }
 
         public bool LoadScripts()

@@ -59,7 +59,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
-            CharData = _game.Config.ContentManager.GetCharData(Model);
+
+            CharData = (CharData) _game.Config.ContentManager.GetCharData(Model);
+
             stats.LoadStats(CharData);
 
             if (CharData.PathfindingCollisionRadius > 0)

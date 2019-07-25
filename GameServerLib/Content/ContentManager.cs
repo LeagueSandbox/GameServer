@@ -16,9 +16,6 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Game _game;
         private readonly string _contentPath;
 
-        private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
-        private readonly Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
-
         private readonly List<Package> _loadedPackages;
         private readonly List<string> _dataPackageNames;
 
@@ -137,25 +134,32 @@ namespace LeagueSandbox.GameServer.Content
 
         public ISpellData GetSpellData(string spellName)
         {
-            if (_spellData.ContainsKey(spellName))
+            foreach (var dataPackage in _loadedPackages)
             {
-                return _spellData[spellName];
+                ISpellData toReturnSpellData = dataPackage.GetSpellData(spellName);
+
+                if (toReturnSpellData != null)
+                {
+                    return toReturnSpellData;
+                }
             }
 
-            _spellData[spellName] = new SpellData(_game);
-            _spellData[spellName].Load(spellName);
-            return _spellData[spellName];
+            throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
         }
 
-        public CharData GetCharData(string charName)
+        public ICharData GetCharData(string characterName)
         {
-            if (_charData.ContainsKey(charName))
+            foreach (var dataPackage in _loadedPackages)
             {
-                return _charData[charName];
+                ICharData toReturnCharData = dataPackage.GetCharData(characterName);
+
+                if (toReturnCharData != null)
+                {
+                    return toReturnCharData;
+                }
             }
-            _charData[charName] = new CharData(_game);
-            _charData[charName].Load(charName);
-            return _charData[charName];
+            
+            throw new ContentNotFoundException($"No Character found with name: {characterName}");
         }
 
         public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)

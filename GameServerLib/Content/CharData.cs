@@ -7,14 +7,14 @@ using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData
+    public class PassiveData : IPassiveData
     {
         public string PassiveNameStr { get; set; } = "";
         public string PassiveLuaName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
     }
 
-    public class CharData
+    public class CharData : ICharData
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
 
-        public PassiveData[] Passives { get; private set; } =
+        public IPassiveData[] Passives { get; private set; } =
         {
             new PassiveData(),
             new PassiveData(),

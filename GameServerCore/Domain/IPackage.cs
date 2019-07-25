@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Content;
+using LeagueSandbox.GameServer.Content;
 using Newtonsoft.Json.Linq;
 
 namespace GameServerCore.Domain
@@ -7,8 +8,10 @@ namespace GameServerCore.Domain
     {
         string PackageName { get; }
         string PackagePath { get; }
+        bool LoadScripts();
         IContentFile GetContentFileFromJson(string contentType, string itemName);
         INavGrid GetNavGrid(int mapId);
-        bool LoadScripts();
+        ISpellData GetSpellData(string spellName);
+        ICharData GetCharData(string characterName);
     }
 }
