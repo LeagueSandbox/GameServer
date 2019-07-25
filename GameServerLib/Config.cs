@@ -82,19 +82,7 @@ namespace LeagueSandbox.GameServer
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
             // Read spawns info
-            var spawns = ContentManager.GetMapSpawnData(GameConfig.Map);
-
-            MapSpawns = new MapSpawns();
-            foreach (JProperty teamSpawn in spawns)
-            {
-                var team = teamSpawn.Name;
-                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
-                {
-                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
-                    MapSpawns.SetSpawns(team, playerSpawns, i);
-                }
-            }
+            MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
         }
     }
 

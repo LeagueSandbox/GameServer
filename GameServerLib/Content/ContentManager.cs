@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -19,7 +20,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
-        private readonly List<IPackage> loadedPackages = new List<IPackage>();
+        private readonly List<Package> loadedPackages = new List<Package>();
 
         private ContentManager(Game game, string dataPackageName, string contentPath)
         {
@@ -34,11 +35,11 @@ namespace LeagueSandbox.GameServer.Content
 
         public Package GetPackage(string packageName)
         {
-            foreach (IPackage package in loadedPackages)
+            foreach (var dataPackage in loadedPackages)
             {
-                if (package.PackageName.Equals(packageName))
+                if (dataPackage.PackageName.Equals(packageName))
                 {
-                    return (Package) package;
+                    return dataPackage;
                 }
             }
 
@@ -71,21 +72,21 @@ namespace LeagueSandbox.GameServer.Content
             return packageLoadingResults;
         }
 
-        public JToken GetMapSpawnData(int mapId)
+        public MapSpawns GetMapSpawns(int mapId)
         {
             foreach (var dataPackage in loadedPackages)
             {
-                var toReturnContentFile = dataPackage.GetMapSpawnData(mapId);
+                var toReturnMapSpawns = dataPackage.GetMapSpawns(mapId);
 
-                if (toReturnContentFile == null)
+                if (toReturnMapSpawns == null)
                 {
                     continue;
                 }
 
-                return toReturnContentFile;
+                return toReturnMapSpawns;
             }
 
-            throw new ContentNotFoundException($"No map found with id: {mapId}");
+            throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
         public ContentFile GetUnitStatFile(string unitName)
@@ -102,7 +103,7 @@ namespace LeagueSandbox.GameServer.Content
                 return (ContentFile) toReturnContentFile;
             }
 
-            throw new ContentNotFoundException($"No unit found with name: {unitName}");
+            throw new ContentNotFoundException($"No unit found with name: {unitName} in any package.");
         }
 
         public ContentFile GetSpellDataFile(string spellName)
@@ -119,7 +120,22 @@ namespace LeagueSandbox.GameServer.Content
                 return (ContentFile) toReturnContentFile;
             }
 
-            throw new ContentNotFoundException($"No spell found with name: {spellName}");
+            throw new ContentNotFoundException($"No spell found with name: {spellName} in any package.");
+        }
+
+        public INavGrid GetMapNavGrid(int mapId)
+        {
+            foreach (var dataPackage in loadedPackages)
+            {
+                INavGrid toReturnNavgrid = dataPackage.GetNavGrid(mapId);
+
+                if (toReturnNavgrid != null)
+                {
+                    return toReturnNavgrid;
+                }
+            }
+
+            throw new ContentNotFoundException($"No NavGrid for map with id {mapId} found in packages, skipping map load...");
         }
 
         public ISpellData GetSpellData(string spellName)
@@ -221,7 +237,7 @@ namespace LeagueSandbox.GameServer.Content
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine($"{dataPackageConfigurationPath} not found, skipping...");
+                _logger.Debug($"{dataPackageConfigurationPath} not found, skipping...");
                 return new List<string>();
             }
 

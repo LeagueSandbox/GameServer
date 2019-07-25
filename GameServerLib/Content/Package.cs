@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using log4net;
 using log4net.Repository.Hierarchy;
@@ -49,7 +50,8 @@ namespace LeagueSandbox.GameServer.Content
         {
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
             {
-                throw new ContentNotFoundException($"File for {itemName} was not found.");
+                _logger.Debug($"Package: {PackageName} does not containt file for {itemName}.");
+                return null;
             }
 
             var fileName = $"{itemName}/{itemName}.json";
@@ -70,33 +72,59 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnContentFile;
         }
 
-        public JToken GetMapSpawnData(int mapId)
+        public MapSpawns GetMapSpawns(int mapId)
         {
             var mapName = $"Map{mapId}";
             var contentType = "Maps";
+            var toReturnMapSpawns = new MapSpawns();
+
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
-                throw new ContentNotFoundException($"{mapName} was not found in the files.");
+                return null;
             }
 
             var fileName = $"{mapName}/{mapName}";
             var filePath = $"{GetContentTypePath(contentType)}/{fileName}.json";
 
-            JToken toReturnJToken;
+            JToken mapSpawnInformation;
 
             try
             {
                 var mapData = JObject.Parse(File.ReadAllText(filePath));
 
-                toReturnJToken = mapData.SelectToken("spawns");
+                mapSpawnInformation = mapData.SelectToken("spawns");
             }
             catch (JsonReaderException)
             {
                 return null;
             }
 
-            return toReturnJToken;
+            foreach (JProperty teamSpawn in mapSpawnInformation)
+            {
+                var team = teamSpawn.Name;
+                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
+                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
+                {
+                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
+                    toReturnMapSpawns.SetSpawns(team, playerSpawns, i);
+                }
+            }
+
+            return toReturnMapSpawns;
+        }
+
+        public INavGrid GetNavGrid(int mapId)
+        {
+            var navgridPath = $"{PackagePath}/AIMesh/Map{mapId}/AIPath.aimesh_ngrid";
+
+            if (!File.Exists(navgridPath))
+            {
+                _logger.Debug($"{PackageName} does not contain a navgrid, skipping...");
+                return null;
+            }
+
+            return NavGridReader.ReadBinary(navgridPath);
         }
 
         private void InitializeContent()
