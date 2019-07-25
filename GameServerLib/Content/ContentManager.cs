@@ -12,15 +12,15 @@ namespace LeagueSandbox.GameServer.Content
 {
     public class ContentManager
     {
-        public List<string> DataPackageNames { get; private set; }
-
         private readonly ILog _logger;
         private readonly Game _game;
         private readonly string _contentPath;
 
         private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
         private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+
         private readonly List<Package> loadedPackages = new List<Package>();
+        private readonly List<string> _dataPackageNames;
 
         private ContentManager(Game game, string dataPackageName, string contentPath)
         {
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Content
 
             _contentPath = contentPath;
 
-            DataPackageNames = new List<string>{dataPackageName};
+            _dataPackageNames = new List<string>{dataPackageName};
 
             _logger = LoggerProvider.GetLogger();
         }
@@ -171,13 +171,13 @@ namespace LeagueSandbox.GameServer.Content
 
             foreach (var packageName in extraPackageList)
             {
-                if (!contentManager.DataPackageNames.Contains(packageName))
+                if (!contentManager._dataPackageNames.Contains(packageName))
                 {
-                    contentManager.DataPackageNames.Add(packageName);
+                    contentManager._dataPackageNames.Add(packageName);
                 }
             }
 
-            foreach (var dataPackage in contentManager.DataPackageNames)
+            foreach (var dataPackage in contentManager._dataPackageNames)
             {
                 contentManager.LoadPackages(dataPackage);
 

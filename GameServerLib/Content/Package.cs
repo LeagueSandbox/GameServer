@@ -46,6 +46,14 @@ namespace LeagueSandbox.GameServer.Content
             LoadScripts();
         }
 
+        private void InitializeContent()
+        {
+            foreach (var contentType in ContentTypes)
+            {
+                _content[contentType] = new Dictionary<string, List<string>>();
+            }
+        }
+
         public IContentFile GetContentFileFromJson(string contentType, string itemName)
         {
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
@@ -125,14 +133,6 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return NavGridReader.ReadBinary(navgridPath);
-        }
-
-        private void InitializeContent()
-        {
-            foreach (var contentType in ContentTypes)
-            {
-                _content[contentType] = new Dictionary<string, List<string>>();
-            }
         }
 
         public bool LoadScripts()
