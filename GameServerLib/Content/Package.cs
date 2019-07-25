@@ -34,16 +34,19 @@ namespace LeagueSandbox.GameServer.Content
             "Stats"
         };
 
-        public Package(string packageName, string packagePath, Game game)
+        public Package(string packagePath, Game game)
         {
-            PackageName = packageName;
             PackagePath = packagePath;
             
             _game = game;
             _logger = LoggerProvider.GetLogger();
+        }
+
+        public void LoadPackages(string packageName)
+        {
+            PackageName = packageName;
 
             InitializeContent();
-
             LoadPackage();
             LoadItems();
             LoadScripts();

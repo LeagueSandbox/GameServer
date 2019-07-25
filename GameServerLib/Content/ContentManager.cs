@@ -82,7 +82,9 @@ namespace LeagueSandbox.GameServer.Content
         {
             string packagePath = GetPackagePath(packageName);
 
-            Package dataPackage = new Package(packageName, packagePath, _game);
+            Package dataPackage = new Package(packagePath, _game);
+
+            dataPackage.LoadPackages(packageName);
 
             if (_loadedPackages.Contains(dataPackage))
             {
