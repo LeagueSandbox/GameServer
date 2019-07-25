@@ -81,26 +81,8 @@ namespace LeagueSandbox.GameServer
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
-            // Load items
-            foreach (var dataPackage in ContentManager.DataPackageNames)
-            {
-                try
-                {
-                    game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                        $"{ContentPath}/{dataPackage}/Items"
-                    ));
-                }
-                catch (DirectoryNotFoundException exception)
-                {
-                    Console.WriteLine($"Package: {dataPackage} does not contain any items, skipping...");
-                    continue;
-                }
-            }
-
             // Read spawns info
-            var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
-            var mapData = JObject.Parse(File.ReadAllText(mapPath));
-            var spawns = mapData.SelectToken("spawns");
+            var spawns = ContentManager.GetMapSpawnData(GameConfig.Map);
 
             MapSpawns = new MapSpawns();
             foreach (JProperty teamSpawn in spawns)

@@ -96,10 +96,6 @@ namespace LeagueSandbox.GameServer
             ApiEventManager.SetGame(this);
             IsRunning = false;
 
-            _logger.Info("Loading C# Scripts");
-
-            LoadScripts();
-
             Map.Init();
 
             _logger.Info("Add players");
@@ -168,12 +164,7 @@ namespace LeagueSandbox.GameServer
 
         public bool LoadScripts()
         {
-            List<bool> scriptLoadingResults = new List<bool>();
-
-            foreach (string dataPackageName in Config.ContentManager.DataPackageNames)
-            {
-                scriptLoadingResults.Add(ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{dataPackageName}"));
-            }
+            var scriptLoadingResults = Config.ContentManager.ReloadScripts();
 
             return scriptLoadingResults.Contains(false);
         }

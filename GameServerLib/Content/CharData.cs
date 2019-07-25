@@ -81,14 +81,11 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.Debug($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                file = _game.Config.ContentManager.GetUnitStatFile(name);
             }
-            catch (ContentNotFoundException notfound)
+            catch (ContentNotFoundException exception)
             {
-                _logger.Warn($"Stats for {name} was not found: {notfound.Message}");
+                _logger.Warn(exception.Message);
                 return;
             }
 
