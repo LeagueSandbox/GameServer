@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             {
                 string packageName = split[1];
 
-                _contentManager.LoadPackages(packageName);
+                _contentManager.LoadPackage(packageName);
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, $"Loading content from package: {packageName}");
             }
             else

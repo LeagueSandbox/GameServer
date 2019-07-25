@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.Content
 
             foreach (var dataPackage in contentManager._dataPackageNames)
             {
-                contentManager.LoadPackages(dataPackage);
+                contentManager.LoadPackage(dataPackage);
 
                 contentManager._logger.Debug($"Loaded package with name: {dataPackage}");
             }
@@ -78,13 +78,13 @@ namespace LeagueSandbox.GameServer.Content
             return _loadedPackages;
         }
 
-        public void LoadPackages(string packageName)
+        public void LoadPackage(string packageName)
         {
             string packagePath = GetPackagePath(packageName);
 
             Package dataPackage = new Package(packagePath, _game);
 
-            dataPackage.LoadPackages(packageName);
+            dataPackage.LoadPackage(packageName);
 
             if (_loadedPackages.Contains(dataPackage))
             {

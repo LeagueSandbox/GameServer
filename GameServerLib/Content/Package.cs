@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Content
             _logger = LoggerProvider.GetLogger();
         }
 
-        public void LoadPackages(string packageName)
+        public void LoadPackage(string packageName)
         {
             PackageName = packageName;
 
