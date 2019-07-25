@@ -181,6 +181,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chatbox\Commands\PrintPackageListCommand.cs" />
+    <Compile Include="Chatbox\Commands\LoadPackageCommand.cs" />
     <Compile Include="Chatbox\DebugMsgType.cs" />
     <Compile Include="Content\NavGrid.cs" />
     <Compile Include="API\ApiFunctionManager.cs" />

@@ -34,6 +34,32 @@ namespace LeagueSandbox.GameServer.Content
             _logger = LoggerProvider.GetLogger();
         }
 
+        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
+        {
+            var contentManager = new ContentManager(game, dataPackageName, contentPath);
+
+            List<string> extraPackageList = new List<string>();
+
+            contentManager.GetDependenciesRecursively(extraPackageList, dataPackageName, contentPath);
+
+            foreach (var packageName in extraPackageList)
+            {
+                if (!contentManager._dataPackageNames.Contains(packageName))
+                {
+                    contentManager._dataPackageNames.Add(packageName);
+                }
+            }
+
+            foreach (var dataPackage in contentManager._dataPackageNames)
+            {
+                contentManager.LoadPackages(dataPackage);
+
+                contentManager._logger.Debug($"Loaded package with name: {dataPackage}");
+            }
+
+            return contentManager;
+        }
+
         public Package GetLoadedPackage(string packageName)
         {
             foreach (var dataPackage in _loadedPackages)
@@ -52,7 +78,7 @@ namespace LeagueSandbox.GameServer.Content
             return _loadedPackages;
         }
 
-        private void LoadPackages(string packageName)
+        public void LoadPackages(string packageName)
         {
             string packagePath = GetPackagePath(packageName);
 
@@ -162,56 +188,6 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No Character found with name: {characterName}");
         }
 
-        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
-        {
-            var contentManager = new ContentManager(game, dataPackageName, contentPath);
-
-            List<string> extraPackageList = new List<string>();
-
-            contentManager.GetDependenciesRecursively(extraPackageList, dataPackageName, contentPath);
-
-            foreach (var packageName in extraPackageList)
-            {
-                if (!contentManager._dataPackageNames.Contains(packageName))
-                {
-                    contentManager._dataPackageNames.Add(packageName);
-                }
-            }
-
-            foreach (var dataPackage in contentManager._dataPackageNames)
-            {
-                contentManager.LoadPackages(dataPackage);
-
-                contentManager._logger.Debug($"Loaded package with name: {dataPackage}");
-            }
-
-            return contentManager;
-        }
-
-        private static bool ValidatePackageName(string packageName)
-        {
-            if (packageName.Equals("Self"))
-            {
-                return true;
-            }
-
-            if (packageName.All(c => c != '-'))
-            {
-                return false;
-            }
-
-            var parts = packageName.Split('-');
-            foreach (var part in parts)
-            {
-                if (part.Length < 2)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)
         {
             foreach(var dependency in GetDependenciesFromPackage(packageName, contentPath))
@@ -256,6 +232,30 @@ namespace LeagueSandbox.GameServer.Content
 
             return dependencyList;
         }
-        
+
+        private static bool ValidatePackageName(string packageName)
+        {
+            if (packageName.Equals("Self"))
+            {
+                return true;
+            }
+
+            if (packageName.All(c => c != '-'))
+            {
+                return false;
+            }
+
+            var parts = packageName.Split('-');
+            foreach (var part in parts)
+            {
+                if (part.Length < 2)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }
