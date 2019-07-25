@@ -17,9 +17,9 @@ namespace LeagueSandbox.GameServer.Content
         private readonly string _contentPath;
 
         private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
-        private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+        private readonly Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
 
-        private readonly List<Package> loadedPackages = new List<Package>();
+        private readonly List<Package> _loadedPackages;
         private readonly List<string> _dataPackageNames;
 
         private ContentManager(Game game, string dataPackageName, string contentPath)
@@ -28,14 +28,15 @@ namespace LeagueSandbox.GameServer.Content
 
             _contentPath = contentPath;
 
+            _loadedPackages = new List<Package>();
             _dataPackageNames = new List<string>{dataPackageName};
 
             _logger = LoggerProvider.GetLogger();
         }
 
-        public Package GetPackage(string packageName)
+        public Package GetLoadedPackage(string packageName)
         {
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 if (dataPackage.PackageName.Equals(packageName))
                 {
@@ -46,13 +47,23 @@ namespace LeagueSandbox.GameServer.Content
             return null;
         }
 
+        public List<Package> GetAllLoadedPackages()
+        {
+            return _loadedPackages;
+        }
+
         private void LoadPackages(string packageName)
         {
             string packagePath = GetPackagePath(packageName);
 
             Package dataPackage = new Package(packageName, packagePath, _game);
 
-            loadedPackages.Add(dataPackage);
+            if (_loadedPackages.Contains(dataPackage))
+            {
+                return;
+            }
+
+            _loadedPackages.Add(dataPackage);
         }
 
         private string GetPackagePath(string packageName)
@@ -64,7 +75,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             List<bool> packageLoadingResults = new List<bool>();
 
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 packageLoadingResults.Add(dataPackage.LoadScripts());
             }
@@ -74,7 +85,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public MapSpawns GetMapSpawns(int mapId)
         {
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 var toReturnMapSpawns = dataPackage.GetMapSpawns(mapId);
 
@@ -91,7 +102,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public ContentFile GetUnitStatFile(string unitName)
         {
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 var toReturnContentFile = dataPackage.GetContentFileFromJson("Stats", unitName);
 
@@ -108,7 +119,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public ContentFile GetSpellDataFile(string spellName)
         {
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 var toReturnContentFile = dataPackage.GetContentFileFromJson("Spells", spellName);
 
@@ -125,7 +136,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public INavGrid GetMapNavGrid(int mapId)
         {
-            foreach (var dataPackage in loadedPackages)
+            foreach (var dataPackage in _loadedPackages)
             {
                 INavGrid toReturnNavgrid = dataPackage.GetNavGrid(mapId);
 
