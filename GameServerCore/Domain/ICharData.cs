@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.Content
         float BaseStaticHpRegen { get; }
         float BaseStaticMpRegen { get; }
         float AttackDelayOffsetPercent { get; }
+        float AttackDelayCastOffsetPercent { get; }
         float HpPerLevel { get; }
         float MpPerLevel { get; }
         float DamagePerLevel { get; }
