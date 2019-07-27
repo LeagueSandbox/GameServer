@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Content
         public string PackageName { get; private set; }
 
         private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
-        private readonly Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+        private readonly Dictionary<string, ICharData> _charData = new Dictionary<string, ICharData>();
 
         private readonly Game _game;
         private readonly ILog _logger;

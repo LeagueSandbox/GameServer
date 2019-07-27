@@ -79,8 +79,6 @@
     <Compile Include="Buffs\LuluR\LuluR.cs" />
     <Compile Include="Buffs\LuluWBuff\LuluWBuff.cs" />
     <Compile Include="Buffs\LuluWDebuff\LuluWDebuff.cs" />
-    <Compile Include="Buffs\NidaleeEBuff\NidaleeEBuff.cs" />
-    <Compile Include="Buffs\NidaleeTransformedQBuff\NidaleeTransformedQBuff.cs" />
     <Compile Include="Buffs\OverdriveSlow\OverdriveSlow.cs" />
     <Compile Include="Buffs\Overdrive\Overdrive.cs" />
     <Compile Include="Buffs\Quickdraw\Quickdraw.cs" />
@@ -136,13 +134,7 @@
     <Compile Include="Champions\Lulu\W.cs" />
     <Compile Include="Champions\Lux\R.cs" />
     <Compile Include="Champions\MasterYi\R.cs" />
-    <Compile Include="Champions\Nidalee\E.cs" />
     <Compile Include="Champions\Nidalee\Q.cs" />
-    <Compile Include="Champions\Nidalee\R.cs" />
-    <Compile Include="Champions\Nidalee\TransformedE.cs" />
-    <Compile Include="Champions\Nidalee\TransformedQ.cs" />
-    <Compile Include="Champions\Nidalee\TransformedW.cs" />
-    <Compile Include="Champions\Nidalee\W.cs" />
     <Compile Include="Champions\Olaf\Q.cs" />
     <Compile Include="Champions\Shaco\W.cs" />
     <Compile Include="Champions\Taric\E.cs" />

@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Tenacity = new Stat();
         }
 
-        public void LoadStats(CharData charData)
+        public void LoadStats(ICharData charData)
         {
             HealthPoints.BaseValue = charData.BaseHp;
             ManaPoints.BaseValue = charData.BaseMp;

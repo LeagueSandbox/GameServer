@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         public IAttackableUnit AutoAttackTarget { get; set; }
-        public CharData CharData { get; }
+        public ICharData CharData { get; }
         public ISpellData AaSpellData { get; }
         private bool _isNextAutoCrit;
         public float AutoAttackDelay { get; set; }
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
 
-            CharData = (CharData) _game.Config.ContentManager.GetCharData(Model);
+            CharData = _game.Config.ContentManager.GetCharData(Model);
 
             stats.LoadStats(CharData);
 
