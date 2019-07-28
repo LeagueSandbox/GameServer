@@ -30,6 +30,9 @@ namespace GameServerCore.Domain.GameObjects
         void RemoveBuffSlot(IBuff b);
         byte GetNewBuffSlot(IBuff b);
         void AddBuff(IBuff b);
+        void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData);
+        void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName);
+        void ResetAutoAttackSpellData();
         void ApplyCrowdControl(ICrowdControl cc);
         void RemoveCrowdControl(ICrowdControl cc);
         void SetDashingState(bool state);

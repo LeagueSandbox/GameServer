@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IAttackableUnit TargetUnit { get; set; }
         public IAttackableUnit AutoAttackTarget { get; set; }
         public CharData CharData { get; }
-        public ISpellData AaSpellData { get; }
+        public ISpellData AaSpellData { get; private set; }
         private bool _isNextAutoCrit;
         public float AutoAttackCastTime { get; set; }
         public float AutoAttackProjectileSpeed { get; set; }
@@ -254,6 +254,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool HasCrowdControl(CrowdControlType ccType)
         {
             return _crowdControlList.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
+        }
+
+        public void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData)
+        {
+            AaSpellData = newAutoAttackSpellData;
+        }
+
+        public void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName)
+        {
+            AaSpellData = _game.Config.ContentManager.GetSpellData(newAutoAttackSpellDataName);
+        }
+
+        public void ResetAutoAttackSpellData()
+        {
+            AaSpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
         }
 
         public void StopMovement()
