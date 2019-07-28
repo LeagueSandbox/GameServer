@@ -258,6 +258,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return _crowdControlList.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
         }
 
+        public void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData)
+        {
+            AaSpellData = newAutoAttackSpellData;
+        }
+
+        public void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName)
+        {
+            AaSpellData = _game.Config.ContentManager.GetSpellData(newAutoAttackSpellDataName);
+        }
+
+        public void ResetAutoAttackSpellData()
+        {
+            AaSpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+        }
+
         public void StopMovement()
         {
             SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
