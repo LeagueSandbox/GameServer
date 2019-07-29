@@ -292,12 +292,12 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance)
+        public void NotifyBuyItem(int userId, IObjAiBase gameObject, IItem itemInstance)
         {
             ItemData itemData = new ItemData
             {
                 ItemID = (uint) itemInstance.ItemData.ItemId,
-                Slot = champion.Inventory.GetItemSlot(itemInstance),
+                Slot = gameObject.Inventory.GetItemSlot(itemInstance),
                 ItemsInSlot = itemInstance.StackCount,
                 
                 //todo implement item spell charges
@@ -308,14 +308,13 @@ namespace PacketDefinitions420
             var buyItemPacket = new BuyItemAns
             {
                 Item = itemData,
-                SenderNetID = champion.NetId
+                SenderNetID = gameObject.NetId
             };
 
             // todo find out what bitfield does, currently unknown
             //buyItemPacket.Bitfield = null;
 
-            _packetHandlerManager.SendPacket(userId, buyItemPacket.GetBytes(), Channel.CHL_S2C);
-            _packetHandlerManager.BroadcastPacketVision(champion, buyItemPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(buyItemPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyTurretSpawn(int userId, ILaneTurret turret)
@@ -529,7 +528,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(stopAttack.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyItemBought(IAttackableUnit u, IItem i)
+        public void NotifyItemBought(IObjAiBase u, IItem i)
         {
             var response = new BuyItemResponse(u, i);
             _packetHandlerManager.BroadcastPacketVision(u, response, Channel.CHL_S2C);
