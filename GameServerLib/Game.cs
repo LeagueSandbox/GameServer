@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
         // Object managers
-        internal ItemManager ItemManager { get; private set; }
+        public ItemManager ItemManager { get; private set; }
         // Other managers
         internal ChatCommandManager ChatCommandManager { get; private set; }
         public IPlayerManager PlayerManager { get; private set; }
