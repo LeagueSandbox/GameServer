@@ -6,11 +6,13 @@ namespace LeagueSandbox.GameServer.Items
 {
     public class ItemManager
     {
+        private readonly Game _game;
         private readonly Dictionary<int, IItemData> _itemTypes;
 
-        public ItemManager()
+        public ItemManager(Game game)
         {
             _itemTypes = new Dictionary<int, IItemData>();
+            _game = game;
         }
 
         public IItemData GetItemType(int itemId)
@@ -38,11 +40,20 @@ namespace LeagueSandbox.GameServer.Items
             _itemTypes.Clear();
         }
 
+        public void LoadItemSpelldata()
+        {
+            foreach (var entry in _itemTypes)
+            {
+                var itemData = entry.Value;
+                itemData.SpellData.Load(itemData.SpellName);
+            }
+        }
+
         public void AddItems(ItemContentCollection contentCollection)
         {
             foreach (var entry in contentCollection)
             {
-                var itemType = ItemData.Load(this, entry.Value);
+                var itemType = ItemData.Load(_game, entry.Value);
                 _itemTypes.Add(entry.Key, itemType);
             }
         }

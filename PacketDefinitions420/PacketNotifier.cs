@@ -299,11 +299,8 @@ namespace PacketDefinitions420
                 ItemID = (uint) itemInstance.ItemData.ItemId,
                 Slot = gameObject.Inventory.GetItemSlot(itemInstance),
                 ItemsInSlot = itemInstance.StackCount,
-                
-                //todo implement item spell charges
-                //SpellCharges = itemInstance.StackCount
+                SpellCharges = (byte)itemInstance.ItemData.SpellData.MaxAmmo[0]
             };
-
 
             var buyItemPacket = new BuyItemAns
             {

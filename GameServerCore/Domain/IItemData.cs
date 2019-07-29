@@ -11,6 +11,7 @@ namespace GameServerCore.Domain
         int Price { get; }
         string ItemGroup { get; }
         string SpellName { get; }
+        ISpellData SpellData { get; }
         float SellBackModifier { get; }
         int[] RecipeItem { get; }
         IItemRecipe Recipe { get; }

@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Items
         public int Price { get; private set; }
         public string ItemGroup { get; private set; }
         public string SpellName { get; private set; }
+        public ISpellData SpellData { get; private set; }
         public float SellBackModifier { get; private set; }
 
         // Recipes
@@ -51,7 +52,7 @@ namespace LeagueSandbox.GameServer.Items
             Recipe = ItemRecipe.FromItemType(this, manager);
         }
 
-        public static ItemData Load(ItemManager owner, ItemContentCollectionEntry itemInfo)
+        public static ItemData Load(Game game, ItemContentCollectionEntry itemInfo)
         {
             // Because IntelliSense is nice to have
             var result = new ItemData()
@@ -62,6 +63,7 @@ namespace LeagueSandbox.GameServer.Items
                 Price = itemInfo.GetInt("Data", "Price"),
                 ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
                 SpellName = itemInfo.GetString("Data", "SpellName"),
+                SpellData = new SpellData(game),
                 SellBackModifier = itemInfo.GetFloat("Data", "SellBackModifier", 0.7f),
 
                 RecipeItem1 = itemInfo.GetInt("Data", "RecipeItem1", -1),
@@ -136,7 +138,7 @@ namespace LeagueSandbox.GameServer.Items
 
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
 
-            result.CreateRecipe(owner);
+            result.CreateRecipe(game.ItemManager);
             return result;
         }
     }

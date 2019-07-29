@@ -69,10 +69,10 @@ namespace LeagueSandbox.GameServer
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game(ItemManager itemManager)
+        public Game()
         {
             _logger = LoggerProvider.GetLogger();
-            ItemManager = itemManager;
+            ItemManager = new ItemManager(this);
             ChatCommandManager = new ChatCommandManager(this);
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
@@ -89,6 +89,7 @@ namespace LeagueSandbox.GameServer
             _gameScriptTimers = new List<GameScriptTimer>();
 
             ChatCommandManager.LoadCommands();
+            ItemManager.LoadItemSpelldata();
 
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);

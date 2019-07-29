@@ -8,7 +8,6 @@ namespace LeagueSandbox.GameServer.Items
         public IItemData ItemData { get; }
         public byte StackCount { get; private set; }
 
-
         private Item(IItemData data)
         {
             ItemData = data;
