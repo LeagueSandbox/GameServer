@@ -10,6 +10,7 @@ namespace GameServerCore.Domain.GameObjects
         bool IsAttacking { get; set; } 
         bool IsDashing { get; }
         bool HasMadeInitialAttack { get; set; }
+        IInventoryManager Inventory { get; }
 
         float AutoAttackCastTime { get; set; }
         float AutoAttackProjectileSpeed { get; set;  }

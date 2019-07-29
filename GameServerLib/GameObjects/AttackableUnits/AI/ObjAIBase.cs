@@ -44,6 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private float _autoAttackCurrentDelay;
         public bool IsAttacking { get; set; }
         public bool HasMadeInitialAttack { get; set; }
+        public IInventoryManager Inventory { get; protected set; }
         private bool _nextAttackFlag;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
