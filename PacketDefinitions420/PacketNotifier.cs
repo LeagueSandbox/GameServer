@@ -525,12 +525,6 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(stopAttack.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyItemBought(IObjAiBase u, IItem i)
-        {
-            var response = new BuyItemResponse(u, i);
-            _packetHandlerManager.BroadcastPacketVision(u, response, Channel.CHL_S2C);
-        }
-
         public void NotifyFogUpdate2(IAttackableUnit u, uint newFogId)
         {
             var fog = new FogUpdate2(u, newFogId);

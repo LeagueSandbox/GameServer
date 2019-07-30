@@ -49,7 +49,6 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
         void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null);
         void NotifyInstantStopAttack(IAttackableUnit attacker, bool isSummonerSpell, uint missileNetID = 0);
-        void NotifyItemBought(IObjAiBase u, IItem i);
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
         void NotifyKeyCheck(ulong userId, uint playerNo);
