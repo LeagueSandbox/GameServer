@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaths", "GameMaths\Game
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketDefinitionsTests", "PacketDefinitionsTests\PacketDefinitionsTests.csproj", "{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "Content\LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,14 +93,6 @@ Global
 		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Release|x86.ActiveCfg = Release|Any CPU
 		{B00A2AE5-A32A-477F-9159-E4E83C2A77E1}.Release|x86.Build.0 = Release|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Debug|x86.Build.0 = Debug|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Release|x86.ActiveCfg = Release|Any CPU
-		{9C11EF83-17F6-446B-95D4-F60568A9F486}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
