@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
+using Priority_Queue;
 using LeagueSandbox.GameServer.GameObjects;
 using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
@@ -33,19 +35,6 @@ namespace LeagueSandbox.GameServer.Content
         public float MapHeight { get; set; }
         public Vector2 MiddleOfMap { get; set; }
         public const float SCALE = 2f;
-        private Grid _grid;
-
-        public void InitializePathfinding()
-        {
-            _grid = new Grid((int)XCellCount, (int)YCellCount);
-            foreach (var cell in Cells)
-            {
-                if (cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE))
-                {
-                    _grid.BlockCell(new Position(cell.X, cell.Y));
-                }
-            }
-        }
 
         public List<Vector2> GetPath(Vector2 from, Vector2 to)
         {
@@ -54,22 +43,105 @@ namespace LeagueSandbox.GameServer.Content
             var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
 
             var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
-            var cellTo = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+            var goal = GetCell((short)vectorTo.X, (short)vectorTo.Y);
 
-            if(cellFrom != null && cellTo != null)
+            if (cellFrom != null && goal != null)
             {
-                var path = _grid.GetPath(new Position(cellFrom.X, cellFrom.Y), new Position(cellTo.X, cellTo.Y));
-                if (path != null)
+                SimplePriorityQueue<Stack<NavGridCell>> priorityQueue = new SimplePriorityQueue<Stack<NavGridCell>>();
+                var start = new Stack<NavGridCell>();
+                start.Push(cellFrom);
+                priorityQueue.Enqueue(start, CellDistance(cellFrom, goal));
+
+                Dictionary<int, NavGridCell> closedList = new Dictionary<int, NavGridCell>();
+                closedList.Add(cellFrom.Id, cellFrom);
+
+                Stack<NavGridCell> path = null;
+
+                // while there are still paths to explore
+                while (true)
                 {
-                    foreach (var position in path)
+                    if (!priorityQueue.TryFirst(out path))
                     {
-                        var navGridCell = GetCell(position.X, position.Y);
-                        var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
-                        returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                        // no solution
+                        path = null;
+                        break;
+                    }
+                    var curCost = priorityQueue.GetPriority(priorityQueue.First);
+                    priorityQueue.TryDequeue(out path);
+                    var cell = path.Peek();
+                    curCost -= (CellDistance(cell, goal) + cell.Heuristic); // decrease the heuristic to get the cost
+                    // found the min solution return it (path)
+                    if (cell.Id == goal.Id) break;
+                    NavGridCell tempCell = null;
+                    foreach (NavGridCell ncell in GetCellNeighbors(cell))
+                    {
+                        // if the neighbor in the closed list - skip
+                        if (closedList.TryGetValue(ncell.Id, out tempCell)) continue;
+                        // not walkable - skip
+                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH))
+                        {
+                            closedList.Add(ncell.Id, ncell);
+                            continue;
+                        }
+                        // calculate the new path and cost +heuristic and add to the priority queue
+                        var npath = new Stack<NavGridCell>(new Stack<NavGridCell>(path));
+                        npath.Push(ncell);
+                        // add 1 for every cell used
+                        priorityQueue.Enqueue(npath, curCost + 1 + ncell.Heuristic + ncell.ArrivalCost + ncell.AdditionalCost + CellDistance(ncell, goal));
+                        closedList.Add(ncell.Id, ncell);
                     }
                 }
+                // shouldn't happen usually
+                if (path == null) return null;
+                var arr = path.ToArray();
+                Array.Reverse(arr);
+                var pathList = SmoothPath(new List<NavGridCell>(arr));
+                pathList.RemoveAt(0); // removes the first point
+                foreach (var navGridCell in pathList.ToArray())
+                {
+                    var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                    returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
+                }
+                return returnList;
             }
-            return returnList;
+            return null;
+        }
+        private int CellDistance(NavGridCell cell1, NavGridCell cell2)
+        {
+            return (Math.Abs(cell1.X - cell2.X) + Math.Abs(cell1.Y - cell2.Y));
+        }
+
+        /// <summary>
+        /// Remove waypoints that have LOS from the waypoint before the waypoint after
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private List<NavGridCell> SmoothPath(List<NavGridCell> path)
+        {
+            int curWaypointToSmooth = 0;
+            int i = path.Count - 1;
+            while (curWaypointToSmooth != path.Count - 1)
+            {
+                // no waypoint in LOS - continue to smooth the next one
+                if (i <= curWaypointToSmooth + 1)
+                {
+                    curWaypointToSmooth++;
+                    i = path.Count - 1;
+                }
+                // if the next point in the LOS, remove the current one
+                // TODO: equal of floats should be with epsilon
+                else if (!IsAnythingBetween(path[curWaypointToSmooth], path[i]))
+                {
+                    path.RemoveRange(curWaypointToSmooth + 1, i - (curWaypointToSmooth + 1));
+                    curWaypointToSmooth++; // the remove function removed all the indexes between them
+                    i = path.Count - 1;
+                }
+                else
+                {
+                    --i;
+                }
+            }
+            return path;
         }
 
         public void CreateTranslation()
@@ -268,6 +340,23 @@ namespace LeagueSandbox.GameServer.Content
 
             return -1;
         }
+        private List<NavGridCell> GetCellNeighbors(NavGridCell cell)
+        {
+            var x = cell.X;
+            var y = cell.Y;
+            List<NavGridCell> neighbors = new List<NavGridCell>();
+            for (int dirY = -1; dirY <= 1; dirY++)
+            {
+                for (int dirX = -1; dirX <= 1; dirX++)
+                {
+                    var nx = x + dirX;
+                    var ny = y + dirY;
+                    var ncell = GetCell(nx, ny);
+                    if (ncell != null) neighbors.Add(ncell);
+                }
+            }
+            return neighbors;
+        }
 
         public NavGridCell GetCell(short x, short y)
         {
@@ -382,6 +471,11 @@ namespace LeagueSandbox.GameServer.Content
         public float CastRay(Vector2 origin, Vector2 destination, bool inverseRay = false)
         {
             return (float)Math.Sqrt(CastRaySqr(origin, destination, inverseRay));
+        }
+
+        public bool IsAnythingBetween(NavGridCell origin, NavGridCell destination)
+        {
+            return IsAnythingBetween(new Vector2(origin.X, origin.Y), new Vector2(destination.X, destination.Y));
         }
 
         public float CastRaySqr(Vector2 origin, Vector2 destination, bool inverseRay = false)
@@ -707,7 +801,6 @@ namespace LeagueSandbox.GameServer.Content
             grid.MapWidth = grid.MaxGridPos.X + grid.MinGridPos.X;
             grid.MapHeight = grid.MaxGridPos.Z + grid.MinGridPos.Z;
             grid.MiddleOfMap = new Vector2(grid.MapWidth / 2, grid.MapHeight / 2);
-            grid.InitializePathfinding();
             return grid;
         }
 
