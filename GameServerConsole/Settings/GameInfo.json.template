@@ -47,7 +47,7 @@
     ],
     "game": {
         "map": 1,
-        "dataPackage": "LeagueSandbox-Default"
+        "dataPackage": "LeagueSandbox-Scripts"
     },
     "gameInfo": {
         "MANACOSTS_ENABLED": false,
