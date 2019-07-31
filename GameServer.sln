@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLib", "GameServer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerLibTests", "GameServerLibTests\GameServerLibTests.csproj", "{56E885A9-FC37-4ABB-B9CC-822DAC13CC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueSandbox-Default", "Content\LeagueSandbox-Default\LeagueSandbox-Default.csproj", "{9C11EF83-17F6-446B-95D4-F60568A9F486}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packets", "Packets", "{2576843A-B620-4B3A-8272-E3DCBBB17AD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketDefinitions420", "PacketDefinitions420\PacketDefinitions420.csproj", "{0B60B297-306B-4317-866A-6DD70A113074}"
