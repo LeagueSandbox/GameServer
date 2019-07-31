@@ -1,6 +1,4 @@
 using System;
-using GameServerCore.Domain;
-using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Items;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,9 +11,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestAddAndGetItem()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var inventoryManager = InventoryManager.CreateInventory();
 
@@ -52,9 +49,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestItemStacking()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -93,9 +89,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestSetExtraItem()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -119,9 +114,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestGetItemSlot()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -151,9 +145,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestRemoveItem()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -177,9 +170,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestSwapItems()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            var itemManager = new ItemManager();
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -228,10 +220,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestGetAvailableItems()
         {
-            var game = new Game();
-            var itemManager = game.ItemManager;
+            var itemManager = new ItemManager();
             itemManager.ResetItems();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
 
             var manager = InventoryManager.CreateInventory();
 

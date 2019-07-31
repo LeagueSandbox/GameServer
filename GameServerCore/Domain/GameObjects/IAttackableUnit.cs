@@ -9,6 +9,7 @@ namespace GameServerCore.Domain.GameObjects
         int KillDeathCounter { get; set; }
         int MinionCounter { get; }
         string Model { get; }
+        IInventoryManager Inventory { get; }
         IReplication Replication { get; }
         IStats Stats { get; }
 

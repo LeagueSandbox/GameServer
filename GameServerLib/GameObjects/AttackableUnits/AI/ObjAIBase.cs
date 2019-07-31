@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         public IAttackableUnit AutoAttackTarget { get; set; }
-        public CharData CharData { get; }
+        public ICharData CharData { get; }
         public ISpellData AaSpellData { get; private set; }
         private bool _isNextAutoCrit;
         public float AutoAttackCastTime { get; set; }
@@ -44,7 +44,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private float _autoAttackCurrentDelay;
         public bool IsAttacking { get; set; }
         public bool HasMadeInitialAttack { get; set; }
-        public IInventoryManager Inventory { get; protected set; }
         private bool _nextAttackFlag;
         private uint _autoAttackProjId;
         public MoveOrder MoveOrder { get; set; }
@@ -60,7 +59,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
+
             CharData = _game.Config.ContentManager.GetCharData(Model);
+
             stats.LoadStats(CharData);
 
             if (CharData.PathfindingCollisionRadius > 0)

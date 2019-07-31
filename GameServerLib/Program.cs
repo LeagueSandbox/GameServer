@@ -24,7 +24,8 @@ namespace LeagueSandbox.GameServer
             ConfigJson = configJson;
             ServerPort = serverPort;
             _logger = LoggerProvider.GetLogger();
-            game = new Game();
+            var itemManager = new ItemManager();
+            game = new Game(itemManager);
             _server = new Server(game, serverPort, configJson, blowfishKey);
 
 #if !DEBUG

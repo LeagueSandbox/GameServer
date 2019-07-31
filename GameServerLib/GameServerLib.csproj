@@ -66,8 +66,8 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RoyT.AStar, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RoyT.AStar.2.1.0\lib\netstandard1.0\RoyT.AStar.dll</HintPath>
@@ -181,6 +181,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chatbox\Commands\PrintPackageListCommand.cs" />
+    <Compile Include="Chatbox\Commands\LoadPackageCommand.cs" />
     <Compile Include="Chatbox\DebugMsgType.cs" />
     <Compile Include="Content\NavGrid.cs" />
     <Compile Include="API\ApiFunctionManager.cs" />
@@ -221,6 +223,7 @@
     <Compile Include="Content\ContentManager.cs" />
     <Compile Include="Content\ContentNotFoundException.cs" />
     <Compile Include="Content\ItemCollection.cs" />
+    <Compile Include="Content\Package.cs" />
     <Compile Include="Content\RuneCollection.cs" />
     <Compile Include="Content\SpellData.cs" />
     <Compile Include="Game.cs" />

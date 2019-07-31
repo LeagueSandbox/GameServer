@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer
         protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
 
         // Object managers
-        public ItemManager ItemManager { get; private set; }
+        internal ItemManager ItemManager { get; private set; }
         // Other managers
         internal ChatCommandManager ChatCommandManager { get; private set; }
         public IPlayerManager PlayerManager { get; private set; }
@@ -69,10 +69,10 @@ namespace LeagueSandbox.GameServer
 
         private List<GameScriptTimer> _gameScriptTimers;
 
-        public Game()
+        public Game(ItemManager itemManager)
         {
             _logger = LoggerProvider.GetLogger();
-            ItemManager = new ItemManager(this);
+            ItemManager = itemManager;
             ChatCommandManager = new ChatCommandManager(this);
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
@@ -89,17 +89,12 @@ namespace LeagueSandbox.GameServer
             _gameScriptTimers = new List<GameScriptTimer>();
 
             ChatCommandManager.LoadCommands();
-            ItemManager.LoadItemSpelldata();
 
             ObjectManager = new ObjectManager(this);
             Map = new Map(this);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
-
-            _logger.Info("Loading C# Scripts");
-
-            LoadScripts();
 
             Map.Init();
 
@@ -169,7 +164,9 @@ namespace LeagueSandbox.GameServer
 
         public bool LoadScripts()
         {
-            return ScriptEngine.LoadSubdirectoryScripts($"{Config.ContentPath}/{Config.GameConfig.GameMode}/");
+            var scriptLoadingResults = Config.ContentManager.LoadScripts();
+
+            return scriptLoadingResults;
         }
 
         public void GameLoop()
