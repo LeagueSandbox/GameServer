@@ -116,17 +116,33 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
+        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, float removeAfter = -1.0f)
         {
             var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
+
             onto.AddBuff(buff);
+
             _game.PacketNotifier.NotifyAddBuff(buff);
+
+            if (removeAfter > 0)
+            {
+                CreateTimer(removeAfter, () =>
+                {
+                    RemoveBuff(buff);
+                });
+            }
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
         {
             b.SetStacks(newStacks);
             _game.PacketNotifier.NotifyEditBuff(b, newStacks);
+        }
+
+        public static void RemoveBuff(IBuff buff)
+        {
+            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+            buff.TargetUnit.RemoveBuff(buff);
         }
 
         public static Particle AddParticle(IChampion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
