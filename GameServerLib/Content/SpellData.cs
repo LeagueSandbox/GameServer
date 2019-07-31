@@ -244,14 +244,12 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetSpellDataPath(name);
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Spells", name);
             }
 
-            catch (ContentNotFoundException)
+            catch (ContentNotFoundException exception)
             {
-                _logger.Warn($"Spell data for {name} was not found.");
+                _logger.Warn(exception.Message);
                 return;
             }
 

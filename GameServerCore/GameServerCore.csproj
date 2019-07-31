@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -44,9 +47,13 @@
   <ItemGroup>
     <Compile Include="Content\Color.cs" />
     <Compile Include="Domain\IAnnounce.cs" />
+    <Compile Include="Domain\ICharData.cs" />
+    <Compile Include="Domain\IContentFile.cs" />
     <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
     <Compile Include="Domain\IMapProperties.cs" />
+    <Compile Include="Domain\IPackage.cs" />
+    <Compile Include="Domain\IPassiveData.cs" />
     <Compile Include="Domain\IShop.cs" />
     <Compile Include="Domain\IStackable.cs" />
     <Compile Include="Domain\IUpdate.cs" />
@@ -254,6 +261,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

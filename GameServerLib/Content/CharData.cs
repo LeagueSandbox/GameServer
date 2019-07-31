@@ -7,14 +7,14 @@ using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData
+    public class PassiveData : IPassiveData
     {
         public string PassiveNameStr { get; set; } = "";
         public string PassiveLuaName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
     }
 
-    public class CharData
+    public class CharData : ICharData
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
 
-        public PassiveData[] Passives { get; private set; } =
+        public IPassiveData[] Passives { get; private set; } =
         {
             new PassiveData(),
             new PassiveData(),
@@ -82,14 +82,11 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.Debug($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Stats", name);
             }
-            catch (ContentNotFoundException notfound)
+            catch (ContentNotFoundException exception)
             {
-                _logger.Warn($"Stats for {name} was not found: {notfound.Message}");
+                _logger.Warn(exception.Message);
                 return;
             }
 
