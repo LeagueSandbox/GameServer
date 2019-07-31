@@ -104,7 +104,6 @@ namespace LeagueSandbox.GameServer.Content
                 }
                 return returnList;
             }
-            //Logging.LoggerProvider.GetLogger().Debug("Found path: "+returnList.ToString());
             return null;
         }
         private int CellDistance(NavGridCell cell1, NavGridCell cell2)
