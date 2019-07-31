@@ -118,6 +118,11 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, float removeAfter = -1.0f)
         {
+            if (duration < 0)
+            {
+                return;
+            }
+
             var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
 
             onto.AddBuff(buff);
