@@ -159,6 +159,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 return _charData[characterName];
             }
+            
             _charData[characterName] = new CharData(_game.Config.ContentManager);
             _charData[characterName].Load(characterName);
             return _charData[characterName];
