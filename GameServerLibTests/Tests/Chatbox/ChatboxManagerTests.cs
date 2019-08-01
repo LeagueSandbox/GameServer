@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Chatbox
     [TestClass]
     public class ChatboxManagerTests
     {
-        private readonly Game _game = new Game(new ItemManager());
+        private readonly Game _game = new Game();
         [TestMethod]
         public void AddCommandTest()
         {

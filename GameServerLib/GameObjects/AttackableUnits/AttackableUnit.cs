@@ -25,7 +25,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public string Model { get; protected set; }
 
         protected readonly ILog Logger;
-        public IInventoryManager Inventory { get; protected set; }
         public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }

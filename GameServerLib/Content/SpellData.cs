@@ -58,12 +58,12 @@ namespace LeagueSandbox.GameServer.Content
 
     public class SpellData : ISpellData
     {
-        private readonly Game _game;
+        private readonly ContentManager _contentManager;
         private readonly ILog _logger;
 
-        public SpellData(Game game)
+        public SpellData(ContentManager contentManager)
         {
-            _game = game;
+            _contentManager = contentManager;
             _logger = LoggerProvider.GetLogger();
         }
 
@@ -244,7 +244,7 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Spells", name);
+                file = (ContentFile)_contentManager.GetContentFileFromJson("Spells", name);
             }
 
             catch (ContentNotFoundException exception)

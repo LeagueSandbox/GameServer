@@ -16,12 +16,12 @@ namespace LeagueSandbox.GameServer.Content
 
     public class CharData : ICharData
     {
-        private readonly Game _game;
+        private readonly ContentManager _contentManager;
         private readonly ILog _logger;
 
-        public CharData(Game game)
+        public CharData(ContentManager contentManager)
         {
-            _game = game;
+            _contentManager = contentManager;
             _logger = LoggerProvider.GetLogger();
         }
 
@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Content
             var file = new ContentFile();
             try
             {
-                file = (ContentFile)_game.Config.ContentManager.GetContentFileFromJson("Stats", name);
+                file = (ContentFile)_contentManager.GetContentFileFromJson("Stats", name);
             }
             catch (ContentNotFoundException exception)
             {

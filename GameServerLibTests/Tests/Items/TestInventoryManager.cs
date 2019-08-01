@@ -1,4 +1,6 @@
 using System;
+using GameServerCore.Domain;
+using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Items;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,8 +13,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestAddAndGetItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var inventoryManager = InventoryManager.CreateInventory();
 
@@ -49,8 +52,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestItemStacking()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -71,7 +75,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             Assert.AreEqual(1, item2.StackCount);
 
             // Stack the second item, and make sure the second gets stacked
-            for(var i = 0; i < itemType2.MaxStack - 1; i++)
+            for (var i = 0; i < itemType2.MaxStack - 1; i++)
             {
                 var item2Reference = manager.AddItem(itemType2);
                 Assert.AreEqual(item2, item2Reference);
@@ -89,8 +93,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestSetExtraItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -114,8 +119,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestGetItemSlot()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -145,8 +151,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestRemoveItem()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -170,8 +177,9 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestSwapItems()
         {
-            var itemManager = new ItemManager();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            var game = new Game();
+            var itemManager = game.ItemManager;
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
@@ -220,9 +228,10 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
         [TestMethod]
         public void TestGetAvailableItems()
         {
-            var itemManager = new ItemManager();
+            var game = new Game();
+            var itemManager = game.ItemManager;
             itemManager.ResetItems();
-            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content"));
+            itemManager.AddItems(ItemContentCollection.LoadItemsFrom("../../../Content/LeagueSandbox-Default/Items"));
 
             var manager = InventoryManager.CreateInventory();
 
