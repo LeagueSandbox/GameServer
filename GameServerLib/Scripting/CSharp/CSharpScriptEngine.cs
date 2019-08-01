@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
-        private Assembly _scriptAssembly;
+        private List<Assembly> _scriptAssembly = new List<Assembly>();
 
         public CSharpScriptEngine()
         {
@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                     if (result.Success)
                     {
                         ms.Seek(0, SeekOrigin.Begin);
-                        _scriptAssembly = Assembly.Load(ms.ToArray());
+                        _scriptAssembly.Add(Assembly.Load(ms.ToArray()));
                         return errored;
                     }
 
@@ -115,14 +115,26 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
         {
-            if (_scriptAssembly == null) return default(T);
-
-            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
-            if (classType != null)
+            if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
+                return default(T);
+            }
+
+            foreach (var scriptAssembly in _scriptAssembly)
+            {
+                var classType = scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
+
+                if (classType == null)
+                {
+                    continue;
+                }
+
                 var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
+
                 if (desiredFunction != null)
-                    return (T) (object) Delegate.CreateDelegate(typeof(T), desiredFunction, false);
+                {
+                    return (T)(object)Delegate.CreateDelegate(typeof(T), desiredFunction, false);
+                }
             }
 
             return default(T);
@@ -130,17 +142,27 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
-            scriptClass = scriptClass.Replace(" ", "_");
-            if (_scriptAssembly == null) return default(T);
-
-            var classType = _scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
-            if (classType == null)
+            if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
-                _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
                 return default(T);
             }
 
-            return (T) Activator.CreateInstance(classType);
+            scriptClass = scriptClass.Replace(" ", "_");
+
+            foreach (var scriptAssembly in _scriptAssembly)
+            {
+                var classType = scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
+
+                if (classType == null)
+                {
+                    continue;
+                }
+
+                return (T)Activator.CreateInstance(classType);
+            }
+
+            _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
+            return default(T);
         }
 
         public static object RunFunctionOnObject(object obj, string method, params object[] args)
