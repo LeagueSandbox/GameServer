@@ -225,11 +225,41 @@ namespace PacketDefinitions420
             _packetHandlerManager.UnpauseGame();
         }
 
-        public void NotifySurrender(IChampion starter, byte flag, byte yesVotes, byte noVotes, byte maxVotes, TeamId team,
-            float timeOut)
+        public void NotifySurrender(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, TeamId team, float timeOut)
         {
-            var surrender = new Surrender(starter, flag, yesVotes, noVotes, maxVotes, team, timeOut);
-            _packetHandlerManager.BroadcastPacketTeam(team, surrender, Channel.CHL_S2C);
+            var surrender = new S2C_TeamSurrenderVote()
+            {
+                PlayerNetID = starter.NetId,
+                OpenVoteMenu = open,
+                VoteYes = votedYes,
+                ForVote = yesVotes,
+                AgainstVote = noVotes,
+                NumPlayers = maxVotes,
+                TeamID = (uint)team,
+                TimeOut = timeOut,
+            };
+            _packetHandlerManager.BroadcastPacketTeam(team, surrender.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifySurrenderStatus(uint reason, byte yesVotes, byte noVotes, TeamId team)
+        {
+            var surrenderStatus = new S2C_TeamSurrenderStatus()
+            {
+                SurrenderReason = reason,
+                ForVote = yesVotes,
+                AgainstVote = noVotes,
+                TeamID = (uint)team,
+            };
+            _packetHandlerManager.BroadcastPacketTeam(team, surrenderStatus.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifyCanSurrender(bool can, TeamId team)
+        {
+            var canSurrender = new S2C_SetCanSurrender()
+            {
+                CanSurrender = can
+            };
+            _packetHandlerManager.BroadcastPacketTeam(team, canSurrender.GetBytes(), Channel.CHL_S2C );
         }
 
         public void NotifyGameStart()

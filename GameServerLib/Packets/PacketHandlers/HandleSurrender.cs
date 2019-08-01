@@ -1,6 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -18,7 +19,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, SurrenderRequest req)
         {
             var c = _pm.GetPeerInfo((ulong)userId).Champion;
-             _game.PacketNotifier.NotifySurrender(c, 0x03, 1, 0, 5, c.Team, 10.0f);
+            //_game.PacketNotifier.NotifySurrender( c, false, true, 2, 0, (byte)_game.PlayerManager.GetPlayers().Count, c.Team, 10.0f );
+            Console.WriteLine( $"Champion {c.Model} voted {req.VotedYes} towards surrender" );
             return true;
         }
     }
