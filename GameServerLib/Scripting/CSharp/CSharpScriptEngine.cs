@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public T GetStaticMethod<T>(string scriptNamespace, string scriptClass, string scriptFunction)
         {
-            if (_scriptAssembly == null || _scriptAssembly.Count > 0)
+            if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
                 return default(T);
             }
@@ -142,7 +142,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
-            if (_scriptAssembly == null || _scriptAssembly.Count > 0)
+            if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
                 return default(T);
             }
