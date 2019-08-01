@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
             {
-                _logger.Debug($"Package: {PackageName} does not containt file for {itemName}.");
+                _logger.Debug($"Package: {PackageName} does not contain file for {itemName}.");
                 return null;
             }
 
