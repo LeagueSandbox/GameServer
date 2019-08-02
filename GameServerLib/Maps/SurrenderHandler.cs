@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
             
             bool open = !IsSurrenderActive;
-            if (IsSurrenderActive && _game.GameTime < LastSurrenderTime + SurrenderRestTime)
+            if (!IsSurrenderActive && _game.GameTime < LastSurrenderTime + SurrenderRestTime)
             {
                 _game.PacketNotifier.NotifySurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_QUICKLY, 0, 0);
                 return;
