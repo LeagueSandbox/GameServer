@@ -241,11 +241,11 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(starter.Team, surrender.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifySurrenderStatus(int userId, TeamId team, uint reason, byte yesVotes, byte noVotes)
+        public void NotifySurrenderStatus(int userId, TeamId team, SurrenderReason reason, byte yesVotes, byte noVotes)
         {
             var surrenderStatus = new S2C_TeamSurrenderStatus()
             {
-                SurrenderReason = reason,
+                SurrenderReason = (uint)reason,
                 ForVote = yesVotes,
                 AgainstVote = noVotes,
                 TeamID = (uint)team,

@@ -95,7 +95,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifySpellAnimation(IAttackableUnit u, string animation);
         void NotifyStaticObjectSpawn(int userId, uint netId);
         void NotifySurrender(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
-        void NotifySurrenderStatus(int userId, TeamId team, uint reason, byte yesVotes, byte noVotes);
+        void NotifySurrenderStatus(int userId, TeamId team, SurrenderReason reason, byte yesVotes, byte noVotes);
         void NotifyCanSurrender(bool can, TeamId team);
         void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
         void NotifyTeleport(IAttackableUnit u, Vector2 pos);
