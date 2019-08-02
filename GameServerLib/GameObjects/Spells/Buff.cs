@@ -31,6 +31,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
+            if (dur < 0)
+            {
+                throw new ArgumentException("Duration was set to 0 or below.");
+            }
+
             _game = game;
             _scriptEngine = game.ScriptEngine;
             Duration = dur;

@@ -118,12 +118,17 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
-            if (duration <= 0)
+            IBuff buff;
+
+            try
             {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, onto);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
                 return;
             }
-
-            var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
 
             onto.AddBuff(buff);
 
@@ -138,12 +143,17 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
         {
-            if (duration <= 0)
+            IBuff buff;
+
+            try
             {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, target);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
                 return;
             }
-
-            var buff = new Buff(_game, buffName, duration, stacks, buffType, target);
 
             target.AddBuff(buff);
             target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
