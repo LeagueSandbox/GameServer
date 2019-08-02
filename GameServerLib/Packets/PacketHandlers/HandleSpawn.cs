@@ -78,8 +78,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                     foreach (var item in turret.Inventory)
                     {
-                        if (item == null) continue;
-                         _game.PacketNotifier.NotifyItemBought(turret, item as IItem);
+                        if (item == null)
+                        {
+                            continue;
+                        }
+
+                        _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                     }
                 }
                 else if (kv.Value is ILevelProp levelProp)

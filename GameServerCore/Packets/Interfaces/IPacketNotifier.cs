@@ -20,7 +20,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyBeginAutoAttack(IAttackableUnit attacker, IAttackableUnit victim, uint futureProjNetId, bool isCritical);
         /// <summary> TODO: tipCommand should be an lib/core enum that gets translated into league version specific packet enum as it may change over time </summary>
         void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
-        void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance);
+        void NotifyBuyItem(int userId, IObjAiBase champion, IItem itemInstance);
         void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId, uint spellNetId);
         void NotifyChampionDeathTimer(IChampion die);
         void NotifyChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill);
@@ -49,7 +49,6 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
         void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null);
         void NotifyInstantStopAttack(IAttackableUnit attacker, bool isSummonerSpell, uint missileNetID = 0);
-        void NotifyItemBought(IAttackableUnit u, IItem i);
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         // TODO: move handling to PacketDefinitions
         void NotifyKeyCheck(ulong userId, uint playerNo);

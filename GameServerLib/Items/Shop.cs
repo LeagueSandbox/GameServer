@@ -85,17 +85,22 @@ namespace LeagueSandbox.GameServer.Items
 
         private bool AddItem(IItemData itemData)
         {
-            var i = _owner.Inventory.AddItem(itemData);
-            if (i == null)
+            var item = _owner.Inventory.AddItem(itemData);
+
+            if (item == null)
             {
                 return false;
             }
+
             _owner.Stats.AddModifier(itemData);
-            _game.PacketNotifier.NotifyItemBought(_owner, i);
-            if (!string.IsNullOrEmpty(i.ItemData.SpellName))
+
+            _game.PacketNotifier.NotifyBuyItem((int)_game.PlayerManager.GetClientInfoByChampion(_owner).PlayerId, _owner, item);
+
+            if (!string.IsNullOrEmpty(item.ItemData.SpellName))
             {
-                _owner.SetSpell(i.ItemData.SpellName, (byte)(_owner.Inventory.GetItemSlot(i) + ITEM_ACTIVE_OFFSET), true);
+                _owner.SetSpell(item.ItemData.SpellName, (byte)(_owner.Inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET), true);
             }
+
             return true;
         }
 
