@@ -34,11 +34,11 @@ namespace LeagueSandbox.GameServer.Maps
             SurrenderLength = length;
         }
 
-        public Pair<int, int> GetVoteCounts()
+        public Tuple<int, int> GetVoteCounts()
         {
             int yes = _votes.Count(kv => kv.Value == true);
             int no = _votes.Count - yes;
-            return new Pair<int, int>(yes, no);
+            return new Tuple<int, int>(yes, no);
         }
 
         public void HandleSurrender(int userId, IChampion who, bool vote)
@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
             _votes[who] = vote;
-            Pair<int, int> voteCounts = GetVoteCounts();
+            Tuple<int, int> voteCounts = GetVoteCounts();
             int total = _game.PlayerManager.GetPlayers().Count;
 
             Console.WriteLine($"Champion {who.Model} voted {vote}. Currently {voteCounts.Item1} yes votes, {voteCounts.Item2} no votes, with {total} total players");
@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.Maps
             if (voteCounts.Item1 >= total - 1)
             {
                 IsSurrenderActive = false;
-                foreach (Pair<uint, ClientInfo> p in _game.PlayerManager.GetPlayers())
+                foreach (var p in _game.PlayerManager.GetPlayers())
                 {
                     _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
@@ -103,8 +103,8 @@ namespace LeagueSandbox.GameServer.Maps
                 if (_game.GameTime >= LastSurrenderTime + (SurrenderLength * 1000.0f))
                 {
                     IsSurrenderActive = false;
-                    Pair<int, int> count = GetVoteCounts();
-                    foreach (Pair<uint, ClientInfo> p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
+                    Tuple<int, int> count = GetVoteCounts();
+                    foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
                         _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
                 }
             }
