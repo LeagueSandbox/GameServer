@@ -156,7 +156,7 @@ namespace LeagueSandbox.GameServer.Maps
         private long _nextSpawnTime = 90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
         private readonly Dictionary<TeamId, Fountain> _fountains;
-        private readonly Dictionary<TeamId, Surrender> _surrenders;
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders;
 
         public List<int> ExpToLevelUp { get; set; } = new List<int>
         {
@@ -195,10 +195,10 @@ namespace LeagueSandbox.GameServer.Maps
                 { TeamId.TEAM_BLUE, new Fountain(game, TeamId.TEAM_BLUE, 11, 250, 1000) },
                 { TeamId.TEAM_PURPLE, new Fountain(game, TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
             };
-            _surrenders = new Dictionary<TeamId, Surrender>
+            _surrenders = new Dictionary<TeamId, SurrenderHandler>
             {
-                { TeamId.TEAM_BLUE, new Surrender(game, TeamId.TEAM_BLUE, 1200000.0f , 300000.0f , 30.0f) },
-                { TeamId.TEAM_PURPLE, new Surrender(game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f) }
+                { TeamId.TEAM_BLUE, new SurrenderHandler(game, TeamId.TEAM_BLUE, 1200000.0f , 300000.0f , 30.0f) },
+                { TeamId.TEAM_PURPLE, new SurrenderHandler(game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f) }
             };
             SpawnEnabled = _game.Config.MinionSpawnsEnabled;
         }

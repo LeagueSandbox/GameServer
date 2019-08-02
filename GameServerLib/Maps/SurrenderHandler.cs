@@ -12,7 +12,7 @@ using System.Linq;
 namespace LeagueSandbox.GameServer.Maps
 {
     // TODO: Make the surrender UI button become clickable upon hitting SurrenderMinimumTime
-    public class Surrender : IUpdate
+    public class SurrenderHandler : IUpdate
     {
         private Dictionary<IChampion, bool> _votes = new Dictionary<IChampion, bool>();
         private Game _game;
@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Maps
         public TeamId Team { get; set; }
 
         // TODO: The first two parameters are in milliseconds, the third is seconds. QoL fix this?
-        public Surrender(Game g, TeamId team, float minTime, float restTime, float length)
+        public SurrenderHandler(Game g, TeamId team, float minTime, float restTime, float length)
         {
             _game = g;
             Team = team;
