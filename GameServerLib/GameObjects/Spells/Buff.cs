@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             if (dur < 0)
             {
-                throw new ArgumentException("Duration was set to 0 or below.");
+                throw new ArgumentException("Duration was set to under 0, returning...");
             }
 
             _game = game;
