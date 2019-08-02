@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                             continue;
                         }
 
-                         _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
+                        _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                     }
                 }
                 else if (kv.Value is ILevelProp levelProp)
