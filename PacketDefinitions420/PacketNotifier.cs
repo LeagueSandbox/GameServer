@@ -302,14 +302,12 @@ namespace PacketDefinitions420
                 SpellCharges = 0
             };
 
+            //TODO find out what bitfield does, currently unknown
             var buyItemPacket = new BuyItemAns
             {
                 Item = itemData,
                 SenderNetID = gameObject.NetId
             };
-
-            // todo find out what bitfield does, currently unknown
-            //buyItemPacket.Bitfield = null;
 
             _packetHandlerManager.BroadcastPacket(buyItemPacket.GetBytes(), Channel.CHL_S2C);
         }
