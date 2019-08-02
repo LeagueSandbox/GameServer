@@ -116,9 +116,9 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.NavGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, float removeAfter = -1.0f)
+        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
-            if (duration < 0)
+            if (duration <= 0)
             {
                 return;
             }
@@ -129,13 +129,30 @@ namespace LeagueSandbox.GameServer.API
 
             _game.PacketNotifier.NotifyAddBuff(buff);
 
-            if (removeAfter > 0)
+            CreateTimer(duration, () =>
             {
-                CreateTimer(removeAfter, () =>
-                {
-                    RemoveBuff(buff);
-                });
+                RemoveBuff(buff);
+            });
+        }
+
+        public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
+        {
+            if (duration <= 0)
+            {
+                return;
             }
+
+            var buff = new Buff(_game, buffName, duration, stacks, buffType, target);
+
+            target.AddBuff(buff);
+            target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
+
+            _game.PacketNotifier.NotifyAddBuff(buff);
+
+            CreateTimer(duration, () =>
+            {
+                RemoveBuff(buff);
+            });
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
