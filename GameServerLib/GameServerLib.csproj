@@ -270,6 +270,7 @@
     <Compile Include="Items\Shop.cs" />
     <Compile Include="Logging\LoggerProvider.cs" />
     <Compile Include="Maps\Map.cs" />
+    <Compile Include="Maps\Surrender.cs" />
     <Compile Include="ObjectManager.cs" />
     <Compile Include="Packets\NetworkIdManager.cs" />
     <Compile Include="Attributes\DisabledHandlerAttribute.cs" />
