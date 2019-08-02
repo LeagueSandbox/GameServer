@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.Content
                 return _spellData[spellName];
             }
 
-            _spellData[spellName] = new SpellData(_game);
+            _spellData[spellName] = new SpellData(_game.Config.ContentManager);
             _spellData[spellName].Load(spellName);
             return _spellData[spellName];
         }
@@ -159,7 +159,8 @@ namespace LeagueSandbox.GameServer.Content
             {
                 return _charData[characterName];
             }
-            _charData[characterName] = new CharData(_game);
+            
+            _charData[characterName] = new CharData(_game.Config.ContentManager);
             _charData[characterName].Load(characterName);
             return _charData[characterName];
         }

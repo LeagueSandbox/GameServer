@@ -292,10 +292,24 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyBuyItem(int userId, IChampion champion, IItem itemInstance)
+        public void NotifyBuyItem(int userId, IObjAiBase gameObject, IItem itemInstance)
         {
-            var buyItem = new BuyItemResponse(champion, itemInstance);
-            _packetHandlerManager.SendPacket(userId, buyItem, Channel.CHL_S2C);
+            ItemData itemData = new ItemData
+            {
+                ItemID = (uint)itemInstance.ItemData.ItemId,
+                Slot = gameObject.Inventory.GetItemSlot(itemInstance),
+                ItemsInSlot = itemInstance.StackCount,
+                SpellCharges = 0
+            };
+
+            //TODO find out what bitfield does, currently unknown
+            var buyItemPacket = new BuyItemAns
+            {
+                Item = itemData,
+                SenderNetID = gameObject.NetId
+            };
+
+            _packetHandlerManager.BroadcastPacket(buyItemPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyTurretSpawn(int userId, ILaneTurret turret)
@@ -507,12 +521,6 @@ namespace PacketDefinitions420
             stopAttack.IsSummonerSpell = isSummonerSpell;
             stopAttack.ForceDoClient = false;
             _packetHandlerManager.BroadcastPacket(stopAttack.GetBytes(), Channel.CHL_S2C);
-        }
-
-        public void NotifyItemBought(IAttackableUnit u, IItem i)
-        {
-            var response = new BuyItemResponse(u, i);
-            _packetHandlerManager.BroadcastPacketVision(u, response, Channel.CHL_S2C);
         }
 
         public void NotifyFogUpdate2(IAttackableUnit u, uint newFogId)
