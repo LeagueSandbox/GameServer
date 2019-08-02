@@ -129,6 +129,7 @@ namespace LeagueSandbox.GameServer.API
 
             _game.PacketNotifier.NotifyAddBuff(buff);
 
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
             CreateTimer(duration, () =>
             {
                 RemoveBuff(buff);
@@ -149,6 +150,7 @@ namespace LeagueSandbox.GameServer.API
 
             _game.PacketNotifier.NotifyAddBuff(buff);
 
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
             CreateTimer(duration, () =>
             {
                 RemoveBuff(buff);
