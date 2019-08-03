@@ -111,6 +111,15 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool LoadScripts()
         {
+            var scriptLoadResult = _game.ScriptEngine.LoadSubdirectoryScriptsZip(PackagePath);
+
+            if (scriptLoadResult)
+            {
+                _logger.Debug($"Loaded C# scripts from package: {PackageName}");
+                return true;
+            }
+
+            _logger.Debug($"{PackageName} does not contain C# scripts, skipping...");
             return false;
         }
 

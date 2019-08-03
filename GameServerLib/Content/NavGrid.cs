@@ -728,13 +728,13 @@ namespace LeagueSandbox.GameServer.Content
             return ReadData(b);
         }
 
-        public static NavGrid ReadBinary(byte[] fileBytes)
+        public static NavGrid ReadBinary(byte[] stream)
         {
             NavBinaryReader b = null;
 
             try
             {
-                b = new NavBinaryReader(new MemoryStream(fileBytes));
+                b = new NavBinaryReader(new MemoryStream(stream));
             }
             catch
             {
