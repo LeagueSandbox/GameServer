@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer
             GameConfig = new GameConfig(gameToken);
 
             // Load data package
-            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
+            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath, GameConfig.Zip);
 
             // Read spawns info
             MapSpawns = (MapSpawns)ContentManager.GetMapSpawns(GameConfig.Map);
@@ -123,6 +123,7 @@ namespace LeagueSandbox.GameServer
     {
         public int Map => (int)_gameData.SelectToken("map");
         public string DataPackage => (string)_gameData.SelectToken("dataPackage");
+        public bool Zip => (bool) _gameData.SelectToken("zip");
 
         private JToken _gameData;
 

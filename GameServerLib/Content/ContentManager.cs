@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Content
         public string PackageName { get; }
         public string PackagePath { get; }
 
-        private ContentManager(Game game, string dataPackageName, string contentPath, bool zip = true)
+        private ContentManager(Game game, string dataPackageName, string contentPath, bool zip = false)
         {
             _game = game;
 
@@ -39,9 +39,9 @@ namespace LeagueSandbox.GameServer.Content
             _logger = LoggerProvider.GetLogger();
         }
 
-        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
+        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath, bool zip = false)
         {
-            var contentManager = new ContentManager(game, dataPackageName, contentPath);
+            var contentManager = new ContentManager(game, dataPackageName, contentPath, zip);
 
             List<string> extraPackageList = new List<string>();
 
