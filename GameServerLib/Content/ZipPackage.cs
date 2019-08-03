@@ -90,7 +90,8 @@ namespace LeagueSandbox.GameServer.Content
 
                     if (entry.FullName.EndsWith(".json"))
                     {
-                        _content[contentType][entry.FullName] = new List<string> { PackageName };
+                        var itemName = Path.GetFileNameWithoutExtension(entry.FullName);
+                        _content[contentType][itemName] = new List<string> { PackageName };
                     }
                 }
             }
@@ -148,7 +149,7 @@ namespace LeagueSandbox.GameServer.Content
             var filePath = $"{PackageName}/{contentType}/{mapName}/{mapName}.json";
             var toReturnMapSpawns = new MapSpawns();
 
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(filePath))
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
                 _logger.Debug($"Package: {PackageName} does not contain file for {mapName}.");
                 return null;

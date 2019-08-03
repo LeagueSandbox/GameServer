@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
@@ -15,6 +18,7 @@ namespace LeagueSandbox.GameServer.Content
         private readonly ILog _logger;
         private readonly Game _game;
         private readonly string _contentPath;
+        private readonly bool _zip;
 
         private readonly List<IPackage> _loadedPackages;
         private readonly List<string> _dataPackageNames;
@@ -22,11 +26,12 @@ namespace LeagueSandbox.GameServer.Content
         public string PackageName { get; }
         public string PackagePath { get; }
 
-        private ContentManager(Game game, string dataPackageName, string contentPath)
+        private ContentManager(Game game, string dataPackageName, string contentPath, bool zip = true)
         {
             _game = game;
 
             _contentPath = contentPath;
+            _zip = zip;
 
             _loadedPackages = new List<IPackage>();
             _dataPackageNames = new List<string>{dataPackageName};
@@ -80,22 +85,34 @@ namespace LeagueSandbox.GameServer.Content
 
         public void LoadPackage(string packageName)
         {
-            string packagePath = GetPackagePath(packageName);
+            var packagePath = GetPackagePath(packageName);
 
-            ZipPackage zipPackage = new ZipPackage(packagePath + ".zip", _game);
-
-            zipPackage.LoadPackage(packageName);
-
-            //Package dataPackage = new Package(packagePath, _game);
-
-            //dataPackage.LoadPackage(packageName);
-
-            if (_loadedPackages.Contains(zipPackage))
+            if (_zip)
             {
-                return;
-            }
+                ZipPackage zipPackage = new ZipPackage(packagePath + ".zip", _game);
 
-            _loadedPackages.Add(zipPackage);
+                zipPackage.LoadPackage(packageName);
+
+                if (_loadedPackages.Contains(zipPackage))
+                {
+                    return;
+                }
+
+                _loadedPackages.Add(zipPackage);
+            }
+            else
+            {
+                Package dataPackage = new Package(packagePath, _game);
+
+                dataPackage.LoadPackage(packageName);
+
+                if (_loadedPackages.Contains(dataPackage))
+                {
+                    return;
+                }
+
+                _loadedPackages.Add(dataPackage);
+            }
         }
 
         private string GetPackagePath(string packageName)
@@ -196,14 +213,18 @@ namespace LeagueSandbox.GameServer.Content
 
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)
         {
-            foreach(var dependency in GetDependenciesFromPackage(packageName, contentPath))
-            {
-                if (!resultList.Contains(dependency))
-                {
-                    resultList.Add(dependency);
+            var dependencyList = _zip ? GetDependenciesFromZipPackage(packageName) : GetDependenciesFromPackage(packageName, contentPath);
 
-                    GetDependenciesRecursively(resultList, dependency, contentPath);
+            foreach(var dependency in dependencyList)
+            {
+                if (resultList.Contains(dependency))
+                {
+                    continue;
                 }
+
+                resultList.Add(dependency);
+
+                GetDependenciesRecursively(resultList, dependency, contentPath);
             }
         }
 
@@ -237,6 +258,43 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return dependencyList;
+        }
+
+        private List<string> GetDependenciesFromZipPackage(string packageName)
+        {
+            var packagePath = GetPackagePath(packageName);
+            var zipLocation = $"{packagePath}.zip";
+            var zipFileLocation = $"{packageName}/packageInfo.json";
+
+            string packageInfoFile;
+
+            using (var archive = ZipFile.OpenRead(zipLocation))
+            {
+                var file = archive.GetEntry(zipFileLocation);
+
+                if (file == null)
+                {
+                    return null;
+                }
+
+                packageInfoFile = new StreamReader(file.Open(), Encoding.Default).ReadToEnd();
+            }
+
+            JToken dataPackageConfiguration = null;
+
+            try
+            {
+                dataPackageConfiguration = JToken.Parse(packageInfoFile);
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.Debug($"{zipFileLocation} not found, skipping...");
+                return new List<string>();
+            }
+
+            var dataPackageDependencies = dataPackageConfiguration.SelectToken("dependencies");
+
+            return dataPackageDependencies.Select(dependencyToken => dependencyToken.Value<string>()).Where(ValidatePackageName).ToList();
         }
 
         private static bool ValidatePackageName(string packageName)
