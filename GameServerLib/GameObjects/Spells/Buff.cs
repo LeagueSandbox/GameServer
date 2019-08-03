@@ -31,9 +31,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
-            if (dur <= 0)
+            if (dur < 0)
             {
-                throw new ArgumentException("Duration was set to 0 or less, returning...");
+                throw new ArgumentException("Error: Duration was set to under 0.");
             }
 
             _game = game;
@@ -56,6 +56,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         
         public void Update(float diff)
         {
+            if (Duration == 0)
+            {
+                return;
+            }
+
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
