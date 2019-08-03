@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
@@ -20,11 +21,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            List<Package> packageList = _contentManager.GetAllLoadedPackages();
+            var packageList = _contentManager.GetAllLoadedPackages();
 
-            string printedString = "Loaded packages:\n";
+            var printedString = "Loaded packages:\n";
 
-            foreach (Package dataPackage in packageList)
+            foreach (var dataPackage in packageList)
             {
                 printedString += $"- {dataPackage.PackageName}\n";
             }

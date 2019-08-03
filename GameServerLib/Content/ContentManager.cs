@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Game _game;
         private readonly string _contentPath;
 
-        private readonly List<Package> _loadedPackages;
+        private readonly List<IPackage> _loadedPackages;
         private readonly List<string> _dataPackageNames;
 
         public string PackageName { get; }
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Content
 
             _contentPath = contentPath;
 
-            _loadedPackages = new List<Package>();
+            _loadedPackages = new List<IPackage>();
             _dataPackageNames = new List<string>{dataPackageName};
 
             _logger = LoggerProvider.GetLogger();
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Content
             return contentManager;
         }
 
-        public Package GetLoadedPackage(string packageName)
+        public IPackage GetLoadedPackage(string packageName)
         {
             foreach (var dataPackage in _loadedPackages)
             {
@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServer.Content
             return null;
         }
 
-        public List<Package> GetAllLoadedPackages()
+        public List<IPackage> GetAllLoadedPackages()
         {
             return _loadedPackages;
         }
@@ -81,6 +81,10 @@ namespace LeagueSandbox.GameServer.Content
         public void LoadPackage(string packageName)
         {
             string packagePath = GetPackagePath(packageName);
+
+            ZipPackage zipPackage = new ZipPackage(packagePath + ".zip", _game);
+
+            zipPackage.LoadPackage(packageName);
 
             Package dataPackage = new Package(packagePath, _game);
 
@@ -115,7 +119,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                var toReturnMapSpawns = dataPackage.GetMapSpawns(mapId);
+                var toReturnMapSpawns = ((Package)dataPackage).GetMapSpawns(mapId);
 
                 if (toReturnMapSpawns == null)
                 {

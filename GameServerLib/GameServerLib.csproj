@@ -229,6 +229,7 @@
     <Compile Include="Content\Package.cs" />
     <Compile Include="Content\RuneCollection.cs" />
     <Compile Include="Content\SpellData.cs" />
+    <Compile Include="Content\ZipPackage.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameObjects\AttackableUnits\AI\ObjAIBase.cs" />
     <Compile Include="GameObjects\AttackableUnits\Buildings\AnimatedBuildings\ObjAnimatedBuilding.cs" />
