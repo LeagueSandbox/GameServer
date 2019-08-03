@@ -52,8 +52,10 @@
     <Compile Include="Domain\ICrowdControl.cs" />
     <Compile Include="Domain\IItemRecipe.cs" />
     <Compile Include="Domain\IMapProperties.cs" />
+    <Compile Include="Domain\IMapSpawns.cs" />
     <Compile Include="Domain\IPackage.cs" />
     <Compile Include="Domain\IPassiveData.cs" />
+    <Compile Include="Domain\IPlayerSpawns.cs" />
     <Compile Include="Domain\IShop.cs" />
     <Compile Include="Domain\IStackable.cs" />
     <Compile Include="Domain\IUpdate.cs" />

@@ -86,15 +86,15 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnContentFile;
         }
 
-        public MapSpawns GetMapSpawns(int mapId)
+        public IMapSpawns GetMapSpawns(int mapId)
         {
             var mapName = $"Map{mapId}";
             var contentType = "Maps";
             var toReturnMapSpawns = new MapSpawns();
 
-
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
+                _logger.Debug($"Package: {PackageName} does not contain file for {mapName}.");
                 return null;
             }
 

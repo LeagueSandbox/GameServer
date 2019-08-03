@@ -82,29 +82,29 @@ namespace LeagueSandbox.GameServer
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
             // Read spawns info
-            MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
+            MapSpawns = (MapSpawns)ContentManager.GetMapSpawns(GameConfig.Map);
         }
     }
 
-    public class MapSpawns
+    public class MapSpawns : IMapSpawns
     {
         public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();
         public Dictionary<int, PlayerSpawns> Purple = new Dictionary<int, PlayerSpawns>();
 
-        public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
+        public void SetSpawns(string team, IPlayerSpawns spawns, int playerCount)
         {
             if (team.ToLower().Equals("blue"))
             {
-                Blue[playerCount] = spawns;
+                Blue[playerCount] = (PlayerSpawns)spawns;
             }
             else
             {
-                Purple[playerCount] = spawns;
+                Purple[playerCount] = (PlayerSpawns)spawns;
             }
         }
     }
 
-    public class PlayerSpawns
+    public class PlayerSpawns : IPlayerSpawns
     {
         private JArray _spawns;
 

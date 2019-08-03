@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
@@ -44,6 +46,12 @@ namespace LeagueSandbox.GameServer.Content
             _items.Add(collectionEntry.ItemId, collectionEntry);
         }
 
+        private void AddFromPathZip(string dataFile)
+        {
+            var collectionEntry = JsonConvert.DeserializeObject<ItemContentCollectionEntry>(dataFile);
+            _items.Add(collectionEntry.ItemId, collectionEntry);
+        }
+
         public static ItemContentCollection LoadItemsFrom(string directoryPath)
         {
             var result = new ItemContentCollection();
@@ -54,6 +62,32 @@ namespace LeagueSandbox.GameServer.Content
                 var itemName = path.Split('/').Last();
                 var itemDataPath = $"{path}/{itemName}.json";
                 result.AddFromPath(itemDataPath);
+            }
+
+            return result;
+        }
+
+        public static ItemContentCollection LoadItemsFromZip(string zipLocation, string packageName)
+        {
+            var result = new ItemContentCollection();
+
+            var contentTypeFolder = $"{packageName}/Items/";
+
+            using (var archive = ZipFile.OpenRead(zipLocation))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (!entry.FullName.StartsWith(contentTypeFolder) || entry.FullName.Equals(contentTypeFolder))
+                    {
+                        continue;
+                    }
+
+                    if (entry.FullName.EndsWith(".json"))
+                    {
+                        var dataFile = new StreamReader(entry.Open(), Encoding.Default).ReadToEnd();
+                        result.AddFromPathZip(dataFile);
+                    }
+                }
             }
 
             return result;

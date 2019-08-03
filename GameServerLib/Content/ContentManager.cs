@@ -86,16 +86,16 @@ namespace LeagueSandbox.GameServer.Content
 
             zipPackage.LoadPackage(packageName);
 
-            Package dataPackage = new Package(packagePath, _game);
+            //Package dataPackage = new Package(packagePath, _game);
 
-            dataPackage.LoadPackage(packageName);
+            //dataPackage.LoadPackage(packageName);
 
-            if (_loadedPackages.Contains(dataPackage))
+            if (_loadedPackages.Contains(zipPackage))
             {
                 return;
             }
 
-            _loadedPackages.Add(dataPackage);
+            _loadedPackages.Add(zipPackage);
         }
 
         private string GetPackagePath(string packageName)
@@ -115,11 +115,11 @@ namespace LeagueSandbox.GameServer.Content
             return packageLoadingResults.Contains(false);
         }
 
-        public MapSpawns GetMapSpawns(int mapId)
+        public IMapSpawns GetMapSpawns(int mapId)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                var toReturnMapSpawns = ((Package)dataPackage).GetMapSpawns(mapId);
+                var toReturnMapSpawns = dataPackage.GetMapSpawns(mapId);
 
                 if (toReturnMapSpawns == null)
                 {

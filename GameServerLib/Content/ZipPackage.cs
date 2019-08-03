@@ -9,6 +9,8 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using log4net;
 using LeagueSandbox.GameServer.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -88,14 +90,7 @@ namespace LeagueSandbox.GameServer.Content
 
                     if (entry.FullName.EndsWith(".json"))
                     {
-                        var fileName = Path.GetFileNameWithoutExtension(entry.FullName);
-
-                        if (fileName == null)
-                        {
-                            continue;
-                        }
-
-                        _content[contentType][fileName] = new List<string> { PackageName };
+                        _content[contentType][entry.FullName] = new List<string> { PackageName };
                     }
                 }
             }
@@ -103,7 +98,14 @@ namespace LeagueSandbox.GameServer.Content
 
         private void LoadItems()
         {
-
+            try
+            {
+                _game.ItemManager.AddItems(ItemContentCollection.LoadItemsFromZip(PackagePath, PackageName));
+            }
+            catch (DirectoryNotFoundException)
+            {
+                _logger.Debug($"Package: {PackageName} does not contain any items, skipping...");
+            }
         }
 
         public bool LoadScripts()
@@ -113,27 +115,126 @@ namespace LeagueSandbox.GameServer.Content
 
         public IContentFile GetContentFileFromJson(string contentType, string itemName)
         {
-            return null;
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
+            {
+                _logger.Debug($"Package: {PackageName} does not contain file for {itemName}.");
+                return null;
+            }
+
+            var filePath = $"{PackageName}/{contentType}/{itemName}/{itemName}.json";
+
+            IContentFile toReturnContentFile;
+
+            using (var archive = ZipFile.OpenRead(PackagePath))
+            {
+                var file = archive.GetEntry(filePath);
+
+                if (file == null)
+                {
+                    return null;
+                }
+
+                var fileText = new StreamReader(file.Open(), Encoding.Default).ReadToEnd();
+                toReturnContentFile = JsonConvert.DeserializeObject<ContentFile>(fileText);
+            }
+
+            return toReturnContentFile;
+        }
+
+        public IMapSpawns GetMapSpawns(int mapId)
+        {
+            const string contentType = "Maps";
+            var mapName = $"Map{mapId}";
+            var filePath = $"{PackageName}/{contentType}/{mapName}/{mapName}.json";
+            var toReturnMapSpawns = new MapSpawns();
+
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(filePath))
+            {
+                _logger.Debug($"Package: {PackageName} does not contain file for {mapName}.");
+                return null;
+            }
+
+            JToken mapSpawnInformation;
+
+            using (var archive = ZipFile.OpenRead(PackagePath))
+            {
+                var file = archive.GetEntry(filePath);
+
+                if (file == null)
+                {
+                    return null;
+                }
+
+                var fileText = new StreamReader(file.Open(), Encoding.Default).ReadToEnd();
+
+                try
+                {
+                    var mapData = JObject.Parse(fileText);
+
+                    mapSpawnInformation = mapData.SelectToken("spawns");
+                }
+                catch (JsonReaderException)
+                {
+                    return null;
+                }
+            }
+
+            foreach (JProperty teamSpawn in mapSpawnInformation)
+            {
+                var team = teamSpawn.Name;
+                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
+                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
+                {
+                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
+                    toReturnMapSpawns.SetSpawns(team, playerSpawns, i);
+                }
+            }
+
+            return toReturnMapSpawns;
         }
 
         public INavGrid GetNavGrid(int mapId)
         {
-            return null;
+            var navgridPath = $"{PackageName}/AIMesh/Map{mapId}/AIPath.aimesh_ngrid";
+
+            string fileText;
+
+            using (var archive = ZipFile.OpenRead(PackagePath))
+            {
+                var file = archive.GetEntry(navgridPath);
+
+                if (file == null)
+                {
+                    return null;
+                }
+
+                fileText = new StreamReader(file.Open(), Encoding.Default).ReadToEnd();
+            }
+
+            return NavGridReader.ReadBinary(Encoding.Default.GetBytes(fileText));
         }
 
         public ISpellData GetSpellData(string spellName)
         {
-            return null;
+            if (_spellData.ContainsKey(spellName))
+            {
+                return _spellData[spellName];
+            }
+
+            _spellData[spellName] = new SpellData(_game);
+            _spellData[spellName].Load(spellName);
+            return _spellData[spellName];
         }
 
         public ICharData GetCharData(string characterName)
         {
-            return null;
-        }
-
-        private string GetContentTypePath(string contentType)
-        {
-            return $"{PackagePath}/{contentType}";
+            if (_charData.ContainsKey(characterName))
+            {
+                return _charData[characterName];
+            }
+            _charData[characterName] = new CharData(_game);
+            _charData[characterName].Load(characterName);
+            return _charData[characterName];
         }
     }
 }
