@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using GameServerCore.Domain;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Content
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
 
         //TODO: Extend into handling several passives, when we decide on a format for that case.
-        public static string GetPassiveAbilityNameFromScriptFile(string champName, List<Package> packages)
+        public static string GetPassiveAbilityNameFromScriptFile(string champName, List<IPackage> packages)
         {
             foreach (var package in packages)
             {
@@ -106,11 +107,11 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             var file = new ContentFile();
-            var packages = new List<Package>();
+            List<IPackage> packages;
             try
             {
                 file = (ContentFile)_contentManager.GetContentFileFromJson("Stats", name);
-                packages = _contentManager.GetAllLoadedPackages();
+                packages = new List<IPackage>(_contentManager.GetAllLoadedPackages());
             }
             catch (ContentNotFoundException exception)
             {
