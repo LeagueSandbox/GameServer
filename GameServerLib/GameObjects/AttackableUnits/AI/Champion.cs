@@ -83,9 +83,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             for (short i = 0; i < CharData.Passives.Length; i++)
             {
-                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
+                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveAbilityName))
                 {
-                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveAbilityName, (byte)(i + 14));
                 }
             }
 

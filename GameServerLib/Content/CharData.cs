@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -10,8 +11,22 @@ namespace LeagueSandbox.GameServer.Content
     public class PassiveData : IPassiveData
     {
         public string PassiveNameStr { get; set; } = "";
-        public string PassiveLuaName { get; set; } = "";
+        public string PassiveAbilityName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
+
+        //TODO: Extend into handling several passives, when we decide on a format for that case.
+        public static string getPassiveAbilityNameFromScriptFile(string champName)
+        {
+            var inputPassiveFile = File.ReadAllText($"..\\..\\..\\Content\\LeagueSandbox-Scripts\\Champions\\{champName}\\Passive.cs");
+
+            string pattern = @"class (?<passiveName>\w+) : IGameScript";
+           
+            RegexOptions options = RegexOptions.Multiline;
+
+            var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
+
+            return passiveName;
+        }
     }
 
     public class CharData : ICharData
@@ -136,8 +151,7 @@ namespace LeagueSandbox.GameServer.Content
             for (var i = 0; i < 6; i++)
             {
                 Passives[i].PassiveNameStr = file.GetString("Data", $"Passive{i + 1}Name", Passives[i].PassiveNameStr);
-                Passives[i].PassiveLuaName =
-                    file.GetString("Data", $"Passive{i + 1}LuaName", Passives[i].PassiveLuaName);
+                Passives[i].PassiveAbilityName = PassiveData.getPassiveAbilityNameFromScriptFile(name);
                 Passives[i].PassiveLevels = file.GetMultiInt("Data", $"Passive{i + 1}Level", 6, -1);
             }
         }
