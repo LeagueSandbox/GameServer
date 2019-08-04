@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using GameServerCore.Enums;
@@ -15,17 +16,27 @@ namespace LeagueSandbox.GameServer.Content
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
 
         //TODO: Extend into handling several passives, when we decide on a format for that case.
-        public static string GetPassiveAbilityNameFromScriptFile(string champName)
+        public static string GetPassiveAbilityNameFromScriptFile(string champName, List<Package> packages)
         {
-            var inputPassiveFile = File.ReadAllText($"..\\..\\..\\Content\\LeagueSandbox-Scripts\\Champions\\{champName}\\Passive.cs");
+            foreach (var package in packages)
+            {
+                var path = $"{package.PackagePath}\\Champions\\{champName}\\Passive.cs";
 
-            string pattern = @"class (?<passiveName>\w+) : IGameScript";
-           
-            RegexOptions options = RegexOptions.Multiline;
+                if (File.Exists(path))
+                {
+                    var inputPassiveFile = File.ReadAllText(path);
 
-            var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
+                    string pattern = @"class (?<passiveName>\w+) : IGameScript";
 
-            return passiveName;
+                    RegexOptions options = RegexOptions.Multiline;
+
+                    var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
+
+                    return passiveName;
+                }
+            }
+
+            return "";
         }
     }
 
@@ -95,9 +106,11 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             var file = new ContentFile();
+            var packages = new List<Package>();
             try
             {
                 file = (ContentFile)_contentManager.GetContentFileFromJson("Stats", name);
+                packages = _contentManager.GetAllLoadedPackages();
             }
             catch (ContentNotFoundException exception)
             {
@@ -151,7 +164,7 @@ namespace LeagueSandbox.GameServer.Content
             for (var i = 0; i < 6; i++)
             {
                 Passives[i].PassiveNameStr = file.GetString("Data", $"Passive{i + 1}Name", Passives[i].PassiveNameStr);
-                Passives[i].PassiveAbilityName = PassiveData.GetPassiveAbilityNameFromScriptFile(name);
+                Passives[i].PassiveAbilityName = PassiveData.GetPassiveAbilityNameFromScriptFile(name, packages);
                 Passives[i].PassiveLevels = file.GetMultiInt("Data", $"Passive{i + 1}Level", 6, -1);
             }
         }
