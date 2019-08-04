@@ -99,15 +99,12 @@ namespace LeagueSandbox.GameServer.Maps
 
         public void Update(float diff)
         {
-            if (IsSurrenderActive)
+            if (IsSurrenderActive && _game.GameTime >= LastSurrenderTime + (SurrenderLength * 1000.0f))
             {
-                if (_game.GameTime >= LastSurrenderTime + (SurrenderLength * 1000.0f))
-                {
-                    IsSurrenderActive = false;
-                    Tuple<int, int> count = GetVoteCounts();
-                    foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
-                        _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
-                }
+                IsSurrenderActive = false;
+                Tuple<int, int> count = GetVoteCounts();
+                foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
+                    _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
             }
         }
     }
