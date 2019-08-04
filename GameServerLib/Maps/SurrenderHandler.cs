@@ -49,14 +49,14 @@ namespace LeagueSandbox.GameServer.Maps
         {
             if (_game.GameTime < SurrenderMinimumTime)
             {
-                _game.PacketNotifier.NotifySurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_EARLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_EARLY, 0, 0);
                 return;
             }
             
             bool open = !IsSurrenderActive;
             if (!IsSurrenderActive && _game.GameTime < LastSurrenderTime + SurrenderRestTime)
             {
-                _game.PacketNotifier.NotifySurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_QUICKLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_QUICKLY, 0, 0);
                 return;
             }
             IsSurrenderActive = true;
@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Maps
 
             if (_votes.ContainsKey(who))
             {
-                _game.PacketNotifier.NotifySurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_ALREADY_VOTED, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_ALREADY_VOTED, 0, 0);
                 return;
             }
             _votes[who] = vote;
@@ -74,14 +74,14 @@ namespace LeagueSandbox.GameServer.Maps
 
             _log.Info($"Champion {who.Model} voted {vote}. Currently {voteCounts.Item1} yes votes, {voteCounts.Item2} no votes, with {total} total players");
 
-            _game.PacketNotifier.NotifySurrender(who, open, vote, (byte)voteCounts.Item1, (byte)voteCounts.Item2, (byte)total, SurrenderLength);
+            _game.PacketNotifier.NotifyTeamSurrenderVote(who, open, vote, (byte)voteCounts.Item1, (byte)voteCounts.Item2, (byte)total, SurrenderLength);
 
             if (voteCounts.Item1 >= total - 1)
             {
                 IsSurrenderActive = false;
                 foreach (var p in _game.PlayerManager.GetPlayers())
                 {
-                    _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
 
                 API.ApiFunctionManager.CreateTimer(3.0f, () =>
@@ -104,7 +104,7 @@ namespace LeagueSandbox.GameServer.Maps
                 IsSurrenderActive = false;
                 Tuple<int, int> count = GetVoteCounts();
                 foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
-                    _game.PacketNotifier.NotifySurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
             }
         }
     }
