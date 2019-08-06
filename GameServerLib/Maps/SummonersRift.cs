@@ -4,6 +4,7 @@ using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Maps;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -155,6 +156,7 @@ namespace LeagueSandbox.GameServer.Maps
         private long _nextSpawnTime = 90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
         private readonly Dictionary<TeamId, Fountain> _fountains;
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders;
 
         public List<int> ExpToLevelUp { get; set; } = new List<int>
         {
@@ -192,6 +194,11 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 { TeamId.TEAM_BLUE, new Fountain(game, TeamId.TEAM_BLUE, 11, 250, 1000) },
                 { TeamId.TEAM_PURPLE, new Fountain(game, TeamId.TEAM_PURPLE, 13950, 14200, 1000) }
+            };
+            _surrenders = new Dictionary<TeamId, SurrenderHandler>
+            {
+                { TeamId.TEAM_BLUE, new SurrenderHandler(game, TeamId.TEAM_BLUE, 1200000.0f , 300000.0f , 30.0f) },
+                { TeamId.TEAM_PURPLE, new SurrenderHandler(game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f) }
             };
             SpawnEnabled = _game.Config.MinionSpawnsEnabled;
         }
@@ -319,6 +326,9 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 fountain.Update(diff);
             }
+
+            foreach(var surrender in _surrenders.Values)
+                surrender.Update(diff);
         }
 
         public ITarget GetRespawnLocation(TeamId team)
@@ -623,6 +633,12 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             return EndGameCameraPosition[team];
+        }
+
+        public void HandleSurrender(int userId, IChampion who, bool vote)
+        {
+            if (_surrenders.ContainsKey(who.Team))
+                _surrenders[who.Team].HandleSurrender(userId, who, vote);
         }
     }
 }

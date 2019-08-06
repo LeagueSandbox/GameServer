@@ -4,6 +4,7 @@ namespace GameServerCore.Packets.Interfaces
 {
     public interface IPacketReader
     {
+        SurrenderRequest ReadSurrenderRequest(byte[] data);
         SwapItemsRequest ReadSwapItemsRequest(byte[] data);
         AttentionPingRequest ReadAttentionPingRequest(byte[] data);
         AutoAttackOptionRequest ReadAutoAttackOptionRequest(byte[] data);

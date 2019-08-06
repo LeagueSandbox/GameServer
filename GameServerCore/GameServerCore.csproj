@@ -120,6 +120,7 @@
     <Compile Include="IPlayerManager.cs" />
     <Compile Include="Maps\IMap.cs" />
     <Compile Include="MovementVector.cs" />
+    <Compile Include="Packets\Enums\SurrenderReason.cs" />
     <Compile Include="Packets\Handlers\NetworkHandler.cs" />
     <Compile Include="Packets\PacketDefinitions\ICoreRequest.cs" />
     <Compile Include="Packets\PacketDefinitions\ICoreResponse.cs" />

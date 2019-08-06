@@ -1,5 +1,7 @@
 ﻿using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets;
+using LeaguePackets.Game;
 using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.C2S;
@@ -73,7 +75,8 @@ namespace PacketDefinitions420
         [PacketType(PacketCmd.PKT_C2S_SURRENDER)]
         public static SurrenderRequest ReadSurrenderRequest(byte[] data)
         {
-            return new SurrenderRequest();
+            var rq = (C2S_TeamSurrenderVote)GamePacket.Create( data);
+            return new SurrenderRequest(rq.VotedYes);
         }
         [PacketType(PacketCmd.PKT_UNPAUSE_GAME)]
         public static UnpauseRequest ReadUnpauseRequest(byte[] data)
