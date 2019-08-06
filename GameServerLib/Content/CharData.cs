@@ -22,21 +22,16 @@ namespace LeagueSandbox.GameServer.Content
             foreach (var package in packages)
             {
                 var path = $"{package.PackagePath}\\Champions\\{champName}\\Passive.cs";
-
                 if (File.Exists(path))
                 {
                     var inputPassiveFile = File.ReadAllText(path);
-
                     string pattern = @"class (?<passiveName>\w+) : IGameScript";
-
                     RegexOptions options = RegexOptions.Multiline;
-
                     var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
 
                     return passiveName;
                 }
             }
-
             return "";
         }
     }
