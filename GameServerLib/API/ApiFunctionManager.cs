@@ -118,15 +118,65 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
+            IBuff buff;
+
+            try
+            {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, onto);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
+                return;
+            }
+
             onto.AddBuff(buff);
+
             _game.PacketNotifier.NotifyAddBuff(buff);
+
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
+            CreateTimer(duration, () =>
+            {
+                RemoveBuff(buff);
+            });
+        }
+
+        public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
+        {
+            IBuff buff;
+
+            try
+            {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, target);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
+                return;
+            }
+
+            target.AddBuff(buff);
+            target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
+
+            _game.PacketNotifier.NotifyAddBuff(buff);
+
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
+            CreateTimer(duration, () =>
+            {
+                RemoveBuff(buff);
+            });
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
         {
             b.SetStacks(newStacks);
             _game.PacketNotifier.NotifyEditBuff(b, newStacks);
+        }
+
+        public static void RemoveBuff(IBuff buff)
+        {
+            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+            buff.TargetUnit.RemoveBuff(buff);
         }
 
         public static Particle AddParticle(IChampion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")

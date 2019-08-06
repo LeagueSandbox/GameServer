@@ -21,6 +21,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public string Name { get; private set; }
         public byte StackCount { get; private set; }
         public byte Slot { get; private set; }
+        protected bool _infiniteDuration;
 
         protected Game _game;
 
@@ -29,8 +30,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             return _remove;
         }
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
+            if (dur < 0)
+            {
+                throw new ArgumentException("Error: Duration was set to under 0.");
+            }
+
             _game = game;
             _scriptEngine = game.ScriptEngine;
             Duration = dur;
@@ -42,15 +48,21 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             SourceUnit = from;
             BuffType = buffType;
             Slot = onto.GetNewBuffSlot(this);
+            _infiniteDuration = infiniteDuration;
         }
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto)
-               : this(game, buffName, dur, stacks, buffType, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, bool infiniteDuration = false)
+               : this(game, buffName, dur, stacks, buffType, onto, onto, infiniteDuration) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
         
         public void Update(float diff)
         {
+            if (_infiniteDuration)
+            {
+                return;
+            }
+
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
