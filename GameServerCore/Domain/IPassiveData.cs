@@ -3,7 +3,7 @@
     public interface IPassiveData
     {
         string PassiveNameStr { get; set; }
-        string PassiveLuaName { get; set; }
+        string PassiveAbilityName { get; set; }
         int[] PassiveLevels { get; set; }
     }
 }
