@@ -721,7 +721,6 @@ namespace PacketDefinitions420
             }
         }
 
-        // TODO: Fix IsAnythingBetween randomly losing vision often, which ends up spamming this as well
         public void NotifyEnterVisibilityClient(IAttackableUnit u, TeamId team, int userId = 0)
         {
             var enterVis = new OnEnterVisiblityClient(); // TYPO >:(
@@ -741,12 +740,14 @@ namespace PacketDefinitions420
             enterVis.LookAtPosition = new Vector3(1, 0, 0);
             if (u is IObjAiBase)
             {
-                _ = ((IObjAiBase)u).GetBuffs().ToList(); // buffList left for when someone decides to finish this
+                //TODO: Use a non-empty buff list here
                 var emptyBuffCountList = new List<KeyValuePair<byte, int>>();
-                enterVis.BuffCount = emptyBuffCountList; //TODO: Use a non-empty buff count list
+                enterVis.BuffCount = emptyBuffCountList;
             }
             enterVis.UnknownIsHero = false;
-            var md = new MovementDataStop //TODO: Use MovementDataNormal instead, because currently we desync if the unit is moving
+            //TODO: Use MovementDataNormal instead, because currently we desync if the unit is moving
+            // TODO: Save unit waypoints in unit class so they can be used here for MovementDataNormal
+            var md = new MovementDataStop
             {
                 Position = u.GetPosition(),
                 Forward = new Vector2(0, 1),
@@ -758,6 +759,7 @@ namespace PacketDefinitions420
             {
                 case IMinion m:
                     {
+                        // TODO: This implementation will probably need a refactor later
                         charStackData.SkinID = 0;
                         charStackDataList.Add(charStackData);
                         enterVis.CharacterDataStack = charStackDataList;

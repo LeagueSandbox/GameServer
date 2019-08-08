@@ -525,6 +525,7 @@ namespace LeagueSandbox.GameServer.Content
             for (i = 0; i < il; i++)
             {
                 //TODO: Implement bush logic (preferably near here)
+                //TODO: Implement methods for NavGrids without SEE_THROUGH flags
                 if (IsWalkable(x1, y1) == checkWalkable && IsSeeThrough(x1, y1) == checkWalkable)
                 {
                     break;

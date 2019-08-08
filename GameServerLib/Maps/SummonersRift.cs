@@ -215,6 +215,7 @@ namespace LeagueSandbox.GameServer.Maps
             _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false)); // Minions have spawned (90 * 1000)
             _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false)); // Minions have spawned [2] (90 * 1000)
 
+            // TODO: Generate & use exact positions from content files
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_R_03_A", 10097.62f, 808.73f, TeamId.TEAM_BLUE,
                 TurretType.OUTER_TURRET, GetTurretItems(TurretType.OUTER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_R_02_A", 6512.53f, 1262.62f, TeamId.TEAM_BLUE,

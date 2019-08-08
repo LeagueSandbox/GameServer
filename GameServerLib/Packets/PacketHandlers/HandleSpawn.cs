@@ -118,16 +118,17 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
+            // TODO: Generate shop NetId to avoid hard-coding
             if (peerInfo != null && peerInfo.Team == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
-                 _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xff10c6db);
+                _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xff10c6db);
                 _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xff10c6db);
             }
             else if (peerInfo != null && peerInfo.Team == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
-                 _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xffa6170e);
+                _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xffa6170e);
                 _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xffa6170e);
             }
 
