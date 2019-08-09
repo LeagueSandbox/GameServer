@@ -432,22 +432,42 @@ namespace LeagueSandbox.GameServer.Content
             return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE);
         }
 
-        public bool IsWalkable(float x, float y)
+        public bool IsSeeThrough(Vector2 coords)
         {
-            return IsWalkable(new Vector2(x, y));
+            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var cell = GetCell((short)vector.X, (short)vector.Y);
+
+            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH);
         }
 
         public bool IsBrush(Vector2 coords)
         {
             var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
+
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GRASS);
+        }
+
+        public bool IsWalkable(float x, float y)
+        {
+            return IsWalkable(new Vector2(x, y));
+        }
+
+        public bool IsSeeThrough(float x, float y)
+        {
+            return IsSeeThrough(new Vector2(x, y));
+        }
+
+        public bool IsBrush(float x, float y)
+        {
+            return IsBrush(new Vector2(x, y));
         }
 
         public bool HasGlobalVision(Vector2 coords)
         {
             var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
+
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GLOBAL_VISION);
         }
 
@@ -478,7 +498,7 @@ namespace LeagueSandbox.GameServer.Content
             return IsAnythingBetween(new Vector2(origin.X, origin.Y), new Vector2(destination.X, destination.Y));
         }
 
-        public float CastRaySqr(Vector2 origin, Vector2 destination, bool inverseRay = false)
+        public float CastRaySqr(Vector2 origin, Vector2 destination, bool checkWalkable = false)
         {
             var x1 = origin.X;
             var y1 = origin.Y;
@@ -490,34 +510,34 @@ namespace LeagueSandbox.GameServer.Content
                 return 0.0f;
             }
 
-            var b = x2 - x1;
-            var h = y2 - y1;
-            var l = Math.Abs(b);
-            if (Math.Abs(h) > l)
+            var distx = x2 - x1;
+            var disty = y2 - y1;
+            var greatestdist = Math.Abs(distx);
+            if (Math.Abs(disty) > greatestdist)
             {
-                l = Math.Abs(h);
+                greatestdist = Math.Abs(disty);
             }
 
-            var il = (int)l;
-            var dx = b / l;
-            var dy = h / l;
+            var il = (int)greatestdist;
+            var dx = distx / greatestdist;
+            var dy = disty / greatestdist;
             int i;
-            for (i = 0; i <= il; i++)
+            for (i = 0; i < il; i++)
             {
-                if (IsWalkable(x1, y1) == inverseRay)
+                //TODO: Implement bush logic (preferably near here)
+                //TODO: Implement methods for NavGrids without SEE_THROUGH flags
+                if (IsWalkable(x1, y1) == checkWalkable && IsSeeThrough(x1, y1) == checkWalkable)
                 {
                     break;
                 }
 
-                // Inverse = report on walkable
-                // Normal = report on terrain
-                // so break when isWalkable == true and inverse == true
-                // Break when isWalkable == false and inverse == false
+                // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
+                // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position
                 x1 += dx;
                 y1 += dy;
             }
 
-            if (i == il)
+            if (i == il || (x1 == origin.X && y1 == origin.Y))
             {
                 return (new Vector2(x2, y2) - origin).SqrLength();
             }
@@ -537,12 +557,12 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(Vector2 a, Vector2 b)
         {
-            return CastRaySqr(a, b) <= (b - a).SqrLength();
+            return CastRaySqr(a, b) < (b - a).SqrLength();
         }
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)
         {
-            return CastRaySqr(a.GetPosition(), b.GetPosition()) <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)

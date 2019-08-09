@@ -35,8 +35,9 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyDebugPacket(int userId, byte[] data);
         void NotifyEditBuff(IBuff b, int stacks);
         void NotifyEmotions(Emotions type, uint netId);
-        void NotifyEnterVision(IGameObject o, TeamId team);
-        void NotifyEnterVision(int userId, IChampion champion);
+        void NotifyEnterLocalVisibilityClient(IAttackableUnit unit, int userId = 0);
+        void NotifyEnterLocalVisibilityClient(int userId, uint netId);
+        void NotifyEnterVisibilityClient(IAttackableUnit o, TeamId team, int userId = 0);
         void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
         void NotifyFogUpdate2(IAttackableUnit u, uint newFogId);
         void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Pair<uint, ClientInfo>> players);
@@ -81,9 +82,6 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
         void NotifySetAnimation(IAttackableUnit u, List<string> animationPairs);
         void NotifySetCooldown(IChampion c, byte slotId, float currentCd, float totalCd);
-        void NotifySetHealth(IAttackableUnit u);
-        void NotifySetHealth(int userId, IAttackableUnit unit);
-        void NotifySetHealth(int userId, uint netId);
         void NotifySetTarget(IAttackableUnit attacker, IAttackableUnit target);
         void NotifySetTeam(IAttackableUnit unit, TeamId team);
         void NotifyShowProjectile(IProjectile p);

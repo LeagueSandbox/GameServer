@@ -20,6 +20,7 @@ using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.Pi
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 using LeaguePackets.Game.Common;
 using LeaguePackets.Common;
+using System.Linq;
 
 namespace PacketDefinitions420
 {
@@ -38,13 +39,7 @@ namespace PacketDefinitions420
         {
             var ms = new LaneMinionSpawn(_navGrid, m);
             _packetHandlerManager.BroadcastPacketTeam(team, ms, Channel.CHL_S2C);
-            NotifySetHealth(m);
-        }
-
-        public void NotifySetHealth(IAttackableUnit u)
-        {
-            var sh = new SetHealth(u);
-            _packetHandlerManager.BroadcastPacketVision(u, sh, Channel.CHL_S2C);
+            NotifyEnterLocalVisibilityClient(m);
         }
 
         public void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Pair<uint, ClientInfo>> players)
@@ -348,22 +343,23 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, turretSpawn, Channel.CHL_S2C);
         }
 
-        public void NotifySetHealth(int userId, IAttackableUnit unit)
-        {
-            var setHealthPacket = new SetHealth(unit);
-            _packetHandlerManager.SendPacket(userId, setHealthPacket, Channel.CHL_S2C);
-        }
-
         public void NotifyLevelPropSpawn(int userId, ILevelProp levelProp)
         {
             var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
             _packetHandlerManager.SendPacket(userId, levelPropSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifyEnterVision(int userId, IChampion champion)
+        public void NotifyEnterLocalVisibilityClient(IAttackableUnit unit, int userId = 0)
         {
-            var enterVisionPacket = new EnterVisionAgain(_navGrid, champion);
-            _packetHandlerManager.SendPacket(userId, enterVisionPacket, Channel.CHL_S2C);
+            var enterLocalVis = new OnEnterLocalVisiblityClient
+            {
+                SenderNetID = unit.NetId,
+                MaxHealth = unit.Stats.HealthPoints.Total,
+                Health = unit.Stats.CurrentHealth
+            };
+            if (userId == 0)
+                _packetHandlerManager.BroadcastPacketVision(unit, enterLocalVis.GetBytes(), Channel.CHL_S2C);
+            else _packetHandlerManager.SendPacket(userId, enterLocalVis.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyStaticObjectSpawn(int userId, uint netId)
@@ -372,10 +368,14 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, minionSpawnPacket, Channel.CHL_S2C);
         }
 
-        public void NotifySetHealth(int userId, uint netId)
+        public void NotifyEnterLocalVisibilityClient(int userId, uint netId)
         {
-            var setHealthPacket = new SetHealth(netId);
-            _packetHandlerManager.SendPacket(userId, setHealthPacket, Channel.CHL_S2C);
+            var enterLocalVis = new OnEnterLocalVisiblityClient
+            {
+                SenderNetID = netId
+            };
+
+            _packetHandlerManager.SendPacket(userId, enterLocalVis.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyProjectileSpawn(int userId, IProjectile projectile)
@@ -678,7 +678,7 @@ namespace PacketDefinitions420
                     break;
             }
 
-            NotifySetHealth(u);
+            NotifyEnterLocalVisibilityClient(u);
         }
 
         private void NotifyAzirTurretSpawned(IAzirTurret azirTurret)
@@ -726,7 +726,7 @@ namespace PacketDefinitions420
             visionPacket.Packets.Add(spawnPacket);
             visionPacket.SenderNetID = minion.NetId;
             _packetHandlerManager.BroadcastPacketVision(minion, visionPacket.GetBytes(), Channel.CHL_S2C);
-            NotifySetHealth(minion);
+            NotifyEnterLocalVisibilityClient(minion);
             //var spawnPacket = new SpawnMinion(minion);
             //_packetHandlerManager.BroadcastPacketVision(minion, spawnPacket, Channel.CHL_S2C);
         }
@@ -751,23 +751,73 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyEnterVision(IGameObject o, TeamId team)
+        public void NotifyEnterVisibilityClient(IAttackableUnit u, TeamId team, int userId = 0)
         {
-            switch (o)
+            var enterVis = new OnEnterVisiblityClient(); // TYPO >:(
+            var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
+            enterVis.Items = itemData;
+            var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
+            enterVis.ShieldValues = shields;
+            var charStackDataList = new List<CharacterStackData>();
+            var charStackData = new CharacterStackData
+            {
+                SkinName = u.Model,
+                OverrideSpells = false,
+                ModelOnly = false,
+                ReplaceCharacterPackage = false,
+                ID = 0
+            };
+            enterVis.LookAtPosition = new Vector3(1, 0, 0);
+            if (u is IObjAiBase)
+            {
+                //TODO: Use a non-empty buff list here
+                var emptyBuffCountList = new List<KeyValuePair<byte, int>>();
+                enterVis.BuffCount = emptyBuffCountList;
+            }
+            enterVis.UnknownIsHero = false;
+            //TODO: Use MovementDataNormal instead, because currently we desync if the unit is moving
+            // TODO: Save unit waypoints in unit class so they can be used here for MovementDataNormal
+            var md = new MovementDataStop
+            {
+                Position = u.GetPosition(),
+                Forward = new Vector2(0, 1),
+                SyncID = 0x0006E4CF //TODO: generate real movement SyncId
+            };
+            enterVis.MovementData = md;
+            enterVis.SenderNetID = u.NetId;
+            switch (u)
             {
                 case IMinion m:
                     {
-                        var eva = new EnterVisionAgain(_navGrid, m);
-                        _packetHandlerManager.BroadcastPacketTeam(team, eva, Channel.CHL_S2C);
-                        NotifySetHealth(m);
+                        // TODO: This implementation will probably need a refactor later
+                        charStackData.SkinID = 0;
+                        charStackDataList.Add(charStackData);
+                        enterVis.CharacterDataStack = charStackDataList;
+                        if (userId != 0)
+                        {
+                            _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
+                        }
+                        else
+                        {
+                            _packetHandlerManager.BroadcastPacketTeam(team, enterVis.GetBytes(), Channel.CHL_S2C);
+                            NotifyEnterLocalVisibilityClient(m);
+                        }
                         return;
                     }
-                // TODO: Fix bug where enemy champion is not visible to user when vision is acquired until the enemy champion moves
                 case IChampion c:
                     {
-                        var eva = new EnterVisionAgain(_navGrid, c);
-                        _packetHandlerManager.BroadcastPacketTeam(team, eva, Channel.CHL_S2C);
-                        NotifySetHealth(c);
+                        charStackData.SkinID = (uint)c.Skin;
+                        charStackDataList.Add(charStackData);
+                        enterVis.CharacterDataStack = charStackDataList;
+                        if (userId != 0)
+                        {
+                            _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
+                        }
+                        else
+                        {
+                            _packetHandlerManager.BroadcastPacketTeam(team, enterVis.GetBytes(), Channel.CHL_S2C);
+                            NotifyEnterLocalVisibilityClient(c);
+                        }
                         break;
                     }
             }

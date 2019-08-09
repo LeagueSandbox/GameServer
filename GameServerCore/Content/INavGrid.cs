@@ -30,6 +30,8 @@ namespace GameServerCore.Content
         bool IsWalkable(Vector2 coords);
         bool IsWalkable(float x, float y);
         List<Vector2> GetPath(Vector2 start, Vector2 end);
+        bool IsSeeThrough(Vector2 coords);
+        bool IsSeeThrough(float x, float y);
         Vector2 GetSize();
         bool IsAnythingBetween(IGameObject a, IGameObject b);
         Vector2 GetClosestTerrainExit(Vector2 location);
