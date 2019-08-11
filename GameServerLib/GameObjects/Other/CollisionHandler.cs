@@ -16,7 +16,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
         private readonly List<IGameObject> _staticObjects = new List<IGameObject>();
-        private readonly Polygon _staticObjectsPolygon = new Polygon(); // Not efficient enough - delete
 
         public CollisionHandler(Game game, IMap map)
         {
@@ -35,7 +34,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     return true;
             }
             return false;
-            //return _staticObjectsPolygon.IsInside(pos);
         }
         public bool IsOcuupiedByStaticObject(Vector2 pos)
         {
@@ -55,7 +53,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             if(obj.IsStatic)
             {
                 _staticObjects.Add(obj);
-                _staticObjectsPolygon.Add(new CirclePoly(obj.GetPosition(), obj.CollisionRadius));
             }
         }
 
@@ -65,7 +62,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             if (obj.IsStatic)
             {
                 _staticObjects.Remove(obj);
-                _staticObjectsPolygon.Remove(new CirclePoly(obj.GetPosition(), obj.CollisionRadius));
             }
         }
 
