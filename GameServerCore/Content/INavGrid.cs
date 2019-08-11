@@ -30,7 +30,7 @@ namespace GameServerCore.Content
         float GetHeightAtLocation(float x, float y);
         bool IsWalkable(Vector2 coords);
         bool IsWalkable(float x, float y);
-        List<Vector2> GetPath(Vector2 start, Vector2 end, float collisonRadius);
+        List<Vector2> GetPath(Vector2 start, Vector2 end, float collisionRadius);
         bool IsSeeThrough(Vector2 coords);
         bool IsSeeThrough(float x, float y);
         Vector2 GetSize();
