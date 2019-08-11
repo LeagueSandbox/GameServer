@@ -17,7 +17,7 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
             NetId = netId;
             Type = order;
             Position = pos;
-            targetNetId = TargetNetId;
+            TargetNetId = targetNetId;
             Waypoints = waypoints;
         }
     }

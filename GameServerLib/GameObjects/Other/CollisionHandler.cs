@@ -31,7 +31,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             {
                 var collider = new CirclePoly(o.GetPosition(), o.CollisionRadius);
                 if (collider.CheckForOverLaps(collide))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -41,10 +43,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             {
                 var collider = new CirclePoly(o.GetPosition(), o.CollisionRadius);
                 if (collider.IsInside(pos))
+                {
                     return true;
+                }
             }
             return false;
-            //return _staticObjectsPolygon.IsInside(pos);
         }
 
         public void AddObject(IGameObject obj)
