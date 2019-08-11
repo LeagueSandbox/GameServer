@@ -13,7 +13,11 @@ namespace GameServerCore.Domain.GameObjects
         TeamId Team { get; }
         float CollisionRadius { get; }
         float VisionRadius { get; }
-
+        /// <summary>
+        /// Used to synchronize movement
+        /// </summary>
+        uint SyncId { get; }
+        // TODO: Change this to property
         float GetZ();
         float GetMoveSpeed();
         
