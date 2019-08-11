@@ -25,7 +25,7 @@ namespace GameServerCore.Content
         float MapHeight { get; }
         Vector2 MiddleOfMap { get; }
 
-        void SetCollsinoHandler(ICollisionHandler col);
+        void SetCollisionHandler(ICollisionHandler col);
         float GetHeightAtLocation(Vector2 coords);
         float GetHeightAtLocation(float x, float y);
         bool IsWalkable(Vector2 coords);

@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Initialise the pathfinder.
         }
 
-        public bool IsOcuupiedByStaticObject(Vector2 pos, float radius)
+        public bool IsOccupiedByStaticObject(Vector2 pos, float radius)
         {
             var collide = new CirclePoly(pos, radius, 60);
             foreach (var o in _staticObjects)
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             }
             return false;
         }
-        public bool IsOcuupiedByStaticObject(Vector2 pos)
+        public bool IsOccupiedByStaticObject(Vector2 pos)
         {
             foreach (var o in _staticObjects)
             {

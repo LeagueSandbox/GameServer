@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private ICollisionHandler _colHandler;
 
-        public void SetCollsinoHandler(ICollisionHandler col)
+        public void SetCollisionHandler(ICollisionHandler col)
         {
             _colHandler = col;
         }
@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer.Content
                         // if the neighbor in the closed list - skip
                         if (closedList.TryGetValue(ncell.Id, out tempCell)) continue;
                         // not walkable or not sightable or occupied by static object - skip
-                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH) || _colHandler.IsOcuupiedByStaticObject(TranslateFromNavGrid(new Vector2(ncell.X, ncell.Y)), colRadius))
+                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH) || _colHandler.IsOccupiedByStaticObject(TranslateFromNavGrid(new Vector2(ncell.X, ncell.Y)), colRadius))
                         {
                             closedList.Add(ncell.Id, ncell);
                             continue;
@@ -545,7 +545,10 @@ namespace LeagueSandbox.GameServer.Content
                     break;
                 }
                 // to avoid this check all the time we run it only once in 40 cycles
-                if (i%40 == 0 && _colHandler.IsOcuupiedByStaticObject(new Vector2(x1, y1))) break;
+                if (i % 40 == 0 && _colHandler.IsOccupiedByStaticObject(new Vector2(x1, y1)))
+                {
+                    break;
+                }
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
                 // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position

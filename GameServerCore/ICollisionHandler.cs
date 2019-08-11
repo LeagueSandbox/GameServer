@@ -11,7 +11,7 @@ namespace GameServerCore
         void AddObject(IGameObject obj);
         void RemoveObject(IGameObject obj);
 
-        bool IsOcuupiedByStaticObject(Vector2 pos, float radius);
-        bool IsOcuupiedByStaticObject(Vector2 pos);
+        bool IsOccupiedByStaticObject(Vector2 pos, float radius);
+        bool IsOccupiedByStaticObject(Vector2 pos);
     }
 }

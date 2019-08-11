@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(_game, this);
-            NavGrid.SetCollsinoHandler(CollisionHandler);
+            NavGrid.SetCollisionHandler(CollisionHandler);
             MapProperties = GetMapProperties(Id);
         }
 
