@@ -36,6 +36,18 @@ namespace GameMaths.Geometry.Polygons
         }
 
         /// <summary>
+        ///     Removes all of the points in the polygon to this instance.
+        /// </summary>
+        /// <param name="polygon">The Polygon</param>
+        public void Remove(Polygon polygon)
+        {
+            foreach (var point in polygon.Points)
+            {
+                Points.Remove(point);
+            }
+        }
+
+        /// <summary>
         ///     Gets if the Vector3 is inside the polygon.
         /// </summary>
         /// <param name="point">The Point</param>

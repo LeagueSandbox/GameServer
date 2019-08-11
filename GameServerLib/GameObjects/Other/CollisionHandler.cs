@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
+using GameMaths.Geometry.Polygons;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Maps;
@@ -13,6 +15,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private Game _game;
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
+        private readonly List<IGameObject> _staticObjects = new List<IGameObject>();
+        private readonly Polygon _staticObjectsPolygon = new Polygon(); // Not efficient enough - delete
 
         public CollisionHandler(Game game, IMap map)
         {
@@ -21,21 +25,55 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Initialise the pathfinder.
         }
 
+        public bool IsOcuupiedByStaticObject(Vector2 pos, float radius)
+        {
+            var collide = new CirclePoly(pos, radius, 60);
+            foreach (var o in _staticObjects)
+            {
+                var collider = new CirclePoly(o.GetPosition(), o.CollisionRadius);
+                if (collider.CheckForOverLaps(collide))
+                    return true;
+            }
+            return false;
+            //return _staticObjectsPolygon.IsInside(pos);
+        }
+        public bool IsOcuupiedByStaticObject(Vector2 pos)
+        {
+            foreach (var o in _staticObjects)
+            {
+                var collider = new CirclePoly(o.GetPosition(), o.CollisionRadius);
+                if (collider.IsInside(pos))
+                    return true;
+            }
+            return false;
+            //return _staticObjectsPolygon.IsInside(pos);
+        }
+
         public void AddObject(IGameObject obj)
         {
             _objects.Add(obj);
+            if(obj.IsStatic)
+            {
+                _staticObjects.Add(obj);
+                _staticObjectsPolygon.Add(new CirclePoly(obj.GetPosition(), obj.CollisionRadius));
+            }
         }
 
         public void RemoveObject(IGameObject obj)
         {
             _objects.Remove(obj);
+            if (obj.IsStatic)
+            {
+                _staticObjects.Remove(obj);
+                _staticObjectsPolygon.Remove(new CirclePoly(obj.GetPosition(), obj.CollisionRadius));
+            }
         }
 
         public void Update()
         {
             foreach (var obj in _objects)
             {
-                if (obj is IBaseTurret || obj is IInhibitor || obj is INexus)
+                if (obj.IsStatic)
                 {
                     continue;
                 }
@@ -44,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 {
                     obj.OnCollision(null);
                 }
-
+                // TODO: better algos
                 foreach (var obj2 in _objects)
                 {
                     if (obj == obj2)

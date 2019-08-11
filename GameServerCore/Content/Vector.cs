@@ -1,5 +1,6 @@
 ﻿namespace GameServerCore.Content
 {
+    // TODO: Remove this class fast. Wrong. Unnecessary. At least DON'T USE IT. Use Vector2 instead.
     public class Vector<T> where T : struct
     {
         public T X;

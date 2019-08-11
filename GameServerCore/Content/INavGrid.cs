@@ -25,11 +25,12 @@ namespace GameServerCore.Content
         float MapHeight { get; }
         Vector2 MiddleOfMap { get; }
 
+        void SetCollsinoHandler(ICollisionHandler col);
         float GetHeightAtLocation(Vector2 coords);
         float GetHeightAtLocation(float x, float y);
         bool IsWalkable(Vector2 coords);
         bool IsWalkable(float x, float y);
-        List<Vector2> GetPath(Vector2 start, Vector2 end);
+        List<Vector2> GetPath(Vector2 start, Vector2 end, float collisonRadius);
         bool IsSeeThrough(Vector2 coords);
         bool IsSeeThrough(float x, float y);
         Vector2 GetSize();

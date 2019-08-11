@@ -8,6 +8,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
             base(game, model, stats, collisionRadius, x, y, visionRadius, netId)
         {
+            IsStatic = true;
         }
     }
 }

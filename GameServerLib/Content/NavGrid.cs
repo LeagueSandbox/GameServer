@@ -36,13 +36,19 @@ namespace LeagueSandbox.GameServer.Content
         public Vector2 MiddleOfMap { get; set; }
         public const float SCALE = 2f;
 
-        public List<Vector2> GetPath(Vector2 from, Vector2 to)
+        private ICollisionHandler _colHandler;
+
+        public void SetCollsinoHandler(ICollisionHandler col)
+        {
+            _colHandler = col;
+        }
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float colRadius)
         {
             List<Vector2> returnList = new List<Vector2>() { from };
-            var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
+            var vectorFrom = TranslateToNavGrid(new Vector2 { X = from.X, Y = from.Y });
             var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
 
-            var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
+            var vectorTo = TranslateToNavGrid(new Vector2 { X = to.X, Y = to.Y });
             var goal = GetCell((short)vectorTo.X, (short)vectorTo.Y);
 
             if (cellFrom != null && goal != null)
@@ -77,8 +83,8 @@ namespace LeagueSandbox.GameServer.Content
                     {
                         // if the neighbor in the closed list - skip
                         if (closedList.TryGetValue(ncell.Id, out tempCell)) continue;
-                        // not walkable - skip
-                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH))
+                        // not walkable or not sightable or occupied by static object - skip
+                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH) || _colHandler.IsOcuupiedByStaticObject(TranslateFromNavGrid(new Vector2(ncell.X, ncell.Y)), colRadius))
                         {
                             closedList.Add(ncell.Id, ncell);
                             continue;
@@ -95,14 +101,9 @@ namespace LeagueSandbox.GameServer.Content
                 if (path == null) return null;
                 var arr = path.ToArray();
                 Array.Reverse(arr);
-                var pathList = SmoothPath(new List<NavGridCell>(arr));
-                pathList.RemoveAt(0); // removes the first point
-                foreach (var navGridCell in pathList.ToArray())
-                {
-                    var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
-                    returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
-                }
-                return returnList;
+                var pathList = SmoothPath(new List<NavGridCell>(arr).ConvertAll(TranslateFromNavGrid));
+                //pathList.RemoveAt(0); // removes the first point
+                return pathList;
             }
             return null;
         }
@@ -116,7 +117,7 @@ namespace LeagueSandbox.GameServer.Content
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private List<NavGridCell> SmoothPath(List<NavGridCell> path)
+        private List<Vector2> SmoothPath(List<Vector2> path)
         {
             int curWaypointToSmooth = 0;
             int i = path.Count - 1;
@@ -156,25 +157,36 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        public Vector<float> TranslateToNavGrid(Vector<float> vector)
+        public Vector2 TranslateToNavGrid(Vector2 vector)
         {
+            // TODO: Remove this fast. Confusing and nonsense. Justget the grid why to create it in another function?
             CreateTranslation();
-            vector.ForceSize(2);
 
             vector.X = (vector.X - MinGridPos.X) * TranslationMaxGridPos.X;
             vector.Y = (vector.Y - MinGridPos.Z) * TranslationMaxGridPos.Z;
             return vector;
         }
 
-        public Vector<float> TranslateFromNavGrid(Vector<float> vector)
+        public Vector2 TranslateFromNavGrid(Vector2 vector)
         {
             CreateTranslation();
-            vector.ForceSize(2);
 
-            var ret = new Vector<float>
+            var ret = new Vector2
             {
                 X = vector.X / TranslationMaxGridPos.X + MinGridPos.X,
                 Y = vector.Y / TranslationMaxGridPos.Z + MinGridPos.Z
+            };
+
+            return ret;
+        }
+        public Vector2 TranslateFromNavGrid(NavGridCell cell)
+        {
+            CreateTranslation();
+
+            var ret = new Vector2
+            {
+                X = cell.X / TranslationMaxGridPos.X + MinGridPos.X,
+                Y = cell.Y / TranslationMaxGridPos.Z + MinGridPos.Z
             };
 
             return ret;
@@ -426,7 +438,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsWalkable(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE);
@@ -434,7 +446,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsSeeThrough(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH);
@@ -442,7 +454,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsBrush(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GRASS);
@@ -465,7 +477,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool HasGlobalVision(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GLOBAL_VISION);
@@ -473,7 +485,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public float GetHeightAtLocation(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
             if (cell != null)
             {
@@ -495,7 +507,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(NavGridCell origin, NavGridCell destination)
         {
-            return IsAnythingBetween(new Vector2(origin.X, origin.Y), new Vector2(destination.X, destination.Y));
+            return IsAnythingBetween(TranslateFromNavGrid(new Vector2(origin.X, origin.Y)), TranslateFromNavGrid(new Vector2(destination.X, destination.Y)));
         }
 
         public float CastRaySqr(Vector2 origin, Vector2 destination, bool checkWalkable = false)
@@ -522,14 +534,18 @@ namespace LeagueSandbox.GameServer.Content
             var dx = distx / greatestdist;
             var dy = disty / greatestdist;
             int i;
+            
             for (i = 0; i < il; i++)
             {
                 //TODO: Implement bush logic (preferably near here)
                 //TODO: Implement methods for NavGrids without SEE_THROUGH flags
+                
                 if (IsWalkable(x1, y1) == checkWalkable && IsSeeThrough(x1, y1) == checkWalkable)
                 {
                     break;
                 }
+                // to avoid this check all the time we run it only once in 40 cycles
+                if (i%40 == 0 && _colHandler.IsOcuupiedByStaticObject(new Vector2(x1, y1))) break;
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
                 // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position

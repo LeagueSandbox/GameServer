@@ -41,15 +41,18 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
 
+        public bool IsStatic { get; protected set; }
+
         /// <summary>
         /// Current target the object running to (can be coordinates or an object)
         /// </summary>
         public ITarget Target { get; set; }
 
-        public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
+        public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0, bool isStatic = false) : base(x, y)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
+            IsStatic = isStatic;
             if (netId != 0)
             {
                 NetId = netId; // Custom netId
@@ -219,6 +222,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public bool IsCollidingWith(IGameObject o)
         {
+            // TODO: That assumes that everything is circle, consider checking other shapes
             return GetDistanceToSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 

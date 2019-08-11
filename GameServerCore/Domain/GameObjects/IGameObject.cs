@@ -13,6 +13,10 @@ namespace GameServerCore.Domain.GameObjects
         TeamId Team { get; }
         float CollisionRadius { get; }
         float VisionRadius { get; }
+        /// <summary>
+        /// If this object is static and doesn't move currently
+        /// </summary>
+        bool IsStatic { get; }
 
         float GetZ();
         float GetMoveSpeed();

@@ -40,9 +40,9 @@ namespace LeagueSandbox.GameServer.Maps
                 _logger.Error(exception.Message);
                 return;
             }
-
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(_game, this);
+            NavGrid.SetCollsinoHandler(CollisionHandler);
             MapProperties = GetMapProperties(Id);
         }
 

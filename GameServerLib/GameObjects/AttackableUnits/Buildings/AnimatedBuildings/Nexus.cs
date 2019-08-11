@@ -18,7 +18,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;
-
             SetTeam(team);
         }
 

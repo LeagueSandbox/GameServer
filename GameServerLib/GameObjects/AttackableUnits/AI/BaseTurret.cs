@@ -23,13 +23,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
+        ) : base(game, model, new Stats.Stats(), 100, x, y, 1200, netId)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory();
             Replication = new ReplicationAiTurret(this);
+            IsStatic = true;
         }
 
         public void CheckForTargets()
