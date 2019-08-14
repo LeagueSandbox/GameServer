@@ -44,7 +44,7 @@ namespace Spells
         {
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var baseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.05f;
-            float healthGain = 20 + spell.Level * 40 + ap + BaseHp;
+            float healthGain = 20 + spell.Level * 40 + ap + baseHp;
 
             if (target == owner && spell.Target == owner)
             {
