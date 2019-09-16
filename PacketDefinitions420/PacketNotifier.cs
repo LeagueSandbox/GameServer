@@ -573,8 +573,14 @@ namespace PacketDefinitions420
 
         public void NotifyRemoveItem(IChampion c, byte slot, byte remaining)
         {
-            var ri = new RemoveItem(c, slot, remaining);
-            _packetHandlerManager.BroadcastPacketVision(c, ri, Channel.CHL_S2C);
+            var ria = new RemoveItemAns()
+            {
+                SenderNetID = c.NetId,
+                Slot = slot,
+                ItemsInSlot = remaining,
+                NotifyInventoryChange = true
+            };
+            _packetHandlerManager.BroadcastPacketVision(c, ria.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifySetTarget(IAttackableUnit attacker, IAttackableUnit target)
