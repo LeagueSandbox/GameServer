@@ -39,8 +39,10 @@ namespace LeagueSandbox.GameServer.Items
 
         public void SetStacks(byte newStacks)
         {
-            if(newStacks >= 1 && newStacks <= ItemData.MaxStack)
-                StackCount = newStacks;
+            if(newStacks < 1 || newStacks > ItemData.MaxStack)
+                throw new System.Exception($"Cannot set stack size out of bounds (max is {ItemData.MaxStack})");
+
+            StackCount = newStacks;
         }
 
         public static Item CreateFromType(IItemData item)
