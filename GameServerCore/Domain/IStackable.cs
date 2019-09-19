@@ -3,8 +3,7 @@ namespace GameServerCore.Domain
     public interface IStackable
     {
         byte StackCount { get; }
-        bool IncrementStackCount();
-        bool DecrementStackCount();
+        bool WithinBounds(byte stackCount);
         void SetStacks(byte newStacks);
     }
 }
