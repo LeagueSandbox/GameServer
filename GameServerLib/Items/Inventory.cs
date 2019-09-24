@@ -121,10 +121,8 @@ namespace LeagueSandbox.GameServer.Items
                     continue;
                 }
 
-                byte newStack = (byte)(Items[i].StackCount + 1);
-                if (Items[i].WithinBounds(newStack))
+                if (Items[i].IncrementStackCount())
                 {
-                    Items[i].SetStacks(newStack);
                     return Items[i];
                 }
 

@@ -14,6 +14,28 @@ namespace LeagueSandbox.GameServer.Items
             ItemData = data;
             StackCount = 1;
         }
+        
+        public bool IncrementStackCount()
+        {
+            if (StackCount >= ItemData.MaxStack)
+            {
+                return false;
+            }
+
+            StackCount++;
+            return true;
+        }
+
+        public bool DecrementStackCount()
+        {
+            if (StackCount < 1)
+            {
+                return false;
+            }
+
+            StackCount--;
+            return true;
+        }
 
         public void SetStacks(byte newStacks)
         {
@@ -26,11 +48,6 @@ namespace LeagueSandbox.GameServer.Items
         public static Item CreateFromType(IItemData item)
         {
             return new Item(item);
-        }
-
-        public bool WithinBounds(byte stackCount)
-        {
-            return stackCount > 0 && stackCount <= ItemData.MaxStack;
         }
     }
 }

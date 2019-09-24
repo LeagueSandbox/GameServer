@@ -78,14 +78,25 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Duration = 0;
         }
 
+        public bool IncrementStackCount()
+        {
+            if (StackCount == byte.MaxValue)
+                return false;
+            StackCount++;
+            return true;
+        }
+
+        public bool DecrementStackCount()
+        {
+            if (StackCount <= 0)
+                return false;
+            StackCount--;
+            return true;
+        }
+
         public void SetStacks(byte newStacks)
         {
             StackCount = newStacks;
-        }
-
-        public bool WithinBounds(byte stackCount)
-        {
-            return stackCount >= 0 && stackCount <= byte.MaxValue;
         }
     }
 }

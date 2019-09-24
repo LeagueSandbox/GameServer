@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Items
             var inventory = _owner.Inventory;
             var newStacks = (byte)Math.Max(item.StackCount - stacksToRemove, 0);
 
-            if(item.WithinBounds(newStacks))
+            if(item.ItemData.MaxStack > 1)
                 item.SetStacks(newStacks);
 
             _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, newStacks);
