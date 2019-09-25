@@ -30,7 +30,8 @@ namespace LeagueSandbox.GameServer.Items
             var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
             
-            RemoveItem(i, slotId, 1);
+            i.DecrementStackCount();
+            RemoveItem(i, slotId, i.StackCount);
             return true;
         }
 
@@ -57,7 +58,8 @@ namespace LeagueSandbox.GameServer.Items
 
                 foreach (var item in ownedItems)
                 {
-                    RemoveItem(item, inventory.GetItemSlot(item));
+                    item.DecrementStackCount();
+                    RemoveItem(item, inventory.GetItemSlot(item), item.StackCount);
                 }
 
                 AddItem(itemTemplate);
@@ -71,13 +73,9 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(IItem item, byte slotId, byte stacksToRemove = 1)
+        private void RemoveItem(IItem item, byte slotId, byte newStacks)
         {
             var inventory = _owner.Inventory;
-            var newStacks = (byte)Math.Max(item.StackCount - stacksToRemove, 0);
-
-            if(item.ItemData.MaxStack > 1)
-                item.SetStacks(newStacks);
 
             _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, newStacks);
 
