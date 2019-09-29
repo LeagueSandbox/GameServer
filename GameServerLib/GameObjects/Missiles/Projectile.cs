@@ -19,7 +19,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         public ISpellData SpellData { get; protected set; }
 
         protected float _moveSpeed;
-        protected ISpell _originSpell;
+        public ISpell OriginSpell { get; protected set; }
+        public bool IsServerOnly { get; }
 
         public Projectile(
             Game game,
@@ -32,11 +33,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float moveSpeed,
             string projectileName,
             int flags = 0,
-            uint netId = 0
+            uint netId = 0,
+            bool serverOnly = false
         ) : base(game, x, y, collisionRadius, 0, netId)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
-            _originSpell = originSpell;
+            OriginSpell = originSpell;
             _moveSpeed = moveSpeed;
             Owner = owner;
             Team = owner.Team;
@@ -48,6 +50,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             ObjectsHit = new List<IGameObject>();
 
             Target = target;
+            IsServerOnly = serverOnly;
         }
 
         public override void Update(float diff)
@@ -99,16 +102,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 var attackableUnit = unit;
                 if (attackableUnit != null)
                 {
-                    _originSpell.ApplyEffects(attackableUnit, this);
+                    OriginSpell.ApplyEffects(attackableUnit, this);
                 }
             }
             else
             {
                 if (Target is IAttackableUnit u)
                 { // Autoguided spell
-                    if (_originSpell != null)
+                    if (OriginSpell != null)
                     {
-                        _originSpell.ApplyEffects(u, this);
+                        OriginSpell.ApplyEffects(u, this);
                     }
                     else
                     { // auto attack
@@ -125,7 +128,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         public override void SetToRemove()
         {
             base.SetToRemove();
-            _game.PacketNotifier.NotifyProjectileDestroy(this);
+            _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
         
         protected bool CheckIfValidTarget(IAttackableUnit unit)

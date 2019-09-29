@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                         _game.PacketNotifier.NotifyProjectileSpawn(userId, projectile);
+                         _game.PacketNotifier.NotifyMissileReplication(projectile);
                     }
                 }
                 else

@@ -183,20 +183,20 @@ namespace LeagueSandbox.GameServer.API
         {
             var t = new Target(toX, toY);
             var p = new Particle(_game, champion, t, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            _game.PacketNotifier.NotifyFXCreateGroup(p);
             return p;
         }
 
         public static Particle AddParticleTarget(IChampion champion, string particle, ITarget target, float size = 1.0f, string bone = "")
         {
             var p = new Particle(_game, champion, target, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            _game.PacketNotifier.NotifyFXCreateGroup(p);
             return p;
         }
 
         public static void RemoveParticle(Particle p)
         {
-            _game.PacketNotifier.NotifyParticleDestroy(p);
+            _game.PacketNotifier.NotifyFXKill(p);
         }
 
         public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)

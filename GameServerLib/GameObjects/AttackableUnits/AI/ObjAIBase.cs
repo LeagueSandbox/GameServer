@@ -465,7 +465,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                                 _autoAttackProjId
                             );
                             _game.ObjectManager.AddObject(p);
-                            _game.PacketNotifier.NotifyShowProjectile(p);
+                            _game.PacketNotifier.NotifyForceCreateMissile(p);
                         }
                         else
                         {

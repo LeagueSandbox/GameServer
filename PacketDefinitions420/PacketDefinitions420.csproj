@@ -109,8 +109,6 @@
     <Compile Include="PacketDefinitions\S2C\DebugMessage.cs" />
     <Compile Include="PacketDefinitions\S2C\DeleteObjectFromVision.cs" />
     <Compile Include="PacketDefinitions\S2C\DestroyObject.cs" />
-    <Compile Include="PacketDefinitions\S2C\DestroyParticle.cs" />
-    <Compile Include="PacketDefinitions\S2C\DestroyProjectile.cs" />
     <Compile Include="PacketDefinitions\S2C\DisconnectedAnnouncement.cs" />
     <Compile Include="PacketDefinitions\S2C\EditBuff.cs" />
     <Compile Include="PacketDefinitions\S2C\EditMessageBoxRight.cs" />
@@ -133,7 +131,6 @@
     <Compile Include="PacketDefinitions\S2C\HeroSpawn.cs" />
     <Compile Include="PacketDefinitions\S2C\HeroSpawn2.cs" />
     <Compile Include="PacketDefinitions\S2C\HideUi.cs" />
-    <Compile Include="PacketDefinitions\S2C\HighlightUnit.cs" />
     <Compile Include="PacketDefinitions\S2C\InhibitorDeathAnimation.cs" />
     <Compile Include="PacketDefinitions\S2C\InhibitorStateUpdate.cs" />
     <Compile Include="PacketDefinitions\S2C\KeyCheckResponse.cs" />
@@ -162,7 +159,6 @@
     <Compile Include="PacketDefinitions\S2C\QueryStatus.cs" />
     <Compile Include="PacketDefinitions\S2C\Quest.cs" />
     <Compile Include="PacketDefinitions\S2C\RemoveBuff.cs" />
-    <Compile Include="PacketDefinitions\S2C\RemoveHighlightUnit.cs" />
     <Compile Include="PacketDefinitions\S2C\RemoveItem.cs" />
     <Compile Include="PacketDefinitions\S2C\RemoveMessageBoxRight.cs" />
     <Compile Include="PacketDefinitions\S2C\RemoveMessageBoxTop.cs" />
@@ -184,14 +180,11 @@
     <Compile Include="PacketDefinitions\S2C\SetTarget2.cs" />
     <Compile Include="PacketDefinitions\S2C\SetTeam.cs" />
     <Compile Include="PacketDefinitions\S2C\ShowHPAndName.cs" />
-    <Compile Include="PacketDefinitions\S2C\ShowProjectile.cs" />
     <Compile Include="PacketDefinitions\S2C\SkillUpResponse.cs" />
     <Compile Include="PacketDefinitions\S2C\SoundSettings.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnAzirTurret.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnCampMonster.cs" />
     <Compile Include="PacketDefinitions\S2C\SpawnMonster.cs" />
-    <Compile Include="PacketDefinitions\S2C\SpawnParticle.cs" />
-    <Compile Include="PacketDefinitions\S2C\SpawnProjectile.cs" />
     <Compile Include="PacketDefinitions\S2C\SpellAnimation.cs" />
     <Compile Include="PacketDefinitions\S2C\SpellEmpower.cs" />
     <Compile Include="PacketDefinitions\S2C\StatePacket.cs" />
