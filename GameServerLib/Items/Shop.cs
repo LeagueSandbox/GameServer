@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -28,11 +29,8 @@ namespace LeagueSandbox.GameServer.Items
 
             var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
-
-            if (i.ItemData.MaxStack > 1)
-            {
-                i.DecrementStackCount();
-            }
+            
+            i.DecrementStackCount();
             RemoveItem(i, slotId, i.StackCount);
             return true;
         }
@@ -60,7 +58,8 @@ namespace LeagueSandbox.GameServer.Items
 
                 foreach (var item in ownedItems)
                 {
-                    RemoveItem(item, inventory.GetItemSlot(item));
+                    item.DecrementStackCount();
+                    RemoveItem(item, inventory.GetItemSlot(item), item.StackCount);
                 }
 
                 AddItem(itemTemplate);
@@ -74,13 +73,18 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        private void RemoveItem(IItem item, byte slotId, byte stackSize = 0)
+        private void RemoveItem(IItem item, byte slotId, byte newStacks)
         {
             var inventory = _owner.Inventory;
-            _owner.Stats.RemoveModifier(item.ItemData);
-            _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, stackSize);
-            _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
-            inventory.RemoveItem(item);
+
+            _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, newStacks);
+
+            if(newStacks == 0) // I don't believe there exists a stackable item that applies stats.
+            {
+                _owner.Stats.RemoveModifier(item.ItemData);
+                _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
+                inventory.RemoveItem(item);
+            }
         }
 
         private bool AddItem(IItemData itemData)
