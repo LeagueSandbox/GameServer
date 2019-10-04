@@ -546,6 +546,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             var onUpdate = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
+            foreach(var b in BuffGameScriptControllers)
+            {
+                b.Update(diff);
+                if (b.NeedsRemoved())
+                {
+                    RemoveBuff(b.BuffClass);
+                }
+            }
             BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
             base.Update(diff);
             UpdateAutoAttackTarget(diff);

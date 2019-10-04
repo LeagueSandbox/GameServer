@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class BuffGameScriptController
+    public class BuffGameScriptController : IUpdate
     {
         public IObjAiBase Unit { get; private set; }
         public IBuffGameScript GameScript { get; private set; }
@@ -15,6 +15,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public ISpell OwnerSpell { get; private set; }
         private bool _remove;
         private float _duration = -1f;
+		private float _remainingDuration = 1f;
         protected CSharpScriptEngine _scriptEngine;
 
         public BuffGameScriptController(Game game, IObjAiBase unit, string buffNamespace, string buffClass, ISpell ownerSpell, float duration = -1f)
@@ -29,7 +30,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
             if (_duration >= 0)
             {
-                ApiFunctionManager.CreateTimer(_duration, DeactivateBuff);
+                _remainingDuration = _duration * 1000;
             }
         }
 
@@ -58,6 +59,20 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool IsBuffSame(string buffNamespace, string buffClass)
         {
             return buffNamespace == BuffNamespace && buffClass == BuffClass;
+        }
+
+        public void Update(float diff)
+        {
+            if(_duration < 0)
+            {
+                return;
+            }
+
+            _remainingDuration -= diff;
+            if(_remainingDuration <= 0f)
+            {
+                DeactivateBuff();
+            }
         }
     }
 }

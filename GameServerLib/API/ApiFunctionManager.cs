@@ -57,6 +57,7 @@ namespace LeagueSandbox.GameServer.API
             _logger.Debug(string.Format(format, args));
         }
 
+        [Obsolete("Use CreateTimer only for debug purpose")]
         public static GameScriptTimer CreateTimer(float duration, Action callback)
         {
             var newTimer = new GameScriptTimer(duration, callback);
@@ -74,10 +75,6 @@ namespace LeagueSandbox.GameServer.API
         {
             var b = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
             _game.PacketNotifier.NotifyAddBuff(b);
-            if (removeAfter >= 0)
-            {
-                CreateTimer(removeAfter, () => RemoveBuffHudVisual(b));
-            }
 
             return b;
         }
@@ -133,21 +130,15 @@ namespace LeagueSandbox.GameServer.API
             onto.AddBuff(buff);
 
             _game.PacketNotifier.NotifyAddBuff(buff);
-
-            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
-            CreateTimer(duration, () =>
-            {
-                RemoveBuff(buff);
-            });
         }
 
-        public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
+        public static void AddBuffGameScript(string buffClass, string buffNamespace, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
         {
             IBuff buff;
 
             try
             {
-                buff = new Buff(_game, buffName, duration, stacks, buffType, target);
+                buff = new Buff(_game, buffClass, duration, stacks, buffType, target);
             }
             catch (ArgumentException exception)
             {
@@ -156,15 +147,9 @@ namespace LeagueSandbox.GameServer.API
             }
 
             target.AddBuff(buff);
-            target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
+            target.AddBuffGameScript(buffClass, buffNamespace, ownerSpell, duration, isUnique);
 
             _game.PacketNotifier.NotifyAddBuff(buff);
-
-            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
-            CreateTimer(duration, () =>
-            {
-                RemoveBuff(buff);
-            });
         }
 
         public static void EditBuff(IBuff b, byte newStacks)

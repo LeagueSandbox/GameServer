@@ -18,12 +18,7 @@ namespace Spells
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
-            var p = AddParticleTarget(owner, "Overdrive_buf.troy", target, 1);
             ((ObjAiBase) target).AddBuffGameScript("Overdrive", "Overdrive", spell, 8.0f);
-            CreateTimer(8.0f, () =>
-            {
-                RemoveParticle(p);
-            });
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
