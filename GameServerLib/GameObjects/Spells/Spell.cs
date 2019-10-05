@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         private Game _game;
         protected NetworkIdManager _networkIdManager;
 
-        private uint FutureProjNetId;
+        private uint _futureProjNetId;
 
         private IGameScript _spellGameScript;
 
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             X2 = x2;
             Y2 = y2;
             Target = u;
-            FutureProjNetId = _networkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
             Projectiles = new Dictionary<uint, IProjectile>();
             SpellNetId = _networkIdManager.GetNewNetId();
 
@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 FinishCasting();
             }
 
-            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, new Vector2(x, y) , new Vector2(x2, y2), FutureProjNetId, SpellNetId);
+            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId, SpellNetId);
             return true;
         }
 
@@ -239,7 +239,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                     SpellData.MissileSpeed,
                     nameMissile,
                     SpellData.Flags,
-                    FutureProjNetId,
+                    _futureProjNetId,
                     isServerOnly
                 );
             Projectiles.Add(p.NetId, p);
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
-            FutureProjNetId = _networkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
@@ -264,7 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 SpellData.MissileSpeed,
                 nameMissile,
                 SpellData.Flags,
-                FutureProjNetId
+                _futureProjNetId
             );
             Projectiles.Add(p.NetId, p);
             _game.ObjectManager.AddObject(p);
@@ -272,7 +272,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
-            FutureProjNetId = _networkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true)
@@ -288,11 +288,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 effectName,
                 SpellData.Flags,
                 affectAsCastIsOver,
-                FutureProjNetId
+                _futureProjNetId
             );
             Projectiles.Add(l.NetId, l);
             _game.ObjectManager.AddObject(l);
-            FutureProjNetId = _networkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true)
@@ -309,11 +309,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 SpellData.Flags,
                 affectAsCastIsOver,
                 angleDeg,
-                FutureProjNetId
+                _futureProjNetId
             );
             Projectiles.Add(c.NetId, c);
             _game.ObjectManager.AddObject(c);
-            FutureProjNetId = _networkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void SpellAnimation(string animName, IAttackableUnit target)
