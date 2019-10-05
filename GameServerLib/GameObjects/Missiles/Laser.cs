@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 return;
             }
 
-            if (_originSpell.State != SpellState.STATE_CASTING)
+            if (OriginSpell.State != SpellState.STATE_CASTING)
             {
                 var objects = _game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             ObjectsHit.Add(unit);
             if (unit != null)
             {
-                _originSpell.ApplyEffects(unit, this);
+                OriginSpell.ApplyEffects(unit, this);
             }
         }
 

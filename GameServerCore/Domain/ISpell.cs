@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Collections.Generic;
 
 namespace GameServerCore.Domain
 {
@@ -14,7 +15,7 @@ namespace GameServerCore.Domain
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        uint FutureProjNetId { get; }
+        Dictionary<uint, IProjectile> Projectiles { get; }
         uint SpellNetId { get; }
         IAttackableUnit Target { get; }
         float X { get; }

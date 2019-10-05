@@ -59,6 +59,41 @@ namespace LeagueSandbox.GameServer
 
                 obj.Update(diff);
 
+                //TODO: Implement visibility checks for projectiles here (should be similar to particles below), make
+                //Make sure to account for server only, globally visible (everyone sees it) projectiles, and normal projectiles:
+                //1. Nidalee Q is affected by visibility checks, but is server only 
+                //2. Ezreal R is globally visible, and is server only
+                //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
+
+                var particle = obj as IParticle;
+                if (particle != null)
+                {
+                    foreach (var team in Teams)
+                    {
+                        var visionUnitsTeam = GetVisionUnits(particle.Team);
+                        if (visionUnitsTeam.ContainsKey(particle.NetId))
+                        {
+                            if (TeamHasVisionOn(team, particle))
+                            {
+                                particle.SetVisibleByTeam(team, true);
+                                _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
+                                continue;
+                            }
+                        }
+
+                        if (!particle.IsVisibleByTeam(team) && TeamHasVisionOn(team, particle))
+                        {
+                            particle.SetVisibleByTeam(team, true);
+                            _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
+                        }
+                        else if (particle.IsVisibleByTeam(team) && !TeamHasVisionOn(team, particle))
+                        {
+                            particle.SetVisibleByTeam(team, false);
+                            _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
+                        }
+                    }
+                }
+
                 if (!(obj is IAttackableUnit))
                     continue;
 

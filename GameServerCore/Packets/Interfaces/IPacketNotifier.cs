@@ -13,6 +13,7 @@ namespace GameServerCore.Packets.Interfaces
     public interface IPacketNotifier
     {
         void NotifyAddBuff(IBuff b);
+        void NotifyAddDebugObject(int userId, IAttackableUnit unit, uint objNetId, float lifetime, float radius, Vector3 pos1, Vector3 pos2, int objID = 0, byte type = 0x0, string name = "debugobj", byte r = 0xFF, byte g = 0x46, byte b = 0x0);
         void NotifyAddGold(IChampion c, IAttackableUnit died, float gold);
         void NotifyAddXp(IChampion champion, float experience);
         void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific);
@@ -26,6 +27,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill);
         void NotifyChampionRespawn(IChampion c);
         void NotifyChampionSpawned(IChampion c, TeamId team);
+        void NotifyCreateUnitHighlight(int userId, IGameObject unit);
         void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0);
         void NotifyDash(IAttackableUnit u, ITarget t, float dashSpeed, bool keepFacingLastDirection, float leapHeight, float followTargetMaxDistance, float backDistance, float travelTime);
         void NotifyDebugMessage(string htmlDebugMessage);
@@ -33,6 +35,8 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyDebugMessage(TeamId team, string message);
         // TODO: only in deubg mode
         void NotifyDebugPacket(int userId, byte[] data);
+        void NotifyDestroyClientMissile(IProjectile p);
+        void NotifyDestroyClientMissile(IProjectile p, TeamId team);
         void NotifyEditBuff(IBuff b, int stacks);
         void NotifyEmotions(Emotions type, uint netId);
         void NotifyEnterLocalVisibilityClient(IAttackableUnit unit, int userId = 0);
@@ -40,6 +44,11 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyEnterVisibilityClient(IAttackableUnit o, TeamId team, int userId = 0);
         void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
         void NotifyFogUpdate2(IAttackableUnit u, uint newFogId);
+        void NotifyForceCreateMissile(IProjectile p);
+        void NotifyFXCreateGroup(IParticle particle, Vector3 direction = new Vector3(), float timespent = 0, bool reqvision = true);
+        void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team);
+        void NotifyFXKill(IParticle particle);
+        void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team);
         void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Pair<uint, ClientInfo>> players);
         void NotifyGameStart();
         void NotifyGameTimer(float gameTime);
@@ -61,30 +70,31 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player);
         void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player);
         void NotifyMinionSpawned(IMinion m, TeamId team);
+        void NotifyMissileReplication(IProjectile p);
         void NotifyModelUpdate(IAttackableUnit obj);
+        void NotifyModifyDebugCircleRadius(int userId, uint sender, int objID, float newRadius);
+        void NotifyModifyDebugObjectColor(int userId, uint sender, int objID, byte r, byte g, byte b);
         void NotifyModifyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade);
         void NotifyMovement(IGameObject o);
         void NotifyNextAutoAttack(IAttackableUnit attacker, IAttackableUnit target, uint futureProjNetId, bool isCritical, bool nextAttackFlag);
         void NotifyNpcDie(IAttackableUnit die, IAttackableUnit killer);
         void NotifyOnAttack(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
-        void NotifyParticleDestroy(IParticle particle);
-        void NotifyParticleSpawn(IParticle particle);
         void NotifyPauseGame(int seconds, bool showWindow);
         void NotifyPing(ClientInfo client, Vector2 position, int targetNetId, Pings type);
         void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo);
         void NotifyPlayerStats(IChampion champion);
-        void NotifyProjectileDestroy(IProjectile p);
-        void NotifyProjectileSpawn(IProjectile p);
-        void NotifyProjectileSpawn(int userId, IProjectile projectile);
         void NotifyQueryStatus(int userId);
         void NotifyRemoveBuff(IAttackableUnit u, string buffName, byte slot = 1);
+        void NotifyRemoveDebugObject(int userId, uint sender, int objID);
         void NotifyRemoveItem(IChampion c, byte slot, byte remaining);
+        void NotifyRemoveUnitHighlight(int userId, IGameObject unit);
         void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
         void NotifySetAnimation(IAttackableUnit u, List<string> animationPairs);
+        void NotifySetCanSurrender(bool can, TeamId team);
         void NotifySetCooldown(IChampion c, byte slotId, float currentCd, float totalCd);
+        void NotifySetDebugHidden(int userId, uint sender, int objID, byte bitfield = 0x0);
         void NotifySetTarget(IAttackableUnit attacker, IAttackableUnit target);
         void NotifySetTeam(IAttackableUnit unit, TeamId team);
-        void NotifyShowProjectile(IProjectile p);
         void NotifySkillUp(int userId, uint netId, byte skill, byte level, byte pointsLeft);
         void NotifySpawn(IAttackableUnit u);
         void NotifySpawnEnd(int userId);
@@ -93,12 +103,12 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyStaticObjectSpawn(int userId, uint netId);
         void NotifyTeamSurrenderVote(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
         void NotifyTeamSurrenderStatus(int userId, TeamId team, SurrenderReason reason, byte yesVotes, byte noVotes);
-        void NotifySetCanSurrender(bool can, TeamId team);
         void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
         void NotifyTeleport(IAttackableUnit u, Vector2 pos);
         void NotifyTint(TeamId team, bool enable, float speed, Color color);
         void NotifyTurretSpawn(int userId, ILaneTurret turret);
         void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null);
+        void NotifyUnitSetDrawPathMode(int userId, IAttackableUnit unit, IGameObject target, byte mode);
         void NotifyUnpauseGame();
         void NotifyUpdatedStats(IAttackableUnit u, bool partial = true);
         void NotifyViewResponse(int userId, ViewRequest request);
