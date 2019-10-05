@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
-        public List<IProjectile> Projectiles { get; protected set; }
+        public Dictionary<uint, IProjectile> Projectiles { get; protected set; }
         public uint SpellNetId { get; protected set; }
 
         public IAttackableUnit Target { get; private set; }
@@ -43,6 +43,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         private CSharpScriptEngine _scriptEngine;
         private Game _game;
         protected NetworkIdManager _networkIdManager;
+
+        private uint FutureProjNetId;
 
         private IGameScript _spellGameScript;
 
@@ -96,8 +98,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             X2 = x2;
             Y2 = y2;
             Target = u;
-            uint FutureProjNetId = _networkIdManager.GetNewNetId();
-            Projectiles = new List<IProjectile>();
+            FutureProjNetId = _networkIdManager.GetNewNetId();
+            Projectiles = new Dictionary<uint, IProjectile>();
             SpellNetId = _networkIdManager.GetNewNetId();
 
             if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
@@ -220,41 +222,37 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _spellGameScript.ApplyEffects(Owner, u, this, p);
             if (p.IsToRemove())
             {
-                Projectiles.Remove(p);
+                Projectiles.Remove(p.NetId);
             }
         }
 
         public void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false)
         {
-            uint projNetId = _networkIdManager.GetNewNetId();
             var p = new Projectile(
-                _game,
-                fromX,
-                fromY,
-                (int)SpellData.LineWidth,
-                Owner,
-                new Target(toX, toY),
-                this,
-                SpellData.MissileSpeed,
-                nameMissile,
-                SpellData.Flags,
-                projNetId,
-                isServerOnly
-            );
-            if (p != null)
-            {
-                Projectiles.Add(p);
-            }
+                    _game,
+                    fromX,
+                    fromY,
+                    (int)SpellData.LineWidth,
+                    Owner,
+                    new Target(toX, toY),
+                    this,
+                    SpellData.MissileSpeed,
+                    nameMissile,
+                    SpellData.Flags,
+                    FutureProjNetId,
+                    isServerOnly
+                );
+            Projectiles.Add(p.NetId, p);
             _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
+            FutureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
         {
-            uint projNetId = _networkIdManager.GetNewNetId();
             var p = new Projectile(
                 _game,
                 Owner.X,
@@ -266,22 +264,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 SpellData.MissileSpeed,
                 nameMissile,
                 SpellData.Flags,
-                projNetId
+                FutureProjNetId
             );
-            if (p != null)
-            {
-                Projectiles.Add(p);
-            }
+            Projectiles.Add(p.NetId, p);
             _game.ObjectManager.AddObject(p);
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
+            FutureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true)
         {
-            uint projNetId = _networkIdManager.GetNewNetId();
             var l = new Laser(
                 _game,
                 Owner.X,
@@ -293,18 +288,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 effectName,
                 SpellData.Flags,
                 affectAsCastIsOver,
-                projNetId
+                FutureProjNetId
             );
-            if (l != null)
-            {
-                Projectiles.Add(l);
-            }
+            Projectiles.Add(l.NetId, l);
             _game.ObjectManager.AddObject(l);
+            FutureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true)
         {
-            uint projNetId = _networkIdManager.GetNewNetId();
             var c = new Cone(
                 _game,
                 Owner.X,
@@ -317,13 +309,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 SpellData.Flags,
                 affectAsCastIsOver,
                 angleDeg,
-                projNetId
+                FutureProjNetId
             );
-            if (c != null)
-            {
-                Projectiles.Add(c);
-            }
+            Projectiles.Add(c.NetId, c);
             _game.ObjectManager.AddObject(c);
+            FutureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void SpellAnimation(string animName, IAttackableUnit target)

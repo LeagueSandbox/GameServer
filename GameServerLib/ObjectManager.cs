@@ -66,9 +66,9 @@ namespace LeagueSandbox.GameServer
                 //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
 
                 var particle = obj as IParticle;
-                foreach (var team in Teams)
+                if (particle != null)
                 {
-                    if (particle != null)
+                    foreach (var team in Teams)
                     {
                         var visionUnitsTeam = GetVisionUnits(particle.Team);
                         if (visionUnitsTeam.ContainsKey(particle.NetId))
@@ -89,7 +89,6 @@ namespace LeagueSandbox.GameServer
                         else if (particle.IsVisibleByTeam(team) && !TeamHasVisionOn(team, particle))
                         {
                             particle.SetVisibleByTeam(team, false);
-                            //_game.PacketNotifier.NotifyLeaveVision(particle, team);
                             _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
                         }
                     }

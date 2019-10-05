@@ -15,7 +15,7 @@ namespace GameServerCore.Domain
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        List<IProjectile> Projectiles { get; }
+        Dictionary<uint, IProjectile> Projectiles { get; }
         uint SpellNetId { get; }
         IAttackableUnit Target { get; }
         float X { get; }
