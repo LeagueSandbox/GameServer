@@ -228,50 +228,62 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false)
         {
+            ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
+
             var p = new Projectile(
                     _game,
                     fromX,
                     fromY,
-                    (int)SpellData.LineWidth,
+                    (int)projectileSpellData.LineWidth,
                     Owner,
                     new Target(toX, toY),
                     this,
-                    SpellData.MissileSpeed,
+                    projectileSpellData.MissileSpeed,
                     nameMissile,
-                    SpellData.Flags,
+                    projectileSpellData.Flags,
                     _futureProjNetId,
                     isServerOnly
                 );
+
             Projectiles.Add(p.NetId, p);
+
             _game.ObjectManager.AddObject(p);
+
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
+
             _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
         public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
         {
+            ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
+
             var p = new Projectile(
                 _game,
                 Owner.X,
                 Owner.Y,
-                (int)SpellData.LineWidth,
+                (int)projectileSpellData.LineWidth,
                 Owner,
                 target,
                 this,
-                SpellData.MissileSpeed,
+                projectileSpellData.MissileSpeed,
                 nameMissile,
-                SpellData.Flags,
+                projectileSpellData.Flags,
                 _futureProjNetId
             );
+
             Projectiles.Add(p.NetId, p);
+
             _game.ObjectManager.AddObject(p);
+
             if (!isServerOnly)
             {
                 _game.PacketNotifier.NotifyMissileReplication(p);
             }
+
             _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
