@@ -236,6 +236,8 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
+        // TODO: seems like using binary search for simple index finding on a grid!!!
+        // CHANGE THIS
         public Vector2 GetCellVector(short x, short y)
         {
             // Changed to binary search
@@ -821,7 +823,7 @@ namespace LeagueSandbox.GameServer.Content
             grid.MaxGridPos = b.ReadVector3();
 
             grid.CellSize = b.GetBinaryReader().ReadSingle();
-            grid.XCellCount = b.GetBinaryReader().ReadUInt32();
+            grid.XCellCount = b.GetBinaryReader().ReadUInt32(); //TODO: Add comment what is this value for our usual map
             grid.YCellCount = b.GetBinaryReader().ReadUInt32();
 
             return grid;
