@@ -63,7 +63,6 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Content\HashFunctions.cs" />
     <Compile Include="Content\INavGrid.cs" />
-    <Compile Include="Content\Vector.cs" />
     <Compile Include="Domain\GameObjects\IAttackableUnit.cs" />
     <Compile Include="Domain\GameObjects\IAzirTurret.cs" />
     <Compile Include="Domain\GameObjects\IBaseTurret.cs" />
