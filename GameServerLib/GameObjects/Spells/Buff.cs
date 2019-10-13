@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; private set; }
-        protected bool _remove;
         public IObjAiBase TargetUnit { get; private set; }
         public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
@@ -24,11 +23,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         protected bool _infiniteDuration;
 
         protected Game _game;
-
-        public bool Elapsed()
-        {
-            return _remove;
-        }
 
         public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
@@ -43,7 +37,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             StackCount = stacks;
             Name = buffName;
             TimeElapsed = 0;
-            _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
             BuffType = buffType;
@@ -68,7 +61,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             {
                 if (TimeElapsed >= Duration)
                 {
-                    _remove = true;
+                    if (Name != "")
+                    {
+                        _game.PacketNotifier.NotifyRemoveBuff(TargetUnit, Name, Slot);
+                    }
+
+                    TargetUnit.RemoveBuff(this);
                 }
             }
         }
