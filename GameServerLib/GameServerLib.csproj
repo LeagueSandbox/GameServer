@@ -38,9 +38,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <DependsOnNETStandard>true</DependsOnNETStandard>
+  </PropertyGroup>
   
   <ItemGroup>
     <Reference Include="netstandard" />
+	<Reference Include="System.IdentityModel" />
   </ItemGroup>
   
   <ItemGroup>
