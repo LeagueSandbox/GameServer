@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.NetInfo;
 
@@ -8,6 +9,6 @@ namespace GameServerCore
     {
         ClientInfo GetClientInfoByChampion(IChampion champ);
         ClientInfo GetPeerInfo(ulong playerId);
-        List<Pair<uint, ClientInfo>> GetPlayers();
+        List<Tuple<uint, ClientInfo>> GetPlayers();
     }
 }

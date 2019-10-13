@@ -1,13 +1,11 @@
-using GameServerCore;
 using GameServerCore.NetInfo;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions;
+using System;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class LoadScreenPlayerChampion : Packet
     {
-        public LoadScreenPlayerChampion(Pair<uint, ClientInfo> p)
+        public LoadScreenPlayerChampion(Tuple<uint, ClientInfo> p)
             : base(PacketCmd.PKT_S2C_LOAD_HERO)
         {
             var player = p.Item2;

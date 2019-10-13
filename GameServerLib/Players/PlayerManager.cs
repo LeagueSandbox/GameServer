@@ -5,6 +5,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;
 using System.Collections.Generic;
+using System;
 
 namespace LeagueSandbox.GameServer.Players
 {
@@ -13,7 +14,7 @@ namespace LeagueSandbox.GameServer.Players
         private NetworkIdManager _networkIdManager;
         private Game _game;
 
-        private List<Pair<uint, ClientInfo>> _players = new List<Pair<uint, ClientInfo>>();
+        private List<Tuple<uint, ClientInfo>> _players = new List<Tuple<uint, ClientInfo>>();
         private ulong _currentId = 1;
         private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
         {
@@ -64,7 +65,7 @@ namespace LeagueSandbox.GameServer.Players
             c.LevelUp();
 
             player.Champion = c;
-            var pair = new Pair<uint, ClientInfo> {Item1=(uint)player.PlayerId,Item2 = player};
+            var pair = new Tuple<uint, ClientInfo> ((uint)player.PlayerId, player);
             _players.Add(pair);
         }
 
@@ -87,7 +88,7 @@ namespace LeagueSandbox.GameServer.Players
             return GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
         }
 
-        public List<Pair<uint, ClientInfo>> GetPlayers()
+        public List<Tuple<uint, ClientInfo>> GetPlayers()
         {
             return _players;
         }

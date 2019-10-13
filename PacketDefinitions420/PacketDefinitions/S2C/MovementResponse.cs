@@ -32,11 +32,11 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             }
         }
 
-        private Pair<bool, bool> IsAbsolute(Vector2 vec)
+        private Tuple<bool, bool> IsAbsolute(Vector2 vec)
         {
-            var ret = new Pair<bool, bool>();
-            ret.Item1 = vec.X < sbyte.MinValue || vec.X > sbyte.MaxValue;
-            ret.Item2 = vec.Y < sbyte.MinValue || vec.Y > sbyte.MaxValue;
+            var item1 = vec.X < sbyte.MinValue || vec.X > sbyte.MaxValue;
+            var item2 = vec.Y < sbyte.MinValue || vec.Y > sbyte.MaxValue;
+            var ret = new Tuple<bool, bool>(item1, item2);
 
             return ret;
         }
