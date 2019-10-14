@@ -31,22 +31,5 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
                 Write(Movement.EncodeWaypoints(navGrid, waypoints));
             }
         }
-
-        private Tuple<bool, bool> IsAbsolute(Vector2 vec)
-        {
-            var item1 = vec.X < sbyte.MinValue || vec.X > sbyte.MaxValue;
-            var item2 = vec.Y < sbyte.MinValue || vec.Y > sbyte.MaxValue;
-            var ret = new Tuple<bool, bool>(item1, item2);
-
-            return ret;
-        }
-
-        private static void SetBitmaskValue(ref byte[] mask, int pos, bool val)
-        {
-            if (val)
-                mask[pos / 8] |= (byte)(1 << pos % 8);
-            else
-                mask[pos / 8] &= (byte)~(1 << pos % 8);
-        }
     }
 }
