@@ -8,9 +8,9 @@ namespace GameServerCore.Content
     {
         byte MajorVersion { get; }
         short MinorVersion { get; }
-        Vector<float> MinGridPos { get; }
-        Vector<float> MaxGridPos { get; }
-        Vector<float> TranslationMaxGridPos { get; }
+        Vector3 MinGridPos { get; }
+        Vector3 MaxGridPos { get; }
+        Vector3 TranslationMaxGridPos { get; }
         float CellSize { get; }
         uint XCellCount { get; }
         uint YCellCount { get; }

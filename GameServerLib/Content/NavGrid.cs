@@ -9,6 +9,7 @@ using Priority_Queue;
 using LeagueSandbox.GameServer.GameObjects;
 using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -17,9 +18,9 @@ namespace LeagueSandbox.GameServer.Content
     {
         public byte MajorVersion { get; set; }
         public short MinorVersion { get; set; }
-        public Vector<float> MinGridPos { get; set; }
-        public Vector<float> MaxGridPos { get; set; }
-        public Vector<float> TranslationMaxGridPos { get; set; }
+        public Vector3 MinGridPos { get; set; }
+        public Vector3 MaxGridPos { get; set; }
+        public Vector3 TranslationMaxGridPos { get; set; }
         public float CellSize { get; set; }
         public uint XCellCount { get; set; }
         public uint YCellCount { get; set; }
@@ -39,10 +40,10 @@ namespace LeagueSandbox.GameServer.Content
         public List<Vector2> GetPath(Vector2 from, Vector2 to)
         {
             List<Vector2> returnList = new List<Vector2>() { from };
-            var vectorFrom = TranslateToNavGrid(new Vector<float> { X = from.X, Y = from.Y });
+            var vectorFrom = TranslateToNavGrid(new Vector2 { X = from.X, Y = from.Y });
             var cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
 
-            var vectorTo = TranslateToNavGrid(new Vector<float> { X = to.X, Y = to.Y });
+            var vectorTo = TranslateToNavGrid(new Vector2 { X = to.X, Y = to.Y });
             var goal = GetCell((short)vectorTo.X, (short)vectorTo.Y);
 
             if (cellFrom != null && goal != null)
@@ -99,7 +100,7 @@ namespace LeagueSandbox.GameServer.Content
                 pathList.RemoveAt(0); // removes the first point
                 foreach (var navGridCell in pathList.ToArray())
                 {
-                    var cellPosition = TranslateFromNavGrid(new Vector<float>() { X = navGridCell.X, Y = navGridCell.Y });
+                    var cellPosition = TranslateFromNavGrid(new Vector2 { X = navGridCell.X, Y = navGridCell.Y });
                     returnList.Add(new Vector2(cellPosition.X, cellPosition.Y));
                 }
                 return returnList;
@@ -148,7 +149,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             if (TranslationMaxGridPos == null)
             {
-                TranslationMaxGridPos = new Vector<float>
+                TranslationMaxGridPos = new Vector3
                 {
                     X = XCellCount / (MaxGridPos.X - MinGridPos.X),
                     Z = YCellCount / (MaxGridPos.Z - MinGridPos.Z)
@@ -156,22 +157,20 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        public Vector<float> TranslateToNavGrid(Vector<float> vector)
+        public Vector2 TranslateToNavGrid(Vector2 vector)
         {
             CreateTranslation();
-            vector.ForceSize(2);
 
             vector.X = (vector.X - MinGridPos.X) * TranslationMaxGridPos.X;
             vector.Y = (vector.Y - MinGridPos.Z) * TranslationMaxGridPos.Z;
             return vector;
         }
 
-        public Vector<float> TranslateFromNavGrid(Vector<float> vector)
+        public Vector2 TranslateFromNavGrid(Vector2 vector)
         {
             CreateTranslation();
-            vector.ForceSize(2);
 
-            var ret = new Vector<float>
+            var ret = new Vector2
             {
                 X = vector.X / TranslationMaxGridPos.X + MinGridPos.X,
                 Y = vector.Y / TranslationMaxGridPos.Z + MinGridPos.Z
@@ -180,11 +179,9 @@ namespace LeagueSandbox.GameServer.Content
             return ret;
         }
 
-        public Vector<float> Uncompress(Vector<float> vector)
+        public Vector2 Uncompress(Vector2 vector)
         {
-            vector.ForceSize(2);
-
-            var ret = new Vector<float>
+            var ret = new Vector2
             {
                 X = vector.X / MaxGridPos.X + MinGridPos.X,
                 Y = vector.Y / MaxGridPos.Z + MinGridPos.Z
@@ -246,18 +243,18 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        public Vector<int> GetCellVector(short x, short y)
+        public Vector2 GetCellVector(short x, short y)
         {
             // Changed to binary search
             var width = (int)XCellCount;
             var height = (int)YCellCount;
             var cellSize = (int)CellSize;
-            var index = new Vector<int>
+            var index = new Vector2
             {
                 X = width / 2,
                 Y = height / 2
             };
-            var step = new Vector<int>
+            var step = new Vector2
             {
                 X = width / 4,
                 Y = height / 4
@@ -265,7 +262,7 @@ namespace LeagueSandbox.GameServer.Content
 
             while (true)
             {
-                var i = index.X + index.Y * width;
+                var i = (int)(index.X + index.Y * width);
 
                 if (Cells[i].X < x)
                 {
@@ -296,23 +293,13 @@ namespace LeagueSandbox.GameServer.Content
 
                 if (step.X == 0 && step.Y == 0)
                 {
-                    return new Vector<int>
+                    return new Vector2
                     {
                         X = -1,
                         Y = -1
                     };
                 }
             }
-        }
-
-        public Vector<ushort> GetCellVectorShort(short x, short y)
-        {
-            var index = GetCellVector(x, y);
-            return new Vector<ushort>
-            {
-                X = (ushort)index.X,
-                Y = (ushort)index.Y
-            };
         }
 
         public int GetCellIndex(short x, short y)
@@ -426,7 +413,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsWalkable(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE);
@@ -434,7 +421,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsSeeThrough(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH);
@@ -442,7 +429,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsBrush(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GRASS);
@@ -465,7 +452,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool HasGlobalVision(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
 
             return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GLOBAL_VISION);
@@ -473,7 +460,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public float GetHeightAtLocation(Vector2 coords)
         {
-            var vector = TranslateToNavGrid(new Vector<float> { X = coords.X, Y = coords.Y });
+            var vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             var cell = GetCell((short)vector.X, (short)vector.Y);
             if (cell != null)
             {
@@ -652,9 +639,9 @@ namespace LeagueSandbox.GameServer.Content
             return _reader.BaseStream.Position;
         }
 
-        public Vector<float> ReadVector2()
+        public Vector2 ReadVector2()
         {
-            var vector = new Vector<float>
+            var vector = new Vector2
             {
                 X = _reader.ReadSingle(),
                 Y = _reader.ReadSingle()
@@ -663,9 +650,9 @@ namespace LeagueSandbox.GameServer.Content
             return vector;
         }
 
-        public Vector<float> ReadVector3()
+        public Vector3 ReadVector3()
         {
-            var vector = new Vector<float>
+            var vector = new Vector3
             {
                 X = _reader.ReadSingle(),
                 Y = _reader.ReadSingle(),
