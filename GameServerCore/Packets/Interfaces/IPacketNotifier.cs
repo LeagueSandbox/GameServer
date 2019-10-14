@@ -7,6 +7,7 @@ using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using System;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -49,7 +50,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team);
         void NotifyFXKill(IParticle particle);
         void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team);
-        void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Pair<uint, ClientInfo>> players);
+        void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Tuple<uint, ClientInfo>> players);
         void NotifyGameStart();
         void NotifyGameTimer(float gameTime);
         void NotifyGameTimer(int userId, float time);
@@ -66,9 +67,9 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyLeaveVision(IGameObject o, TeamId team);
         void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
         void NotifyLevelUp(IChampion c);
-        void NotifyLoadScreenInfo(int userId, List<Pair<uint, ClientInfo>> players);
-        void NotifyLoadScreenPlayerChampion(int userId, Pair<uint, ClientInfo> player);
-        void NotifyLoadScreenPlayerName(int userId, Pair<uint, ClientInfo> player);
+        void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players);
+        void NotifyLoadScreenPlayerChampion(int userId, Tuple<uint, ClientInfo> player);
+        void NotifyLoadScreenPlayerName(int userId, Tuple<uint, ClientInfo> player);
         void NotifyMinionSpawned(IMinion m, TeamId team);
         void NotifyMissileReplication(IProjectile p);
         void NotifyModelUpdate(IAttackableUnit obj);
@@ -103,7 +104,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyStaticObjectSpawn(int userId, uint netId);
         void NotifyTeamSurrenderVote(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
         void NotifyTeamSurrenderStatus(int userId, TeamId team, SurrenderReason reason, byte yesVotes, byte noVotes);
-        void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId);
+        void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId);
         void NotifyTeleport(IAttackableUnit u, Vector2 pos);
         void NotifyTint(TeamId team, bool enable, float speed, Color color);
         void NotifyTurretSpawn(int userId, ILaneTurret turret);

@@ -226,7 +226,6 @@
     <Compile Include="Packets\PacketDefinitions\Responses\PingResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\SetTeamResponse.cs" />
     <Compile Include="Packets\PacketDefinitions\Responses\SkillUpResponse.cs" />
-    <Compile Include="Pair.cs" />
     <Compile Include="Packets\Enums\Channel.cs" />
     <Compile Include="Packets\Enums\ChatType.cs" />
     <Compile Include="Packets\Enums\Emotions.cs" />

@@ -1,13 +1,12 @@
+using System;
 using System.Collections.Generic;
-using GameServerCore;
 using GameServerCore.NetInfo;
-using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SynchVersionResponse : BasePacket
     {
-        public SynchVersionResponse(List<Pair<uint, ClientInfo>> players, string version, string gameMode, int map)
+        public SynchVersionResponse(List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int map)
             : base(PacketCmd.PKT_S2C_SYNCH_VERSION)
         {
             Write((byte)1); // Bit field

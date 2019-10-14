@@ -97,52 +97,6 @@ namespace GameServerCore
         }
     }
 
-    public class PairList<TKey, TValue> : List<Pair<TKey, TValue>>
-    {
-        public void Add(TKey key, TValue value)
-        {
-            Add(new Pair<TKey, TValue>(key, value));
-        }
-        public bool ContainsKey(TKey key)
-        {
-            foreach (var v in this)
-            {
-                if (v.Item1.Equals(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public TValue this[TKey key]
-        {
-            get
-            {
-                foreach (var v in this)
-                {
-                    if (v.Item1.Equals(key))
-                    {
-                        return v.Item2;
-                    }
-                }
-
-                return default(TValue);
-            }
-            set
-            {
-                foreach (var v in this)
-                {
-                    if (v.Item1.Equals(key))
-                    {
-                        v.Item2 = value;
-                    }
-                }
-            }
-        }
-    }
-
     public static class CustomConvert
     {
         public static TeamId ToTeamId(this int i)

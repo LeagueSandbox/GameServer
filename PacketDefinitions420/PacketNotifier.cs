@@ -42,7 +42,7 @@ namespace PacketDefinitions420
             NotifyEnterLocalVisibilityClient(m);
         }
 
-        public void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Pair<uint, ClientInfo>> players)
+        public void NotifyGameEnd(Vector3 cameraPosition, INexus nexus, List<Tuple<uint, ClientInfo>> players)
         {
             var losingTeam = nexus.Team;
 
@@ -177,25 +177,25 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, answer, Channel.CHL_S2C, PacketFlags.None);
         }
 
-        public void NotifySynchVersion(int userId, List<Pair<uint, ClientInfo>> players, string version, string gameMode, int mapId)
+        public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
         {
             var response = new SynchVersionResponse(players, version, "CLASSIC", mapId);
             _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
-        public void NotifyLoadScreenInfo(int userId, List<Pair<uint,ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<Tuple<uint,ClientInfo>> players)
         {
             var screenInfo = new LoadScreenInfo(players);
             _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerName(int userId, Pair<uint,ClientInfo> player)
+        public void NotifyLoadScreenPlayerName(int userId, Tuple<uint,ClientInfo> player)
         {
             var loadName = new LoadScreenPlayerName(player);
             _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
         }
 
-        public void NotifyLoadScreenPlayerChampion(int userId, Pair<uint,ClientInfo> player)
+        public void NotifyLoadScreenPlayerChampion(int userId, Tuple<uint,ClientInfo> player)
         {
             var loadChampion = new LoadScreenPlayerChampion(player);
             _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
