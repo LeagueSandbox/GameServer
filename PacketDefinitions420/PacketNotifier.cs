@@ -42,12 +42,12 @@ namespace PacketDefinitions420
             p.SenderNetID = m.NetId;
             p.ObjectID = m.NetId;
             p.ObjectNodeID = 0x40; // TODO: check this
-            p.BarracksNetID = 0xFF000000 | Crc32.ComputeChecksum(m.BarracksName); // TODO: CRC32 of barracks name
+            p.BarracksNetID = 0xFF000000 | CRC32.ComputeChecksum(m.BarracksName); // TODO: CRC32 of barracks name
             p.WaveCount = 1;
             p.MinionType = (byte)m.MinionSpawnType;
-            p.DamageBonus = 0;
-            p.HealthBonus = 0;
-            p.MinionLevel = 2;
+            p.DamageBonus = 10;
+            p.HealthBonus = 7;
+            p.MinionLevel = 1;
 
             
             
@@ -55,7 +55,7 @@ namespace PacketDefinitions420
             md.Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints,_navGrid);
             md.TeleportNetID = m.NetId;
             md.HasTeleportID = false;
-            md.SyncID = 0x0006E4CF; //TODO: generate real movement SyncId
+            md.SyncID = 0x0008E4CF; //TODO: generate real movement SyncId
 
             var visionPacket = new OnEnterVisiblityClient();
             visionPacket.MovementData = md;

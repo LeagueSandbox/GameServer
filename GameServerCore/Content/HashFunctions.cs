@@ -39,53 +39,50 @@ namespace GameServerCore.Content
         }
 
 
-        // From http://sanity-free.org/12/crc32_implementation_in_csharp.html
-        public static class Crc32
+        // Adapted from http://sanity-free.org/12/crc32_implementation_in_csharp.html
+        public static class CRC32
         {
-            static readonly uint[] table;
+            static readonly uint[] _table = new uint[256];
 
-            public static uint ComputeChecksum(byte[] bytes)
+            static CRC32()
             {
-                uint crc = 0xffffffff;
-                for (int i = 0; i < bytes.Length; ++i)
+                uint entry;
+                for (uint i = 0; i < 256; i++)
                 {
-                    byte index = (byte)(((crc) & 0xff) ^ bytes[i]);
-                    crc = (uint)((crc >> 8) ^ table[index]);
+                    entry = i;
+                    for (var j = 0; j < 8; j++)
+                    {
+                        if ((entry & 1) == 1)
+                        {
+                            entry = (entry >> 1) ^ 0xedb88320;
+                        }
+                        else
+                        {
+                            entry >>= 1;
+                        }
+                    }
+                    _table[i] = entry;
                 }
-                return ~crc;
+            }
+
+            public static uint ComputeChecksum(string str, Encoding enc)
+            {
+                return ComputeChecksum(enc.GetBytes(str));
             }
 
             public static uint ComputeChecksum(string str)
             {
-                return ComputeChecksum(Encoding.ASCII.GetBytes(str));
+                return ComputeChecksum(str, Encoding.ASCII);
             }
 
-            public static byte[] ComputeChecksumBytes(byte[] bytes)
+            public static uint ComputeChecksum(byte[] bytes)
             {
-                return BitConverter.GetBytes(ComputeChecksum(bytes));
-            }
-
-            static Crc32()
-            {
-                uint poly = 0xedb88320;
-                table = new uint[256];
-                uint temp = 0;
-                for (uint i = 0; i < table.Length; ++i)
+                uint hash = 0xffffffff;
+                for (var i = 0; i < bytes.Length; i++)
                 {
-                    temp = i;
-                    for (int j = 8; j > 0; --j)
-                    {
-                        if ((temp & 1) == 1)
-                        {
-                            temp = (uint)((temp >> 1) ^ poly);
-                        }
-                        else
-                        {
-                            temp >>= 1;
-                        }
-                    }
-                    table[i] = temp;
+                    hash = (hash >> 8) ^ _table[bytes[i] ^ hash & 0xff];
                 }
+                return ~hash;
             }
         }
     }
