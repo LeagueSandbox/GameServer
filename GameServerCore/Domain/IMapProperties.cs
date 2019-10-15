@@ -19,7 +19,7 @@ namespace GameServerCore.Domain
 
         void Init();
 
-        Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition);
+        Tuple<TeamId, Vector2> GetMinionSpawnPosition(string barracksName);
 
         void SetMinionStats(ILaneMinion m);
 

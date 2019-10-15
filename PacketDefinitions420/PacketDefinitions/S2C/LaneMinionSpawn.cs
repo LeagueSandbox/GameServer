@@ -4,6 +4,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
+using static GameServerCore.Content.HashFunctions;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
@@ -16,7 +17,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0x03); // SpawnType - 3 = minion
             WriteNetId(m);
             WriteNetId(m);
-            Write((uint)m.SpawnPosition);
+            //Console.WriteLine(Crc32.ComputeChecksum((m.BarracksName)).ToString("x"));
+            //Write();
             Write((byte)0xFF); // unk
             Write((byte)1); // wave number ?
 
