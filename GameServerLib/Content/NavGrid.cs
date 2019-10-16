@@ -145,22 +145,17 @@ namespace LeagueSandbox.GameServer.Content
             return path;
         }
 
-        public void CreateTranslation()
+        public void InitTranslation()
         {
-            if (TranslationMaxGridPos == null)
+            TranslationMaxGridPos = new Vector3
             {
-                TranslationMaxGridPos = new Vector3
-                {
-                    X = XCellCount / (MaxGridPos.X - MinGridPos.X),
-                    Z = YCellCount / (MaxGridPos.Z - MinGridPos.Z)
-                };
-            }
+                X = XCellCount / (MaxGridPos.X - MinGridPos.X),
+                Z = YCellCount / (MaxGridPos.Z - MinGridPos.Z)
+            };
         }
 
         public Vector2 TranslateToNavGrid(Vector2 vector)
         {
-            CreateTranslation();
-
             vector.X = (vector.X - MinGridPos.X) * TranslationMaxGridPos.X;
             vector.Y = (vector.Y - MinGridPos.Z) * TranslationMaxGridPos.Z;
             return vector;
@@ -168,8 +163,6 @@ namespace LeagueSandbox.GameServer.Content
 
         public Vector2 TranslateFromNavGrid(Vector2 vector)
         {
-            CreateTranslation();
-
             var ret = new Vector2
             {
                 X = vector.X / TranslationMaxGridPos.X + MinGridPos.X,
@@ -808,6 +801,8 @@ namespace LeagueSandbox.GameServer.Content
             grid.MapWidth = grid.MaxGridPos.X + grid.MinGridPos.X;
             grid.MapHeight = grid.MaxGridPos.Z + grid.MinGridPos.Z;
             grid.MiddleOfMap = new Vector2(grid.MapWidth / 2, grid.MapHeight / 2);
+
+            grid.InitTranslation(); // Initialize translation vector
             return grid;
         }
 
