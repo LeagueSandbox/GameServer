@@ -39,17 +39,14 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         //Takes about 300 milliseconds for a single script
         public bool Load(List<string> scriptLocations)
         {
-            var treeList = new List<SyntaxTree>();
+            var treeList = new SyntaxTree[scriptLocations.Count];
             Parallel.For(0, scriptLocations.Count, i =>
             {
                 using (var sr = new StreamReader(scriptLocations[i]))
                 {
                     // Read the stream to a string, and write the string to the console.
                     var syntaxTree = CSharpSyntaxTree.ParseText(sr.ReadToEnd(), null, scriptLocations[i]);
-                    lock (treeList)
-                    {
-                        treeList.Add(syntaxTree);
-                    }
+                    treeList[i] = syntaxTree;
                 }
             });
             var assemblyName = Path.GetRandomFileName();
