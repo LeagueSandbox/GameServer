@@ -29,7 +29,7 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 
 #### Automatically Launching from Visual Studio
 Click the debug button.
-> Auto run settings are located in Settings/GameServerSettings.json.
+> Autorun settings are located in Settings/GameServerSettings.json.
 
 #### Manually Launching from command line
 ```
@@ -39,4 +39,4 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 # License
 
 This repository is under the [AGPL-3.0](LICENSE) license.
-This essentially means that all changes that are made on top of this repository are required to be made public, regardless of where the code is being ran.
+This essentially means that all changes that are made on top of this repository are required to be made public, regardless of where the code is being run.
