@@ -11,11 +11,11 @@
     <AssemblyTitle>GameServerTests</AssemblyTitle>
     <Company>Hewlett-Packard Company</Company>
     <Product>GameServerTests</Product>
-    <Copyright>Copyright © Hewlett-Packard Company 2016</Copyright>
+    <Copyright>Copyright © LeagueSandbox 2016</Copyright>
     <AssemblyTitle>GameServerTests</AssemblyTitle>
     <Company>Hewlett-Packard Company</Company>
     <Product>GameServerTests</Product>
-    <Copyright>Copyright © Hewlett-Packard Company 2016</Copyright>
+    <Copyright>Copyright © LeagueSandbox 2016</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
   </PropertyGroup>
