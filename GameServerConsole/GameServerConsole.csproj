@@ -40,7 +40,7 @@
 		<_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
 		<_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
 		<_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-		<_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
+		<_ENetSharpLeagueSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
 		<_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
 		<_IsMac>false</_IsMac>
 		<_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
