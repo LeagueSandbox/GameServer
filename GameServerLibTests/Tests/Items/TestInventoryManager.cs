@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
     [TestClass]
     public class InventoryManagerTests
     {
-        String path = "../../../../Content/";
+        readonly String path = "../../../../Content/";
         [TestMethod]
         public void TestAddAndGetItem()
         {
