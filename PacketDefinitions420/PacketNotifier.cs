@@ -42,7 +42,7 @@ namespace PacketDefinitions420
             p.SenderNetID = m.NetId;
             p.ObjectID = m.NetId;
             p.ObjectNodeID = 0x40; // TODO: check this
-            p.BarracksNetID = 0xFF000000 | CRC32.ComputeChecksum(m.BarracksName); // TODO: CRC32 of barracks name
+            p.BarracksNetID = 0xFF000000 | Crc32.ComputeChecksum(m.BarracksName); // TODO: CRC32 of barracks name
             p.WaveCount = 1;
             p.MinionType = (byte)m.MinionSpawnType;
             p.DamageBonus = 10;
@@ -63,7 +63,6 @@ namespace PacketDefinitions420
             visionPacket.Packets.Add(p);
             visionPacket.SenderNetID = m.NetId;
 
-            //var ms = new LaneMinionSpawn(_navGrid, m);
             _packetHandlerManager.BroadcastPacketTeam(team, visionPacket.GetBytes(), Channel.CHL_S2C);
             NotifyEnterLocalVisibilityClient(m);
         }

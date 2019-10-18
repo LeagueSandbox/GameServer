@@ -40,11 +40,11 @@ namespace GameServerCore.Content
 
 
         // Adapted from http://sanity-free.org/12/crc32_implementation_in_csharp.html
-        public static class CRC32
+        public static class Crc32
         {
             static readonly uint[] _table = new uint[256];
 
-            static CRC32()
+            static Crc32()
             {
                 uint entry;
                 for (uint i = 0; i < 256; i++)
