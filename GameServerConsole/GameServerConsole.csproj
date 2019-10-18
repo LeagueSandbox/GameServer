@@ -20,7 +20,7 @@
     <AssemblyVersion>0.1.*</AssemblyVersion>
     <FileVersion>0.1.*</FileVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
+    <BuildDependsOn>$(BuildDependsOn)</BuildDependsOn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -34,24 +34,24 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
-    <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-    <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
-    <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-    <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-    <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
-    <_IsMac>false</_IsMac>
-    <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' != 'Unix'">
-    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
-    <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
-  </PropertyGroup>
-  <Target Name="AfterBuildMigrated">
+  <Target Name="PostBuild" AfterTargets="AfterBuild">
+	<PropertyGroup>
+		<_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
+		<_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
+		<_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
+		<_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
+		<_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
+		<_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
+		<_IsMac>false</_IsMac>
+		<_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)' != 'Unix'">
+		<_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)' == 'Unix'">
+		<_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
+		<_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
+	</PropertyGroup>
     <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
     <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
   </Target>
