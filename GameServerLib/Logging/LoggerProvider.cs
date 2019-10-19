@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Logging
@@ -7,7 +8,7 @@ namespace LeagueSandbox.GameServer.Logging
     {
         static LoggerProvider()
         {
-            log4net.Config.XmlConfigurator.Configure();
+            log4net.Config.XmlConfigurator.Configure(LogManager.CreateRepository(Guid.NewGuid().ToString()));
         }
 
         public static ILog GetLogger()

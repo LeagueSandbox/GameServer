@@ -1,103 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProjectGuid>{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>LeagueSandbox.GameServerConsole</RootNamespace>
-    <TargetFramework>net472</TargetFramework>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyTitle>GameServerApp</AssemblyTitle>
-    <Company>League Sandbox</Company>
-    <Product>GameServerApp</Product>
-    <Copyright>Copyright © League Sandbox 2016</Copyright>
-    <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.1.*</AssemblyVersion>
-    <FileVersion>0.1.*</FileVersion>
-    <AssemblyTitle>GameServerApp</AssemblyTitle>
-    <Company>League Sandbox</Company>
-    <Product>GameServerApp</Product>
-    <Copyright>Copyright © League Sandbox 2016</Copyright>
-    <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.1.*</AssemblyVersion>
-    <FileVersion>0.1.*</FileVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <BuildDependsOn>$(BuildDependsOn)</BuildDependsOn>
-    <StartupObject>LeagueSandbox.GameServerConsole.Program</StartupObject>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DebugType>full</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DebugType>pdbonly</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <Target Name="PostBuild" AfterTargets="AfterBuild">
-	<PropertyGroup>
-		<_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
-		<_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-		<_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
-		<_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-		<_ENetSharpLeagueSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-		<_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
-		<_IsMac>false</_IsMac>
-		<_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(OS)' != 'Unix'">
-		<_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(OS)' == 'Unix'">
-		<_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
-		<_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
-	</PropertyGroup>
-    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
-  </Target>
+
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="System.Console" Version="4.3.1" />
-    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.Globalization" Version="4.3.0" />
-    <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="System.Linq" Version="4.3.0" />
-    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-    <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.6.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Settings\GameInfo.json.template" />
-    <None Include="Settings\GameServerSettings.json.template" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\GameServerLib\GameServerLib.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="AfterBuild">
+	<PropertyGroup>
+	  <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings\.</_SettingsSourceDirectory>
+	  <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
+	  <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
+	  <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
+	  <_ENetSharpLeagueSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
+	  <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
+	  <_IsMac>false</_IsMac>
+	  <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)' != 'Unix'">
+	  <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)' == 'Unix'">
+	  <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
+	  <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
+	</PropertyGroup>
+    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
+  </Target>
+
 </Project>

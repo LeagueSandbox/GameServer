@@ -1,70 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProjectGuid>{56E885A9-FC37-4ABB-B9CC-822DAC13CC67}</ProjectGuid>
-    <RootNamespace>LeagueSandbox.GameServerTests</RootNamespace>
-    <TargetFramework>net472</TargetFramework>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <AssemblyTitle>GameServerTests</AssemblyTitle>
-    <Company>Hewlett-Packard Company</Company>
-    <Product>GameServerTests</Product>
-    <Copyright>Copyright © LeagueSandbox 2016</Copyright>
-    <AssemblyTitle>GameServerTests</AssemblyTitle>
-    <Company>Hewlett-Packard Company</Company>
-    <Product>GameServerTests</Product>
-    <Copyright>Copyright © LeagueSandbox 2016</Copyright>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DebugType>full</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DebugType>pdbonly</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings</_SettingsSourceDirectory>
-    <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-    <_LibSourceDirectory>$(SolutionDir)lib</_LibSourceDirectory>
-    <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-    <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-    <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
-    <_IsMac>false</_IsMac>
-    <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' != 'Unix'">
-    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
-    <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
-  </PropertyGroup>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Target Name="AfterBuildMigrated">
-    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(_SettingsTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
-  </Target>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
     <ProjectReference Include="..\GameServerLib\GameServerLib.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Content\TestContentCollection.cs" />
-  </ItemGroup>
+
 </Project>

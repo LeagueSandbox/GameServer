@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using CommandLine;
+using GameServerConsole.Properties;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServerConsole.Logic;
-using LeagueSandbox.GameServerConsole.Properties;
 using LeagueSandbox.GameServerConsole.Utility;
 using log4net;
 

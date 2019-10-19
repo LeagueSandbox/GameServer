@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Force.Crc32;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
@@ -25,7 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
         {
-            ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
+            ParentNetId = Force.Crc32.Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory();

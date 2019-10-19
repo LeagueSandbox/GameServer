@@ -1,32 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProjectGuid>{0B60B297-306B-4317-866A-6DD70A113074}</ProjectGuid>
-    <TargetFramework>net472</TargetFramework>
-    <AssemblyTitle>PacketDefinitions420</AssemblyTitle>
-    <Product>PacketDefinitions420</Product>
-    <Copyright>Copyright ©  2018</Copyright>
-    <AssemblyTitle>PacketDefinitions420</AssemblyTitle>
-    <Product>PacketDefinitions420</Product>
-    <Copyright>Copyright ©  2018</Copyright>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
-    <PackageReference Include="LeaguePackets420" Version="0.0.2" />
+    <PackageReference Include="ENetSharpLeague" Version="1.1.0" />
+	<PackageReference Include="LeaguePackets420" Version="0.0.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
   </ItemGroup>
+
 </Project>

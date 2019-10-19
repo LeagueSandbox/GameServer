@@ -1,62 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A65E641D-9B7F-418B-90F3-9A1527E9CFE7}</ProjectGuid>
-    <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>LeagueSandbox_Scripts</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <AssemblyTitle>LeagueSandbox-Scripts</AssemblyTitle>
-    <Company>League Sandbox</Company>
-    <Product>LeagueSandbox-Scripts</Product>
-    <Copyright>Copyright @ League Sandbox 2016</Copyright>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
-    <FileVersion>0.0.1</FileVersion>
-    <AssemblyTitle>LeagueSandbox-Scripts</AssemblyTitle>
-    <Company>League Sandbox</Company>
-    <Product>LeagueSandbox-Scripts</Product>
-    <Copyright>Copyright @ League Sandbox 2016</Copyright>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
-    <FileVersion>0.0.1</FileVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>LeagueSandbox_Scripts</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />-->
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data.DataSetExtensions" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packageInfo.json" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\GameServerCore\GameServerCore.csproj" />
     <ProjectReference Include="..\..\GameServerLib\GameServerLib.csproj" />
   </ItemGroup>
+
 </Project>
