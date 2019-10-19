@@ -21,6 +21,7 @@
     <FileVersion>0.1.*</FileVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <BuildDependsOn>$(BuildDependsOn)</BuildDependsOn>
+    <StartupObject>LeagueSandbox.GameServerConsole.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>bin\$(Configuration)\</OutputPath>
