@@ -894,7 +894,7 @@ namespace PacketDefinitions420
             var md = new MovementDataStop();
             md.Position = minion.GetPosition();
             md.Forward = new Vector2(0, 1);
-            md.SyncID = 0x0006E4CF; //TODO: generate real movement SyncId
+            md.SyncID = (int)minion.SyncId;
             visionPacket.MovementData = md;
             visionPacket.Packets.Add(spawnPacket);
             visionPacket.SenderNetID = minion.NetId;
@@ -954,7 +954,7 @@ namespace PacketDefinitions420
             {
                 Position = u.GetPosition(),
                 Forward = new Vector2(0, 1),
-                SyncID = 0x0006E4CF //TODO: generate real movement SyncId
+                SyncID = (int)u.SyncId
             };
             enterVis.MovementData = md;
             enterVis.SenderNetID = u.NetId;
