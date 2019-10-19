@@ -11,11 +11,11 @@ build:
   verbosity: minimal
 
 test_script:
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerAppTests\bin\Debug\GameServerAppTests.dll" -filter:"+[GameServerApp]*  -[GameServerApp]GameServerApp.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerApp_coverage.xml
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
+  - .\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerConsoleTests\bin\Debug\GameServerConsoleTests.dll" -filter:"+[GameServerConsole]*  -[GameServerConsole]GameServerConsole.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerConsole_coverage.xml
+  - .\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
 
 after_test:
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
-  - codecov -f "GameServerApp_coverage.xml"
+  - codecov -f "GameServerConsole_coverage.xml"
   - codecov -f "GameServerLib_coverage.xml"
