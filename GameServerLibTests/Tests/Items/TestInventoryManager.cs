@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
     [TestClass]
     public class InventoryManagerTests
     {
-        readonly String path = "../../../../Content/";
+        readonly String path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)+"/../../../../Content/";
         [TestMethod]
         public void TestAddAndGetItem()
         {
