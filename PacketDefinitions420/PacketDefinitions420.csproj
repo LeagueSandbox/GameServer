@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{0B60B297-306B-4317-866A-6DD70A113074}</ProjectGuid>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyTitle>PacketDefinitions420</AssemblyTitle>
     <Product>PacketDefinitions420</Product>
     <Copyright>Copyright ©  2018</Copyright>

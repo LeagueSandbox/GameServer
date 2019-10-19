@@ -3,7 +3,7 @@
     <ProjectGuid>{9CE7FFAA-C3AE-4688-930E-3C71A0CC2F7E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>LeagueSandbox.GameServerConsole</RootNamespace>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>GameServerApp</AssemblyTitle>
     <Company>League Sandbox</Company>

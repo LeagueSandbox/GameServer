@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{CB004023-B938-4EC6-B036-29EE2F55CFA4}</ProjectGuid>
     <RootNamespace>LeagueSandbox.GameServer</RootNamespace>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyTitle>LeagueSandbox.GameServer</AssemblyTitle>
     <Product>LeagueSandbox.GameServer</Product>
     <Copyright>Copyright ©  2015</Copyright>

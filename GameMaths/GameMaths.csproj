@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{12F14E81-7609-43D9-9477-83A0D3DE4BBC}</ProjectGuid>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyTitle>GameMaths</AssemblyTitle>
     <Product>GameMaths</Product>
     <Copyright>Copyright ©  2018</Copyright>

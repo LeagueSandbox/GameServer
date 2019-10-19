@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{DA3DE633-D75B-40B0-8833-099ABFBF43A2}</ProjectGuid>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyTitle>GameServerCore</AssemblyTitle>
     <Product>GameServerCore</Product>
     <Copyright>Copyright ©  2018</Copyright>

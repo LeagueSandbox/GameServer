@@ -4,7 +4,7 @@
     <ProjectGuid>{A65E641D-9B7F-418B-90F3-9A1527E9CFE7}</ProjectGuid>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>LeagueSandbox_Scripts</AssemblyName>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
