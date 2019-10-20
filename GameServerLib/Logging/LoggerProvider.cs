@@ -9,7 +9,6 @@ namespace LeagueSandbox.GameServer.Logging
 {
     public static class LoggerProvider
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(Game));
         static LoggerProvider()
         {
             string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App.config");
@@ -21,7 +20,7 @@ namespace LeagueSandbox.GameServer.Logging
         public static ILog GetLogger()
         {
             var caller = new StackTrace().GetFrame(1).GetMethod().DeclaringType;
-            return LogManager.GetLogger(caller); ;
+            return LogManager.GetLogger(caller);
         }
     }
 }
