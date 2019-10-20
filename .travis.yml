@@ -1,9 +1,8 @@
 sudo: true
 language: csharp
 solution: GameServer.sln
-dist: trusty
 mono: none
-dotnet: 100
+dotnet: 3.0
 
 install:
     - dotnet restore
