@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Logging
@@ -8,7 +10,10 @@ namespace LeagueSandbox.GameServer.Logging
     {
         static LoggerProvider()
         {
-            log4net.Config.XmlConfigurator.Configure(LogManager.CreateRepository(Guid.NewGuid().ToString()));
+            string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App.config");
+            FileInfo finfo = new FileInfo(logFilePath);
+            var logRepository = LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+            log4net.Config.XmlConfigurator.ConfigureAndWatch(logRepository, finfo);
         }
 
         public static ILog GetLogger()
