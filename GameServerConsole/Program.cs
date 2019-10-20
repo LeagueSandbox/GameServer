@@ -14,11 +14,10 @@ namespace LeagueSandbox.GameServerConsole
 {
     internal class Program
     {
-        private static ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         private static void Main(string[] args)
         {
-            _logger = LoggerProvider.GetLogger();
 
             var parsedArgs = ArgsOptions.Parse(args);
             parsedArgs.GameInfoJson = LoadConfig(
