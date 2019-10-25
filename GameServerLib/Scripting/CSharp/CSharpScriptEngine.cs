@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         private readonly ILog _logger;
         private List<Assembly> _scriptAssembly = new List<Assembly>();
+        private Dictionary<string, Type> types = new Dictionary<string, Type>();
 
         public CSharpScriptEngine()
         {
@@ -76,8 +77,12 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                     if (result.Success)
                     {
                         ms.Seek(0, SeekOrigin.Begin);
-                        _scriptAssembly.Add(Assembly.Load(ms.ToArray()));
-                        return errored;
+                        var assembly = Assembly.Load(ms.ToArray());
+                        _scriptAssembly.Add(assembly);
+                        foreach (var type in assembly.GetTypes())
+                        {
+                            types.Add(type.FullName, type);
+                        }
                     }
 
                     errored |= true;
@@ -117,15 +122,10 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 return default(T);
             }
 
-            foreach (var scriptAssembly in _scriptAssembly)
+            var fullClassName = scriptNamespace + "." + scriptClass;
+            if (types.ContainsKey(fullClassName))
             {
-                var classType = scriptAssembly.GetType(scriptNamespace + "." + scriptClass, false);
-
-                if (classType == null)
-                {
-                    continue;
-                }
-
+                Type classType = (Type)types[fullClassName];
                 var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
 
                 if (desiredFunction != null)
@@ -145,16 +145,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             }
 
             scriptClass = scriptClass.Replace(" ", "_");
+            var fullClassName = scriptNamespace + "." + scriptClass;
 
-            foreach (var scriptAssembly in _scriptAssembly)
+            if (types.ContainsKey(fullClassName))
             {
-                var classType = scriptAssembly.GetType(scriptNamespace + "." + scriptClass);
-
-                if (classType == null)
-                {
-                    continue;
-                }
-
+                Type classType = (Type)types[fullClassName];
                 return (T)Activator.CreateInstance(classType);
             }
 
