@@ -247,8 +247,7 @@ namespace PacketDefinitions420
         }
         public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
         {
-            var data = new byte[packet.Length];
-            Marshal.Copy(packet.Data, data, 0, data.Length);
+            var data = packet.GetBytes();
 
             // if channel id is HANDSHAKE we should initialize blowfish key and return
             if(channelId == Channel.CHL_HANDSHAKE)
