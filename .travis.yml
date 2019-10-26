@@ -8,6 +8,5 @@ install:
     - dotnet restore
 script:
     - dotnet build
-    - dotnet test
 notifications:
     email: false
