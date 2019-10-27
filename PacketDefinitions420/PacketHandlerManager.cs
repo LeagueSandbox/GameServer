@@ -230,7 +230,7 @@ namespace PacketDefinitions420
             {
                 //TODO: improve dictionary reverse search
                 ulong playerId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
-                dynamic req = convertor(data);        
+                dynamic req = convertor(data);
                 // TODO: fix all to use ulong
                 _netReq.OnMessage((int)playerId, req);
                 return true;
@@ -286,6 +286,12 @@ namespace PacketDefinitions420
                 _playersConnected++;
 
             }
+
+            if (_peers.ContainsKey(request.PlayerID))
+            {
+                return false;
+            }
+
             _peers[request.PlayerID] = peer;
 
             bool result = true;
