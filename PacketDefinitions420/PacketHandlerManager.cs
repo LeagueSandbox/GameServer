@@ -286,8 +286,7 @@ namespace PacketDefinitions420
                 _playersConnected++;
 
             }
-
-            if (_peers.ContainsKey(request.PlayerID))
+            else
             {
                 return false;
             }
