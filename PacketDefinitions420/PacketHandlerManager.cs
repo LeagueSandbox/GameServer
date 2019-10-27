@@ -274,6 +274,7 @@ namespace PacketDefinitions420
             // TODO: keys for every player
             ulong playerID = (ulong)_blowfish.Decrypt(request.CheckId);
 
+            // Wrong Blowfish key, or the client is already connected
             if (request.PlayerID != playerID || _peers.ContainsKey(request.PlayerID))
             {
                 return false;
@@ -290,6 +291,7 @@ namespace PacketDefinitions420
 
             bool result = true;
 
+            // inform players about their player numbers
             foreach (var player in _peers.Keys.ToArray())
             {
                 var response = new KeyCheckResponse(player, _playerClient[player]);
@@ -297,6 +299,7 @@ namespace PacketDefinitions420
                 result = result && SendPacket((int)request.PlayerID, response.GetBytes(), Channel.CHL_HANDSHAKE);
             }
 
+            // only if all packets were sent successfully return true
             return result;
         }
     }
