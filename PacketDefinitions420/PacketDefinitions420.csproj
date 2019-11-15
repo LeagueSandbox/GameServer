@@ -7,11 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
-	<PackageReference Include="LeaguePackets420" Version="0.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
+    <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
   </ItemGroup>
 
 </Project>
