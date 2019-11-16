@@ -5,3 +5,4 @@
 [submodule "LeaguePackets"]
 	path = LeaguePackets
 	url = https://github.com/LeagueSandbox/LeaguePackets
+	branch = master
