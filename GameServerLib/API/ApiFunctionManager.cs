@@ -254,7 +254,8 @@ namespace LeagueSandbox.GameServer.API
                                   float leapHeight = 0.0f,
                                   float followTargetMaxDistance = 0.0f,
                                   float backDistance = 0.0f,
-                                  float travelTime = 0.0f
+                                  float travelTime = 0f,
+                                  Action completionHandler = null
                                   )
         {
             if (animation != null)
@@ -266,34 +267,27 @@ namespace LeagueSandbox.GameServer.API
             if (target.IsSimpleTarget)
             {
                 var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
-                var newTarget = new Target(newCoords);
-                unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
-                    unit,
-                    newTarget,
-                    dashSpeed,
-                    keepFacingLastDirection,
-                    leapHeight,
-                    followTargetMaxDistance,
-                    backDistance,
-                    travelTime
-                );
+                target = new Target(newCoords);
             }
-            else
-            {
-                unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
-                    unit,
-                    target,
-                    dashSpeed,
-                    keepFacingLastDirection,
-                    leapHeight,
-                    followTargetMaxDistance,
-                    backDistance,
-                    travelTime
-                );
-            }
+
+            unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
+            _game.PacketNotifier.NotifyDash(
+                unit,
+                target,
+                dashSpeed,
+                keepFacingLastDirection,
+                leapHeight,
+                followTargetMaxDistance,
+                backDistance,
+                travelTime
+            );
+
+
             unit.TargetUnit = null;
+            CreateTimer(target.GetDistanceTo(unit) / dashSpeed, () => {
+                TeleportTo(unit, target.X, target.Y);
+                completionHandler?.Invoke();
+            });
         }
 
         public static void DashToLocation(IObjAiBase unit,
@@ -305,7 +299,8 @@ namespace LeagueSandbox.GameServer.API
                                  float leapHeight = 0.0f,
                                  float followTargetMaxDistance = 0.0f,
                                  float backDistance = 0.0f,
-                                 float travelTime = 0.0f
+                                 float travelTime = 0.0f,
+                                 Action completionHandler = null
                                  )
         {
             DashToUnit(
@@ -317,7 +312,8 @@ namespace LeagueSandbox.GameServer.API
                 leapHeight,
                 followTargetMaxDistance,
                 backDistance,
-                travelTime
+                travelTime,
+                completionHandler
             );
         }
     }

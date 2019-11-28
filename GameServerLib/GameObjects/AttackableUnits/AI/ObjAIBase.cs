@@ -660,9 +660,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
         {
             // TODO: Take into account the rest of the arguments
-            IsDashing = true;
+            SetDashingState(true);
             Target = t;
-            Waypoints.Clear();
         }
 
         public void SetDashingState(bool state)

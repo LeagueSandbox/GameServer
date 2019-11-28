@@ -25,10 +25,10 @@ namespace Spells
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var initialCoords = new Vector2(owner.X, owner.Y);
+            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - initialCoords);
             var range = to * 1000;
-            var trueCoords = current + range;
+            var trueCoords = initialCoords + range;
             spell.AddProjectile("EzrealEssenceFluxMissile", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
         }
 
@@ -48,7 +48,8 @@ namespace Spells
             {
                 champion.AddBuffGameScript("EzrealWBuff", "EzrealWBuff", spell, buffTime, true);
             }
-            else
+
+            if(!champion.Team.Equals(owner.Team))
             {
                 var damage = 25 + (45 * spell.Level) + (ownerAbilityPowerTotal * 0.8f);
 
