@@ -481,7 +481,7 @@ namespace PacketDefinitions420
             mods.SenderNetID = unit.NetId;
             mods.Physical = IsPhysical;
             mods.Magical = IsMagical;
-            mods.Ammount = amount;
+            mods.Amount = amount;
             _packetHandlerManager.BroadcastPacket(mods.GetBytes(), Channel.CHL_S2C);
         }
 

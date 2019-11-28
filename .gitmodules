@@ -2,3 +2,7 @@
 	path = Content/LeagueSandbox-Default
 	url = https://github.com/LeagueSandbox/LeagueSandbox-Default.git
 	branch = indev
+[submodule "LeaguePackets"]
+	path = LeaguePackets
+	url = https://github.com/LeagueSandbox/LeaguePackets
+	branch = master
