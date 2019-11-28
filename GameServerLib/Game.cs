@@ -165,8 +165,19 @@ namespace LeagueSandbox.GameServer
         public bool LoadScripts()
         {
             var scriptLoadingResults = Config.ContentManager.LoadScripts();
+            ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_BLUE).ForEach(ReloadForChampion);
+            ObjectManager.GetAllChampionsFromTeam(TeamId.TEAM_PURPLE).ForEach(ReloadForChampion);
 
             return scriptLoadingResults;
+        }
+
+        private void ReloadForChampion(GameServerCore.Domain.GameObjects.IChampion champ)
+        {
+            champ.Spells.All((spell) =>
+            {
+                spell.Value.ReloadScript(); 
+                return true;
+            });
         }
 
         public void GameLoop()

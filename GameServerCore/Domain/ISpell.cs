@@ -37,5 +37,6 @@ namespace GameServerCore.Domain
         void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true);
         void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true);
         void SpellAnimation(string animName, IAttackableUnit target);
+        void ReloadScript();
     }
 }

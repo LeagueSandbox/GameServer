@@ -108,7 +108,7 @@ namespace LeagueSandbox.GameServer.Content
                 packageLoadingResults.Add(dataPackage.LoadScripts());
             }
 
-            return packageLoadingResults.Contains(false);
+            return !packageLoadingResults.Contains(false);
         }
 
         public MapSpawns GetMapSpawns(int mapId)

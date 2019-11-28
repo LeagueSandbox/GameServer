@@ -18,7 +18,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
     public class Spell : ISpell
     {
-
         public IChampion Owner { get; private set; }
         public byte Level { get; private set; }
         public byte Slot { get; set; }
@@ -408,6 +407,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public void LowerCooldown(float lowerValue)
         {
             SetCooldown(CurrentCooldown - lowerValue);
+        }
+
+        public void ReloadScript()
+        {
+            _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", SpellName) ?? new GameScriptEmpty();
         }
     }
 }

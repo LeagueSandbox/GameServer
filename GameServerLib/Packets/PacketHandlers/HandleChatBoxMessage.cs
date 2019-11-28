@@ -5,6 +5,7 @@ using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using System;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -53,9 +54,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         command.Execute(userId, true, msg);
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        _logger.Warn(command + " sent an exception.");
+                        _logger.Warn(command + " sent an exception. " +ex.Message);
                          _game.PacketNotifier.NotifyDebugMessage(userId, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;

@@ -9,13 +9,14 @@ using LeagueSandbox.GameServer.Logging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using GameMaths;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
-        private List<Assembly> _scriptAssembly = new List<Assembly>();
+        private Dictionary<string, Assembly> _scriptAssembly = new Dictionary<string, Assembly>();
         private readonly Dictionary<string, Type> types = new Dictionary<string, Type>();
 
         public CSharpScriptEngine()
@@ -34,11 +35,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 if (directories.Contains("bin") || directories.Contains("obj")) return false;
                 return true;
             });
-            return !Load(new List<string>(allfiles));
+            return Load(new List<string>(allfiles), folder);
         }
 
         //Takes about 300 milliseconds for a single script
-        public bool Load(List<string> scriptLocations)
+        public bool Load(List<string> scriptLocations, string folder)
         {
             var treeList = new SyntaxTree[scriptLocations.Count];
             Parallel.For(0, scriptLocations.Count, i =>
@@ -56,10 +57,14 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                 if (!a.IsDynamic && !a.Location.Equals(""))
                     references.Add(MetadataReference.CreateFromFile(a.Location));
+
             //Now add game reference
             references.Add(MetadataReference.CreateFromFile(typeof(Game).Assembly.Location));
+            references.Add(MetadataReference.CreateFromFile(typeof(MathExtension).Assembly.Location));
+
+
             var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                .WithOptimizationLevel(OptimizationLevel.Release).WithConcurrentBuild(true);
+                .WithOptimizationLevel(OptimizationLevel.Debug).WithConcurrentBuild(true);
 
             var compilation = CSharpCompilation.Create(
                 assemblyName,
@@ -69,34 +74,37 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             );
 
             var errored = false;
-            while (true)
-                using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream())
+            {
+                var result = compilation.Emit(ms);
+
+                if (!result.Success) return false;
+
+                ms.Seek(0, SeekOrigin.Begin);
+                var assembly = Assembly.Load(ms.ToArray());
+
+                if (_scriptAssembly.ContainsKey(folder)) _scriptAssembly.Remove(folder);
+                _scriptAssembly.Add(folder, assembly);
+
+                foreach (var type in assembly.GetTypes())
                 {
-                    var result = compilation.Emit(ms);
-
-                    if (result.Success)
-                    {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        var assembly = Assembly.Load(ms.ToArray());
-                        _scriptAssembly.Add(assembly);
-                        foreach (var type in assembly.GetTypes())
-                        {
-                            types.Add(type.FullName, type);
-                        }
-                    }
-
-                    errored |= true;
-                    var invalidSourceTrees = GetInvalidSourceTrees(result);
-
-                    if (invalidSourceTrees.Count == 0)
-                    {
-                        // Shouldnt happen
-                        _logger.Error("Script compilation failed");
-                        return true;
-                    }
-
-                    compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
+                    if (types.ContainsKey(type.FullName)) types.Remove(type.FullName);
+                    types.Add(type.FullName, type);
                 }
+
+                errored |= true;
+                var invalidSourceTrees = GetInvalidSourceTrees(result);
+
+                if (invalidSourceTrees.Count != 0)
+                {
+                    // Shouldnt happen
+                    _logger.Error("Script compilation failed");
+                    return false;
+                }
+
+                compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
+                return true;
+            }
         }
 
         private List<SyntaxTree> GetInvalidSourceTrees(EmitResult result)
@@ -174,7 +182,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Instance);
 
             var typeParameterType = typeof(T);
-            return (T) (object) Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
+            return (T)(object)Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
         }
     }
 }
