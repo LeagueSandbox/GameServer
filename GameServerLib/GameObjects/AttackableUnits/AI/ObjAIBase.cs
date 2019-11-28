@@ -660,7 +660,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override float GetMoveSpeed()
         {
-            return IsDashing ? this.DashSpeed : base.GetMoveSpeed();
+            return IsDashing ? DashSpeed : base.GetMoveSpeed();
         }
 
         public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
@@ -668,7 +668,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Take into account the rest of the arguments
             IsDashing = true;
             Target = t;
-            this.DashSpeed = dashSpeed;
+            DashSpeed = dashSpeed;
             Waypoints.Clear();
         }
 
