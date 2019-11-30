@@ -37,6 +37,8 @@ namespace Spells
 
         public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
+            if (!(target is IChampion)) return;
+
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 25 + spell.Level * 55 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
@@ -58,12 +60,12 @@ namespace Spells
 
         public void CooldownStarted(IChampion owner, ISpell spell)
         {
-            
+            //Executed once spell cooldown started
         }
 
         public void CooldownEnded(IChampion owner, ISpell spell)
         {
-            
+            //Executed when cooldown is over
         }
     }
 }

@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
-        private Dictionary<string, Assembly> _scriptAssembly = new Dictionary<string, Assembly>();
+        private readonly Dictionary<string, Assembly> _scriptAssembly = new Dictionary<string, Assembly>();
         private readonly Dictionary<string, Type> types = new Dictionary<string, Type>();
 
         public CSharpScriptEngine()

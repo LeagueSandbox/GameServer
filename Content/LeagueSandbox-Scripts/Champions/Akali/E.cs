@@ -54,6 +54,7 @@ namespace Spells
 
         public void CooldownEnded(IChampion owner, ISpell spell)
         {
+            //Executed when cooldown is over
         }
     }
 }

@@ -54,14 +54,11 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void CooldownStarted(IChampion owner, ISpell spell)
-        {
-            
-        }
+        public void CooldownStarted(IChampion owner, ISpell spell)        {            //Executed once spell cooldown started        }
 
         public void CooldownEnded(IChampion owner, ISpell spell)
         {
-            
+            //Executed when cooldown is over
         }
     }
 }
