@@ -5,6 +5,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameMaths;
 
 namespace Spells
 {
@@ -21,7 +22,6 @@ namespace Spells
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
             spell.SpellAnimation("SPELL1", owner);
-            //owner.
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
@@ -40,15 +40,13 @@ namespace Spells
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 25 + spell.Level * 55 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+
             if (!target.IsDead)
             {
                 AddParticleTarget(owner, "Blitzcrank_Grapplin_tar.troy", target, 1, "L_HAND");
-                var current = new Vector2(owner.X, owner.Y);
-                var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-                var range = to * 50;
-                var trueCoords = current + range;
-                DashToLocation((ObjAiBase) target, trueCoords.X, trueCoords.Y,
-                    spell.SpellData.MissileSpeed, true);
+
+                var trueCoords = owner.GetPosition().ExtendInDirection(target.GetPosition(), 50);
+                DashToLocation((ObjAiBase) target, trueCoords.X, trueCoords.Y, spell.SpellData.MissileSpeed, true);
             }
 
             projectile.SetToRemove();

@@ -16,22 +16,16 @@ namespace Spells
 {
     public class PowerFist : ISpellScript
     {
-        Particle ultiReady;
-
         public void OnActivate(IChampion owner)
         {
-            //ultiReady = AddParticleTarget(owner, "StaticField_ready.troy", owner, 1, "C_BUFFBONE_GLB_CHEST_LOC", 0x20);
         }
 
         public void OnDeactivate(IChampion owner)
         {
-            //RemoveParticle(ultiReady);
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
-            //spell.SpellAnimation("Spell3", owner);
-            //owner.
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)

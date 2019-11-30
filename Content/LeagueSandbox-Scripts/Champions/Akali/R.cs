@@ -27,10 +27,9 @@ namespace Spells
         {
             var ownerPos = new Vector2(owner.X, owner.Y);
             var targetPos = new Vector2(target.X, target.Y);
-
+            //TODO: Feels like some effect is missing
             var trueCoords = ownerPos.ExtendInDirection(targetPos, ownerPos.Distance(targetPos) - 80);
 
-            //TODO: Dash to the correct location (in front of the enemy IChampion) instead of far behind or inside them
             DashToLocation(owner, trueCoords.X, trueCoords.Y, 2200, false, "Spell4", completionHandler:() => ApplyEffects(owner, target, spell, null));
         }
 
