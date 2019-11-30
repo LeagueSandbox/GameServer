@@ -86,5 +86,9 @@ namespace GameMaths
         {
             return (offset == 0) ? new Vector3(-vector3.Y, vector3.X, vector3.Z) : new Vector3(vector3.Y, -vector3.X, vector3.Z);
         }
+        public static Vector2 ExtendInDirection(this Vector2 origin, Vector2 direction, float value)
+        {
+            return origin + Vector2.Normalize(direction - origin) * value;
+        }
     }
 }

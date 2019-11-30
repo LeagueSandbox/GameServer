@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class LuluR : IGameScript
+    public class LuluR : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -37,6 +37,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

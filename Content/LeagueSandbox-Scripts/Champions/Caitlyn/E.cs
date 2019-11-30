@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class CaitlynEntrapment : IGameScript
+    public class CaitlynEntrapment : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -52,6 +52,16 @@ namespace Spells
             AddParticleTarget(owner, "caitlyn_entrapment_tar.troy", target);
             AddParticleTarget(owner, "caitlyn_entrapment_slow.troy", target);
             projectile.SetToRemove();
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

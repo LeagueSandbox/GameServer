@@ -12,7 +12,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace Spells
 {
-    public class JackInTheBox : IGameScript
+    public class JackInTheBox : ISpellScript
     {
         public float petTimeAlive = 0.00f;
 
@@ -95,6 +95,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

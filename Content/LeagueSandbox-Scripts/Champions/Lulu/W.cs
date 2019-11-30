@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class LuluW : IGameScript
+    public class LuluW : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -85,6 +85,16 @@ namespace Spells
                     target.ChangeModel("LuluSnowman");
                     break;
             }
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

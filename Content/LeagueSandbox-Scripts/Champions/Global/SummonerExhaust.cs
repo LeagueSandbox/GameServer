@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class SummonerExhaust : IGameScript
+    public class SummonerExhaust : ISpellScript
     {
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
@@ -36,6 +36,16 @@ namespace Spells
 
         public void OnDeactivate(IChampion owner)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

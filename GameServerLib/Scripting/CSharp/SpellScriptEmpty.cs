@@ -1,26 +1,16 @@
-using LeagueSandbox.GameServer.API;
+﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
-using GameServerCore.Domain;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace Spells
+namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class EvelynnPassive : ISpellScript
+    class SpellScriptEmpty : ISpellScript
     {
         public void OnActivate(IChampion owner)
-        {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, owner, SelfWasDamaged);
-        }
-
-        private void SelfWasDamaged()
         {
         }
 
         public void OnDeactivate(IChampion owner)
         {
-            //Listeners are automatically removed when GameScripts deactivate
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
@@ -35,19 +25,14 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
-        {
-        }
-
         public void CooldownStarted(IChampion owner, ISpell spell)
         {
-            
+
         }
 
         public void CooldownEnded(IChampion owner, ISpell spell)
         {
-            
+
         }
     }
 }
-

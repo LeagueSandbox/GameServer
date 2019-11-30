@@ -24,9 +24,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float CastTime { get; private set; } = 0;
 
         public string SpellName { get; private set; }
-        public bool HasEmptyScript => _spellGameScript.GetType() == typeof(GameScriptEmpty);
+        public bool HasEmptyScript { get; private set; }
 
-        public SpellState State { get; protected set; } = SpellState.STATE_READY;
+        private SpellState state;
+        public SpellState State
+        {
+            get => state;
+            protected set
+            {
+                state = value;
+
+                if (value == SpellState.STATE_COOLDOWN)
+                    _spellGameScript.CooldownStarted(Owner, this);
+
+                if (value == SpellState.STATE_READY)
+                    _spellGameScript.CooldownEnded(Owner, this);
+            }
+        }
+
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
@@ -45,7 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         private uint _futureProjNetId;
 
-        private IGameScript _spellGameScript;
+        private ISpellScript _spellGameScript;
 
         public ISpellData SpellData { get; private set; }
 
@@ -59,8 +74,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
 
-            //Set the game script for the spell
-            _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", spellName) ?? new GameScriptEmpty();
+            ReloadScript();
+
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             _spellGameScript.OnActivate(owner);
         }
@@ -119,7 +134,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 FinishCasting();
             }
 
-            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId, SpellNetId);
+            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavGrid, this, new Vector2(x, y), new Vector2(x2, y2), _futureProjNetId, SpellNetId);
             return true;
         }
 
@@ -364,15 +379,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void LevelUp()
         {
-            if (Level <= 5)
-            {
-                ++Level;
-            }
-
-            if (Slot < 4)
-            {
-                Owner.Stats.ManaCost[Slot] = SpellData.ManaCost[Level];
-            }
+            SetLevel(++Level);
         }
 
         public void SetLevel(byte toLevel)
@@ -386,6 +393,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             {
                 Owner.Stats.ManaCost[Slot] = SpellData.ManaCost[Level];
             }
+
+            State = State;
         }
 
         public void SetCooldown(float newCd)
@@ -411,7 +420,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void ReloadScript()
         {
-            _spellGameScript = _scriptEngine.CreateObject<IGameScript>("Spells", SpellName) ?? new GameScriptEmpty();
+            _spellGameScript = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName);
+            if (_spellGameScript != null) return;
+
+            _spellGameScript = new SpellScriptEmpty();
+            HasEmptyScript = true;
         }
     }
 }

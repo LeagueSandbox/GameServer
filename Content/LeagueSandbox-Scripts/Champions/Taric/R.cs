@@ -9,7 +9,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace Spells
 {
-    public class TaricHammerSmash : IGameScript
+    public class TaricHammerSmash : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -83,6 +83,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class Overdrive : IGameScript
+    public class Overdrive : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -19,7 +19,7 @@ namespace Spells
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
             var p = AddParticleTarget(owner, "Overdrive_buf.troy", target, 1);
-            ((ObjAiBase) target).AddBuffGameScript("Overdrive", "Overdrive", spell, 8.0f);
+            ((ObjAiBase)target).AddBuffGameScript("Overdrive", "Overdrive", spell, 8.0f);
             CreateTimer(8.0f, () =>
             {
                 RemoveParticle(p);
@@ -36,6 +36,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

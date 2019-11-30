@@ -9,7 +9,7 @@ using GameMaths;
 
 namespace Spells
 {
-    public class AkaliShadowDance : IGameScript
+    public class AkaliShadowDance : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -27,10 +27,8 @@ namespace Spells
         {
             var ownerPos = new Vector2(owner.X, owner.Y);
             var targetPos = new Vector2(target.X, target.Y);
-            var to = Vector2.Normalize(targetPos - ownerPos);
-            var range = to * (ownerPos.Distance(targetPos) - 80);
 
-            var trueCoords = ownerPos + range;
+            var trueCoords = ownerPos.ExtendInDirection(targetPos, ownerPos.Distance(targetPos) - 80);
 
             //TODO: Dash to the correct location (in front of the enemy IChampion) instead of far behind or inside them
             DashToLocation(owner, trueCoords.X, trueCoords.Y, 2200, false, "Spell4", completionHandler:() => ApplyEffects(owner, target, spell, null));
@@ -45,8 +43,14 @@ namespace Spells
             AddParticleTarget(owner, "akali_shadowDance_tar.troy", target, 1, "");
         }
 
-        public void OnUpdate(double diff)
+        public void CooldownStarted(IChampion owner, ISpell spell)
         {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

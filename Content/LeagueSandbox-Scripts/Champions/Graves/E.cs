@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class GravesMove : IGameScript
+    public class GravesMove : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -42,6 +42,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

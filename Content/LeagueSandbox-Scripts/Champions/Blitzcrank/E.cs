@@ -1,42 +1,48 @@
-using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
+﻿using GameServerCore;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
-    public class EvelynnPassive : ISpellScript
+    public class PowerFist : ISpellScript
     {
+        Particle ultiReady;
+
         public void OnActivate(IChampion owner)
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, owner, SelfWasDamaged);
-        }
-
-        private void SelfWasDamaged()
-        {
+            //ultiReady = AddParticleTarget(owner, "StaticField_ready.troy", owner, 1, "C_BUFFBONE_GLB_CHEST_LOC", 0x20);
         }
 
         public void OnDeactivate(IChampion owner)
         {
-            //Listeners are automatically removed when GameScripts deactivate
+            //RemoveParticle(ultiReady);
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
+            //spell.SpellAnimation("Spell3", owner);
+            //owner.
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
+            AddBuffHudVisual("Powerfist", 5, 1, BuffType.COMBAT_ENCHANCER, owner, 5);
+            //owner.AddBuffGameScript("Powerfist", "Powerfist", spell, 8.0f);
         }
 
         public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
-        }
 
-        public void OnUpdate(double diff)
-        {
         }
 
         public void CooldownStarted(IChampion owner, ISpell spell)
@@ -50,4 +56,3 @@ namespace Spells
         }
     }
 }
-

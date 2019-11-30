@@ -9,7 +9,7 @@ using System;
 
 namespace Spells
 {
-    public class JavelinToss : IGameScript
+    public class JavelinToss : ISpellScript
     {
         public float finaldamage;
         public Vector2 castcoords;
@@ -64,6 +64,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

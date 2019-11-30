@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class SummonerMana : IGameScript
+    public class SummonerMana : ISpellScript
     {
         private const float PERCENT_MAX_MANA_HEAL = 0.40f;
 
@@ -51,6 +51,16 @@ namespace Spells
 
         public void OnDeactivate(IChampion owner)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

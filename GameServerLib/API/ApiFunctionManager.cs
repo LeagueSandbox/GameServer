@@ -109,6 +109,8 @@ namespace LeagueSandbox.GameServer.API
 
             CancelDash(unit);
             unit.TeleportTo(truePos.X, truePos.Y);
+
+            FaceDirection(unit, truePos, true, 0);
         }
 
         public static bool IsWalkable(float x, float y)

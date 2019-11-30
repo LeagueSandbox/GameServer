@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class RocketGrab : IGameScript
+    public class RocketGrab : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -21,15 +21,18 @@ namespace Spells
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
             spell.SpellAnimation("SPELL1", owner);
+            //owner.
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-            var range = to * 925;
+            var range = to * 1050;
             var trueCoords = current + range;
+
             spell.AddProjectile("RocketGrabMissile", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
+            FaceDirection(owner, trueCoords, false);
         }
 
         public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
@@ -53,6 +56,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }

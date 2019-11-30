@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class OlafAxeThrowCast : IGameScript
+    public class OlafAxeThrowCast : ISpellScript
     {
         public void OnActivate(IChampion owner)
         {
@@ -52,6 +52,16 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+        }
+
+        public void CooldownStarted(IChampion owner, ISpell spell)
+        {
+            
+        }
+
+        public void CooldownEnded(IChampion owner, ISpell spell)
+        {
+            
         }
     }
 }
