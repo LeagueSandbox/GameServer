@@ -22,6 +22,8 @@ using LeaguePackets.Game.Common;
 using LeaguePackets.Common;
 using System.Linq;
 using static GameServerCore.Content.HashFunctions;
+using System.Text;
+using Force.Crc32;
 
 namespace PacketDefinitions420
 {
@@ -42,7 +44,7 @@ namespace PacketDefinitions420
             p.SenderNetID = m.NetId;
             p.ObjectID = m.NetId;
             p.ObjectNodeID = 0x40; // TODO: check this
-            p.BarracksNetID = 0xFF000000 | Crc32.ComputeChecksum(m.BarracksName); // TODO: CRC32 of barracks name
+            p.BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));
             p.WaveCount = 1;
             p.MinionType = (byte)m.MinionSpawnType;
             p.DamageBonus = 10;
@@ -55,7 +57,7 @@ namespace PacketDefinitions420
             md.Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints,_navGrid);
             md.TeleportNetID = m.NetId;
             md.HasTeleportID = false;
-            md.SyncID = 0x0008E4CF; //TODO: generate real movement SyncId
+            md.SyncID = (int) m.SyncId;
 
             var visionPacket = new OnEnterVisiblityClient();
             visionPacket.MovementData = md;

@@ -37,53 +37,5 @@ namespace GameServerCore.Content
 
             return hash;
         }
-
-
-        // Adapted from http://sanity-free.org/12/crc32_implementation_in_csharp.html
-        public static class Crc32
-        {
-            static readonly uint[] _table = new uint[256];
-
-            static Crc32()
-            {
-                uint entry;
-                for (uint i = 0; i < 256; i++)
-                {
-                    entry = i;
-                    for (var j = 0; j < 8; j++)
-                    {
-                        if ((entry & 1) == 1)
-                        {
-                            entry = (entry >> 1) ^ 0xedb88320;
-                        }
-                        else
-                        {
-                            entry >>= 1;
-                        }
-                    }
-                    _table[i] = entry;
-                }
-            }
-
-            public static uint ComputeChecksum(string str, Encoding enc)
-            {
-                return ComputeChecksum(enc.GetBytes(str));
-            }
-
-            public static uint ComputeChecksum(string str)
-            {
-                return ComputeChecksum(str, Encoding.ASCII);
-            }
-
-            public static uint ComputeChecksum(byte[] bytes)
-            {
-                uint hash = 0xffffffff;
-                for (var i = 0; i < bytes.Length; i++)
-                {
-                    hash = (hash >> 8) ^ _table[bytes[i] ^ hash & 0xff];
-                }
-                return ~hash;
-            }
-        }
     }
 }
