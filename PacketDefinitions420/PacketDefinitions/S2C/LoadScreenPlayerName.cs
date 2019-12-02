@@ -1,11 +1,11 @@
-using GameServerCore;
 using GameServerCore.NetInfo;
+using System;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class LoadScreenPlayerName : Packet
     {
-        public LoadScreenPlayerName(Pair<uint, ClientInfo> player)
+        public LoadScreenPlayerName(Tuple<uint, ClientInfo> player)
             : base(PacketCmd.PKT_S2C_LOAD_NAME)
         {
             Write(player.Item2.PlayerId);

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
+using GameServerCore.Domain;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -7,21 +10,40 @@ using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData
+    public class PassiveData : IPassiveData
     {
         public string PassiveNameStr { get; set; } = "";
-        public string PassiveLuaName { get; set; } = "";
+        public string PassiveAbilityName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = { -1, -1, -1, -1, -1, -1 };
+
+        //TODO: Extend into handling several passives, when we decide on a format for that case.
+        public static string GetPassiveAbilityNameFromScriptFile(string champName, List<IPackage> packages)
+        {
+            foreach (var package in packages)
+            {
+                var path = $"{package.PackagePath}\\Champions\\{champName}\\Passive.cs";
+                if (File.Exists(path))
+                {
+                    var inputPassiveFile = File.ReadAllText(path);
+                    string pattern = @"class (?<passiveName>\w+) : IGameScript";
+                    RegexOptions options = RegexOptions.Multiline;
+                    var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
+
+                    return passiveName;
+                }
+            }
+            return "";
+        }
     }
 
-    public class CharData
+    public class CharData : ICharData
     {
-        private readonly Game _game;
+        private readonly ContentManager _contentManager;
         private readonly ILog _logger;
 
-        public CharData(Game game)
+        public CharData(ContentManager contentManager)
         {
-            _game = game;
+            _contentManager = contentManager;
             _logger = LoggerProvider.GetLogger();
         }
 
@@ -35,6 +57,7 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float AttackDelayOffsetPercent { get; private set; }
+        public float AttackDelayCastOffsetPercent { get; private set; }
         public float HpPerLevel { get; private set; } = 10.0f;
         public float MpPerLevel { get; private set; } = 10.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
@@ -61,7 +84,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public string[] ExtraSpells { get; private set; } = { "", "", "", "", "", "", "", "" };
 
-        public PassiveData[] Passives { get; private set; } =
+        public IPassiveData[] Passives { get; private set; } =
         {
             new PassiveData(),
             new PassiveData(),
@@ -79,16 +102,15 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             var file = new ContentFile();
+            List<IPackage> packages;
             try
             {
-                var path = _game.Config.ContentManager.GetUnitStatPath(name);
-                _logger.Debug($"Loading {name}'s Stats  from path: {Path.GetFullPath(path)}!");
-                var text = File.ReadAllText(Path.GetFullPath(path));
-                file = JsonConvert.DeserializeObject<ContentFile>(text);
+                file = (ContentFile)_contentManager.GetContentFileFromJson("Stats", name);
+                packages = new List<IPackage>(_contentManager.GetAllLoadedPackages());
             }
-            catch (ContentNotFoundException notfound)
+            catch (ContentNotFoundException exception)
             {
-                _logger.Warn($"Stats for {name} was not found: {notfound.Message}");
+                _logger.Warn(exception.Message);
                 return;
             }
 
@@ -102,6 +124,7 @@ namespace LeagueSandbox.GameServer.Content
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
             AttackDelayOffsetPercent = file.GetFloat("Data", "AttackDelayOffsetPercent", AttackDelayOffsetPercent);
+            AttackDelayCastOffsetPercent = file.GetFloat("Data", "AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
             MpPerLevel = file.GetFloat("Data", "MPPerLevel", MpPerLevel);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
@@ -110,7 +133,7 @@ namespace LeagueSandbox.GameServer.Content
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
-            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "Yes" : "No").Equals("yes");
+            IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
             PathfindingCollisionRadius =
                 file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
@@ -137,8 +160,7 @@ namespace LeagueSandbox.GameServer.Content
             for (var i = 0; i < 6; i++)
             {
                 Passives[i].PassiveNameStr = file.GetString("Data", $"Passive{i + 1}Name", Passives[i].PassiveNameStr);
-                Passives[i].PassiveLuaName =
-                    file.GetString("Data", $"Passive{i + 1}LuaName", Passives[i].PassiveLuaName);
+                Passives[i].PassiveAbilityName = PassiveData.GetPassiveAbilityNameFromScriptFile(name, packages);
                 Passives[i].PassiveLevels = file.GetMultiInt("Data", $"Passive{i + 1}Level", 6, -1);
             }
         }

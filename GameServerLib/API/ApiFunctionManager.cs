@@ -118,9 +118,53 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
         {
-            var buff = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
+            IBuff buff;
+
+            try
+            {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, onto);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
+                return;
+            }
+
             onto.AddBuff(buff);
+
             _game.PacketNotifier.NotifyAddBuff(buff);
+
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
+            CreateTimer(duration, () =>
+            {
+                RemoveBuff(buff);
+            });
+        }
+
+        public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
+        {
+            IBuff buff;
+
+            try
+            {
+                buff = new Buff(_game, buffName, duration, stacks, buffType, target);
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.Error(exception);
+                return;
+            }
+
+            target.AddBuff(buff);
+            target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
+
+            _game.PacketNotifier.NotifyAddBuff(buff);
+
+            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
+            CreateTimer(duration, () =>
+            {
+                RemoveBuff(buff);
+            });
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
@@ -129,24 +173,30 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
+        public static void RemoveBuff(IBuff buff)
+        {
+            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
+            buff.TargetUnit.RemoveBuff(buff);
+        }
+
         public static Particle AddParticle(IChampion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
             var p = new Particle(_game, champion, t, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            _game.PacketNotifier.NotifyFXCreateGroup(p);
             return p;
         }
 
         public static Particle AddParticleTarget(IChampion champion, string particle, ITarget target, float size = 1.0f, string bone = "")
         {
             var p = new Particle(_game, champion, target, particle, size, bone);
-            _game.PacketNotifier.NotifyParticleSpawn(p);
+            _game.PacketNotifier.NotifyFXCreateGroup(p);
             return p;
         }
 
         public static void RemoveParticle(Particle p)
         {
-            _game.PacketNotifier.NotifyParticleDestroy(p);
+            _game.PacketNotifier.NotifyFXKill(p);
         }
 
         public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)

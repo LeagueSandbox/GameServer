@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Collections.Generic;
 
 namespace GameServerCore.Domain
 {
@@ -14,7 +15,7 @@ namespace GameServerCore.Domain
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        uint FutureProjNetId { get; }
+        Dictionary<uint, IProjectile> Projectiles { get; }
         uint SpellNetId { get; }
         IAttackableUnit Target { get; }
         float X { get; }
@@ -30,6 +31,7 @@ namespace GameServerCore.Domain
         void Deactivate();
         void ApplyEffects(IAttackableUnit u, IProjectile p);
         void LevelUp();
+        void SetLevel(byte toLevel);
         void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false);
         void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false);
         void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true);

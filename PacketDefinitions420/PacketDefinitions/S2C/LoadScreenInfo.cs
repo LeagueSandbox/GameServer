@@ -1,15 +1,13 @@
 using System.Collections.Generic;
-using GameServerCore;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions;
+using System;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class LoadScreenInfo : Packet
     {
-        public LoadScreenInfo(List<Pair<uint, ClientInfo>> players)
+        public LoadScreenInfo(List<Tuple<uint, ClientInfo>> players)
             : base(PacketCmd.PKT_S2C_LOAD_SCREEN_INFO)
         {
             //Zero this complete buffer

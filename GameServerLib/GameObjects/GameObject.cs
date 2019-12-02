@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected bool _movementUpdated;
         protected bool _toRemove;
         public uint NetId { get; }
+        public uint SyncId { get; }
 
         public List<Vector2> Waypoints { get; private set; }
         public int CurWaypoint { get; private set; }
@@ -59,6 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 NetId = _networkIdManager.GetNewNetId(); // Let the base class (this one) asign a netId
             }
             Target = null;
+            SyncId = (uint)Environment.TickCount; // TODO: use movement manager to generate those
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
             Waypoints = new List<Vector2>();

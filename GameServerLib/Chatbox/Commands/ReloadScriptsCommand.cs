@@ -12,14 +12,8 @@
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            if (Game.LoadScripts())
-            {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts reloaded.");
-            }
-            else
-            {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Scripts failed to reload.");
-            }
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO,
+                Game.LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
         }
     }
 }

@@ -1,13 +1,12 @@
 sudo: true
 language: csharp
 solution: GameServer.sln
-dist: trusty
-mono: latest
+mono: none
+dotnet: 3.0
 
 install:
-    - wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-    - sudo mono nuget.exe restore GameServer.sln
+    - dotnet restore
 script:
-    - xbuild /p:Configuration=Debug GameServer.sln
+    - dotnet build
 notifications:
     email: false

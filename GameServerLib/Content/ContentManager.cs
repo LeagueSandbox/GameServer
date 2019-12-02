@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -9,84 +10,88 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class ContentManager
+    public class ContentManager : IPackage
     {
         private readonly ILog _logger;
-        private Game _game;
+        private readonly Game _game;
+        private readonly string _contentPath;
 
-        private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
-        private Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+        private readonly List<Package> _loadedPackages;
+        private readonly List<string> _dataPackageNames;
 
-        private string _contentPath;
+        public string PackageName { get; }
+        public string PackagePath { get; }
 
-        private static readonly string[] ContentTypes = {
-            "Champions",
-            "Items",
-            "Buffs",
-            "Maps",
-            "Spells",
-            "Stats"
-        };
-
-        private Dictionary<string, Dictionary<string, List<string>>> _content;
-        public string GameModeName { get; }
-
-        private ContentManager(Game game, string gameModeName, string contentPath)
+        private ContentManager(Game game, string dataPackageName, string contentPath)
         {
-            _contentPath = contentPath;
             _game = game;
+
+            _contentPath = contentPath;
+
+            _loadedPackages = new List<Package>();
+            _dataPackageNames = new List<string>{dataPackageName};
+
             _logger = LoggerProvider.GetLogger();
-
-            GameModeName = gameModeName;
-
-            _content = new Dictionary<string, Dictionary<string, List<string>>>();
-            foreach (var contentType in ContentTypes)
-            {
-                _content[contentType] = new Dictionary<string, List<string>>();
-            }
         }
 
-        private void AddContent(string packageName, string contentType, JToken contentSet)
+        public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
         {
-            var contents = new string[0];
-            if (contentSet is JArray)
-            {
-                contents = contentSet.ToObject<string[]>();
-            }
-            else if (contentSet.Value<string>().Equals("*"))
-            {
-                var contentPath = GetContentSetPath(packageName, contentType);
-                contents = GetFolderNamesFromPath(contentPath);
-            }
-            else
-            {
-                throw new Exception("Invalid content configuration");
-            }
+            var contentManager = new ContentManager(game, dataPackageName, contentPath);
 
-            foreach (var content in contents)
+            List<string> extraPackageList = new List<string>();
+
+            contentManager.GetDependenciesRecursively(extraPackageList, dataPackageName, contentPath);
+
+            foreach (var packageName in extraPackageList)
             {
-                _logger.Debug($"Mapped Content [{packageName}][{contentType}][{content}]");
-                if (!_content[contentType].ContainsKey(content))
+                if (!contentManager._dataPackageNames.Contains(packageName))
                 {
-                    _content[contentType][content] = new List<string>();
+                    contentManager._dataPackageNames.Add(packageName);
                 }
-
-                _content[contentType][content].Add(packageName);
             }
+
+            foreach (var dataPackage in contentManager._dataPackageNames)
+            {
+                contentManager.LoadPackage(dataPackage);
+
+                contentManager._logger.Debug($"Loaded package with name: {dataPackage}");
+            }
+
+            return contentManager;
         }
 
-        private string[] GetFolderNamesFromPath(string folderPath)
+        public Package GetLoadedPackage(string packageName)
         {
-            var contents = new List<string>();
-            if (Directory.Exists(folderPath))
+            foreach (var dataPackage in _loadedPackages)
             {
-                var contentDirectories = Directory.GetDirectories(folderPath);
-                foreach (var directory in contentDirectories)
+                if (dataPackage.PackageName.Equals(packageName))
                 {
-                    contents.Add(directory.Replace('\\', '/').Split('/').Last());
+                    return dataPackage;
                 }
             }
-            return contents.ToArray();
+
+            return null;
+        }
+
+        public List<Package> GetAllLoadedPackages()
+        {
+            return _loadedPackages;
+        }
+
+        public void LoadPackage(string packageName)
+        {
+            string packagePath = GetPackagePath(packageName);
+
+            Package dataPackage = new Package(packagePath, _game);
+
+            dataPackage.LoadPackage(packageName);
+
+            if (_loadedPackages.Contains(dataPackage))
+            {
+                return;
+            }
+
+            _loadedPackages.Add(dataPackage);
         }
 
         private string GetPackagePath(string packageName)
@@ -94,161 +99,140 @@ namespace LeagueSandbox.GameServer.Content
             return $"{_contentPath}/{packageName}";
         }
 
-        private string GetContentSetPath(string packageName, string contentType)
+        public bool LoadScripts()
         {
-            if (packageName.Equals("Self"))
+            List<bool> packageLoadingResults = new List<bool>();
+
+            foreach (var dataPackage in _loadedPackages)
             {
-                return $"{_contentPath}/GameMode/{GameModeName}/Data/{contentType}";
+                packageLoadingResults.Add(dataPackage.LoadScripts());
             }
 
-            return $"{GetPackagePath(packageName)}/{contentType}";
+            return packageLoadingResults.Contains(false);
         }
 
-        private string GetContentPath(string packageName, string contentType, string fileName)
+        public MapSpawns GetMapSpawns(int mapId)
         {
-            return $"{GetContentSetPath(packageName, contentType)}/{fileName}";
+            foreach (var dataPackage in _loadedPackages)
+            {
+                var toReturnMapSpawns = dataPackage.GetMapSpawns(mapId);
+
+                if (toReturnMapSpawns == null)
+                {
+                    continue;
+                }
+
+                return toReturnMapSpawns;
+            }
+
+            throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        private string GetContentPath(List<string> contentPackages, string contentType, string fileName)
+        public IContentFile GetContentFileFromJson(string contentType, string itemName)
         {
-            var path = "";
-            var depth = contentPackages.Count;
-            while (!File.Exists(path) && depth > 0)
+            foreach (var dataPackage in _loadedPackages)
             {
-                depth--;
-                path = GetContentPath(contentPackages[depth], contentType, fileName);
+                var toReturnContentFile = dataPackage.GetContentFileFromJson(contentType, itemName);
+
+                if (toReturnContentFile == null)
+                {
+                    continue;
+                }
+
+                return (ContentFile)toReturnContentFile;
             }
 
-            if (!File.Exists(path))
-            {
-                throw new ContentNotFoundException("Failed to load content [" + contentType + "][" + fileName + "]");
-            }
-
-            _logger.Debug($"Loaded content [{contentPackages[depth]}][{contentType}][{fileName}]");
-            return path;
+            throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
         }
 
-        public string GetMapDataPath(int mapId)
+        public INavGrid GetNavGrid(int mapId)
         {
-            var mapName = $"Map{mapId}";
-            var contentType = "Maps";
-
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
+            foreach (var dataPackage in _loadedPackages)
             {
-                throw new ContentNotFoundException($"Map{mapId} was not found in the files.");
+                INavGrid toReturnNavgrid = dataPackage.GetNavGrid(mapId);
+
+                if (toReturnNavgrid != null)
+                {
+                    return toReturnNavgrid;
+                }
             }
 
-            var contentPackages = _content[contentType][mapName];
-            var fileName = $"{mapName}/{mapName}.json";
-            return GetContentPath(contentPackages, contentType, fileName);
-        }
-
-        public string GetSpellScriptPath(string championName, string spellSlot)
-        {
-            var contentType = "Champions";
-
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(championName))
-            {
-                throw new ContentNotFoundException($"{championName}/{spellSlot}.lua was not found.");
-            }
-
-            var contentPackages = _content[contentType][championName];
-            var fileName = $"{championName}/{spellSlot}.lua";
-            return GetContentPath(contentPackages, contentType, fileName);
-        }
-
-        public string GetBuffScriptPath(string buffName)
-        {
-            var contentType = "Buffs";
-
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(buffName))
-            {
-                throw new ContentNotFoundException($"Buff {buffName} was not found.");
-            }
-
-            var contentPackages = _content[contentType][buffName];
-            var fileName = $"{buffName}/{buffName}.lua";
-            return GetContentPath(contentPackages, contentType, fileName);
-        }
-
-        public string GetUnitStatPath(string model)
-        {
-            var contentType = "Stats";
-
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(model))
-            {
-                throw new ContentNotFoundException($"Stat file for {model} was not found.");
-            }
-
-            var contentPackages = _content[contentType][model];
-            var fileName = $"{model}/{model}.json";
-            return GetContentPath(contentPackages, contentType, fileName);
-        }
-
-        public string GetSpellDataPath(string spellName)
-        {
-            var contentType = "Spells";
-
-            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(spellName))
-            {
-                throw new ContentNotFoundException($"Spell data for {spellName} was not found.");
-            }
-
-            var contentPackages = _content[contentType][spellName];
-            var fileName = $"{spellName}/{spellName}.json";
-
-            return GetContentPath(contentPackages, contentType, fileName);
+            throw new ContentNotFoundException($"No NavGrid for map with id {mapId} found in packages, skipping map load...");
         }
 
         public ISpellData GetSpellData(string spellName)
         {
-            if (_spellData.ContainsKey(spellName))
+            foreach (var dataPackage in _loadedPackages)
             {
-                return _spellData[spellName];
-            }
+                ISpellData toReturnSpellData = dataPackage.GetSpellData(spellName);
 
-            _spellData[spellName] = new SpellData(_game);
-            _spellData[spellName].Load(spellName);
-            return _spellData[spellName];
-        }
-
-        public CharData GetCharData(string charName)
-        {
-            if (_charData.ContainsKey(charName))
-            {
-                return _charData[charName];
-            }
-            _charData[charName] = new CharData(_game);
-            _charData[charName].Load(charName);
-            return _charData[charName];
-        }
-
-        public static ContentManager LoadGameMode(Game game, string gameModeName, string contentPath)
-        {
-            var contentManager = new ContentManager(game, gameModeName, contentPath);
-
-            var gameModeConfigurationPath = $"{contentPath}/GameMode/{gameModeName}/GameMode.json";
-            var gameModeConfiguration = JToken.Parse(File.ReadAllText(gameModeConfigurationPath));
-            var dataConfiguration = gameModeConfiguration.SelectToken("data");
-
-            foreach (JProperty dataPackage in dataConfiguration)
-            {
-                if (!ValidatePackageName(dataPackage.Name)) throw new Exception("Data packages must be namespaced!");
-
-                foreach (var contentType in ContentTypes)
+                if (toReturnSpellData != null)
                 {
-                    var contentSet = dataPackage.Value.SelectToken(contentType);
-
-                    if (contentSet == null)
-                    {
-                        continue;
-                    }
-
-                    contentManager.AddContent(dataPackage.Name, contentType, contentSet);
+                    return toReturnSpellData;
                 }
             }
 
-            return contentManager;
+            throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
+        }
+
+        public ICharData GetCharData(string characterName)
+        {
+            foreach (var dataPackage in _loadedPackages)
+            {
+                ICharData toReturnCharData = dataPackage.GetCharData(characterName);
+
+                if (toReturnCharData != null)
+                {
+                    return toReturnCharData;
+                }
+            }
+            
+            throw new ContentNotFoundException($"No Character found with name: {characterName}");
+        }
+
+        private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)
+        {
+            foreach(var dependency in GetDependenciesFromPackage(packageName, contentPath))
+            {
+                if (!resultList.Contains(dependency))
+                {
+                    resultList.Add(dependency);
+
+                    GetDependenciesRecursively(resultList, dependency, contentPath);
+                }
+            }
+        }
+
+        private List<string> GetDependenciesFromPackage(string packageName, string contentPath)
+        {
+            List<string> dependencyList = new List<string>();
+
+            var dataPackageConfigurationPath = $"{contentPath}/{packageName}/packageInfo.json";
+            JToken dataPackageConfiguration = null;
+
+            try
+            {
+                dataPackageConfiguration = JToken.Parse(File.ReadAllText(dataPackageConfigurationPath));
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.Debug($"{dataPackageConfigurationPath} not found, skipping...");
+                return new List<string>();
+            }
+
+            var dataPackageDependencies = dataPackageConfiguration.SelectToken("dependencies");
+
+            foreach (var dependencyToken in dataPackageDependencies)
+            {
+                var dependencyName = dependencyToken.Value<string>();
+
+                if (ValidatePackageName(dependencyName))
+                {
+                    dependencyList.Add(dependencyName);
+                }
+            }
+
+            return dependencyList;
         }
 
         private static bool ValidatePackageName(string packageName)
@@ -274,5 +258,6 @@ namespace LeagueSandbox.GameServer.Content
 
             return true;
         }
+
     }
 }

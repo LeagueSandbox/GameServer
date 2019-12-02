@@ -1,13 +1,13 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.NetInfo;
+﻿using GameServerCore.NetInfo;
+using System;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
     public class LoadScreenPlayerNameResponse : ICoreResponse
     {
         public int UserId { get; }
-        public Pair<uint, ClientInfo> Player { get; }
-        public LoadScreenPlayerNameResponse(int userId, Pair<uint, ClientInfo> player)
+        public Tuple<uint, ClientInfo> Player { get; }
+        public LoadScreenPlayerNameResponse(int userId, Tuple<uint, ClientInfo> player)
         {
             UserId = userId;
             Player = player;

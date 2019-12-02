@@ -48,6 +48,7 @@ namespace PacketDefinitions420
             _convertorTable = new Dictionary<Tuple<PacketCmd, Channel>, RequestConvertor>();
             InitializePacketConvertors();
         }
+
         internal void InitializePacketConvertors()
         {
             foreach(var m in typeof(PacketReader).GetMethods())
@@ -230,7 +231,7 @@ namespace PacketDefinitions420
             {
                 //TODO: improve dictionary reverse search
                 ulong playerId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
-                dynamic req = convertor(data);        
+                dynamic req = convertor(data);
                 // TODO: fix all to use ulong
                 _netReq.OnMessage((int)playerId, req);
                 return true;
@@ -239,16 +240,17 @@ namespace PacketDefinitions420
             PrintPacket(data, "Error: ");
             return false;
         }
+
         public bool HandleDisconnect(Peer peer)
         {
             ulong playerId = _peers.FirstOrDefault(x => x.Value == peer).Key;
             // TODO: fix all to use ulong
             return _game.HandleDisconnect((int)playerId);
         }
+
         public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
         {
-            var data = new byte[packet.Length];
-            Marshal.Copy(packet.Data, data, 0, data.Length);
+            var data = packet.GetBytes();
 
             // if channel id is HANDSHAKE we should initialize blowfish key and return
             if(channelId == Channel.CHL_HANDSHAKE)
@@ -264,31 +266,30 @@ namespace PacketDefinitions420
             }
             return HandlePacket(peer, data, channelId);
         }
+
         private bool HandleHandshake(Peer peer, byte[] data)
         {
             var request = PacketReader.ReadKeyCheckRequest(data);
             // TODO: keys for every player
             ulong playerID = (ulong)_blowfish.Decrypt(request.CheckId);
 
-            if (request.PlayerID != playerID)
+            // Wrong Blowfish key, or the client is already connected
+            if (request.PlayerID != playerID || _peers.ContainsKey(request.PlayerID))
             {
-                // wrong blowfish key
                 return false;
             }
-            // TODO: removed code that return if player connected, check if there is no problem
 
-            if (!_peers.ContainsKey(request.PlayerID))
-            {  
-                _playerClient[request.PlayerID] = (uint)_playersConnected;
-                _playerManager.GetPeerInfo(request.PlayerID).ClientId = _playerClient[request.PlayerID];
-                _playerManager.GetPeerInfo(request.PlayerID).IsStartedClient = true;
-                Debug.WriteLine("Connected player No "+ request.PlayerID);
-                _playersConnected++;
+            _playerClient[request.PlayerID] = (uint)_playersConnected;
+            _playerManager.GetPeerInfo(request.PlayerID).ClientId = _playerClient[request.PlayerID];
+            _playerManager.GetPeerInfo(request.PlayerID).IsStartedClient = true;
+            _playersConnected++;
 
-            }
+            Debug.WriteLine("Connected player No " + request.PlayerID);      
+
             _peers[request.PlayerID] = peer;
 
             bool result = true;
+
             // inform players about their player numbers
             foreach (var player in _peers.Keys.ToArray())
             {
@@ -296,6 +297,7 @@ namespace PacketDefinitions420
                 // TODO: fix casting
                 result = result && SendPacket((int)request.PlayerID, response.GetBytes(), Channel.CHL_HANDSHAKE);
             }
+
             // only if all packets were sent successfully return true
             return result;
         }

@@ -32,5 +32,7 @@ namespace GameServerCore.Domain
         float GetExperienceFor(IAttackableUnit u);
 
         Vector3 GetEndGameCameraPosition(TeamId team);
+
+        void HandleSurrender(int userId, IChampion who, bool vote);
     }
 }

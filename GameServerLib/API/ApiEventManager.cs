@@ -68,12 +68,16 @@ namespace LeagueSandbox.GameServer.API
         {
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
+            OnChampionMove.RemoveListener(owner);
         }
 
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
+        public static EventOnChampionMove OnChampionMove = new EventOnChampionMove();
         public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
+        public static EventOnUnitCrowdControlled OnUnitCrowdControlled = new EventOnUnitCrowdControlled();
+        public static EventOnChampionCrowdControlled OnChampionCrowdControlled = new EventOnChampionCrowdControlled();
     }
 
     public class EventOnUpdate
@@ -154,6 +158,37 @@ namespace LeagueSandbox.GameServer.API
         }
     }
 
+    public class EventOnChampionMove
+    {
+        private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
+        public void AddListener(object owner, IChampion champion, Action callback)
+        {
+            var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IChampion champion)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IChampion champion)
+        {
+            _listeners.ForEach(listener =>
+            {
+                if (listener.Item2 == champion)
+                {
+                    listener.Item3();
+                }
+            });
+        }
+    }
+
     public class EventOnHitUnit
     {
         private List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>>> listeners = new List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>>>();
@@ -183,6 +218,64 @@ namespace LeagueSandbox.GameServer.API
         public void AddListener(IChampion owner, Action<IAttackableUnit, bool> onAutoAttack)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class EventOnUnitCrowdControlled
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action>> _listeners = new List<Tuple<object, IAttackableUnit, Action>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action callback)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action>(owner, unit, callback);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IAttackableUnit unit)
+        {
+            _listeners.ForEach(listener => listener.Item3());
+            if (unit is IChampion champion)
+                ApiEventManager.OnChampionCrowdControlled.Publish(champion);
+        }
+    }
+
+    public class EventOnChampionCrowdControlled
+    {
+        private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
+        public void AddListener(object owner, IChampion champion, Action callback)
+        {
+            var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IChampion champion)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IChampion champion)
+        {
+            _listeners.ForEach(listener =>
+            {
+                if (listener.Item2 == champion)
+                {
+                    listener.Item3();
+                }
+            });
         }
     }
 }

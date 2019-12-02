@@ -1,127 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{56E885A9-FC37-4ABB-B9CC-822DAC13CC67}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeagueSandbox.GameServerTests</RootNamespace>
-    <AssemblyName>GameServerLibTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
-  <Choose>
-    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-      </ItemGroup>
-    </When>
-    <Otherwise />
-  </Choose>
+
   <ItemGroup>
-    <Compile Include="Tests\Items\TestInventoryManager.cs" />
-    <Compile Include="Tests\API\ApiFunctionManagerTests.cs" />
-    <Compile Include="Tests\Chatbox\ChatboxManagerTests.cs" />
-    <Compile Include="Tests\Chatbox\TestCommand.cs" />
-    <Compile Include="Tests\TestGameplayElements.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\TestStat.cs" />
-    <Compile Include="Tests\TestStats.cs" />
-    <Compile Include="Tests\TestStatModificator.cs" />
+    <ProjectReference Include="..\GameServerLib\GameServerLib.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj">
-      <Project>{da3de633-d75b-40b0-8833-099abfbf43a2}</Project>
-      <Name>GameServerCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameServerLib\GameServerLib.csproj">
-      <Project>{cb004023-b938-4ec6-b036-29ee2f55cfa4}</Project>
-      <Name>GameServerLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Framework\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <_SettingsSourceDirectory>$(SolutionDir)GameServerConsole\Settings</_SettingsSourceDirectory>
-    <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
-    <_LibSourceDirectory>$(SolutionDir)lib</_LibSourceDirectory>
-    <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-    <_ENetSharpLeagueSourceDirectory>$(SolutionDir)packages\ENetSharpLeague.1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-    <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
-    <_IsMac>false</_IsMac>
-    <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' != 'Unix'">
-    <_CopyCommand>xcopy /s /y /q /d</_CopyCommand>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' == 'Unix'">
-    <_CopyCommand Condition="'$(_IsMac)' == 'false'">cp -r -u</_CopyCommand>
-    <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
-  </PropertyGroup>
-  <Target Name="AfterBuild">
-    <Exec Command="$(_CopyCommand) &quot;$(_SettingsSourceDirectory)&quot; &quot;$(_SettingsTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
-  </Target>
+
 </Project>

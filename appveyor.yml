@@ -4,18 +4,21 @@ before_build:
 install:
   - git submodule update --init --recursive
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 build:
   project: GameServer.sln
   verbosity: minimal
 
 test_script:
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerAppTests\bin\Debug\GameServerAppTests.dll" -filter:"+[GameServerApp]*  -[GameServerApp]GameServerApp.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerApp_coverage.xml
-  - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
+  - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
+  - ps: Expand-Archive opencover.zip ./opencover-bin/
+  - dotnet test
+  - .\opencover-bin\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerConsoleTests\bin\Debug\netcoreapp3.0\GameServerConsoleTests.dll" -filter:"+[GameServerConsole]*  -[GameServerConsole]GameServerConsole.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerConsole_coverage.xml
+  - .\opencover-bin\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\netcoreapp3.0\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
 
 after_test:
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
-  - codecov -f "GameServerApp_coverage.xml"
+  - codecov -f "GameServerConsole_coverage.xml"
   - codecov -f "GameServerLib_coverage.xml"

@@ -10,8 +10,9 @@ namespace GameServerCore.Domain.GameObjects
         bool IsAttacking { get; set; } 
         bool IsDashing { get; }
         bool HasMadeInitialAttack { get; set; }
+        IInventoryManager Inventory { get; }
 
-        float AutoAttackDelay { get; set;  }
+        float AutoAttackCastTime { get; set; }
         float AutoAttackProjectileSpeed { get; set;  }
         MoveOrder MoveOrder { get; }
         bool IsCastingSpell { get; set;  }
@@ -30,6 +31,9 @@ namespace GameServerCore.Domain.GameObjects
         void RemoveBuffSlot(IBuff b);
         byte GetNewBuffSlot(IBuff b);
         void AddBuff(IBuff b);
+        void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData);
+        void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName);
+        void ResetAutoAttackSpellData();
         void ApplyCrowdControl(ICrowdControl cc);
         void RemoveCrowdControl(ICrowdControl cc);
         void SetDashingState(bool state);

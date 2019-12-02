@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float Duration { get; private set; }
         protected float _movementSpeedPercentModifier;
         public float TimeElapsed { get; private set; }
-        protected bool _remove;
         public IObjAiBase TargetUnit { get; private set; }
         public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
         public BuffType BuffType { get; private set; }
@@ -21,42 +20,53 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public string Name { get; private set; }
         public byte StackCount { get; private set; }
         public byte Slot { get; private set; }
+        protected bool _infiniteDuration;
 
         protected Game _game;
 
-        public bool Elapsed()
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
-            return _remove;
-        }
+            if (dur < 0)
+            {
+                throw new ArgumentException("Error: Duration was set to under 0.");
+            }
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
-        {
             _game = game;
             _scriptEngine = game.ScriptEngine;
             Duration = dur;
             StackCount = stacks;
             Name = buffName;
             TimeElapsed = 0;
-            _remove = false;
             TargetUnit = onto;
             SourceUnit = from;
             BuffType = buffType;
             Slot = onto.GetNewBuffSlot(this);
+            _infiniteDuration = infiniteDuration;
         }
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto)
-               : this(game, buffName, dur, stacks, buffType, onto, onto) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, bool infiniteDuration = false)
+               : this(game, buffName, dur, stacks, buffType, onto, onto, infiniteDuration) //no attacker specified = selfbuff, attacker aka source is same as attachedto
         {
         }
         
         public void Update(float diff)
         {
+            if (_infiniteDuration)
+            {
+                return;
+            }
+
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
                 if (TimeElapsed >= Duration)
                 {
-                    _remove = true;
+                    if (Name != "")
+                    {
+                        _game.PacketNotifier.NotifyRemoveBuff(TargetUnit, Name, Slot);
+                    }
+
+                    TargetUnit.RemoveBuff(this);
                 }
             }
         }

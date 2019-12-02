@@ -7,5 +7,8 @@ namespace GameServerCore.Domain.GameObjects
         List<IGameObject> ObjectsHit { get; }
         IAttackableUnit Owner { get; }
         int ProjectileId { get; }
+        ISpellData SpellData { get; }
+        ISpell OriginSpell { get; }
+        bool IsServerOnly { get; }
     }
 }

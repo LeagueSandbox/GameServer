@@ -83,9 +83,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             for (short i = 0; i < CharData.Passives.Length; i++)
             {
-                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveLuaName))
+                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveAbilityName))
                 {
-                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveLuaName, (byte)(i + 14));
+                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveAbilityName, (byte)(i + 14));
                 }
             }
 
@@ -167,6 +167,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void UpdateMoveOrder(MoveOrder order)
         {
             MoveOrder = order;
+
+            ApiEventManager.OnChampionMove.Publish(this);
         }
 
         public bool CanCast()
@@ -548,10 +550,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Skin = skinNo;
         }
 
-        public void SetSpell(string name, byte slot, bool enabled)
+        public ISpell SetSpell(string name, byte slot, bool enabled)
         {
-            Spells[slot] = new Spell(_game, this, name, slot);
+            ISpell newSpell = new Spell(_game, this, name, slot);
+
+            if (Spells[slot] != null)
+            {
+                newSpell.SetLevel(Spells[slot].Level);
+            }
+
+            Spells[slot] = newSpell;
             Stats.SetSpellEnabled(slot, enabled);
+
+            return newSpell;
         }
 
         public void SwapSpells(byte slot1, byte slot2)

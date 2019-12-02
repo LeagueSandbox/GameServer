@@ -13,6 +13,5 @@ namespace GameServerCore.Domain
         string Name { get; }
         byte Slot { get; }
         void ResetDuration();
-        bool Elapsed();
     }
 }

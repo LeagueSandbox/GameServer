@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GameServerCore\GameServerCore.csproj" />
+    <ProjectReference Include="..\..\GameServerLib\GameServerLib.csproj" />
+  </ItemGroup>
+
+</Project>

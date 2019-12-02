@@ -72,35 +72,17 @@ namespace LeagueSandbox.GameServer
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
 
             // Read global damage text setting
-            IsDamageTextGlobal = (bool)gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
-
-            // Load items
-            game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom(
-                // todo: remove this hardcoded path with content pipeline refactor
-                $"{ContentPath}/LeagueSandbox-Default/Items"
-            ));
+            IsDamageTextGlobal = (bool) gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
 
             // Read the game configuration
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
 
-            // Read spawns info
-            ContentManager = ContentManager.LoadGameMode(game, GameConfig.GameMode, ContentPath);
-            var mapPath = ContentManager.GetMapDataPath(GameConfig.Map);
-            var mapData = JObject.Parse(File.ReadAllText(mapPath));
-            var spawns = mapData.SelectToken("spawns");
+            // Load data package
+            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
-            MapSpawns = new MapSpawns();
-            foreach (JProperty teamSpawn in spawns)
-            {
-                var team = teamSpawn.Name;
-                var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
-                {
-                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
-                    MapSpawns.SetSpawns(team, playerSpawns, i);
-                }
-            }
+            // Read spawns info
+            MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
         }
     }
 
@@ -140,7 +122,7 @@ namespace LeagueSandbox.GameServer
     public class GameConfig
     {
         public int Map => (int)_gameData.SelectToken("map");
-        public string GameMode => (string)_gameData.SelectToken("gameMode");
+        public string DataPackage => (string)_gameData.SelectToken("dataPackage");
 
         private JToken _gameData;
 

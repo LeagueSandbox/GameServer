@@ -74,12 +74,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyFogUpdate2(turret, _networkIdManager.GetNewNetId());
 
                     // To suppress game HP-related errors for enemy turrets out of vision
-                     _game.PacketNotifier.NotifySetHealth(userId, turret);
+                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId);
 
                     foreach (var item in turret.Inventory)
                     {
-                        if (item == null) continue;
-                         _game.PacketNotifier.NotifyItemBought(turret, item as IItem);
+                        if (item == null)
+                        {
+                            continue;
+                        }
+
+                        _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                     }
                 }
                 else if (kv.Value is ILevelProp levelProp)
@@ -90,20 +94,20 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                         _game.PacketNotifier.NotifyEnterVision(userId, champion);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, champion.Team, userId);
                     }
                 }
                 else if (kv.Value is IInhibitor || kv.Value is INexus)
                 {
                     var inhibtor = (IAttackableUnit)kv.Value;
                      _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
-                     _game.PacketNotifier.NotifySetHealth(userId, inhibtor.NetId);
+                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, inhibtor.NetId);
                 }
                 else if (kv.Value is IProjectile projectile)
                 {
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                         _game.PacketNotifier.NotifyProjectileSpawn(userId, projectile);
+                         _game.PacketNotifier.NotifyMissileReplication(projectile);
                     }
                 }
                 else
@@ -114,17 +118,18 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
+            // TODO: Generate shop NetId to avoid hard-coding
             if (peerInfo != null && peerInfo.Team == TeamId.TEAM_BLUE)
             {
                 // Shop (blue team)
-                 _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xff10c6db);
-                 _game.PacketNotifier.NotifySetHealth(userId, 0xff10c6db);
+                _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xff10c6db);
+                _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xff10c6db);
             }
             else if (peerInfo != null && peerInfo.Team == TeamId.TEAM_PURPLE)
             {
                 // Shop (purple team)
-                 _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xffa6170e);
-                 _game.PacketNotifier.NotifySetHealth(userId, 0xffa6170e);
+                _game.PacketNotifier.NotifyStaticObjectSpawn(userId, 0xffa6170e);
+                _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xffa6170e);
             }
 
              _game.PacketNotifier.NotifySpawnEnd(userId);

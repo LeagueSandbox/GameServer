@@ -1,3 +1,5 @@
+using System;
+
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class HelpCommand : ChatCommandBase
@@ -35,7 +37,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             {
                 if(isNewMessage)
                 {
-                    commandsString = System.String.Copy(lastCommandString);
+                    commandsString = new String(lastCommandString);
                     isNewMessage = false;
                 }
 

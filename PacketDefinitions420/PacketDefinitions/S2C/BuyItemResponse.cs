@@ -6,7 +6,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class BuyItemResponse : BasePacket
     {
-        public BuyItemResponse(IAttackableUnit actor, IItem item, byte unk = 0x29)
+        public BuyItemResponse(IObjAiBase actor, IItem item, byte unk = 0x29)
             : base(PacketCmd.PKT_S2C_BUY_ITEM_ANS, actor.NetId)
         {
             Write((int)item.ItemData.ItemId);
