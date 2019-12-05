@@ -1,12 +1,15 @@
-﻿namespace GameServerCore.Enums
+﻿using System.Collections.Generic;
+
+namespace GameServerCore.Enums
 {
-    public enum MinionSpawnPosition : uint
+    public static class Barracks
     {
-        SPAWN_BLUE_TOP = 0xeb364c40,
-        SPAWN_BLUE_BOT = 0x53b83640,
-        SPAWN_BLUE_MID = 0xb7717140,
-        SPAWN_RED_TOP = 0xe647d540,
-        SPAWN_RED_BOT = 0x5ec9af40,
-        SPAWN_RED_MID = 0xba00e840
+        public const string
+            SPAWN_BLUE_TOP = "__P_Order_Spawn_Barracks__L01",
+            SPAWN_BLUE_BOT = "__P_Order_Spawn_Barracks__R01",
+            SPAWN_BLUE_MID = "__P_Order_Spawn_Barracks__C01",
+            SPAWN_RED_TOP = "__P_Chaos_Spawn_Barracks__L01",
+            SPAWN_RED_BOT = "__P_Chaos_Spawn_Barracks__R01",
+            SPAWN_RED_MID = "__P_Chaos_Spawn_Barracks__C01";
     }
 }

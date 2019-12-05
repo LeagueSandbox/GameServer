@@ -21,6 +21,9 @@ using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewReques
 using LeaguePackets.Game.Common;
 using LeaguePackets.Common;
 using System.Linq;
+using static GameServerCore.Content.HashFunctions;
+using System.Text;
+using Force.Crc32;
 
 namespace PacketDefinitions420
 {
@@ -37,8 +40,32 @@ namespace PacketDefinitions420
 
         public void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team)
         {
-            var ms = new LaneMinionSpawn(_navGrid, m);
-            _packetHandlerManager.BroadcastPacketTeam(team, ms, Channel.CHL_S2C);
+            var p = new LeaguePackets.Game.Barrack_SpawnUnit();
+            p.SenderNetID = m.NetId;
+            p.ObjectID = m.NetId;
+            p.ObjectNodeID = 0x40; // TODO: check this
+            p.BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));
+            p.WaveCount = 1;
+            p.MinionType = (byte)m.MinionSpawnType;
+            p.DamageBonus = 10;
+            p.HealthBonus = 7;
+            p.MinionLevel = 1;
+
+            
+            
+            var md = new MovementDataNormal();
+            md.Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints,_navGrid);
+            md.TeleportNetID = m.NetId;
+            md.HasTeleportID = false;
+            md.SyncID = (int) m.SyncId;
+
+            var visionPacket = new OnEnterVisiblityClient();
+            visionPacket.MovementData = md;
+            visionPacket.LookAtPosition = new Vector3(1, 0, 0);
+            visionPacket.Packets.Add(p);
+            visionPacket.SenderNetID = m.NetId;
+
+            _packetHandlerManager.BroadcastPacketTeam(team, visionPacket.GetBytes(), Channel.CHL_S2C);
             NotifyEnterLocalVisibilityClient(m);
         }
 

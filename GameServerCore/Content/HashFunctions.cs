@@ -1,4 +1,7 @@
-﻿namespace GameServerCore.Content
+﻿using System;
+using System.Text;
+
+namespace GameServerCore.Content
 {
     public class HashFunctions
     {
@@ -35,6 +38,4 @@
             return hash;
         }
     }
-
-
 }

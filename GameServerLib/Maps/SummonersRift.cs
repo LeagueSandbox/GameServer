@@ -457,21 +457,21 @@ namespace LeagueSandbox.GameServer.Maps
             return dic[m.MinionSpawnType];
         }
 
-        public Tuple<TeamId, Vector2> GetMinionSpawnPosition(MinionSpawnPosition spawnPosition)
+        public Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
         {
             switch (spawnPosition)
             {
-                case MinionSpawnPosition.SPAWN_BLUE_TOP:
+                case Barracks.SPAWN_BLUE_TOP:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(907, 1715));
-                case MinionSpawnPosition.SPAWN_BLUE_BOT:
+                case Barracks.SPAWN_BLUE_BOT:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1533, 1321));
-                case MinionSpawnPosition.SPAWN_BLUE_MID:
+                case Barracks.SPAWN_BLUE_MID:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1443, 1663));
-                case MinionSpawnPosition.SPAWN_RED_TOP:
+                case Barracks.SPAWN_RED_TOP:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(14455, 13159));
-                case MinionSpawnPosition.SPAWN_RED_BOT:
+                case Barracks.SPAWN_RED_BOT:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12967, 12695));
-                case MinionSpawnPosition.SPAWN_RED_MID:
+                case Barracks.SPAWN_RED_MID:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12433, 12623));
             }
             return new Tuple<TeamId, Vector2>(0, new Vector2());
@@ -525,27 +525,27 @@ namespace LeagueSandbox.GameServer.Maps
             }
         }
 
-        public void SpawnMinion(List<MinionSpawnType> list, int minionNo, MinionSpawnPosition pos, List<Vector2> waypoints)
+        public void SpawnMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
         {
             if (list.Count <= minionNo)
             {
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], pos, waypoints);
+            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints);
             _game.ObjectManager.AddObject(m);
         }
 
         public bool Spawn()
         {
-            var positions = new List<MinionSpawnPosition>
+            var barracks = new List<string>
             {
-                MinionSpawnPosition.SPAWN_BLUE_TOP,
-                MinionSpawnPosition.SPAWN_BLUE_BOT,
-                MinionSpawnPosition.SPAWN_BLUE_MID,
-                MinionSpawnPosition.SPAWN_RED_TOP,
-                MinionSpawnPosition.SPAWN_RED_BOT,
-                MinionSpawnPosition.SPAWN_RED_MID
+                Barracks.SPAWN_BLUE_TOP,
+                Barracks.SPAWN_BLUE_BOT,
+                Barracks.SPAWN_BLUE_MID,
+                Barracks.SPAWN_RED_TOP,
+                Barracks.SPAWN_RED_BOT,
+                Barracks.SPAWN_RED_MID
             };
 
             var cannonMinionTimestamps = new List<Tuple<long, int>>
@@ -555,14 +555,14 @@ namespace LeagueSandbox.GameServer.Maps
                 new Tuple<long, int>(35 * 60 * 1000, 0)
             };
 
-            var spawnToWaypoints = new Dictionary<MinionSpawnPosition, Tuple<List<Vector2>, uint>>
+            var spawnToWaypoints = new Dictionary<string, Tuple<List<Vector2>, uint>>
             {
-                {MinionSpawnPosition.SPAWN_BLUE_BOT, Tuple.Create(BlueBotWaypoints, 0xff26ac0f)},
-                {MinionSpawnPosition.SPAWN_BLUE_MID, Tuple.Create(BlueMidWaypoints, 0xffff8f1f)},
-                {MinionSpawnPosition.SPAWN_BLUE_TOP, Tuple.Create(BlueTopWaypoints, 0xff6793d0)},
-                {MinionSpawnPosition.SPAWN_RED_BOT, Tuple.Create(RedBotWaypoints, 0xff9303e1)},
-                {MinionSpawnPosition.SPAWN_RED_MID, Tuple.Create(RedMidWaypoints, 0xff4a20f1)},
-                {MinionSpawnPosition.SPAWN_RED_TOP, Tuple.Create(RedTopWaypoints, 0xffd23c3e)}
+                {Barracks.SPAWN_BLUE_BOT, Tuple.Create(BlueBotWaypoints, 0xff26ac0f)},
+                {Barracks.SPAWN_BLUE_MID, Tuple.Create(BlueMidWaypoints, 0xffff8f1f)},
+                {Barracks.SPAWN_BLUE_TOP, Tuple.Create(BlueTopWaypoints, 0xff6793d0)},
+                {Barracks.SPAWN_RED_BOT, Tuple.Create(RedBotWaypoints, 0xff9303e1)},
+                {Barracks.SPAWN_RED_MID, Tuple.Create(RedMidWaypoints, 0xff4a20f1)},
+                {Barracks.SPAWN_RED_TOP, Tuple.Create(RedTopWaypoints, 0xffd23c3e)}
             };
             var cannonMinionCap = 2;
 
@@ -574,10 +574,10 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
 
-            foreach (var pos in positions)
+            foreach (var barracksName in barracks)
             {
-                var waypoints = spawnToWaypoints[pos].Item1;
-                var inhibitorId = spawnToWaypoints[pos].Item2;
+                var waypoints = spawnToWaypoints[barracksName].Item1;
+                var inhibitorId = spawnToWaypoints[barracksName].Item2;
                 var inhibitor = _game.ObjectManager.GetInhibitorById(inhibitorId);
                 var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
@@ -605,7 +605,7 @@ namespace LeagueSandbox.GameServer.Maps
                     list = DoubleSuperMinionWave;
                 }
 
-                SpawnMinion(list, _minionNumber, pos, waypoints);
+                SpawnMinion(list, _minionNumber, barracksName, waypoints);
             }
 
 

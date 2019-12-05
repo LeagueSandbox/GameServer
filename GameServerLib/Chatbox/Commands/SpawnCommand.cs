@@ -44,10 +44,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void SpawnMinionsForTeam(TeamId team, int userId)
         {
-            var spawnPositions = new Dictionary<TeamId, MinionSpawnPosition>
+            var spawnPositions = new Dictionary<TeamId, string>
             {
-                [TeamId.TEAM_BLUE] = MinionSpawnPosition.SPAWN_BLUE_BOT,
-                [TeamId.TEAM_PURPLE] = MinionSpawnPosition.SPAWN_RED_BOT
+                [TeamId.TEAM_BLUE] = Barracks.SPAWN_BLUE_BOT,
+                [TeamId.TEAM_PURPLE] = Barracks.SPAWN_RED_BOT
             };
 
             var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
