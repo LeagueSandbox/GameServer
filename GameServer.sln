@@ -12,18 +12,36 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketDefinitions420", "PacketDefinitions420\PacketDefinitions420.csproj", "{57440E69-E7A4-4E24-8AB4-5D766BB0A9F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketDefinitionsTests", "PacketDefinitionsTests\PacketDefinitionsTests.csproj", "{E39B27AF-7B7E-4719-905F-E3B87421CAE5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueSandbox-Scripts", "Content\LeagueSandbox-Scripts\LeagueSandbox-Scripts.csproj", "{8637E2DB-2A64-4A4B-853C-F62C852B2F23}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerLib", "GameServerLib\GameServerLib.csproj", "{81E1DCC1-6331-4C15-8A13-6758E7276D7E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerLibTests", "GameServerLibTests\GameServerLibTests.csproj", "{D9783087-E84D-43B8-9E00-FAEB9DEC0B6D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsole", "GameServerConsole\GameServerConsole.csproj", "{BC2DE5C1-75F1-4100-A436-B12D0E62C263}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsoleTests", "GameServerConsoleTests\GameServerConsoleTests.csproj", "{36DC8345-3D8F-49D6-9C2C-3E300419CAC7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaguePackets", "LeaguePackets\LeaguePackets\LeaguePackets.csproj", "{6B86971B-1812-406E-ABD1-3B4B78565642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaguePackets", "LeaguePackets\LeaguePackets\LeaguePackets.csproj", "{6B86971B-1812-406E-ABD1-3B4B78565642}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
