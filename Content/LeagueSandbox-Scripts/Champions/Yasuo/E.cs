@@ -9,21 +9,21 @@ namespace Spells
 {
     public class YasuoDashWrapper : IGameScript
     {
-        public static IAttackableUnit _target;
-        public static IChampion _owner;
+        public static IAttackableUnit _target = null;
+        public static IChampion _owner = null;
         public void OnActivate(IChampion owner)
         {
-        //here's empty
+            //here's nothing yet
         }
 
         public void OnDeactivate(IChampion owner)
         {
-        //here's empty
+            //here's empty
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
         {
-            
+            //here's empty, maybe will add some functions?
         }
 
         public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
@@ -41,12 +41,12 @@ namespace Spells
 
         public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
-        //here's empty because no needed to code
+            //here's empty because no needed to add things here
         }
                
         public void OnUpdate(double diff)
         {
-        //here's empty
+            //here's empty because it's not working
         }
     }
 }

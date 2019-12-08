@@ -12,10 +12,12 @@ namespace Spells
         private Vector2 trueCoords;
         public void OnActivate(IChampion owner)
         {
+            // here's nothing
         }
 
         public void OnDeactivate(IChampion owner)
         {
+            // here's empty
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
@@ -68,6 +70,7 @@ namespace Spells
 
         public void OnUpdate(double diff)
         {
+            //here's nothing
         }
     }
 }

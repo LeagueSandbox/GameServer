@@ -27,7 +27,7 @@ namespace YasuoQ01
 
         public void OnUpdate(double diff)
         {
-
+            //nothing!
         }
     }
 }

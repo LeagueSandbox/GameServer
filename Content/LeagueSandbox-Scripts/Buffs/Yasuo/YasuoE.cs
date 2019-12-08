@@ -1,4 +1,4 @@
-using GameServerCore.Domain;
+﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
@@ -31,7 +31,7 @@ namespace YasuoE
 
         public void OnUpdate(double diff)
         {
-
+            //empty
         }
     }
 }
