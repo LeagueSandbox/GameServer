@@ -2,7 +2,6 @@
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects;
 
@@ -10,7 +9,6 @@ namespace YasuoQ02
 {
     internal class YasuoQ02 : IBuffGameScript
     {
-        private StatsModifier _statMod;
         private IBuff _visualBuff;
         private Particle p1;
         private Particle p2;
@@ -24,7 +22,7 @@ namespace YasuoQ02
             p2 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q3_Indicator_Ring_alt.troy", unit);
             p3 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_wind_ready_buff.troy", unit);
             p4 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_strike_build_up_test.troy", unit);
-            _visualBuff = AddBuffHudVisual("YasuoQ3W", 10f, 1, BuffType.COMBAT_ENCHANCER, unit);
+            _visualBuff = AddBuffHudVisual("YasuoQ3W", 6f, 1, BuffType.COMBAT_ENCHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)

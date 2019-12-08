@@ -4,25 +4,22 @@ using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace YasuoQ01
+namespace YasuoEBlock
 {
-    internal class YasuoQ01 : IBuffGameScript
+    internal class YasuoEBlock : IBuffGameScript
     {
-        private IBuff _visualBuff;
+        private readonly IChampion owner = Spells.YasuoDashWrapper._owner;
 
         public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
         {
-            ((IChampion)unit).SetSpell("YasuoQ2W", 0, true);
-            _visualBuff = AddBuffHudVisual("YasuoQ", 6f, 1, BuffType.COMBAT_ENCHANCER, unit);
+            var time = 11f - ownerSpell.Level * 1f;
+            AddBuffHudVisual("YasuoDashScalar", time, 1, BuffType.COMBAT_DEHANCER, unit, time);
+            AddParticleTarget(owner, "Yasuo_base_E_timer1.troy", unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            if (((IChampion)unit).Spells[0].SpellName == "YasuoQ2W")
-            {
-                ((IChampion)unit).SetSpell("YasuoQW", 0, true);
-            }
-            RemoveBuffHudVisual(_visualBuff);
+
         }
 
         public void OnUpdate(double diff)

@@ -5,13 +5,12 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Linq;
-using GameServerCore;
 
 namespace Spells
 {
     public class YasuoQ2W : IGameScript
     {
+        private Vector2 trueCoords;
         public void OnActivate(IChampion owner)
         {
         }
@@ -24,8 +23,8 @@ namespace Spells
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-            var range = to * 475;
-            var trueCoords = current + range;
+            var range = to * spell.SpellData.CastRangeDisplayOverride[0];
+            trueCoords = current + range;
 
             FaceDirection(owner, trueCoords, true, 0f);
         }
@@ -37,29 +36,24 @@ namespace Spells
             {
                 spell.SpellAnimation("SPELL3b", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ_cas.troy", owner);
-                AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner, bone: "C_BUFFBONE_GLB_Weapon_1");
-                foreach (var units in GetUnitsInRange(owner, 375f, true).Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
+                AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner,1, "C_BUFFBONE_GLB_Weapon_1");
+                foreach (var affectEnemys in GetUnitsInRange(owner, 270f, true))
                 {
-                    if (units is IAttackableUnit)
+                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
-                        units.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-                        AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", units);
+                        affectEnemys.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                        AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
                     }
                 }
-                AddBuffGameScript("YasuoQ02", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 10f, true);
+                AddBuffGameScript("YasuoQ02", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 6f, true);
                 ((ObjAiBase)owner).RemoveBuffGameScriptsWithName("YasuoQ01", "YasuoQ01");
             }
             else
             {
                 spell.SpellAnimation("SPELL1B", owner);
-                AddParticleTarget(owner, "Yasuo_Base_Q2_cast_sound.troy", owner);
-                var current = new Vector2(owner.X, owner.Y);
-                var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-                var range = to * 475;
-                var trueCoords = current + range;
-
                 spell.AddLaser("YasuoQ", trueCoords.X, trueCoords.Y);
                 AddParticleTarget(owner, "Yasuo_Q_Hand.troy", owner);
+                AddParticleTarget(owner, "Yasuo_Base_Q2_cast_sound.troy", owner);
             }
         }
 
@@ -70,7 +64,7 @@ namespace Spells
             target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             if (!_hasbuff)
             {
-                AddBuffGameScript("YasuoQ02", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 10f, true);
+                AddBuffGameScript("YasuoQ02", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 6f, true);
                 ((ObjAiBase)owner).RemoveBuffGameScriptsWithName("YasuoQ01", "YasuoQ01");
             }
         }
