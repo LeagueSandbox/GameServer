@@ -13,10 +13,12 @@ namespace Spells
         public static IChampion _owner;
         public void OnActivate(IChampion owner)
         {
+        //here's empty
         }
 
         public void OnDeactivate(IChampion owner)
         {
+        //here's empty
         }
 
         public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
@@ -39,11 +41,12 @@ namespace Spells
 
         public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
-
+        //here's empty because no needed to code
         }
                
         public void OnUpdate(double diff)
         {
+        //here's empty
         }
     }
 }
