@@ -15,7 +15,7 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 	* This is strongly encouraged to follow the 120 character limit per line guideline
 	
-### Auto Setup (Windows x64)
+### Auto Setup (Windows x64) is broken right, we are working on it
 * Download and run [League Sandbox Auto Setup](http://gamemakersgarage.com/League%20Sandbox%20Auto%20Setup.exe) [[Mirror]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/files/2237681/League.Sandbox.Auto.Setup.zip) [[Source]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup)
 
 ### Manual Setup (Windows/Mac/Linux)
