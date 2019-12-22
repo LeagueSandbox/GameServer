@@ -15,6 +15,12 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 	* This is strongly encouraged to follow the 120 character limit per line guideline
 	
+### Auto Setup (Windows x64)
+* Download and run [League Sandbox Auto Setup](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/releases/download/v1.1/League.Sandbox.Auto.Setup.exe) 
+(https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.zip) [[Source]]
+(https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.tar.gz) [[Mirror]]
+* Build and run
+		
 ### Manual Setup (Windows/Mac/Linux)
 * Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
 * Clone the git repository and run ```git submodule update --init --recursive``` to download the necessary contents package 
