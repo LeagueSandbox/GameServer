@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
         // This is the 'static map'
-        private readonly QuadTree<IGameObject> _quadMap = new QuadTree<IGameObject>(20000,20000,new CollisonObject()); //TODO: initialize the proper values of width and height for every map
+        private readonly QuadTree<IGameObject> _quadMap = new QuadTree<IGameObject>(16000, 16000, new CollisionObject()); //TODO: initialize the proper values of width and height for every map
 
         public CollisionHandler(Game game, IMap map)
         {
@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public void Update()
         {
-            QuadTree<IGameObject> _quadDynamic = new QuadTree<IGameObject>(20000, 20000, new CollisonObject());
+            QuadTree<IGameObject> _quadDynamic = new QuadTree<IGameObject>(16000, 16000, new CollisionObject());
             _quadDynamic.InsertRange(_objects);
             foreach (var obj in _objects)
             {
