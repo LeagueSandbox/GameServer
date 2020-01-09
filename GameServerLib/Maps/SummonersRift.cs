@@ -278,8 +278,8 @@ namespace LeagueSandbox.GameServer.Maps
             _game.ObjectManager.AddObject(new LevelProp(_game, -99.5613f, 855.6632f, 191.4039f, 158.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
 
             //TODO: Unhardcode everything (preferably by reading from content)
-            var inhibRadius = 350;
-            var nexusRadius = 550;
+            var inhibRadius = 325;
+            var nexusRadius = 350;
             var sightRange = 1700;
 
             _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, inhibRadius, 796.097f, 3339.8077f, sightRange, 0xffd23c3e)); //top

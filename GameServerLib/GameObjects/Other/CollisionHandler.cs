@@ -62,6 +62,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
                 foreach (var obj2 in _quadDynamic.GetNearestObjects(obj))
                 {
+                    if (obj == obj2)
+                    {
+                        continue;
+                    }
                     if (obj.IsCollidingWith(obj2))
                     {
                         obj.OnCollision(obj2);
