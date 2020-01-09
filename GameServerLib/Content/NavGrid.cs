@@ -544,16 +544,20 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)
         {
-            var rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
             if (a is IObjBuilding)
             {
+                var rayDist = Math.Sqrt(CastRaySqr(b.GetPosition(), a.GetPosition()));
                 rayDist += a.CollisionRadius;
+                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
             if (b is IObjBuilding)
             {
+                var rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
+                rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
                 rayDist += b.CollisionRadius;
+                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
-            return rayDist*rayDist <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)
