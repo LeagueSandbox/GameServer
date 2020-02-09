@@ -241,9 +241,9 @@ namespace LeagueSandbox.GameServer.Maps
                 TurretType.INNER_TURRET, GetTurretItems(TurretType.INNER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_C_03_A", 3233.99f, 3447.24f, TeamId.TEAM_BLUE,
                 TurretType.INHIBITOR_TURRET, GetTurretItems(TurretType.INHIBITOR_TURRET)));
-            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_C_01_A", 1341.63f, 2029.98f, TeamId.TEAM_BLUE,
+            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_C_01_A", 1271.097f, 1989.8077f, TeamId.TEAM_BLUE,
                 TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
-            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_C_02_A", 1768.19f, 1589.47f, TeamId.TEAM_BLUE,
+            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T1_C_02_A", 1821.097f, 1589.8077f, TeamId.TEAM_BLUE,
                 TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_05_A", 8548.0f, 8289.0f, TeamId.TEAM_PURPLE,
                 TurretType.OUTER_TURRET, GetTurretItems(TurretType.OUTER_TURRET)));
@@ -251,9 +251,9 @@ namespace LeagueSandbox.GameServer.Maps
                 TurretType.INNER_TURRET, GetTurretItems(TurretType.INNER_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_03_A", 10743.0f, 11010.0f, TeamId.TEAM_PURPLE,
                 TurretType.INHIBITOR_TURRET, GetTurretItems(TurretType.INHIBITOR_TURRET)));
-            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_01_A", 12662.0f, 12442.0f, TeamId.TEAM_PURPLE,
-                TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
-            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_02_A", 12118.0f, 12876.0f, TeamId.TEAM_PURPLE,
+            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_01_A", 12621.097f, 12364.8077f, TeamId.TEAM_PURPLE,
+               TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
+            _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_T2_C_02_A", 12171.097f, 12789.8077f, TeamId.TEAM_PURPLE,
                 TurretType.NEXUS_TURRET, GetTurretItems(TurretType.NEXUS_TURRET)));
             _game.ObjectManager.AddObject(new LaneTurret(_game, "Turret_OrderTurretShrine_A", -236.05f, -53.32f, TeamId.TEAM_BLUE,
                 TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET)));
@@ -277,18 +277,19 @@ namespace LeagueSandbox.GameServer.Maps
             _game.ObjectManager.AddObject(new LevelProp(_game, 13374.17f, 14245.673f, 194.9741f, 224.0f, 33.33f, 0.0f, 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale"));
             _game.ObjectManager.AddObject(new LevelProp(_game, -99.5613f, 855.6632f, 191.4039f, 158.0f, 0.0f, 0.0f, 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
 
-            //TODO
-            var collisionRadius = 400;
+            //TODO: Unhardcode everything (preferably by reading from content)
+            var inhibRadius = 325;
+            var nexusRadius = 350;
             var sightRange = 1700;
 
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, collisionRadius, 853.368f, 3345.1645f, sightRange, 0xffd23c3e)); //top exact
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, collisionRadius, 2785, 3000, sightRange, 0xff4a20f1)); //mid exact
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, collisionRadius, 3044, 1070, sightRange, 0xff9303e1)); //bot exact
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, collisionRadius, 10962.21f, 13422.915f, sightRange, 0xff6793d0)); //top exact          
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, collisionRadius, 11225.62402f, 11425.87012f, sightRange, 0xffff8f1f)); //mid exact            
-            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, collisionRadius, 13200, 11200, sightRange, 0xff26ac0f)); //bot exact
-            _game.ObjectManager.AddObject(new Nexus(_game, "OrderNexus", TeamId.TEAM_BLUE, collisionRadius, 1170, 1470, sightRange, 0xfff97db5));
-            _game.ObjectManager.AddObject(new Nexus(_game, "ChaosNexus", TeamId.TEAM_PURPLE, collisionRadius, 12804.69f, 13041.465f, sightRange, 0xfff02c0f));
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, inhibRadius, 796.097f, 3339.8077f, sightRange, 0xffd23c3e)); //top
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, inhibRadius, 2746.097f, 2964.8077f, sightRange, 0xff4a20f1)); //mid
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "OrderInhibitor", TeamId.TEAM_BLUE, inhibRadius, 2996.097f, 1014.8077f, sightRange, 0xff9303e1)); //bot
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, inhibRadius, 10946.097f, 13414.8077f, sightRange, 0xff6793d0)); //top
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, inhibRadius, 11196.097f, 11439.8077f, sightRange, 0xffff8f1f)); //mid
+            _game.ObjectManager.AddObject(new Inhibitor(_game, "ChaosInhibitor", TeamId.TEAM_PURPLE, inhibRadius, 13196.097f, 11164.8077f, sightRange, 0xff26ac0f)); //bot
+            _game.ObjectManager.AddObject(new Nexus(_game, "OrderNexus", TeamId.TEAM_BLUE, nexusRadius, 1146.097f, 1414.8077f, sightRange, 0xfff97db5));
+            _game.ObjectManager.AddObject(new Nexus(_game, "ChaosNexus", TeamId.TEAM_PURPLE, nexusRadius, 12771.097f, 13014.8077f, sightRange, 0xfff02c0f));
         }
 
         public void Update(float diff)

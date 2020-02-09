@@ -236,6 +236,8 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
+        // TODO: seems like using binary search for simple index finding on a grid!!!
+        // CHANGE THIS
         public Vector2 GetCellVector(short x, short y)
         {
             // Changed to binary search
@@ -542,16 +544,20 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool IsAnythingBetween(IGameObject a, IGameObject b)
         {
-            var rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
             if (a is IObjBuilding)
             {
+                var rayDist = Math.Sqrt(CastRaySqr(b.GetPosition(), a.GetPosition()));
                 rayDist += a.CollisionRadius;
+                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
             if (b is IObjBuilding)
             {
+                var rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
+                rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
                 rayDist += b.CollisionRadius;
+                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
-            return rayDist*rayDist <= (b.GetPosition() - a.GetPosition()).SqrLength();
+            return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)
@@ -821,7 +827,7 @@ namespace LeagueSandbox.GameServer.Content
             grid.MaxGridPos = b.ReadVector3();
 
             grid.CellSize = b.GetBinaryReader().ReadSingle();
-            grid.XCellCount = b.GetBinaryReader().ReadUInt32();
+            grid.XCellCount = b.GetBinaryReader().ReadUInt32(); //TODO: Add comment what is this value for our usual map
             grid.YCellCount = b.GetBinaryReader().ReadUInt32();
 
             return grid;
