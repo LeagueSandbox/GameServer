@@ -11,7 +11,7 @@ namespace GameServerCore.Domain
         void LoadPackage(string packageName);
         bool LoadScripts();
         IContentFile GetContentFileFromJson(string contentType, string itemName);
-        INavGrid GetNavGrid(int mapId);
+        INavigationGrid GetNavigationGrid(int mapId);
         ISpellData GetSpellData(string spellName);
         ICharData GetCharData(string characterName);
     }

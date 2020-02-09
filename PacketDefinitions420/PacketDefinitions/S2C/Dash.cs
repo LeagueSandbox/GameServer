@@ -9,7 +9,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class Dash : BasePacket
     {
-        public Dash(INavGrid navGrid,
+        public Dash(INavigationGrid navGrid,
             IAttackableUnit u,
             ITarget t,
             float dashSpeed,
