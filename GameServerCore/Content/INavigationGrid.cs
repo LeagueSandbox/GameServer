@@ -4,21 +4,16 @@ using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Content
 {
-    public interface INavGrid
+    public interface INavigationGrid
     {
-        byte MajorVersion { get; }
-        short MinorVersion { get; }
-        Vector3 MinGridPos { get; }
-        Vector3 MaxGridPos { get; }
-        Vector3 TranslationMaxGridPos { get; }
+        Vector3 MinGridPosition { get; }
+        Vector3 MaxGridPosition { get; }
+        Vector3 TranslationMaxGridPosition { get; }
         float CellSize { get; }
-        uint XCellCount { get; }
-        uint YCellCount { get; }
+        uint CellCountX { get; }
+        uint CellCountY { get; }
         ushort[] CellFlags { get; } // Version 7 change
-        int XSampledHeightCount { get; }
-        int YSampledHeightCount { get; }
-        float DirectionX { get; }
-        float DirectionY { get; }
+        Vector2 SampledHeightDistance { get; }
         float OffsetX { get; }
         float OffsetZ { get; }
         float MapWidth { get; }

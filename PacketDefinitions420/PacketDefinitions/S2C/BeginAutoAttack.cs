@@ -7,7 +7,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class BeginAutoAttack : BasePacket
     {
-        public BeginAutoAttack(INavGrid navGrid, IAttackableUnit attacker, IAttackableUnit attacked, uint futureProjNetId, bool isCritical)
+        public BeginAutoAttack(INavigationGrid navGrid, IAttackableUnit attacker, IAttackableUnit attacked, uint futureProjNetId, bool isCritical)
             : base(PacketCmd.PKT_S2C_BEGIN_AUTO_ATTACK, attacker.NetId)
         {
             WriteNetId(attacked);

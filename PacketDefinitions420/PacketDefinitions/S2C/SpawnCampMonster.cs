@@ -6,7 +6,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpawnCampMonster : BasePacket
     {
-        public SpawnCampMonster(INavGrid navGrid, IMonster m)
+        public SpawnCampMonster(INavigationGrid navGrid, IMonster m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Write((byte)0x79);

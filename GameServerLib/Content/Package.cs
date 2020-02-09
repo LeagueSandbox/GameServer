@@ -9,6 +9,7 @@ using log4net.Repository.Hierarchy;
 using LeagueSandbox.GameServer.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LeagueSandbox.GameServer.Content.Navigation;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -128,7 +129,7 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnMapSpawns;
         }
 
-        public INavGrid GetNavGrid(int mapId)
+        public INavigationGrid GetNavGrid(int mapId)
         {
             var navgridPath = $"{PackagePath}/AIMesh/Map{mapId}/AIPath.aimesh_ngrid";
 
@@ -138,7 +139,7 @@ namespace LeagueSandbox.GameServer.Content
                 return null;
             }
 
-            return NavGridReader.ReadBinary(navgridPath);
+            return new NavigationGrid(navgridPath);
         }
 
         public ISpellData GetSpellData(string spellName)
