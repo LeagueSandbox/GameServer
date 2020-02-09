@@ -51,7 +51,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool IsCastingSpell { get; set; }
         public bool IsMelee { get; set; }
         public bool IsDashing { get; protected set; }
-        public float DashSpeed { get; set; }
 
         private Random _random = new Random();
 
@@ -658,17 +657,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TargetUnit = unit;
         }
 
-        public override float GetMoveSpeed()
-        {
-            return IsDashing ? DashSpeed : base.GetMoveSpeed();
-        }
-
         public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
         {
             // TODO: Take into account the rest of the arguments
             IsDashing = true;
             Target = t;
-            DashSpeed = dashSpeed;
             Waypoints.Clear();
         }
 
