@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly ILog _logger;
 
         public List<IAnnounce> AnnouncerEvents { get; private set; }
-        public INavGrid NavGrid { get; private set; }
+        public INavigationGrid NavGrid { get; private set; }
         public ICollisionHandler CollisionHandler { get; private set; }
         public int Id { get; private set; }
         public IMapProperties MapProperties { get; private set; }

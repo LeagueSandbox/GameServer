@@ -23,7 +23,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary> TODO: tipCommand should be an lib/core enum that gets translated into league version specific packet enum as it may change over time </summary>
         void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
         void NotifyBuyItem(int userId, IObjAiBase champion, IItem itemInstance);
-        void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId, uint spellNetId);
+        void NotifyCastSpell(INavigationGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId, uint spellNetId);
         void NotifyChampionDeathTimer(IChampion die);
         void NotifyChampionDie(IChampion die, IAttackableUnit killer, int goldFromKill);
         void NotifyChampionRespawn(IChampion c);
