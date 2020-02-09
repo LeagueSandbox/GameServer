@@ -37,6 +37,7 @@ namespace GameServerCore.Domain.GameObjects
         void ApplyCrowdControl(ICrowdControl cc);
         void RemoveCrowdControl(ICrowdControl cc);
         void SetDashingState(bool state);
+        float DashSpeed { get; set; }
         void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
         Dictionary<string, IBuff> GetBuffs();
         void RemoveBuff(IBuff b);
