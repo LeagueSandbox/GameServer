@@ -8,27 +8,27 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public NavigationGridCellFlags Flags { get; private set; }
         public int ID { get; private set; }
         public float CenterHeight { get; private set; }
-        public uint SessionId { get; private set; }
+        public int SessionId { get; private set; }
         public float ArrivalCost { get; private set; }
         public bool IsOpen { get; private set; }
         public float Heuristic { get; private set; }
         public uint ActorList { get; private set; }
-        public short X { get; private set; }
-        public short Y { get; private set; }
+        public short X { get; private set; } = -32768;
+        public short Y { get; private set; } = -32768;
         public float AdditionalCost { get; private set; }
         public float HintAsGoodCell { get; private set; }
         public uint AdditionalCostRefCount { get; private set; }
-        public uint GoodCellSessionId { get; private set; }
-        public float RefHintWeight { get; private set; }
-        public short ArrivalDirection { get; private set; }
-        public short[] RefHintNode { get; private set; } = new short[2];
+        public int GoodCellSessionId { get; private set; }
+        public float RefHintWeight { get; private set; } = 0.5f;
+        public short ArrivalDirection { get; private set; } = 9;
+        public short[] RefHintNode { get; private set; } = new short[2] { -32768, -32768 };
 
         private NavigationGridCell() { }
 
         public static NavigationGridCell ReadVersion5(BinaryReader br, int id)
         {
             float centerHeight = br.ReadSingle();
-            uint sessionId = br.ReadUInt32();
+            int sessionId = br.ReadInt32();
             float arrivalCost = br.ReadSingle();
             bool isOpen = br.ReadUInt32() == 1;
             float heuristic = br.ReadSingle();
@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public static NavigationGridCell ReadVersion7(BinaryReader br, int id)
         {
             float centerHeight = br.ReadSingle();
-            uint sessionId = br.ReadUInt32();
+            int sessionId = br.ReadInt32();
             float arrivalCost = br.ReadSingle();
             bool isOpen = br.ReadUInt32() == 1;
             float heuristic = br.ReadSingle();
