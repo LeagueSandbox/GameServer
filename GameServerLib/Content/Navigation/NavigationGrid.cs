@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 {
                     for (int i = 0; i < this.Cells.Length; i++)
                     {
-                        this.Cells[i] = new NavigationGridCell(br, i, out this.CellFlags[i]);
+                        this.Cells[i] = NavigationGridCell.ReadVersion5(br, i, out this.CellFlags[i]);
                     }
 
                     int sampledHeightCountX = br.ReadInt32();
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 {
                     for (int i = 0; i < this.Cells.Length; i++)
                     {
-                        this.Cells[i] = new NavigationGridCell(br, i);
+                        this.Cells[i] = NavigationGridCell.ReadVersion7(br, i);
                     }
 
                     for (int i = 0; i < this.Cells.Length; i++)

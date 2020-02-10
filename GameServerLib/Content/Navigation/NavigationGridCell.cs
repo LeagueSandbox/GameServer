@@ -22,45 +22,82 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public short ArrivalDirection { private set; get; }
         public short[] RefHintNode { private set; get; } = new short[2];
 
-        public NavigationGridCell(BinaryReader br, int id, out ushort flag)
+        public NavigationGridCell() { }
+
+        public static NavigationGridCell ReadVersion5(BinaryReader br, int id, out ushort flag)
         {
-            this.ID = id;
-            this.CenterHeight = br.ReadSingle();
-            this.SessionId = br.ReadUInt32();
-            this.ArrivalCost = br.ReadSingle();
-            this.IsOpen = br.ReadUInt32() == 1;
-            this.Heuristic = br.ReadSingle();
-            this.ActorList = br.ReadUInt32();
-            this.X = br.ReadInt16();
-            this.Y = br.ReadInt16();
-            this.AdditionalCost = br.ReadSingle();
-            this.HintAsGoodCell = br.ReadSingle();
-            this.AdditionalCostRefCount = br.ReadUInt32();
-            this.GoodCellSessionId = br.ReadUInt32();
-            this.RefHintWeight = br.ReadSingle();
-            this.ArrivalDirection = br.ReadInt16();
+            float centerHeight = br.ReadSingle();
+            uint sessionId = br.ReadUInt32();
+            float arrivalCost = br.ReadSingle();
+            bool isOpen = br.ReadUInt32() == 1;
+            float heuristic = br.ReadSingle();
+            uint actorList = br.ReadUInt32();
+            short x = br.ReadInt16();
+            short y = br.ReadInt16();
+            float additionalCost = br.ReadSingle();
+            float hintAsGoodCell = br.ReadSingle();
+            uint additionalCostRefCount = br.ReadUInt32();
+            uint goodCellSessionId = br.ReadUInt32();
+            float refHintWeight = br.ReadSingle();
+            short arrivalDirection = br.ReadInt16();
             flag = br.ReadUInt16();
-            this.RefHintNode[0] = br.ReadInt16();
-            this.RefHintNode[1] = br.ReadInt16();
+            short refHintNode1 = br.ReadInt16();
+            short refHintNode2 = br.ReadInt16();
+
+            return new NavigationGridCell()
+            {
+               ID = id,
+               CenterHeight = centerHeight,
+               SessionId = sessionId,
+               ArrivalCost = arrivalCost,
+               IsOpen = isOpen,
+               Heuristic = heuristic,
+               ActorList = actorList,
+               X = x,
+               Y = y,
+               AdditionalCost = additionalCost,
+               HintAsGoodCell = hintAsGoodCell,
+               AdditionalCostRefCount = additionalCostRefCount,
+               GoodCellSessionId = goodCellSessionId,
+               RefHintWeight = refHintWeight,
+               ArrivalDirection = arrivalDirection,
+               RefHintNode = new short[] { refHintNode1, refHintNode2 }
+           };
         }
-        public NavigationGridCell(BinaryReader br, int id)
+        public static NavigationGridCell ReadVersion7(BinaryReader br, int id)
         {
-            this.ID = id;
-            this.CenterHeight = br.ReadSingle();
-            this.SessionId = br.ReadUInt32();
-            this.ArrivalCost = br.ReadSingle();
-            this.IsOpen = br.ReadUInt32() == 1;
-            this.Heuristic = br.ReadSingle();
-            this.X = br.ReadInt16();
-            this.Y = br.ReadInt16();
-            this.ActorList = br.ReadUInt32();
-            br.ReadUInt32(); // <- "Unk1"
-            this.GoodCellSessionId = br.ReadUInt32();
-            this.RefHintWeight = br.ReadSingle();
-            br.ReadUInt16();   // <- "Unk2"
-            this.ArrivalDirection = br.ReadInt16();
-            this.RefHintNode[0] = br.ReadInt16();
-            this.RefHintNode[1] = br.ReadInt16();
+            float centerHeight = br.ReadSingle();
+            uint sessionId = br.ReadUInt32();
+            float arrivalCost = br.ReadSingle();
+            bool isOpen = br.ReadUInt32() == 1;
+            float heuristic = br.ReadSingle();
+            short x = br.ReadInt16();
+            short y = br.ReadInt16();
+            uint actorList = br.ReadUInt32();
+            br.ReadUInt32();
+            uint goodCellSessionId = br.ReadUInt32();
+            float refHintWeight = br.ReadSingle();
+            br.ReadUInt16();
+            short arrivalDirection = br.ReadInt16();
+            short refHintNode1 = br.ReadInt16();
+            short refHintNode2 = br.ReadInt16();
+
+            return new NavigationGridCell()
+            {
+                ID = id,
+                CenterHeight = centerHeight,
+                SessionId = sessionId,
+                ArrivalCost = arrivalCost,
+                IsOpen = isOpen,
+                Heuristic = heuristic,
+                ActorList = actorList,
+                X = x,
+                Y = y,
+                GoodCellSessionId = goodCellSessionId,
+                RefHintWeight = refHintWeight,
+                ArrivalDirection = arrivalDirection,
+                RefHintNode = new short[] { refHintNode1, refHintNode2 }
+            };
         }
 
         public bool HasFlag(NavigationGrid grid, NavigationGridCellFlags flag)
