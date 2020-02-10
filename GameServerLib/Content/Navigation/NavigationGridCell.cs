@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public short ArrivalDirection { private set; get; }
         public short[] RefHintNode { private set; get; } = new short[2];
 
-        public NavigationGridCell() { }
+        private NavigationGridCell() { }
 
         public static NavigationGridCell ReadVersion5(BinaryReader br, int id, out ushort flag)
         {
