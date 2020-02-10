@@ -34,12 +34,12 @@ namespace GameServerCore
             return TargetYToNormalFormat(game.Map.NavGrid, value);
         }
 
-        public static short TargetXToNormalFormat(INavGrid navGrid, float value)
+        public static short TargetXToNormalFormat(INavigationGrid navGrid, float value)
         {
             return FormatCoordinate(value, navGrid.MiddleOfMap.X);
         }
 
-        public static short TargetYToNormalFormat(INavGrid navGrid, float value)
+        public static short TargetYToNormalFormat(INavigationGrid navGrid, float value)
         {
             return FormatCoordinate(value, navGrid.MiddleOfMap.Y);
         }

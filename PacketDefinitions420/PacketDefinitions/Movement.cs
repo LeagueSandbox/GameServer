@@ -30,7 +30,7 @@ namespace PacketDefinitions420.PacketDefinitions
             }
         }
 
-        public static byte[] EncodeWaypoints(INavGrid navGrid, List<Vector2> waypoints)
+        public static byte[] EncodeWaypoints(INavigationGrid navGrid, List<Vector2> waypoints)
         {
             var mapSize = navGrid.GetSize();
             var numCoords = waypoints.Count * 2;

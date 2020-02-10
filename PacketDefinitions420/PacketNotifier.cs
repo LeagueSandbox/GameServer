@@ -30,9 +30,9 @@ namespace PacketDefinitions420
     public class PacketNotifier : IPacketNotifier
     {
         private readonly IPacketHandlerManager _packetHandlerManager;
-        private readonly INavGrid _navGrid;
+        private readonly INavigationGrid _navGrid;
 
-        public PacketNotifier(IPacketHandlerManager packetHandlerManager, INavGrid navGrid)
+        public PacketNotifier(IPacketHandlerManager packetHandlerManager, INavigationGrid navGrid)
         {
             _packetHandlerManager = packetHandlerManager;
             _navGrid = navGrid;
@@ -130,7 +130,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(p, Channel.CHL_S2C);
         }
 
-        public void NotifyCastSpell(INavGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId,
+        public void NotifyCastSpell(INavigationGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId,
             uint spellNetId)
         {
             var response = new CastSpellResponse(navGrid, s, start.X, start.Y, end.X, end.Y, futureProjNetId, spellNetId);

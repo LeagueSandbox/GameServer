@@ -145,11 +145,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
         }
 
-        public INavGrid GetNavGrid(int mapId)
+        public INavigationGrid GetNavigationGrid(int mapId)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                INavGrid toReturnNavgrid = dataPackage.GetNavGrid(mapId);
+                INavigationGrid toReturnNavgrid = dataPackage.GetNavigationGrid(mapId);
 
                 if (toReturnNavgrid != null)
                 {

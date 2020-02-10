@@ -11,7 +11,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
     /// </summary>
     public class EnterVisionAgain : BasePacket
     {
-        public EnterVisionAgain(INavGrid navGrid, IMinion m)
+        public EnterVisionAgain(INavigationGrid navGrid, IMinion m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, m.NetId)
         {
             Fill(0, 13);
@@ -35,7 +35,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             }
         }
 
-        public EnterVisionAgain(INavGrid navGrid, IChampion c)
+        public EnterVisionAgain(INavigationGrid navGrid, IChampion c)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN, c.NetId)
         {
             Write((short)0); // extraInfo
