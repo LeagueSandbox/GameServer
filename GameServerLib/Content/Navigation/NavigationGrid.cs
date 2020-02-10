@@ -16,20 +16,32 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 {
     public class NavigationGrid : INavigationGrid
     {
-        public Vector3 MinGridPosition { get; set; }
-        public Vector3 MaxGridPosition { get; set; }
-        public Vector3 TranslationMaxGridPosition { get; set; }
+        public const float SCALE = 2f;
+
+        public Vector3 MinGridPosition { get; private set; }
+        public Vector3 MaxGridPosition { get; private set; }
+        public Vector3 TranslationMaxGridPosition { get; private set; }
+
         public float CellSize { get; private set; }
-        public uint CellCountX { get; set; }
-        public uint CellCountY { get; set; }
-        public NavigationGridCell[] Cells { get; set; }
-        public Vector2 SampledHeightDistance { get; private set; }
+        public uint CellCountX { get; private set; }
+        public uint CellCountY { get; private set; }
+        public NavigationGridCell[] Cells { get; private set; }
+
+        public uint[] RegionTags { get; private set; }
+        public NavigationRegionTagTable RegionTagTable { get; private set; }
+
+        public uint SampledHeightsCountX { get; private set; }
+        public uint SampledHeightsCountY { get; private set; }
+        public Vector2 SampledHeightsDistance { get; private set; }
+        public float[] SampledHeights { get; private set; }
+
+        public NavigationHintGrid HintGrid { get; private set; }
+
         public float OffsetX { get; private set; }
         public float OffsetZ { get; private set; }
         public float MapWidth { get; private set; }
         public float MapHeight { get; private set; }
         public Vector2 MiddleOfMap { get; private set; }
-        public const float SCALE = 2f;
 
         public NavigationGrid(string fileLocation) : this(File.OpenRead(fileLocation)) { }
         public NavigationGrid(byte[] buffer) : this(new MemoryStream(buffer)) { }
@@ -39,6 +51,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 byte major = br.ReadByte();
                 ushort minor = major != 2 ? br.ReadUInt16() : (ushort)0;
+                if(major != 2 && major != 3 && major != 5 && major != 7)
+                {
+                    throw new Exception(string.Format("Unsupported Navigation Grid Version: {0}.{1}", major, minor));
+                }
 
                 this.MinGridPosition = br.ReadVector3();
                 this.MaxGridPosition = br.ReadVector3();
@@ -48,6 +64,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 this.CellCountY = br.ReadUInt32();
 
                 this.Cells = new NavigationGridCell[this.CellCountX * this.CellCountY];
+                this.RegionTags = new uint[this.CellCountX * this.CellCountY];
 
                 if (major == 2 || major == 3 || major == 5)
                 {
@@ -55,13 +72,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     {
                         this.Cells[i] = NavigationGridCell.ReadVersion5(br, i);
                     }
-
-                    int sampledHeightCountX = br.ReadInt32();
-                    int sampledHeightCountY = br.ReadInt32();
-
-                    this.SampledHeightDistance = br.ReadVector2();
                 }
-                else if (major == 0x07)
+                else if (major == 7)
                 {
                     for (int i = 0; i < this.Cells.Length; i++)
                     {
@@ -72,10 +84,35 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         this.Cells[i].SetFlags((NavigationGridCellFlags)br.ReadUInt16());
                     }
                 }
-                else
+
+                if(major == 5)
                 {
-                    throw new Exception(string.Format("Unsupported Navigation Grid Version: {0}.{1}", major, minor));
+                    for(int i = 0; i < this.RegionTags.Length; i++)
+                    {
+                        this.RegionTags[i] = br.ReadUInt16();
+                    }
                 }
+                else if(major == 7)
+                {
+                    for (int i = 0; i < this.RegionTags.Length; i++)
+                    {
+                        this.RegionTags[i] = br.ReadUInt32();
+                    }
+                }
+
+                uint groupCount = major == 5 ? 4u : 8u;
+                this.RegionTagTable = new NavigationRegionTagTable(br, groupCount);
+
+                this.SampledHeightsCountX = br.ReadUInt32();
+                this.SampledHeightsCountY = br.ReadUInt32();
+                this.SampledHeightsDistance = br.ReadVector2();
+                this.SampledHeights = new float[this.SampledHeightsCountX * this.SampledHeightsCountY];
+                for(int i = 0; i < this.SampledHeights.Length; i++)
+                {
+                    this.SampledHeights[i] = br.ReadSingle();
+                }
+
+                this.HintGrid = new NavigationHintGrid(br);
 
                 this.MapWidth = this.MaxGridPosition.X + this.MinGridPosition.X;
                 this.MapHeight = this.MaxGridPosition.Z + this.MinGridPosition.Z;
@@ -143,10 +180,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                         // calculate the new path and cost +heuristic and add to the priority queue
                         Stack<NavigationGridCell> npath = new Stack<NavigationGridCell>(new Stack<NavigationGridCell>(path));
-                        
+
                         npath.Push(ncell);
                         // add 1 for every cell used
-                        priorityQueue.Enqueue(npath, currentCost + 1 + ncell.Heuristic + ncell.ArrivalCost + ncell.AdditionalCost 
+                        priorityQueue.Enqueue(npath, currentCost + 1 + ncell.Heuristic + ncell.ArrivalCost + ncell.AdditionalCost
                             + NavigationGridCell.Distance(ncell, goal));
                         closedList.Add(ncell.ID, ncell);
                     }
@@ -433,7 +470,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
             };
         }
-        
+
         public Vector2 GetSize()
         {
             return new Vector2(this.MapWidth / 2, this.MapHeight / 2);
@@ -459,7 +496,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-            
+
             return cell != null && cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
         }
 

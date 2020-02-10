@@ -12,7 +12,7 @@ namespace GameServerCore.Content
         float CellSize { get; }
         uint CellCountX { get; }
         uint CellCountY { get; }
-        Vector2 SampledHeightDistance { get; }
+        Vector2 SampledHeightsDistance { get; }
         float OffsetX { get; }
         float OffsetZ { get; }
         float MapWidth { get; }

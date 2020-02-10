@@ -42,29 +42,28 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float refHintWeight = br.ReadSingle();
             short arrivalDirection = br.ReadInt16();
             NavigationGridCellFlags flags = (NavigationGridCellFlags)br.ReadUInt16();
-            short refHintNode1 = br.ReadInt16();
-            short refHintNode2 = br.ReadInt16();
+            short[] refHintNode = new short[] { br.ReadInt16(), br.ReadInt16() };
 
             return new NavigationGridCell()
             {
-               ID = id,
-               Flags = flags,
-               CenterHeight = centerHeight,
-               SessionId = sessionId,
-               ArrivalCost = arrivalCost,
-               IsOpen = isOpen,
-               Heuristic = heuristic,
-               ActorList = actorList,
-               X = x,
-               Y = y,
-               AdditionalCost = additionalCost,
-               HintAsGoodCell = hintAsGoodCell,
-               AdditionalCostRefCount = additionalCostRefCount,
-               GoodCellSessionId = goodCellSessionId,
-               RefHintWeight = refHintWeight,
-               ArrivalDirection = arrivalDirection,
-               RefHintNode = new short[] { refHintNode1, refHintNode2 }
-           };
+                ID = id,
+                Flags = flags,
+                CenterHeight = centerHeight,
+                SessionId = sessionId,
+                ArrivalCost = arrivalCost,
+                IsOpen = isOpen,
+                Heuristic = heuristic,
+                ActorList = actorList,
+                X = x,
+                Y = y,
+                AdditionalCost = additionalCost,
+                HintAsGoodCell = hintAsGoodCell,
+                AdditionalCostRefCount = additionalCostRefCount,
+                GoodCellSessionId = goodCellSessionId,
+                RefHintWeight = refHintWeight,
+                ArrivalDirection = arrivalDirection,
+                RefHintNode = refHintNode
+            };
         }
         public static NavigationGridCell ReadVersion7(BinaryReader br, int id)
         {
@@ -81,8 +80,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float refHintWeight = br.ReadSingle();
             br.ReadUInt16();
             short arrivalDirection = br.ReadInt16();
-            short refHintNode1 = br.ReadInt16();
-            short refHintNode2 = br.ReadInt16();
+            short[] refHintNode = new short[] { br.ReadInt16(), br.ReadInt16() };
 
             return new NavigationGridCell()
             {
@@ -98,7 +96,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 GoodCellSessionId = goodCellSessionId,
                 RefHintWeight = refHintWeight,
                 ArrivalDirection = arrivalDirection,
-                RefHintNode = new short[] { refHintNode1, refHintNode2 }
+                RefHintNode = refHintNode
             };
         }
 
