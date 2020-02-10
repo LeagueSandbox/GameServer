@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float additionalCost = br.ReadSingle();
             float hintAsGoodCell = br.ReadSingle();
             uint additionalCostRefCount = br.ReadUInt32();
-            uint goodCellSessionId = br.ReadUInt32();
+            int goodCellSessionId = br.ReadInt32();
             float refHintWeight = br.ReadSingle();
             short arrivalDirection = br.ReadInt16();
             NavigationGridCellFlags flags = (NavigationGridCellFlags)br.ReadUInt16();
@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             short y = br.ReadInt16();
             uint actorList = br.ReadUInt32();
             br.ReadUInt32();
-            uint goodCellSessionId = br.ReadUInt32();
+            int goodCellSessionId = br.ReadInt32();
             float refHintWeight = br.ReadSingle();
             br.ReadUInt16();
             short arrivalDirection = br.ReadInt16();
