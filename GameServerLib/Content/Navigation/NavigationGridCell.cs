@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         private NavigationGridCell() { }
 
-        public static NavigationGridCell ReadVersion5(BinaryReader br, int id)
+        public static NavigationGridCell ReadVersion5(BinaryReader br, int id, out ushort flag)
         {
             float centerHeight = br.ReadSingle();
             uint sessionId = br.ReadUInt32();

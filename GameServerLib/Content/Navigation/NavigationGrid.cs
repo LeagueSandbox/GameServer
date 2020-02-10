@@ -374,6 +374,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             return this.Cells[index];
         }
+
         private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
         {
             short x = cell.X;
@@ -432,7 +433,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
             };
         }
-
+        
         public Vector2 GetSize()
         {
             return new Vector2(this.MapWidth / 2, this.MapHeight / 2);
@@ -458,7 +459,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-
+            
             return cell != null && cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
         }
 
