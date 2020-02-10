@@ -12,7 +12,6 @@ namespace GameServerCore.Content
         float CellSize { get; }
         uint CellCountX { get; }
         uint CellCountY { get; }
-        ushort[] CellFlags { get; } // Version 7 change
         Vector2 SampledHeightDistance { get; }
         float OffsetX { get; }
         float OffsetZ { get; }

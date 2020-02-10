@@ -5,26 +5,27 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 {
     public class NavigationGridCell
     {
-        public int ID { private set; get; }
-        public float CenterHeight { private set; get; }
-        public uint SessionId { private set; get; }
-        public float ArrivalCost { private set; get; }
-        public bool IsOpen { private set; get; }
-        public float Heuristic { private set; get; }
-        public uint ActorList { private set; get; }
-        public short X { private set; get; }
-        public short Y { private set; get; }
-        public float AdditionalCost { private set; get; }
-        public float HintAsGoodCell { private set; get; }
-        public uint AdditionalCostRefCount { private set; get; }
-        public uint GoodCellSessionId { private set; get; }
-        public float RefHintWeight { private set; get; }
-        public short ArrivalDirection { private set; get; }
-        public short[] RefHintNode { private set; get; } = new short[2];
+        public NavigationGridCellFlags Flags { get; private set; }
+        public int ID { get; private set; }
+        public float CenterHeight { get; private set; }
+        public uint SessionId { get; private set; }
+        public float ArrivalCost { get; private set; }
+        public bool IsOpen { get; private set; }
+        public float Heuristic { get; private set; }
+        public uint ActorList { get; private set; }
+        public short X { get; private set; }
+        public short Y { get; private set; }
+        public float AdditionalCost { get; private set; }
+        public float HintAsGoodCell { get; private set; }
+        public uint AdditionalCostRefCount { get; private set; }
+        public uint GoodCellSessionId { get; private set; }
+        public float RefHintWeight { get; private set; }
+        public short ArrivalDirection { get; private set; }
+        public short[] RefHintNode { get; private set; } = new short[2];
 
         private NavigationGridCell() { }
 
-        public static NavigationGridCell ReadVersion5(BinaryReader br, int id, out ushort flag)
+        public static NavigationGridCell ReadVersion5(BinaryReader br, int id)
         {
             float centerHeight = br.ReadSingle();
             uint sessionId = br.ReadUInt32();
@@ -40,13 +41,14 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             uint goodCellSessionId = br.ReadUInt32();
             float refHintWeight = br.ReadSingle();
             short arrivalDirection = br.ReadInt16();
-            flag = br.ReadUInt16();
+            NavigationGridCellFlags flags = (NavigationGridCellFlags)br.ReadUInt16();
             short refHintNode1 = br.ReadInt16();
             short refHintNode2 = br.ReadInt16();
 
             return new NavigationGridCell()
             {
                ID = id,
+               Flags = flags,
                CenterHeight = centerHeight,
                SessionId = sessionId,
                ArrivalCost = arrivalCost,
@@ -100,9 +102,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             };
         }
 
-        public bool HasFlag(NavigationGrid grid, NavigationGridCellFlags flag)
+        public void SetFlags(NavigationGridCellFlags flags)
         {
-            return grid.HasFlag(this.ID, flag);
+            this.Flags |= flags;
+        }
+        public bool HasFlag(NavigationGridCellFlags flag)
+        {
+            return (this.Flags & flag) == flag;
         }
 
         public static int Distance(NavigationGridCell a, NavigationGridCell b)

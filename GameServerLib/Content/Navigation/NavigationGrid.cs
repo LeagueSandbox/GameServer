@@ -23,7 +23,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public uint CellCountX { get; set; }
         public uint CellCountY { get; set; }
         public NavigationGridCell[] Cells { get; set; }
-        public ushort[] CellFlags { get; set; } // Version 7 change
         public Vector2 SampledHeightDistance { get; private set; }
         public float OffsetX { get; private set; }
         public float OffsetZ { get; private set; }
@@ -49,13 +48,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 this.CellCountY = br.ReadUInt32();
 
                 this.Cells = new NavigationGridCell[this.CellCountX * this.CellCountY];
-                this.CellFlags = new ushort[this.CellCountX * this.CellCountY];
 
                 if (major == 2 || major == 3 || major == 5)
                 {
                     for (int i = 0; i < this.Cells.Length; i++)
                     {
-                        this.Cells[i] = NavigationGridCell.ReadVersion5(br, i, out this.CellFlags[i]);
+                        this.Cells[i] = NavigationGridCell.ReadVersion5(br, i);
                     }
 
                     int sampledHeightCountX = br.ReadInt32();
@@ -69,10 +67,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     {
                         this.Cells[i] = NavigationGridCell.ReadVersion7(br, i);
                     }
-
                     for (int i = 0; i < this.Cells.Length; i++)
                     {
-                        this.CellFlags[i] = br.ReadUInt16();
+                        this.Cells[i].SetFlags((NavigationGridCellFlags)br.ReadUInt16());
                     }
                 }
                 else
@@ -138,7 +135,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         if (closedList.TryGetValue(ncell.ID, out tempCell)) continue;
 
                         // not walkable - skip
-                        if (ncell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH))
+                        if (ncell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
                         {
                             closedList.Add(ncell.ID, ncell);
                             continue;
@@ -223,22 +220,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return ret;
         }
 
-        public Vector2 Uncompress(Vector2 vector)
-        {
-            Vector2 ret = new Vector2
-            {
-                X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
-                Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
-            };
-
-            return ret;
-        }
-
-        public ushort GetFlag(ushort x, ushort y)
-        {
-            return this.CellFlags[x + y * this.CellCountX];
-        }
-
         public void ToImage(string fileName)
         {
             int width = (int)this.CellCountX;
@@ -248,7 +229,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             int offset = 0;
             for (int i = 0; i < this.Cells.Length; i++)
             {
-                if (HasFlag(i, NavigationGridCellFlags.NOT_PASSABLE))
+                if (this.Cells[i].HasFlag(NavigationGridCellFlags.NOT_PASSABLE))
                 {
                     byte red = 0xFF;
                     byte green = 0x00;
@@ -359,7 +340,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             return -1;
         }
-
         public int GetCellIndex(float x, float z)
         {
             for (int i = 0; i < this.Cells.Length; i++)
@@ -372,23 +352,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return -1;
-        }
-        private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
-        {
-            short x = cell.X;
-            short y = cell.Y;
-            List<NavigationGridCell> neighbors = new List<NavigationGridCell>();
-            for (int dirY = -1; dirY <= 1; dirY++)
-            {
-                for (int dirX = -1; dirX <= 1; dirX++)
-                {
-                    int nx = x + dirX;
-                    int ny = y + dirY;
-                    NavigationGridCell ncell = GetCell(nx, ny);
-                    if (ncell != null) neighbors.Add(ncell);
-                }
-            }
-            return neighbors;
         }
 
         public NavigationGridCell GetCell(short x, short y)
@@ -410,6 +373,24 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return this.Cells[index];
+        }
+
+        private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
+        {
+            short x = cell.X;
+            short y = cell.Y;
+            List<NavigationGridCell> neighbors = new List<NavigationGridCell>();
+            for (int dirY = -1; dirY <= 1; dirY++)
+            {
+                for (int dirX = -1; dirX <= 1; dirX++)
+                {
+                    int nx = x + dirX;
+                    int ny = y + dirY;
+                    NavigationGridCell ncell = GetCell(nx, ny);
+                    if (ncell != null) neighbors.Add(ncell);
+                }
+            }
+            return neighbors;
         }
 
         public ushort CompressX(float positionX)
@@ -444,14 +425,18 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return Convert.ToSingle(shortZ / (1 / SCALE) + this.OffsetZ);
         }
 
+        public Vector2 Uncompress(Vector2 vector)
+        {
+            return new Vector2
+            {
+                X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
+                Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
+            };
+        }
+        
         public Vector2 GetSize()
         {
             return new Vector2(this.MapWidth / 2, this.MapHeight / 2);
-        }
-
-        public bool HasFlag(int index, NavigationGridCellFlags flag)
-        {
-            return (this.CellFlags[index] & (int)flag) == (int)flag;
         }
 
         public bool IsWalkable(float x, float y)
@@ -463,7 +448,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell != null && !cell.HasFlag(this, NavigationGridCellFlags.NOT_PASSABLE);
+            return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE);
         }
 
         public bool IsSeeThrough(float x, float y)
@@ -474,8 +459,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-
-            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.SEE_THROUGH);
+            
+            return cell != null && cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
         }
 
         public bool IsBrush(float x, float y)
@@ -487,7 +472,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GRASS);
+            return cell != null && cell.HasFlag(NavigationGridCellFlags.HAS_GRASS);
         }
 
         public bool HasGlobalVision(Vector2 coords)
@@ -495,7 +480,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 vector = TranslateToNavGrid(coords);
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell != null && cell.HasFlag(this, NavigationGridCellFlags.HAS_GLOBAL_VISION);
+            return cell != null && cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION);
         }
 
         public float GetHeightAtLocation(Vector2 coords)
