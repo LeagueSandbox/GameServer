@@ -220,17 +220,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return ret;
         }
 
-        public Vector2 Uncompress(Vector2 vector)
-        {
-            Vector2 ret = new Vector2
-            {
-                X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
-                Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
-            };
-
-            return ret;
-        }
-
         public void ToImage(string fileName)
         {
             int width = (int)this.CellCountX;
@@ -433,6 +422,15 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public float UncompressZ(short shortZ)
         {
             return Convert.ToSingle(shortZ / (1 / SCALE) + this.OffsetZ);
+        }
+
+        public Vector2 Uncompress(Vector2 vector)
+        {
+            return new Vector2
+            {
+                X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
+                Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
+            };
         }
 
         public Vector2 GetSize()
