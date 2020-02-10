@@ -585,10 +585,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 rayDist += a.CollisionRadius;
                 return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
-            else
+            if (b is IObjBuilding)
             {
-                return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
+                double rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
+                rayDist += b.CollisionRadius;
+                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
+            return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
         }
         public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination)
         {
