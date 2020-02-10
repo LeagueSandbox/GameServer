@@ -7,7 +7,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class SpawnMonster : Packet
     {
-        public SpawnMonster(INavGrid navGrid, IMonster m)
+        public SpawnMonster(INavigationGrid navGrid, IMonster m)
             : base(PacketCmd.PKT_S2C_OBJECT_SPAWN)
         {
             WriteNetId(m);

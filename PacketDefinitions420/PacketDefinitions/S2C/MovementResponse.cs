@@ -10,13 +10,13 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class MovementResponse : BasePacket
     {
-        public MovementResponse(INavGrid navGrid, IGameObject obj)
+        public MovementResponse(INavigationGrid navGrid, IGameObject obj)
             : this(navGrid, new List<IGameObject> { obj })
         {
 
         }
 
-        public MovementResponse(INavGrid navGrid, List<IGameObject> actors)
+        public MovementResponse(INavigationGrid navGrid, List<IGameObject> actors)
             : base(PacketCmd.PKT_S2C_MOVE_ANS)
         {
             Write(Environment.TickCount); // syncID
