@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     continue;
                 }
 
-                if (!_game.Map.NavGrid.IsWalkable(obj.X, obj.Y))
+                if (!_game.Map.NavigationGrid.IsWalkable(obj.X, obj.Y))
                 {
                     obj.OnCollision(null); // TODO: Change this to something more readable like `bool terrain`
                 }

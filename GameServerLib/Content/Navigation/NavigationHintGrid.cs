@@ -7,13 +7,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 {
     public class NavigationHintGrid
     {
-        public const uint HINT_NODE_COUNT = 900;
-
-        public NavigationHintNode[] HintNodes { get; private set; } = new NavigationHintNode[HINT_NODE_COUNT];
+        public NavigationHintNode[] HintNodes { get; private set; } = new NavigationHintNode[900];
 
         public NavigationHintGrid(BinaryReader br)
         {
-            for (int i = 0; i < HINT_NODE_COUNT; i++)
+            for (int i = 0; i < this.HintNodes.Length; i++)
             {
                 this.HintNodes[i] = new NavigationHintNode(br);
             }

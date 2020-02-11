@@ -117,7 +117,7 @@ namespace LeagueSandbox.GameServer
             // TODO: GameApp should send the Response/Request handlers
             _packetServer = server;
             // TODO: switch the notifier with ResponseHandler
-            PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavGrid);
+            PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavigationGrid);
             InitializePacketHandlers();
 
             _logger.Info("Game is ready.");

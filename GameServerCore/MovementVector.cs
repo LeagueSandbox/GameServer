@@ -15,8 +15,8 @@ namespace GameServerCore
 
         public MovementVector(IGame game, float x, float y)
         {
-            X = FormatCoordinate(x, game.Map.NavGrid.MiddleOfMap.Y);
-            Y = FormatCoordinate(y, game.Map.NavGrid.MiddleOfMap.X);
+            X = FormatCoordinate(x, game.Map.NavigationGrid.MiddleOfMap.Y);
+            Y = FormatCoordinate(y, game.Map.NavigationGrid.MiddleOfMap.X);
         }
 
         public static short FormatCoordinate(float coordinate, float origin)
@@ -26,12 +26,12 @@ namespace GameServerCore
 
         public static short TargetXToNormalFormat(IGame game, float value)
         {
-            return TargetXToNormalFormat(game.Map.NavGrid, value);
+            return TargetXToNormalFormat(game.Map.NavigationGrid, value);
         }
 
         public static short TargetYToNormalFormat(IGame game, float value)
         {
-            return TargetYToNormalFormat(game.Map.NavGrid, value);
+            return TargetYToNormalFormat(game.Map.NavigationGrid, value);
         }
 
         public static short TargetXToNormalFormat(INavigationGrid navGrid, float value)

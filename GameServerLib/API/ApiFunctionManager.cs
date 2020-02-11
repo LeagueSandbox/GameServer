@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.API
         public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
             var coords = new Vector2(x, y);
-            var truePos = _game.Map.NavGrid.GetClosestTerrainExit(coords);
+            var truePos = _game.Map.NavigationGrid.GetClosestTerrainExit(coords);
 
             CancelDash(unit);
             unit.TeleportTo(truePos.X, truePos.Y);
@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static bool IsWalkable(float x, float y)
         {
-            return _game.Map.NavGrid.IsWalkable(x, y);
+            return _game.Map.NavigationGrid.IsWalkable(x, y);
         }
 
         public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
@@ -265,7 +265,7 @@ namespace LeagueSandbox.GameServer.API
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(

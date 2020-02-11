@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 byte major = br.ReadByte();
                 ushort minor = major != 2 ? br.ReadUInt16() : (ushort)0;
-                if(major != 2 && major != 3 && major != 5 && major != 7)
+                if (major != 2 && major != 3 && major != 5 && major != 7)
                 {
                     throw new Exception(string.Format("Unsupported Navigation Grid Version: {0}.{1}", major, minor));
                 }
@@ -85,14 +85,14 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     }
                 }
 
-                if(major == 5)
+                if (major == 5)
                 {
-                    for(int i = 0; i < this.RegionTags.Length; i++)
+                    for (int i = 0; i < this.RegionTags.Length; i++)
                     {
                         this.RegionTags[i] = br.ReadUInt16();
                     }
                 }
-                else if(major == 7)
+                else if (major == 7)
                 {
                     for (int i = 0; i < this.RegionTags.Length; i++)
                     {
@@ -107,7 +107,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 this.SampledHeightsCountY = br.ReadUInt32();
                 this.SampledHeightsDistance = br.ReadVector2();
                 this.SampledHeights = new float[this.SampledHeightsCountX * this.SampledHeightsCountY];
-                for(int i = 0; i < this.SampledHeights.Length; i++)
+                for (int i = 0; i < this.SampledHeights.Length; i++)
                 {
                     this.SampledHeights[i] = br.ReadSingle();
                 }
@@ -149,7 +149,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 // while there are still paths to explore
                 while (true)
                 {
-                    if (!priorityQueue.TryFirst(out path))
+                    if (!priorityQueue.TryFirst(out _))
                     {
                         // no solution
                         return null;
@@ -163,29 +163,34 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     currentCost -= (NavigationGridCell.Distance(cell, goal) + cell.Heuristic); // decrease the heuristic to get the cost
 
                     // found the min solution return it (path)
-                    if (cell.ID == goal.ID) break;
+                    if (cell.ID == goal.ID)
+                    {
+                        break;
+                    }
 
-                    NavigationGridCell tempCell = null;
-                    foreach (NavigationGridCell ncell in GetCellNeighbors(cell))
+                    foreach (NavigationGridCell neighborCell in GetCellNeighbors(cell))
                     {
                         // if the neighbor in the closed list - skip
-                        if (closedList.TryGetValue(ncell.ID, out tempCell)) continue;
+                        if (closedList.TryGetValue(neighborCell.ID, out _))
+                        {
+                            continue;
+                        }
 
                         // not walkable - skip
-                        if (ncell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || ncell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                        if (neighborCell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || neighborCell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
                         {
-                            closedList.Add(ncell.ID, ncell);
+                            closedList.Add(neighborCell.ID, neighborCell);
                             continue;
                         }
 
                         // calculate the new path and cost +heuristic and add to the priority queue
                         Stack<NavigationGridCell> npath = new Stack<NavigationGridCell>(new Stack<NavigationGridCell>(path));
 
-                        npath.Push(ncell);
+                        npath.Push(neighborCell);
                         // add 1 for every cell used
-                        priorityQueue.Enqueue(npath, currentCost + 1 + ncell.Heuristic + ncell.ArrivalCost + ncell.AdditionalCost
-                            + NavigationGridCell.Distance(ncell, goal));
-                        closedList.Add(ncell.ID, ncell);
+                        priorityQueue.Enqueue(npath, currentCost + 1 + neighborCell.Heuristic + neighborCell.ArrivalCost + neighborCell.AdditionalCost
+                            + NavigationGridCell.Distance(neighborCell, goal));
+                        closedList.Add(neighborCell.ID, neighborCell);
                     }
                 }
 
@@ -261,8 +266,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return ret;
         }
 
-        // TODO: seems like using binary search for simple index finding on a grid!!!
-        // CHANGE THIS
         public Vector2 GetCellVector(short x, short y)
         {
             return new Vector2(UncompressX(x), UncompressZ(y));
@@ -295,13 +298,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         public NavigationGridCell GetCell(short x, short y)
         {
-            long index = y * this.CellCountX + x;
-            if (x < 0 || x > this.CellCountX || y < 0 || y > this.CellCountY || index >= this.Cells.Length)
-            {
-                return null;
-            }
-
-            return this.Cells[index];
+            return GetCell((int)x, (int)y);
         }
         public NavigationGridCell GetCell(int x, int y)
         {
@@ -340,9 +337,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 throw new Exception("Compressed position reached maximum value.");
             }
 
-            int ret = Convert.ToInt32((positionX - this.OffsetX) * (1 / SCALE));
-
-            return (ushort)ret;
+            return (ushort)Convert.ToInt32((positionX - this.OffsetX) * (1 / SCALE));
         }
         public ushort CompressZ(float positionZ)
         {
@@ -370,11 +365,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
                 Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
             };
-        }
-
-        public Vector2 GetSize()
-        {
-            return new Vector2(this.MapWidth / 2, this.MapHeight / 2);
         }
 
         public bool IsWalkable(float x, float y)
@@ -532,8 +522,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return location;
             }
 
-            double trueX = (double)location.X;
-            double trueY = (double)location.Y;
+            double trueX = location.X;
+            double trueY = location.Y;
             double angle = Math.PI / 4;
             double rr = (location.X - trueX) * (location.X - trueX) + (location.Y - trueY) * (location.Y - trueY);
             double r = Math.Sqrt(rr);

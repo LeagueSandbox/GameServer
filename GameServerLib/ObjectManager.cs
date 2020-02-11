@@ -399,7 +399,7 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _objects)
                 {
                     if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavGrid.IsAnythingBetween(kv.Value, o))
+                        !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o))
                     {
                         var unit = kv.Value as IAttackableUnit;
                         if (unit != null && unit.IsDead)
