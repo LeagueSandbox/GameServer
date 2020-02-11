@@ -13,8 +13,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public bool IsOpen { get; private set; }
         public float Heuristic { get; private set; }
         public uint ActorList { get; private set; }
-        public short X { get; private set; } = -32768;
-        public short Y { get; private set; } = -32768;
+        public NavigationGridLocator Locator { get; private set; }
         public float AdditionalCost { get; private set; }
         public float HintAsGoodCell { get; private set; }
         public uint AdditionalCostRefCount { get; private set; }
@@ -33,8 +32,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             bool isOpen = br.ReadUInt32() == 1;
             float heuristic = br.ReadSingle();
             uint actorList = br.ReadUInt32();
-            short x = br.ReadInt16();
-            short y = br.ReadInt16();
+            NavigationGridLocator locator = new NavigationGridLocator(br);
             float additionalCost = br.ReadSingle();
             float hintAsGoodCell = br.ReadSingle();
             uint additionalCostRefCount = br.ReadUInt32();
@@ -54,8 +52,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 IsOpen = isOpen,
                 Heuristic = heuristic,
                 ActorList = actorList,
-                X = x,
-                Y = y,
+                Locator = locator,
                 AdditionalCost = additionalCost,
                 HintAsGoodCell = hintAsGoodCell,
                 AdditionalCostRefCount = additionalCostRefCount,
@@ -72,8 +69,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float arrivalCost = br.ReadSingle();
             bool isOpen = br.ReadUInt32() == 1;
             float heuristic = br.ReadSingle();
-            short x = br.ReadInt16();
-            short y = br.ReadInt16();
+            NavigationGridLocator locator = new NavigationGridLocator(br);
             uint actorList = br.ReadUInt32();
             br.ReadUInt32();
             int goodCellSessionId = br.ReadInt32();
@@ -91,8 +87,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 IsOpen = isOpen,
                 Heuristic = heuristic,
                 ActorList = actorList,
-                X = x,
-                Y = y,
+                Locator = locator,
                 GoodCellSessionId = goodCellSessionId,
                 RefHintWeight = refHintWeight,
                 ArrivalDirection = arrivalDirection,
@@ -111,7 +106,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         public static int Distance(NavigationGridCell a, NavigationGridCell b)
         {
-            return (Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y));
+            return NavigationGridLocator.Distance(a.Locator, b.Locator);
         }
     }
 

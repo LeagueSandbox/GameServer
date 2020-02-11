@@ -20,5 +20,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             this.X = br.ReadInt16();
             this.Y = br.ReadInt16();
         }
+
+        public static int Distance(NavigationGridLocator a, NavigationGridLocator b)
+        {
+            return (Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y));
+        }
     }
 }

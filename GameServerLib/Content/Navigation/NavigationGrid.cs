@@ -198,7 +198,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 foreach (NavigationGridCell navGridCell in pathList.ToArray())
                 {
-                    returnList.Add(TranslateFromNavGrid(new Vector2 { X = navGridCell.X, Y = navGridCell.Y }));
+                    returnList.Add(TranslateFrmNavigationGrid(navGridCell.Locator));
                 }
 
                 return returnList;
@@ -246,7 +246,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             vector.Y = (vector.Y - this.MinGridPosition.Z) * this.TranslationMaxGridPosition.Z;
             return vector;
         }
-        public Vector2 TranslateFromNavGrid(Vector2 vector)
+        public Vector2 TranslateFrmNavigationGrid(NavigationGridLocator locator)
+        {
+            return TranslateFrmNavigationGrid(new Vector2(locator.X, locator.Y));
+        }
+        public Vector2 TranslateFrmNavigationGrid(Vector2 vector)
         {
             Vector2 ret = new Vector2
             {
@@ -257,113 +261,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return ret;
         }
 
-        public void ToImage(string fileName)
-        {
-            int width = (int)this.CellCountX;
-            int height = (int)this.CellCountY;
-            byte[] pixels = new byte[this.Cells.Length * 4];
-
-            int offset = 0;
-            for (int i = 0; i < this.Cells.Length; i++)
-            {
-                if (this.Cells[i].HasFlag(NavigationGridCellFlags.NOT_PASSABLE))
-                {
-                    byte red = 0xFF;
-                    byte green = 0x00;
-                    byte blue = 0x00;
-
-                    pixels[offset] = blue; // r
-                    pixels[offset + 1] = green; // g
-                    pixels[offset + 2] = red; // b
-                    pixels[offset + 3] = 0xFF; // a
-                }
-
-                offset += 4;
-            }
-
-
-            byte[] header = new byte[]
-            {
-                0x00, // ID length
-                0x00, // no color map
-                0x02, // uncompressed, true color
-                0x00, 0x00, 0x00, 0x00,
-                0x00,
-                0x00, 0x00, 0x00, 0x00, // x and y origin
-                (byte)(width & 0x00FF),
-                (byte)((width & 0xFF00) >> 8),
-                (byte)(height & 0x00FF),
-                (byte)((height & 0xFF00) >> 8),
-                0x20, // 32 bit bitmap
-                0x00
-            };
-
-            using (BinaryWriter writer = new BinaryWriter(File.Open(fileName, FileMode.Create)))
-            {
-                writer.Write(header);
-                writer.Write(pixels);
-            }
-        }
-
         // TODO: seems like using binary search for simple index finding on a grid!!!
         // CHANGE THIS
         public Vector2 GetCellVector(short x, short y)
         {
-            // Changed to binary search
-            int width = (int)this.CellCountX;
-            int height = (int)this.CellCountY;
-            int cellSize = (int)this.CellSize;
-            Vector2 index = new Vector2
-            {
-                X = width / 2,
-                Y = height / 2
-            };
-            Vector2 step = new Vector2
-            {
-                X = width / 4,
-                Y = height / 4
-            };
-
-            while (true)
-            {
-                int i = (int)(index.X + index.Y * width);
-
-                if (this.Cells[i].X < x)
-                {
-                    index.X += step.X;
-                    step.X = step.X / 2;
-                }
-                else if (this.Cells[i].X > x)
-                {
-                    index.X -= step.X;
-                    step.X = step.X / 2;
-                }
-
-                if (this.Cells[i].Y < y)
-                {
-                    index.Y += step.Y;
-                    step.Y = step.Y / 2;
-                }
-                else if (this.Cells[i].Y > y)
-                {
-                    index.Y -= step.Y;
-                    step.Y = step.Y / 2;
-                }
-
-                if (Math.Abs(this.Cells[i].X - x) < cellSize && Math.Abs(this.Cells[i].Y - y) < cellSize)
-                {
-                    return index;
-                }
-
-                if (step.X == 0 && step.Y == 0)
-                {
-                    return new Vector2
-                    {
-                        X = -1,
-                        Y = -1
-                    };
-                }
-            }
+            return new Vector2(UncompressX(x), UncompressZ(y));
         }
 
         public int GetCellIndex(short x, short y)
@@ -381,8 +283,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             for (int i = 0; i < this.Cells.Length; i++)
             {
-                if (UncompressX(this.Cells[i].X) > x - this.CellSize && UncompressX(this.Cells[i].X) < x + this.CellSize &&
-                    UncompressZ(this.Cells[i].Y) > z - this.CellSize && UncompressZ(this.Cells[i].Y) < z + this.CellSize)
+                if (UncompressX(this.Cells[i].Locator.X) > x - this.CellSize && UncompressX(this.Cells[i].Locator.X) < x + this.CellSize &&
+                    UncompressZ(this.Cells[i].Locator.Y) > z - this.CellSize && UncompressZ(this.Cells[i].Locator.Y) < z + this.CellSize)
                 {
                     return i;
                 }
@@ -414,17 +316,18 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
         {
-            short x = cell.X;
-            short y = cell.Y;
             List<NavigationGridCell> neighbors = new List<NavigationGridCell>();
             for (int dirY = -1; dirY <= 1; dirY++)
             {
                 for (int dirX = -1; dirX <= 1; dirX++)
                 {
-                    int nx = x + dirX;
-                    int ny = y + dirY;
-                    NavigationGridCell ncell = GetCell(nx, ny);
-                    if (ncell != null) neighbors.Add(ncell);
+                    int nx = cell.Locator.X + dirX;
+                    int ny = cell.Locator.Y + dirY;
+                    NavigationGridCell neighborCell = GetCell(nx, ny);
+                    if (neighborCell != null)
+                    {
+                        neighbors.Add(neighborCell);
+                    }
                 }
             }
             return neighbors;
@@ -448,18 +351,16 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 throw new Exception("Compressed position reached maximum value.");
             }
 
-            int ret = Convert.ToInt32((positionZ - this.OffsetZ) * (1 / SCALE));
-
-            return (ushort)ret;
+            return (ushort)Convert.ToInt32((positionZ - this.OffsetZ) * (1 / SCALE));
         }
 
         public float UncompressX(short shortX)
         {
-            return Convert.ToSingle(shortX / (1 / SCALE) + this.OffsetX);
+            return shortX / (1 / SCALE) + this.OffsetX;
         }
         public float UncompressZ(short shortZ)
         {
-            return Convert.ToSingle(shortZ / (1 / SCALE) + this.OffsetZ);
+            return shortZ / (1 / SCALE) + this.OffsetZ;
         }
 
         public Vector2 Uncompress(Vector2 vector)
@@ -520,9 +421,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return cell != null && cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION);
         }
 
-        public float GetHeightAtLocation(Vector2 coords)
+        public float GetHeightAtLocation(Vector2 location)
         {
-            Vector2 vector = TranslateToNavGrid(coords);
+            Vector2 vector = TranslateToNavGrid(location);
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
             if (cell != null)
             {
@@ -615,9 +516,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
             return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
         }
-        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination)
+        public bool IsAnythingBetween(NavigationGridLocator a, NavigationGridLocator b)
         {
-            return IsAnythingBetween(new Vector2(origin.X, origin.Y), new Vector2(destination.X, destination.Y));
+            return IsAnythingBetween(new Vector2(a.X, a.Y), new Vector2(b.X, b.Y));
+        }
+        public bool IsAnythingBetween(NavigationGridCell a, NavigationGridCell b)
+        {
+            return IsAnythingBetween(a.Locator, b.Locator);
         }
 
         public Vector2 GetClosestTerrainExit(Vector2 location)
