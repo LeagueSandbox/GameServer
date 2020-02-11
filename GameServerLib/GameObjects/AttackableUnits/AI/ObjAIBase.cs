@@ -676,5 +676,46 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             IsDashing = state;
         }
+
+        public int GetObjHash()
+        {
+            var hash = 0;
+            var gobj = "[Character]";
+
+            for (var i = 0; i < gobj.Length; i++)
+            {
+                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
+            }
+
+            for (var i = 0; i < Model.Length; i++)
+            {
+                hash = char.ToLower(Model[i]) + 0x1003F * hash;
+            }
+
+            if (this is IChampion || this is IMinion)
+            {
+                var szSkin = "";
+
+                if (this is IChampion c)
+                {
+                    if (c.Skin < 10)
+                    {
+                        szSkin = "0" + c.Skin;
+                    }
+                    else
+                    {
+                        szSkin = c.Skin.ToString();
+                    }
+                }
+                // TODO: Account for Skin of Minions
+
+                for (var i = 0; i < szSkin.Length; i++)
+                {
+                    hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
+                }
+            }
+
+            return hash;
+        }
     }
 }

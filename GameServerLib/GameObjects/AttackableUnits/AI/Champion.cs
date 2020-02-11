@@ -367,40 +367,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeleportTo(spawnPos.X, spawnPos.Y);
         }
 
-        public int GetChampionHash()
-        {
-            var szSkin = "";
-
-            if (Skin < 10)
-            {
-                szSkin = "0" + Skin;
-            }
-            else
-            {
-                szSkin = Skin.ToString();
-            }
-
-            var hash = 0;
-            var gobj = "[Character]";
-
-            for (var i = 0; i < gobj.Length; i++)
-            {
-                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
-            }
-
-            for (var i = 0; i < Model.Length; i++)
-            {
-                hash = char.ToLower(Model[i]) + 0x1003F * hash;
-            }
-
-            for (var i = 0; i < szSkin.Length; i++)
-            {
-                hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
-            }
-
-            return hash;
-        }
-
         public bool LevelUp()
         {
             var stats = Stats;
