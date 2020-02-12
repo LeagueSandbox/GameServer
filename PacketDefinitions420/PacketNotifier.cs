@@ -561,7 +561,7 @@ namespace PacketDefinitions420
             cast.CasterNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId;
             //TODO: Implement spell chains
             cast.SpellChainOwnerNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId; // TODO: Implement spell chains
-            cast.PackageHash = p.OriginSpell != null ? (uint)(p.Owner as IObjAiBase).GetObjHash() : 0;
+            cast.PackageHash = p.OriginSpell != null ? (p.Owner as IObjAiBase).GetObjHash() : 0;
             cast.MissileNetID = p.NetId;
             // Not sure if we want to add height for these, but i did it anyway
             cast.TargetPosition = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
@@ -690,7 +690,7 @@ namespace PacketDefinitions420
             var fxGroupData1 = new FXCreateGroupData();
             if (particle.Owner is IObjAiBase o)
             {
-                fxGroupData1.PackageHash = (uint)o.GetObjHash();
+                fxGroupData1.PackageHash = o.GetObjHash();
             }
             else
             {

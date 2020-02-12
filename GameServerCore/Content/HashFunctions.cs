@@ -37,5 +37,17 @@ namespace GameServerCore.Content
 
             return hash;
         }
+
+        public static uint HashStringNorm(string str)
+        {
+            uint hash = 0;
+
+            for (var i = 0; i < str.Length; i++)
+            {
+                hash = char.ToLower(str[i]) + 65599 * hash;
+            }
+
+            return hash;
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace GameServerCore.Domain.GameObjects
         void RemoveStatModifier(IStatsModifier statModifier);
         void SetTargetUnit(IAttackableUnit target);
         void AutoAttackHit(IAttackableUnit target);
-        int GetObjHash();
+        uint GetObjHash();
 
         // buffs
         bool HasBuffGameScriptActive(string buffNamespace, string buffClass);

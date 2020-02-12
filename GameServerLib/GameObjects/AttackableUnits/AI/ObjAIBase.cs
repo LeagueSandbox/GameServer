@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -677,45 +678,26 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             IsDashing = state;
         }
 
-        public int GetObjHash()
+        public uint GetObjHash()
         {
-            var hash = 0;
-            var gobj = "[Character]";
+            var gobj = "[Character]" + Model;
 
-            for (var i = 0; i < gobj.Length; i++)
-            {
-                hash = char.ToLower(gobj[i]) + 0x1003F * hash;
-            }
-
-            for (var i = 0; i < Model.Length; i++)
-            {
-                hash = char.ToLower(Model[i]) + 0x1003F * hash;
-            }
-
-            if (this is IChampion || this is IMinion)
+            // TODO: Account for any other units that have skins (requires skins to be implemented for those units)
+            if (this is IChampion c)
             {
                 var szSkin = "";
-
-                if (this is IChampion c)
+                if (c.Skin < 10)
                 {
-                    if (c.Skin < 10)
-                    {
-                        szSkin = "0" + c.Skin;
-                    }
-                    else
-                    {
-                        szSkin = c.Skin.ToString();
-                    }
+                    szSkin = "0" + c.Skin;
                 }
-                // TODO: Account for Skin of Minions
-
-                for (var i = 0; i < szSkin.Length; i++)
+                else
                 {
-                    hash = char.ToLower(szSkin[i]) + 0x1003F * hash;
+                    szSkin = c.Skin.ToString();
                 }
+                gobj += szSkin;
             }
 
-            return hash;
+            return HashFunctions.HashStringNorm(gobj);
         }
     }
 }
