@@ -299,10 +299,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         public NavigationGridCell GetCell(short x, short y)
         {
-            return GetCell((int)x, (int)y);
-        }
-        public NavigationGridCell GetCell(int x, int y)
-        {
             long index = y * this.CellCountX + x;
             if (x < 0 || x > this.CellCountX || y < 0 || y > this.CellCountY || index >= this.Cells.Length)
             {
@@ -315,12 +311,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
         {
             List<NavigationGridCell> neighbors = new List<NavigationGridCell>();
-            for (int dirY = -1; dirY <= 1; dirY++)
+            for (short dirY = -1; dirY <= 1; dirY++)
             {
-                for (int dirX = -1; dirX <= 1; dirX++)
+                for (short dirX = -1; dirX <= 1; dirX++)
                 {
-                    int nx = cell.Locator.X + dirX;
-                    int ny = cell.Locator.Y + dirY;
+                    short nx = (short)(cell.Locator.X + dirX);
+                    short ny = (short)(cell.Locator.Y + dirY);
                     NavigationGridCell neighborCell = GetCell(nx, ny);
                     if (neighborCell != null)
                     {
