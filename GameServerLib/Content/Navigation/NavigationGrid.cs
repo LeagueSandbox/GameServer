@@ -92,12 +92,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         this.Cells[i].SetFlags((NavigationGridCellFlags)br.ReadUInt16());
                     }
 
-                    if (major == 7)
+                    for (int i = 0; i < this.RegionTags.Length; i++)
                     {
-                        for (int i = 0; i < this.RegionTags.Length; i++)
-                        {
-                            this.RegionTags[i] = br.ReadUInt32();
-                        }
+                        this.RegionTags[i] = br.ReadUInt32();
                     }
                 }
 
@@ -410,62 +407,67 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         public float GetHeightAtLocation(Vector2 location)
         {
+            // Uses SampledHeights to get the height of a given location on the Navigation Grid
+            // This is the method the game uses to get height data
+
             if (location.X >= this.MinGridPosition.X && location.Y >= this.MinGridPosition.Z &&
                 location.X <= this.MaxGridPosition.X && location.Y <= this.MaxGridPosition.Z)
             {
-                float sampledHeightX = (location.X - this.MinGridPosition.X) / this.SampledHeightsDistance.X;
-                int sampledHeightIndexX = (int)sampledHeightX;
-                float sampledHeightY = (location.Y - this.MinGridPosition.Z) / this.SampledHeightsDistance.Y;
-                int sampledHeightIndexY = (int)sampledHeightY;
+                float reguestedHeightX = (location.X - this.MinGridPosition.X) / this.SampledHeightsDistance.X;
+                float requestedHeightY = (location.Y - this.MinGridPosition.Z) / this.SampledHeightsDistance.Y;
+                
+                int sampledHeight1IndexX = (int)reguestedHeightX;
+                int sampledHeight1IndexY = (int)requestedHeightY;
+                int sampledHeight2IndexX;
+                int sampledHeight2IndexY;
+
                 float v13;
                 float v15;
-                int x1;
-                int y1;
 
-                if(sampledHeightX >= this.SampledHeightsCountX - 1)
+                if (reguestedHeightX >= this.SampledHeightsCountX - 1)
                 {
                     v13 = 1.0f;
-                    x1 = sampledHeightIndexX--;
+                    sampledHeight2IndexX = sampledHeight1IndexX--;
                 }
                 else
                 {
                     v13 = 0.0f;
-                    x1 = sampledHeightIndexX + 1;
+                    sampledHeight2IndexX = sampledHeight1IndexX + 1;
                 }
-                if (sampledHeightY >= this.SampledHeightsCountY - 1)
+                if (requestedHeightY >= this.SampledHeightsCountY - 1)
                 {
                     v15 = 1.0f;
-                    y1 = sampledHeightIndexY--;
+                    sampledHeight2IndexY = sampledHeight1IndexY--;
                 }
                 else
                 {
                     v15 = 0.0f;
-                    y1 = sampledHeightIndexY + 1;
+                    sampledHeight2IndexY = sampledHeight1IndexY + 1;
                 }
 
                 uint sampledHeightsCount = this.SampledHeightsCountX * this.SampledHeightsCountY;
-                int v1 = (int)this.SampledHeightsCountX * sampledHeightIndexY;
-                int x0y0 = v1 + sampledHeightIndexX;
-                
-                if(v1 + sampledHeightIndexX < sampledHeightsCount)
-                {
-                    int v19 = x1 + v1;
-                    if(v19 < sampledHeightsCount)
-                    {
-                        int v20 = y1 * (int)this.SampledHeightsCountX;
-                        int v21 = v20 + sampledHeightIndexX;
+                int v1 = (int)this.SampledHeightsCountX * sampledHeight1IndexY;
+                int x0y0 = v1 + sampledHeight1IndexX;
 
-                        if(v21 < sampledHeightsCount)
+                if (v1 + sampledHeight1IndexX < sampledHeightsCount)
+                {
+                    int v19 = sampledHeight2IndexX + v1;
+                    if (v19 < sampledHeightsCount)
+                    {
+                        int v20 = sampledHeight2IndexY * (int)this.SampledHeightsCountX;
+                        int v21 = v20 + sampledHeight1IndexX;
+
+                        if (v21 < sampledHeightsCount)
                         {
-                            int v22 = x1 + v20;
-                            if(v22 < sampledHeightsCount)
+                            int v22 = sampledHeight2IndexX + v20;
+                            if (v22 < sampledHeightsCount)
                             {
-                                return (float)((float)(1.0 - v15)
-                                          * (((float)(1.0 - v13) * this.SampledHeights[x0y0])
+                                float height = ((1.0f - v13) * this.SampledHeights[x0y0])
                                           + (v13 * this.SampledHeights[v19])
-                                          + (((this.SampledHeights[v21] * (1.0 - v13))
-                                          + (this.SampledHeights[v22] * v13))
-                                          * v15)));
+                                          + (((this.SampledHeights[v21] * (1.0f - v13))
+                                          + (this.SampledHeights[v22] * v13)) * v15);
+
+                                return (1.0f - v15) * height;
                             }
                         }
                     }
