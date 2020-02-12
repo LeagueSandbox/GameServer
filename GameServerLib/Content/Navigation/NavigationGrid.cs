@@ -413,14 +413,70 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         public float GetHeightAtLocation(Vector2 location)
         {
-            Vector2 vector = TranslateToNavGrid(location);
-            NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-            if (cell != null)
+            if (location.X >= this.MinGridPosition.X && location.Y >= this.MinGridPosition.Z &&
+                location.X <= this.MaxGridPosition.X && location.Y <= this.MaxGridPosition.Z)
             {
-                return cell.CenterHeight;
+                float sampledHeightX = (location.X - this.MinGridPosition.X) / this.SampledHeightsDistance.X;
+                int sampledHeightX2 = (int)sampledHeightX;
+                float sampledHeightY = (location.Y - this.MinGridPosition.Z) / this.SampledHeightsDistance.Y;
+                int sampledHeightY2 = (int)sampledHeightY;
+                float v13;
+                float v15;
+                int x1;
+                int y1;
+
+                if(sampledHeightX >= this.SampledHeightsCountX - 1)
+                {
+                    v13 = 1.0f;
+                    x1 = sampledHeightX2--;
+                }
+                else
+                {
+                    v13 = 0.0f;
+                    x1 = sampledHeightX2 + 1;
+                }
+                if (sampledHeightY >= this.SampledHeightsCountY - 1)
+                {
+                    v15 = 1.0f;
+                    y1 = sampledHeightY2--;
+                }
+                else
+                {
+                    v15 = 0.0f;
+                    y1 = sampledHeightY2 + 1;
+                }
+
+                int v1 = (int)this.SampledHeightsCountX * sampledHeightY2;
+                uint sampledHeightsCount = this.SampledHeightsCountX * this.SampledHeightsCountY;
+                int x0y0 = v1 + sampledHeightX2;
+                
+                if(v1 + sampledHeightX2 < sampledHeightsCount)
+                {
+                    int v19 = x1 + v1;
+                    if(v19 < sampledHeightsCount)
+                    {
+                        int v20 = y1 * (int)this.SampledHeightsCountX;
+                        int v21 = v20 + sampledHeightX2;
+
+                        if(v21 < sampledHeightsCount)
+                        {
+                            int v22 = x1 + v20;
+                            if(v22 < sampledHeightsCount)
+                            {
+                                return (float)((float)(1.0 - v15)
+                                          * (((float)(1.0 - v13) * this.SampledHeights[x0y0])
+                                          + (v13 * this.SampledHeights[v19])
+                                          + (((this.SampledHeights[v21] * (1.0 - v13))
+                                          + (this.SampledHeights[v22] * v13))
+                                          * v15)));
+                            }
+                        }
+                    }
+                }
+
             }
 
-            return float.MinValue;
+            return 0.0f;
         }
         public float GetHeightAtLocation(float x, float y)
         {
