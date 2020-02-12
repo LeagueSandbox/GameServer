@@ -72,6 +72,14 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     {
                         this.Cells[i] = NavigationGridCell.ReadVersion5(br, i);
                     }
+
+                    if (major == 5)
+                    {
+                        for (int i = 0; i < this.RegionTags.Length; i++)
+                        {
+                            this.RegionTags[i] = br.ReadUInt16();
+                        }
+                    }
                 }
                 else if (major == 7)
                 {
@@ -83,20 +91,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     {
                         this.Cells[i].SetFlags((NavigationGridCellFlags)br.ReadUInt16());
                     }
-                }
 
-                if (major == 5)
-                {
-                    for (int i = 0; i < this.RegionTags.Length; i++)
+                    if (major == 7)
                     {
-                        this.RegionTags[i] = br.ReadUInt16();
-                    }
-                }
-                else if (major == 7)
-                {
-                    for (int i = 0; i < this.RegionTags.Length; i++)
-                    {
-                        this.RegionTags[i] = br.ReadUInt32();
+                        for (int i = 0; i < this.RegionTags.Length; i++)
+                        {
+                            this.RegionTags[i] = br.ReadUInt32();
+                        }
                     }
                 }
 
@@ -417,9 +418,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 location.X <= this.MaxGridPosition.X && location.Y <= this.MaxGridPosition.Z)
             {
                 float sampledHeightX = (location.X - this.MinGridPosition.X) / this.SampledHeightsDistance.X;
-                int sampledHeightX2 = (int)sampledHeightX;
+                int sampledHeightIndexX = (int)sampledHeightX;
                 float sampledHeightY = (location.Y - this.MinGridPosition.Z) / this.SampledHeightsDistance.Y;
-                int sampledHeightY2 = (int)sampledHeightY;
+                int sampledHeightIndexY = (int)sampledHeightY;
                 float v13;
                 float v15;
                 int x1;
@@ -428,35 +429,35 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 if(sampledHeightX >= this.SampledHeightsCountX - 1)
                 {
                     v13 = 1.0f;
-                    x1 = sampledHeightX2--;
+                    x1 = sampledHeightIndexX--;
                 }
                 else
                 {
                     v13 = 0.0f;
-                    x1 = sampledHeightX2 + 1;
+                    x1 = sampledHeightIndexX + 1;
                 }
                 if (sampledHeightY >= this.SampledHeightsCountY - 1)
                 {
                     v15 = 1.0f;
-                    y1 = sampledHeightY2--;
+                    y1 = sampledHeightIndexY--;
                 }
                 else
                 {
                     v15 = 0.0f;
-                    y1 = sampledHeightY2 + 1;
+                    y1 = sampledHeightIndexY + 1;
                 }
 
-                int v1 = (int)this.SampledHeightsCountX * sampledHeightY2;
                 uint sampledHeightsCount = this.SampledHeightsCountX * this.SampledHeightsCountY;
-                int x0y0 = v1 + sampledHeightX2;
+                int v1 = (int)this.SampledHeightsCountX * sampledHeightIndexY;
+                int x0y0 = v1 + sampledHeightIndexX;
                 
-                if(v1 + sampledHeightX2 < sampledHeightsCount)
+                if(v1 + sampledHeightIndexX < sampledHeightsCount)
                 {
                     int v19 = x1 + v1;
                     if(v19 < sampledHeightsCount)
                     {
                         int v20 = y1 * (int)this.SampledHeightsCountX;
-                        int v21 = v20 + sampledHeightX2;
+                        int v21 = v20 + sampledHeightIndexX;
 
                         if(v21 < sampledHeightsCount)
                         {
