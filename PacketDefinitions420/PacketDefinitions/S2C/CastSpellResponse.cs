@@ -19,7 +19,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write(1.0f); // attackSpeedMod
             WriteNetId(s.Owner);
             WriteNetId(s.Owner);
-            Write((int)s.Owner.GetChampionHash());
+            Write((int)s.Owner.GetObjHash());
             Write((uint)futureProjNetId); // The projectile ID that will be spawned
             Write((float)x);
             Write((float)navGrid.GetHeightAtLocation(x, y));

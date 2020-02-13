@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore;
+using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -675,6 +676,28 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void SetDashingState(bool state)
         {
             IsDashing = state;
+        }
+
+        public uint GetObjHash()
+        {
+            var gobj = "[Character]" + Model;
+
+            // TODO: Account for any other units that have skins (requires skins to be implemented for those units)
+            if (this is IChampion c)
+            {
+                var szSkin = "";
+                if (c.Skin < 10)
+                {
+                    szSkin = "0" + c.Skin;
+                }
+                else
+                {
+                    szSkin = c.Skin.ToString();
+                }
+                gobj += szSkin;
+            }
+
+            return HashFunctions.HashStringNorm(gobj);
         }
     }
 }

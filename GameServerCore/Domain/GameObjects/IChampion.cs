@@ -16,7 +16,6 @@ namespace GameServerCore.Domain.GameObjects
 
         // basic
         void UpdateSkin(int skinNo);
-        int GetChampionHash();
         void StopChampionMovement();
         bool CanMove();
         void UpdateMoveOrder(MoveOrder order);

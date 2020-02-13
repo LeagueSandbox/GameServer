@@ -546,11 +546,11 @@ namespace PacketDefinitions420
             misPacket.StartPoint = new Vector3(p.X, p.GetZ(), p.Y);
             misPacket.EndPoint = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
             misPacket.UnitPosition = new Vector3(p.Owner.X, p.Owner.GetZ(), p.Owner.Y);
-            misPacket.TimeFromCreation = 0f; // Unsure of a use for this
+            misPacket.TimeFromCreation = 0f; // TODO: Unhardcode
             misPacket.Speed = p.GetMoveSpeed();
-            misPacket.LifePercentage = 0f; // Unsure of a use for this
+            misPacket.LifePercentage = 0f; // TODO: Unhardcode
             //TODO: Implement time limited projectiles
-            misPacket.TimedSpeedDelta = 0f; // Likely for time limited projectiles, implement this
+            misPacket.TimedSpeedDelta = 0f; // TODO: Implement time limited projectiles for this
             misPacket.TimedSpeedDeltaTime = 0x7F7FFFFF; // Same as above (this value is from the SpawnProjectile packet, it is a placeholder)
             misPacket.Bounced = false; //TODO: Implement bouncing projectiles
             var cast = new CastInfo();
@@ -560,8 +560,8 @@ namespace PacketDefinitions420
             cast.AttackSpeedModifier = 1.0f; // Unsure of a use for this
             cast.CasterNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId;
             //TODO: Implement spell chains
-            cast.SpellChainOwnerNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId; // Might change in the future, spell chains not implemented
-            cast.PackageHash = p.OriginSpell != null ? (uint)(p.Owner as IChampion).GetChampionHash() : 0; // Probably incorrect, taken from SpawnProjectile packet
+            cast.SpellChainOwnerNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId; // TODO: Implement spell chains
+            cast.PackageHash = p.OriginSpell != null ? (p.Owner as IObjAiBase).GetObjHash() : 0;
             cast.MissileNetID = p.NetId;
             // Not sure if we want to add height for these, but i did it anyway
             cast.TargetPosition = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
@@ -572,16 +572,16 @@ namespace PacketDefinitions420
                 var targets = new List<CastInfo.Target>();
                 var tar = new CastInfo.Target();
                 tar.UnitNetID = (p.Target as IAttackableUnit).NetId;
-                tar.HitResult = 0; // Not sure what to put here
+                tar.HitResult = 0; // TODO: Unhardcode
                 targets.Add(tar);
                 cast.Targets = targets;
             }
 
-            cast.DesignerCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // Probably incorrect
-            cast.ExtraCastTime = 0f; // Unsure of a use for this
-            cast.DesignerTotalTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // Probably incorrect
+            cast.DesignerCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // TODO: Verify
+            cast.ExtraCastTime = 0f; // TODO: Unhardcode
+            cast.DesignerTotalTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // TODO: Verify
             cast.Cooldown = p.OriginSpell != null ? p.OriginSpell.GetCooldown() : 0f;
-            cast.StartCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 0f; // Probably incorrect, maybe channel time?
+            cast.StartCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 0f; // TODO: Verify
 
             //TODO: Implement spell flags so these aren't set manually
             cast.IsAutoAttack = false;
@@ -688,7 +688,14 @@ namespace PacketDefinitions420
             // TODO: implement option for multiple particles instead of hardcoding one
             fxDataList.Add(fxData1);
             var fxGroupData1 = new FXCreateGroupData();
-            fxGroupData1.PackageHash = (uint)particle.Owner.GetChampionHash();
+            if (particle.Owner is IObjAiBase o)
+            {
+                fxGroupData1.PackageHash = o.GetObjHash();
+            }
+            else
+            {
+                fxGroupData1.PackageHash = 0; // TODO: Verify
+            }
             fxGroupData1.EffectNameHash = HashFunctions.HashString(particle.Name);
             //TODO: un-hardcode flags
             fxGroupData1.Flags = 0x20; // Taken from SpawnParticle packet
