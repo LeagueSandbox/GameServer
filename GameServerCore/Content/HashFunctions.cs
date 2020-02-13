@@ -23,19 +23,7 @@ namespace GameServerCore.Content
 
         public static uint HashStringSdbm(string section, string name)
         {
-            uint hash = 0;
-            foreach (var c in section)
-            {
-                hash = char.ToLower(c) + 65599 * hash;
-            }
-
-            hash = char.ToLower('*') + 65599 * hash;
-            foreach (var c in name)
-            {
-                hash = char.ToLower(c) + 65599 * hash;
-            }
-
-            return hash;
+            return HashStringNorm(section + '*' + name);
         }
 
         public static uint HashStringNorm(string str)
