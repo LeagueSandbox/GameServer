@@ -9,21 +9,23 @@ namespace SummonerHasteBuff
 {
     internal class SummonerHasteBuff : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
+        public BuffType BuffType { get; } = BuffType.HASTE;
+        public BuffAddType BuffAddType { get; } = BuffAddType.STACKS_AND_OVERLAPS;
+        public int MaxStacks { get; } = 5;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = false;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = 27 / 100.0f;
-            unit.AddStatModifier(_statMod);
-            _visualBuff = AddBuffHudVisual("SummonerHaste", 10.0f, 1, BuffType.COMBAT_ENCHANCER, unit);
+            StatsModifier.MoveSpeed.PercentBonus = 27 / 100.0f;
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(_statMod);
-            RemoveBuffHudVisual(_visualBuff);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

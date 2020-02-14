@@ -8,16 +8,20 @@ namespace HealCheck
 {
     internal class HealCheck : IBuffGameScript
     {
-        private IBuff _healBuff;
+        public BuffType BuffType { get; } = BuffType.COMBAT_DEHANCER;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = true;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; }
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _healBuff = AddBuffHudVisual("SummonerHealCheck", 35.0f, 1, BuffType.COMBAT_DEHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_healBuff);
         }
 
         public void OnUpdate(double diff)

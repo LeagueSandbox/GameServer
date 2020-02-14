@@ -8,17 +8,17 @@ namespace Spells
 {
     public class Imbue : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             spell.SpellAnimation("SPELL1", owner);
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             if (target.Team == owner.Team)
             {
                 var p1 = AddParticleTarget(owner, "Imbue_glow.troy", target, 1);
-                var p2 = AddParticleTarget(owner, "Imbue_cas.troy", owner, 1);                
+                var p2 = AddParticleTarget(owner, "Imbue_cas.troy", owner, 1);
                 CreateTimer(1.75f, () =>
                 {
                     RemoveParticle(p1);
@@ -36,11 +36,11 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
-        private void PerformHeal(IChampion owner, ISpell spell, IAttackableUnit target)
+        private void PerformHeal(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var baseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.05f;
@@ -63,11 +63,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

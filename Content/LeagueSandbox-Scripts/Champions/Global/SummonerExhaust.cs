@@ -8,21 +8,21 @@ namespace Spells
 {
     public class SummonerExhaust : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var ai = target as ObjAiBase;
             if (ai != null)
             {
                 AddParticleTarget(owner, "Global_SS_Exhaust.troy", target);
-                ai.AddBuffGameScript("SummonerExhaustDebuff", "SummonerExhaustDebuff", spell, 2.5f, true);
+                AddBuff("SummonerExhaustDebuff", 2.5f, 1, spell, ai, owner);
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
@@ -30,11 +30,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

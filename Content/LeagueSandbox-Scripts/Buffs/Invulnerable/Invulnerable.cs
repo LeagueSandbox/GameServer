@@ -8,9 +8,17 @@ namespace Invulnerable
 {
     internal class Invulnerable : IBuffGameScript
     {
+        public BuffType BuffType { get; } = BuffType.INVULNERABILITY;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = true;
+        public bool IsUnique { get; } = true;
+
+        public IStatsModifier StatsModifier { get; private set; }
+
         private UnitCrowdControl _crowd = new UnitCrowdControl(CrowdControlType.INVULNERABLE);
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             unit.ApplyCrowdControl(_crowd);
         }

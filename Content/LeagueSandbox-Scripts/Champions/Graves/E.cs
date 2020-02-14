@@ -8,19 +8,19 @@ namespace Spells
 {
     public class GravesMove : IGameScript
     {
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
@@ -28,7 +28,7 @@ namespace Spells
             var trueCoords = current + range;
 
             DashToLocation(owner, trueCoords.X, trueCoords.Y, 1200, false, "Spell3");
-            owner.AddBuffGameScript("Quickdraw", "Quickdraw", spell, 4.0f, true);
+            AddBuff("Quickdraw", 4.0f, 1, spell, owner, owner);
             var p = AddParticleTarget(owner, "Graves_Move_OnBuffActivate.troy", owner);
             CreateTimer(4.0f, () =>
             {
@@ -36,7 +36,7 @@ namespace Spells
             });
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 

@@ -8,12 +8,17 @@ namespace YasuoQ01
 {
     internal class YasuoQ01 : IBuffGameScript
     {
-        private IBuff _visualBuff;
+        public BuffType BuffType { get; } = BuffType.INTERNAL;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = true;
+        public bool IsUnique { get; } = true;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; }
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             ((IChampion)unit).SetSpell("YasuoQ2W", 0, true);
-            _visualBuff = AddBuffHudVisual("YasuoQ", 6f, 1, BuffType.COMBAT_ENCHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
@@ -22,7 +27,6 @@ namespace YasuoQ01
             {
                 ((IChampion)unit).SetSpell("YasuoQW", 0, true);
             }
-            RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)

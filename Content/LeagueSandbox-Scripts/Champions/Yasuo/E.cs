@@ -9,37 +9,36 @@ namespace Spells
 {
     public class YasuoDashWrapper : IGameScript
     {
-        public static IAttackableUnit _target = null;
+        public static IObjAiBase _target = null;
         public static IChampion _owner = null;
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
             //here's nothing yet
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
             //here's empty
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             //here's empty, maybe will add some functions?
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            _target = target;
-            _owner = owner;
-            var _hasbuff = ((ObjAiBase)target).HasBuffGameScriptActive("YasuoEBlock", "YasuoEBlock");
+            _target = (IObjAiBase)target;
+            _owner = (IChampion)owner;
 
-            if (!_hasbuff)
+            if (!_target.HasBuff("YasuoEBlock"))
             {
-                AddBuffGameScript("YasuoE", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 0.395f - spell.Level *0.012f, true);            
-                AddBuffGameScript("YasuoEBlock", 1, spell, BuffType.COMBAT_DEHANCER, (ObjAiBase)target, 11f - spell.Level * 1f, true);
+                AddBuff("YasuoE", 0.395f - spell.Level * 0.012f, 1, spell, _owner, _owner);            
+                AddBuff("YasuoEBlock", 11f - spell.Level * 1f, 1, spell, _target, _owner);
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
             //here's empty because no needed to add things here
         }

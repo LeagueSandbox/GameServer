@@ -10,11 +10,11 @@ namespace Spells
     {
         private const float PERCENT_MAX_MANA_HEAL = 0.40f;
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             foreach (var unit in GetChampionsInRange(owner, 600, true))
             {
@@ -25,9 +25,9 @@ namespace Spells
             }
         }
 
-        private void RestoreMana(IChampion target)
+        private void RestoreMana(IObjAiBase target)
         {
-            
+
             var maxMp = target.Stats.ManaPoints.Total;
             var newMp = target.Stats.CurrentMana + (maxMp * PERCENT_MAX_MANA_HEAL);
             if (newMp < maxMp)
@@ -37,7 +37,7 @@ namespace Spells
             AddParticleTarget(target, "global_ss_clarity_02.troy", target);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
@@ -45,11 +45,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

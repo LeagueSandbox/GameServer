@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifySetTarget(this, nextTarget);
                 return true;
             }
-            _game.PacketNotifier.NotifyInstantStopAttack(this, false);
+            _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
             IsAttacking = false;
             return false;
         }
@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) > Stats.Range.Total))
             // If target is dead or out of range
             {
-                _game.PacketNotifier.NotifyInstantStopAttack(this, false);
+                _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
                 IsAttacking = false;
             }
         }

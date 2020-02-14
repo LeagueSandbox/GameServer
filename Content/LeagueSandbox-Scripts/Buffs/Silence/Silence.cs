@@ -8,9 +8,17 @@ namespace Silence
 {
     internal class Silence : IBuffGameScript
     {
+        public BuffType BuffType { get; } = BuffType.SILENCE;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = true;
+        public bool IsUnique { get; } = false;
+
+        public IStatsModifier StatsModifier { get; private set; }
+
         private UnitCrowdControl _crowd = new UnitCrowdControl(CrowdControlType.SILENCE);
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             unit.ApplyCrowdControl(_crowd);
         }

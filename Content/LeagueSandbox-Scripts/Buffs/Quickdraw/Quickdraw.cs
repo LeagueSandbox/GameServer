@@ -9,26 +9,28 @@ namespace Quickdraw
 {
     internal class Quickdraw : IBuffGameScript
     {
-        private StatsModifier _statMod = new StatsModifier();
-        private IBuff _visualBuff;
+        public BuffType BuffType { get; } = BuffType.COMBAT_ENCHANCER;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = true;
+
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnUpdate(double diff)
         {
 
         }
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.Level);
-            unit.AddStatModifier(_statMod);
-            _visualBuff = AddBuffHudVisual("GravesMoveSteroid", 4.0f, 1, BuffType.COMBAT_ENCHANCER, 
-                unit);
+            StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.Level);
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-            unit.RemoveStatModifier(_statMod);
+            unit.RemoveStatModifier(StatsModifier);
         }
     }
 }

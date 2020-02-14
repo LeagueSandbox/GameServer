@@ -9,24 +9,25 @@ namespace LuluWBuff
 {
     internal class LuluWBuff : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
+        public BuffType BuffType { get; } = BuffType.COMBAT_ENCHANCER;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = false;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             var ap = ownerSpell.Owner.Stats.AbilityPower.Total * 0.001;
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = _statMod.MoveSpeed.PercentBonus + 0.3f + (float)ap;
-            unit.AddStatModifier(_statMod);
+            StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;
+            unit.AddStatModifier(StatsModifier);
             var time = 2.5f + 0.5f * ownerSpell.Level;
-            _visualBuff = AddBuffHudVisual("LuluWBuff", time, 1, BuffType.COMBAT_ENCHANCER,
-                unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-            unit.RemoveStatModifier(_statMod);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

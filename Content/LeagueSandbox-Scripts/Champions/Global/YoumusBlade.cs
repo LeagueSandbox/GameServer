@@ -1,5 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
-﻿using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -7,13 +7,13 @@ namespace Spells
 {
     public class YoumusBlade : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            owner.AddBuffGameScript("YoumuusGhostblade", "YoumuusGhostblade", spell, 6.0f, true);
+            AddBuff("YoumuusGhostblade", 6.0f, 1, spell, owner, owner);
             var p = AddParticleTarget(owner, "spectral_fury_activate_speed.troy", owner, 2);
             CreateTimer(6.0f, () =>
             {
@@ -21,7 +21,7 @@ namespace Spells
             });
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
@@ -29,11 +29,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

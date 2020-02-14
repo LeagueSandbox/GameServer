@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
     public class Spell : ISpell
     {
 
-        public IChampion Owner { get; private set; }
+        public IObjAiBase Owner { get; private set; }
         public byte Level { get; private set; }
         public byte Slot { get; set; }
         public float CastTime { get; private set; } = 0;
@@ -120,7 +120,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 FinishCasting();
             }
 
-            _game.PacketNotifier.NotifyCastSpell(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId, SpellNetId);
+            _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);
             return true;
         }
 
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
                 if (Slot < 4)
                 {
-                    _game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
+                    _game.PacketNotifier.NotifyCHAR_SetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
                 }
 
                 Owner.IsCastingSpell = false;
@@ -165,7 +165,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             if (Slot < 4)
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
+                _game.PacketNotifier.NotifyCHAR_SetCooldown(Owner, Slot, CurrentCooldown, GetCooldown());
             }
 
             Owner.IsCastingSpell = false;
@@ -393,13 +393,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             if (newCd <= 0)
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, 0, 0);
+                _game.PacketNotifier.NotifyCHAR_SetCooldown(Owner, Slot, 0, 0);
                 State = SpellState.STATE_READY;
                 CurrentCooldown = 0;
             }
             else
             {
-                _game.PacketNotifier.NotifySetCooldown(Owner, Slot, newCd, GetCooldown());
+                _game.PacketNotifier.NotifyCHAR_SetCooldown(Owner, Slot, newCd, GetCooldown());
                 State = SpellState.STATE_COOLDOWN;
                 CurrentCooldown = newCd;
             }

@@ -9,24 +9,26 @@ namespace SummonerExhaustDebuff
 {
     internal class SummonerExhaustDebuff : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
+        public BuffType BuffType { get; } = BuffType.COMBAT_DEHANCER;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = true;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = -0.3f;
-            _statMod.AttackSpeed.PercentBonus = -0.3f;
-            _statMod.Armor.BaseBonus = -10;
-            _statMod.MagicResist.BaseBonus = -10;
-            unit.AddStatModifier(_statMod);
-            _visualBuff = AddBuffHudVisual("SummonerExhaustDebuff", 2.5f, 1, BuffType.COMBAT_DEHANCER, unit);
+            StatsModifier.MoveSpeed.PercentBonus = -0.3f;
+            StatsModifier.AttackSpeed.PercentBonus = -0.3f;
+            StatsModifier.Armor.BaseBonus = -10;
+            StatsModifier.MagicResist.BaseBonus = -10;
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(_statMod);
-            RemoveBuffHudVisual(_visualBuff);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

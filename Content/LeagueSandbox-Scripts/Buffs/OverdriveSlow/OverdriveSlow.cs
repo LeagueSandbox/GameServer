@@ -1,5 +1,6 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -7,18 +8,23 @@ namespace OverdriveSlow
 {
     internal class OverdriveSlow : IBuffGameScript
     {
-        private StatsModifier _statMod;
+        public BuffType BuffType { get; } = BuffType.SLOW;
+        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks { get; } = 1;
+        public bool IsHidden { get; } = false;
+        public bool IsUnique { get; } = true;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = _statMod.MoveSpeed.PercentBonus - 0.3f;
-            unit.AddStatModifier(_statMod);
+            StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus - 0.3f;
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(_statMod);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

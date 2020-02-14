@@ -10,78 +10,70 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
     public class Buff : IBuff
     {
-        public float Duration { get; private set; }
-        protected float _movementSpeedPercentModifier;
-        public float TimeElapsed { get; private set; }
-        public IObjAiBase TargetUnit { get; private set; }
-        public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public BuffAddType BuffAddType { get; private set; }
         public BuffType BuffType { get; private set; }
-        protected CSharpScriptEngine _scriptEngine;
+        public float Duration { get; private set; }
+        private IBuffGameScript GameScript { get; }
+        public bool IsHidden { get; private set; }
+        public bool IsUnique { get; private set; }
+        public int MaxStacks { get; private set; }
         public string Name { get; private set; }
-        public byte StackCount { get; private set; }
+        public ISpell OriginSpell { get; private set; }
         public byte Slot { get; private set; }
+        public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
+        public byte StackCount { get; private set; }
+        public IObjAiBase TargetUnit { get; private set; }
+        public float TimeElapsed { get; private set; }
+
         protected bool _infiniteDuration;
-
         protected Game _game;
+        protected bool _remove;
+        protected CSharpScriptEngine _scriptEngine;
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, byte stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
-            if (dur < 0)
+            if (duration < 0)
             {
                 throw new ArgumentException("Error: Duration was set to under 0.");
             }
 
+            _infiniteDuration = infiniteDuration;
             _game = game;
+            _remove = false;
             _scriptEngine = game.ScriptEngine;
-            Duration = dur;
-            StackCount = stacks;
+
+            GameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
+
+            BuffAddType = GameScript.BuffAddType;
+            BuffType = GameScript.BuffType;
+            Duration = duration;
+            IsHidden = GameScript.IsHidden;
+            IsUnique = GameScript.IsUnique;
+            MaxStacks = GameScript.MaxStacks;
             Name = buffName;
+            OriginSpell = originspell;
+            StackCount = stacks;
+            Slot = onto.GetNewBuffSlot(this);
+            SourceUnit = from;
             TimeElapsed = 0;
             TargetUnit = onto;
-            SourceUnit = from;
-            BuffType = buffType;
-            Slot = onto.GetNewBuffSlot(this);
-            _infiniteDuration = infiniteDuration;
         }
 
-        public Buff(Game game, string buffName, float dur, byte stacks, BuffType buffType, IObjAiBase onto, bool infiniteDuration = false)
-               : this(game, buffName, dur, stacks, buffType, onto, onto, infiniteDuration) //no attacker specified = selfbuff, attacker aka source is same as attachedto
+        public void ActivateBuff()
         {
+            GameScript.OnActivate(TargetUnit, this, OriginSpell);
+            _remove = false;
         }
-        
-        public void Update(float diff)
+
+        public void DeactivateBuff()
         {
-            if (_infiniteDuration)
+            if (_remove)
             {
                 return;
             }
 
-            TimeElapsed += diff / 1000.0f;
-            if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
-            {
-                if (TimeElapsed >= Duration)
-                {
-                    if (Name != "")
-                    {
-                        _game.PacketNotifier.NotifyRemoveBuff(TargetUnit, Name, Slot);
-                    }
-
-                    TargetUnit.RemoveBuff(this);
-                }
-            }
-        }
-
-        public void ResetDuration()
-        {
-            Duration = 0;
-        }
-
-        public bool IncrementStackCount()
-        {
-            if (StackCount == byte.MaxValue)
-                return false;
-            StackCount++;
-            return true;
+            GameScript.OnDeactivate(TargetUnit);
+            _remove = true;
         }
 
         public bool DecrementStackCount()
@@ -92,9 +84,66 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             return true;
         }
 
+        public bool Elapsed()
+        {
+            return _remove;
+        }
+
+        public IStatsModifier GetStatsModifier()
+        {
+            return GameScript.StatsModifier;
+        }
+
+        public bool IncrementStackCount()
+        {
+            if (StackCount == byte.MaxValue)
+                return false;
+            StackCount++;
+            return true;
+        }
+
+        public bool IsBuffSame(string buffName)
+        {
+            return buffName == Name;
+        }
+
+        public void ResetTimeElapsed()
+        {
+            TimeElapsed = 0;
+        }
+
+        public void SetSlot(byte slot)
+        {
+            Slot = slot;
+        }
+
         public void SetStacks(byte newStacks)
         {
-            StackCount = newStacks;
+            if (newStacks <= MaxStacks)
+            {
+                StackCount = newStacks;
+            }
+        }
+
+        public void Update(float diff)
+        {
+            if (_infiniteDuration)
+            {
+                return;
+            }
+
+            TimeElapsed += diff / 1000.0f;
+            if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
+            {
+                if (GameScript != null)
+                {
+                    GameScript.OnUpdate(diff);
+                }
+                if (TimeElapsed >= Duration)
+                {
+                    DeactivateBuff();
+                }
+            }
         }
     }
 }
