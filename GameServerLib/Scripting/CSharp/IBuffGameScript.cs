@@ -11,7 +11,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         BuffType BuffType { get; }
         BuffAddType BuffAddType { get; }
         bool IsHidden { get; }
-        bool IsUnique { get; }
         int MaxStacks { get; }
         IStatsModifier StatsModifier { get; }
 

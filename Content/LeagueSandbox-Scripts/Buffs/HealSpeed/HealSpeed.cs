@@ -9,13 +9,12 @@ namespace HealSpeed
 {
     internal class HealSpeed : IBuffGameScript
     {
-        public BuffType BuffType { get; } = BuffType.HEAL;
-        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks { get; } = 1;
-        public bool IsHidden { get; } = false;
-        public bool IsUnique { get; } = false;
+        public BuffType BuffType => BuffType.HEAL;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
-        public IStatsModifier StatsModifier { get; } = new StatsModifier();
+        public IStatsModifier StatsModifier => new StatsModifier();
 
         public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {

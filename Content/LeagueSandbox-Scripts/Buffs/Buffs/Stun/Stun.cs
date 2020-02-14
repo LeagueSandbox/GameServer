@@ -8,11 +8,10 @@ namespace Stun
 {
     internal class Stun : IBuffGameScript
     {
-        public BuffType BuffType { get; } = BuffType.STUN;
-        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks { get; } = 1;
-        public bool IsHidden { get; } = true;
-        public bool IsUnique { get; } = false;
+        public BuffType BuffType => BuffType.STUN;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => true;
 
         public IStatsModifier StatsModifier { get; private set; }
 

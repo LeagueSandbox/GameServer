@@ -8,11 +8,10 @@ namespace Invulnerable
 {
     internal class Invulnerable : IBuffGameScript
     {
-        public BuffType BuffType { get; } = BuffType.INVULNERABILITY;
-        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks { get; } = 1;
-        public bool IsHidden { get; } = true;
-        public bool IsUnique { get; } = true;
+        public BuffType BuffType => BuffType.INVULNERABILITY;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => true;
 
         public IStatsModifier StatsModifier { get; private set; }
 

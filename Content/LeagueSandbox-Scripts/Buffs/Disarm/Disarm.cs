@@ -8,11 +8,10 @@ namespace Disarm
 {
     internal class Disarm : IBuffGameScript
     {
-        public BuffType BuffType { get; } = BuffType.DISARM;
-        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks { get; } = 1;
-        public bool IsHidden { get; } = false;
-        public bool IsUnique { get; } = false;
+        public BuffType BuffType => BuffType.DISARM;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
         public IStatsModifier StatsModifier { get; private set; }
 

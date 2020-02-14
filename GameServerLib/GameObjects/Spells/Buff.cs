@@ -15,7 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float Duration { get; private set; }
         private IBuffGameScript GameScript { get; }
         public bool IsHidden { get; private set; }
-        public bool IsUnique { get; private set; }
         public int MaxStacks { get; private set; }
         public string Name { get; private set; }
         public ISpell OriginSpell { get; private set; }

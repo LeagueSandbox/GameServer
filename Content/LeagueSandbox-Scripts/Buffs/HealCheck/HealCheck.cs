@@ -8,11 +8,10 @@ namespace HealCheck
 {
     internal class HealCheck : IBuffGameScript
     {
-        public BuffType BuffType { get; } = BuffType.COMBAT_DEHANCER;
-        public BuffAddType BuffAddType { get; } = BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks { get; } = 1;
-        public bool IsHidden { get; } = false;
-        public bool IsUnique { get; } = true;
+        public BuffType BuffType => BuffType.COMBAT_DEHANCER;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
         public IStatsModifier StatsModifier { get; private set; }
 
