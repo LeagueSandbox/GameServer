@@ -122,7 +122,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                     b.ActivateBuff();
                 }
-                else if (b.IsUnique || b.BuffAddType == BuffAddType.REPLACE_EXISTING)
+                else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
                 {
                     var prevbuff = Buffs[b.Name];
 

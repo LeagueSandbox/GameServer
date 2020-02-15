@@ -47,7 +47,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             BuffType = GameScript.BuffType;
             Duration = duration;
             IsHidden = GameScript.IsHidden;
-            IsUnique = GameScript.IsUnique;
             MaxStacks = GameScript.MaxStacks;
             Name = buffName;
             OriginSpell = originspell;
