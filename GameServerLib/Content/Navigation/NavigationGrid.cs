@@ -98,8 +98,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     }
                 }
 
-                uint groupCount = major == 5 ? 4u : 8u;
-                this.RegionTagTable = new NavigationRegionTagTable(br, groupCount);
+                if(major >= 5)
+                {
+                    uint groupCount = major == 5 ? 4u : 8u;
+                    this.RegionTagTable = new NavigationRegionTagTable(br, groupCount);
+                }
 
                 this.SampledHeightsCountX = br.ReadUInt32();
                 this.SampledHeightsCountY = br.ReadUInt32();

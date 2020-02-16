@@ -5,7 +5,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
     public class NavigationRegionTagTableGroupTag
     {
         public uint Name { get; private set; }
-        public NavigationRegionTagTableValueTag[] Values { get; private set; } = new NavigationRegionTagTableValueTag[16];
+        public (uint name1, uint name2)[] Values { get; private set; } = new (uint name1, uint name2)[16];
 
         public NavigationRegionTagTableGroupTag(BinaryReader br)
         {
@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             for (int i = 0; i < this.Values.Length; i++)
             {
-                this.Values[i] = new NavigationRegionTagTableValueTag(br);
+                this.Values[i] = (br.ReadUInt32(), br.ReadUInt32());
             }
         }
     }
