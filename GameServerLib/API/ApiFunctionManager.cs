@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void RemoveBuff(IBuff buff)
         {
-            buff.TargetUnit.RemoveBuff(buff);
+            buff.DeactivateBuff();
         }
 
         public static void RemoveBuff(IObjAiBase target, string buff)

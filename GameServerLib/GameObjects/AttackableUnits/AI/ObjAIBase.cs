@@ -126,9 +126,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     var prevbuff = Buffs[b.Name];
 
+                    prevbuff.DeactivateBuff();
                     RemoveBuff(b.Name);
                     BuffList.Remove(prevbuff);
-                    prevbuff.DeactivateBuff();
                     RemoveBuffSlot(b);
 
                     BuffSlots[prevbuff.Slot] = b;
@@ -161,10 +161,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         var tempbuffs = GetBuffsWithName(b.Name);
                         var oldestbuff = tempbuffs[0];
 
+                        oldestbuff.DeactivateBuff();
                         RemoveBuff(b.Name);
                         BuffList.Remove(oldestbuff);
                         RemoveBuffSlot(oldestbuff);
-                        oldestbuff.DeactivateBuff();
 
                         b.SetStacks(oldestbuff.StackCount);
                         RemoveBuffSlot(b);
@@ -606,7 +606,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         RemoveBuff(b.Name);
                         BuffList.Remove(b);
                         RemoveBuffSlot(b);
-                        b.DeactivateBuff();
 
                         var tempbuffs = GetBuffsWithName(b.Name);
 
@@ -651,7 +650,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         BuffList.RemoveAll(buff => buff.Elapsed());
                         RemoveBuff(b.Name);
                         RemoveBuffSlot(b);
-                        b.DeactivateBuff();
                     }
                 }
                 else if (b.BuffAddType == BuffAddType.STACKS_AND_RENEWS)
@@ -680,7 +678,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         BuffList.RemoveAll(buff => buff.Elapsed());
                         RemoveBuff(b.Name);
                         RemoveBuffSlot(b);
-                        b.DeactivateBuff();
                         if (!b.IsHidden)
                         {
                             if (b.BuffType == BuffType.COUNTER)
@@ -699,7 +696,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     BuffList.RemoveAll(buff => buff.Elapsed());
                     RemoveBuff(b.Name);
                     RemoveBuffSlot(b);
-                    b.DeactivateBuff();
                     if (!b.IsHidden)
                     {
                         _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
@@ -724,7 +720,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (BuffList[i].IsBuffSame(buffName))
                     {
-                        RemoveBuff(BuffList[i]);
+                        BuffList[i].DeactivateBuff();
                     }
                 }
             }
