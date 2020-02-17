@@ -153,7 +153,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void RemoveParticle(IParticle p)
         {
-            p.Remove();
+            p.SetToRemove();
         }
 
         public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)

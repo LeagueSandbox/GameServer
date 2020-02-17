@@ -22,9 +22,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             _game.PacketNotifier.NotifyFXCreateGroup(this);
         }
 
-        public void Remove()
+        public override void OnRemoved()
         {
-            SetToRemove();
+            base.OnRemoved();
             _game.PacketNotifier.NotifyFXKill(this);
         }
     }
