@@ -109,8 +109,6 @@ namespace LeagueSandbox.GameServer.API
 
             onto.AddBuff(buff);
             return buff;
-
-            //TODO: handle buffs using priority queue of duration and order
         }
 
         public static bool HasBuff(IObjAiBase unit, IBuff b)

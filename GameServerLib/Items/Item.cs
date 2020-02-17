@@ -6,7 +6,7 @@ namespace LeagueSandbox.GameServer.Items
     {
         public int TotalPrice => ItemData.TotalPrice;
         public IItemData ItemData { get; }
-        public byte StackCount { get; private set; }
+        public int StackCount { get; private set; }
 
 
         private Item(IItemData data)
@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public void SetStacks(byte newStacks)
+        public void SetStacks(int newStacks)
         {
             if(newStacks < 1 || newStacks > ItemData.MaxStack)
                 throw new System.Exception($"Cannot set stack size out of bounds (max is {ItemData.MaxStack})");

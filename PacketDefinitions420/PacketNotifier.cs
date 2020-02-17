@@ -123,7 +123,7 @@ namespace PacketDefinitions420
             {
                 ItemID = (uint)itemInstance.ItemData.ItemId,
                 Slot = gameObject.Inventory.GetItemSlot(itemInstance),
-                ItemsInSlot = itemInstance.StackCount,
+                ItemsInSlot = (byte)itemInstance.StackCount,
                 SpellCharges = 0
             };
 
@@ -749,7 +749,6 @@ namespace PacketDefinitions420
 
         public void NotifyMissileReplication(IProjectile p)
         {
-            //TODO: Add OwnerSpell var to Projectile/IProjectile class to make things easier
             var misPacket = new MissileReplication();
             misPacket.SenderNetID = p.Owner.NetId;
             misPacket.Position = new Vector3(p.X, p.GetZ(), p.Y);
@@ -893,7 +892,7 @@ namespace PacketDefinitions420
                 SenderNetID = b.SourceUnit.NetId,
                 BuffSlot = b.Slot,
                 BuffType = (byte)b.BuffType,
-                Count = b.StackCount,
+                Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
                 BuffNameHash = HashFunctions.HashString(b.Name),
                 PackageHash = b.OriginSpell.Owner.GetObjHash(), // TODO: Verify
@@ -923,7 +922,7 @@ namespace PacketDefinitions420
                     OwnerNetID = buffs[i].SourceUnit.NetId,
                     CasterNetID = buffs[i].OriginSpell.Owner.NetId,
                     Slot = buffs[i].Slot,
-                    Count = buffs[i].StackCount,
+                    Count = (byte)buffs[i].StackCount,
                     IsHidden = buffs[i].IsHidden
                 };
                 entries.Add(entry);
@@ -1005,27 +1004,27 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(target, replaceGroupPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyNPC_BuffUpdateCount(IBuff b)
+        public void NotifyNPC_BuffUpdateCount(IBuff b, float duration, float runningTime)
         {
             var updatePacket = new NPC_BuffUpdateCount
             {
                 SenderNetID = b.SourceUnit.NetId,
                 BuffSlot = b.Slot,
-                Count = b.StackCount,
-                Duration = b.Duration,
-                RunningTime = b.TimeElapsed,
+                Count = (byte)b.StackCount,
+                Duration = duration,
+                RunningTime = runningTime,
                 CasterNetID = b.SourceUnit.NetId
             };
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, updatePacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningtime)
+        public void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningTime)
         {
             var updateGroupPacket = new NPC_BuffUpdateCountGroup
             {
                 SenderNetID = 0,
                 Duration = duration,
-                RunningTime = runningtime
+                RunningTime = runningTime
             };
             var entries = new List<BuffUpdateCountGroupEntry>();
             for (int i = 0; i < buffs.Count; i++)
@@ -1035,7 +1034,7 @@ namespace PacketDefinitions420
                     OwnerNetID = buffs[i].SourceUnit.NetId,
                     CasterNetID = buffs[i].OriginSpell.Owner.NetId,
                     BuffSlot = buffs[i].Slot,
-                    Count = buffs[i].StackCount
+                    Count = (byte)buffs[i].StackCount
                 };
                 entries.Add(entry);
             }

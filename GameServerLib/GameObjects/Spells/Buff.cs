@@ -13,14 +13,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public BuffAddType BuffAddType { get; private set; }
         public BuffType BuffType { get; private set; }
         public float Duration { get; private set; }
-        private IBuffGameScript GameScript { get; }
+        private IBuffGameScript _buffGameScript { get; }
         public bool IsHidden { get; private set; }
         public int MaxStacks { get; private set; }
         public string Name { get; private set; }
         public ISpell OriginSpell { get; private set; }
         public byte Slot { get; private set; }
         public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
-        public byte StackCount { get; private set; }
+        public int StackCount { get; private set; }
         public IObjAiBase TargetUnit { get; private set; }
         public float TimeElapsed { get; private set; }
 
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         protected bool _remove;
         protected CSharpScriptEngine _scriptEngine;
 
-        public Buff(Game game, string buffName, float duration, byte stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
             if (duration < 0)
             {
@@ -41,17 +41,26 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _remove = false;
             _scriptEngine = game.ScriptEngine;
 
-            GameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
+            _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
 
-            BuffAddType = GameScript.BuffAddType;
-            BuffType = GameScript.BuffType;
+            BuffAddType = _buffGameScript.BuffAddType;
+            BuffType = _buffGameScript.BuffType;
             Duration = duration;
-            IsHidden = GameScript.IsHidden;
-            MaxStacks = GameScript.MaxStacks;
+            IsHidden = _buffGameScript.IsHidden;
+            MaxStacks = (_buffGameScript.MaxStacks > 254 && !(BuffType == BuffType.COUNTER)) ? 254 : _buffGameScript.MaxStacks;
             Name = buffName;
             OriginSpell = originspell;
-            StackCount = stacks;
-            Slot = onto.GetNewBuffSlot(this);
+            if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
+            {
+                // Put parent buff data into children buffs
+                StackCount = onto.GetBuffWithName(Name).StackCount;
+                Slot = onto.GetBuffWithName(Name).Slot;
+            }
+            else
+            {
+                StackCount = stacks;
+                Slot = onto.GetNewBuffSlot(this);
+            }
             SourceUnit = from;
             TimeElapsed = 0;
             TargetUnit = onto;
@@ -59,7 +68,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public void ActivateBuff()
         {
-            GameScript.OnActivate(TargetUnit, this, OriginSpell);
+            _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
             _remove = false;
         }
 
@@ -70,7 +79,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 return;
             }
 
-            GameScript.OnDeactivate(TargetUnit);
+            _buffGameScript.OnDeactivate(TargetUnit);
             _remove = true;
         }
 
@@ -89,12 +98,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
         public IStatsModifier GetStatsModifier()
         {
-            return GameScript.StatsModifier;
+            return _buffGameScript.StatsModifier;
         }
 
         public bool IncrementStackCount()
         {
-            if (StackCount == byte.MaxValue)
+            if (StackCount == MaxStacks)
                 return false;
             StackCount++;
             return true;
@@ -115,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Slot = slot;
         }
 
-        public void SetStacks(byte newStacks)
+        public void SetStacks(int newStacks)
         {
             if (newStacks <= MaxStacks)
             {
@@ -133,9 +142,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
-                if (GameScript != null)
+                if (_buffGameScript != null)
                 {
-                    GameScript.OnUpdate(diff);
+                    _buffGameScript.OnUpdate(diff);
                 }
                 if (TimeElapsed >= Duration)
                 {

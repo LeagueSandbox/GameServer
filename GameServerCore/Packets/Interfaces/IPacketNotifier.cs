@@ -81,7 +81,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyNPC_BuffRemoveGroup(IObjAiBase target, List<IBuff> buffs, string buffName);
         void NotifyNPC_BuffReplace(IBuff b);
         void NotifyNPC_BuffReplaceGroup(IObjAiBase target, List<IBuff> buffs, float runningtime, float duration);
-        void NotifyNPC_BuffUpdateCount(IBuff b);
+        void NotifyNPC_BuffUpdateCount(IBuff b, float duration, float runningTime);
         void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningtime);
         void NotifyNPC_BuffUpdateNumCounter(IBuff b);
         void NotifyNPC_CastSpellAns(INavigationGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId);

@@ -111,7 +111,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (HasBuff(b.Name))
                     {
-                        Buffs.Add(b.Name, GetBuffsWithName(b.Name)[0]);
+                        var buff = GetBuffsWithName(b.Name)[0];
+                        Buffs.Add(b.Name, buff);
                         return;
                     }
                     Buffs.Add(b.Name, b);
@@ -166,30 +167,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         BuffList.Remove(oldestbuff);
                         RemoveBuffSlot(oldestbuff);
 
-                        b.SetStacks(oldestbuff.StackCount);
-                        RemoveBuffSlot(b);
-
                         tempbuffs = GetBuffsWithName(b.Name);
-                        for (int i = tempbuffs.Count - 1; i >= 0; i--) // Reverse for loop
-                        {
-                            if (i == 0)
-                            {
-                                BuffSlots[oldestbuff.Slot] = tempbuffs[i];
-                                tempbuffs[i].SetSlot(oldestbuff.Slot);
-                                Buffs.Add(tempbuffs[i].Name, tempbuffs[i]);
-                            }
-                            else if (i == tempbuffs.Count - 1)
-                            {
-                                BuffSlots[tempbuffs[i].Slot] = b;
-                                b.SetSlot(tempbuffs[i].Slot);
-                                BuffList.Add(b);
-                            }
-                            else
-                            {
-                                BuffSlots[tempbuffs[i - 1].Slot] = tempbuffs[i];
-                                tempbuffs[i].SetSlot(tempbuffs[i - 1].Slot);
-                            }
-                        }
+
+                        BuffSlots[oldestbuff.Slot] = tempbuffs[0];
+                        Buffs.Add(oldestbuff.Name, tempbuffs[0]);
+                        BuffList.Add(b);
 
                         if (!b.IsHidden)
                         {
@@ -199,7 +181,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             }
                             else
                             {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(this, GetBuffsWithName(b.Name), b.Duration, b.TimeElapsed);
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
                             }
                         }
                         b.ActivateBuff();
@@ -222,15 +204,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                         else
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(this, GetBuffsWithName(b.Name), b.Duration, b.TimeElapsed);
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
                         }
                     }
                     b.ActivateBuff();
                 }
                 else if (Buffs[b.Name].BuffAddType == BuffAddType.STACKS_AND_RENEWS)
                 {
-                    Buffs[b.Name].IncrementStackCount();
+                    RemoveBuffSlot(b);
+
                     Buffs[b.Name].ResetTimeElapsed();
+                    Buffs[b.Name].IncrementStackCount();
 
                     if (!b.IsHidden)
                     {
@@ -240,9 +224,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                         else
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(Buffs[b.Name]);
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(Buffs[b.Name], Buffs[b.Name].Duration, Buffs[b.Name].TimeElapsed);
                         }
                     }
+
                     RemoveStatModifier(Buffs[b.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
                     Buffs[b.Name].ActivateBuff();
                 }
@@ -512,7 +497,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool RecalculateAttackPosition()
         {
-            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
+            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total) //If we are already where we should be, do not move.
             {
                 return false;
             }
@@ -597,96 +582,41 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             lock (_buffsLock)
             {
-                if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
+                if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && b.StackCount > 1)
                 {
-                    if (b.StackCount > 1)
+                    b.DecrementStackCount();
+
+                    RemoveBuff(b.Name);
+                    BuffList.Remove(b);
+                    RemoveBuffSlot(b);
+
+                    var tempbuffs = GetBuffsWithName(b.Name);
+
+                    for (int i = 0; i < tempbuffs.Count; i++)
                     {
-                        b.DecrementStackCount();
-
-                        RemoveBuff(b.Name);
-                        BuffList.Remove(b);
-                        RemoveBuffSlot(b);
-
-                        var tempbuffs = GetBuffsWithName(b.Name);
-
-                        RemoveBuffSlot(tempbuffs[tempbuffs.Count - 1]);
-
-                        for (int i = tempbuffs.Count - 1; i >= 0; i--) // Reverse for loop
-                        {
-                            tempbuffs[i].SetStacks(b.StackCount);
-
-                            if (i == 0)
-                            {
-                                BuffSlots[b.Slot] = tempbuffs[0];
-                                tempbuffs[0].SetSlot(b.Slot);
-                                Buffs.Add(tempbuffs[0].Name, tempbuffs[0]);
-                            }
-                            else
-                            {
-                                BuffSlots[tempbuffs[i - 1].Slot] = tempbuffs[i];
-                                tempbuffs[i].SetSlot(tempbuffs[i - 1].Slot);
-                            }
-                        }
-
-                        if (!b.IsHidden)
-                        {
-                            if (b.BuffType == BuffType.COUNTER)
-                            {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
-                            }
-                            else
-                            {
-                                var buffs = GetBuffsWithName(b.Name);
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(this, buffs, b.Duration, buffs[buffs.Count - 1].TimeElapsed);
-                            }
-                        }
+                        tempbuffs[i].SetStacks(b.StackCount);
                     }
-                    else
+
+                    BuffSlots[b.Slot] = tempbuffs[0];
+                    Buffs.Add(b.Name, tempbuffs[0]);
+
+                    var newestBuff = tempbuffs[tempbuffs.Count - 1];
+
+                    if (!b.IsHidden)
                     {
-                        if (!b.IsHidden)
+                        if (b.BuffType == BuffType.COUNTER)
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
                         }
-                        BuffList.RemoveAll(buff => buff.Elapsed());
-                        RemoveBuff(b.Name);
-                        RemoveBuffSlot(b);
-                    }
-                }
-                else if (b.BuffAddType == BuffAddType.STACKS_AND_RENEWS)
-                {
-                    Logger.Debug(b.StackCount.ToString());
-                    if (b.StackCount > 1)
-                    {
-                        b.DecrementStackCount();
-                        b.ResetTimeElapsed();
-                        if (!b.IsHidden)
+                        else
                         {
-                            if (b.BuffType == BuffType.COUNTER)
+                            if (b.StackCount == 1)
                             {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(b);
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(newestBuff, b.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                             }
                             else
                             {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b);
-                            }
-                        }
-                        RemoveStatModifier(b.GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
-                        b.ActivateBuff();
-                    }
-                    else
-                    {
-                        BuffList.RemoveAll(buff => buff.Elapsed());
-                        RemoveBuff(b.Name);
-                        RemoveBuffSlot(b);
-                        if (!b.IsHidden)
-                        {
-                            if (b.BuffType == BuffType.COUNTER)
-                            {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(b);
-                            }
-                            else
-                            {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b);
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(this, tempbuffs, b.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                             }
                         }
                     }
@@ -828,7 +758,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     IsAttacking = false;
                     _game.PacketNotifier.NotifySetTarget(this, null);
                     HasMadeInitialAttack = false;
-
                 }
                 else if (IsAttacking && AutoAttackTarget != null)
                 {
