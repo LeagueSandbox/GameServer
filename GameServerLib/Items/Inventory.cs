@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Items
                 return AddTrinketItem(item);
             }
 
-            if (item.MaxStack > 1)
+            if (item.MaxStacks > 1)
             {
                 return AddStackingItem(item);
             }

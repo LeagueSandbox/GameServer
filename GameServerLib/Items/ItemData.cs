@@ -11,7 +11,7 @@ namespace LeagueSandbox.GameServer.Items
         public string Name { get; private set; }
 
         // General
-        public int MaxStack { get; private set; }
+        public int MaxStacks { get; private set; }
         public int Price { get; private set; }
         public string ItemGroup { get; private set; }
         public string SpellName { get; private set; }
@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Items
             {
                 ItemId = itemInfo.ItemId,
                 Name = itemInfo.Name,
-                MaxStack = itemInfo.GetInt("Data", "MaxStack"),
+                MaxStacks = itemInfo.GetInt("Data", "MaxStack"),
                 Price = itemInfo.GetInt("Data", "Price"),
                 ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
                 SpellName = itemInfo.GetString("Data", "SpellName"),

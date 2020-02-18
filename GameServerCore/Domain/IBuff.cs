@@ -9,7 +9,6 @@ namespace GameServerCore.Domain
         BuffType BuffType { get; }
         float Duration { get; }
         bool IsHidden { get; }
-        int MaxStacks { get; }
         string Name { get; }
         ISpell OriginSpell { get; }
         byte Slot { get; }

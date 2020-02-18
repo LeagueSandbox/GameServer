@@ -5,22 +5,21 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
-    public class Buff : IBuff
+    public class Buff : Stackable, IBuff
     {
         public BuffAddType BuffAddType { get; private set; }
         public BuffType BuffType { get; private set; }
         public float Duration { get; private set; }
         private IBuffGameScript _buffGameScript { get; }
         public bool IsHidden { get; private set; }
-        public int MaxStacks { get; private set; }
         public string Name { get; private set; }
         public ISpell OriginSpell { get; private set; }
         public byte Slot { get; private set; }
         public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
-        public int StackCount { get; private set; }
         public IObjAiBase TargetUnit { get; private set; }
         public float TimeElapsed { get; private set; }
 
@@ -83,14 +82,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _remove = true;
         }
 
-        public bool DecrementStackCount()
-        {
-            if (StackCount <= 0)
-                return false;
-            StackCount--;
-            return true;
-        }
-
         public bool Elapsed()
         {
             return _remove;
@@ -99,14 +90,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public IStatsModifier GetStatsModifier()
         {
             return _buffGameScript.StatsModifier;
-        }
-
-        public bool IncrementStackCount()
-        {
-            if (StackCount == MaxStacks)
-                return false;
-            StackCount++;
-            return true;
         }
 
         public bool IsBuffSame(string buffName)
@@ -122,14 +105,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public void SetSlot(byte slot)
         {
             Slot = slot;
-        }
-
-        public void SetStacks(int newStacks)
-        {
-            if (newStacks <= MaxStacks)
-            {
-                StackCount = newStacks;
-            }
         }
 
         public void Update(float diff)
