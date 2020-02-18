@@ -30,14 +30,14 @@ namespace PacketDefinitions420
         {
             // For unk reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
             // mapSize contains the real center point coordinates, meaning width/2, height/2
-            return new Vector2(2 * vector.X + grid.GetSize().X, 2 * vector.Y + grid.GetSize().Y);
+            return new Vector2(2 * vector.X + grid.MiddleOfMap.X, 2 * vector.Y + grid.MiddleOfMap.Y);
         }
 
         public static Vector2 TranslateToCenteredCoordinates(Vector2 vector, INavigationGrid grid)
         {
             // For unk reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
             // mapSize contains the real center point coordinates, meaning width/2, height/2
-            return new Vector2((vector.X - grid.GetSize().X) / 2, (vector.Y - grid.GetSize().Y) / 2);
+            return new Vector2((vector.X - grid.MiddleOfMap.X) / 2, (vector.Y - grid.MiddleOfMap.Y) / 2);
         }
     }
 }

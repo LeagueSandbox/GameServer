@@ -12,7 +12,7 @@ namespace GameServerCore.Content
         float CellSize { get; }
         uint CellCountX { get; }
         uint CellCountY { get; }
-        Vector2 SampledHeightDistance { get; }
+        Vector2 SampledHeightsDistance { get; }
         float OffsetX { get; }
         float OffsetZ { get; }
         float MapWidth { get; }
@@ -26,7 +26,6 @@ namespace GameServerCore.Content
         List<Vector2> GetPath(Vector2 start, Vector2 end);
         bool IsSeeThrough(Vector2 coords);
         bool IsSeeThrough(float x, float y);
-        Vector2 GetSize();
         bool IsAnythingBetween(IGameObject a, IGameObject b);
         Vector2 GetClosestTerrainExit(Vector2 location);
     }

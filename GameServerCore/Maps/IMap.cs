@@ -7,7 +7,7 @@ namespace GameServerCore.Maps
     public interface IMap: IUpdate
     {
         List<IAnnounce> AnnouncerEvents { get; }
-        INavigationGrid NavGrid { get; }
+        INavigationGrid NavigationGrid { get; }
         int Id { get; }
         ICollisionHandler CollisionHandler { get; }
         void Init();

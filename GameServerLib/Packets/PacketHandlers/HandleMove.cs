@@ -66,54 +66,55 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 coordCount++;
             }
 
-            var mapSize = map.NavGrid.GetSize();
-            var reader = new BinaryReader(new MemoryStream(buffer));
-
-            BitArray mask = null;
-            if (coordCount > 2)
+            List<Vector2> vMoves = new List<Vector2>();
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(buffer)))
             {
-                mask = new BitArray(reader.ReadBytes((coordCount - 3) / 8 + 1));
-            }
-
-            var lastCoord = new Vector2(reader.ReadInt16(), reader.ReadInt16());
-            var vMoves = new List<Vector2> { TranslateCoordinates(lastCoord, mapSize) };
-
-            if (coordCount < 3)
-            {
-                return vMoves;
-            }
-
-            for (var i = 0; i < coordCount - 2; i += 2)
-            {
-                if (mask[i])
+                BitArray mask = null;
+                if (coordCount > 2)
                 {
-                    lastCoord.X += reader.ReadSByte();
-                }
-                else
-                {
-                    lastCoord.X = reader.ReadInt16();
+                    mask = new BitArray(reader.ReadBytes((coordCount - 3) / 8 + 1));
                 }
 
-                if (mask[i + 1])
+                Vector2 lastCoord = new Vector2(reader.ReadInt16(), reader.ReadInt16());
+                vMoves.Add(TranslateCoordinates(lastCoord, map.NavigationGrid.MiddleOfMap));
+
+                if (coordCount < 3)
                 {
-                    lastCoord.Y += reader.ReadSByte();
-                }
-                else
-                {
-                    lastCoord.Y = reader.ReadInt16();
+                    return vMoves;
                 }
 
-                vMoves.Add(TranslateCoordinates(lastCoord, mapSize));
+                for (int i = 0; i < coordCount - 2; i += 2)
+                {
+                    if (mask[i])
+                    {
+                        lastCoord.X += reader.ReadSByte();
+                    }
+                    else
+                    {
+                        lastCoord.X = reader.ReadInt16();
+                    }
+
+                    if (mask[i + 1])
+                    {
+                        lastCoord.Y += reader.ReadSByte();
+                    }
+                    else
+                    {
+                        lastCoord.Y = reader.ReadInt16();
+                    }
+
+                    vMoves.Add(TranslateCoordinates(lastCoord, map.NavigationGrid.MiddleOfMap));
+                }
             }
 
             return vMoves;
         }
 
-        private Vector2 TranslateCoordinates(Vector2 vector, Vector2 mapSize)
+        private Vector2 TranslateCoordinates(Vector2 vector, Vector2 mapCenter)
         {
             // For ???? reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
-            // mapSize contains the real center point coordinates, meaning width/2, height/2
-            return new Vector2(2 * vector.X + mapSize.X, 2 * vector.Y + mapSize.Y);
+            // mapCenter contains the real center point coordinates, meaning width/2, height/2
+            return new Vector2(2 * vector.X + mapCenter.X, 2 * vector.Y + mapCenter.Y);
         }
     }
 }

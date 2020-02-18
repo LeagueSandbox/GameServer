@@ -612,7 +612,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 //Find optimal position...
                 foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
                 {
-                    if (!_game.Map.NavGrid.IsWalkable(point) && !_game.Map.NavGrid.IsSeeThrough(point))
+                    if (!_game.Map.NavigationGrid.IsWalkable(point) && !_game.Map.NavigationGrid.IsSeeThrough(point))
                         continue;
                     var positionUsed = false;
                     foreach (var circlePoly in usedPositions)
@@ -635,20 +635,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary> TODO: Probably not the best place to have this, but still better than packet notifier </summary>
         public void TeleportTo(float x, float y)
         {
-            if (!_game.Map.NavGrid.IsWalkable(x, y))
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y))
             {
-                var walkableSpot = _game.Map.NavGrid.GetClosestTerrainExit(new Vector2(x, y));
+                var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y));
                 SetPosition(walkableSpot);
 
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, walkableSpot.X);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, walkableSpot.Y);
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
             }
             else
             {
                 SetPosition(x, y);
 
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavGrid, x);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavGrid, y);
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
 
             _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));

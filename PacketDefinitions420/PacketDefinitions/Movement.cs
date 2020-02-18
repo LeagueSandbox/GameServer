@@ -32,7 +32,6 @@ namespace PacketDefinitions420.PacketDefinitions
 
         public static byte[] EncodeWaypoints(INavigationGrid navGrid, List<Vector2> waypoints)
         {
-            var mapSize = navGrid.GetSize();
             var numCoords = waypoints.Count * 2;
 
             var maskBytes = new byte[(numCoords - 3) / 8 + 1];
@@ -45,7 +44,7 @@ namespace PacketDefinitions420.PacketDefinitions
             var coordinate = 0;
             foreach (var waypoint in waypoints)
             {
-                var curVector = new Vector2((waypoint.X - mapSize.X) / 2, (waypoint.Y - mapSize.Y) / 2);
+                var curVector = new Vector2((waypoint.X - navGrid.MiddleOfMap.X) / 2, (waypoint.Y - navGrid.MiddleOfMap.Y) / 2);
                 if (coordinate == 0)
                 {
                     tempBuffer.Write((short)curVector.X);

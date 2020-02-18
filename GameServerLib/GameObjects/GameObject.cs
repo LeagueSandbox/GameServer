@@ -216,7 +216,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual float GetZ()
         {
-            return _game.Map.NavGrid.GetHeightAtLocation(X, Y);
+            return _game.Map.NavigationGrid.GetHeightAtLocation(X, Y);
         }
 
         public bool IsCollidingWith(IGameObject o)
