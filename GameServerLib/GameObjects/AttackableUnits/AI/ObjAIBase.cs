@@ -191,10 +191,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     BuffList.Add(b);
 
                     Buffs[b.Name].IncrementStackCount();
-                    foreach (IBuff buff in GetBuffsWithName(b.Name))
-                    {
-                        buff.SetStacks(Buffs[b.Name].StackCount);
-                    }
+
+                    GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(Buffs[b.Name].StackCount));
 
                     if (!b.IsHidden)
                     {
@@ -411,15 +409,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             lock (_buffsLock)
             {
-                var buffs = new List<IBuff>();
-                for (int i = 0; i < BuffList.Count; i++)
-                {
-                    if (BuffList[i].IsBuffSame(buffName))
-                    {
-                        buffs.Add(BuffList[i]);
-                    }
-                }
-                return buffs;
+                return BuffList.FindAll(b => b.IsBuffSame(buffName));
             }
         }
 
@@ -459,20 +449,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool HasBuff(IBuff buff)
         {
-            foreach (var b in BuffList)
+            if (BuffList.Find(b => b == buff) == null)
             {
-                if (b == buff) return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         public bool HasBuff(string buffName)
         {
-            foreach (var b in BuffList)
+            if (BuffList.Find(b => b.IsBuffSame(buffName)) == null)
             {
-                if (b.IsBuffSame(buffName)) return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         public bool HasCrowdControl(CrowdControlType ccType)
@@ -592,10 +582,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                     var tempbuffs = GetBuffsWithName(b.Name);
 
-                    for (int i = 0; i < tempbuffs.Count; i++)
-                    {
-                        tempbuffs[i].SetStacks(b.StackCount);
-                    }
+                    tempbuffs.ForEach(tempbuff => tempbuff.SetStacks(b.StackCount));
 
                     BuffSlots[b.Slot] = tempbuffs[0];
                     Buffs.Add(b.Name, tempbuffs[0]);
@@ -646,13 +633,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             lock (_buffsLock)
             {
-                for (int i = 0; i < BuffList.Count; i++)
-                {
-                    if (BuffList[i].IsBuffSame(buffName))
-                    {
-                        BuffList[i].DeactivateBuff();
-                    }
-                }
+                BuffList.FindAll(b => 
+                b.IsBuffSame(buffName)).ForEach(b => 
+                b.DeactivateBuff());
             }
         }
 
