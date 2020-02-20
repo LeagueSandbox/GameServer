@@ -11,17 +11,17 @@ namespace Spells
     public class YasuoQ3W : IGameScript
     {
         private Vector2 trueCoords;
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
             //empty
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
             //empty
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
@@ -31,10 +31,9 @@ namespace Spells
             FaceDirection(owner, trueCoords, true, 0f);
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var _hasbuff = owner.HasBuffGameScriptActive("YasuoE", "YasuoE");
-            if (_hasbuff)
+            if (HasBuff(owner, "YasuoE"))
             {
                 spell.SpellAnimation("SPELL3b", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ3_cas.troy", owner);
@@ -55,17 +54,17 @@ namespace Spells
             {
                 spell.AddProjectile("YasuoQ3Mis", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
                 spell.SpellAnimation("SPELL1C", owner);
-                owner.SetSpell("YasuoQW", 0, true);
+                (owner as IChampion).SetSpell("YasuoQW", 0, true);
                 AddParticleTarget(owner, "Yasuo_Base_Q3_Hand.troy", owner);
                 AddParticleTarget(owner, "Yasuo_Base_Q3_cast_sound.troy", owner);
             }
-            if (((ObjAiBase)owner).HasBuffGameScriptActive("YasuoQ02", "YasuoQ02"))
+            if (HasBuff(owner, "YasuoQ02"))
             {
-                ((ObjAiBase)owner).RemoveBuffGameScriptsWithName("YasuoQ02", "YasuoQ02");
+                RemoveBuff(owner, "YasuoQ02");
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
             AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);

@@ -9,22 +9,23 @@ namespace YoumuusGhostblade
 {
     internal class YoumuusGhostblade : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
+        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = 0.2f;
-            _statMod.AttackSpeed.PercentBonus = 0.4f;
-            _visualBuff = AddBuffHudVisual("SpectralFury", 6.0f, 1, BuffType.COMBAT_ENCHANCER, unit);
-            unit.AddStatModifier(_statMod);
+            StatsModifier.MoveSpeed.PercentBonus = 0.2f;
+            StatsModifier.AttackSpeed.PercentBonus = 0.4f;
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-            unit.RemoveStatModifier(_statMod);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

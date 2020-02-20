@@ -10,11 +10,11 @@ namespace Spells
 {
     public class CaitlynEntrapment : IGameScript
     {
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
@@ -23,11 +23,11 @@ namespace Spells
 
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             // Calculate net coords
             var current = new Vector2(owner.X, owner.Y);
@@ -42,13 +42,13 @@ namespace Spells
             spell.AddProjectile("CaitlynEntrapmentMissile", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 80 + (spell.Level - 1) * 50 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            var slowDuration = new[] {0, 1, 1.25f, 1.5f, 1.75f, 2}[spell.Level];
-            AddBuff("Slow", slowDuration, 1, BuffType.SLOW, (ObjAiBase) target, owner);
+            var slowDuration = new[] { 0, 1, 1.25f, 1.5f, 1.75f, 2 }[spell.Level];
+            AddBuff("Slow", slowDuration, 1, spell, (IObjAiBase)target, owner);
             AddParticleTarget(owner, "caitlyn_entrapment_tar.troy", target);
             AddParticleTarget(owner, "caitlyn_entrapment_slow.troy", target);
             projectile.SetToRemove();

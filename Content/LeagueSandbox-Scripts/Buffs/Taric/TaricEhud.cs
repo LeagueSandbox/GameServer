@@ -10,22 +10,25 @@ namespace TaricEhud
 {
     internal class TaricEhud : IBuffGameScript
     {
-        private IBuff _visualBuff;        
-        public void OnActivate(IObjAiBase unit,ISpell spell)
+        public BuffType BuffType => BuffType.INTERNAL;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => true;
+
+        public IStatsModifier StatsModifier { get; private set; }
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            var time = 1.1f + 0.1f * spell.Level;
-            _visualBuff = AddBuffHudVisual("Stun", time, 1, BuffType.COMBAT_DEHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-            
+
         }
 
         public void OnUpdate(double diff)
         {
-            
+
         }
     }
 }

@@ -1,46 +1,52 @@
 ﻿using System.Collections.Generic;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Content;
 
 namespace GameServerCore.Domain.GameObjects
 {
     public interface IObjAiBase : IAttackableUnit
     {
-        IAttackableUnit TargetUnit { get; set;  }
+        ISpellData AaSpellData { get; }
+        float AutoAttackCastTime { get; set; }
+        float AutoAttackProjectileSpeed { get; set; }
         IAttackableUnit AutoAttackTarget { get; set; }
-        bool IsAttacking { get; set; } 
-        bool IsDashing { get; }
+        ICharData CharData { get; }
+        float DashSpeed { get; set; }
         bool HasMadeInitialAttack { get; set; }
         IInventoryManager Inventory { get; }
-
-        float AutoAttackCastTime { get; set; }
-        float AutoAttackProjectileSpeed { get; set;  }
-        MoveOrder MoveOrder { get; }
-        bool IsCastingSpell { get; set;  }
+        bool IsAttacking { get; set; }
+        bool IsCastingSpell { get; set; }
+        bool IsDashing { get; }
         bool IsMelee { get; set; }
-        void UpdateTargetUnit(IAttackableUnit unit);
+        MoveOrder MoveOrder { get; }
+        IAttackableUnit TargetUnit { get; set;  }
+
+        void AddBuff(IBuff b);
+        void AddStatModifier(IStatsModifier statModifier);
+        void ApplyCrowdControl(ICrowdControl cc);
+        void AutoAttackHit(IAttackableUnit target);
+        void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName);
+        void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData);
+        void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
+        IBuff GetBuffWithName(string name);
+        int GetBuffsCount();
+        List<IBuff> GetBuffs();
+        List<IBuff> GetBuffsWithName(string buffName);
+        byte GetNewBuffSlot(IBuff b);
+        uint GetObjHash();
+        bool HasBuff(IBuff buff);
+        bool HasBuff(string buffName);
+        void RemoveBuff(IBuff b);
+        void RemoveBuff(string b);
+        void RemoveBuffSlot(IBuff b);
+        void RemoveBuffsWithName(string buffName);
+        void RemoveCrowdControl(ICrowdControl cc);
+        void RemoveStatModifier(IStatsModifier statModifier);
+        void ResetAutoAttackSpellData();
+        void SetDashingState(bool state);
+        void SetTargetUnit(IAttackableUnit target);
         void StopMovement();
         void TeleportTo(float x, float y);
-        void AddStatModifier(IStatsModifier statModifier);
-        void RemoveStatModifier(IStatsModifier statModifier);
-        void SetTargetUnit(IAttackableUnit target);
-        void AutoAttackHit(IAttackableUnit target);
-        uint GetObjHash();
-
-        // buffs
-        bool HasBuffGameScriptActive(string buffNamespace, string buffClass);
-        void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false);
-        void RemoveBuffSlot(IBuff b);
-        byte GetNewBuffSlot(IBuff b);
-        void AddBuff(IBuff b);
-        void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData);
-        void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName);
-        void ResetAutoAttackSpellData();
-        void ApplyCrowdControl(ICrowdControl cc);
-        void RemoveCrowdControl(ICrowdControl cc);
-        void SetDashingState(bool state);
-        float DashSpeed { get; set; }
-        void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
-        Dictionary<string, IBuff> GetBuffs();
-        void RemoveBuff(IBuff b);
+        void UpdateTargetUnit(IAttackableUnit unit);
     }
 }

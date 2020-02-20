@@ -110,6 +110,7 @@ namespace GameServerCore.Domain
         bool UseMinimapTargeting { get; }
 
         float GetCastTime();
+        float GetCastTimeTotal();
         void Load(string name);
     }
 }

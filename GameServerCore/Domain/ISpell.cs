@@ -6,7 +6,7 @@ namespace GameServerCore.Domain
 {
     public interface ISpell: IUpdate
     {
-        IChampion Owner { get; }
+        IObjAiBase Owner { get; }
         byte Level { get; }
         byte Slot { get; }
         float CastTime { get; }

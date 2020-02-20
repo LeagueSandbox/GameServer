@@ -9,29 +9,29 @@ namespace Spells
 {
     public class EvelynnPassive : IGameScript
     {
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, owner, SelfWasDamaged);
+            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, SelfWasDamaged);
         }
 
         private void SelfWasDamaged()
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
             //Listeners are automatically removed when GameScripts deactivate
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 

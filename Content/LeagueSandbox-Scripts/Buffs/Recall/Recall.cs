@@ -9,39 +9,42 @@ namespace Recall
 {
     class Recall : IBuffGameScript
     {
-        private IBuff _visualBuff;
-        private Particle _createdParticle;
+        public BuffType BuffType => BuffType.COMBAT_DEHANCER;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
-        private bool _canRecall;
+        public IStatsModifier StatsModifier { get; private set; }
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        private IParticle _createdParticle;
+        private IChampion owner;
+        private IBuff sourceBuff;
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             IChampion champion = unit as IChampion;
+            owner = champion;
+            sourceBuff = buff;
 
-            _visualBuff = AddBuffHudVisual("Recall", 8.0f, 1, BuffType.COMBAT_ENCHANCER, champion);
             _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion);
-
-            // @TODO Change to a less hacky way of implementing recall checking
-            CreateTimer(7.9f, () => 
-            {
-                _canRecall = true;
-            });
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-            RemoveParticle(_createdParticle);
-
-            if (_canRecall)
+            LogInfo("sourceBuff.TimeElapsed: " + sourceBuff.TimeElapsed);
+            if (sourceBuff.TimeElapsed >= sourceBuff.Duration)
             {
-                ((IChampion)unit).Recall();
+                owner.Recall();
             }
+            RemoveParticle(_createdParticle);
         }
 
         public void OnUpdate(double diff)
         {
-
+            if (owner.IsMovementUpdated())
+            {
+                sourceBuff.DeactivateBuff();
+            }
         }
     }
 }

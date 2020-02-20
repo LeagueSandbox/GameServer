@@ -9,21 +9,22 @@ namespace HealSpeed
 {
     internal class HealSpeed : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _healBuff;
+        public BuffType BuffType => BuffType.HEAL;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier => new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.PercentBonus = 0.3f;
-            unit.AddStatModifier(_statMod);
-            _healBuff = AddBuffHudVisual("SummonerHeal", 1.0f, 1, BuffType.COMBAT_ENCHANCER, unit);
+            StatsModifier.MoveSpeed.PercentBonus = 0.3f;
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(_statMod);
-            RemoveBuffHudVisual(_healBuff);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

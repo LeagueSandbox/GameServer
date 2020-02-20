@@ -231,7 +231,12 @@ namespace LeagueSandbox.GameServer.Content
 
         public float GetCastTime()
         {
-            return (1.0f + DelayCastOffsetPercent) / 2.0f;
+            return (1.0f + DelayCastOffsetPercent) * 0.5f;
+        }
+
+        public float GetCastTimeTotal()
+        {
+            return (1.0f + DelayTotalTimePercent) * 2.0f;
         }
 
         public void Load(string name)

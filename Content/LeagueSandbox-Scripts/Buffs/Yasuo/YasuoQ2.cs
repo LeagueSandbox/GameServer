@@ -9,20 +9,25 @@ namespace YasuoQ02
 {
     internal class YasuoQ02 : IBuffGameScript
     {
-        private IBuff _visualBuff;
-        private Particle p1;
-        private Particle p2;
-        private Particle p3;
-        private Particle p4;
+        public BuffType BuffType => BuffType.INTERNAL;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => true;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; }
+
+        private IParticle p1;
+        private IParticle p2;
+        private IParticle p3;
+        private IParticle p4;
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             ((IChampion)unit).SetSpell("YasuoQ3W", 0, true);
             p1 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q3_Indicator_Ring.troy", unit);
             p2 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q3_Indicator_Ring_alt.troy", unit);
             p3 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_wind_ready_buff.troy", unit);
             p4 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_strike_build_up_test.troy", unit);
-            _visualBuff = AddBuffHudVisual("YasuoQ3W", 6f, 1, BuffType.COMBAT_ENCHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
@@ -35,7 +40,6 @@ namespace YasuoQ02
             RemoveParticle(p2);
             RemoveParticle(p3);
             RemoveParticle(p4);
-            RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)

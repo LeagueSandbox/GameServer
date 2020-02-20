@@ -10,17 +10,17 @@ namespace Spells
     public class YasuoQW : IGameScript
     {
         private Vector2 trueCoords;
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
             // here's nothing
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
             // here's empty
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
@@ -30,10 +30,9 @@ namespace Spells
             FaceDirection(owner, trueCoords, true, 0f);
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var _hasbuff = owner.HasBuffGameScriptActive("YasuoE", "YasuoE");
-            if (_hasbuff)
+            if (HasBuff(owner, "YasuoE"))
             {
                 spell.SpellAnimation("SPELL3b", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ_cas.troy", owner);
@@ -46,7 +45,7 @@ namespace Spells
                         AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
                     }
                 }
-                AddBuffGameScript("YasuoQ01", 1, spell, BuffType.COMBAT_ENCHANCER, owner, 6f, true);
+                AddBuff("YasuoQ01", 6f, 1, spell, owner, owner);
             }
             else
             {
@@ -57,14 +56,13 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
-            var _hasbuff = owner.HasBuffGameScriptActive("YasuoQ01", "YasuoQ01");
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
             target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            if (!_hasbuff)
+            if (!HasBuff(owner, "YasuoQ01"))
             {
-                AddBuffGameScript("YasuoQ01",1,spell, BuffType.COMBAT_ENCHANCER, owner,6f,true);
+                AddBuff("YasuoQ01", 6f, 1, spell, owner, owner);
             }
         }
 

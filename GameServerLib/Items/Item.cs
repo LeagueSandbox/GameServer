@@ -1,12 +1,12 @@
 using GameServerCore.Domain;
+using LeagueSandbox.GameServer.GameObjects.Other;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class Item : IItem
+    public class Item : Stackable, IItem
     {
         public int TotalPrice => ItemData.TotalPrice;
         public IItemData ItemData { get; }
-        public byte StackCount { get; private set; }
 
 
         private Item(IItemData data)
@@ -14,10 +14,10 @@ namespace LeagueSandbox.GameServer.Items
             ItemData = data;
             StackCount = 1;
         }
-        
-        public bool IncrementStackCount()
+
+        public override bool IncrementStackCount()
         {
-            if (StackCount >= ItemData.MaxStack)
+            if (StackCount >= ItemData.MaxStacks)
             {
                 return false;
             }
@@ -26,21 +26,10 @@ namespace LeagueSandbox.GameServer.Items
             return true;
         }
 
-        public bool DecrementStackCount()
+        public override void SetStacks(int newStacks)
         {
-            if (StackCount < 1)
-            {
-                return false;
-            }
-
-            StackCount--;
-            return true;
-        }
-
-        public void SetStacks(byte newStacks)
-        {
-            if(newStacks < 1 || newStacks > ItemData.MaxStack)
-                throw new System.Exception($"Cannot set stack size out of bounds (max is {ItemData.MaxStack})");
+            if (newStacks < 1 || newStacks > ItemData.MaxStacks)
+                throw new System.Exception($"Cannot set stack size out of bounds (max is {ItemData.MaxStacks})");
 
             StackCount = newStacks;
         }

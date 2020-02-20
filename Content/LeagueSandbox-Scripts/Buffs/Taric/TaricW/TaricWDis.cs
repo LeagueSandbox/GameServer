@@ -10,20 +10,24 @@ namespace TaricWDis
 {
     internal class TaricWDis : IBuffGameScript
     {
-        private IBuff _visualBuff;        
-        public void OnActivate(IObjAiBase unit,ISpell spell)
+        public BuffType BuffType => BuffType.DISARM;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
+
+        public IStatsModifier StatsModifier { get; private set; }
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _visualBuff = AddBuffHudVisual("Shatter", 4f, 1, BuffType.COMBAT_DEHANCER, unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)
         {
-            
+
         }
     }
 }

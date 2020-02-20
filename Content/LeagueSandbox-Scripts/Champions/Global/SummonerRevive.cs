@@ -7,23 +7,23 @@ namespace Spells
 {
     public class SummonerRevive : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             if (!owner.IsDead)
             {
                 return;
             }
 
-            owner.Respawn();
+            (owner as IChampion).Respawn();
+            AddBuff("SummonerReviveSpeedBoost", 12.0f, 1, spell, owner, owner);
             AddParticleTarget(owner, "Global_SS_Revive.troy", owner);
-            owner.AddBuffGameScript("SummonerReviveSpeedBoost", "SummonerReviveSpeedBoost", spell, 12.0f, true);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
@@ -31,11 +31,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

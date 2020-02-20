@@ -14,30 +14,28 @@ namespace EzrealWBuff
 {
     class EzrealWBuff : IBuffGameScript
     {
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
+        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
+            StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.Level);
 
-            _statMod.AttackSpeed.PercentBonus = _statMod.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.Level);
-
-            unit.AddStatModifier(_statMod);
-
-            _visualBuff = AddBuffHudVisual("EzrealEssenceFluxBuff", 5f, 1, BuffType.COMBAT_ENCHANCER, unit);
+            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            RemoveBuffHudVisual(_visualBuff);
-
-            unit.RemoveStatModifier(_statMod);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)
         {
-            
+
         }
     }
 }

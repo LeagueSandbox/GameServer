@@ -22,39 +22,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class ObjAiBase : AttackableUnit, IObjAiBase
     {
-        private IBuff[] AppliedBuffs { get; }
-        private List<BuffGameScriptController> BuffGameScriptControllers { get; }
-        private object BuffsLock { get; }
-        private Dictionary<string, IBuff> Buffs { get; }
-
+        private float _autoAttackCurrentCooldown;
+        private float _autoAttackCurrentDelay;
+        private uint _autoAttackProjId;
+        private object _buffsLock;
         private List<ICrowdControl> _crowdControlList = new List<ICrowdControl>();
+        private bool _isNextAutoCrit;
         protected ItemManager _itemManager;
+        private bool _nextAttackFlag;
+        private Random _random = new Random();
         protected CSharpScriptEngine _scriptEngine;
 
+        public ISpellData AaSpellData { get; private set; }
+        public float AutoAttackCastTime { get; set; }
+        public float AutoAttackProjectileSpeed { get; set; }
+        public IAttackableUnit AutoAttackTarget { get; set; }
+        private IBuff[] BuffSlots { get; }
+        private Dictionary<string, IBuff> Buffs { get; }
+        private List<IBuff> BuffList { get; }
+        public ICharData CharData { get; }
+        public float DashSpeed { get; set; }
+        public bool HasMadeInitialAttack { get; set; }
+        public IInventoryManager Inventory { get; protected set; }
+        public bool IsAttacking { get; set; }
+        public bool IsCastingSpell { get; set; }
+        public bool IsDashing { get; protected set; }
+        public bool IsMelee { get; set; }
+        public MoveOrder MoveOrder { get; set; }
         /// <summary>
         /// Unit we want to attack as soon as in range
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
-        public IAttackableUnit AutoAttackTarget { get; set; }
-        public ICharData CharData { get; }
-        public ISpellData AaSpellData { get; private set; }
-        private bool _isNextAutoCrit;
-        public float AutoAttackCastTime { get; set; }
-        public float AutoAttackProjectileSpeed { get; set; }
-        private float _autoAttackCurrentCooldown;
-        private float _autoAttackCurrentDelay;
-        public bool IsAttacking { get; set; }
-        public bool HasMadeInitialAttack { get; set; }
-        public IInventoryManager Inventory { get; protected set; }
-        private bool _nextAttackFlag;
-        private uint _autoAttackProjId;
-        public MoveOrder MoveOrder { get; set; }
-        public bool IsCastingSpell { get; set; }
-        public bool IsMelee { get; set; }
-        public bool IsDashing { get; protected set; }
-        public float DashSpeed { get; set; }
-
-        private Random _random = new Random();
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             float x = 0, float y = 0, int visionRadius = 0, uint netId = 0) :
@@ -98,140 +96,145 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsMelee = true;
             }
 
-            AppliedBuffs = new IBuff[256];
-            BuffGameScriptControllers = new List<BuffGameScriptController>();
-            BuffsLock = new object();
+            BuffSlots = new IBuff[256];
+            BuffList = new List<IBuff>();
+            _buffsLock = new object();
             Buffs = new Dictionary<string, IBuff>();
             IsDashing = false;
         }
 
-        public void AddBuffGameScript(string buffNamespace, string buffClass, ISpell ownerSpell, float removeAfter = -1f, bool isUnique = false)
+        public void AddBuff(IBuff b)
         {
-            if (isUnique)
+            lock (_buffsLock)
             {
-                RemoveBuffGameScriptsWithName(buffNamespace, buffClass);
-            }
-
-            var buffController =
-                new BuffGameScriptController(_game, this, buffNamespace, buffClass, ownerSpell, removeAfter);
-            BuffGameScriptControllers.Add(buffController);
-            buffController.ActivateBuff();
-
-            // TODO: should handle the controllers in the class, and don't pass them outside
-        }
-
-        public void RemoveBuffGameScript(BuffGameScriptController buffController)
-        {
-            buffController.DeactivateBuff();
-            BuffGameScriptControllers.Remove(buffController);
-        }
-
-        public bool HasBuffGameScriptActive(string buffNamespace, string buffClass)
-        {
-            foreach (var b in BuffGameScriptControllers)
-            {
-                if (b.IsBuffSame(buffNamespace, buffClass)) return true;
-            }
-            return false;
-        }
-
-        public void RemoveBuffGameScriptsWithName(string buffNamespace, string buffClass)
-        {
-            foreach (var b in BuffGameScriptControllers)
-            {
-                if (b.IsBuffSame(buffNamespace, buffClass)) b.DeactivateBuff();
-            }
-            BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
-        }
-
-        public List<BuffGameScriptController> GetBuffGameScriptController()
-        {
-            return BuffGameScriptControllers;
-        }
-
-        public Dictionary<string, IBuff> GetBuffs()
-        {
-            var toReturn = new Dictionary<string, IBuff>();
-            lock (BuffsLock)
-            {
-                foreach (var buff in Buffs)
+                if (!Buffs.ContainsKey(b.Name))
                 {
-                    toReturn.Add(buff.Key, buff.Value);
+                    if (HasBuff(b.Name))
+                    {
+                        var buff = GetBuffsWithName(b.Name)[0];
+                        Buffs.Add(b.Name, buff);
+                        return;
+                    }
+                    Buffs.Add(b.Name, b);
+                    BuffList.Add(b);
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                    }
+                    b.ActivateBuff();
                 }
-
-                return toReturn;
-            }
-        }
-
-        public int GetBuffsCount()
-        {
-            return Buffs.Count;
-        }
-
-        //todo: use statmods
-        public IBuff GetBuff(string name)
-        {
-            lock (BuffsLock)
-            {
-                if (Buffs.ContainsKey(name))
+                else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
                 {
-                    return Buffs[name];
+                    var prevbuff = Buffs[b.Name];
+
+                    prevbuff.DeactivateBuff();
+                    RemoveBuff(b.Name);
+                    BuffList.Remove(prevbuff);
+                    RemoveBuffSlot(b);
+
+                    BuffSlots[prevbuff.Slot] = b;
+                    b.SetSlot(prevbuff.Slot);
+
+                    Buffs.Add(b.Name, b);
+                    BuffList.Add(b);
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffReplace(b);
+                    }
+                    b.ActivateBuff();
                 }
-                return null;
+                else if (b.BuffAddType == BuffAddType.RENEW_EXISTING)
+                {
+                    Buffs[b.Name].ResetTimeElapsed();
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffReplace(Buffs[b.Name]);
+                    }
+                    RemoveStatModifier(Buffs[b.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
+                    Buffs[b.Name].ActivateBuff();
+                }
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
+                {
+                    if (Buffs[b.Name].StackCount >= Buffs[b.Name].MaxStacks)
+                    {
+                        var tempbuffs = GetBuffsWithName(b.Name);
+                        var oldestbuff = tempbuffs[0];
+
+                        oldestbuff.DeactivateBuff();
+                        RemoveBuff(b.Name);
+                        BuffList.Remove(oldestbuff);
+                        RemoveBuffSlot(oldestbuff);
+
+                        tempbuffs = GetBuffsWithName(b.Name);
+
+                        BuffSlots[oldestbuff.Slot] = tempbuffs[0];
+                        Buffs.Add(oldestbuff.Name, tempbuffs[0]);
+                        BuffList.Add(b);
+
+                        if (!b.IsHidden)
+                        {
+                            if (Buffs[b.Name].BuffType == BuffType.COUNTER)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
+                            }
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                            }
+                        }
+                        b.ActivateBuff();
+
+                        return;
+                    }
+                    BuffList.Add(b);
+
+                    Buffs[b.Name].IncrementStackCount();
+
+                    GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(Buffs[b.Name].StackCount));
+
+                    if (!b.IsHidden)
+                    {
+                        if (b.BuffType == BuffType.COUNTER)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
+                        }
+                        else
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                        }
+                    }
+                    b.ActivateBuff();
+                }
+                else if (Buffs[b.Name].BuffAddType == BuffAddType.STACKS_AND_RENEWS)
+                {
+                    RemoveBuffSlot(b);
+
+                    Buffs[b.Name].ResetTimeElapsed();
+                    Buffs[b.Name].IncrementStackCount();
+
+                    if (!b.IsHidden)
+                    {
+                        if (Buffs[b.Name].BuffType == BuffType.COUNTER)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
+                        }
+                        else
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(Buffs[b.Name], Buffs[b.Name].Duration, Buffs[b.Name].TimeElapsed);
+                        }
+                    }
+
+                    RemoveStatModifier(Buffs[b.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
+                    Buffs[b.Name].ActivateBuff();
+                }
             }
         }
 
         public void AddStatModifier(IStatsModifier statModifier)
         {
             Stats.AddModifier(statModifier);
-        }
-
-        public void RemoveStatModifier(IStatsModifier statModifier)
-        {
-            Stats.RemoveModifier(statModifier);
-        }
-
-        public void AddBuff(IBuff b)
-        {
-            lock (BuffsLock)
-            {
-                if (!Buffs.ContainsKey(b.Name))
-                {
-                    Buffs.Add(b.Name, b);
-                }
-                else
-                {
-                    Buffs[b.Name].ResetDuration(); // if buff already exists, just restart its timer
-                }
-            }
-        }
-
-        public void RemoveBuff(IBuff b)
-        {
-            //TODO add every stat
-            RemoveBuff(b.Name);
-            RemoveBuffSlot(b);
-        }
-
-        public void RemoveBuff(string b)
-        {
-            lock (BuffsLock)
-            {
-                Buffs.Remove(b);
-            }
-        }
-
-        public byte GetNewBuffSlot(IBuff b)
-        {
-            var slot = GetBuffSlot();
-            AppliedBuffs[slot] = b;
-            return slot;
-        }
-
-        public void RemoveBuffSlot(IBuff b)
-        {
-            var slot = GetBuffSlot(b);
-            AppliedBuffs[slot] = null;
         }
 
         public void ApplyCrowdControl(ICrowdControl cc)
@@ -246,19 +249,31 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _crowdControlList.Add(cc);
         }
 
-        public void RemoveCrowdControl(ICrowdControl cc)
+        /// <summary>
+        /// This is called by the AA projectile when it hits its target
+        /// </summary>
+        public virtual void AutoAttackHit(IAttackableUnit target)
         {
-            _crowdControlList.Remove(cc);
-        }
+            if (HasCrowdControl(CrowdControlType.BLIND))
+            {
+                target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
+                                             DamageSource.DAMAGE_SOURCE_ATTACK,
+                                             DamageText.DAMAGE_TEXT_MISS);
+                return;
+            }
 
-        public void ClearAllCrowdControl()
-        {
-            _crowdControlList.Clear();
-        }
+            var damage = Stats.AttackDamage.Total;
+            if (_isNextAutoCrit)
+            {
+                damage *= Stats.CriticalDamage.Total;
+            }
 
-        public bool HasCrowdControl(CrowdControlType ccType)
-        {
-            return _crowdControlList.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
+            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnAutoAttack");
+            onAutoAttack?.Invoke(this, target);
+
+            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
+                DamageSource.DAMAGE_SOURCE_ATTACK,
+                _isNextAutoCrit);
         }
 
         public void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData)
@@ -269,42 +284,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName)
         {
             AaSpellData = _game.Config.ContentManager.GetSpellData(newAutoAttackSpellDataName);
-        }
-
-        public void ResetAutoAttackSpellData()
-        {
-            AaSpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
-        }
-
-        public void StopMovement()
-        {
-            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
-        }
-
-        public virtual void RefreshWaypoints()
-        {
-            if (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
-            {
-                return;
-            }
-
-            if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2f)
-            {
-                SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
-            }
-            else
-            {
-                SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
-                /* TODO: Soon we will use path finding for this.
-                 * if(CurWaypoint >= Waypoints.Count)
-                {
-                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
-                    if (newWaypoints.Count > 1)
-                    {
-                        SetWaypoints(newWaypoints);
-                    }
-                }*/
-            }
         }
 
         public ClassifyUnit ClassifyTarget(IAttackableUnit target)
@@ -339,7 +318,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                 }
             }
-        
+
             switch (target)
             {
                 case IMinion _:
@@ -370,17 +349,44 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return ClassifyUnit.DEFAULT;
         }
 
-        public void SetTargetUnit(IAttackableUnit target)
+        public void ClearAllCrowdControl()
         {
-            TargetUnit = target;
-            RefreshWaypoints();
+            _crowdControlList.Clear();
+        }
+
+        public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
+        {
+            // TODO: Take into account the rest of the arguments
+            IsDashing = true;
+            Target = t;
+            DashSpeed = dashSpeed;
+            Waypoints.Clear();
+        }
+
+        public override void Die(IAttackableUnit killer)
+        {
+            var onDie = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
+            onDie?.Invoke(this, killer);
+            base.Die(killer);
+        }
+
+        public IBuff GetBuffWithName(string name)
+        {
+            lock (_buffsLock)
+            {
+                if (Buffs.ContainsKey(name))
+                {
+                    return Buffs[name];
+                }
+                return null;
+            }
         }
 
         private byte GetBuffSlot(IBuff buffToLookFor = null)
         {
-            for (byte i = 1; i < AppliedBuffs.Length; i++) // Find the first open slot or the slot corresponding to buff
+            for (byte i = 1; i < BuffSlots.Length; i++) // Find the first open slot or the slot corresponding to buff
             {
-                if (AppliedBuffs[i] == buffToLookFor)
+                if (BuffSlots[i] == buffToLookFor)
                 {
                     return i;
                 }
@@ -389,31 +395,314 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             throw new Exception("No slot found with requested value"); // If no open slot or no corresponding slot
         }
 
-        /// <summary>
-        /// This is called by the AA projectile when it hits its target
-        /// </summary>
-        public virtual void AutoAttackHit(IAttackableUnit target)
+        public List<IBuff> GetBuffs()
         {
-            if (HasCrowdControl(CrowdControlType.BLIND))
+            return BuffList;
+        }
+
+        public int GetBuffsCount()
+        {
+            return Buffs.Count;
+        }
+
+        public List<IBuff> GetBuffsWithName(string buffName)
+        {
+            lock (_buffsLock)
             {
-                target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
-                                             DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageText.DAMAGE_TEXT_MISS);
+                return BuffList.FindAll(b => b.IsBuffSame(buffName));
+            }
+        }
+
+        public override float GetMoveSpeed()
+        {
+            return IsDashing ? DashSpeed : base.GetMoveSpeed();
+        }
+
+        public byte GetNewBuffSlot(IBuff b)
+        {
+            var slot = GetBuffSlot();
+            BuffSlots[slot] = b;
+            return slot;
+        }
+
+        public uint GetObjHash()
+        {
+            var gobj = "[Character]" + Model;
+
+            // TODO: Account for any other units that have skins (requires skins to be implemented for those units)
+            if (this is IChampion c)
+            {
+                var szSkin = "";
+                if (c.Skin < 10)
+                {
+                    szSkin = "0" + c.Skin;
+                }
+                else
+                {
+                    szSkin = c.Skin.ToString();
+                }
+                gobj += szSkin;
+            }
+
+            return HashFunctions.HashStringNorm(gobj);
+        }
+
+        public bool HasBuff(IBuff buff)
+        {
+            return !(BuffList.Find(b => b == buff) == null);
+        }
+
+        public bool HasBuff(string buffName)
+        {
+            return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
+        }
+
+        public bool HasCrowdControl(CrowdControlType ccType)
+        {
+            return _crowdControlList.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
+        }
+
+        public override void OnCollision(IGameObject collider)
+        {
+            base.OnCollision(collider);
+            if (collider == null)
+            {
+                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<IAttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
+                onCollideWithTerrain?.Invoke(this);
+            }
+            else
+            {
+                var onCollide = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "onCollide");
+                onCollide?.Invoke(this, collider as IAttackableUnit);
+            }
+        }
+
+        public bool RecalculateAttackPosition()
+        {
+            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total) //If we are already where we should be, do not move.
+            {
+                return false;
+            }
+            var objects = _game.ObjectManager.GetObjects();
+            List<CirclePoly> usedPositions = new List<CirclePoly>();
+            var isCurrentlyOverlapping = false;
+
+            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
+
+            foreach (var gameObject in objects)
+            {
+                var unit = gameObject.Value as IAttackableUnit;
+                if (unit == null ||
+                    unit.NetId == NetId ||
+                    unit.IsDead ||
+                    unit.Team != Team ||
+                    unit.GetDistanceTo(TargetUnit) > DETECT_RANGE
+                )
+                {
+                    continue;
+                }
+                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
+                if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
+                {
+                    isCurrentlyOverlapping = true;
+                }
+                usedPositions.Add(targetCollisionCircle);
+            }
+            if (isCurrentlyOverlapping)
+            {
+                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
+                //Find optimal position...
+                foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
+                {
+                    if (!_game.Map.NavigationGrid.IsWalkable(point) && !_game.Map.NavigationGrid.IsSeeThrough(point))
+                        continue;
+                    var positionUsed = false;
+                    foreach (var circlePoly in usedPositions)
+                    {
+                        if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
+                        {
+                            positionUsed = true;
+                        }
+                    }
+
+                    if (positionUsed)
+                        continue;
+                    SetWaypoints(new List<Vector2> { GetPosition(), point });
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public virtual void RefreshWaypoints()
+        {
+            if (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) <= Stats.Range.Total && Waypoints.Count == 1)
+            {
                 return;
             }
 
-            var damage = Stats.AttackDamage.Total;
-            if (_isNextAutoCrit)
+            if (GetDistanceTo(TargetUnit) <= Stats.Range.Total - 2f)
             {
-                damage *= Stats.CriticalDamage.Total;
+                SetWaypoints(new List<Vector2> { new Vector2(X, Y) });
+            }
+            else
+            {
+                SetWaypoints(new List<Vector2>() { GetPosition(), TargetUnit.GetPosition() });
+                /* TODO: Soon we will use path finding for this.
+                 * if(CurWaypoint >= Waypoints.Count)
+                {
+                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
+                    if (newWaypoints.Count > 1)
+                    {
+                        SetWaypoints(newWaypoints);
+                    }
+                }*/
+            }
+        }
+
+        public void RemoveBuff(IBuff b)
+        {
+            lock (_buffsLock)
+            {
+                if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && b.StackCount > 1)
+                {
+                    b.DecrementStackCount();
+
+                    RemoveBuff(b.Name);
+                    BuffList.Remove(b);
+                    RemoveBuffSlot(b);
+
+                    var tempbuffs = GetBuffsWithName(b.Name);
+
+                    tempbuffs.ForEach(tempbuff => tempbuff.SetStacks(b.StackCount));
+
+                    BuffSlots[b.Slot] = tempbuffs[0];
+                    Buffs.Add(b.Name, tempbuffs[0]);
+
+                    var newestBuff = tempbuffs[tempbuffs.Count - 1];
+
+                    if (!b.IsHidden)
+                    {
+                        if (b.BuffType == BuffType.COUNTER)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Buffs[b.Name]);
+                        }
+                        else
+                        {
+                            if (b.StackCount == 1)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(newestBuff, b.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            }
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(this, tempbuffs, b.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    BuffList.RemoveAll(buff => buff.Elapsed());
+                    RemoveBuff(b.Name);
+                    RemoveBuffSlot(b);
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
+                    }
+                }
+            }
+        }
+
+        public void RemoveBuff(string b)
+        {
+            lock (_buffsLock)
+            {
+                Buffs.Remove(b);
+            }
+        }
+
+        public void RemoveBuffsWithName(string buffName)
+        {
+            lock (_buffsLock)
+            {
+                BuffList.FindAll(b => 
+                b.IsBuffSame(buffName)).ForEach(b => 
+                b.DeactivateBuff());
+            }
+        }
+
+        public void RemoveBuffSlot(IBuff b)
+        {
+            var slot = GetBuffSlot(b);
+            BuffSlots[slot] = null;
+        }
+
+        public void RemoveCrowdControl(ICrowdControl cc)
+        {
+            _crowdControlList.Remove(cc);
+        }
+
+        public void RemoveStatModifier(IStatsModifier statModifier)
+        {
+            Stats.RemoveModifier(statModifier);
+        }
+
+        public void ResetAutoAttackSpellData()
+        {
+            AaSpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+        }
+
+        public void SetDashingState(bool state)
+        {
+            IsDashing = state;
+        }
+
+        public void SetTargetUnit(IAttackableUnit target)
+        {
+            TargetUnit = target;
+            RefreshWaypoints();
+        }
+
+        public void StopMovement()
+        {
+            SetWaypoints(new List<Vector2> { GetPosition(), GetPosition() });
+        }
+
+        /// <summary> TODO: Probably not the best place to have this, but still better than packet notifier </summary>
+        public void TeleportTo(float x, float y)
+        {
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y))
+            {
+                var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y));
+                SetPosition(walkableSpot);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
+            }
+            else
+            {
+                SetPosition(x, y);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
 
-            var onAutoAttack = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnAutoAttack");
-            onAutoAttack?.Invoke(this, target);
+            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
+        }
 
-            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                DamageSource.DAMAGE_SOURCE_ATTACK,
-                _isNextAutoCrit);
+        public override void Update(float diff)
+        {
+            foreach (var cc in _crowdControlList)
+            {
+                cc.Update(diff);
+            }
+
+            _crowdControlList.RemoveAll(cc => cc.IsRemoved);
+
+            var onUpdate = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
+            onUpdate?.Invoke(this, diff);
+            base.Update(diff);
+            UpdateAutoAttackTarget(diff);
         }
 
         public void UpdateAutoAttackTarget(float diff)
@@ -444,7 +733,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     IsAttacking = false;
                     _game.PacketNotifier.NotifySetTarget(this, null);
                     HasMadeInitialAttack = false;
-
                 }
                 else if (IsAttacking && AutoAttackTarget != null)
                 {
@@ -528,7 +816,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 HasMadeInitialAttack = false;
                 AutoAttackTarget = null;
                 _autoAttackCurrentDelay = 0;
-                _game.PacketNotifier.NotifyInstantStopAttack(this, false);
+                _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
             }
 
             if (_autoAttackCurrentCooldown > 0)
@@ -537,167 +825,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void Update(float diff)
-        {
-            foreach (var cc in _crowdControlList)
-            {
-                cc.Update(diff);
-            }
-
-            _crowdControlList.RemoveAll(cc => cc.IsRemoved);
-
-            var onUpdate = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
-            onUpdate?.Invoke(this, diff);
-            BuffGameScriptControllers.RemoveAll(b => b.NeedsRemoved());
-            base.Update(diff);
-            UpdateAutoAttackTarget(diff);
-        }
-
-        public override void Die(IAttackableUnit killer)
-        {
-            var onDie = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
-            onDie?.Invoke(this, killer);
-            base.Die(killer);
-        }
-
-        public override void OnCollision(IGameObject collider)
-        {
-            base.OnCollision(collider);
-            if (collider == null)
-            {
-                var onCollideWithTerrain = _scriptEngine.GetStaticMethod<Action<IAttackableUnit>>(Model, "Passive", "onCollideWithTerrain");
-                onCollideWithTerrain?.Invoke(this);
-            }
-            else
-            {
-                var onCollide = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "onCollide");
-                onCollide?.Invoke(this, collider as IAttackableUnit);
-            }
-        }
-
-        public bool RecalculateAttackPosition()
-        {
-            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)//If we are already where we should be, do not move.
-            {
-                return false;
-            }
-            var objects = _game.ObjectManager.GetObjects();
-            List<CirclePoly> usedPositions = new List<CirclePoly>();
-            var isCurrentlyOverlapping = false;
-
-            var thisCollisionCircle = new CirclePoly(Target?.GetPosition() ?? GetPosition(), CollisionRadius + 10);
-
-            foreach (var gameObject in objects)
-            {
-                var unit = gameObject.Value as IAttackableUnit;
-                if (unit == null ||
-                    unit.NetId == NetId ||
-                    unit.IsDead ||
-                    unit.Team != Team ||
-                    unit.GetDistanceTo(TargetUnit) > DETECT_RANGE
-                )
-                {
-                    continue;
-                }
-                var targetCollisionCircle = new CirclePoly(unit.Target?.GetPosition() ?? unit.GetPosition(), unit.CollisionRadius + 10);
-                if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
-                {
-                    isCurrentlyOverlapping = true;
-                }
-                usedPositions.Add(targetCollisionCircle);
-            }
-            if (isCurrentlyOverlapping)
-            {
-                var targetCircle = new CirclePoly(TargetUnit.Target?.GetPosition() ?? TargetUnit.GetPosition(), Stats.Range.Total, 72);
-                //Find optimal position...
-                foreach (var point in targetCircle.Points.OrderBy(x => GetDistanceTo(X, Y)))
-                {
-                    if (!_game.Map.NavigationGrid.IsWalkable(point) && !_game.Map.NavigationGrid.IsSeeThrough(point))
-                        continue;
-                    var positionUsed = false;
-                    foreach (var circlePoly in usedPositions)
-                    {
-                        if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
-                        {
-                            positionUsed = true;
-                        }
-                    }
-
-                    if (positionUsed)
-                        continue;
-                    SetWaypoints(new List<Vector2> { GetPosition(), point });
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary> TODO: Probably not the best place to have this, but still better than packet notifier </summary>
-        public void TeleportTo(float x, float y)
-        {
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y))
-            {
-                var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y));
-                SetPosition(walkableSpot);
-
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
-            }
-            else
-            {
-                SetPosition(x, y);
-
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
-            }
-
-            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
-        }
-
         public void UpdateTargetUnit(IAttackableUnit unit)
         {
             TargetUnit = unit;
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return IsDashing ? DashSpeed : base.GetMoveSpeed();
-        }
-
-        public void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime)
-        {
-            // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            Target = t;
-            DashSpeed = dashSpeed;
-            Waypoints.Clear();
-        }
-
-        public void SetDashingState(bool state)
-        {
-            IsDashing = state;
-        }
-
-        public uint GetObjHash()
-        {
-            var gobj = "[Character]" + Model;
-
-            // TODO: Account for any other units that have skins (requires skins to be implemented for those units)
-            if (this is IChampion c)
-            {
-                var szSkin = "";
-                if (c.Skin < 10)
-                {
-                    szSkin = "0" + c.Skin;
-                }
-                else
-                {
-                    szSkin = c.Skin.ToString();
-                }
-                gobj += szSkin;
-            }
-
-            return HashFunctions.HashStringNorm(gobj);
         }
     }
 }

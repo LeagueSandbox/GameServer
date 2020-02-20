@@ -3,11 +3,11 @@ using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Domain
 {
-    public interface IItemData: IStatsModifier
+    public interface IItemData : IStatsModifier
     {
         int ItemId { get; }
         string Name { get; }
-        int MaxStack { get; }
+        int MaxStacks { get; }
         int Price { get; }
         string ItemGroup { get; }
         string SpellName { get; }

@@ -6,12 +6,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 {
     public class Particle : GameObject, IParticle
     {
-        public IChampion Owner { get; }
+        public IGameObject Owner { get; }
         public string Name { get; }
         public string BoneName { get; }
         public float Size { get; }
 
-        public Particle(Game game, IChampion owner, ITarget t, string particleName, float size = 1.0f, string boneName = "", uint netId = 0)
+        public Particle(Game game, IGameObject owner, ITarget t, string particleName, float size = 1.0f, string boneName = "", uint netId = 0)
                : base(game, t.X, t.Y, 0, 0, netId)
         {
             Owner = owner;
@@ -19,6 +19,13 @@ namespace LeagueSandbox.GameServer.GameObjects
             Name = particleName;
             BoneName = boneName;
             Size = size;
+            _game.PacketNotifier.NotifyFXCreateGroup(this);
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.PacketNotifier.NotifyFXKill(this);
         }
     }
 }

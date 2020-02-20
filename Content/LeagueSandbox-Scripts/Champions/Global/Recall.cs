@@ -3,22 +3,23 @@ using GameServerCore.Domain;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
     public class Recall : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             // @TODO Interrupt the script when owner uses movement spells
-            owner.AddBuffGameScript("Recall", "Recall", spell, 8.0f, true);
+            AddBuff("Recall", 8.0f, 1, spell, owner, owner);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
@@ -26,18 +27,18 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, owner, () =>
+            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, () =>
             {
-                if (owner.HasBuffGameScriptActive("Recall", "Recall"))
+                if (HasBuff(owner, "Recall"))
                 {
-                    ((ObjAiBase)owner).RemoveBuffGameScriptsWithName("Recall", "Recall");
+                    RemoveBuff(owner, "Recall");
                 }
             });
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
 
         }

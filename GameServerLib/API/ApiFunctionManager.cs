@@ -65,29 +65,6 @@ namespace LeagueSandbox.GameServer.API
             return newTimer;
         }
 
-        public static Buff AddBuffHudVisual(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, float removeAfter = -1.0f)
-        {
-            return AddBuffHudVisual(buffName, duration, stacks, buffType, onto, onto, removeAfter);
-        }
-
-        public static Buff AddBuffHudVisual(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from, float removeAfter = -1.0f)
-        {
-            var b = new Buff(_game, buffName, duration, stacks, buffType, onto, from);
-            _game.PacketNotifier.NotifyAddBuff(b);
-            if (removeAfter >= 0)
-            {
-                CreateTimer(removeAfter, () => RemoveBuffHudVisual(b));
-            }
-
-            return b;
-        }
-
-        public static void RemoveBuffHudVisual(IBuff b)
-        {
-            _game.PacketNotifier.NotifyRemoveBuff(b.TargetUnit, b.Name, b.Slot);
-            b.TargetUnit.RemoveBuffSlot(b);
-        }
-
         public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
         {
             var teams = GetTeams();
@@ -116,87 +93,67 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.NavigationGrid.IsWalkable(x, y);
         }
 
-        public static void AddBuff(string buffName, float duration, byte stacks, BuffType buffType, IObjAiBase onto, IObjAiBase from)
+        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteduration = false)
         {
             IBuff buff;
 
             try
             {
-                buff = new Buff(_game, buffName, duration, stacks, buffType, onto);
+                buff = new Buff(_game, buffName, duration, stacks, originspell, onto, from, infiniteduration);
             }
             catch (ArgumentException exception)
             {
                 _logger.Error(exception);
-                return;
+                return null;
             }
 
             onto.AddBuff(buff);
-
-            _game.PacketNotifier.NotifyAddBuff(buff);
-
-            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
-            CreateTimer(duration, () =>
-            {
-                RemoveBuff(buff);
-            });
+            return buff;
         }
 
-        public static void AddBuffGameScript(string buffName, byte stacks, ISpell ownerSpell, BuffType buffType, IObjAiBase target, float duration, bool isUnique = false)
+        public static bool HasBuff(IObjAiBase unit, IBuff b)
         {
-            IBuff buff;
+            return unit.HasBuff(b);
+        }
 
-            try
-            {
-                buff = new Buff(_game, buffName, duration, stacks, buffType, target);
-            }
-            catch (ArgumentException exception)
-            {
-                _logger.Error(exception);
-                return;
-            }
-
-            target.AddBuff(buff);
-            target.AddBuffGameScript(buffName, buffName, ownerSpell, duration, isUnique);
-
-            _game.PacketNotifier.NotifyAddBuff(buff);
-
-            // HACK: Remove timers and use proper tick system to handle the buffs using priority queue of duration and order
-            CreateTimer(duration, () =>
-            {
-                RemoveBuff(buff);
-            });
+        public static bool HasBuff(IObjAiBase unit, string b)
+        {
+            return unit.HasBuff(b);
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
         {
             b.SetStacks(newStacks);
-            _game.PacketNotifier.NotifyEditBuff(b, newStacks);
         }
 
         public static void RemoveBuff(IBuff buff)
         {
-            _game.PacketNotifier.NotifyRemoveBuff(buff.TargetUnit, buff.Name, buff.Slot);
-            buff.TargetUnit.RemoveBuff(buff);
+            buff.DeactivateBuff();
         }
 
-        public static Particle AddParticle(IChampion champion, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static void RemoveBuff(IObjAiBase target, string buff)
+        {
+            target.RemoveBuffsWithName(buff);
+        }
+
+
+
+        public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "")
         {
             var t = new Target(toX, toY);
-            var p = new Particle(_game, champion, t, particle, size, bone);
-            _game.PacketNotifier.NotifyFXCreateGroup(p);
+            var p = new Particle(_game, unit, t, particle, size, bone);
             return p;
         }
 
-        public static Particle AddParticleTarget(IChampion champion, string particle, ITarget target, float size = 1.0f, string bone = "")
+        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, ITarget target, float size = 1.0f, string bone = "")
         {
-            var p = new Particle(_game, champion, target, particle, size, bone);
-            _game.PacketNotifier.NotifyFXCreateGroup(p);
+            var p = new Particle(_game, unit, target, particle, size, bone);
             return p;
         }
 
-        public static void RemoveParticle(Particle p)
+        public static void RemoveParticle(IParticle p)
         {
-            _game.PacketNotifier.NotifyFXKill(p);
+            p.SetToRemove();
         }
 
         public static Minion AddMinion(IChampion champion, string model, string name, float toX, float toY, int visionRadius = 0)
@@ -217,13 +174,13 @@ namespace LeagueSandbox.GameServer.API
 
         public static void PrintChat(string msg)
         {
-            _game.PacketNotifier.NotifyDebugMessage(msg);
+            _game.PacketNotifier.NotifyDebugMessage(msg); // TODO: Move PacketNotifier usage to less abstract classes
         }
 
         public static void FaceDirection(IAttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
         {
-            _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime);
-            // todo change units direction
+            _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime); // TODO: Move PacketNotifier usage to less abstract classes (in this case GameObject)
+            // TODO: Change direction of actual GameObject
         }
 
         public static List<IAttackableUnit> GetUnitsInRange(ITarget target, float range, bool isAlive)
@@ -243,7 +200,7 @@ namespace LeagueSandbox.GameServer.API
 
             // Reset the default run animation
             var animList = new List<string> { "RUN", "" };
-            _game.PacketNotifier.NotifySetAnimation(unit, animList);
+            _game.PacketNotifier.NotifySetAnimation(unit, animList); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
         }
 
         public static void DashToUnit(IObjAiBase unit,
@@ -260,7 +217,7 @@ namespace LeagueSandbox.GameServer.API
             if (animation != null)
             {
                 var animList = new List<string> { "RUN", animation };
-                _game.PacketNotifier.NotifySetAnimation(unit, animList);
+                _game.PacketNotifier.NotifySetAnimation(unit, animList); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
             }
 
             if (target.IsSimpleTarget)
@@ -278,7 +235,7 @@ namespace LeagueSandbox.GameServer.API
                     backDistance,
                     travelTime
                 );
-            }
+            } // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
             else
             {
                 unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
@@ -291,7 +248,7 @@ namespace LeagueSandbox.GameServer.API
                     followTargetMaxDistance,
                     backDistance,
                     travelTime
-                );
+                ); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
             }
             unit.TargetUnit = null;
         }

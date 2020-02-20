@@ -5,14 +5,14 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public interface IGameScript
     {
-        void OnActivate(IChampion owner);
+        void OnActivate(IObjAiBase owner);
 
-        void OnDeactivate(IChampion owner);
+        void OnDeactivate(IObjAiBase owner);
 
-        void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target);
+        void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target);
 
-        void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target);
+        void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target);
 
-        void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile);
+        void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile);
     }
 }

@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Items
             _owner.Stats.Gold += sellPrice;
             
             i.DecrementStackCount();
-            RemoveItem(i, slotId, i.StackCount);
+            RemoveItem(i, slotId, (byte)i.StackCount);
             return true;
         }
 
@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.Items
                 foreach (var item in ownedItems)
                 {
                     item.DecrementStackCount();
-                    RemoveItem(item, inventory.GetItemSlot(item), item.StackCount);
+                    RemoveItem(item, inventory.GetItemSlot(item), (byte)item.StackCount);
                 }
 
                 AddItem(itemTemplate);

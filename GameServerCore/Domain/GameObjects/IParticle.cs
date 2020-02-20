@@ -2,7 +2,7 @@
 {
     public interface IParticle : IGameObject
     {
-        IChampion Owner { get; }
+        IGameObject Owner { get; }
         string Name { get; }
         string BoneName { get; }
         float Size { get; }

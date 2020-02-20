@@ -8,19 +8,19 @@ namespace Spells
 {
     public class SummonerHeal : IGameScript
     {
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var units = GetChampionsInRange(owner, 850, true);
-            units.Remove(owner);
             IChampion mostWoundedAlliedIChampion = null;
             float lowestHealthPercentage = 100;
             float maxHealth;
-            foreach(var value in units) {
-                if (owner.Team == value.Team)
+            foreach (var value in units)
+            {
+                if (value != owner && owner.Team == value.Team)
                 {
                     var currentHealth = value.Stats.CurrentHealth;
                     maxHealth = value.Stats.HealthPoints.Total;
@@ -37,24 +37,24 @@ namespace Spells
                 PerformHeal(owner, spell, mostWoundedAlliedIChampion);
             }
 
-            PerformHeal(owner, spell, owner);
+            PerformHeal(owner, spell, (IChampion)owner);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
-        private void PerformHeal(IChampion owner, ISpell spell, IChampion target)
+        private void PerformHeal(IObjAiBase owner, ISpell spell, IChampion target)
         {
             float healthGain = 75 + (target.Stats.Level * 15);
-            if (target.HasBuffGameScriptActive("HealCheck", "HealCheck"))
+            if (target.HasBuff("HealCheck"))
             {
                 healthGain *= 0.5f;
             }
             var newHealth = target.Stats.CurrentHealth + healthGain;
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
-            target.AddBuffGameScript("HealSpeed", "HealSpeed", spell, 1.0f, true);
-            target.AddBuffGameScript("HealCheck", "HealCheck", spell, 35.0f, true);
+            AddBuff("HealSpeed", 1.0f, 1, spell, target, owner);
+            AddBuff("HealCheck", 35.0f, 1, spell, target, owner);
             AddParticleTarget(owner, "global_ss_heal_02.troy", target);
             AddParticleTarget(owner, "global_ss_heal_speedboost.troy", target);
         }
@@ -63,11 +63,11 @@ namespace Spells
         {
         }
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

@@ -16,7 +16,7 @@ namespace Spells
     {
         public float petTimeAlive = 0.00f;
 
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
@@ -24,15 +24,15 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var castrange = spell.SpellData.CastRange[0];
             var apbonus = owner.Stats.AbilityPower.Total * 0.2f;
@@ -47,7 +47,7 @@ namespace Spells
 
             if (owner.WithinRange(ownerPos, spellPos, castrange))
             {
-                IMinion m = AddMinion(owner, "ShacoBox", "ShacoBox", spell.X, spell.Y);
+                IMinion m = AddMinion((IChampion)owner, "ShacoBox", "ShacoBox", spell.X, spell.Y);
                 AddParticle(owner, "JackintheboxPoof.troy", spell.X, spell.Y);
 
                 var attackrange = m.Stats.Range.Total;
@@ -89,7 +89,7 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 

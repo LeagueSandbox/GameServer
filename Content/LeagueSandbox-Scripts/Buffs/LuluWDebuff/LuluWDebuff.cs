@@ -10,29 +10,30 @@ namespace LuluWDebuff
 {
     internal class LuluWDebuff : IBuffGameScript
     {
+        public BuffType BuffType => BuffType.COMBAT_DEHANCER;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
+
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
         private UnitCrowdControl _crowdDisarm = new UnitCrowdControl(CrowdControlType.DISARM);
         private UnitCrowdControl _crowdSilence = new UnitCrowdControl(CrowdControlType.SILENCE);
-        private StatsModifier _statMod;
-        private IBuff _visualBuff;
 
-        public void OnActivate(IObjAiBase unit, ISpell ownerSpell)
+        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
-            _statMod = new StatsModifier();
-            _statMod.MoveSpeed.BaseBonus = _statMod.MoveSpeed.BaseBonus - 60;
+            StatsModifier.MoveSpeed.BaseBonus = StatsModifier.MoveSpeed.BaseBonus - 60;
             unit.ApplyCrowdControl(_crowdDisarm);
             unit.ApplyCrowdControl(_crowdSilence);
-            unit.AddStatModifier(_statMod);
+            unit.AddStatModifier(StatsModifier);
             var time = 1 + 0.25f * ownerSpell.Level;
-            _visualBuff = AddBuffHudVisual("LuluWDebuff", time, 1, BuffType.COMBAT_DEHANCER, 
-                unit);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
             unit.RemoveCrowdControl(_crowdDisarm);
             unit.RemoveCrowdControl(_crowdSilence);
-            unit.RemoveStatModifier(_statMod);
-            RemoveBuffHudVisual(_visualBuff);
+            unit.RemoveStatModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)
