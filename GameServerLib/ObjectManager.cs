@@ -135,15 +135,16 @@ namespace LeagueSandbox.GameServer
                 if (ai != null)
                 {
                     var tempBuffs = ai.GetBuffs();
-                    for (int i = 0; i < tempBuffs.Count; i++)
+                    for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {
                         if (tempBuffs[i].Elapsed())
                         {
                             ai.RemoveBuff(tempBuffs[i]);
-                            i--;
-                            continue;
                         }
-                        tempBuffs[i].Update(diff);
+                        else
+                        {
+                            tempBuffs[i].Update(diff);
+                        }
                     }
                 }
 

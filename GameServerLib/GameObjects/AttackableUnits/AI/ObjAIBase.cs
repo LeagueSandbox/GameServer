@@ -449,20 +449,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool HasBuff(IBuff buff)
         {
-            if (BuffList.Find(b => b == buff) == null)
-            {
-                return false;
-            }
-            return true;
+            return !(BuffList.Find(b => b == buff) == null);
         }
 
         public bool HasBuff(string buffName)
         {
-            if (BuffList.Find(b => b.IsBuffSame(buffName)) == null)
-            {
-                return false;
-            }
-            return true;
+            return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
         }
 
         public bool HasCrowdControl(CrowdControlType ccType)

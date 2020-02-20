@@ -43,10 +43,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
 
             BuffAddType = _buffGameScript.BuffAddType;
+            if (BuffAddType == (BuffAddType.STACKS_AND_OVERLAPS | BuffAddType.STACKS_AND_RENEWS) && _buffGameScript.MaxStacks < 2)
+            {
+                throw new ArgumentException("Error: Tried to create Stackable Buff, but MaxStacks was less than 2.");
+            }
+
             BuffType = _buffGameScript.BuffType;
             Duration = duration;
             IsHidden = _buffGameScript.IsHidden;
-            MaxStacks = (_buffGameScript.MaxStacks > 254 && !(BuffType == BuffType.COUNTER)) ? 254 : _buffGameScript.MaxStacks;
+            if (_buffGameScript.MaxStacks > 254 && !(BuffType == BuffType.COUNTER))
+            {
+                MaxStacks = 254;
+            }
+            else
+            {
+                MaxStacks = _buffGameScript.MaxStacks;
+            }
             Name = buffName;
             OriginSpell = originspell;
             if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
