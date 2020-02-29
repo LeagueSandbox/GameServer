@@ -10,29 +10,34 @@ Project chat on Discord: https://discord.gg/Bz3znAM
 Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CONTRIBUTING.md)
 
 # Setup guide
-* Install Microsoft Visual Studio 2017 or newer (Community Edition is fine)
-* Install latest .NET Framework (VS Installer should let you do that)
+* Install Microsoft Visual Studio 2019 or newer (Community Edition is fine)
+* Install latest .NET Framework and Core (VS Installer should let you do that, otherwise check [here](https://dotnet.microsoft.com/download/dotnet-framework) for Framework, and [here](https://dotnet.microsoft.com/download/dotnet-core) for Core)
 * Install Editor Guidelines (https://visualstudiogallery.msdn.microsoft.com/da227a0b-0e31-4a11-8f6b-3a149cf2e459)
 	* This is strongly encouraged to follow the 120 character limit per line guideline
 	
 ### Auto Setup (Windows x64)
 * Download and run [League Sandbox Auto Setup](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/releases/download/v1.1/League.Sandbox.Auto.Setup.exe) 
-(https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.zip) [[Source]]
-(https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.tar.gz) [[Mirror]]
+[[Source]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.zip)
+[[Mirror]](https://github.com/LeagueSandbox/LeagueSandboxAutoSetup/archive/v1.1.tar.gz)
 * Build and run
+* If having trouble, follow the Manual Setup below
 		
 ### Manual Setup (Windows/Mac/Linux)
-* Download the 4.20 version of League client (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
-* Clone the git repository and run ```git submodule update --init --recursive``` to download the necessary contents package 
-* Copy `GameServer/Settings/GameInfo.json.template` to `GameServer/Settings/GameInfo.json`
-* Modify the file copied in the last step as required
-* Build and run
+* Download the 4.20 version of League game client:
+	1. Unscrubbed, packed version: (https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
+	2. Scrubbed, moddable version: (https://drive.google.com/open?id=1vr6kGpDK1Hq3Loh8-2z7dlmXSCGKqY2Z)
+* For running the git commands below, [Git Bash](https://gitforwindows.org/) is recommended
+* Clone the git repository using ```git clone https://github.com/LeagueSandbox/GameServer.git```, then to download the necessary contents packages, run:
+	* ```cd GameServer```
+	* ```git submodule init```
+	* ```git submodule update```
+* Open the GameServer Solution in VS and Build and run
 
-# Running the client
+# Running the game client
 
-#### Automatically Launching from Visual Studio
+#### Automatically Launching from Visual Studio or GameServerConsole.exe
 Click the debug button.
-> Auto run settings are located in Settings/GameServerSettings.json.
+> Auto run settings are located in `GameServer/GameServerConsole/bin/Debug/netcoreapp3.0/Settings/GameServerSettings.json`, there is where you'll set the path to your League of Legends' deploy folder, which shown by the example already in the file.
 
 #### Manually Launching from command line
 ```
