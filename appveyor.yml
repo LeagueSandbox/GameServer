@@ -1,3 +1,9 @@
+# Caches NuGet packages between builds unless packages.config is changed
+cache:
+  - packages -> **\packages.config
+  - '%LocalAppData%\NuGet\Cache'
+  - '%LocalAppData%\NuGet\v3-cache'
+
 before_build:
   - nuget restore
 
@@ -22,3 +28,11 @@ after_test:
   - pip install codecov
   - codecov -f "GameServerConsole_coverage.xml"
   - codecov -f "GameServerLib_coverage.xml"
+
+artifacts:
+  - path: test.zip
+    name: app
+  
+  - path: logs
+    name: test logs
+    type: zip
