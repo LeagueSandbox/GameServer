@@ -1,3 +1,5 @@
+configuration: Debug
+
 # Caches NuGet packages between builds unless packages.config is changed
 cache:
   - packages -> **\packages.config
@@ -30,9 +32,20 @@ after_test:
   - codecov -f "GameServerLib_coverage.xml"
 
 artifacts:
-  - path: test.zip
-    name: app
+  - path: Content
+    name: Content
   
-  - path: logs
-    name: test logs
-    type: zip
+  - path: GameServerConsole\bin\$(configuration)
+    name: GameServerConsole
+
+  - path: GameServerCore\bin\$(configuration)
+    name: GameServerCore
+
+  - path: GameServerLib\bin\$(configuration)
+    name: GameServerLib
+
+  - path: LeaguePackets\bin\$(configuration)
+    name: LeaguePackets
+
+  - path: PacketDefinitions420\bin\$(configuration)
+    name: PacketDefinitions420
