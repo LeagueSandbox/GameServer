@@ -19,7 +19,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - 7z Content\ GameServerConsole\bin\$(configuration) GameServerCore\bin\$(configuration) GameServerLib\bin\$(configuration) LeaguePackets\LeaguePackets\bin\$(configuration) PacketDefinitions420\bin\$(configuration)
+  - 7z a Content\ GameServerConsole\bin\$(configuration) GameServerCore\bin\$(configuration) GameServerLib\bin\$(configuration) LeaguePackets\LeaguePackets\bin\$(configuration) PacketDefinitions420\bin\$(configuration)
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
