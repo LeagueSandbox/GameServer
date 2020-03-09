@@ -18,6 +18,9 @@ build:
   project: GameServer.sln
   verbosity: minimal
 
+after_build:
+  - 7z Content GameServerConsole GameServerCore GameServerLib LeaguePackets PacketDefinitions420
+
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
   - ps: Expand-Archive opencover.zip ./opencover-bin/
@@ -44,7 +47,7 @@ artifacts:
   - path: GameServerLib\bin\$(configuration)
     name: GameServerLib
 
-  - path: LeaguePackets\bin\$(configuration)
+  - path: LeaguePackets\LeaguePackets\bin\$(configuration)
     name: LeaguePackets
 
   - path: PacketDefinitions420\bin\$(configuration)
