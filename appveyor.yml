@@ -19,7 +19,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - 7z a Content\ GameServerConsole\bin\Debug GameServerCore\bin\Debug GameServerLib\bin\Debug LeaguePackets\LeaguePackets\bin\Debug PacketDefinitions420\bin\Debug
+  - 7z a LeagueSandbox.zip Content\ GameServerConsole\bin\Debug GameServerCore\bin\Debug GameServerLib\bin\Debug LeaguePackets\LeaguePackets\bin\Debug PacketDefinitions420\bin\Debug
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
@@ -35,20 +35,5 @@ after_test:
   - codecov -f "GameServerLib_coverage.xml"
 
 artifacts:
-  - path: Content
-    name: Content
-  
-  - path: GameServerConsole\bin\$(configuration)
-    name: GameServerConsole
-
-  - path: GameServerCore\bin\$(configuration)
-    name: GameServerCore
-
-  - path: GameServerLib\bin\$(configuration)
-    name: GameServerLib
-
-  - path: LeaguePackets\LeaguePackets\bin\$(configuration)
-    name: LeaguePackets
-
-  - path: PacketDefinitions420\bin\$(configuration)
-    name: PacketDefinitions420
+  - path: LeagueSandbox.zip
+    name: LeagueSandbox
