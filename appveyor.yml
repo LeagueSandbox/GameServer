@@ -1,5 +1,3 @@
-platform: x64
-
 # Caches NuGet packages between builds unless packages.config is changed
 cache:
   - packages -> **\packages.config
