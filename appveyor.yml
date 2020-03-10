@@ -1,4 +1,4 @@
-configuration: Debug
+platform: x64
 
 # Caches NuGet packages between builds unless packages.config is changed
 cache:
@@ -15,14 +15,15 @@ install:
 image: Visual Studio 2019
 
 build:
+  parallel: true
   project: GameServer.sln
-  verbosity: minimal
+  verbosity: detailed
 
 after_build:
   - mkdir GameServer
   - move Content GameServer
   - move GameServerConsole GameServer
-  - 7z a -m0=LZMA2 -mx9 LeagueSandbox.zip GameServer\
+  - 7z a -m0=LZMA2 -mx9 LeagueSandbox.zip GameServer\ -bb3
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
