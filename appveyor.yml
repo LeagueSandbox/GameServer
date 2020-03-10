@@ -1,6 +1,3 @@
-environment:
-  ZIPNAME: LeagueSandboxServer.7z
-
 # Caches NuGet packages between builds unless packages.config is changed
 cache:
   - packages -> **\packages.config
@@ -37,8 +34,8 @@ after_test:
   - mkdir LeagueSandboxServer
   - move Content LeagueSandboxServer
   - move GameServerConsole LeagueSandboxServer
-  - ps: 7z a $env:ZIPNAME LeagueSandboxServer\
+  - ps: 7z a LeagueSandboxServer.7z LeagueSandboxServer\
 
 artifacts:
-  - path: $(ZIPNAME)
+  - path: LeagueSandboxServer.7z
     name: LeagueSandbox
