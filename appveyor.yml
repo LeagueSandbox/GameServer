@@ -33,7 +33,7 @@ after_test:
   # Creates and packs the artifact
   - mkdir LeagueSandboxServer
   - move Content LeagueSandboxServer
-  - move GameServerConsole\Settings\ LeagueSandboxServer
+  - move GameServerConsole\Settings LeagueSandboxServer\Setttings
   
   # Recursively moves all contents of the debug folder to the LeagueSandboxServer folder (See https://gist.github.com/jcefoli/b77e7f2e8d5bfd005c55)
   - ps: Get-ChildItem -Path "GameServerConsole\bin\Debug\" -Recurse |  Move-Item -Destination "LeagueSandboxServer"
