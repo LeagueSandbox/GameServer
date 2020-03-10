@@ -22,7 +22,7 @@ after_build:
   - mkdir GameServer
   - mv Content GameServer
   - mv GameServerConsole GameServer
-  - 7z a -m0=LZMA2 -mx9 LeagueSandbox.zip GameServer
+  - 7z a -m0=LZMA2 -mx9 LeagueSandbox.zip GameServer\
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
