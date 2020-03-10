@@ -27,15 +27,17 @@ test_script:
   - .\opencover-bin\OpenCover.Console.exe -register:user -target:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\MSTest.exe" -targetargs:"/noresults /noisolation /testcontainer:"".\GameServerLibTests\bin\Debug\netcoreapp3.0\GameServerLibTests.dll" -filter:"+[GameServerLib]*  -[GameServerLib]GameServerLib.Properties.*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\GameServerLib_coverage.xml
 
 after_test:
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-  - pip install codecov
-  - codecov -f "GameServerConsole_coverage.xml"
-  - codecov -f "GameServerLib_coverage.xml"
-  - mkdir LeagueSandboxServer
-  - move Content LeagueSandboxServer
-  - move GameServerConsole LeagueSandboxServer
-  - 7z a $env:ZIPNAME LeagueSandboxServer\
+  - ps: | # Runs CodeCov tests
+      "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+      pip install codecov
+      codecov -f "GameServerConsole_coverage.xml"
+      codecov -f "GameServerLib_coverage.xml"
+  - ps: | # Creates and packs the artifact
+      mkdir LeagueSandboxServer
+      move Content LeagueSandboxServer
+      move GameServerConsole LeagueSandboxServer
+      7z a $env:ZIPNAME LeagueSandboxServer\
 
 artifacts:
-  - path: $env:ZIPNAME
+  - path: $(ZIPNAME)
     name: LeagueSandbox
