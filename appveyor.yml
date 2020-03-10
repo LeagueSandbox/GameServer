@@ -37,7 +37,7 @@ after_test:
   - mkdir LeagueSandboxServer
   - move Content LeagueSandboxServer
   - move GameServerConsole LeagueSandboxServer
-  - 7z a $env:ZIPNAME LeagueSandboxServer\
+  - 7z a $(ZIPNAME) LeagueSandboxServer\
 
 artifacts:
   - path: $(ZIPNAME)
