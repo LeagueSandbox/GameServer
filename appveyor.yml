@@ -7,7 +7,7 @@ cache:
   - '%LocalAppData%\NuGet\v3-cache'
 
 before_build:
-  - nuget restore
+  - dotnet restore --verbosity m
 
 install:
   - git submodule update --init --recursive
@@ -19,7 +19,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - 7z a LeagueSandbox.zip Content\ GameServerConsole\bin\Debug GameServerCore\bin\Debug GameServerLib\bin\Debug LeaguePackets\LeaguePackets\bin\Debug PacketDefinitions420\bin\Debug
+  - 7z a LeagueSandbox.zip Content\ GameServerConsole\bin\Debug
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
