@@ -18,10 +18,10 @@ build:
   verbosity: minimal
 
 after_build:
-  - mkdir GameServer
-  - move Content GameServer
-  - move GameServerConsole GameServer
-  - 7z a LeagueSandbox.zip GameServer\
+  - mkdir LeagueSandboxServer
+  - move Content LeagueSandboxServer
+  - move GameServerConsole LeagueSandboxServer
+  - 7z a LeagueSandbox.zip LeagueSandboxServer\
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
