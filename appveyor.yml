@@ -37,5 +37,5 @@ after_test:
   - 7z a -m0=LZMA2 -mx9 $env:ZIPNAME LeagueSandboxServer\
 
 artifacts:
-  - path: LeagueSandbox.zip
+  - path: LeagueSandbox.7z
     name: LeagueSandbox
