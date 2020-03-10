@@ -13,15 +13,8 @@ install:
 image: Visual Studio 2019
 
 build:
-  parallel: true
   project: GameServer.sln
   verbosity: minimal
-
-after_build:
-  - mkdir LeagueSandboxServer
-  - move Content LeagueSandboxServer
-  - move GameServerConsole LeagueSandboxServer
-  - 7z a LeagueSandbox.zip LeagueSandboxServer\
 
 test_script:
   - curl -fsSL -o opencover.zip https://github.com/OpenCover/opencover/releases/download/4.7.922/opencover.4.7.922.zip
@@ -35,6 +28,10 @@ after_test:
   - pip install codecov
   - codecov -f "GameServerConsole_coverage.xml"
   - codecov -f "GameServerLib_coverage.xml"
+  - mkdir LeagueSandboxServer
+  - move Content LeagueSandboxServer
+  - move GameServerConsole LeagueSandboxServer
+  - 7z a LeagueSandbox.zip LeagueSandboxServer\
 
 artifacts:
   - path: LeagueSandbox.zip
