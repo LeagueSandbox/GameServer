@@ -20,8 +20,8 @@ build:
 
 after_build:
   - mkdir GameServer
-  - mv Content GameServer
-  - mv GameServerConsole GameServer
+  - move Content GameServer
+  - move GameServerConsole GameServer
   - 7z a -m0=LZMA2 -mx9 LeagueSandbox.zip GameServer\
 
 test_script:
