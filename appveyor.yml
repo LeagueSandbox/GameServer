@@ -8,6 +8,9 @@ before_build:
   - dotnet restore --verbosity m
 
 install:
+  - ps: | # Sets environment variables for the eventual artifact and zip name
+      $env:COMM_HASH = $(git rev-parse --short HEAD)
+      $env:BUILD = "LeagueSandboxServer-v{0}.7z" -f $env:COMM_HASH
   - git submodule update --init --recursive
 
 image: Visual Studio 2019
@@ -35,18 +38,18 @@ after_test:
   - move Content LeagueSandboxServer
   - move GameServerConsole\Settings LeagueSandboxServer\Settings
   
-  # Recursively moves all contents of the debug folder to the LeagueSandboxServer folder (See https://gist.github.com/jcefoli/b77e7f2e8d5bfd005c55)
-  - ps: Get-ChildItem -Path "GameServerConsole\bin\Debug\netcoreapp3.0\" -Recurse |  Move-Item -Destination "LeagueSandboxServer"
+  - ps: | # Recursively moves all contents of the debug folder to the LeagueSandboxServer folder (See https://gist.github.com/jcefoli/b77e7f2e8d5bfd005c55)
+      Get-ChildItem -Path "GameServerConsole\bin\Debug\netcoreapp3.0\" -Recurse |  Move-Item -Destination "LeagueSandboxServer"
 
-  # Changes the Content path in GameInfo.json.template to the base folder, should change this to something different
-  - ps: ((Get-Content -path LeagueSandboxServer\Settings\GameInfo.json.template -Raw) -replace '../../../../Content','./Content') | Set-Content -Path LeagueSandboxServer\Settings\GameInfo.json.template
+  - ps: | # Changes the Content path in GameInfo.json.template to the base folder, should change this to something different
+      ((Get-Content -path LeagueSandboxServer\Settings\GameInfo.json.template -Raw) -replace '../../../../Content','./Content') | Set-Content -Path LeagueSandboxServer\Settings\GameInfo.json.template
 
-  # Automatically changes the .json.template files to .json files, allows users to immediately start the server
-  - ps: Get-ChildItem LeagueSandboxServer\Settings\*.template | Rename-Item -NewName { $_.Name -replace '.template', '.' }
+  - ps: | # Automatically changes the .json.template files to .json files, allows users to immediately start the server
+      Get-ChildItem LeagueSandboxServer\Settings\*.template | Rename-Item -NewName { $_.Name -replace '.template', '.' }
 
-  # Packs everything up for artifacting
-  - ps: 7z a LeagueSandboxServer.7z LeagueSandboxServer\
+  - ps: | # Packs everything up for artifacting
+      7z a $env:BUILD LeagueSandboxServer\
 
 artifacts:
-  - path: LeagueSandboxServer.7z
-    name: LeagueSandbox
+  - path: $(BUILD)
+    name: LeagueSandboxServer
