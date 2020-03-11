@@ -42,7 +42,7 @@ after_test:
   - ps: ((Get-Content -path LeagueSandboxServer\Settings\GameInfo.json.template -Raw) -replace '../../../../Content','./Content') | Set-Content -Path LeagueSandboxServer\Settings\GameInfo.json.template
 
   # Automatically changes the .json.template files to .json files, allows users to immediately start the server
-  - ps: Get-ChildItem Settings\*.template | Rename-Item -NewName { $_.Name -replace '.template', '.' }
+  - ps: Get-ChildItem LeagueSandboxServer\Settings\*.template | Rename-Item -NewName { $_.Name -replace '.template', '.' }
 
   # Packs everything up for artifacting
   - ps: 7z a LeagueSandboxServer.7z LeagueSandboxServer\
