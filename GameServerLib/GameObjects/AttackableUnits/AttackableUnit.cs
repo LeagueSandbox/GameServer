@@ -28,6 +28,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
+        public float PhyShieldAmount { get; set; }
+        public float MagShieldAmount { get; set; }
+        public IAttackableUnit me { get; set; }
 
         public AttackableUnit(
             Game game,
@@ -161,6 +164,27 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
+            if (MagShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_MAGICAL)                
+            {
+                float Mamount = MagShieldAmount;
+                ApplyShield(me, -damage, false, true, false);
+                damage -= Mamount;
+                if (MagShieldAmount < 0)
+                {
+                    MagShieldAmount = 0;
+                }
+            }
+            if (PhyShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_PHYSICAL)
+            {
+                float Pamount = PhyShieldAmount;
+                ApplyShield(me, -damage, true, false, false);
+                damage -= Pamount;
+                if (PhyShieldAmount < 0)
+                {
+                    PhyShieldAmount = 0;
+                }
+            }
+
             if (damage < 0f)
             {
                 damage = 0f;
@@ -170,7 +194,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 //Damage dealing. (based on leagueoflegends' wikia)
                 damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
             }
-
             ApiEventManager.OnUnitDamageTaken.Publish(this);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
@@ -178,6 +201,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 IsDead = true;
                 Die(attacker);
+                if (PhyShieldAmount > 0)
+                {
+                    ApplyShield(me, -PhyShieldAmount, true, false, false);
+                }
+                if (MagShieldAmount > 0)
+                {
+                    ApplyShield(me, -MagShieldAmount, false, true, false);
+                }
             }
 
             int attackerId = 0, targetId = 0;
@@ -264,6 +295,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     Stats.IsTargetableToTeam &= ~SpellFlags.NonTargetableEnemy;
                 }
             }
+        }
+
+        public void ApplyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade)
+        {
+            if ((IsPhysical && IsPhysical) || (!IsPhysical && IsMagical))
+            {
+                _game.PacketNotifier.NotifyDebugMessage("ApplyShield seems have boolean conflict(IsPhysical and IsMagical are both true or both false)");
+            }
+            if (IsPhysical)
+            {
+                PhyShieldAmount = PhyShieldAmount + (amount);
+            }
+            if (IsMagical)
+            {
+                MagShieldAmount = MagShieldAmount + (amount);
+            }
+            me = unit;
+            _game.PacketNotifier.NotifyModifyShield(unit, amount, IsPhysical, IsMagical, StopShieldFade);
         }
     }
 
