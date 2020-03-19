@@ -166,7 +166,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (MagShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_MAGICAL)                
             {
                 float shieldAmount = MagShieldAmount;
-                ApplyShield(-damage, false, true, false);
+                ApplyShield(-damage, ShieldType.SHIELD_MAGICAL, false);
                 damage -= shieldAmount;
                 if (MagShieldAmount < 0)
                 {
@@ -176,7 +176,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (PhyShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_PHYSICAL)
             {
                 float shieldAmount = PhyShieldAmount;
-                ApplyShield(-damage, true, false, false);
+                ApplyShield(-damage, ShieldType.SHIELD_PHYSICAL, false);
                 damage -= shieldAmount;
                 if (PhyShieldAmount < 0)
                 {
@@ -202,11 +202,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(attacker);
                 if (PhyShieldAmount > 0)
                 {
-                    ApplyShield(-PhyShieldAmount, true, false, true);
+                    ApplyShield(-PhyShieldAmount, ShieldType.SHIELD_PHYSICAL, true);
                 }
                 if (MagShieldAmount > 0)
                 {
-                    ApplyShield(-MagShieldAmount, false, true, true);
+                    ApplyShield(-MagShieldAmount, ShieldType.SHIELD_MAGICAL, true);
                 }
             }
 
@@ -296,9 +296,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        public void ApplyShield(float amount, bool isPhysical, bool isMagical, bool noFade)
+        public void ApplyShield(float amount, ShieldType shieldType, bool noFade)
         {
-            if ((isPhysical && isMagical) || (!isPhysical && !isMagical))
+            switch (shieldType)
+            {
+                case ShieldType.SHIELD_PHYSICAL:
+                    _game.PacketNotifier.NotifyModifyShield(this, amount, true, false, noFade);
+                    PhyShieldAmount += amount;
+                    break;
+                case ShieldType.SHIELD_MAGICAL:
+                    _game.PacketNotifier.NotifyModifyShield(this, amount, false, true, noFade);
+                    MagShieldAmount += amount;
+                    break;
+                default:
+                    throw new ArgumentException("ApplyShield: shieldType is empty.");
+            }
+            /*if ((isPhysical && isMagical) || (!isPhysical && !isMagical))
             {
                 throw new ArgumentException("ApplyShield: isPhysical and isMagical both True/False.");
             }
@@ -310,7 +323,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 MagShieldAmount += amount;
             }
-            _game.PacketNotifier.NotifyModifyShield(this, amount, isPhysical, isMagical, noFade);
+            _game.PacketNotifier.NotifyModifyShield(this, amount, isPhysical, isMagical, noFade);*/
         }
     }
 

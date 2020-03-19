@@ -17,7 +17,7 @@ namespace GameServerCore.Domain.GameObjects
         void Die(IAttackableUnit killer);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageText damageText);
-        void ApplyShield(float amount, bool isPhysical, bool isMagical, bool noFade);
+        void ApplyShield(float amount, ShieldType shieldType, bool noFade);
 
         bool IsInDistress();
         bool ChangeModel(string model);
