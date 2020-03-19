@@ -310,7 +310,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     break;
                 default:
                     throw new ArgumentException("ApplyShield: shieldType is empty.");
-            }            
+            }
         }
     }
 
