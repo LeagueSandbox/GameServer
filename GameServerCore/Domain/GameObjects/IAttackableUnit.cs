@@ -11,11 +11,13 @@ namespace GameServerCore.Domain.GameObjects
         string Model { get; }
         IReplication Replication { get; }
         IStats Stats { get; }
+        float PhyShieldAmount { get; }
+        float MagShieldAmount { get; }
 
         void Die(IAttackableUnit killer);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageText damageText);
-        void ApplyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade);
+        void ApplyShield(float amount, bool isPhysical, bool isMagical, bool noFade);
 
         bool IsInDistress();
         bool ChangeModel(string model);

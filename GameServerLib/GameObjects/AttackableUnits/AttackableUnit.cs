@@ -30,7 +30,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public IReplication Replication { get; protected set; }
         public float PhyShieldAmount { get; set; }
         public float MagShieldAmount { get; set; }
-        public IAttackableUnit me { get; set; }
 
         public AttackableUnit(
             Game game,
@@ -166,9 +165,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (MagShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_MAGICAL)                
             {
-                float Mamount = MagShieldAmount;
-                ApplyShield(me, -damage, false, true, false);
-                damage -= Mamount;
+                float shieldAmount = MagShieldAmount;
+                ApplyShield(-damage, false, true, false);
+                damage -= shieldAmount;
                 if (MagShieldAmount < 0)
                 {
                     MagShieldAmount = 0;
@@ -176,9 +175,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             if (PhyShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_PHYSICAL)
             {
-                float Pamount = PhyShieldAmount;
-                ApplyShield(me, -damage, true, false, false);
-                damage -= Pamount;
+                float shieldAmount = PhyShieldAmount;
+                ApplyShield(-damage, true, false, false);
+                damage -= shieldAmount;
                 if (PhyShieldAmount < 0)
                 {
                     PhyShieldAmount = 0;
@@ -203,11 +202,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(attacker);
                 if (PhyShieldAmount > 0)
                 {
-                    ApplyShield(me, -PhyShieldAmount, true, false, false);
+                    ApplyShield(-PhyShieldAmount, true, false, true);
                 }
                 if (MagShieldAmount > 0)
                 {
-                    ApplyShield(me, -MagShieldAmount, false, true, false);
+                    ApplyShield(-MagShieldAmount, false, true, true);
                 }
             }
 
@@ -297,22 +296,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        public void ApplyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade)
+        public void ApplyShield(float amount, bool isPhysical, bool isMagical, bool noFade)
         {
-            if ((IsPhysical && IsPhysical) || (!IsPhysical && IsMagical))
+            if ((isPhysical && isMagical) || (!isPhysical && !isMagical))
             {
-                _game.PacketNotifier.NotifyDebugMessage("ApplyShield seems have boolean conflict(IsPhysical and IsMagical are both true or both false)");
+                throw new ArgumentException("ApplyShield: isPhysical and isMagical both True/False.");
             }
-            if (IsPhysical)
+            if (isPhysical)
             {
-                PhyShieldAmount = PhyShieldAmount + (amount);
+                PhyShieldAmount += amount;
             }
-            if (IsMagical)
+            if (isMagical)
             {
-                MagShieldAmount = MagShieldAmount + (amount);
+                MagShieldAmount += amount;
             }
-            me = unit;
-            _game.PacketNotifier.NotifyModifyShield(unit, amount, IsPhysical, IsMagical, StopShieldFade);
+            _game.PacketNotifier.NotifyModifyShield(this, amount, isPhysical, isMagical, noFade);
         }
     }
 
