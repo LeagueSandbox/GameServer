@@ -310,20 +310,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     break;
                 default:
                     throw new ArgumentException("ApplyShield: shieldType is empty.");
-            }
-            /*if ((isPhysical && isMagical) || (!isPhysical && !isMagical))
-            {
-                throw new ArgumentException("ApplyShield: isPhysical and isMagical both True/False.");
-            }
-            if (isPhysical)
-            {
-                PhyShieldAmount += amount;
-            }
-            if (isMagical)
-            {
-                MagShieldAmount += amount;
-            }
-            _game.PacketNotifier.NotifyModifyShield(this, amount, isPhysical, isMagical, noFade);*/
+            }            
         }
     }
 
