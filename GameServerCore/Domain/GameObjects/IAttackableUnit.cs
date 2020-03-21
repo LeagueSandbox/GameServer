@@ -11,8 +11,7 @@ namespace GameServerCore.Domain.GameObjects
         string Model { get; }
         IReplication Replication { get; }
         IStats Stats { get; }
-        float PhyShieldAmount { get; }
-        float MagShieldAmount { get; }
+        int[] ShieldAmount { get; }
 
         void Die(IAttackableUnit killer);
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
