@@ -29,8 +29,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
         private int[] ShieldAmount = new int[Enum.GetNames(typeof(ShieldType)).Length];
-        private ShieldType shieldType;
-        //ShieldAmount[0] = Physical , [1] = Magical
 
         public AttackableUnit(
             Game game,
@@ -128,6 +126,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float defense = 0;
             float regain = 0;
             var attackerStats = attacker.Stats;
+            ShieldType shieldType = ShieldType.SHIELD_PHYSICAL;
+            bool useShield = false;
 
             switch (type)
             {
@@ -135,12 +135,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     defense = Stats.Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
                               attackerStats.ArmorPenetration.FlatBonus;
+                    useShield = true;
                     shieldType = ShieldType.SHIELD_PHYSICAL;
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = Stats.MagicPenetration.Total;
                     defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
                               attackerStats.MagicPenetration.FlatBonus;
+                    useShield = true;
                     shieldType = ShieldType.SHIELD_MAGICAL;                    
                     break;
                 case DamageType.DAMAGE_TYPE_TRUE:
@@ -164,8 +166,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 default:
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
-
-            if (ShieldAmount[(int)shieldType] > 0)
+            
+            if (useShield && ShieldAmount[(int)shieldType] > 0)
             {
                 float shieldAmount = ShieldAmount[(int)shieldType];
                 ApplyShield(-damage, shieldType, false);
@@ -173,6 +175,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 if (ShieldAmount[(int)shieldType] < 0)
                 {
                     ShieldAmount[(int)shieldType] = 0;
+                    useShield = false;
                 }
             }
 
@@ -191,12 +194,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
-                Die(attacker);                
-                foreach (ShieldType ShiType in Enum.GetValues(typeof(ShieldType)))
+                Die(attacker);
+                if (useShield)
                 {
-                    if (ShieldAmount[(int)ShiType] > 0)
+                    foreach (ShieldType shield in Enum.GetValues(typeof(ShieldType)))
                     {
-                        ApplyShield(-ShieldAmount[(int)ShiType], ShiType, true);
+                        if (ShieldAmount[(int)shield] > 0)
+                        {
+                            ApplyShield(-ShieldAmount[(int)shield], shield, true);
+                            useShield = false;
+                        }
                     }
                 }
             }
@@ -287,9 +294,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        public void ApplyShield(float amount, ShieldType ShieldType, bool noFade)
+        public void ApplyShield(float amount, ShieldType shieldType, bool noFade)
         {
-            switch (ShieldType)
+            switch (shieldType)
             {
                 case ShieldType.SHIELD_PHYSICAL:
                     _game.PacketNotifier.NotifyModifyShield(this, amount, true, false, noFade);
