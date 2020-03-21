@@ -11,6 +11,7 @@ namespace GameServerCore.Domain.GameObjects
         string Model { get; }
         IReplication Replication { get; }
         IStats Stats { get; }
+        void Die(IAttackableUnit killer);
         int[] ShieldAmount { get; }
         
         void Die(IAttackableUnit killer);
