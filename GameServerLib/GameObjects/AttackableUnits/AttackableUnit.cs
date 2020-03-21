@@ -28,8 +28,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
-        public float PhyShieldAmount { get; set; }
-        public float MagShieldAmount { get; set; }
+        private int[] ShieldAmount = new int[Enum.GetNames(typeof(ShieldType)).Length];
+        private ShieldType shieldType;
+        //ShieldAmount[0] = Physical , [1] = Magical
 
         public AttackableUnit(
             Game game,
@@ -134,12 +135,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     defense = Stats.Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
                               attackerStats.ArmorPenetration.FlatBonus;
-
+                    shieldType = ShieldType.SHIELD_PHYSICAL; //Because it's TakeDamage, so make sense.
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = Stats.MagicPenetration.Total;
                     defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
                               attackerStats.MagicPenetration.FlatBonus;
+                    shieldType = ShieldType.SHIELD_MAGICAL;                    
                     break;
                 case DamageType.DAMAGE_TYPE_TRUE:
                     break;
@@ -163,24 +165,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            if (MagShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_MAGICAL)                
+            if (ShieldAmount[(int)shieldType] > 0)
             {
-                float shieldAmount = MagShieldAmount;
-                ApplyShield(-damage, ShieldType.SHIELD_MAGICAL, false);
+                float shieldAmount = ShieldAmount[(int)shieldType];
+                ApplyShield(-damage, shieldType, false);
                 damage -= shieldAmount;
-                if (MagShieldAmount < 0)
+                if (ShieldAmount[(int)shieldType] < 0)
                 {
-                    MagShieldAmount = 0;
-                }
-            }
-            if (PhyShieldAmount > 0 && type == DamageType.DAMAGE_TYPE_PHYSICAL)
-            {
-                float shieldAmount = PhyShieldAmount;
-                ApplyShield(-damage, ShieldType.SHIELD_PHYSICAL, false);
-                damage -= shieldAmount;
-                if (PhyShieldAmount < 0)
-                {
-                    PhyShieldAmount = 0;
+                    ShieldAmount[(int)shieldType] = 0;
                 }
             }
 
@@ -200,14 +192,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 IsDead = true;
                 Die(attacker);
-                if (PhyShieldAmount > 0)
+                //** Not sure this part is right or not! //
+                /*for (int ShiType = 0; ShiType <= ShieldAmount.Length; ShiType++)
                 {
-                    ApplyShield(-PhyShieldAmount, ShieldType.SHIELD_PHYSICAL, true);
-                }
-                if (MagShieldAmount > 0)
-                {
-                    ApplyShield(-MagShieldAmount, ShieldType.SHIELD_MAGICAL, true);
-                }
+                    if (ShieldAmount[ShiType] > 0)
+                    {
+                        ApplyShield(-ShieldAmount[ShiType], ShieldType.(the number get from ShiType and turn it into ShieldType enum), true);
+                    }
+                }*/
+                //** Not sure this part is right or not! //
             }
 
             int attackerId = 0, targetId = 0;
@@ -296,17 +289,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        public void ApplyShield(float amount, ShieldType shieldType, bool noFade)
+        public void ApplyShield(float amount, ShieldType ShieldType, bool noFade)
         {
-            switch (shieldType)
+            switch (ShieldType)
             {
                 case ShieldType.SHIELD_PHYSICAL:
                     _game.PacketNotifier.NotifyModifyShield(this, amount, true, false, noFade);
-                    PhyShieldAmount += amount;
+                    ShieldAmount[(int)ShieldType.SHIELD_PHYSICAL] += (int)amount; // Packet using float , so force it as (int).
                     break;
                 case ShieldType.SHIELD_MAGICAL:
                     _game.PacketNotifier.NotifyModifyShield(this, amount, false, true, noFade);
-                    MagShieldAmount += amount;
+                    ShieldAmount[(int)ShieldType.SHIELD_MAGICAL] += (int)amount;
                     break;
                 default:
                     throw new ArgumentException("ApplyShield: shieldType is empty.");
