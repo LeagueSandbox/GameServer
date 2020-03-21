@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
-        private int[] ShieldAmount = new int[Enum.GetNames(typeof(ShieldType)).Length];
+        public int[] ShieldAmount { get; protected set; } = new int[Enum.GetNames(typeof(ShieldType)).Length];
 
         public AttackableUnit(
             Game game,
@@ -134,7 +134,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
                     defense = Stats.Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
-                              attackerStats.ArmorPenetration.FlatBonus;
+                        attackerStats.ArmorPenetration.FlatBonus;
                     useShield = true;
                     shieldType = ShieldType.SHIELD_PHYSICAL;
                     break;
