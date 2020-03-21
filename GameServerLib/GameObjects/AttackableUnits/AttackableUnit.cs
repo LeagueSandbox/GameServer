@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     defense = Stats.Armor.Total;
                     defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
                               attackerStats.ArmorPenetration.FlatBonus;
-                    shieldType = ShieldType.SHIELD_PHYSICAL; //Because it's TakeDamage, so make sense.
+                    shieldType = ShieldType.SHIELD_PHYSICAL;
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
                     defense = Stats.MagicPenetration.Total;
@@ -191,16 +191,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
-                Die(attacker);
-                //** Not sure this part is right or not! //
-                /*for (int ShiType = 0; ShiType <= ShieldAmount.Length; ShiType++)
+                Die(attacker);                
+                foreach (ShieldType ShiType in Enum.GetValues(typeof(ShieldType)))
                 {
-                    if (ShieldAmount[ShiType] > 0)
+                    if (ShieldAmount[(int)ShiType] > 0)
                     {
-                        ApplyShield(-ShieldAmount[ShiType], ShieldType.(the number get from ShiType and turn it into ShieldType enum), true);
+                        ApplyShield(-ShieldAmount[(int)ShiType], ShiType, true);
                     }
-                }*/
-                //** Not sure this part is right or not! //
+                }
             }
 
             int attackerId = 0, targetId = 0;
