@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsoleTests", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaguePackets", "LeaguePackets\LeaguePackets\LeaguePackets.csproj", "{6B86971B-1812-406E-ABD1-3B4B78565642}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerApp", "GameServerApp\GameServerApp.csproj", "{97E32E73-F523-4B8F-93DA-10DE01AECE58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,14 @@ Global
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|x86.Build.0 = Release|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Debug|x86.Build.0 = Debug|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Release|x86.ActiveCfg = Release|Any CPU
+		{97E32E73-F523-4B8F-93DA-10DE01AECE58}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
