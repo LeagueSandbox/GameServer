@@ -9,9 +9,17 @@ using LeagueSandbox.GameServer.Logging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
+    public enum CompilationStatus
+    {
+        Compiled = 0,
+        SomeCompiled = 1,
+        NoneCompiled = 2,
+        NoScripts = 3
+    }
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
@@ -23,7 +31,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             _logger = LoggerProvider.GetLogger();
         }
 
-        public bool LoadSubdirectoryScripts(string folder)
+        public CompilationStatus LoadSubdirectoryScripts(string folder)
         {
             var basePath = Path.GetFullPath(folder);
             var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where(pathString =>
@@ -32,13 +40,24 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 var trimmedPath = fileBasePath.Remove(0, basePath.Length);
                 var directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
                 if (directories.Contains("bin") || directories.Contains("obj")) return false;
+                if (pathString.Contains("AssemblyInfo.cs")) return false;
                 return true;
             });
-            return !Load(new List<string>(allfiles));
+            if (allfiles.Count() == 0)
+            {
+                return CompilationStatus.NoScripts;
+            }
+            return Load(new List<string>(allfiles));
         }
 
-        //Takes about 300 milliseconds for a single script
-        public bool Load(List<string> scriptLocations)
+        /// <summary>
+        /// Loads scripts from a list of files and compiles them.
+        /// Takes about 300 milliseconds for a single script. Faster for a bunch of scripts.
+        /// Returns an enum that defines the compilation state.
+        /// </summary>
+        /// <param name="scriptLocations"></param>
+        /// <returns>Returns an enum that defines the compilation state.</returns>
+        public CompilationStatus Load(List<string> scriptLocations)
         {
             var treeList = new SyntaxTree[scriptLocations.Count];
             Parallel.For(0, scriptLocations.Count, i =>
@@ -53,50 +72,58 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var assemblyName = Path.GetRandomFileName();
 
             var references = new List<MetadataReference>();
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
-                if (!a.IsDynamic && !a.Location.Equals(""))
-                    references.Add(MetadataReference.CreateFromFile(a.Location));
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (!assembly.IsDynamic && !assembly.Location.Equals(""))
+                {
+                    references.Add(MetadataReference.CreateFromFile(assembly.Location));
+                }
+            }
+            //Add vector2 reference because vector2 isn't in System.Numerics in dot net core
+            references.Add(MetadataReference.CreateFromFile(typeof(Vector2).Assembly.Location));
             //Now add game reference
             references.Add(MetadataReference.CreateFromFile(typeof(Game).Assembly.Location));
-            var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+            var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                 .WithOptimizationLevel(OptimizationLevel.Release).WithConcurrentBuild(true);
 
             var compilation = CSharpCompilation.Create(
                 assemblyName,
                 treeList,
                 references,
-                op
+                compilationOptions
             );
 
-            var errored = false;
+            var state = CompilationStatus.Compiled;
             while (true)
-                using (var ms = new MemoryStream())
+            {
+                using (var compiledAssemblies = new MemoryStream())
                 {
-                    var result = compilation.Emit(ms);
+                    var result = compilation.Emit(compiledAssemblies);
 
                     if (result.Success)
                     {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        var assembly = Assembly.Load(ms.ToArray());
+                        compiledAssemblies.Seek(0, SeekOrigin.Begin);
+                        var assembly = Assembly.Load(compiledAssemblies.ToArray());
                         _scriptAssembly.Add(assembly);
                         foreach (var type in assembly.GetTypes())
                         {
                             types.Add(type.FullName, type);
                         }
+                        return state;
                     }
-
-                    errored |= true;
-                    var invalidSourceTrees = GetInvalidSourceTrees(result);
-
-                    if (invalidSourceTrees.Count == 0)
+                    else
                     {
-                        // Shouldnt happen
-                        _logger.Error("Script compilation failed");
-                        return true;
+                        state = CompilationStatus.SomeCompiled;
+                        var invalidSourceTrees = GetInvalidSourceTrees(result);
+                        compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
+                        if (invalidSourceTrees.Count == 0 || compilation.SyntaxTrees.Length == 0)
+                        {
+                            _logger.Error("Script compilation failed");
+                            return CompilationStatus.NoneCompiled;
+                        }
                     }
-
-                    compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
                 }
+            }
         }
 
         private List<SyntaxTree> GetInvalidSourceTrees(EmitResult result)
@@ -153,7 +180,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 return (T)Activator.CreateInstance(classType);
             }
 
-            _logger.Warn($"Failed to load script: {scriptNamespace}.{scriptClass}");
+            _logger.Warn($"Could not find script: {scriptNamespace}.{scriptClass}");
             return default(T);
         }
 
@@ -174,7 +201,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Instance);
 
             var typeParameterType = typeof(T);
-            return (T) (object) Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
+            return (T)(object)Delegate.CreateDelegate(typeParameterType, obj, desiredFunction);
         }
     }
 }
