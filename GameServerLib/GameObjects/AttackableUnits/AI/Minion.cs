@@ -103,6 +103,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         KeepFocusingTarget(); // attack/follow target
                     }
                 }
+                else if (this is ILaneMinion lm)
+                {
+                    lm.WalkToDestination(); // walk to destination (or target)
+                }
             }
             Replication.Update();
         }

@@ -6,5 +6,7 @@ namespace GameServerCore.Domain.GameObjects
     {
         string BarracksName { get; }
         MinionSpawnType MinionSpawnType { get; }
+
+        void WalkToDestination();
     }
 }
