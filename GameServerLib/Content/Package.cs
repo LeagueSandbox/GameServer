@@ -191,8 +191,11 @@ namespace LeagueSandbox.GameServer.Content
                         _logger.Debug($"{PackageName} does not contain C# scripts, skipping...");
                         return false;
                     }
+                default:
+                    {
+                        return false;
+                    }
             }
-            return false;
         }
 
         private void LoadPackage()
