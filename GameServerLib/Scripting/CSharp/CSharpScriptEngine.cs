@@ -43,7 +43,8 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 {
                     return false;
                 }
-                if (pathString.Contains("AssemblyInfo.cs")) {
+                if (pathString.Contains("AssemblyInfo.cs"))
+                {
                     return false;
                 }
                 return true;
