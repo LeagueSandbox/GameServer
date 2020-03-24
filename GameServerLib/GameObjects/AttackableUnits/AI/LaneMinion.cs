@@ -25,6 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0
         ) : base(game, null, 0, 0, "", "", 1100, netId)
         {
+            IsLaneMinion = true;
             MinionSpawnType = spawnType;
             BarracksName = position;
             _mainWaypoints = mainWaypoints;
@@ -77,6 +78,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
+            AIMove();
+        }
+
+        public override bool AIMove()
+        {
+            if (base.AIMove())
+            {
+                WalkToDestination();
+                return true;
+            }
+            return false;
         }
 
         // TODO: Override ScanForTargets and use unique LaneMinion AI
