@@ -13,7 +13,7 @@ install:
       $env:BUILD = "LeagueSandboxServer-v{0}.7z" -f $env:COMM_HASH
   - git submodule update --init --recursive
 
-image: Visual Studio 2019
+image: Previous Visual Studio 2019
 
 build:
   project: GameServer.sln
