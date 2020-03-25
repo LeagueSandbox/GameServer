@@ -39,11 +39,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 var fileBasePath = Path.GetFullPath(pathString);
                 var trimmedPath = fileBasePath.Remove(0, basePath.Length);
                 var directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
-                if (directories.Contains("bin") || directories.Contains("obj"))
-                {
-                    return false;
-                }
-                if (pathString.Contains("AssemblyInfo.cs"))
+                if (directories.Contains("bin") || directories.Contains("obj") || pathString.Contains("AssemblyInfo.cs"))
                 {
                     return false;
                 }
