@@ -630,28 +630,32 @@ namespace PacketDefinitions420
 
         public void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team)
         {
-            var p = new LeaguePackets.Game.Barrack_SpawnUnit();
-            p.SenderNetID = m.NetId;
-            p.ObjectID = m.NetId;
-            p.ObjectNodeID = 0x40; // TODO: check this
-            p.BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));
-            p.WaveCount = 1;
-            p.MinionType = (byte)m.MinionSpawnType;
-            p.DamageBonus = 10;
-            p.HealthBonus = 7;
-            p.MinionLevel = 1;
+            var p = new Barrack_SpawnUnit
+            {
+                SenderNetID = m.NetId,
+                ObjectID = m.NetId,
+                ObjectNodeID = 0x40, // TODO: check this
+                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)), // TODO: Verify
+                WaveCount = 1, // TODO: Unhardcode
+                MinionType = (byte)m.MinionSpawnType,
+                DamageBonus = 10, // TODO: Unhardcode
+                HealthBonus = 7, // TODO: Unhardcode
+                MinionLevel = 1 // TODO: Unhardcode
+            };
 
-            
-            
-            var md = new MovementDataNormal();
-            md.Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints,_navGrid);
-            md.TeleportNetID = m.NetId;
-            md.HasTeleportID = false;
-            md.SyncID = (int) m.SyncId;
+            var md = new MovementDataNormal
+            {
+                Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints, _navGrid),
+                TeleportNetID = m.NetId,
+                HasTeleportID = false, // TODO: Unhardcode
+                SyncID = (int)m.SyncId
+            };
 
-            var visionPacket = new OnEnterVisiblityClient();
-            visionPacket.MovementData = md;
-            visionPacket.LookAtPosition = new Vector3(1, 0, 0);
+            var visionPacket = new OnEnterVisiblityClient
+            {
+                MovementData = md,
+                LookAtPosition = new Vector3(1, 0, 0) // TODO: Unhardcode
+            };
             visionPacket.Packets.Add(p);
             visionPacket.SenderNetID = m.NetId;
 

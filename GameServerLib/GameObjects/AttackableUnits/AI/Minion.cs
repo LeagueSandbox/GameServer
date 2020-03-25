@@ -10,11 +10,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     {
         public string Name { get; }
         public IObjAiBase Owner { get; } // We'll probably want to change this in the future
-        public bool IsWard { get; }
-        public bool IsPet { get; }
-        public bool IsBot { get; }
-        public bool IsLaneMinion { get; }
-        public bool IsClone { get; }
+        public bool IsWard { get; protected set; }
+        public bool IsPet { get; protected set; }
+        public bool IsBot { get; protected set; }
+        public bool IsLaneMinion { get; protected set; }
+        public bool IsClone { get; protected set; }
         protected bool _aiPaused;
 
         public Minion(
@@ -46,20 +46,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetTeam(Team);
                 IsPet = false;
             }
-
-            if (this is ILaneMinion)
-            {
-                IsLaneMinion = true;
-            }
-            else
-            {
-                IsLaneMinion = false;
-            }
-
-            //TODO: Fix health not showing unless visible to enemy and health not updating when taking damage
+            IsLaneMinion = false;
 
             // Fix issues induced by having an empty model string
-            CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
+            CollisionRadius = CharData.PathfindingCollisionRadius;
 
             SetVisibleByTeam(Team, true);
 
@@ -96,15 +86,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Replication.Update();
                     return;
                 }
-                if (ScanForTargets()) // returns true if we have a target
-                {
-                    if (!RecalculateAttackPosition())
-                    {
-                        KeepFocusingTarget(); // attack/follow target
-                    }
-                }
+                AIMove();
             }
             Replication.Update();
+        }
+
+        public virtual bool AIMove()
+        {
+            if (ScanForTargets()) // returns true if we have a target
+            {
+                if (!RecalculateAttackPosition())
+                {
+                    KeepFocusingTarget(); // attack/follow target
+                }
+                return false;
+            }
+            return true;
         }
 
         // AI tasks
@@ -117,7 +114,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
             var objects = _game.ObjectManager.GetObjects();
-            foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))//Find target closest to max attack range.
+            //Find target closest to max attack range.
+            foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))
             {
                 if (!(it.Value is IAttackableUnit u) ||
                     u.IsDead ||
