@@ -188,7 +188,7 @@ namespace LeagueSandbox.GameServer.Content
                     }
                 case Scripting.CSharp.CompilationStatus.NoScripts:
                     {
-                        _logger.Debug($"{PackageName} does not contain C# scripts, skipping...");
+                        _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
                         return false;
                     }
                 default:
