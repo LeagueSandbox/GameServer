@@ -183,7 +183,7 @@ namespace LeagueSandbox.GameServer.Content
                     }
                 case Scripting.CSharp.CompilationStatus.NoneCompiled:
                     {
-                        _logger.Debug($"{PackageName} failed to compile C# scripts...");
+                        _logger.Debug($"{PackageName} failed to compile all C# scripts...");
                         return false;
                     }
                 case Scripting.CSharp.CompilationStatus.NoScripts:
