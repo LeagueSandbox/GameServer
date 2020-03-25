@@ -169,15 +169,33 @@ namespace LeagueSandbox.GameServer.Content
         public bool LoadScripts()
         {
             var scriptLoadResult = _game.ScriptEngine.LoadSubdirectoryScripts(PackagePath);
-
-            if (scriptLoadResult)
+            switch (scriptLoadResult)
             {
-                _logger.Debug($"Loaded C# scripts from package: {PackageName}");
-                return true;
+                case Scripting.CSharp.CompilationStatus.Compiled:
+                    {
+                        _logger.Debug($"Loaded all C# scripts from package: {PackageName}");
+                        return true;
+                    }
+                case Scripting.CSharp.CompilationStatus.SomeCompiled:
+                    {
+                        _logger.Debug($"Loaded some C# scripts from package: {PackageName}");
+                        return true;
+                    }
+                case Scripting.CSharp.CompilationStatus.NoneCompiled:
+                    {
+                        _logger.Debug($"{PackageName} failed to compile all C# scripts...");
+                        return false;
+                    }
+                case Scripting.CSharp.CompilationStatus.NoScripts:
+                    {
+                        _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
+                        return false;
+                    }
+                default:
+                    {
+                        return false;
+                    }
             }
-
-            _logger.Debug($"{PackageName} does not contain C# scripts, skipping...");
-            return false;
         }
 
         private void LoadPackage()
