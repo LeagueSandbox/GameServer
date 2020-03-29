@@ -197,17 +197,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 IsDead = true;
                 Die(attacker);
-                if (useShield)
-                {
-                    for (ShieldType shield = 0; shield < ShieldType.END;shield++)
+                for (ShieldType shield = 0; shield < ShieldType.END;shield++)
                     {
-                        if (ShieldAmount[(int)shield] > 0)
+                        if (useShield && ShieldAmount[(int)shield] > 0)
                         {
                             ApplyShield(-ShieldAmount[(int)shield], shield, true);
                             useShield = false;
                         }
                     }
-                }
             }
 
             int attackerId = 0, targetId = 0;
