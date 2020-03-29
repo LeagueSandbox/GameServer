@@ -3,6 +3,7 @@
     public enum ShieldType
     {
         SHIELD_PHYSICAL,
-        SHIELD_MAGICAL
+        SHIELD_MAGICAL,
+        END
     }
 }

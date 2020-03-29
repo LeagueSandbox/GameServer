@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -28,7 +30,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public int KillDeathCounter { get; set; }
         public int MinionCounter { get; protected set; }
         public IReplication Replication { get; protected set; }
-        public int[] ShieldAmount { get; protected set; } = new int[Enum.GetNames(typeof(ShieldType)).Length];
+        public int[] ShieldAmount { get; protected set; } = new int[(int)ShieldType.END];
 
         public AttackableUnit(
             Game game,
@@ -197,7 +199,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(attacker);
                 if (useShield)
                 {
-                    foreach (ShieldType shield in Enum.GetValues(typeof(ShieldType)))
+                    for (ShieldType shield = 0; shield < ShieldType.END;shield++)
                     {
                         if (ShieldAmount[(int)shield] > 0)
                         {
