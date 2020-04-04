@@ -11,11 +11,12 @@ namespace Spells
     {
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
+            //IChampion champion = (IChampion)owner;
+            //champion.IsRecalling = true;
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            // @TODO Interrupt the script when owner uses movement spells
             AddBuff("Recall", 8.0f, 1, spell, owner, owner);
         }
 
@@ -29,13 +30,17 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner)
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, () =>
+            void HandleRemoveBuff()
             {
                 if (HasBuff(owner, "Recall"))
                 {
                     RemoveBuff(owner, "Recall");
                 }
-            });
+            }
+
+            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, HandleRemoveBuff);
+            ApiEventManager.OnChampionMove.AddListener(this, (IChampion)owner, HandleRemoveBuff);
+            ApiEventManager.OnChampionCrowdControlled.AddListener(this, (IChampion)owner, HandleRemoveBuff);
         }
 
         public void OnDeactivate(IObjAiBase owner)
