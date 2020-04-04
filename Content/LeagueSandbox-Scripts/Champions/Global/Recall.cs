@@ -11,8 +11,6 @@ namespace Spells
     {
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            //IChampion champion = (IChampion)owner;
-            //champion.IsRecalling = true;
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
