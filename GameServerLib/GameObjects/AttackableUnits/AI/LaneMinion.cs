@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             if (_mainWaypoints.Count > _curMainWaypoint + 1)
             {
-                if (Waypoints.Count == 1 || CurWaypoint >= Waypoints.Count && ++_curMainWaypoint < _mainWaypoints.Count)
+                if (Waypoints.Count == 1 || WaypointIndex >= Waypoints.Count && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
                     SetWaypoints(new List<Vector2>() { GetPosition(), _mainWaypoints[_curMainWaypoint] });

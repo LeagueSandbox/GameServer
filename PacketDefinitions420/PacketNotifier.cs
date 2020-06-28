@@ -186,6 +186,7 @@ namespace PacketDefinitions420
             var highlightPacket = new S2C_CreateUnitHighlight();
             highlightPacket.SenderNetID = unit.NetId;
             highlightPacket.TargetNetID = unit.NetId;
+
             _packetHandlerManager.SendPacket(userId, highlightPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -413,65 +414,83 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(misPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyFXCreateGroup(IParticle particle, Vector3 direction = new Vector3(), float timespent = 0, bool reqvision = true)
+        public void NotifyFXCreateGroup(IParticle particle, int playerId = 0)
         {
             var fxPacket = new FX_Create_Group();
             fxPacket.SenderNetID = particle.Owner.NetId;
-            var fxData1 = new FXCreateData();
-            if (particle.Target.IsSimpleTarget) // Non-object target (usually a position)
-            {
-                fxData1.TargetNetID = particle.Owner.NetId; // Probably not correct, but it works
-            }
-            else
-            {
-                fxData1.TargetNetID = (particle.Target as IGameObject).NetId;
-            }
-            fxData1.NetAssignedNetID = particle.NetId;
-            fxData1.CasterNetID = particle.Owner.NetId;
-            if (particle.Target.IsSimpleTarget)
-            {
-                fxData1.BindNetID = 0; // Not sure what this is
-            }
-            else
-            {
-                fxData1.BindNetID = (particle.Target as IGameObject).NetId; // Not sure what this is
-            }
-            fxData1.KeywordNetID = 0; // Not sure what this is
+
+            var fxDataList = new List<FXCreateData>();
+
             var ownerHeight = _navGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
             var targetHeight = _navGrid.GetHeightAtLocation(particle.Target.X, particle.Target.Y);
             var particleHeight = _navGrid.GetHeightAtLocation(particle.X, particle.Y);
             var higherValue = Math.Max(targetHeight, particleHeight);
-            fxData1.PositionX = (short)((particle.X - _navGrid.MapWidth / 2) / 2);
-            fxData1.PositionY = higherValue;
-            fxData1.PositionZ = (short)((particle.Y - _navGrid.MapHeight / 2) / 2);
-            if (!particle.Target.IsSimpleTarget)
+
+            // TODO: implement option for multiple particles instead of hardcoding one
+            var fxData1 = new FXCreateData
             {
-                fxData1.TargetPositionX = (short)(particle.Target as IGameObject).X;
-                fxData1.TargetPositionZ = (short)(particle.Target as IGameObject).Y;
-            }
-            else
+                NetAssignedNetID = particle.NetId,
+                CasterNetID = particle.Owner.NetId,
+                KeywordNetID = 0, // Not sure what this is
+
+                PositionX = (short)((particle.X - _navGrid.MapWidth / 2) / 2),
+                PositionY = higherValue,
+                PositionZ = (short)((particle.Y - _navGrid.MapHeight / 2) / 2),
+
+                TargetPositionY = targetHeight,
+
+                OwnerPositionX = (short)((particle.Owner.X - _navGrid.MapWidth / 2) / 2),
+                OwnerPositionY = ownerHeight,
+                OwnerPositionZ = (short)((particle.Owner.Y - _navGrid.MapHeight / 2) / 2),
+
+                // NOTE: particles may have a set lifetime, which ignores this
+                TimeSpent = particle.Lifetime,
+                ScriptScale = particle.Scale
+            };
+
+            if (particle.Target.IsSimpleTarget) // Non-object target (usually a position)
             {
+                fxData1.TargetNetID = particle.Owner.NetId; // Probably not correct, but it works
+                fxData1.BindNetID = 0; // Not sure what this is
+
                 fxData1.TargetPositionX = (short)((particle.Target.X - _navGrid.MapWidth / 2) / 2);
                 fxData1.TargetPositionZ = (short)((particle.Target.Y - _navGrid.MapHeight / 2) / 2);
             }
-            fxData1.TargetPositionY = targetHeight;
-            fxData1.OwnerPositionX = (short)((particle.Owner.X - _navGrid.MapWidth / 2) / 2);
-            fxData1.OwnerPositionY = ownerHeight;
-            fxData1.OwnerPositionZ = (short)((particle.Owner.Y - _navGrid.MapHeight / 2) / 2);
-            if (direction.Length() <= 0)
+            else
+            {
+                fxData1.TargetNetID = (particle.Target as IGameObject).NetId;
+                fxData1.BindNetID = (particle.Target as IGameObject).NetId; // Not sure what this is
+
+                fxData1.TargetPositionX = (short)(particle.Target as IGameObject).X;
+                fxData1.TargetPositionZ = (short)(particle.Target as IGameObject).Y;
+            }
+
+            if (particle.Direction.Length() <= 0)
             {
                 fxData1.OrientationVector = Vector3.Zero;
             }
             else
             {
-                fxData1.OrientationVector = direction;
+                fxData1.OrientationVector = particle.Direction;
             }
-            fxData1.TimeSpent = timespent; // TODO: would be nice to have some option for time before removal (if possible) (not likely, as some particles have a set lifetime)
-            fxData1.ScriptScale = particle.Size;
-            var fxDataList = new List<FXCreateData>();
-            // TODO: implement option for multiple particles instead of hardcoding one
+
             fxDataList.Add(fxData1);
-            var fxGroupData1 = new FXCreateGroupData();
+
+            // TODO: implement option for multiple groups of particles instead of hardcoding one
+            var fxGroups = new List<FXCreateGroupData>();
+
+            var fxGroupData1 = new FXCreateGroupData
+            {
+                EffectNameHash = HashString(particle.Name),
+                //TODO: un-hardcode flags
+                Flags = 0x20, // Taken from SpawnParticle packet
+                TargetBoneNameHash = 0,
+                // TODO: Verify if the above is the same as below (most likely relate to bone of origin and bone of end point)
+                BoneNameHash = HashString(particle.BoneName),
+
+                FXCreateData = fxDataList
+            };
+
             if (particle.Owner is IObjAiBase o)
             {
                 fxGroupData1.PackageHash = o.GetObjHash();
@@ -480,22 +499,25 @@ namespace PacketDefinitions420
             {
                 fxGroupData1.PackageHash = 0; // TODO: Verify
             }
-            fxGroupData1.EffectNameHash = HashFunctions.HashString(particle.Name);
-            //TODO: un-hardcode flags
-            fxGroupData1.Flags = 0x20; // Taken from SpawnParticle packet
-            fxGroupData1.TargetBoneNameHash = 0; // Are these the same?
-            fxGroupData1.BoneNameHash = HashFunctions.HashString(particle.BoneName); // Are these the same?
-            fxGroupData1.FXCreateData = fxDataList;
-            var fxGroup = new List<FXCreateGroupData>();
-            fxGroup.Add(fxGroupData1);
-            fxPacket.FXCreateGroup = fxGroup;
-            if (reqvision)
+
+            fxGroups.Add(fxGroupData1);
+
+            fxPacket.FXCreateGroup = fxGroups;
+
+            if (playerId == 0)
             {
-                _packetHandlerManager.BroadcastPacketVision(particle, fxPacket.GetBytes(), Channel.CHL_S2C);
+                if (particle.VisionAffected)
+                {
+                    _packetHandlerManager.BroadcastPacketVision(particle, fxPacket.GetBytes(), Channel.CHL_S2C);
+                }
+                else
+                {
+                    _packetHandlerManager.BroadcastPacket(fxPacket.GetBytes(), Channel.CHL_S2C);
+                }
             }
             else
             {
-                _packetHandlerManager.BroadcastPacket(fxPacket.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(playerId, fxPacket.GetBytes(), Channel.CHL_S2C);
             }
         }
 

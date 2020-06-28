@@ -136,18 +136,16 @@ namespace LeagueSandbox.GameServer.API
             target.RemoveBuffsWithName(buff);
         }
 
-
-
-        public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "")
+        public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
             var t = new Target(toX, toY);
-            var p = new Particle(_game, unit, t, particle, size, bone);
+            var p = new Particle(_game, unit, t, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
-        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, ITarget target, float size = 1.0f, string bone = "")
+        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, ITarget target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, unit, target, particle, size, bone);
+            var p = new Particle(_game, unit, target, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
