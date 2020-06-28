@@ -479,7 +479,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool RecalculateAttackPosition()
         {
-            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) < CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total) //If we are already where we should be, do not move.
+            // If we are already where we should be, which means we are in attack range and not colliding, then keep our current position.
+            if (Target != null && TargetUnit != null && !TargetUnit.IsDead && GetDistanceTo(Target) > CollisionRadius && GetDistanceTo(TargetUnit.X, TargetUnit.Y) <= Stats.Range.Total)
             {
                 return false;
             }

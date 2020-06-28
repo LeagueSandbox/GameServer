@@ -78,7 +78,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-            AIMove();
         }
 
         public override bool AIMove()
