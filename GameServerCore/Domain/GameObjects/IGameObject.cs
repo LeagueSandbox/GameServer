@@ -102,7 +102,7 @@ namespace GameServerCore.Domain.GameObjects
         void SetWaypoints(List<Vector2> newWaypoints);
 
         /// <summary>
-        /// Sets this object's path to the newWaypoints.
+        /// Whether or not the specified object is colliding with this object.
         /// </summary>
         /// <param name="o">An object that could be colliding with this object.</param>
         bool IsCollidingWith(IGameObject o);

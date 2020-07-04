@@ -15,6 +15,7 @@ namespace GameServerCore
         void AddVisionUnit(IAttackableUnit unit);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         int CountUnitsAttackingUnit(IAttackableUnit target);
+        List<IChampion> GetAllChampions();
         List<IChampion> GetAllChampionsFromTeam(TeamId team);
         List<IChampion> GetChampionsInRange(float x, float y, float range, bool onlyAlive = false);
         List<IChampion> GetChampionsInRange(ITarget t, float range, bool onlyAlive = false);

@@ -98,19 +98,35 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Moves the object to its specified waypoints, updating its coordinate.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
-        public void Move(float diff)
+        public void Move(float diff, bool useTarget = false)
         {
-            // no waypoints remained - return
+            // no waypoints remained - clear the Waypoints
             if (WaypointIndex >= Waypoints.Count)
             {
                 Waypoints.RemoveAll(v => v != Waypoints[0]);
+            }
+
+            // TODO: Remove dependency of Target. In fact, just remove Target altogether.
+            if (Target == null)
+            {
+                _direction = new Vector2();
 
                 return;
             }
 
-            var next = Waypoints[WaypointIndex];
             // current position
             var cur = new Vector2(X, Y);
+
+            var next = new Vector2();
+            if (!Target.IsSimpleTarget)
+            {
+                next = new Vector2(Target.X, Target.Y);
+            }
+            else
+            {
+                next = Waypoints[WaypointIndex];
+            }
+
             var goingTo = next - cur;
             _direction = Vector2.Normalize(goingTo);
 
@@ -183,7 +199,14 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public virtual void Update(float diff)
         {
-            Move(diff);
+            if (Target != null && !Target.IsSimpleTarget)
+            {
+                Move(diff, true);
+            }
+            else
+            {
+                Move(diff);
+            }
         }
 
         public virtual float GetMoveSpeed()
