@@ -19,9 +19,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         public uint NetId { get; }
         public uint SyncId { get; }
 
+        private static uint MOVEMENT_EPSILON = 5; //TODO: Verify if this should exist
+
+        public int WaypointIndex { get; private set; }
+
         public List<Vector2> Waypoints { get; private set; }
-        public int CurWaypoint { get; private set; }
-        
+
         public TeamId Team { get; protected set; }
         public void SetTeam(TeamId team)
         {
@@ -43,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected NetworkIdManager _networkIdManager;
 
         /// <summary>
-        /// Current target the object running to (can be coordinates or an object)
+        /// Current target the game object is looking/attacking/moving to (can be coordinates or an object)
         /// </summary>
         public ITarget Target { get; set; }
 
@@ -91,33 +94,43 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
         }
 
-        public void Move(float diff)
-        {
-            if (Target == null)
-            {
-                _direction = new Vector2();
-                return;
-            }
-
-            var to = new Vector2(Target.X, Target.Y);
-            Move(diff, to);
-        }
-
         /// <summary>
-        /// Moves the object depending on its target, updating its coordinate.
+        /// Moves the object to its specified waypoints, updating its coordinate.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
-        public void Move(float diff, Vector2 to)
+        public void Move(float diff, bool useTarget = false)
         {
+            // no waypoints remained - clear the Waypoints
+            if (WaypointIndex >= Waypoints.Count)
+            {
+                Waypoints.RemoveAll(v => v != Waypoints[0]);
+            }
+
+            // TODO: Remove dependency of Target. In fact, just remove Target altogether.
             if (Target == null)
             {
                 _direction = new Vector2();
+
                 return;
             }
-            var cur = new Vector2(X, Y); //?
 
-            var goingTo = to - cur;
+            // current position
+            var cur = new Vector2(X, Y);
+
+            var next = new Vector2();
+            if (!Target.IsSimpleTarget)
+            {
+                next = new Vector2(Target.X, Target.Y);
+            }
+            else
+            {
+                next = Waypoints[WaypointIndex];
+            }
+
+            var goingTo = next - cur;
             _direction = Vector2.Normalize(goingTo);
+
+            // usually doesn't happen
             if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
             {
                 _direction = new Vector2(0, 0);
@@ -133,29 +146,67 @@ namespace LeagueSandbox.GameServer.GameObjects
             X += xx;
             Y += yy;
 
-            // If the target was a simple point, stop when it is reached
+            // (X, Y) have now moved to the next position
+            cur = new Vector2(X, Y);
 
-            if (GetDistanceTo(Target) < deltaMovement * 2)
+            // Check if we reached the next waypoint
+            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
+            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {
                 if (this is IProjectile && !Target.IsSimpleTarget)
                 {
                     return;
                 }
-                
-                if (++CurWaypoint >= Waypoints.Count)
+
+                // remove this waypoint because we have reached it
+                if (++WaypointIndex >= Waypoints.Count)
                 {
                     Target = null;
                 }
                 else
                 {
-                    Target = new Target(Waypoints[CurWaypoint]);
+                    Target = new Target(Waypoints[WaypointIndex]);
                 }
             }
         }
 
+        /// <summary>
+        /// Returns the current direction used in movement.
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetDirection()
+        {
+            return _direction;
+        }
+
+        /// <summary>
+        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetNextWaypoint()
+        {
+            if (WaypointIndex < Waypoints.Count) return Waypoints[WaypointIndex];
+            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        }
+        /// <summary>
+        /// Returns whether the game object has reached the last waypoint in its path of waypoints.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPathEnded()
+        {
+            return WaypointIndex >= Waypoints.Count;
+        }
+
         public virtual void Update(float diff)
         {
-            Move(diff);
+            if (Target != null && !Target.IsSimpleTarget)
+            {
+                Move(diff, true);
+            }
+            else
+            {
+                Move(diff);
+            }
         }
 
         public virtual float GetMoveSpeed()
@@ -176,7 +227,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
 
             Target = new Target(Waypoints[1]);
-            CurWaypoint = 1;
+            WaypointIndex = 1;
         }
 
         public bool IsMovementUpdated()

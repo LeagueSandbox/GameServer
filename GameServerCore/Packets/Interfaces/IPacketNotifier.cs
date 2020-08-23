@@ -44,7 +44,7 @@ namespace GameServerCore.Packets.Interfaces
         void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
         void NotifyFogUpdate2(IAttackableUnit u, uint newFogId);
         void NotifyForceCreateMissile(IProjectile p);
-        void NotifyFXCreateGroup(IParticle particle, Vector3 direction = new Vector3(), float timespent = 0, bool reqvision = true);
+        void NotifyFXCreateGroup(IParticle particle, int playerId = 0);
         void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team);
         void NotifyFXKill(IParticle particle);
         void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team);

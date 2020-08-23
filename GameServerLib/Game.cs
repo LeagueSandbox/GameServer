@@ -98,13 +98,6 @@ namespace LeagueSandbox.GameServer
 
             Map.Init();
 
-            _logger.Info("Add players");
-            foreach (var p in Config.Players)
-            {
-                _logger.Info("Player "+p.Value.Name+" Added: "+p.Value.Champion);
-                ((PlayerManager)PlayerManager).AddPlayer(p);
-            }
-
             _pauseTimer = new Timer
             {
                 AutoReset = true,
@@ -119,6 +112,13 @@ namespace LeagueSandbox.GameServer
             // TODO: switch the notifier with ResponseHandler
             PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavigationGrid);
             InitializePacketHandlers();
+
+            _logger.Info("Add players");
+            foreach (var p in Config.Players)
+            {
+                _logger.Info("Player " + p.Value.Name + " Added: " + p.Value.Champion);
+                ((PlayerManager)PlayerManager).AddPlayer(p);
+            }
 
             _logger.Info("Game is ready.");
         }

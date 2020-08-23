@@ -330,6 +330,21 @@ namespace LeagueSandbox.GameServer
             }
         }
 
+        public List<IChampion> GetAllChampions()
+        {
+            var champs = new List<IChampion>();
+            foreach (var kv in _champions)
+            {
+                var c = kv.Value;
+                if (c != null)
+                {
+                    champs.Add(c);
+                }
+            }
+
+            return champs;
+        }
+
         public List<IChampion> GetAllChampionsFromTeam(TeamId team)
         {
             var champs = new List<IChampion>();
