@@ -68,7 +68,8 @@ namespace LeagueSandbox.GameServer.GameObjects
                         champion.AddStatModifier(AFK_PROT_MODIFIER);
                         champion.HasAfkProtection = true;
                     }
-                } else
+                }
+                else
                 {
                     if (champion.HasAfkProtection)
                     {
