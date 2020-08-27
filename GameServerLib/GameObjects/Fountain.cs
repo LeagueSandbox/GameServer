@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
         private const float PERCENT_MAX_MANA_HEAL = 0.15f;
         private const float HEAL_FREQUENCY = 1000f;
-        private IStatsModifier AFK_PROT_MODIFIER = new StatsModifier();
+        private readonly IStatsModifier AFK_PROT_MODIFIER = new StatsModifier();
         private float _x;
         private float _y;
         private float _fountainSize;
@@ -63,17 +63,17 @@ namespace LeagueSandbox.GameServer.GameObjects
 
                 if (_game.PlayerManager.GetClientInfoByChampion(champion).IsDisconnected)
                 {
-                    if (!champion.HasAFKProtection)
+                    if (!champion.HasAfkProtection)
                     {
                         champion.AddStatModifier(AFK_PROT_MODIFIER);
-                        champion.HasAFKProtection = true;
+                        champion.HasAfkProtection = true;
                     }
                 } else
                 {
-                    if (champion.HasAFKProtection)
+                    if (champion.HasAfkProtection)
                     {
                         champion.RemoveStatModifier(AFK_PROT_MODIFIER);
-                        champion.HasAFKProtection = false;
+                        champion.HasAfkProtection = false;
                     }
                 }
             }

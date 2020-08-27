@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public byte SkillPoints { get; set; }
         public int Skin { get; set; }
-        public bool HasAFKProtection { get; set; }
+        public bool HasAfkProtection { get; set; }
 
         private float _championHitFlagTimer;
         /// <summary>
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Replication = new ReplicationHero(this);
             Stats.SetSpellEnabled(13, true);
 
-            HasAFKProtection = false;
+            HasAfkProtection = false;
         }
 
         private string GetPlayerIndex()
