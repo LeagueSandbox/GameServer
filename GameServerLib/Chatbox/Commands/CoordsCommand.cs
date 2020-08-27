@@ -29,8 +29,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             if (!champion.IsPathEnded())
             {
                 Vector2 dir = champion.GetDirection();
-                double ang = Math.Acos(dir.Y / dir.Length()) * (180 / Math.PI);
-                dirMsg = $"dirX: {dir.X} dirY: {dir.Y} dirAngle: {ang}";
+                // Angle measured between [1, 0] and player direction vectors (to X axis)
+                double ang = Math.Acos(dir.X / dir.Length()) * (180 / Math.PI); 
+                dirMsg = $"dirX: {dir.X} dirY: {dir.Y} dirAngle (to X axis): {ang}";
             }
             var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()} "+dirMsg;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
