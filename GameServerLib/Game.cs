@@ -24,6 +24,7 @@ using Timer = System.Timers.Timer;
 using GameServerCore.Packets.PacketDefinitions;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer
 {
@@ -262,9 +263,9 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Enabled = false;
         }
 
-        public bool HandleDisconnect(int userId)
+        public bool HandleDisconnect(ulong userId)
         {
-            var peerinfo = PlayerManager.GetPeerInfo((ulong)userId);
+            var peerinfo = PlayerManager.GetPeerInfo(userId);
             if (peerinfo != null)
             {
                 if (!peerinfo.IsDisconnected)
@@ -272,6 +273,8 @@ namespace LeagueSandbox.GameServer
                     PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
                 }
                 peerinfo.IsDisconnected = true;
+                peerinfo.Champion.StopChampionMovement();
+                peerinfo.Champion.SetWaypoints(Map.NavigationGrid.GetPath(peerinfo.Champion.GetPosition(), Map.MapProperties.GetRespawnLocation(peerinfo.Team).GetPosition()));
             }
             return true;
         }

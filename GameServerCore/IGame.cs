@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Maps;
 using GameServerCore.Domain;
+using System.Collections.Generic;
 
 namespace GameServerCore
 {
@@ -13,6 +14,6 @@ namespace GameServerCore
 
         bool SetToExit { get; set; }
 
-        bool HandleDisconnect(int userId);
+        bool HandleDisconnect(ulong userId);
     }
 }
