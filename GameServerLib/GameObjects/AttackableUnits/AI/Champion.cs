@@ -26,6 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public byte SkillPoints { get; set; }
         public int Skin { get; set; }
+        public bool HasAfkProtection { get; set; }
 
         private float _championHitFlagTimer;
         /// <summary>
@@ -103,6 +104,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Spells[5].LevelUp();
             Replication = new ReplicationHero(this);
             Stats.SetSpellEnabled(13, true);
+
+            HasAfkProtection = false;
         }
 
         private string GetPlayerIndex()

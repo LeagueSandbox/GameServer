@@ -13,6 +13,6 @@ namespace GameServerCore
 
         bool SetToExit { get; set; }
 
-        bool HandleDisconnect(int userId);
+        bool HandleDisconnect(ulong userId);
     }
 }
