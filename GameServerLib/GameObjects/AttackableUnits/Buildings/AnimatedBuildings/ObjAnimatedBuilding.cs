@@ -10,7 +10,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         private readonly AttackableUnit[] _dependOnAll;
         private readonly AttackableUnit[] _dependOnSingle;
 
-        private readonly IStatsModifier BUILDING_PROTECTION = new StatsModifier();
         private bool _hasProtection;
 
         public ObjAnimatedBuilding(Game game, string model, IStats stats, int collisionRadius = 40,
@@ -27,8 +26,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             }
 
             Replication = new ReplicationAnimatedBuilding(this);
-            BUILDING_PROTECTION.Armor.FlatBonus = 99999.0f;
-            BUILDING_PROTECTION.MagicResist.FlatBonus = 99999.0f;
         }
 
         public ObjAnimatedBuilding(Game game, string model, IStats stats, int collisionRadius = 40,
@@ -38,11 +35,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             _dependOnAll = dependOnAll;
             _dependOnSingle = dependOnSingle;
             Replication = new ReplicationAnimatedBuilding(this);
-            BUILDING_PROTECTION.Armor.FlatBonus = 99999.0f;
-            BUILDING_PROTECTION.MagicResist.FlatBonus = 99999.0f;
         }
 
         public override void Update(float diff)
+        {
+            UpdateProtection();
+            base.Update(diff);
+            Replication.Update();
+        }
+
+        public void UpdateProtection()
         {
             if (_dependOnAll != null || _dependOnSingle != null)
             {
@@ -62,7 +64,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
                     if (_hasProtection)
                     {
                         SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, true);
-                        Stats.RemoveModifier(BUILDING_PROTECTION);
                         _hasProtection = false;
                     }
                 }
@@ -71,14 +72,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
                     if (!_hasProtection)
                     {
                         SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, false);
-                        Stats.AddModifier(BUILDING_PROTECTION);
                         _hasProtection = true;
                     }
                 }
             }
-
-            base.Update(diff);
-            Replication.Update();
         }
     }
 }

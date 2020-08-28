@@ -19,7 +19,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private readonly AttackableUnit[] _dependOnAll;
         private readonly AttackableUnit[] _dependOnSingle;
 
-        private readonly IStatsModifier TURRET_PROTECTION = new StatsModifier();
         private bool _hasProtection;
         public uint ParentNetId { get; private set; }
 
@@ -48,8 +47,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 _dependOnSingle = dependOn;
             }
-            TURRET_PROTECTION.Armor.FlatBonus = 99999.0f;
-            TURRET_PROTECTION.MagicResist.FlatBonus = 99999.0f;
         }
 
         public BaseTurret(
@@ -71,8 +68,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Replication = new ReplicationAiTurret(this);
             _dependOnAll = dependOnAll;
             _dependOnSingle = dependOnSingle;
-            TURRET_PROTECTION.Armor.FlatBonus = 99999.0f;
-            TURRET_PROTECTION.MagicResist.FlatBonus = 99999.0f;
         }
 
         public void CheckForTargets()
@@ -137,6 +132,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
+            UpdateProtection();
+            base.Update(diff);
+            Replication.Update();
+        }
+
+        public void UpdateProtection()
+        {
             if (_dependOnAll != null || _dependOnSingle != null)
             {
                 int destroyedAllCount = 0;
@@ -150,12 +152,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     destroyedSingleCount = _dependOnSingle.Count(p => p.IsDead);
                 }
 
-                if ( (_dependOnAll == null || destroyedAllCount == _dependOnAll.Count()) && destroyedSingleCount >= 1)
+                if ((_dependOnAll == null || destroyedAllCount == _dependOnAll.Count()) && destroyedSingleCount >= 1)
                 {
                     if (_hasProtection)
                     {
                         SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, true);
-                        Stats.RemoveModifier(TURRET_PROTECTION);
                         _hasProtection = false;
                     }
                 }
@@ -164,14 +165,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (!_hasProtection)
                     {
                         SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, false);
-                        Stats.AddModifier(TURRET_PROTECTION);
                         _hasProtection = true;
                     }
                 }
             }
-
-            base.Update(diff);
-            Replication.Update();
         }
 
         public override void Die(IAttackableUnit killer)
