@@ -188,18 +188,18 @@ namespace LeagueSandbox.GameServer.Maps
         public long FirstGoldTime { get; set; } = 90 * 1000;
         public bool SpawnEnabled { get; set; }
 
-        private List<LaneTurret> _blueOuterTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _blueInnerTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _blueInhibTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _blueNexusTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _blueOuterTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _blueInnerTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _blueInhibTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _blueNexusTurrets = new List<LaneTurret>(3);
 
-        private List<LaneTurret> _purpleOuterTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _purpleInnerTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _purpleInhibTurrets = new List<LaneTurret>(3);
-        private List<LaneTurret> _purpleNexusTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _purpleOuterTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _purpleInnerTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _purpleInhibTurrets = new List<LaneTurret>(3);
+        private readonly List<LaneTurret> _purpleNexusTurrets = new List<LaneTurret>(3);
 
-        private List<Inhibitor> _blueInhibitors = new List<Inhibitor>(3);
-        private List<Inhibitor> _purpleInhibitors = new List<Inhibitor>(3);
+        private readonly List<Inhibitor> _blueInhibitors = new List<Inhibitor>(3);
+        private readonly List<Inhibitor> _purpleInhibitors = new List<Inhibitor>(3);
 
         public SummonersRift(Game game)
         {
@@ -343,9 +343,9 @@ namespace LeagueSandbox.GameServer.Maps
 
             
             _game.ObjectManager.AddObject(new Nexus(_game, "OrderNexus", TeamId.TEAM_BLUE, nexusRadius, 1146.097f, 1414.8077f, sightRange, 0xfff97db5,
-                new LaneTurret[2] { _blueNexusTurrets[0], _blueNexusTurrets[1] }, new Inhibitor[3] { _blueInhibitors[0], _blueInhibitors[1], _blueInhibitors[2] }));
+                new LaneTurret[] { _blueNexusTurrets[0], _blueNexusTurrets[1] }, new Inhibitor[] { _blueInhibitors[0], _blueInhibitors[1], _blueInhibitors[2] }));
             _game.ObjectManager.AddObject(new Nexus(_game, "ChaosNexus", TeamId.TEAM_PURPLE, nexusRadius, 12771.097f, 13014.8077f, sightRange, 0xfff02c0f,
-                new LaneTurret[2] { _purpleNexusTurrets[0], _purpleNexusTurrets[1] }, new Inhibitor[3] { _purpleInhibitors[0], _purpleInhibitors[1], _purpleInhibitors[2] }));
+                new LaneTurret[] { _purpleNexusTurrets[0], _purpleNexusTurrets[1] }, new Inhibitor[] { _purpleInhibitors[0], _purpleInhibitors[1], _purpleInhibitors[2] }));
         }
 
         public void Update(float diff)
