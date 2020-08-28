@@ -242,6 +242,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public void SetIsTargetableToTeam(TeamId team, bool targetable)
         {
+            Stats.IsTargetableToTeam &= ~SpellFlags.TargetableToAll;
             if (team == Team)
             {
                 if (!targetable)

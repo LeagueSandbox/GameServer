@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Force.Crc32;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 
@@ -13,6 +16,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected float _globalGold = 250.0f;
         protected float _globalExp = 0.0f;
 
+        private AttackableUnit[] _dependOnAll = null;
+        private AttackableUnit[] _dependOnSingle = null;
+
+        private readonly IStatsModifier TURRET_PROTECTION = new StatsModifier();
+        public bool _hasProtection = false;
         public uint ParentNetId { get; private set; }
 
         public BaseTurret(
@@ -22,7 +30,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
-            uint netId = 0
+            uint netId = 0,
+            bool dependAll = false,
+            params AttackableUnit[] dependOn
         ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
@@ -30,6 +40,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory();
             Replication = new ReplicationAiTurret(this);
+            if (dependAll) _dependOnAll = dependOn;
+            else _dependOnSingle = dependOn;
+            TURRET_PROTECTION.Armor.FlatBonus = 99999.0f;
+            TURRET_PROTECTION.MagicResist.FlatBonus = 99999.0f;
+        }
+
+        public BaseTurret(
+            Game game,
+            string name,
+            string model,
+            float x = 0,
+            float y = 0,
+            TeamId team = TeamId.TEAM_BLUE,
+            uint netId = 0,
+            AttackableUnit[] dependOnAll = null,
+            AttackableUnit[] dependOnSingle = null
+        ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
+        {
+            ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
+            Name = name;
+            SetTeam(team);
+            Inventory = InventoryManager.CreateInventory();
+            Replication = new ReplicationAiTurret(this);
+            _dependOnAll = dependOnAll;
+            _dependOnSingle = dependOnSingle;
+            TURRET_PROTECTION.Armor.FlatBonus = 99999.0f;
+            TURRET_PROTECTION.MagicResist.FlatBonus = 99999.0f;
         }
 
         public void CheckForTargets()
@@ -92,6 +129,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 TargetUnit = null;
                 _game.PacketNotifier.NotifySetTarget(this, null);
+            }
+
+            if (_dependOnAll != null || _dependOnSingle != null)
+            {
+                int destroyedAllCount = 0;
+                int destroyedSingleCount = 0;
+                if (_dependOnAll != null) destroyedAllCount = _dependOnAll.Count(p => p.IsDead);
+                if (_dependOnSingle != null) destroyedSingleCount = _dependOnSingle.Count(p => p.IsDead);
+
+                if ( (_dependOnAll == null || destroyedAllCount == _dependOnAll.Count()) && destroyedSingleCount >= 1)
+                {
+                    if (_hasProtection)
+                    {
+                        SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, true);
+                        Stats.RemoveModifier(TURRET_PROTECTION);
+                        _hasProtection = false;
+                    }
+                }
+                else
+                {
+                    if (!_hasProtection)
+                    {
+                        SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, false);
+                        Stats.AddModifier(TURRET_PROTECTION);
+                        _hasProtection = true;
+                    }
+                }
             }
 
             base.Update(diff);

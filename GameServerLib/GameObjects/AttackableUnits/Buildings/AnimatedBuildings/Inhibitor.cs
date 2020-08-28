@@ -25,8 +25,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             float x = 0,
             float y = 0,
             int visionRadius = 0,
-            uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+            uint netId = 0,
+            bool dependAll = false,
+            params AttackableUnit[] dependOn
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId, dependAll, dependOn)
+        {
+            Stats.CurrentHealth = 4000;
+            Stats.HealthPoints.BaseValue = 4000;
+            InhibitorState = InhibitorState.ALIVE;
+            SetTeam(team);
+        }
+
+        public Inhibitor(
+            Game game,
+            string model,
+            TeamId team,
+            int collisionRadius = 40,
+            float x = 0,
+            float y = 0,
+            int visionRadius = 0,
+            uint netId = 0,
+            AttackableUnit[] dependOnAll = null,
+            AttackableUnit[] dependOnSingle = null
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId, dependOnAll, dependOnSingle)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;

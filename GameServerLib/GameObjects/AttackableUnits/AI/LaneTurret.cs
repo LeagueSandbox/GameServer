@@ -17,8 +17,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
-            uint netId = 0
-        ) : base(game, name, "", x, y, team, netId)
+            uint netId = 0,
+            bool dependAll = false,
+            params AttackableUnit[] dependOn
+        ) : base(game, name, "", x, y, team, netId, dependAll, dependOn)
         {
             Type = type;
             if (items != null)
@@ -33,6 +35,49 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Inventory.AddItem(itemTemplate);
                     Stats.AddModifier(itemTemplate);
                 }
+            }
+
+            if (type == TurretType.FOUNTAIN_TURRET)
+            {
+                SetIsTargetableToTeam(TeamId.TEAM_BLUE, false);
+                SetIsTargetableToTeam(TeamId.TEAM_PURPLE, false);
+            }
+
+            BuildTurret(type);
+        }
+
+        public LaneTurret(
+            Game game,
+            string name,
+            float x = 0,
+            float y = 0,
+            TeamId team = TeamId.TEAM_BLUE,
+            TurretType type = TurretType.OUTER_TURRET,
+            int[] items = null,
+            uint netId = 0,
+            AttackableUnit[] dependOnAll = null,
+            AttackableUnit[] dependOnSingle = null
+        ) : base(game, name, "", x, y, team, netId, dependOnAll, dependOnSingle)
+        {
+            Type = type;
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    var itemTemplate = _itemManager.SafeGetItemType(item);
+                    if (itemTemplate == null)
+                    {
+                        continue;
+                    }
+                    Inventory.AddItem(itemTemplate);
+                    Stats.AddModifier(itemTemplate);
+                }
+            }
+
+            if (type == TurretType.FOUNTAIN_TURRET)
+            {
+                SetIsTargetableToTeam(TeamId.TEAM_BLUE, false);
+                SetIsTargetableToTeam(TeamId.TEAM_PURPLE, false);
             }
 
             BuildTurret(type);
