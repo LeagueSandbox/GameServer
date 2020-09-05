@@ -15,11 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public string Name { get; private set; }
         protected float _globalGold = 250.0f;
         protected float _globalExp = 0.0f;
-
-        private readonly AttackableUnit[] _dependOnAll;
-        private readonly AttackableUnit[] _dependOnSingle;
-
-        private bool _hasProtection;
         public uint ParentNetId { get; private set; }
 
         public BaseTurret(
@@ -29,9 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
-            uint netId = 0,
-            bool dependAll = false,
-            params AttackableUnit[] dependOn
+            uint netId = 0
         ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
@@ -39,35 +32,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory();
             Replication = new ReplicationAiTurret(this);
-            if (dependAll)
-            {
-                _dependOnAll = dependOn;
-            }
-            else
-            {
-                _dependOnSingle = dependOn;
-            }
-        }
-
-        public BaseTurret(
-            Game game,
-            string name,
-            string model,
-            float x = 0,
-            float y = 0,
-            TeamId team = TeamId.TEAM_BLUE,
-            uint netId = 0,
-            AttackableUnit[] dependOnAll = null,
-            AttackableUnit[] dependOnSingle = null
-        ) : base(game, model, new Stats.Stats(), 50, x, y, 1200, netId)
-        {
-            ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
-            Name = name;
-            SetTeam(team);
-            Inventory = InventoryManager.CreateInventory();
-            Replication = new ReplicationAiTurret(this);
-            _dependOnAll = dependOnAll;
-            _dependOnSingle = dependOnSingle;
         }
 
         public void CheckForTargets()
@@ -132,43 +96,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
-            UpdateProtection();
             base.Update(diff);
             Replication.Update();
-        }
-
-        public void UpdateProtection()
-        {
-            if (_dependOnAll != null || _dependOnSingle != null)
-            {
-                int destroyedAllCount = 0;
-                int destroyedSingleCount = 0;
-                if (_dependOnAll != null)
-                {
-                    destroyedAllCount = _dependOnAll.Count(p => p.IsDead);
-                }
-                if (_dependOnSingle != null)
-                {
-                    destroyedSingleCount = _dependOnSingle.Count(p => p.IsDead);
-                }
-
-                if ((_dependOnAll == null || destroyedAllCount == _dependOnAll.Count()) && destroyedSingleCount >= 1)
-                {
-                    if (_hasProtection)
-                    {
-                        SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, true);
-                        _hasProtection = false;
-                    }
-                }
-                else
-                {
-                    if (!_hasProtection)
-                    {
-                        SetIsTargetableToTeam(Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE, false);
-                        _hasProtection = true;
-                    }
-                }
-            }
         }
 
         public override void Die(IAttackableUnit killer)
