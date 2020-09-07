@@ -12,7 +12,5 @@ namespace GameServerCore
         bool IsPaused { get; set; }
 
         bool SetToExit { get; set; }
-
-        bool HandleDisconnect(ulong userId);
     }
 }

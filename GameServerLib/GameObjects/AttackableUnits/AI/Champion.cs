@@ -364,6 +364,23 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
+        public bool HandleDisconnect()
+        {
+            var peerinfo = _game.PlayerManager.GetPeerInfo(this._playerId);
+            if (peerinfo != null)
+            {
+                if (!peerinfo.IsDisconnected)
+                {
+                    _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
+                }
+                peerinfo.IsDisconnected = true;
+                peerinfo.Champion.StopChampionMovement();
+                peerinfo.Champion.SetWaypoints(_game.Map.NavigationGrid.GetPath(peerinfo.Champion.GetPosition(), _game.Map.MapProperties.GetRespawnLocation(peerinfo.Team).GetPosition()));
+            }
+
+            return true;
+        }
+
         public void Recall()
         {
             var spawnPos = GetRespawnPosition();

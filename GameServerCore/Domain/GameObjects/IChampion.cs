@@ -23,6 +23,7 @@ namespace GameServerCore.Domain.GameObjects
         bool CanCast();
         void Recall();
         void Respawn();
+        bool HandleDisconnect();
 
         // spells
         void SwapSpells(byte slot1, byte slot2);
