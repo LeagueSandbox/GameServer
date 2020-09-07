@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Linq;
 
 namespace Spells
 {
@@ -19,7 +20,8 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, 1);
+            spell.SpellAnimation("SPELL3", owner);
+            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, 1, "", default(System.Numerics.Vector3), 3.0f);
             AddBuff("GarenE", 3.0f, 1, spell, owner, owner);
             CreateTimer(3.0f, () =>
             {
