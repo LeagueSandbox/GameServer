@@ -12,6 +12,7 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Content.Navigation;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -364,19 +365,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RespawnTimer = -1;
         }
 
-        public bool HandleDisconnect()
+        public bool OnDisconnect()
         {
-            var peerinfo = _game.PlayerManager.GetPeerInfo(this._playerId);
-            if (peerinfo != null)
-            {
-                if (!peerinfo.IsDisconnected)
-                {
-                    _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
-                }
-                peerinfo.IsDisconnected = true;
-                peerinfo.Champion.StopChampionMovement();
-                peerinfo.Champion.SetWaypoints(_game.Map.NavigationGrid.GetPath(peerinfo.Champion.GetPosition(), _game.Map.MapProperties.GetRespawnLocation(peerinfo.Team).GetPosition()));
-            }
+            this.StopChampionMovement();
+            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(GetPosition(), _game.Map.MapProperties.GetRespawnLocation(Team).GetPosition()));
 
             return true;
         }

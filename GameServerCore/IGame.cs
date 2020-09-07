@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Maps;
 using GameServerCore.Domain;
+using GameServerCore.Packets.Interfaces;
 
 namespace GameServerCore
 {
@@ -8,6 +9,7 @@ namespace GameServerCore
         IMap Map { get; }
         IObjectManager ObjectManager { get; }
         IPlayerManager PlayerManager { get; }
+        IPacketNotifier PacketNotifier { get; }
         bool IsRunning { get;}
         bool IsPaused { get; set; }
 
