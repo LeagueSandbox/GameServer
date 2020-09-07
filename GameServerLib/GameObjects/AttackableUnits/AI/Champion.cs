@@ -12,6 +12,7 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Content.Navigation;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -362,6 +363,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentMana = Stats.HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
+        }
+
+        public bool OnDisconnect()
+        {
+            this.StopChampionMovement();
+            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(GetPosition(), _game.Map.MapProperties.GetRespawnLocation(Team).GetPosition()));
+
+            return true;
         }
 
         public void Recall()

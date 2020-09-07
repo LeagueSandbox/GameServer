@@ -262,21 +262,6 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Enabled = false;
         }
 
-        public bool HandleDisconnect(ulong userId)
-        {
-            var peerinfo = PlayerManager.GetPeerInfo(userId);
-            if (peerinfo != null)
-            {
-                if (!peerinfo.IsDisconnected)
-                {
-                    PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
-                }
-                peerinfo.IsDisconnected = true;
-                peerinfo.Champion.StopChampionMovement();
-                peerinfo.Champion.SetWaypoints(Map.NavigationGrid.GetPath(peerinfo.Champion.GetPosition(), Map.MapProperties.GetRespawnLocation(peerinfo.Team).GetPosition()));
-            }
-            return true;
-        }
         private static List<T> GetInstances<T>(IGame g)
         {
             return Assembly.GetCallingAssembly()
