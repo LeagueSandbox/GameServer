@@ -47,7 +47,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             QuadTree<IGameObject> _quadDynamic = new QuadTree<IGameObject>(16000, 16000, new CollisionObject());
             _quadDynamic.InsertRange(_objects);
-            foreach (var obj in _objects)
+
+            // we iterate over a copy of _objects since it gets modified
+            var objectsCopy = new List<IGameObject>(_objects);
+            foreach (var obj in objectsCopy)
             {
                 // static objects, skip collison as they are static
                 if (obj is IBaseTurret || obj is IInhibitor || obj is INexus)
