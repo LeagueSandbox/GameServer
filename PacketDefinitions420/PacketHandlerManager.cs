@@ -243,9 +243,10 @@ namespace PacketDefinitions420
 
         public bool HandleDisconnect(Peer peer)
         {
-            ulong playerId = _peers.FirstOrDefault(x => x.Value.Address.Equals(peer.Address)).Key;
-            // TODO: fix all to use ulong
-            return _game.PlayerManager.GetPlayers().FirstOrDefault(x => x.Item1.Equals(playerId)).Item2.Champion.HandleDisconnect();
+            ulong clientId = _peers.FirstOrDefault(x => x.Value.Address.Equals(peer.Address)).Key;
+            var player = _game.PlayerManager.GetPlayers().Find(x => x.Item2.ClientId == clientId).Item2;
+
+            return player.Champion.HandleDisconnect();
         }
 
         public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
