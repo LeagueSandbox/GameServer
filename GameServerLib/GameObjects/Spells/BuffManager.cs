@@ -26,6 +26,9 @@ namespace GameServerLib.GameObjects.Spells
             _game = game;
             _target = target;
 
+            _buffs = new Dictionary<string, IBuff>();
+            _slots = new IBuff[256];
+
             if (initialBuffs != null)
             {
                 Add(initialBuffs.ToList());
