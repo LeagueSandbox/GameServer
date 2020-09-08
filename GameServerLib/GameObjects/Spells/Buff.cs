@@ -6,6 +6,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
@@ -27,8 +28,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         protected Game _game;
         protected bool _remove;
         protected CSharpScriptEngine _scriptEngine;
+        protected List<BuffFlag> _flags;
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false, List<BuffFlag> flags = null)
         {
             if (duration < 0)
             {
@@ -39,6 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _game = game;
             _remove = false;
             _scriptEngine = game.ScriptEngine;
+            _flags = flags != null ? flags : new List<BuffFlag>();
 
             _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
 
@@ -61,16 +64,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
             Name = buffName;
             OriginSpell = originspell;
-            if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
+            if (onto.Buffs.Has(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
             {
                 // Put parent buff data into children buffs
-                StackCount = onto.GetBuffWithName(Name).StackCount;
-                Slot = onto.GetBuffWithName(Name).Slot;
+                StackCount = onto.Buffs.Get(Name).StackCount;
+                Slot = onto.Buffs.Get(Name).Slot;
             }
             else
             {
                 StackCount = stacks;
-                Slot = onto.GetNewBuffSlot(this);
+                Slot = onto.Buffs.GetSlot(this);
             }
             SourceUnit = from;
             TimeElapsed = 0;
@@ -138,6 +141,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                     DeactivateBuff();
                 }
             }
+        }
+
+        public bool HasFlag(BuffFlag flag)
+        {
+            return _flags.Contains(flag);
+        }
+
+        public bool HasFlags(List<BuffFlag> flags)
+        {
+            foreach(var flag in flags)
+            {
+                if (!_flags.Contains(flag))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

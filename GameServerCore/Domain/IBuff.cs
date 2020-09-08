@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Collections.Generic;
 
 namespace GameServerCore.Domain
 {
@@ -23,5 +24,8 @@ namespace GameServerCore.Domain
         bool IsBuffSame(string buffName);
         void ResetTimeElapsed();
         void SetSlot(byte slot);
+
+        bool HasFlag(BuffFlag flag);
+        bool HasFlags(List<BuffFlag> flags);
     }
 }

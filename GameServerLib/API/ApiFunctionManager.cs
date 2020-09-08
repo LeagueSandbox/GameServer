@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.API
 
             try
             {
-                buff = new Buff(_game, buffName, duration, stacks, originspell, onto, from, infiniteduration);
+                buff = new Buff(_game, buffName, duration, stacks, originspell, onto, from);
             }
             catch (ArgumentException exception)
             {
@@ -107,18 +107,18 @@ namespace LeagueSandbox.GameServer.API
                 return null;
             }
 
-            onto.AddBuff(buff);
+            onto.Buffs.Add(buff);
             return buff;
         }
 
         public static bool HasBuff(IObjAiBase unit, IBuff b)
         {
-            return unit.HasBuff(b);
+            return unit.Buffs.Has(b);
         }
 
         public static bool HasBuff(IObjAiBase unit, string b)
         {
-            return unit.HasBuff(b);
+            return unit.Buffs.Has(b);
         }
 
         public static void EditBuff(IBuff b, byte newStacks)
@@ -133,7 +133,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void RemoveBuff(IObjAiBase target, string buff)
         {
-            target.RemoveBuffsWithName(buff);
+            target.Buffs.Remove(buff);
         }
 
         public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
