@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Force.Crc32;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 
@@ -12,7 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public string Name { get; private set; }
         protected float _globalGold = 250.0f;
         protected float _globalExp = 0.0f;
-
         public uint ParentNetId { get; private set; }
 
         public BaseTurret(

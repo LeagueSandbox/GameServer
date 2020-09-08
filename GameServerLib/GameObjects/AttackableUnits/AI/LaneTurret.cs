@@ -35,6 +35,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
+            if (type == TurretType.FOUNTAIN_TURRET)
+            {
+                SetIsTargetableToTeam(TeamId.TEAM_BLUE, false);
+                SetIsTargetableToTeam(TeamId.TEAM_PURPLE, false);
+            }
+
             BuildTurret(type);
         }
 

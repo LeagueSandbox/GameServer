@@ -51,6 +51,7 @@ namespace LeagueSandbox.GameServer
         public NetworkHandler<ICoreResponse> ResponseHandler { get; }
         public IPacketNotifier PacketNotifier { get; private set; }
         public IObjectManager ObjectManager { get; private set; }
+        public IProtectionManager ProtectionManager { get; private set; }
         public IMap Map { get; private set; }
         
         public Config Config { get; protected set; }
@@ -91,6 +92,7 @@ namespace LeagueSandbox.GameServer
             ChatCommandManager.LoadCommands();
 
             ObjectManager = new ObjectManager(this);
+            ProtectionManager = new ProtectionManager();
             Map = new Map(this);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
@@ -207,6 +209,7 @@ namespace LeagueSandbox.GameServer
         {
             GameTime += diff;
             ObjectManager.Update(diff);
+            ProtectionManager.Update(diff);
             Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
