@@ -8,6 +8,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerLib.GameObjects.Spells;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -57,6 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
+            Buffs = new BuffManager(game, this);
 
             CharData = _game.Config.ContentManager.GetCharData(Model);
 

@@ -15,7 +15,6 @@ namespace GameServerLib.GameObjects.Spells
 {
     class BuffManager : IBuffManager
     {
-        // TODO: maybe change to a List<IBuff> and access names per LINQ
         private Dictionary<string, IBuff> _buffs;
         private IBuff[] _slots;
         private Game _game;
@@ -39,15 +38,19 @@ namespace GameServerLib.GameObjects.Spells
         {
             var previousBuff = _buffs[buff.Name];
 
+            // remove old buff
             previousBuff.DeactivateBuff();
             Remove(buff);
             RemoveSlot(buff);
 
+            // replace old buff with new one in slots
             _slots[previousBuff.Slot] = buff;
             buff.SetSlot(previousBuff.Slot);
 
+            // add new buff
             _buffs.Add(buff.Name, buff);
 
+            // notify
             if (!buff.IsHidden)
             {
                 _game.PacketNotifier.NotifyNPC_BuffReplace(buff);
