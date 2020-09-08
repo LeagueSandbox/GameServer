@@ -3,8 +3,10 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.GameObjects.Spells;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PacketDefinitions420.PacketDefinitions.S2C;
+using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,8 @@ namespace GameServerLib.GameObjects.Spells
 {
     class BuffManager : IBuffManager
     {
-        private Dictionary<string, IBuff> _buffs;
+        //private Dictionary<string, IBuff> _buffs;
+        private SimplePriorityQueue<IBuff> _buffQueue;
         private IBuff[] _slots;
         private Game _game;
         private IObjAiBase _target;
@@ -25,7 +28,7 @@ namespace GameServerLib.GameObjects.Spells
             _game = game;
             _target = target;
 
-            _buffs = new Dictionary<string, IBuff>();
+            _buffQueue = new SimplePriorityQueue<IBuff>();
             _slots = new IBuff[256];
 
             if (initialBuffs != null)
@@ -36,7 +39,7 @@ namespace GameServerLib.GameObjects.Spells
 
         protected void Replace(IBuff buff)
         {
-            var previousBuff = _buffs[buff.Name];
+            var previousBuff = Get(buff.Name);
 
             // remove old buff
             previousBuff.DeactivateBuff();
@@ -48,7 +51,7 @@ namespace GameServerLib.GameObjects.Spells
             buff.SetSlot(previousBuff.Slot);
 
             // add new buff
-            _buffs.Add(buff.Name, buff);
+            _buffQueue.Enqueue(buff, buff.Duration);
 
             // notify
             if (!buff.IsHidden)
@@ -61,23 +64,25 @@ namespace GameServerLib.GameObjects.Spells
 
         protected void Renew(IBuff buff)
         {
-            _buffs[buff.Name].ResetTimeElapsed();
+            var actualBuff = Get(buff.Name);
+            actualBuff.ResetTimeElapsed();
 
             if (!buff.IsHidden)
             {
-                _game.PacketNotifier.NotifyNPC_BuffReplace(_buffs[buff.Name]);
+                _game.PacketNotifier.NotifyNPC_BuffReplace(actualBuff);
             }
 
-            _target.Stats.RemoveModifier(_buffs[buff.Name].GetStatsModifier());
-            _buffs[buff.Name].ActivateBuff();
+            _target.Stats.RemoveModifier(actualBuff.GetStatsModifier());
+            actualBuff.ActivateBuff();
         }
 
         protected void StackOverlap(IBuff buff)
         {
-            if(_buffs[buff.Name].StackCount >= _buffs[buff.Name].MaxStacks)
+            var actualBuff = Get(buff.Name);
+            if(actualBuff.StackCount >= actualBuff.MaxStacks)
             {
                 var tempBuffs = GetAll(buff.Name);
-                var oldestBuff = tempBuffs[0];
+                var oldestBuff = tempBuffs.First();
 
                 oldestBuff.DeactivateBuff();
                 Remove(buff);
@@ -85,14 +90,14 @@ namespace GameServerLib.GameObjects.Spells
 
                 tempBuffs = GetAll(buff.Name);
 
-                _slots[oldestBuff.Slot] = tempBuffs[0];
-                _buffs.Add(oldestBuff.Name, tempBuffs[0]);
+                _slots[oldestBuff.Slot] = actualBuff;
+                _buffQueue.Enqueue(actualBuff, actualBuff.Duration);
 
                 if (!buff.IsHidden)
                 {
-                    if (_buffs[buff.Name].BuffType == BuffType.COUNTER)
+                    if (actualBuff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(_buffs[buff.Name]);
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(actualBuff);
                     }
                     else
                     {
@@ -108,23 +113,25 @@ namespace GameServerLib.GameObjects.Spells
         {
             RemoveSlot(buff);
 
-            _buffs[buff.Name].ResetTimeElapsed();
-            _buffs[buff.Name].IncrementStackCount();
+            var actualBuff = Get(buff.Name);
+
+            actualBuff.ResetTimeElapsed();
+            actualBuff.IncrementStackCount();
 
             if (!buff.IsHidden)
             {
-                if (_buffs[buff.Name].BuffType == BuffType.COUNTER)
+                if (actualBuff.BuffType == BuffType.COUNTER)
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(_buffs[buff.Name]);
+                    _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(actualBuff);
                 }
                 else
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffUpdateCount(_buffs[buff.Name], _buffs[buff.Name].Duration, _buffs[buff.Name].TimeElapsed);
+                    _game.PacketNotifier.NotifyNPC_BuffUpdateCount(actualBuff, actualBuff.Duration, actualBuff.TimeElapsed);
                 }
             }
 
-            _target.Stats.RemoveModifier(_buffs[buff.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
-            _buffs[buff.Name].ActivateBuff();
+            _target.Stats.RemoveModifier(actualBuff.GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
+            actualBuff.ActivateBuff();
         }
 
         protected void AddNew(IBuff buff)
@@ -132,11 +139,11 @@ namespace GameServerLib.GameObjects.Spells
             if(Has(buff.Name)) // TODO: is this realy needed ?
             {
                 var actualBuff = Get(buff.Name);
-                _buffs.Add(buff.Name, actualBuff);
+                _buffQueue.Enqueue(actualBuff, actualBuff.Duration);
                 return;
             }
 
-            _buffs.Add(buff.Name, buff);
+            _buffQueue.Enqueue(buff, buff.Duration);
 
             if (!buff.IsHidden)
             {
@@ -149,7 +156,7 @@ namespace GameServerLib.GameObjects.Spells
         public void Add(IBuff buff)
         {
             // add a new buff
-            if (!_buffs.ContainsKey(buff.Name))
+            if (_buffQueue.ToList().FindAll(x => x.Name.Equals(buff.Name)).Count == 0)
             {
                 AddNew(buff);
             }
@@ -184,53 +191,46 @@ namespace GameServerLib.GameObjects.Spells
 
         public int Count()
         {
-            return _buffs.Count;
+            return _buffQueue.Count;
         }
 
-        public List<IBuff> Get()
+        public IEnumerable<IBuff> Get()
         {
-            return _buffs.Values.ToList();
+            return _buffQueue.ToList();
         }
 
         public IBuff Get(string buffName)
         {
-            return _buffs[buffName];
+            return _buffQueue.Where(x => x.Name.Equals(buffName)).FirstOrDefault();
         }
 
-        public IBuff Get(Predicate<IBuff> filter)
+        public IBuff Get(Func<IBuff, bool> filter)
         {
-            return _buffs.Values.ToList().Find(filter);
+            return _buffQueue.Where(filter).FirstOrDefault();
         }
 
-        public List<IBuff> GetAll(string buffName)
+        public IEnumerable<IBuff> GetAll(string buffName)
         {
-            return _buffs.Values.ToList().FindAll(buff => buff.IsBuffSame(buffName));
+            return _buffQueue.Where(buff => buff.IsBuffSame(buffName));
         }
 
-        public List<IBuff> GetAll(Predicate<IBuff> filter)
+        public IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter)
         {
-            return _buffs.Values.ToList().FindAll(filter);
+            return _buffQueue.Where(filter);
         }
 
-        public byte GetSlot(IBuff buff = null)
+        public SimplePriorityQueue<IBuff> GetQueue()
         {
-            for(byte i = 1; i < _slots.Length; i++)
-            {
-                if (_slots[i] == buff)
-                {
-                    return i;
-                }
-            }
-
-            throw new Exception($"No slot found with {buff.ToString()}");
+            return _buffQueue;
         }
+
 
         public bool Has(string buffName)
         {
-            return _buffs.Values.Where(x => x.IsBuffSame(buffName)).Count() > 0;
+            return _buffQueue.Where(x => x.IsBuffSame(buffName)).Count() > 0;
         }
 
-        public bool Has(List<string> buffNames)
+        public bool Has(IEnumerable<string> buffNames)
         {
             foreach (var buffName in buffNames)
             {
@@ -248,7 +248,7 @@ namespace GameServerLib.GameObjects.Spells
             return Has(buff.Name);
         }
 
-        public bool Has(List<IBuff> buffs)
+        public bool Has(IEnumerable<IBuff> buffs)
         {
             foreach (var buff in buffs)
             {
@@ -261,12 +261,12 @@ namespace GameServerLib.GameObjects.Spells
             return true;
         }
 
-        public bool Has(Predicate<IBuff> buffFilter)
+        public bool Has(Func<IBuff, bool> buffFilter)
         {
-            return _buffs.Values.ToList().FindAll(buffFilter).Count > 0;
+            return _buffQueue.Where(buffFilter).Count() > 0;
         }
 
-        public bool Has(List<Predicate<IBuff>> buffFilters)
+        public bool Has(IEnumerable<Func<IBuff, bool>> buffFilters)
         {
             foreach (var filter in buffFilters)
             {
@@ -279,20 +279,25 @@ namespace GameServerLib.GameObjects.Spells
             return true;
         }
 
+        public void Remove(string buffName)
+        {
+            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => _buffQueue.Remove(x));
+        }
+
         public void Remove(IBuff buff)
         {
             if(buff.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && buff.StackCount > 1)
             {
                 buff.DecrementStackCount();
 
-                Remove(buff.Name);
+                Remove(buff);
                 RemoveSlot(buff);
 
-                var tempBuffs = GetAll(buff.Name);
+                var tempBuffs = GetAll(buff.Name).ToList();
                 tempBuffs.ForEach(tempBuff => tempBuff.SetStacks(buff.StackCount));
 
                 _slots[buff.Slot] = tempBuffs[0];
-                _buffs.Add(buff.Name, tempBuffs[0]);
+                _buffQueue.Enqueue(tempBuffs[0], tempBuffs[0].Duration);
 
                 var newestBuff = tempBuffs[tempBuffs.Count - 1];
 
@@ -300,7 +305,7 @@ namespace GameServerLib.GameObjects.Spells
                 {
                     if (buff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(_buffs[buff.Name]);
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                     }                        
                     else
                     {
@@ -317,8 +322,7 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
-                _buffs.Values.ToList().RemoveAll(buff => buff.Elapsed());
-                Remove(buff.Name);
+                _buffQueue.Where(buff => buff.Elapsed()).ToList().ForEach(x => _buffQueue.Remove(x));
                 RemoveSlot(buff);
 
                 if(!buff.IsHidden)
@@ -328,12 +332,7 @@ namespace GameServerLib.GameObjects.Spells
             }
         }
 
-        public void Remove(string buffName)
-        {
-            _buffs.Remove(buffName);
-        }
-
-        public void Remove(List<IBuff> buffs)
+        public void Remove(IEnumerable<IBuff> buffs)
         {
             foreach (var buff in buffs)
             {
@@ -341,9 +340,9 @@ namespace GameServerLib.GameObjects.Spells
             }
         }
 
-        public void Remove(Predicate<IBuff> buffFilter)
+        public void Remove(Func<IBuff, bool> buffFilter)
         {
-            var buffsToRemove = _buffs.Values.ToList().FindAll(buffFilter);
+            var buffsToRemove = _buffQueue.Where(buffFilter);
 
             foreach (var buffToRemove in buffsToRemove)
             {
@@ -351,7 +350,7 @@ namespace GameServerLib.GameObjects.Spells
             }
         }
 
-        public void Remove(List<Predicate<IBuff>> buffFilters)
+        public void Remove(IEnumerable<Func<IBuff, bool>> buffFilters)
         {
             foreach (var filter in buffFilters)
             {
@@ -359,6 +358,18 @@ namespace GameServerLib.GameObjects.Spells
             }
         }
 
+        public byte GetSlot(IBuff buff = null)
+        {
+            for (byte i = 1; i < _slots.Length; i++)
+            {
+                if (_slots[i] == buff)
+                {
+                    return i;
+                }
+            }
+
+            throw new Exception($"No slot found with {buff.ToString()}");
+        }
         public void RemoveSlot(IBuff buff)
         {
             var slot = GetSlot(buff);

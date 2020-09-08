@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +31,7 @@ namespace GameServerCore.Domain
         /// get all buffs
         /// </summary>
         /// <returns>list of all buffs</returns>
-        List<IBuff> Get();
+        IEnumerable<IBuff> Get();
 
         /// <summary>
         /// get a buff by name
@@ -44,21 +45,27 @@ namespace GameServerCore.Domain
         /// </summary>
         /// <param name="filter">filter for buff</param>
         /// <returns>buff</returns>
-        IBuff Get(Predicate<IBuff> filter);
+        IBuff Get(Func<IBuff, bool> filter);
 
         /// <summary>
         /// get all buffs with name
         /// </summary>
         /// <param name="buffName">buff name</param>
         /// <returns>buffs</returns>
-        List<IBuff> GetAll(string buffName);
+        IEnumerable<IBuff> GetAll(string buffName);
 
         /// <summary>
         /// get a filtered list of buffs
         /// </summary>
         /// <param name="filter">filter</param>
         /// <returns>buffs</returns>
-        List<IBuff> GetAll(Predicate<IBuff> filter);
+        IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter);
+
+        /// <summary>
+        /// get the buff priority queue
+        /// </summary>
+        /// <returns>buff priority queue</returns>
+        SimplePriorityQueue<IBuff> GetQueue();
 
         /// <summary>
         /// check if unit has buff
@@ -72,7 +79,7 @@ namespace GameServerCore.Domain
         /// </summary>
         /// <param name="buffNames">list of buff names to check</param>
         /// <returns>unit has buffs ?</returns>
-        bool Has(List<string> buffNames);
+        bool Has(IEnumerable<string> buffNames);
 
         /// <summary>
         /// check if unit has buff
@@ -86,21 +93,21 @@ namespace GameServerCore.Domain
         /// </summary>
         /// <param name="buffs">buffs to check</param>
         /// <returns>unit has buffs ?</returns>
-        bool Has(List<IBuff>buffs);
+        bool Has(IEnumerable<IBuff> buffs);
 
         /// <summary>
         /// check if unit has buff
         /// </summary>
         /// <param name="buffFilter">predicate filter of buff</param>
         /// <returns>unit has buff ?</returns>
-        bool Has(Predicate<IBuff> buffFilter);
+        bool Has(Func<IBuff, bool> buffFilter);
 
         /// <summary>
         /// check if unit has buffs
         /// </summary>
         /// <param name="buffFilters">predicate filters of buff</param>
         /// <returns>unit has buffs ?</returns>
-        bool Has(List<Predicate<IBuff>> buffFilters);
+        bool Has(IEnumerable<Func<IBuff, bool>> buffFilters);
 
         /// <summary>
         /// remove buff from unit
@@ -118,19 +125,19 @@ namespace GameServerCore.Domain
         /// removes multiple buffs from unit
         /// </summary>
         /// <param name="buffs">buffs to remove</param>
-        void Remove(List<IBuff> buffs);
+        void Remove(IEnumerable<IBuff> buffs);
 
         /// <summary>
         /// remove buff from unit
         /// </summary>
         /// <param name="buffFilter">predicate filter for buff</param>
-        void Remove(Predicate<IBuff> buffFilter);
+        void Remove(Func<IBuff, bool> buffFilter);
 
         /// <summary>
         /// remove buffs from unit
         /// </summary>
         /// <param name="buffFilters">predicate filters for buff</param>
-        void Remove(List<Predicate<IBuff>> buffFilters);
+        void Remove(IEnumerable<Func<IBuff, bool>> buffFilters);
 
         /// <summary>
         /// get slot of the buff or a new one

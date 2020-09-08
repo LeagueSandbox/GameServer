@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
@@ -134,16 +135,17 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = ai.Buffs.Get();
-                    for (int i = tempBuffs.Count - 1; i >= 0; i--)
+                    var tempBuffs = ai.Buffs.GetQueue();
+                    while(tempBuffs.Count > 0)
                     {
-                        if (tempBuffs[i].Elapsed())
+                        IBuff buff = tempBuffs.Dequeue();
+                        if(buff.Elapsed())
                         {
-                            ai.Buffs.Remove(tempBuffs[i]);
+                            ai.Buffs.Remove(buff);
                         }
                         else
                         {
-                            tempBuffs[i].Update(diff);
+                            buff.Update(diff);
                         }
                     }
                 }
