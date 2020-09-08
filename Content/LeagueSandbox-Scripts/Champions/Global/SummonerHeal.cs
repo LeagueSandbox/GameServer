@@ -47,7 +47,7 @@ namespace Spells
         private void PerformHeal(IObjAiBase owner, ISpell spell, IChampion target)
         {
             float healthGain = 75 + (target.Stats.Level * 15);
-            if (target.HasBuff("HealCheck"))
+            if (target.Buffs.Has("HealCheck"))
             {
                 healthGain *= 0.5f;
             }

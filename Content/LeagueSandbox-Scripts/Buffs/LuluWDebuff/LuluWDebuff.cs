@@ -25,7 +25,7 @@ namespace LuluWDebuff
             StatsModifier.MoveSpeed.BaseBonus = StatsModifier.MoveSpeed.BaseBonus - 60;
             unit.ApplyCrowdControl(_crowdDisarm);
             unit.ApplyCrowdControl(_crowdSilence);
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
             var time = 1 + 0.25f * ownerSpell.Level;
         }
 
@@ -33,7 +33,7 @@ namespace LuluWDebuff
         {
             unit.RemoveCrowdControl(_crowdDisarm);
             unit.RemoveCrowdControl(_crowdSilence);
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

@@ -62,7 +62,7 @@ namespace GameServerLib.GameObjects.Spells
                 _game.PacketNotifier.NotifyNPC_BuffReplace(_buffs[buff.Name]);
             }
 
-            RemoveStatModifier(_buffs[buff.Name].GetStatsModifier());
+            _target.Stats.RemoveModifier(_buffs[buff.Name].GetStatsModifier());
             _buffs[buff.Name].ActivateBuff();
         }
 
@@ -117,7 +117,7 @@ namespace GameServerLib.GameObjects.Spells
                 }
             }
 
-            RemoveStatModifier(_buffs[buff.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
+            _target.Stats.RemoveModifier(_buffs[buff.Name].GetStatsModifier()); // TODO: Replace with a better method that unloads -> reloads all data of a script
             _buffs[buff.Name].ActivateBuff();
         }
 
@@ -138,16 +138,6 @@ namespace GameServerLib.GameObjects.Spells
             }
 
             buff.ActivateBuff();
-        }
-
-        public void AddStatModifier(IStatsModifier statModifier)
-        {
-            _target.Stats.AddModifier(statModifier);
-        }
-
-        public void RemoveStatModifier(IStatsModifier statModifier)
-        {
-            _target.Stats.RemoveModifier(statModifier);
         }
 
         public void Add(IBuff buff)

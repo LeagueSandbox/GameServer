@@ -28,7 +28,7 @@ namespace LuluR
             _healthBonus = 150 + 150 * ownerSpell.Level;
             StatsModifier.HealthPoints.BaseBonus = StatsModifier.HealthPoints.BaseBonus + 150 + 150 * ownerSpell.Level;
             unit.Stats.CurrentHealth = unit.Stats.CurrentHealth + 150 + 150 * ownerSpell.Level;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
@@ -36,7 +36,7 @@ namespace LuluR
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
             if (unit.Stats.CurrentHealth > unit.Stats.HealthPoints.Total)
             {
                 unit.Stats.CurrentHealth = unit.Stats.CurrentHealth - bonusDamage;

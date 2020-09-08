@@ -22,12 +22,12 @@ namespace SummonerExhaustDebuff
             StatsModifier.AttackSpeed.PercentBonus = -0.3f;
             StatsModifier.Armor.BaseBonus = -10;
             StatsModifier.MagicResist.BaseBonus = -10;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

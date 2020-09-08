@@ -20,12 +20,12 @@ namespace YoumuusGhostblade
         {
             StatsModifier.MoveSpeed.PercentBonus = 0.2f;
             StatsModifier.AttackSpeed.PercentBonus = 0.4f;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

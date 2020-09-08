@@ -47,14 +47,14 @@ namespace AatroxR
                 StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.Level - 1))) * buff.StackCount; // StackCount included here as an example
                 StatsModifier.Range.FlatBonus = 175f * buff.StackCount;
 
-                unit.AddStatModifier(StatsModifier);
+                unit.Stats.AddModifier(StatsModifier);
             }
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
             RemoveParticle(pmodel);
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

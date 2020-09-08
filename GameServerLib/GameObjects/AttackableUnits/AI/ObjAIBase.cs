@@ -25,7 +25,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private float _autoAttackCurrentCooldown;
         private float _autoAttackCurrentDelay;
         private uint _autoAttackProjId;
-        private object _buffsLock;
         private List<ICrowdControl> _crowdControlList = new List<ICrowdControl>();
         private bool _isNextAutoCrit;
         protected ItemManager _itemManager;

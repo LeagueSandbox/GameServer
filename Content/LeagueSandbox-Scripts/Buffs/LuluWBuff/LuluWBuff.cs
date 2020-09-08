@@ -20,13 +20,13 @@ namespace LuluWBuff
         {
             var ap = ownerSpell.Owner.Stats.AbilityPower.Total * 0.001;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
             var time = 2.5f + 0.5f * ownerSpell.Level;
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

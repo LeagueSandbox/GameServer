@@ -28,7 +28,7 @@ namespace Spells
         {
             var p1 = AddParticleTarget(owner, "TaricHammerSmash_nova.troy", owner);
             var p2 = AddParticleTarget(owner, "TaricHammerSmash_shatter.troy", owner);
-            var hasbuff = owner.HasBuff("Radiance");
+            var hasbuff = owner.Buffs.Has("Radiance");
             var ap = owner.Stats.AbilityPower.Total * 0.5f;
             var damage = 50 + spell.Level * 100 + ap;
 

@@ -24,12 +24,12 @@ namespace Quickdraw
         public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.Level);
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
     }
 }

@@ -20,12 +20,12 @@ namespace Radiance
         {
             StatsModifier.AttackDamage.FlatBonus += 10f + ownerSpell.Level * 20;
             StatsModifier.AbilityPower.FlatBonus += 10f + ownerSpell.Level * 20;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

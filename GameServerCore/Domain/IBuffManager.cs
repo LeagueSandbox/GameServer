@@ -39,8 +39,5 @@ namespace GameServerCore.Domain
 
         byte GetSlot(IBuff buff);
         void RemoveSlot(IBuff buff);
-
-        void AddStatModifier(IStatsModifier statModifier);
-        void RemoveStatModifier(IStatsModifier statModifier);
     }
 }

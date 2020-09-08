@@ -23,14 +23,14 @@ namespace Overdrive
             //p = AddParticleTarget(unit, "Overdrive_buf.troy", unit, 1);
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (12f + ownerSpell.Level * 4) / 100f;
             StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (22f + 8f * ownerSpell.Level) / 100f;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.AddModifier(StatsModifier);
 
         }
 
         public void OnDeactivate(IObjAiBase unit)
         {
             //RemoveParticle(p);
-            unit.RemoveStatModifier(StatsModifier);
+            unit.Stats.RemoveModifier(StatsModifier);
         }
 
         public void OnUpdate(double diff)

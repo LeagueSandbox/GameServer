@@ -31,7 +31,7 @@ namespace Spells
             _target = (IObjAiBase)target;
             _owner = (IChampion)owner;
 
-            if (!_target.HasBuff("YasuoEBlock"))
+            if (!_target.Buffs.Has("YasuoEBlock"))
             {
                 AddBuff("YasuoE", 0.395f - spell.Level * 0.012f, 1, spell, _owner, _owner);            
                 AddBuff("YasuoEBlock", 11f - spell.Level * 1f, 1, spell, _target, _owner);
