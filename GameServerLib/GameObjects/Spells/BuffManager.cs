@@ -222,17 +222,17 @@ namespace GameServerLib.GameObjects.Spells
 
         public IBuff Get(string buffName)
         {
-            return _buffQueue.Where(x => x.Name.Equals(buffName)).FirstOrDefault();
+            return _buffQueue.Where(x => x.Name.Equals(buffName)).First();
         }
 
         public IBuff Get(Func<IBuff, bool> filter)
         {
-            return _buffQueue.Where(filter).FirstOrDefault();
+            return _buffQueue.Where(filter).First();
         }
 
         public IEnumerable<IBuff> GetAll(string buffName)
         {
-            return _buffQueue.Where(buff => buff.IsBuffSame(buffName));
+            return _buffQueue.Where(buff => buff.Name.Equals(buffName));
         }
 
         public IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter)
@@ -379,12 +379,21 @@ namespace GameServerLib.GameObjects.Spells
             }
         }
 
-        public byte GetSlot(IBuff buff = null)
+        public byte GetSlot(IBuff buff = null, bool createNew = false)
         {
+            IBuff tempBuff = null;
+            if(createNew)
+            {
+                tempBuff = buff;
+                buff = null;
+            }
+
             for (byte i = 1; i < _slots.Length; i++)
             {
                 if (_slots[i] == buff)
                 {
+                    if (createNew)
+                        _slots[i] = tempBuff;
                     return i;
                 }
             }

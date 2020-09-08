@@ -143,8 +143,9 @@ namespace GameServerCore.Domain
         /// get slot of the buff or a new one
         /// </summary>
         /// <param name="buff">buff of slot</param>
+        /// <param name="createNewOne">should create a new slot ?</param>
         /// <returns>slot of buff</returns>
-        byte GetSlot(IBuff buff = null);
+        byte GetSlot(IBuff buff = null, bool createNewOne = false);
 
         /// <summary>
         /// remove slot of the buff

@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             else
             {
                 StackCount = stacks;
-                Slot = onto.Buffs.GetSlot(this);
+                Slot = onto.Buffs.GetSlot(this, true);
             }
             SourceUnit = from;
             TimeElapsed = 0;
