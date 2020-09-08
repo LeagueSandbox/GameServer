@@ -43,7 +43,7 @@ namespace GameServerLib.GameObjects.Spells
 
             // remove old buff
             previousBuff.DeactivateBuff();
-            Remove(buff);
+            Remove(buff.Name);
             RemoveSlot(buff);
 
             // replace old buff with new one in slots
@@ -85,19 +85,40 @@ namespace GameServerLib.GameObjects.Spells
                 var oldestBuff = tempBuffs.First();
 
                 oldestBuff.DeactivateBuff();
-                Remove(buff);
+                Remove(buff.Name);
                 RemoveSlot(buff);
 
                 tempBuffs = GetAll(buff.Name);
 
-                _slots[oldestBuff.Slot] = actualBuff;
-                _buffQueue.Enqueue(actualBuff, actualBuff.Duration);
+                _slots[oldestBuff.Slot] = tempBuffs.First();
+                _buffQueue.Enqueue(actualBuff, tempBuffs.First().Duration);
 
                 if (!buff.IsHidden)
                 {
                     if (actualBuff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(actualBuff);
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                    }
+                    else
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(buff, buff.Duration, buff.TimeElapsed);
+                    }
+                }
+
+                buff.ActivateBuff();
+            }
+            else
+            {
+                actualBuff = Get(buff.Name);
+                actualBuff.IncrementStackCount();
+
+                GetAll(buff.Name).ToList().ForEach(x => x.SetStacks(actualBuff.StackCount));
+
+                if (!buff.IsHidden)
+                {
+                    if (buff.BuffType == BuffType.COUNTER)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                     }
                     else
                     {
@@ -156,7 +177,7 @@ namespace GameServerLib.GameObjects.Spells
         public void Add(IBuff buff)
         {
             // add a new buff
-            if (_buffQueue.ToList().FindAll(x => x.Name.Equals(buff.Name)).Count == 0)
+            if (_buffQueue.Where(x => x.Name.Equals(buff.Name)).Count() == 0)
             {
                 AddNew(buff);
             }
