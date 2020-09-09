@@ -18,7 +18,7 @@ namespace GameServerLib.GameObjects.Spells
     class BuffManager : IBuffManager
     {
         //private Dictionary<string, IBuff> _buffs;
-        private SimplePriorityQueue<IBuff> _buffQueue;
+        private SimplePriorityQueue<IBuff, float> _buffQueue;
         private IBuff[] _slots;
         private Game _game;
         private IObjAiBase _target;
@@ -28,7 +28,7 @@ namespace GameServerLib.GameObjects.Spells
             _game = game;
             _target = target;
 
-            _buffQueue = new SimplePriorityQueue<IBuff>();
+            _buffQueue = new SimplePriorityQueue<IBuff, float>();
             _slots = new IBuff[256];
 
             if (initialBuffs != null)
@@ -240,7 +240,7 @@ namespace GameServerLib.GameObjects.Spells
             return _buffQueue.Where(filter);
         }
 
-        public SimplePriorityQueue<IBuff> GetQueue()
+        public SimplePriorityQueue<IBuff, float> GetQueue()
         {
             return _buffQueue;
         }
@@ -302,7 +302,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(string buffName)
         {
-            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => _buffQueue.Remove(x));
+            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffQueue.Remove(x); });
         }
 
         public void Remove(IBuff buff)
@@ -311,7 +311,7 @@ namespace GameServerLib.GameObjects.Spells
             {
                 buff.DecrementStackCount();
 
-                Remove(buff);
+                Remove(buff.Name);
                 RemoveSlot(buff);
 
                 var tempBuffs = GetAll(buff.Name).ToList();
@@ -320,7 +320,7 @@ namespace GameServerLib.GameObjects.Spells
                 _slots[buff.Slot] = tempBuffs[0];
                 _buffQueue.Enqueue(tempBuffs[0], tempBuffs[0].Duration);
 
-                var newestBuff = tempBuffs[tempBuffs.Count - 1];
+                var newestBuff = tempBuffs.Last();
 
                 if (!buff.IsHidden)
                 {
@@ -344,6 +344,7 @@ namespace GameServerLib.GameObjects.Spells
             else
             {
                 _buffQueue.Where(buff => buff.Elapsed()).ToList().ForEach(x => _buffQueue.Remove(x));
+                Remove(buff.Name);
                 RemoveSlot(buff);
 
                 if(!buff.IsHidden)

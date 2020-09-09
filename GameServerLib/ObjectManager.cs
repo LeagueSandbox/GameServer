@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerLib;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
+using Priority_Queue;
 
 namespace LeagueSandbox.GameServer
 {
@@ -135,13 +139,14 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = ai.Buffs.GetQueue();
-                    while(tempBuffs.Count > 0)
+                    var tempBuffs = ai.Buffs.Get();  
+                    
+                    // TODO: add propper dequeing for buffs ? -> will result in bugs
+                    foreach(var buff in tempBuffs)
                     {
-                        IBuff buff = tempBuffs.Dequeue();
                         if(buff.Elapsed())
                         {
-                            ai.Buffs.Remove(buff);
+                            ai.Buffs.Remove(buff.Name);
                         }
                         else
                         {

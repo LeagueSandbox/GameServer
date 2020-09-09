@@ -65,7 +65,7 @@ namespace GameServerCore.Domain
         /// get the buff priority queue
         /// </summary>
         /// <returns>buff priority queue</returns>
-        SimplePriorityQueue<IBuff> GetQueue();
+        SimplePriorityQueue<IBuff, float> GetQueue();
 
         /// <summary>
         /// check if unit has buff
