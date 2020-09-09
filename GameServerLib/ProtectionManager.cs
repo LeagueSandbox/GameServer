@@ -13,10 +13,10 @@ namespace LeagueSandbox.GameServer
         private List<IAttackableUnit> _protectedElements = new List<IAttackableUnit>();
         private List<IAttackableUnit> _hasProtectionElements = new List<IAttackableUnit>();
 
-        private List<IChampion> _protectedPlayers = new List<IChampion>();
+        private readonly List<IChampion> _protectedPlayers = new List<IChampion>();
         private readonly IStatsModifier AFK_PROT_MODIFIER = new StatsModifier();
 
-        private Game _game;
+        private readonly Game _game;
 
         public ProtectionManager(Game game)
         {
