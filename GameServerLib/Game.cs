@@ -92,7 +92,7 @@ namespace LeagueSandbox.GameServer
             ChatCommandManager.LoadCommands();
 
             ObjectManager = new ObjectManager(this);
-            ProtectionManager = new ProtectionManager();
+            ProtectionManager = new ProtectionManager(this);
             Map = new Map(this);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);

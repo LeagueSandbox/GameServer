@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer
 {
@@ -13,9 +13,16 @@ namespace LeagueSandbox.GameServer
         private List<IAttackableUnit> _protectedElements = new List<IAttackableUnit>();
         private List<IAttackableUnit> _hasProtectionElements = new List<IAttackableUnit>();
 
-        public ProtectionManager()
+        private readonly List<IChampion> _protectedPlayers = new List<IChampion>();
+        private readonly IStatsModifier AFK_PROT_MODIFIER = new StatsModifier();
+
+        private readonly Game _game;
+
+        public ProtectionManager(Game game)
         {
-            
+            _game = game;
+            AFK_PROT_MODIFIER.Armor.FlatBonus = 99999.0f;
+            AFK_PROT_MODIFIER.MagicResist.FlatBonus = 99999.0f;
         }
 
         public void AddProtection(IAttackableUnit element, IAttackableUnit[] dependOnAll,
@@ -99,6 +106,26 @@ namespace LeagueSandbox.GameServer
                             _hasProtectionElements.Add(element);
                         }
                     }
+                }
+            }
+        }
+
+        public void HandleFountainProtection(IChampion champion)
+        {
+            if (_game.PlayerManager.GetClientInfoByChampion(champion).IsDisconnected)
+            {
+                if (!_protectedPlayers.Contains(champion))
+                {
+                    champion.AddStatModifier(AFK_PROT_MODIFIER);
+                    _protectedPlayers.Add(champion);
+                }
+            }
+            else
+            {
+                if (_protectedPlayers.Contains(champion))
+                {
+                    champion.RemoveStatModifier(AFK_PROT_MODIFIER);
+                    _protectedPlayers.Remove(champion);
                 }
             }
         }
