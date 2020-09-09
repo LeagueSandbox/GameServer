@@ -244,7 +244,13 @@ namespace PacketDefinitions420
         public bool HandleDisconnect(Peer peer)
         {
             ulong playerId = _peers.FirstOrDefault(x => x.Value.Address.Equals(peer.Address)).Key;
-            var player = _game.PlayerManager.GetPlayers().Find(x => x.Item2.PlayerId == playerId).Item2;
+            var player = _game.PlayerManager.GetPlayers().Find(x => x.Item2.PlayerId == playerId)?.Item2;
+            if (player == null)
+            {
+                Debug.WriteLine($"prevented double disconnect of {playerId}");
+                return true;
+            }
+            
             var peerInfo = _game.PlayerManager.GetPeerInfo(player.PlayerId);
 
             if (peerInfo != null)
