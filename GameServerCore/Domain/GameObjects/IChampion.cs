@@ -13,7 +13,6 @@ namespace GameServerCore.Domain.GameObjects
         int Skin { get; }
         IChampionStats ChampStats { get; }
         byte SkillPoints { get; set; }
-        bool HasAfkProtection { get; set; }
 
         // basic
         void UpdateSkin(int skinNo);
