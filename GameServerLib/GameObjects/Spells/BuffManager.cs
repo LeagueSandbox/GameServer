@@ -18,7 +18,7 @@ namespace GameServerLib.GameObjects.Spells
     class BuffManager : IBuffManager
     {
         //private Dictionary<string, IBuff> _buffs;
-        private SimplePriorityQueue<IBuff, float> _buffQueue;
+        private List<IBuff> _buffQueue;
         private IBuff[] _slots;
         private Game _game;
         private IObjAiBase _target;
@@ -28,7 +28,7 @@ namespace GameServerLib.GameObjects.Spells
             _game = game;
             _target = target;
 
-            _buffQueue = new SimplePriorityQueue<IBuff, float>();
+            _buffQueue = new List<IBuff>();
             _slots = new IBuff[256];
 
             if (initialBuffs != null)
@@ -51,7 +51,7 @@ namespace GameServerLib.GameObjects.Spells
             buff.SetSlot(previousBuff.Slot);
 
             // add new buff
-            _buffQueue.Enqueue(buff, buff.Duration);
+            _buffQueue.Add(buff);
 
             // notify
             if (!buff.IsHidden)
@@ -91,7 +91,7 @@ namespace GameServerLib.GameObjects.Spells
                 tempBuffs = GetAll(buff.Name);
 
                 _slots[oldestBuff.Slot] = tempBuffs.First();
-                _buffQueue.Enqueue(actualBuff, tempBuffs.First().Duration);
+                _buffQueue.Add(actualBuff);
 
                 if (!buff.IsHidden)
                 {
@@ -160,11 +160,11 @@ namespace GameServerLib.GameObjects.Spells
             if(Has(buff.Name)) // TODO: is this realy needed ?
             {
                 var actualBuff = Get(buff.Name);
-                _buffQueue.Enqueue(actualBuff, actualBuff.Duration);
+                _buffQueue.Add(actualBuff);
                 return;
             }
 
-            _buffQueue.Enqueue(buff, buff.Duration);
+            _buffQueue.Add(buff);
 
             if (!buff.IsHidden)
             {
@@ -212,12 +212,12 @@ namespace GameServerLib.GameObjects.Spells
 
         public int Count()
         {
-            return _buffQueue.Count;
+            return _buffQueue.Count();
         }
 
         public IEnumerable<IBuff> Get()
         {
-            return _buffQueue.ToList();
+            return _buffQueue;
         }
 
         public IBuff Get(string buffName)
@@ -242,7 +242,11 @@ namespace GameServerLib.GameObjects.Spells
 
         public SimplePriorityQueue<IBuff, float> GetQueue()
         {
-            return _buffQueue;
+            var queue = new SimplePriorityQueue<IBuff, float>();
+            foreach (var buff in _buffQueue)
+                queue.Enqueue(buff, buff.Duration);
+
+            return queue;
         }
 
 
@@ -318,7 +322,7 @@ namespace GameServerLib.GameObjects.Spells
                 tempBuffs.ForEach(tempBuff => tempBuff.SetStacks(buff.StackCount));
 
                 _slots[buff.Slot] = tempBuffs[0];
-                _buffQueue.Enqueue(tempBuffs[0], tempBuffs[0].Duration);
+                _buffQueue.Add(tempBuffs[0]);
 
                 var newestBuff = tempBuffs.Last();
 
