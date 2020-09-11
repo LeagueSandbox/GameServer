@@ -113,7 +113,7 @@ namespace GameServerCore.Domain
         /// remove buff from unit
         /// </summary>
         /// <param name="name">name of buff to remove</param>
-        void Remove(string name);
+        void Remove(string name, bool removeAll = false);
 
         /// <summary>
         /// removes multiple buffs from unit

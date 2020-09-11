@@ -96,7 +96,7 @@ namespace GameServerLib.GameObjects.Spells
                 RemoveSlot(oldestBuff);
 
                 // get second oldest buff and assing it to old slot
-                _slots[oldestBuff.Slot] = GetAll(buff.Name).Last();
+                _slots[oldestBuff.Slot] = GetAll(buff.Name).First();
 
                 // add new buff 
                 _buffQueue.Enqueue(buff, buff.Duration);
@@ -105,7 +105,7 @@ namespace GameServerLib.GameObjects.Spells
                 {
                     if (actualBuff.BuffType == BuffType.COUNTER)
                     {
-                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(buff);
                     }
                     else
                     {
@@ -117,15 +117,17 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
+                buff.IncrementStackCount();
+                Console.WriteLine($"Add new stack of {buff.Name}. Current Stacks: {buff.StackCount}");
                 _buffQueue.Enqueue(buff, buff.Duration);
 
-                GetAll(buff.Name).ToList().ForEach(x => x.SetStacks(actualBuff.StackCount));
+                GetAll(buff.Name).ToList().ForEach(x => x.SetStacks(buff.StackCount));
 
                 if (!buff.IsHidden)
                 {
                     if (buff.BuffType == BuffType.COUNTER)
                     {
-                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(buff);
                     }
                     else
                     {
@@ -297,60 +299,67 @@ namespace GameServerLib.GameObjects.Spells
             return true;
         }
 
-        public void Remove(string buffName)
+        public void Remove(string buffName, bool removeAll = false)
         {
-            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffQueue.Remove(x); });
+            if (removeAll)
+            {
+                _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffQueue.Remove(x); });
+            }
+            else
+            {
+                var buff = Get(buffName);
+                Remove(buff);
+            }
         }
 
         public void Remove(IBuff buff)
         {
-            lock(_buffQueueLock)
+            if (buff.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && buff.StackCount > 1)
             {
-                if (buff.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && buff.StackCount > 1)
+                // remove buff
+                _buffQueue.Remove(buff);
+                RemoveSlot(buff);
+
+                // decrement stack counter
+                buff.DecrementStackCount();
+                var tempBuffs = GetAll(buff.Name);
+                foreach (var tempBuff in tempBuffs)
+                    tempBuff.SetStacks(buff.StackCount);
+
+
+                _slots[buff.Slot] = tempBuffs.First();
+
+
+                tempBuffs = GetAll(buff.Name);
+                var newestBuff = tempBuffs.Last();
+
+                if (!buff.IsHidden)
                 {
-                    buff.DecrementStackCount();
-
-                    _buffQueue.Remove(buff);
-                    RemoveSlot(buff);
-
-                    var tempBuffs = GetAll(buff.Name);
-                    foreach (var tempBuff in tempBuffs)
-                        tempBuff.SetStacks(buff.StackCount);
-
-                    _slots[buff.Slot] = tempBuffs.Last();
-
-
-                    var newestBuff = tempBuffs.Last();
-
-                    if (!buff.IsHidden)
+                    if (buff.BuffType == BuffType.COUNTER)
                     {
-                        if (buff.BuffType == BuffType.COUNTER)
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                    }
+                    else
+                    {
+                        if (buff.StackCount == 1)
                         {
-                            _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                            _packetNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                         }
                         else
                         {
-                            if (buff.StackCount == 1)
-                            {
-                                _packetNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
-                            }
-                            else
-                            {
-                                _packetNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs.ToList(), buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
-                            }
+                            _packetNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs.ToList(), buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                         }
                     }
                 }
-                else
-                {
-                    buff.DeactivateBuff();
-                    _buffQueue.Remove(buff);
-                    RemoveSlot(buff);
+            }
+            else
+            {
+                Remove(buff.Name, true);
+                RemoveSlot(buff);
 
-                    if (!buff.IsHidden)
-                    {
-                        _packetNotifier.NotifyNPC_BuffRemove2(buff);
-                    }
+                if (!buff.IsHidden)
+                {
+                    _packetNotifier.NotifyNPC_BuffRemove2(buff);
                 }
             }
         }
