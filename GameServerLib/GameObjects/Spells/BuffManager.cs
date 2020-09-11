@@ -306,7 +306,9 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(string buffName)
         {
-            _buffs.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffs.Remove(x); });
+            //_buffs.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffs.Remove(x); });
+            var buff = Get(buffName);
+            Remove(buff);
         }
 
         public void Remove(IBuff buff)
@@ -347,10 +349,11 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
-                _buffs.Where(buff => buff.Elapsed()).ToList().ForEach(x => _buffs.Remove(x));
+                _buffs.Where(buff => buff.Elapsed()).ToList().ForEach(x => { x.DeactivateBuff(); _buffs.Remove(x); });
                 Remove(buff.Name);
                 RemoveSlot(buff);
 
+                Console.WriteLine($"## removing buff {buff.Name}");
                 if(!buff.IsHidden)
                 {
                     _packetNotifier.NotifyNPC_BuffRemove2(buff);
