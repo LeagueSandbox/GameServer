@@ -137,7 +137,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 {
                     _buffGameScript.OnUpdate(diff);
                 }
-                Console.WriteLine($"## TimeElapsed: {TimeElapsed}, Duration: {Duration}");
                 if (TimeElapsed >= Duration)
                 {
                     DeactivateBuff();

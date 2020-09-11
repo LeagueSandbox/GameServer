@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Recall
@@ -26,7 +27,7 @@ namespace Recall
             owner = champion;
             sourceBuff = buff;
 
-            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion);
+            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion, 1, "", default(System.Numerics.Vector3), 8.0f);
         }
 
         public void OnDeactivate(IObjAiBase unit)
