@@ -18,18 +18,23 @@ namespace GameServerLib.GameObjects.Spells
 {
     class BuffManager : IBuffManager
     {
-        private List<IBuff> _buffs;
+        //private List<IBuff> _buffs;
+        private SimplePriorityQueue<IBuff> _buffQueue;
         private IBuff[] _slots;
         IPacketNotifier _packetNotifier;
         private IObjAiBase _target;
+
+        private object _buffQueueLock;
 
         public BuffManager(IPacketNotifier packetNotifier, IObjAiBase target, IBuff[] initialBuffs = null)
         {
             _packetNotifier = packetNotifier;
             _target = target;
 
-            _buffs = new List<IBuff>();
+            //_buffs = new List<IBuff>();
+            _buffQueue = new SimplePriorityQueue<IBuff>();
             _slots = new IBuff[256];
+            _buffQueueLock = new object();
 
             if (initialBuffs != null)
             {
@@ -51,7 +56,7 @@ namespace GameServerLib.GameObjects.Spells
             buff.SetSlot(previousBuff.Slot);
 
             // add new buff
-            _buffs.Add(buff);
+            _buffQueue.Enqueue(buff, buff.Duration);
 
             // notify
             if (!buff.IsHidden)
@@ -78,20 +83,23 @@ namespace GameServerLib.GameObjects.Spells
 
         protected void StackOverlap(IBuff buff)
         {
+            // get last buff of type
             var actualBuff = Get(buff.Name);
+
+            // replace oldest buff with new one if max stacks reached
             if(actualBuff.StackCount >= actualBuff.MaxStacks)
             {
-                var tempBuffs = GetAll(buff.Name);
-                var oldestBuff = tempBuffs.First();
-
+                // remove oldest buff of same type
+                var oldestBuff = GetAll(buff.Name).Last();
                 oldestBuff.DeactivateBuff();
-                Remove(buff.Name);
-                RemoveSlot(buff);
+                _buffQueue.Remove(oldestBuff);
+                RemoveSlot(oldestBuff);
 
-                tempBuffs = GetAll(buff.Name);
+                // get second oldest buff and assing it to old slot
+                _slots[oldestBuff.Slot] = GetAll(buff.Name).Last();
 
-                _slots[oldestBuff.Slot] = tempBuffs.First();
-                _buffs.Add(actualBuff);
+                // add new buff 
+                _buffQueue.Enqueue(buff, buff.Duration);
 
                 if (!buff.IsHidden)
                 {
@@ -109,8 +117,7 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
-                actualBuff = Get(buff.Name);
-                actualBuff.IncrementStackCount();
+                _buffQueue.Enqueue(buff, buff.Duration);
 
                 GetAll(buff.Name).ToList().ForEach(x => x.SetStacks(actualBuff.StackCount));
 
@@ -157,14 +164,7 @@ namespace GameServerLib.GameObjects.Spells
 
         protected void AddNew(IBuff buff)
         {
-            if(Has(buff.Name)) // TODO: is this realy needed ?
-            {
-                var actualBuff = Get(buff.Name);
-                _buffs.Add(actualBuff);
-                return;
-            }
-
-            _buffs.Add(buff);
+            _buffQueue.Enqueue(buff, buff.Duration);
 
             if (!buff.IsHidden)
             {
@@ -176,33 +176,36 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Add(IBuff buff)
         {
-            // add a new buff
-            if (_buffs.Where(x => x.Name.Equals(buff.Name)).Count() == 0)
+            lock(_buffQueueLock)
             {
-                AddNew(buff);
-            }
-            // handle overbuffing
-            else
-            {
-                switch (buff.BuffAddType)
+                // add a new buff
+                if (!Has(buff))
                 {
-                    case BuffAddType.REPLACE_EXISTING:
-                        Replace(buff);
-                        break;
-                    case BuffAddType.RENEW_EXISTING:
-                        Renew(buff);
-                        break;
-                    case BuffAddType.STACKS_AND_OVERLAPS:
-                        StackOverlap(buff);
-                        break;
-                    case BuffAddType.STACKS_AND_RENEWS:
-                        StackRenew(buff);
-                        break;
+                    AddNew(buff);
+                }
+                // handle overbuffing
+                else
+                {
+                    switch (buff.BuffAddType)
+                    {
+                        case BuffAddType.REPLACE_EXISTING:
+                            Replace(buff);
+                            break;
+                        case BuffAddType.RENEW_EXISTING:
+                            Renew(buff);
+                            break;
+                        case BuffAddType.STACKS_AND_OVERLAPS:
+                            StackOverlap(buff);
+                            break;
+                        case BuffAddType.STACKS_AND_RENEWS:
+                            StackRenew(buff);
+                            break;
+                    }
                 }
             }
         }
 
-        public void Add(List<IBuff> buffs)
+        public void Add(IEnumerable<IBuff> buffs)
         {
             foreach (IBuff buff in buffs)
             {
@@ -212,47 +215,37 @@ namespace GameServerLib.GameObjects.Spells
 
         public int Count()
         {
-            return _buffs.Count();
+            return _buffQueue.Count();
         }
 
         public IEnumerable<IBuff> Get()
         {
-            return _buffs;
+            return _buffQueue;
         }
 
         public IBuff Get(string buffName)
         {
-            return _buffs.Where(x => x.Name.Equals(buffName)).First();
+            return _buffQueue.Where(x => x.Name.Equals(buffName)).First();
         }
 
         public IBuff Get(Func<IBuff, bool> filter)
         {
-            return _buffs.Where(filter).First();
+            return _buffQueue.Where(filter).First();
         }
 
         public IEnumerable<IBuff> GetAll(string buffName)
         {
-            return _buffs.Where(buff => buff.Name.Equals(buffName));
+            return _buffQueue.Where(buff => buff.IsBuffSame(buffName));
         }
 
         public IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter)
         {
-            return _buffs.Where(filter);
+            return _buffQueue.Where(filter);
         }
-
-        public SimplePriorityQueue<IBuff, float> GetQueue()
-        {
-            var queue = new SimplePriorityQueue<IBuff, float>();
-            foreach (var buff in _buffs)
-                queue.Enqueue(buff, buff.Duration);
-
-            return queue;
-        }
-
 
         public bool Has(string buffName)
         {
-            return _buffs.Where(x => x.IsBuffSame(buffName)).Count() > 0;
+            return _buffQueue.Where(x => x.IsBuffSame(buffName)).Count() > 0;
         }
 
         public bool Has(IEnumerable<string> buffNames)
@@ -288,7 +281,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public bool Has(Func<IBuff, bool> buffFilter)
         {
-            return _buffs.Where(buffFilter).Count() > 0;
+            return _buffQueue.Where(buffFilter).Count() > 0;
         }
 
         public bool Has(IEnumerable<Func<IBuff, bool>> buffFilters)
@@ -306,53 +299,58 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(string buffName)
         {
-            _buffs.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffs.Remove(x); });
+            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffQueue.Remove(x); });
         }
 
         public void Remove(IBuff buff)
         {
-            if(buff.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && buff.StackCount > 1)
+            lock(_buffQueueLock)
             {
-                buff.DecrementStackCount();
-
-                Remove(buff.Name);
-                RemoveSlot(buff);
-
-                var tempBuffs = GetAll(buff.Name).ToList();
-                tempBuffs.ForEach(tempBuff => tempBuff.SetStacks(buff.StackCount));
-
-                _slots[buff.Slot] = tempBuffs[0];
-                _buffs.Add(tempBuffs[0]);
-
-                var newestBuff = tempBuffs.Last();
-
-                if (!buff.IsHidden)
+                if (buff.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && buff.StackCount > 1)
                 {
-                    if (buff.BuffType == BuffType.COUNTER)
+                    buff.DecrementStackCount();
+
+                    _buffQueue.Remove(buff);
+                    RemoveSlot(buff);
+
+                    var tempBuffs = GetAll(buff.Name);
+                    foreach (var tempBuff in tempBuffs)
+                        tempBuff.SetStacks(buff.StackCount);
+
+                    _slots[buff.Slot] = tempBuffs.Last();
+
+
+                    var newestBuff = tempBuffs.Last();
+
+                    if (!buff.IsHidden)
                     {
-                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
-                    }                        
-                    else
-                    {
-                        if(buff.StackCount == 1)
+                        if (buff.BuffType == BuffType.COUNTER)
                         {
-                            _packetNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                         }
                         else
                         {
-                            _packetNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            if (buff.StackCount == 1)
+                            {
+                                _packetNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            }
+                            else
+                            {
+                                _packetNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs.ToList(), buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                Remove(buff.Name);
-                RemoveSlot(buff);
-
-                if(!buff.IsHidden)
+                else
                 {
-                    _packetNotifier.NotifyNPC_BuffRemove2(buff);
+                    buff.DeactivateBuff();
+                    _buffQueue.Remove(buff);
+                    RemoveSlot(buff);
+
+                    if (!buff.IsHidden)
+                    {
+                        _packetNotifier.NotifyNPC_BuffRemove2(buff);
+                    }
                 }
             }
         }
@@ -367,7 +365,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(Func<IBuff, bool> buffFilter)
         {
-            var buffsToRemove = _buffs.Where(buffFilter);
+            var buffsToRemove = _buffQueue.Where(buffFilter);
 
             foreach (var buffToRemove in buffsToRemove)
             {
@@ -408,6 +406,25 @@ namespace GameServerLib.GameObjects.Spells
         {
             var slot = GetSlot(buff);
             _slots[slot] = null;
+        }
+
+        public void Update(float diff)
+        {
+            lock(_buffQueueLock)
+            {
+                // remove elapsed buffs
+                while (_buffQueue.Count != 0 && _buffQueue.GetPriority(_buffQueue.First) <= 0)
+                {
+                    Remove(_buffQueue.First);
+                }
+
+                // update remaining buffs
+                foreach (var buff in _buffQueue)
+                {
+                    _buffQueue.UpdatePriority(buff, _buffQueue.GetPriority(buff) - (diff / 1000));
+                    buff.Update(diff);
+                }
+            }
         }
     }
 }

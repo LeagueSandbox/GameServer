@@ -131,16 +131,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
 
             TimeElapsed += diff / 1000.0f;
-            if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
+            if(_buffGameScript != null)
             {
-                if (_buffGameScript != null)
-                {
-                    _buffGameScript.OnUpdate(diff);
-                }
-                if (TimeElapsed >= Duration)
-                {
-                    DeactivateBuff();
-                }
+                _buffGameScript.OnUpdate(diff);
             }
         }
 

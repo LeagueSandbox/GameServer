@@ -25,7 +25,7 @@ namespace GameServerCore.Domain
         /// add multiple buffs
         /// </summary>
         /// <param name="buffs">list of buffs</param>
-        void Add(List<IBuff> buffs);
+        void Add(IEnumerable<IBuff> buffs);
 
         /// <summary>
         /// get all buffs
@@ -60,12 +60,6 @@ namespace GameServerCore.Domain
         /// <param name="filter">filter</param>
         /// <returns>buffs</returns>
         IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter);
-
-        /// <summary>
-        /// get the buff priority queue
-        /// </summary>
-        /// <returns>buff priority queue</returns>
-        SimplePriorityQueue<IBuff, float> GetQueue();
 
         /// <summary>
         /// check if unit has buff
@@ -152,5 +146,11 @@ namespace GameServerCore.Domain
         /// </summary>
         /// <param name="buff">buff to remove slot from</param>
         void RemoveSlot(IBuff buff);
+
+        /// <summary>
+        /// removes elapsed buffs and updates current
+        /// </summary>
+        /// <param name="diff">time difference since last update</param>
+        void Update(float diff);
     }
 }

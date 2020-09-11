@@ -32,11 +32,7 @@ namespace Recall
 
         public void OnDeactivate(IObjAiBase unit)
         {
-            LogInfo("sourceBuff.TimeElapsed: " + sourceBuff.TimeElapsed);
-            if (sourceBuff.TimeElapsed >= sourceBuff.Duration)
-            {
-                owner.Recall();
-            }
+            owner.Recall();
             RemoveParticle(_createdParticle);
         }
 

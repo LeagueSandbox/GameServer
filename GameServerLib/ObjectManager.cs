@@ -139,19 +139,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var buffQueue = ai.Buffs.GetQueue();  
-                    while(buffQueue.Count > 0)
-                    {
-                        var buff = buffQueue.Dequeue();
-                        if(buff.Elapsed())
-                        {
-                            ai.Buffs.Remove(buff);
-                        }
-                        else
-                        {
-                            buff.Update(diff);
-                        }
-                    }
+                    ai.Buffs.Update(diff);
                 }
 
                 // TODO: send this in one place only
