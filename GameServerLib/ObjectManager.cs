@@ -140,9 +140,6 @@ namespace LeagueSandbox.GameServer
                 if (ai != null)
                 {
                     var buffQueue = ai.Buffs.GetQueue();  
-                    
-                    // TODO: add propper dequeing for buffs ? -> will result in bugs
-                    //foreach(var buff in tempBuffs)
                     while(buffQueue.Count > 0)
                     {
                         var buff = buffQueue.Dequeue();
