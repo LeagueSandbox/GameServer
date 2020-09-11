@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer
                         var buff = buffQueue.Dequeue();
                         if(buff.Elapsed())
                         {
-                            ai.Buffs.Remove(buff.Name);
+                            ai.Buffs.Remove(buff);
                         }
                         else
                         {
