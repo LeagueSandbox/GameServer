@@ -117,8 +117,6 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
-                buff.IncrementStackCount();
-                Console.WriteLine($"Add new stack of {buff.Name}. Current Stacks: {buff.StackCount}");
                 _buffQueue.Enqueue(buff, buff.Duration);
 
                 GetAll(buff.Name).ToList().ForEach(x => x.SetStacks(buff.StackCount));
