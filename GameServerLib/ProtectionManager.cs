@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer
             {
                 if (!_protectedPlayers.Contains(champion))
                 {
-                    champion.AddStatModifier(AFK_PROT_MODIFIER);
+                    champion.Stats.AddModifier(AFK_PROT_MODIFIER);
                     _protectedPlayers.Add(champion);
                 }
             }
@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer
             {
                 if (_protectedPlayers.Contains(champion))
                 {
-                    champion.RemoveStatModifier(AFK_PROT_MODIFIER);
+                    champion.Stats.RemoveModifier(AFK_PROT_MODIFIER);
                     _protectedPlayers.Remove(champion);
                 }
             }

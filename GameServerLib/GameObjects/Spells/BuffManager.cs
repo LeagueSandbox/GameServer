@@ -2,6 +2,7 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,12 +20,12 @@ namespace GameServerLib.GameObjects.Spells
     {
         private List<IBuff> _buffs;
         private IBuff[] _slots;
-        private Game _game;
+        IPacketNotifier _packetNotifier;
         private IObjAiBase _target;
 
-        public BuffManager(Game game, IObjAiBase target, IBuff[] initialBuffs = null)
+        public BuffManager(IPacketNotifier packetNotifier, IObjAiBase target, IBuff[] initialBuffs = null)
         {
-            _game = game;
+            _packetNotifier = packetNotifier;
             _target = target;
 
             _buffs = new List<IBuff>();
@@ -55,7 +56,7 @@ namespace GameServerLib.GameObjects.Spells
             // notify
             if (!buff.IsHidden)
             {
-                _game.PacketNotifier.NotifyNPC_BuffReplace(buff);
+                _packetNotifier.NotifyNPC_BuffReplace(buff);
             }
 
             buff.ActivateBuff();
@@ -68,7 +69,7 @@ namespace GameServerLib.GameObjects.Spells
 
             if (!buff.IsHidden)
             {
-                _game.PacketNotifier.NotifyNPC_BuffReplace(actualBuff);
+                _packetNotifier.NotifyNPC_BuffReplace(actualBuff);
             }
 
             _target.Stats.RemoveModifier(actualBuff.GetStatsModifier());
@@ -96,11 +97,11 @@ namespace GameServerLib.GameObjects.Spells
                 {
                     if (actualBuff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                     }
                     else
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(buff, buff.Duration, buff.TimeElapsed);
+                        _packetNotifier.NotifyNPC_BuffUpdateCount(buff, buff.Duration, buff.TimeElapsed);
                     }
                 }
 
@@ -117,11 +118,11 @@ namespace GameServerLib.GameObjects.Spells
                 {
                     if (buff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                     }
                     else
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(buff, buff.Duration, buff.TimeElapsed);
+                        _packetNotifier.NotifyNPC_BuffUpdateCount(buff, buff.Duration, buff.TimeElapsed);
                     }
                 }
 
@@ -142,11 +143,11 @@ namespace GameServerLib.GameObjects.Spells
             {
                 if (actualBuff.BuffType == BuffType.COUNTER)
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(actualBuff);
+                    _packetNotifier.NotifyNPC_BuffUpdateNumCounter(actualBuff);
                 }
                 else
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffUpdateCount(actualBuff, actualBuff.Duration, actualBuff.TimeElapsed);
+                    _packetNotifier.NotifyNPC_BuffUpdateCount(actualBuff, actualBuff.Duration, actualBuff.TimeElapsed);
                 }
             }
 
@@ -167,7 +168,7 @@ namespace GameServerLib.GameObjects.Spells
 
             if (!buff.IsHidden)
             {
-                _game.PacketNotifier.NotifyNPC_BuffAdd2(buff);
+                _packetNotifier.NotifyNPC_BuffAdd2(buff);
             }
 
             buff.ActivateBuff();
@@ -329,17 +330,17 @@ namespace GameServerLib.GameObjects.Spells
                 {
                     if (buff.BuffType == BuffType.COUNTER)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
+                        _packetNotifier.NotifyNPC_BuffUpdateNumCounter(Get(buff.Name));
                     }                        
                     else
                     {
                         if(buff.StackCount == 1)
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            _packetNotifier.NotifyNPC_BuffUpdateCount(newestBuff, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                         }
                         else
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
+                            _packetNotifier.NotifyNPC_BuffUpdateCountGroup(_target, tempBuffs, buff.Duration - newestBuff.TimeElapsed, newestBuff.TimeElapsed);
                         }
                     }
                 }
@@ -352,7 +353,7 @@ namespace GameServerLib.GameObjects.Spells
 
                 if(!buff.IsHidden)
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffRemove2(buff);
+                    _packetNotifier.NotifyNPC_BuffRemove2(buff);
                 }
             }
         }

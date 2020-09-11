@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             _itemManager = game.ItemManager;
             _scriptEngine = game.ScriptEngine;
-            Buffs = new BuffManager(game, this);
+            Buffs = new BuffManager(_game.PacketNotifier, this);
 
             CharData = _game.Config.ContentManager.GetCharData(Model);
 
