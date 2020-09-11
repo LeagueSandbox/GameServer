@@ -17,8 +17,7 @@ namespace GameServerLib.GameObjects.Spells
 {
     class BuffManager : IBuffManager
     {
-        //private Dictionary<string, IBuff> _buffs;
-        private List<IBuff> _buffQueue;
+        private List<IBuff> _buffs;
         private IBuff[] _slots;
         private Game _game;
         private IObjAiBase _target;
@@ -28,7 +27,7 @@ namespace GameServerLib.GameObjects.Spells
             _game = game;
             _target = target;
 
-            _buffQueue = new List<IBuff>();
+            _buffs = new List<IBuff>();
             _slots = new IBuff[256];
 
             if (initialBuffs != null)
@@ -51,7 +50,7 @@ namespace GameServerLib.GameObjects.Spells
             buff.SetSlot(previousBuff.Slot);
 
             // add new buff
-            _buffQueue.Add(buff);
+            _buffs.Add(buff);
 
             // notify
             if (!buff.IsHidden)
@@ -91,7 +90,7 @@ namespace GameServerLib.GameObjects.Spells
                 tempBuffs = GetAll(buff.Name);
 
                 _slots[oldestBuff.Slot] = tempBuffs.First();
-                _buffQueue.Add(actualBuff);
+                _buffs.Add(actualBuff);
 
                 if (!buff.IsHidden)
                 {
@@ -160,11 +159,11 @@ namespace GameServerLib.GameObjects.Spells
             if(Has(buff.Name)) // TODO: is this realy needed ?
             {
                 var actualBuff = Get(buff.Name);
-                _buffQueue.Add(actualBuff);
+                _buffs.Add(actualBuff);
                 return;
             }
 
-            _buffQueue.Add(buff);
+            _buffs.Add(buff);
 
             if (!buff.IsHidden)
             {
@@ -177,7 +176,7 @@ namespace GameServerLib.GameObjects.Spells
         public void Add(IBuff buff)
         {
             // add a new buff
-            if (_buffQueue.Where(x => x.Name.Equals(buff.Name)).Count() == 0)
+            if (_buffs.Where(x => x.Name.Equals(buff.Name)).Count() == 0)
             {
                 AddNew(buff);
             }
@@ -212,38 +211,38 @@ namespace GameServerLib.GameObjects.Spells
 
         public int Count()
         {
-            return _buffQueue.Count();
+            return _buffs.Count();
         }
 
         public IEnumerable<IBuff> Get()
         {
-            return _buffQueue;
+            return _buffs;
         }
 
         public IBuff Get(string buffName)
         {
-            return _buffQueue.Where(x => x.Name.Equals(buffName)).First();
+            return _buffs.Where(x => x.Name.Equals(buffName)).First();
         }
 
         public IBuff Get(Func<IBuff, bool> filter)
         {
-            return _buffQueue.Where(filter).First();
+            return _buffs.Where(filter).First();
         }
 
         public IEnumerable<IBuff> GetAll(string buffName)
         {
-            return _buffQueue.Where(buff => buff.Name.Equals(buffName));
+            return _buffs.Where(buff => buff.Name.Equals(buffName));
         }
 
         public IEnumerable<IBuff> GetAll(Func<IBuff, bool> filter)
         {
-            return _buffQueue.Where(filter);
+            return _buffs.Where(filter);
         }
 
         public SimplePriorityQueue<IBuff, float> GetQueue()
         {
             var queue = new SimplePriorityQueue<IBuff, float>();
-            foreach (var buff in _buffQueue)
+            foreach (var buff in _buffs)
                 queue.Enqueue(buff, buff.Duration);
 
             return queue;
@@ -252,7 +251,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public bool Has(string buffName)
         {
-            return _buffQueue.Where(x => x.IsBuffSame(buffName)).Count() > 0;
+            return _buffs.Where(x => x.IsBuffSame(buffName)).Count() > 0;
         }
 
         public bool Has(IEnumerable<string> buffNames)
@@ -288,7 +287,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public bool Has(Func<IBuff, bool> buffFilter)
         {
-            return _buffQueue.Where(buffFilter).Count() > 0;
+            return _buffs.Where(buffFilter).Count() > 0;
         }
 
         public bool Has(IEnumerable<Func<IBuff, bool>> buffFilters)
@@ -306,7 +305,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(string buffName)
         {
-            _buffQueue.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffQueue.Remove(x); });
+            _buffs.Where(x => x.IsBuffSame(buffName)).ToList().ForEach(x => { x.DeactivateBuff(); _buffs.Remove(x); });
         }
 
         public void Remove(IBuff buff)
@@ -322,7 +321,7 @@ namespace GameServerLib.GameObjects.Spells
                 tempBuffs.ForEach(tempBuff => tempBuff.SetStacks(buff.StackCount));
 
                 _slots[buff.Slot] = tempBuffs[0];
-                _buffQueue.Add(tempBuffs[0]);
+                _buffs.Add(tempBuffs[0]);
 
                 var newestBuff = tempBuffs.Last();
 
@@ -347,7 +346,7 @@ namespace GameServerLib.GameObjects.Spells
             }
             else
             {
-                _buffQueue.Where(buff => buff.Elapsed()).ToList().ForEach(x => _buffQueue.Remove(x));
+                _buffs.Where(buff => buff.Elapsed()).ToList().ForEach(x => _buffs.Remove(x));
                 Remove(buff.Name);
                 RemoveSlot(buff);
 
@@ -368,7 +367,7 @@ namespace GameServerLib.GameObjects.Spells
 
         public void Remove(Func<IBuff, bool> buffFilter)
         {
-            var buffsToRemove = _buffQueue.Where(buffFilter);
+            var buffsToRemove = _buffs.Where(buffFilter);
 
             foreach (var buffToRemove in buffsToRemove)
             {

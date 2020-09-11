@@ -139,13 +139,13 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = ai.Buffs.GetQueue();  
+                    var buffQueue = ai.Buffs.GetQueue();  
                     
                     // TODO: add propper dequeing for buffs ? -> will result in bugs
                     //foreach(var buff in tempBuffs)
-                    while(tempBuffs.Count > 0)
+                    while(buffQueue.Count > 0)
                     {
-                        var buff = tempBuffs.Dequeue();
+                        var buff = buffQueue.Dequeue();
                         if(buff.Elapsed())
                         {
                             ai.Buffs.Remove(buff.Name);
