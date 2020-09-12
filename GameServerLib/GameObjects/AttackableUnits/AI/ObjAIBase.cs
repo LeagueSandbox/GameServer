@@ -32,6 +32,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private bool _nextAttackFlag;
         private Random _random = new Random();
         protected CSharpScriptEngine _scriptEngine;
+        private float _dashElapsedTime;
+        private float _dashTime;
 
         public ISpellData AaSpellData { get; private set; }
         public float AutoAttackCastTime { get; set; }
@@ -359,6 +361,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Take into account the rest of the arguments
             IsDashing = true;
             Target = t;
+            _dashTime = this.GetDistanceTo(t)/(dashSpeed*0.001f);
+            _dashElapsedTime = 0;
             DashSpeed = dashSpeed;
             Waypoints.Clear();
         }
@@ -696,6 +700,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             foreach (var cc in _crowdControlList)
             {
                 cc.Update(diff);
+            }
+
+            if (IsDashing)
+            {
+                _dashElapsedTime += diff;
+                if (_dashElapsedTime >= _dashTime)
+                {
+                    IsDashing = false;
+                    var animList = new List<string> { "RUN" };
+                    _game.PacketNotifier.NotifySetAnimation(this, animList);
+                }
             }
 
             _crowdControlList.RemoveAll(cc => cc.IsRemoved);
