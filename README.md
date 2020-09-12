@@ -64,7 +64,9 @@ start "" "Path/To/Your/League420/RADS/solutions/lol_game_client_sln/releases/0.0
 * Mark .exe files executable by running ```find . -type f -iname "*.exe" -exec chmod +x {} \;``` in your League-of-Legends-4-20 directory.
 * Enter the directory containing the client by running ```cd /path/to/your/League-of-Legends-4-20/RADS/solutions/lol_game_client_sln/releases/0.0.1.68/deploy/```
 * Run the game:
-```./League\ of\ Legends.exe "8394" "/path/to/your/League-of-Legends-4-20/RADS/projects/lol_launcher/releases/0.0.0.227/deploy/LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
+
+```
+./League\ of\ Legends.exe "8394" "/path/to/your/League-of-Legends-4-20/RADS/projects/lol_launcher/releases/0.0.0.227/deploy/LoLLauncher.exe" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== 1"
 ````
 
 # License
