@@ -144,6 +144,7 @@ namespace LeagueSandbox.GameServer
         public string Summoner2 => (string)_playerData.SelectToken("summoner2");
         public short Ribbon => (short)_playerData.SelectToken("ribbon");
         public int Icon => (int)_playerData.SelectToken("icon");
+        public string BlowfishKey => (string)_playerData.SelectToken("blowfishKey");
         public IRuneCollection Runes { get; }
 
         private JToken _playerData;

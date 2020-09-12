@@ -25,7 +25,8 @@ namespace PacketDefinitions420
         private readonly Dictionary<ulong, uint> _playerClient;
         private readonly List<TeamId> _teamsEnumerator;
         private readonly IPlayerManager _playerManager;
-        private readonly BlowFish _blowfish;
+        private readonly Dictionary<ulong, BlowFish> _playerBlowFishKeys;
+        private readonly List<BlowFish> _blowfishes;
         private readonly Host _server;
         private readonly IGame _game;
 
@@ -34,9 +35,9 @@ namespace PacketDefinitions420
 
         private int _playersConnected = 0;
 
-        public PacketHandlerManager(BlowFish blowfish, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public PacketHandlerManager(List<BlowFish> blowfishes, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
-            _blowfish = blowfish;
+            _blowfishes = blowfishes;
             _server = server;
             _game = game;
             _peers = new Dictionary<ulong, Peer>();
@@ -46,6 +47,7 @@ namespace PacketDefinitions420
             _netReq = netReq;
             _netResp = netResp;
             _convertorTable = new Dictionary<Tuple<PacketCmd, Channel>, RequestConvertor>();
+            _playerBlowFishKeys = new Dictionary<ulong, BlowFish>();
             InitializePacketConvertors();
         }
 
@@ -124,19 +126,23 @@ namespace PacketDefinitions420
 
         public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            byte[] temp;
-            if (source.Length >= 8)
-            {
-                temp = _blowfish.Encrypt(source);
-            }
-            else
-            {
-                temp = source;
-            }
             // sometimes we want to send packets to some user but this user doesn't exist (like in broadcast when not all players connected)
             // TODO: fix casting
-            if(_peers.ContainsKey((ulong)playerId))
+            if (_peers.ContainsKey((ulong)playerId))
             {
+                byte[] temp;
+                if (source.Length >= 8)
+                {
+                    if (_playerBlowFishKeys.ContainsKey((ulong)playerId))
+                        temp = _playerBlowFishKeys[(ulong)playerId].Encrypt(source);
+                    else
+                        temp = source;
+                }
+                else
+                {
+                    temp = source;
+                }
+
                 return _peers[(ulong)playerId].Send((byte)channelNo, temp);
             }
             return false;
@@ -144,20 +150,25 @@ namespace PacketDefinitions420
 
         public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            byte[] temp;
             if (data.Length >= 8)
             {
-                temp = _blowfish.Encrypt(data);
+                // send packet to all peers and save failed ones
+                List<KeyValuePair<ulong, Peer>> failedPeers = _peers.Where(x => !x.Value.Send((byte)channelNo, _playerBlowFishKeys[x.Key].Encrypt(data))).ToList();
+
+                if(failedPeers.Count() > 0)
+                {
+                    Debug.WriteLine($"Broadcasting packet failed for {failedPeers.Count()} peers.");
+                    return false;
+                }
+                return true;
             }
             else
             {
-                temp = data;
+                var packet = new ENet.Packet();
+                packet.Create(data);
+                _server.Broadcast((byte)channelNo, ref packet);
+                return true;
             }
-
-            var packet = new ENet.Packet();
-            packet.Create(temp);
-            _server.Broadcast((byte)channelNo, ref packet);
-            return true;
         }
 
         public bool BroadcastPacket(Packet packet, Channel channelNo,
@@ -217,7 +228,6 @@ namespace PacketDefinitions420
         {
             var header = new PacketHeader(data);
             var convertor = GetConvertor(header.Cmd, channelId);
-            
 
             switch (header.Cmd)
             {
@@ -275,8 +285,8 @@ namespace PacketDefinitions420
             // every packet that is not blowfish go here
             if (data.Length >= 8)
             {
-                // TODO: each user will have his unique key
-                data = _blowfish.Decrypt(data);
+                ulong playerId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
+                data = _playerBlowFishKeys[playerId].Decrypt(data);
             }
             return HandlePacket(peer, data, channelId);
         }
@@ -284,12 +294,28 @@ namespace PacketDefinitions420
         private bool HandleHandshake(Peer peer, byte[] data)
         {
             var request = PacketReader.ReadKeyCheckRequest(data);
-            // TODO: keys for every player
-            ulong playerID = (ulong)_blowfish.Decrypt(request.CheckId);
 
-            // Wrong Blowfish key, or the client is already connected
-            if (request.PlayerID != playerID || _peers.ContainsKey(request.PlayerID))
+            bool clientFound = false;
+            foreach(var blowfish in _blowfishes)
             {
+                ulong playerID = (ulong)blowfish.Decrypt(request.CheckId);
+                if(request.PlayerID == playerID)
+                {
+                    if(_peers.ContainsKey(request.PlayerID) || _playerBlowFishKeys.ContainsValue(blowfish))
+                    {
+                        Debug.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.ToString()}.");
+                        return false;
+                    }
+
+                    _playerBlowFishKeys[request.PlayerID] = blowfish;
+                    clientFound = true;
+                    break;
+                }
+            }
+
+            if(!clientFound)
+            {
+                Debug.WriteLine($"No player with matching blowfish key found.");
                 return false;
             }
 
