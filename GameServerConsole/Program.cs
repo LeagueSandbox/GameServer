@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServerConsole
                     var startInfo = new ProcessStartInfo(leaguePath)
                     {
                         Arguments = String.Format("\"8394\" \"LoLLauncher.exe\" \"\" \"127.0.0.1 {0} {1} 1\"",
-                            parsedArgs.ServerPort),
+                            parsedArgs.ServerPort, "17BLOhi6KZsTtldTsizvHg=="),
                         WorkingDirectory = Path.GetDirectoryName(leaguePath)
                     };
 
