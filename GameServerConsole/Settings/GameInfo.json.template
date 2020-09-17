@@ -1,6 +1,8 @@
 {
     "players": [
         {
+            "playerId": 1,
+            "blowfishKey": "17BLOhi6KZsTtldTsizvHg==",
             "rank": "DIAMOND",
             "name": "Test",
             "champion": "Ezreal",

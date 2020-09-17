@@ -6,6 +6,7 @@ using GameServerCore.Packets.Interfaces;
 using GameServerCore.Packets.PacketDefinitions;
 using PacketDefinitions420.Exceptions;
 using System;
+using System.Collections.Generic;
 
 namespace PacketDefinitions420
 {
@@ -23,20 +24,24 @@ namespace PacketDefinitions420
         protected const int PEER_MTU = 996;
 
 
-        public void InitServer(ushort port, string blowfishKey, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public void InitServer(ushort port, Dictionary<ulong, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _game = game;
             _server = new Host();
             _server.Create(new Address(_serverHost,port), 32, 32, 0, 0);
 
-            var key = Convert.FromBase64String(blowfishKey);
-            if (key.Length <= 0)
+            Dictionary<ulong, BlowFish> blowfishes = new Dictionary<ulong, BlowFish>();
+            foreach(var rawKey in blowfishKeys)
             {
-                throw new InvalidKeyException("Invalid blowfish key supplied");
+                var key = Convert.FromBase64String(rawKey.Value);
+                if (key.Length <= 0)
+                {
+                    throw new InvalidKeyException($"Invalid blowfish key supplied ({key})");
+                }
+                blowfishes.Add(rawKey.Key, new BlowFish(key));
             }
 
-            Blowfish = new BlowFish(key);
-            PacketHandlerManager = new PacketHandlerManager(Blowfish, _server, game, netReq, netResp);
+            PacketHandlerManager = new PacketHandlerManager(blowfishes, _server, game, netReq, netResp);
             
         }
         public void NetLoop()

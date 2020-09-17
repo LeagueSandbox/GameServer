@@ -135,6 +135,7 @@ namespace LeagueSandbox.GameServer
 
     public class PlayerConfig
     {
+        public ulong PlayerID => (ulong)_playerData.SelectToken("playerId");
         public string Rank => (string)_playerData.SelectToken("rank");
         public string Name => (string)_playerData.SelectToken("name");
         public string Champion => (string)_playerData.SelectToken("champion");
@@ -144,6 +145,7 @@ namespace LeagueSandbox.GameServer
         public string Summoner2 => (string)_playerData.SelectToken("summoner2");
         public short Ribbon => (short)_playerData.SelectToken("ribbon");
         public int Icon => (int)_playerData.SelectToken("icon");
+        public string BlowfishKey => (string)_playerData.SelectToken("blowfishKey");
         public IRuneCollection Runes { get; }
 
         private JToken _playerData;
