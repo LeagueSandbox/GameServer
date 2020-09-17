@@ -11,23 +11,23 @@ namespace LeagueSandbox.GameServer
 {
     internal class Server : IDisposable
     {
-        private List<string> _blowfishKeys;
+        private Dictionary<ulong, string> _blowfishKeys;
         private string _serverVersion = "0.2.0";
         private readonly ILog _logger;
         private Game _game;
         private Config _config;
         private ushort _serverPort { get; }
 
-        public Server(Game game, ushort port, string configJson, string blowfishKey)
+        public Server(Game game, ushort port, string configJson)
         {
             _logger = LoggerProvider.GetLogger();
             _game = game;
             _serverPort = port;
             _config = Config.LoadFromJson(game, configJson);
 
-            _blowfishKeys = new List<string>();
+            _blowfishKeys = new Dictionary<ulong, string>();
             foreach (var player in _config.Players)
-                _blowfishKeys.Add(player.Value.BlowfishKey);
+                _blowfishKeys.Add(player.Value.PlayerID, player.Value.BlowfishKey);
         }
 
         public void Start()

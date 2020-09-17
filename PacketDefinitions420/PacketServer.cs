@@ -24,25 +24,24 @@ namespace PacketDefinitions420
         protected const int PEER_MTU = 996;
 
 
-        public void InitServer(ushort port, List<string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public void InitServer(ushort port, Dictionary<ulong, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _game = game;
             _server = new Host();
             _server.Create(new Address(_serverHost,port), 32, 32, 0, 0);
 
-            List<BlowFish> keys = new List<BlowFish>();
+            Dictionary<ulong, BlowFish> blowfishes = new Dictionary<ulong, BlowFish>();
             foreach(var rawKey in blowfishKeys)
             {
-                var key = Convert.FromBase64String(rawKey);
+                var key = Convert.FromBase64String(rawKey.Value);
                 if (key.Length <= 0)
                 {
                     throw new InvalidKeyException($"Invalid blowfish key supplied ({key})");
                 }
-
-                keys.Add(new BlowFish(key));
+                blowfishes.Add(rawKey.Key, new BlowFish(key));
             }
 
-            PacketHandlerManager = new PacketHandlerManager(keys, _server, game, netReq, netResp);
+            PacketHandlerManager = new PacketHandlerManager(blowfishes, _server, game, netReq, netResp);
             
         }
         public void NetLoop()

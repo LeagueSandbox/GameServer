@@ -1,6 +1,7 @@
 {
     "players": [
         {
+            "playerId": 1,
             "rank": "DIAMOND",
             "name": "Test",
             "champion": "Ezreal",

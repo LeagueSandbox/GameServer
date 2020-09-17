@@ -25,8 +25,7 @@ namespace PacketDefinitions420
         private readonly Dictionary<ulong, uint> _playerClient;
         private readonly List<TeamId> _teamsEnumerator;
         private readonly IPlayerManager _playerManager;
-        private readonly Dictionary<ulong, BlowFish> _playerBlowFishKeys;
-        private readonly List<BlowFish> _blowfishes;
+        private readonly Dictionary<ulong, BlowFish> _blowfishes;
         private readonly Host _server;
         private readonly IGame _game;
 
@@ -35,7 +34,7 @@ namespace PacketDefinitions420
 
         private int _playersConnected = 0;
 
-        public PacketHandlerManager(List<BlowFish> blowfishes, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public PacketHandlerManager(Dictionary<ulong, BlowFish> blowfishes, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _blowfishes = blowfishes;
             _server = server;
@@ -47,7 +46,6 @@ namespace PacketDefinitions420
             _netReq = netReq;
             _netResp = netResp;
             _convertorTable = new Dictionary<Tuple<PacketCmd, Channel>, RequestConvertor>();
-            _playerBlowFishKeys = new Dictionary<ulong, BlowFish>();
             InitializePacketConvertors();
         }
 
@@ -133,8 +131,8 @@ namespace PacketDefinitions420
                 byte[] temp;
                 if (source.Length >= 8)
                 {
-                    if (_playerBlowFishKeys.ContainsKey((ulong)playerId))
-                        temp = _playerBlowFishKeys[(ulong)playerId].Encrypt(source);
+                    if (_blowfishes.ContainsKey((ulong)playerId))
+                        temp = _blowfishes[(ulong)playerId].Encrypt(source);
                     else
                         temp = source;
                 }
@@ -153,7 +151,7 @@ namespace PacketDefinitions420
             if (data.Length >= 8)
             {
                 // send packet to all peers and save failed ones
-                List<KeyValuePair<ulong, Peer>> failedPeers = _peers.Where(x => !x.Value.Send((byte)channelNo, _playerBlowFishKeys[x.Key].Encrypt(data))).ToList();
+                List<KeyValuePair<ulong, Peer>> failedPeers = _peers.Where(x => !x.Value.Send((byte)channelNo, _blowfishes[x.Key].Encrypt(data))).ToList();
 
                 if(failedPeers.Count() > 0)
                 {
@@ -286,7 +284,7 @@ namespace PacketDefinitions420
             if (data.Length >= 8)
             {
                 ulong playerId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
-                data = _playerBlowFishKeys[playerId].Decrypt(data);
+                data = _blowfishes[playerId].Decrypt(data);
             }
             return HandlePacket(peer, data, channelId);
         }
@@ -295,27 +293,17 @@ namespace PacketDefinitions420
         {
             var request = PacketReader.ReadKeyCheckRequest(data);
 
-            bool clientFound = false;
-            foreach(var blowfish in _blowfishes)
-            {
-                ulong playerID = (ulong)blowfish.Decrypt(request.CheckId);
-                if(request.PlayerID == playerID)
-                {
-                    if(_peers.ContainsKey(request.PlayerID) || _playerBlowFishKeys.ContainsValue(blowfish))
-                    {
-                        Debug.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.ToString()}.");
-                        return false;
-                    }
+            ulong playerID = (ulong)_blowfishes[request.PlayerID].Decrypt(request.CheckId);
 
-                    _playerBlowFishKeys[request.PlayerID] = blowfish;
-                    clientFound = true;
-                    break;
-                }
+            if(request.PlayerID != playerID)
+            {
+                Debug.WriteLine($"Blowfish key is wrong!");
+                return false;
             }
-
-            if(!clientFound)
+            
+            if(_peers.ContainsKey(request.PlayerID))
             {
-                Debug.WriteLine($"No player with matching blowfish key found.");
+                Debug.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.ToString()}.");
                 return false;
             }
 
