@@ -3,6 +3,7 @@ using GameServerCore.Domain;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
@@ -80,6 +81,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public void ActivateBuff()
         {
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
+            if (!OriginSpell.SpellData.CantCancelWhileChanneling)
+            {
+                ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
+                ApiEventManager.OnChampionMove.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
+                ApiEventManager.OnChampionCrowdControlled.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
+            }
+
             _remove = false;
         }
 

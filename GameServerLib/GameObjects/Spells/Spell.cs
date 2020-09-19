@@ -112,6 +112,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
                 Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
+                Owner.IsCastingSpell = true;
                 State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
             }
