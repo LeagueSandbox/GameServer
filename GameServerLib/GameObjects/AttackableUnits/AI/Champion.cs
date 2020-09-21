@@ -158,16 +158,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool CanMove()
         {
-            foreach (var buff in GetBuffs())
-            {
-                if (!buff.OriginSpell.SpellData.CanMoveWhileChanneling && buff.Name != "Recall")
-                {
-                    return false;
-                }
-            }
             return !HasCrowdControl(CrowdControlType.STUN) &&
                 !IsDashing &&
-                !IsCastingSpell &&
+                (GetBuffs().Exists(x => x.OriginSpell.SpellData.CanMoveWhileChanneling) || !IsCastingSpell) &&
                 !IsDead &&
                 !HasCrowdControl(CrowdControlType.ROOT);
         }
