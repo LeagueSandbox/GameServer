@@ -692,14 +692,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
             
-            // If the unit is a champion, notify all listeners of their movement. 
-            // @TODO: Maybe add a OnChampionTeleport event?
-            if(this is IChampion)
-            {
-                IChampion champ = (IChampion)this;
-                ApiEventManager.OnChampionMove.Publish(champ);
-            }
-
             _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
         }
 
