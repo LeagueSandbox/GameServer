@@ -691,7 +691,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
                 y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
-
+            
             _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
         }
 
