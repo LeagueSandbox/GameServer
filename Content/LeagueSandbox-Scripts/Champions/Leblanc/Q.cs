@@ -1,43 +1,46 @@
-using GameServerCore;
+using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Enums;
 using GameServerCore.Domain;
-using System;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class RemoveScurvy : IGameScript
+    public class LeblancQ : IGameScript
     {
         public void OnActivate(IObjAiBase owner)
-        {
-
-        }
-
-        private void SelfWasDamaged()
         {
         }
 
         public void OnDeactivate(IObjAiBase owner)
         {
-
         }
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {	
+        {
+
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            float ap = owner.Stats.AbilityPower.Total; //100% AP Ratio
-            float newHealth = target.Stats.CurrentHealth + 80 + ap;
-            target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
+            spell.AddProjectileTarget("LeblancQ", target, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
+            var ap = owner.Stats.AbilityPower.Total * 0.7f;
+            var damage = 30 + spell.Level * 50 + ap;
+
+            if (target != null && !target.IsDead)
+            {
+                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
+                    false);
+                if (target.IsDead)
+                {
+                }
+            }
+
+            projectile.SetToRemove();
         }
 
         public void OnUpdate(double diff)

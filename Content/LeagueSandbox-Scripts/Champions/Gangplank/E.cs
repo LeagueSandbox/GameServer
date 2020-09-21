@@ -3,15 +3,15 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore;
+using System.Linq;
 
 namespace Spells
 {
     public class RaiseMorale : IGameScript
     {
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
@@ -19,21 +19,21 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {		
-            var hasbuff = owner.HasBuffGameScriptActive("GangplankE", "GangplankE");
+            var hasbuff = owner.HasBuff("GangplankE");
             
             if (hasbuff == false)
             {
-                var buff = ((ObjAIBase) target).AddBuffGameScript("GangplankE", "GangplankE", spell);
+                AddBuff("GangplankE", 7.0f, 1, spell, owner, owner);
             }
             
             foreach (var allyTarget in GetUnitsInRange(owner, 1000, true)
@@ -41,12 +41,12 @@ namespace Spells
             {
                 if (allyTarget is IAttackableUnit && owner != allyTarget && hasbuff == false)
                 {
-                    ((ObjAIBase) allyTarget).AddBuffGameScript("GangplankE", "GangplankE", spell, 7.0f, true);
+                    AddBuff("GangplankE", 7.0f, 1, spell, (IObjAiBase) allyTarget, owner);
                 }
             }			
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 

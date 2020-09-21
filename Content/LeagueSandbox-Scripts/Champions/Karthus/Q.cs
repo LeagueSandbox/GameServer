@@ -3,20 +3,22 @@ using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Linq;
+using GameServerCore;
 
 namespace Spells
 {
     public class KarthusLayWasteA1 : IGameScript
     {
-        public void OnActivate(IChampion owner)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IChampion owner)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnStartCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             AddParticleTarget(owner, "Karthus_Base_Q_Hand_Glow.troy", owner, 1, "R_Hand");
             AddParticle(owner, "Karthus_Base_Q_Point.troy", spell.X, spell.Y);
@@ -24,7 +26,7 @@ namespace Spells
             AddParticle(owner, "Karthus_Base_Q_Skull_Child.troy", spell.X, spell.Y);
         }   
 
-        public void OnFinishCasting(IChampion owner, ISpell spell, IAttackableUnit target)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             IGameObject m = AddParticle(owner, "Karthus_Base_Q_Explosion.troy", spell.X, spell.Y);
             var affectedUnits = GetUnitsInRange(m, 150, true);
@@ -56,7 +58,7 @@ namespace Spells
             AddParticle(owner, "Karthus_Base_Q_Explosion_Sound.troy", spell.X, spell.Y);
         }
 
-        public void ApplyEffects(IChampion owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
         }
 
