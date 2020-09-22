@@ -160,7 +160,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             return !HasCrowdControl(CrowdControlType.STUN) &&
                 !IsDashing &&
-                !IsCastingSpell &&
+                (GetBuffs().Count(x => x.OriginSpell.SpellData.CanMoveWhileChanneling) == GetBuffsCount() || !IsCastingSpell) &&
                 !IsDead &&
                 !HasCrowdControl(CrowdControlType.ROOT);
         }
@@ -230,6 +230,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             l.Add(new Vector2(this.X, this.Y));
             this.SetWaypoints(l);
             _game.PacketNotifier.NotifyMovement(this);
+        }
+        
+        public void TeleportTo(float x, float y)
+        {
+            // @TODO: Maybe add a OnChampionTeleport event?
+            ApiEventManager.OnChampionMove.Publish(this);
+            base.TeleportTo(x, y);
         }
 
         public ISpell GetSpellBySlot(byte slot)
