@@ -97,9 +97,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             {
                 return;
             }
+            _remove = true; // To prevent infinite loop with OnDeactivate calling events
 
             _buffGameScript.OnDeactivate(TargetUnit);
-            _remove = true;
         }
 
         public bool Elapsed()
