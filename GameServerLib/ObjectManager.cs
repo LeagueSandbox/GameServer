@@ -134,7 +134,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = ai.GetBuffs();
+                    var tempBuffs = new List<GameServerCore.Domain.IBuff>(ai.GetBuffs());
                     for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {
                         if (tempBuffs[i].Elapsed())
