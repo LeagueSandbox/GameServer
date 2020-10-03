@@ -1,3 +1,4 @@
+using System;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -20,13 +21,15 @@ namespace Recall
         private IChampion owner;
         private IBuff sourceBuff;
 
+        private bool _isSecondPhase = false;
+
         public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
         {
             IChampion champion = unit as IChampion;
             owner = champion;
             sourceBuff = buff;
 
-            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion);
+            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion, lifetime: 2);
         }
 
         public void OnDeactivate(IObjAiBase unit)
@@ -44,6 +47,19 @@ namespace Recall
             if (owner.IsMovementUpdated())
             {
                 sourceBuff.DeactivateBuff();
+                return;
+            }
+
+            if (sourceBuff.TimeElapsed < 4f && _createdParticle.GetTimeAlive() >= 2f && !_isSecondPhase)
+            {
+                RemoveParticle(_createdParticle);
+                _createdParticle = AddParticleTarget(owner, "TeleportHome.troy", owner, lifetime: 2);
+            }
+            else if (sourceBuff.TimeElapsed >= 4f && !_isSecondPhase)
+            {
+                RemoveParticle(_createdParticle);
+                _isSecondPhase = true;
+                _createdParticle = AddParticleTarget(owner, "TeleportHome.troy", owner, lifetime: 4);
             }
         }
     }
