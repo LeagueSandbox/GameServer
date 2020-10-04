@@ -8,7 +8,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
     public class ChatMessage
     {
         public PacketCmd Cmd;
-        public int PlayerId;
+        public int ClientId;
         public int BotNetId;
         public byte IsBotMessage;
 
@@ -23,7 +23,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
             using (var reader = new BinaryReader(new MemoryStream(data)))
             {
                 Cmd = (PacketCmd)reader.ReadByte();
-                PlayerId = reader.ReadInt32();
+                ClientId = reader.ReadInt32();
                 BotNetId = reader.ReadInt32();
                 IsBotMessage = reader.ReadByte();
                 Type = (ChatType)reader.ReadInt32();
