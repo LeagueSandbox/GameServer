@@ -18,14 +18,14 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             var split = arguments.ToLower().Split(' ');
 
-            if (split.Length < 2 || !bool.TryParse(split[1], out var input))
+            if (split.Length != 2 || !bool.TryParse(split[1], out var userInput))
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else
             {
-                _playerManager.GetPeerInfo((ulong)userId).Champion.SetIsTargetable(input);
+                _playerManager.GetPeerInfo((ulong)userId).Champion.SetIsTargetable(userInput);
             }
         }
     }
