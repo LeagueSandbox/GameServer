@@ -240,6 +240,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableEnemy);
         }
 
+        public void SetIsTargetable(bool targetable)
+        {
+            Stats.IsTargetable = targetable;
+        }
+
         public void SetIsTargetableToTeam(TeamId team, bool targetable)
         {
             Stats.IsTargetableToTeam &= ~SpellFlags.TargetableToAll;

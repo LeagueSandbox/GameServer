@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public bool IsInvulnerable { get; set; }
         public bool IsPhysicalImmune { get; set; }
         public bool IsLifestealImmune { get; set; }
-        public bool IsTargetable { get; }
+        public bool IsTargetable { get; set; }
         public SpellFlags IsTargetableToTeam { get; set; }
 
         public float AttackSpeedFlat { get; set; }
