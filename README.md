@@ -31,7 +31,8 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 	* ```cd GameServer```
 	* ```git submodule init```
 	* ```git submodule update```
-* Open the GameServer Solution in VS and Build and run
+* Open the GameServer Solution in VS, set the platform to x86, Build, and run.
+
 
 ### Manual Setup (Linux)
 * Download the 4.20 version of League game client:
@@ -44,6 +45,7 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 	* ```git submodule update```
 * Build the server by running ```dotnet build .```
 * Enter the output directory by running ```cd GameServerConsole/bin/Debug/netcoreapp3.0/```
+* Open ```Settings/GameInfo.json``` and change ```"CONTENT_PATH": "../../../../../Content"``` to ```"CONTENT_PATH": "../../../../Content"```
 * Open ```Settings/GameServerSettings.json``` and change ```"autoStartClient": true``` to ```false```
 * Start the server: ```./GameServerConsole```
 

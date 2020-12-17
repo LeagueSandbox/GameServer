@@ -5,6 +5,9 @@ using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420
 {
+    /// <summary>
+    /// Interface of all functions related to sending and receiving packets.
+    /// </summary>
     public interface IPacketHandlerManager
     {
         bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable);

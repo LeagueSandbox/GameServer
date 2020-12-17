@@ -9,6 +9,9 @@ using System.Runtime.ExceptionServices;
 
 namespace LeagueSandbox.GameServer
 {
+    /// <summary>
+    /// Class which controls the starting of the game and network loops.
+    /// </summary>
     internal class Server : IDisposable
     {
         private Dictionary<ulong, string> _blowfishKeys;
@@ -18,6 +21,9 @@ namespace LeagueSandbox.GameServer
         private Config _config;
         private ushort _serverPort { get; }
 
+        /// <summary>
+        /// Initialize base variables for future usage.
+        /// </summary>
         public Server(Game game, ushort port, string configJson)
         {
             _logger = LoggerProvider.GetLogger();
@@ -30,6 +36,9 @@ namespace LeagueSandbox.GameServer
                 _blowfishKeys.Add(player.Value.PlayerID, player.Value.BlowfishKey);
         }
 
+        /// <summary>
+        /// Called upon the Program successfully initializing GameServerLauncher.
+        /// </summary>
         public void Start()
         {
             var build = $"League Sandbox Build {ServerContext.BuildDateString}";
@@ -45,11 +54,17 @@ namespace LeagueSandbox.GameServer
             _game.Initialize(_config, packetServer);
         }
 
+        /// <summary>
+        /// Called after the Program has finished setting up the Server for players to join.
+        /// </summary>
         public void StartNetworkLoop()
         {
             _game.GameLoop();
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. Unused.
+        /// </summary>
         public void Dispose()
         {
             // PathNode.DestroyTable();

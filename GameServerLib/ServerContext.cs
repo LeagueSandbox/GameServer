@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 
 namespace LeagueSandbox.GameServer
 {
+    /// <summary>
+    /// Class which houses the build information of the currently running build of the Server.
+    /// </summary>
     public static class ServerContext
     {
         public static string ExecutingDirectory { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

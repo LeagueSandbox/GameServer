@@ -1,5 +1,9 @@
 ﻿namespace PacketDefinitions420.PacketDefinitions
 {
+    /// <summary>
+    /// Enum containing (not all, and often incorrectly) the byte definitions for possible packets to be sent to clients or sent to the server by clients.
+    /// *NOTE* Will soon be depricated as the use of LeaguePackets will replace all functions in PacketNotifier that use this enum.
+    /// </summary>
     public enum PacketCmd : short
     {
         PKT_KEY_CHECK = 0x00,

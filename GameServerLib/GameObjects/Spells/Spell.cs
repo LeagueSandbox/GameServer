@@ -122,6 +122,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
 
             _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);
+
+            // Stops movement serverside
+            // TODO: check for each spell if they stop movement or not
+            Owner.StopMovement();
+
             return true;
         }
 

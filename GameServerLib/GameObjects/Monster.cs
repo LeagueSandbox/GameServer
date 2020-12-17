@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this);
+            _game.PacketNotifier.NotifySpawn(this, Team);
         }
     }
 }
