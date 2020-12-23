@@ -80,7 +80,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
         }
 
-        // TODO: Override ScanForTargets and use unique LaneMinion AI
+        public override bool AIMove()
+        {
+            // TODO: Use unique LaneMinion AI and add here for return values.
+            WalkToDestination();
+            return true;
+        }
 
         public void WalkToDestination()
         {

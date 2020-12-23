@@ -86,11 +86,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public virtual bool AIMove()
         {
-            if (IsLaneMinion)
-            {
-                (this as ILaneMinion).WalkToDestination();
-                return true;
-            }
             if (ScanForTargets()) // returns true if we have a target
             {
                 if (!RecalculateAttackPosition())
