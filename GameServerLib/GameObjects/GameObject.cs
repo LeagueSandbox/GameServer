@@ -169,10 +169,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// Refers to the height that the object is at in 3D space. *NOTE*: Should be renamed.
+        /// Refers to the height that the object is at in 3D space.
         /// </summary>
-        // TODO: Change this to property to GetY() as it does not actually represent the Z-axis in 3D space, it currently represents the Y-axis
-        public virtual float GetZ()
+        public virtual float GetHeight()
         {
             return _game.Map.NavigationGrid.GetHeightAtLocation(X, Y);
         }

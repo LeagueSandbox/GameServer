@@ -37,7 +37,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)s.Slot);
             Write((float)s.SpellData.ManaCost[s.Level]);
             Write((float)s.Owner.X);
-            Write((float)s.Owner.GetZ());
+            Write((float)s.Owner.GetHeight());
             Write((float)s.Owner.Y);
             Write((long)1); // Unk
         }

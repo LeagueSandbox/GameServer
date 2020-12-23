@@ -10,7 +10,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         {
             Write((float)c.X);
             Write((float)c.Y);
-            Write((float)c.GetZ());
+            Write((float)c.GetHeight());
         }
     }
 }

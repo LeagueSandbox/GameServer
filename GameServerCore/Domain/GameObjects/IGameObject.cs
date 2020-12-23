@@ -75,10 +75,9 @@ namespace GameServerCore.Domain.GameObjects
         void SetPosition(Vector2 vec);
 
         /// <summary>
-        /// Refers to the height that the object is at in 3D space. *NOTE* Should be renamed.
+        /// Refers to the height that the object is at in 3D space.
         /// </summary>
-        // TODO: Change this to property
-        float GetZ();
+        float GetHeight();
 
         /// <summary>
         /// Whether or not the specified object is colliding with this object.

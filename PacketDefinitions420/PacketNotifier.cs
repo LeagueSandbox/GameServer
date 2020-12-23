@@ -1091,7 +1091,7 @@ namespace PacketDefinitions420
             spawnPacket.TeamID = (ushort)minion.Team;
             // CloneNetID, clones not yet implemented
             spawnPacket.SkinID = 0;
-            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetZ(), minion.GetPosition().Y); // check if work, probably not
+            spawnPacket.Position = new Vector3(minion.GetPosition().X, minion.GetHeight(), minion.GetPosition().Y); // check if work, probably not
             spawnPacket.SenderNetID = minion.NetId;
             spawnPacket.NetNodeID = (byte)NetNodeID.Spawned;
             if (minion.IsLaneMinion) // Should probably change/optimize at some point
@@ -1128,16 +1128,16 @@ namespace PacketDefinitions420
         {
             var misPacket = new MissileReplication();
             misPacket.SenderNetID = p.Owner.NetId;
-            misPacket.Position = new Vector3(p.X, p.GetZ(), p.Y);
-            misPacket.CasterPosition = new Vector3(p.Owner.X, p.Owner.GetZ(), p.Owner.Y);
+            misPacket.Position = new Vector3(p.X, p.GetHeight(), p.Y);
+            misPacket.CasterPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
             var current = new Vector3(p.X, _navGrid.GetHeightAtLocation(p.X, p.Y), p.Y);
             var to = Vector3.Normalize(new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y) - current);
             // Not sure if we want to add height for these, but i did it anyway
             misPacket.Direction = new Vector3(to.X, 0, to.Y);
             misPacket.Velocity = new Vector3(to.X * p.GetMoveSpeed(), 0, to.Y * p.GetMoveSpeed());
-            misPacket.StartPoint = new Vector3(p.X, p.GetZ(), p.Y);
+            misPacket.StartPoint = new Vector3(p.X, p.GetHeight(), p.Y);
             misPacket.EndPoint = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
-            misPacket.UnitPosition = new Vector3(p.Owner.X, p.Owner.GetZ(), p.Owner.Y);
+            misPacket.UnitPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
             misPacket.TimeFromCreation = 0f; // TODO: Unhardcode
             misPacket.Speed = p.GetMoveSpeed();
             misPacket.LifePercentage = 0f; // TODO: Unhardcode
@@ -1184,7 +1184,7 @@ namespace PacketDefinitions420
 
             cast.SpellSlot = p.OriginSpell != null ? p.OriginSpell.Slot : (byte)0x30;
             cast.ManaCost = p.OriginSpell != null ? p.OriginSpell.SpellData.ManaCost[p.OriginSpell.Level] : 0f;
-            cast.SpellCastLaunchPosition = new Vector3(p.X, p.GetZ(), p.Y);
+            cast.SpellCastLaunchPosition = new Vector3(p.X, p.GetHeight(), p.Y);
             cast.AmmoUsed = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoUsed[p.OriginSpell.Level] : 0;
             cast.AmmoRechargeTime = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoRechargeTime[p.OriginSpell.Level] : 0f;
 
@@ -1810,7 +1810,7 @@ namespace PacketDefinitions420
             var restrictPacket = new S2C_SetCircularMovementRestriction()
             {
                 SenderNetID = ai.NetId,
-                Center = new Vector3(center.X, ai.GetZ(), center.Y),
+                Center = new Vector3(center.X, ai.GetHeight(), center.Y),
                 Radius = radius,
                 RestrictCamera = restrictCam
             };
