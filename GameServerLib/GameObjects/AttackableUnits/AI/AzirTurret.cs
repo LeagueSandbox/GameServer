@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this);
+            _game.PacketNotifier.NotifySpawn(this, Team);
         }
 
         public override void RefreshWaypoints()

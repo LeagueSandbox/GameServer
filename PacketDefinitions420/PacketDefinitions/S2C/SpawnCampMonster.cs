@@ -19,10 +19,10 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             WriteNetId(m);
             Write((byte)0x40);
             Write(m.X); //x
-            Write(m.GetZ()); //z
+            Write(m.GetHeight()); //z
             Write(m.Y); //y
             Write(m.X); //x
-            Write(m.GetZ()); //z
+            Write(m.GetHeight()); //z
             Write(m.Y); //y
             Write(m.Facing.X); //facing x
             Write(navGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z

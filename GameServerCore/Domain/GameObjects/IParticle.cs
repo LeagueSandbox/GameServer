@@ -2,6 +2,9 @@
 
 namespace GameServerCore.Domain.GameObjects
 {
+    /// <summary>
+    /// Interface for the GameObject of type Particle. The Particle class is used for all in-game visual effects meant to be explicitly networked by the server (never spawned client-side).
+    /// </summary>
     public interface IParticle : IGameObject
     {
         /// <summary>

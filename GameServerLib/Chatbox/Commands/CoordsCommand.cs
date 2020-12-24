@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 double ang = Math.Acos(dir.X / dir.Length()) * (180 / Math.PI); 
                 dirMsg = $"dirX: {dir.X} dirY: {dir.Y} dirAngle (to X axis): {ang}";
             }
-            var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetZ()} "+dirMsg;
+            var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetHeight()} "+dirMsg;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
         }
     }

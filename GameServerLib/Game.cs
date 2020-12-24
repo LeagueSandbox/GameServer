@@ -27,49 +27,108 @@ using LeagueSandbox.GameServer.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer
 {
+    /// <summary>
+    /// Class that contains and manages all qualities of the game such as managers for networking and game mechanics, as well as the starting, pausing, and stopping of the game.
+    /// </summary>
     public class Game : IGame
     {
-
-        private ILog _logger;
-
-        public bool IsRunning { get; private set; }
-        public bool IsPaused { get; set; }
-
-        private Timer _pauseTimer;
-        public long PauseTimeLeft { get; private set; }
-        private bool _autoResumeCheck;
-        public bool SetToExit { get; set; }
-
-        public int PlayersReady { get; private set; }
-
-        public float GameTime { get; private set; }
-        private float _nextSyncTime = 10 * 1000;
-
+        // Crucial Game Vars
         private PacketServer _packetServer;
-        public IPacketReader PacketReader { get; private set; }
-        public NetworkHandler<ICoreRequest> RequestHandler {get; }
-        public NetworkHandler<ICoreResponse> ResponseHandler { get; }
-        public IPacketNotifier PacketNotifier { get; private set; }
-        public IObjectManager ObjectManager { get; private set; }
-        public IProtectionManager ProtectionManager { get; private set; }
-        public IMap Map { get; private set; }
-        
-        public Config Config { get; protected set; }
-        protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
-
-        // Object managers
-        public ItemManager ItemManager { get; private set; }
-        // Other managers
-        internal ChatCommandManager ChatCommandManager { get; private set; }
-        public IPlayerManager PlayerManager { get; private set; }
-        internal NetworkIdManager NetworkIdManager { get; private set; }
-        //Script Engine
-        internal CSharpScriptEngine ScriptEngine { get; private set; }
-
         private Stopwatch _lastMapDurationWatch;
-
         private List<GameScriptTimer> _gameScriptTimers;
 
+        // Function Vars
+        private ILog _logger;
+        private Timer _pauseTimer;
+        private bool _autoResumeCheck;
+        private float _nextSyncTime = 10 * 1000;
+        protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
+
+        // Server
+
+        /// <summary>
+        /// Whether the server is running or not. Usually true after the network loop has started via GameServerLauncher.
+        /// </summary>
+        public bool IsRunning { get; private set; }
+        /// <summary>
+        /// Whether or not the game has been paused (via a chat command usually).
+        /// </summary>
+        public bool IsPaused { get; set; }
+        /// <summary>
+        /// Time until the game unpauses (if paused).
+        /// </summary>
+        public long PauseTimeLeft { get; private set; }
+        /// <summary>
+        /// Whether or not the game is set as finished (and thus whether the server should close).
+        /// </summary>
+        public bool SetToExit { get; set; }
+
+        // Networking
+
+        /// <summary>
+        /// Number of players which have connected and are ready to be sent into the game (after fully loading).
+        /// </summary>
+        public int PlayersReady { get; private set; }
+        /// <summary>
+        /// Time since the game has started. Mostly used for networking to sync up players with the server.
+        /// </summary>
+        public float GameTime { get; private set; }
+        /// <summary>
+        /// Handler for request packets sent by game clients.
+        /// </summary>
+        public NetworkHandler<ICoreRequest> RequestHandler { get; }
+        /// <summary>
+        /// Handler for response packets sent by the server to game clients.
+        /// </summary>
+        public NetworkHandler<ICoreResponse> ResponseHandler { get; }
+        /// <summary>
+        /// Interface containing all function related packets (except handshake) which are sent by the server to game clients.
+        /// </summary>
+        public IPacketNotifier PacketNotifier { get; private set; }
+
+        // Game
+
+        /// <summary>
+        /// Interface containing all (public) functions used by ObjectManager. ObjectManager manages GameObjects, their properties, and their interactions such as being added, removed, colliding with other objects or terrain, vision, teams, etc.
+        /// </summary>
+        public IObjectManager ObjectManager { get; private set; }
+        /// <summary>
+        /// Interface for all protection related functions.
+        /// Protection is a mechanic which determines whether or not a unit is targetable.
+        /// </summary>
+        public IProtectionManager ProtectionManager { get; private set; }
+        /// <summary>
+        /// Interface for all map properties used for the game.
+        /// </summary>
+        public IMap Map { get; private set; }
+        /// <summary>
+        /// Class containing all information about the game's configuration such as game content location, map spawn points, whether cheat commands are enabled, etc.
+        /// </summary>
+        public Config Config { get; protected set; }
+        /// <summary>
+        /// Class which manages items of players.
+        /// </summary>
+        public ItemManager ItemManager { get; private set; }
+        /// <summary>
+        /// Class which manages all chat based commands.
+        /// </summary>
+        internal ChatCommandManager ChatCommandManager { get; private set; }
+        /// <summary>
+        /// Interface of functions used to identify players or their properties (such as their champion).
+        /// </summary>
+        public IPlayerManager PlayerManager { get; private set; }
+        /// <summary>
+        /// Manager for all unique identifiers used by GameObjects.
+        /// </summary>
+        internal NetworkIdManager NetworkIdManager { get; private set; }
+        /// <summary>
+        /// Class that compiles and loads all scripts which will be used for the game (ex: spells, items, AI, maps, etc).
+        /// </summary>
+        internal CSharpScriptEngine ScriptEngine { get; private set; }
+
+        /// <summary>
+        /// Instantiates all game managers and handlers.
+        /// </summary>
         public Game()
         {
             _logger = LoggerProvider.GetLogger();
@@ -82,6 +141,11 @@ namespace LeagueSandbox.GameServer
             ResponseHandler = new NetworkHandler<ICoreResponse>();
         }
 
+        /// <summary>
+        /// Sets up all managers and config specific settings like players.
+        /// </summary>
+        /// <param name="config">Game configuration file. Usually from GameInfo.json.</param>
+        /// <param name="server">Server networking instance.</param>
         public void Initialize(Config config, PacketServer server)
         {
             _logger.Info("Loading Config.");
@@ -124,6 +188,10 @@ namespace LeagueSandbox.GameServer
 
             _logger.Info("Game is ready.");
         }
+
+        /// <summary>
+        /// Registers Request Handlers for each request packet.
+        /// </summary>
         public void InitializePacketHandlers()
         {
             // maybe use reflection, the problem is that Register is generic and so it needs to know its type at 
@@ -164,6 +232,10 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<ViewRequest>(new HandleView(this).HandlePacket);
         }
 
+        /// <summary>
+        /// Loads the scripts contained in every content package.
+        /// </summary>
+        /// <returns>Whether all scripts were loaded successfully or not.</returns>
         public bool LoadScripts()
         {
             var scriptLoadingResults = Config.ContentManager.LoadScripts();
@@ -171,6 +243,9 @@ namespace LeagueSandbox.GameServer
             return scriptLoadingResults;
         }
 
+        /// <summary>
+        /// Function which initates ticking of the game's logic.
+        /// </summary>
         public void GameLoop()
         {
             _lastMapDurationWatch = new Stopwatch();
@@ -204,7 +279,11 @@ namespace LeagueSandbox.GameServer
             }
 
         }
-        
+
+        /// <summary>
+        /// Function called every tick of the game.
+        /// </summary>
+        /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public void Update(float diff)
         {
             GameTime += diff;
@@ -223,31 +302,51 @@ namespace LeagueSandbox.GameServer
             }
         }
 
+        /// <summary>
+        /// Adds a timer to the list of timers so that it ticks with the game.
+        /// </summary>
+        /// <param name="timer">Timer instance.</param>
         public void AddGameScriptTimer(GameScriptTimer timer)
         {
             _gameScriptTimers.Add(timer);
         }
 
+        /// <summary>
+        /// Removes a timer from the list of timers which causes it to become inactive.
+        /// </summary>
+        /// <param name="timer">Timer instance.</param>
         public void RemoveGameScriptTimer(GameScriptTimer timer)
         {
             _gameScriptTimers.Remove(timer);
         }
 
+        /// <summary>
+        /// Adds a player to the list of players who have fully loaded and are ready to get in-game.
+        /// </summary>
         public void IncrementReadyPlayers()
         {
             PlayersReady++;
         }
 
+        /// <summary>
+        /// Function to set the game as running. Allows the game loop to start.
+        /// </summary>
         public void Start()
         {
             IsRunning = true;
         }
 
+        /// <summary>
+        /// Function to set the game as not running. Prevents the game loop from continuing.
+        /// </summary>
         public void Stop()
         {
             IsRunning = false;
         }
 
+        /// <summary>
+        /// Temporarily prevents the game loop from continuing and notifies players.
+        /// </summary>
         public void Pause()
         {
             if (PauseTimeLeft <= 0)
@@ -258,6 +357,9 @@ namespace LeagueSandbox.GameServer
             PacketNotifier.NotifyPauseGame((int)PauseTimeLeft, true);
         }
 
+        /// <summary>
+        /// Releases the game loop from a temporary pause.
+        /// </summary>
         public void Unpause()
         {
             _lastMapDurationWatch.Start();
@@ -265,6 +367,10 @@ namespace LeagueSandbox.GameServer
             _pauseTimer.Enabled = false;
         }
 
+        /// <summary>
+        /// Unused function meant to get the instances of a specific type who rely on Game as a parameter.
+        /// </summary>
+        /// <returns>List of instances of type T.</returns>
         private static List<T> GetInstances<T>(IGame g)
         {
             return Assembly.GetCallingAssembly()
@@ -273,6 +379,9 @@ namespace LeagueSandbox.GameServer
                 .Select(t => (T)Activator.CreateInstance(t, g)).ToList();
         }
 
+        /// <summary>
+        /// Prepares to close the Game 10 seconds after being called.
+        /// </summary>
         public void SetGameToExit()
         {
             _logger.Info("Game is over. Game Server will exit in 10 seconds.");

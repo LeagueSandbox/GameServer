@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * damage);
-                // TODO: send this in one place only
+                // TODO: send this in one place only (preferably a central EventHandler class)
                 _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }

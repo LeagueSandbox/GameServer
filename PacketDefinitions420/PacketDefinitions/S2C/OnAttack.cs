@@ -11,7 +11,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         {
             Write((byte)attackType);
             Write(attacked.X);
-            Write(attacked.GetZ());
+            Write(attacked.GetHeight());
             Write(attacked.Y);
             WriteNetId(attacked);
         }

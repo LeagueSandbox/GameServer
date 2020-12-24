@@ -66,14 +66,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            if (!IsLaneMinion)
-            {
-                _game.PacketNotifier.NotifySpawn(this);
-            }
-            else
-            {
-                _game.PacketNotifier.NotifyLaneMinionSpawned((ILaneMinion)this, Team);
-            }
+            _game.PacketNotifier.NotifySpawn(this, Team);
         }
 
         public override void Update(float diff)

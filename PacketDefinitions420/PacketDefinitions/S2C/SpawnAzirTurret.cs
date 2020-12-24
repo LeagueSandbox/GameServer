@@ -29,7 +29,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write(0);
 
             Write(turret.X);
-            Write(turret.GetZ());
+            Write(turret.GetHeight());
             Write(turret.Y);
             Write(4.0f);
 

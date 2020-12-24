@@ -8,6 +8,11 @@ using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer
 {
+    /// <summary>
+    /// Class that contains basic game information which is used to decide how the game will function after starting, such as players, their spawns,
+    /// the packages which control the functionality of their champions/abilities, and lastly whether basic game mechanics such as 
+    /// cooldowns/mana costs/minion spawns should be enabled/disabled.
+    /// </summary>
     public class Config
     {
         public Dictionary<string, PlayerConfig> Players { get; private set; }

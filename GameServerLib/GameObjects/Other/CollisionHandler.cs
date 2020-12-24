@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             foreach (var obj in objectsCopy)
             {
                 // static objects, skip collison as they are static
-                if (obj is IBaseTurret || obj is IInhibitor || obj is INexus)
+                if (obj is IObjBuilding || obj is ILevelProp || obj is IBaseTurret)
                 {
                     continue;
                 }

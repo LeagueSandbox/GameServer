@@ -49,6 +49,7 @@ You can also use `Progress` in place of `Resolve`, in case the issue was not res
 * Files and folders in `PascalCase`
 * JSON dictionary keys in `PascalCase`
 * Keep the code as simple and clear to read as possible
+* All functions and public variables should have summary comments which follow the standard found throughout the project already.
 * Each separate feature should be developed in their own branch
 * Commits should be in logical small pieces
 * Pull requests should be kept as small as possible, generally one feature per pull requests

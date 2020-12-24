@@ -15,7 +15,10 @@ using System.Runtime.InteropServices;
 
 namespace PacketDefinitions420
 {
-    // TODO: refactor this class, get rid of IGame, use generic API requests+responses also for disconnect and unpause
+    /// <summary>
+    /// Class containing all functions related to sending and receiving packets.
+    /// TODO: refactor this class (may be able to replace it with LeaguePackets' implementation), get rid of IGame, use generic API requests+responses also for disconnect and unpause
+    /// </summary>
     public class PacketHandlerManager : IPacketHandlerManager
     {
         private delegate ICoreRequest RequestConvertor(byte[] data);
@@ -124,7 +127,7 @@ namespace PacketDefinitions420
 
         public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            // sometimes we want to send packets to some user but this user doesn't exist (like in broadcast when not all players connected)
+            // Sometimes we try to send packets to a user that doesn't exist (like in broadcast when not all players are connected).
             // TODO: fix casting
             if (_peers.ContainsKey((ulong)playerId))
             {

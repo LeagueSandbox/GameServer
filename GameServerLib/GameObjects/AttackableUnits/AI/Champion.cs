@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
-            _game.PacketNotifier.NotifyChampionSpawned(this, Team);
+            _game.PacketNotifier.NotifySpawn(this, Team);
         }
 
         public override void OnRemoved()
@@ -224,11 +224,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return new Vector2(coords.X, coords.Y);
         }
 
+        // TODO: fix StopMovement function in ObjAiBase and delete this
         public void StopChampionMovement()
         {
-            List<Vector2> l = new List<Vector2>();
-            l.Add(new Vector2(this.X, this.Y));
-            this.SetWaypoints(l);
+            StopMovement();
             _game.PacketNotifier.NotifyMovement(this);
         }
         

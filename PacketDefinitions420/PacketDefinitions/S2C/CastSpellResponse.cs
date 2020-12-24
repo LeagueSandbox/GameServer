@@ -10,7 +10,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         public CastSpellResponse(INavigationGrid navGrid, ISpell s, float x, float y, float xDragEnd, float yDragEnd, uint futureProjNetId, uint spellNetId)
             : base(PacketCmd.PKT_S2C_CAST_SPELL_ANS, s.Owner.NetId)
         {
-            Write(Environment.TickCount); // syncID
+            Write(s.Owner.SyncId); // syncID
             Write((byte)0); // Unk
             Write((short)0x66); // Buffer size from here
             Write((int)s.GetId()); // Spell hash, for example hash("EzrealMysticShot")
@@ -37,7 +37,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)s.Slot);
             Write((float)s.SpellData.ManaCost[s.Level]);
             Write((float)s.Owner.X);
-            Write((float)s.Owner.GetZ());
+            Write((float)s.Owner.GetHeight());
             Write((float)s.Owner.Y);
             Write((long)1); // Unk
         }

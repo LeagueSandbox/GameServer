@@ -13,17 +13,40 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.Maps
 {
+    /// <summary>
+    /// Class responsible for all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
+    /// </summary>
     public class Map: IMap
     {
+        // Crucial Vars
         protected Game _game;
         private readonly ILog _logger;
 
-        public List<IAnnounce> AnnouncerEvents { get; private set; }
-        public INavigationGrid NavigationGrid { get; private set; }
-        public ICollisionHandler CollisionHandler { get; private set; }
+        /// <summary>
+        /// Unique identifier for the Map (ex: 1 = Old SR, 11 = New SR)
+        /// </summary>
         public int Id { get; private set; }
+        /// <summary>
+        /// Collision Handler to be instanced by the map. Used for collisions between GameObjects or GameObjects and terrain.
+        /// </summary>
+        public ICollisionHandler CollisionHandler { get; private set; }
+        /// <summary>
+        /// Navigation Grid to be instanced by the map. Used for terrain data.
+        /// </summary>
+        public INavigationGrid NavigationGrid { get; private set; }
+        /// <summary>
+        /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
+        /// </summary>
         public IMapProperties MapProperties { get; private set; }
+        /// <summary>
+        /// List of events related to the announcer (ex: first blood)
+        /// </summary>
+        public List<IAnnounce> AnnouncerEvents { get; private set; }
 
+        /// <summary>
+        /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
+        /// </summary>
+        /// <param name="game">Game instance.</param>
         public Map(Game game)
         {
             _game = game;
@@ -44,6 +67,32 @@ namespace LeagueSandbox.GameServer.Maps
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(_game, this);
             MapProperties = GetMapProperties(Id);
+        }
+
+        /// <summary>
+        /// Function called every tick of the game. Updates CollisionHandler, MapProperties, and executes AnnouncerEvents.
+        /// </summary>
+        /// <param name="diff">Number of milliseconds since this tick occurred.</param>
+        public void Update(float diff)
+        {
+            CollisionHandler.Update();
+            foreach (var announce in AnnouncerEvents)
+            {
+                if (!announce.IsAnnounced && _game.GameTime >= announce.EventTime)
+                {
+                    announce.Execute();
+                }
+            }
+
+            MapProperties.Update(diff);
+        }
+
+        /// <summary>
+        /// Initializes MapProperties. Usually only occurs once before players are added to Game.
+        /// </summary>
+        public void Init()
+        {
+            MapProperties.Init();
         }
 
         public IMapProperties GetMapProperties(int mapId)
@@ -69,25 +118,6 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             return (IMapProperties)Activator.CreateInstance(dict[mapId], _game);
-        }
-
-        public void Init()
-        {
-            MapProperties.Init();
-        }
-
-        public void Update(float diff)
-        {
-            CollisionHandler.Update();
-            foreach (var announce in AnnouncerEvents)
-            {
-                if (!announce.IsAnnounced && _game.GameTime >= announce.EventTime)
-                {
-                    announce.Execute();
-                }
-            }
-
-            MapProperties.Update(diff);
         }
     }
 }
