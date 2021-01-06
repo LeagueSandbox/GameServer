@@ -9,5 +9,7 @@
         bool IsBot { get; }
         bool IsLaneMinion { get; }
         bool IsClone { get; }
+
+        void PauseAi(bool pause);
     }
 }

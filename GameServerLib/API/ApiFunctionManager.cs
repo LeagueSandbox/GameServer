@@ -148,10 +148,11 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="x">X coordinaate.</param>
         /// <param name="y">Y coordinate.</param>
+        /// <param name="checkRadius">Radius around the given point to check for walkability.</param>
         /// <returns>True/False</returns>
-        public static bool IsWalkable(float x, float y)
+        public static bool IsWalkable(float x, float y, float checkRadius = 0)
         {
-            return _game.Map.NavigationGrid.IsWalkable(x, y);
+            return _game.Map.NavigationGrid.IsWalkable(x, y, checkRadius);
         }
 
         /// <summary>
@@ -252,8 +253,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>New particle instance.</returns>
         public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var t = new Target(toX, toY);
-            var p = new Particle(_game, unit, t, particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, unit, new Vector2(toX, toY), particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -263,14 +263,14 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit">AI unit that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
-        /// <param name="target">Target to attach this particle to.</param>
+        /// <param name="target">GameObject to attach this particle to.</param>
         /// <param name="size">Scale.</param>
         /// <param name="bone">Bone the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, ITarget target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, IGameObject target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
             var p = new Particle(_game, unit, target, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
@@ -299,7 +299,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>New Minion instance.</returns>
         public static IMinion AddMinion(IObjAiBase owner, string model, string name, float toX, float toY, int visionRadius = 0, bool isVisible = true, bool aiPaused = true)
         {
-            var m = new Minion(_game, owner, toX, toY, model, name, visionRadius);
+            var m = new Minion(_game, owner, toX, toY, model, name, visionRadius, 0, owner.Team);
             _game.ObjectManager.AddObject(m);
             m.SetVisibleByTeam(owner.Team, isVisible);
             m.PauseAi(aiPaused);
@@ -320,11 +320,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>New Minion instance.</returns>
         public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, ITarget target, int visionRadius = 0, bool isVisible = true, bool aiPaused = true)
         {
-            var m = new Minion(_game, owner, target.X, target.Y, model, name, visionRadius);
-            _game.ObjectManager.AddObject(m);
-            m.SetVisibleByTeam(owner.Team, isVisible);
-            m.PauseAi(aiPaused);
-            return m;
+            return AddMinion(owner, model, name, target.X, target.Y, visionRadius, isVisible, aiPaused);
         }
 
         /// <summary>
@@ -419,7 +415,7 @@ namespace LeagueSandbox.GameServer.API
 
             if (target.IsSimpleTarget)
             {
-                var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y));
+                var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y), unit.CollisionRadius + 1.0f);
                 var newTarget = new Target(newCoords);
                 unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
                 _game.PacketNotifier.NotifyDash(

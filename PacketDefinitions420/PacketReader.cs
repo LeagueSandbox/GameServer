@@ -20,6 +20,10 @@ using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewReques
 
 namespace PacketDefinitions420
 {
+    /// <summary>
+    /// Class which contains all functions which are called when handling packets sent from clients to the server (C2S).
+    /// </summary>
+    /// TODO: Remove all LeagueSandbox based PacketCmd usage and replace with LeaguePackets' GamPacketID enum.
     public class PacketReader
     {
         [PacketType(PacketCmd.PKT_C2S_EXIT)]
@@ -202,31 +206,10 @@ namespace PacketDefinitions420
         [PacketType(PacketCmd.PKT_C2S_MOVE_REQ)]
         public static MovementRequest ReadMovementRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.MovementRequest(data);
-            MoveType type;
-            switch (rq.Type)
-            {
-                case MovementType.EMOTE:
-                    type = MoveType.EMOTE;
-                    break;
-                case MovementType.MOVE:
-                    type = MoveType.MOVE;
-                    break;
-                case MovementType.ATTACK:
-                    type = MoveType.ATTACK;
-                    break;
-                case MovementType.ATTACKMOVE:
-                    type = MoveType.ATTACKMOVE;
-                    break;
-                case MovementType.STOP:
-                    type = MoveType.STOP;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return new MovementRequest(rq.NetIdHeader, type, rq.X, rq.Y, rq.TargetNetId, rq.CoordCount, rq.NetId,
-                rq.MoveData);
+            var rq = new NPC_IssueOrderReq();
+            rq.Read(data);
+            // TODO: Verify if the MoveType cast works correctly.
+            return new MovementRequest(rq.SenderNetID, rq.TargetNetID, rq.Position, (MoveType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(Convertors.WaypointToVector2));
         }
 
         [PacketType(PacketCmd.PKT_C2S_QUEST_CLICKED)]

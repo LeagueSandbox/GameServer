@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer
         private Timer _pauseTimer;
         private bool _autoResumeCheck;
         private float _nextSyncTime = 10 * 1000;
-        protected const double REFRESH_RATE = 1000.0 / 30.0; // 30 fps
+        protected const double REFRESH_RATE = 1000.0 / 30.0; // 33.3... fps
 
         // Server
 
@@ -267,6 +267,7 @@ namespace LeagueSandbox.GameServer
 
                 if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                 {
+                    // Sets last tick time (diff).
                     var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
@@ -293,7 +294,7 @@ namespace LeagueSandbox.GameServer
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
 
-            // By default, synchronize the game time every 10 seconds
+            // By default, synchronize the game time between server and clients every 10 seconds
             _nextSyncTime += diff;
             if (_nextSyncTime >= 10 * 1000)
             {

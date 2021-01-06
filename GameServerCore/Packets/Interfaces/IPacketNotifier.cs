@@ -424,8 +424,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players that have vision of the specified GameObject that it has made a movement.
         /// </summary>
-        /// <param name="o">GameObject moving.</param>
-        /// TODO: Make moving only applicable to ObjAiBase.
+        /// <param name="o">GameObject that is moving.</param>
+        /// TODO: Make moving only applicable to AttackableUnits.
         void NotifyMovement(IGameObject o);
         /// <summary>
         /// Sends a packet to all players detailing that the specified attacker unit is starting their next auto attack.
@@ -696,10 +696,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has teleported to the specified position.
         /// </summary>
-        /// <param name="u">AttackableUnit that teleported.</param>
+        /// <param name="o">GameObject that teleported.</param>
         /// <param name="pos">2D top-down position that the unit teleported to.</param>
         /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
-        void NotifyTeleport(IAttackableUnit u, Vector2 pos);
+        void NotifyTeleport(IGameObject o, Vector2 pos);
         /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>

@@ -16,6 +16,14 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         string Name { get; }
         /// <summary>
+        /// GameObject this particle is currently attached to. Null when not attached to anything.
+        /// </summary>
+        IGameObject TargetObject { get; }
+        /// <summary>
+        /// Position this object is spawned at. *NOTE*: Does not update. Refer to TargetObject.GetPosition() if particle is supposed to be attached.
+        /// </summary>
+        Vector2 TargetPosition { get; }
+        /// <summary>
         /// Client-sided, internal name of the bone that this particle should be attached to for networking
         /// </summary>
         string BoneName { get; }

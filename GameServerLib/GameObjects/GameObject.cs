@@ -12,12 +12,13 @@ using LeagueSandbox.GameServer.Packets;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    /// <summary>
-    /// Base class for all objects in League of Legends.
-    /// </summary>
+    /// <summmary>
+    /// Base class for all objects.
+    /// GameObjects normally follow these guidelines of functionality: Position, Direction, Collision, Vision, Team, and Networking.
+    /// </summmary>
     public class GameObject : Target, IGameObject
     {
-        // Crucial Vars (probably not good to have Game everywhere though)
+        // Crucial Vars (keep in mind Game is everywhere, which could be an issue for the future)
         protected Game _game;
         protected NetworkIdManager _networkIdManager;
 
@@ -25,9 +26,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected bool _toRemove;
         protected bool _movementUpdated;
         protected Vector2 _direction;
-        private static readonly uint MOVEMENT_EPSILON = 5; //TODO: Verify if this should be changed
         private Dictionary<TeamId, bool> _visibleByTeam;
 
+        /// <summary>
+        /// Comparison variable for small distance movements.
+        /// </summary>
+        public static readonly uint MOVEMENT_EPSILON = 5; //TODO: Verify if this should be changed
         /// <summary>
         /// Whether or not this object counts as a single point target. *NOTE*: Will be depricated once Target class is removed.
         /// </summary>
@@ -44,10 +48,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public List<Vector2> Waypoints { get; private set; }
         /// <summary>
-        /// Index of the waypoint in the list of waypoints that the object is current on.
+        /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public int WaypointIndex { get; private set; }
         /// <summary>
         /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
@@ -64,12 +70,14 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Current target the game object is looking at, moving to, or attacking (can be coordinates or an object)
         /// </summary>
+        /// TODO: Remove the Target class and replace with IAttackableUnit.
+        /// TODO: GameObjects and AttackableUnits shouldn't be able to target, so move this to ObjAIBase.
         public ITarget Target { get; set; }
 
         /// <summary>
         /// Instantiation of an object which represents the base class for all objects in League of Legends.
         /// </summary>
-        public GameObject(Game game, float x, float y, int collisionRadius, int visionRadius = 0, uint netId = 0) : base(x, y)
+        public GameObject(Game game, float x, float y, int collisionRadius = 40, int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) : base(x, y)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
@@ -89,12 +97,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
-            foreach (var team in teams)
+            foreach (var t in teams)
             {
-                _visibleByTeam.Add(team, false);
+                _visibleByTeam.Add(t, false);
             }
 
-            Team = TeamId.TEAM_NEUTRAL;
+            Team = team;
             _movementUpdated = false;
             _toRemove = false;
         }
@@ -113,14 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="diff">Number of milliseconds that passed before this tick occurred.</param>
         public virtual void Update(float diff)
         {
-            if (Target != null && !Target.IsSimpleTarget)
-            {
-                Move(diff);
-            }
-            else
-            {
-                Move(diff);
-            }
+            Move(diff);
         }
 
         /// <summary>
@@ -152,10 +153,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public virtual void SetPosition(float x, float y)
         {
-            X = x;
-            Y = y;
-
-            Target = null;
+            SetPosition(new Vector2(x, y));
         }
 
         /// <summary>
@@ -165,7 +163,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             X = vec.X;
             Y = vec.Y;
-            Target = null;
         }
 
         /// <summary>
@@ -188,16 +185,23 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Whether or not the specified object is colliding with this object.
         /// </summary>
         /// <param name="o">An object that could be colliding with this object.</param>
-        public bool IsCollidingWith(IGameObject o)
+        public virtual bool IsCollidingWith(IGameObject o)
         {
-            return GetDistanceToSqr(o) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return Vector2.DistanceSquared(new Vector2(X, Y), o.GetPosition()) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>
         /// Called by ObjectManager when the object is ontop of another object or when the object is inside terrain.
         /// </summary>
-        public virtual void OnCollision(IGameObject collider)
+        public virtual void OnCollision(IGameObject collider, bool isTerrain = false)
         {
+            if (isTerrain)
+            {
+                // Escape functionality should be moved to GameObject.OnCollision.
+                // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
+                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(GetPosition(), CollisionRadius + 1.0f);
+                TeleportTo(exit.X, exit.Y);
+            }
         }
 
         /// <summary>
@@ -218,6 +222,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Returns the units that the game object travels each second. Default 0 unless overriden.
         /// </summary>
+        /// TODO: Remove this as GameObject shouldn't have anything stat or movement related and make AttackableUnit.GetMoveSpeed virtual.
         public virtual float GetMoveSpeed()
         {
             return 0;
@@ -227,26 +232,31 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Moves the object to its specified waypoints, updating its coordinate.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the object is supposed to move</param>
-        public void Move(float diff)
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
+        public virtual void Move(float diff)
         {
             // no waypoints remained - clear the Waypoints
             if (WaypointIndex >= Waypoints.Count)
             {
                 Waypoints.RemoveAll(v => v != Waypoints[0]);
+                Target = null;
             }
 
             // TODO: Remove dependency of Target. In fact, just remove Target altogether.
             if (Target == null)
             {
                 _direction = new Vector2();
-
                 return;
             }
 
-            // current position
+            // current -> next positions
             var cur = new Vector2(X, Y);
-
             var next = new Vector2(Target.X, Target.Y);
+
+            if (cur == next)
+            {
+                return;
+            }
 
             var goingTo = next - cur;
             _direction = Vector2.Normalize(goingTo);
@@ -259,10 +269,26 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             var moveSpeed = GetMoveSpeed();
 
+            var dist = MathF.Abs(Vector2.Distance(cur, next));
+
             var deltaMovement = moveSpeed * 0.001f * diff;
+
+            // Prevent moving past the next waypoint.
+            if (deltaMovement > dist)
+            {
+                deltaMovement = dist;
+            }
 
             var xx = _direction.X * deltaMovement;
             var yy = _direction.Y * deltaMovement;
+
+            // TODO: Prevent movement past obstacles (after moving movement functionality to ObjAIBase).
+            //Vector2 nextPos = new Vector2(X + xx, Y + yy);
+            //KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(GetPosition(), nextPos);
+            //if (pathBlocked.Key)
+            //{
+            //    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, CollisionRadius + 1.0f);
+            //}
 
             X += xx;
             Y += yy;
@@ -294,15 +320,20 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
         /// </summary>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public Vector2 GetNextWaypoint()
         {
-            if (WaypointIndex < Waypoints.Count) return Waypoints[WaypointIndex];
+            if (WaypointIndex < Waypoints.Count)
+            {
+                return Waypoints[WaypointIndex];
+            }
             return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         }
 
         /// <summary>
         /// Returns whether the game object has reached the last waypoint in its path of waypoints.
         /// </summary>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public bool IsPathEnded()
         {
             return WaypointIndex >= Waypoints.Count;
@@ -312,11 +343,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Sets the object's path to the newWaypoints
         /// </summary>
         /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public void SetWaypoints(List<Vector2> newWaypoints)
         {
             Waypoints = newWaypoints;
 
-            SetPosition(Waypoints[0].X, Waypoints[0].Y);
             _movementUpdated = true;
             if (Waypoints.Count == 1)
             {
@@ -332,6 +363,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Returns whether the game object has set its waypoints this update.
         /// </summary>
         /// <returns></returns>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public bool IsMovementUpdated()
         {
             return _movementUpdated;
@@ -341,6 +373,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Used each object manager update after the game object has set its waypoints and the server has networked it.
         /// </summary>
         /// <returns></returns>
+        /// TODO: Move this to AttackableUnit, as GameObjects should be able to move or target.
         public void ClearMovementUpdated()
         {
             _movementUpdated = false;
@@ -369,6 +402,32 @@ namespace LeagueSandbox.GameServer.GameObjects
                 // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
             }
+        }
+
+        /// <summary>
+        /// Sets the position of this GameObject to the specified position.
+        /// </summary>
+        /// <param name="x">X coordinate to set.</param>
+        /// <param name="y">Y coordinate to set.</param>
+        public void TeleportTo(float x, float y)
+        {
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
+            {
+                var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
+                SetPosition(walkableSpot);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
+            }
+            else
+            {
+                SetPosition(x, y);
+
+                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
+                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
+            }
+
+            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
         }
     }
 }

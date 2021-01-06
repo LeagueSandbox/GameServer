@@ -13,6 +13,10 @@ using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.GameObjects.Missiles
 {
+    /// <summary>
+    /// Class representing cone based spells.
+    /// </summary>
+    /// TODO: Create a generalized class for spell based hitboxes instead of inheriting Projectile.
     internal class Cone : Projectile
     {
         private bool _affectAsCastIsOver;
@@ -28,20 +32,18 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float y,
             int collisionRadius,
             IAttackableUnit owner,
-            ITarget target,
+            Vector2 targetPos,
             ISpell originSpell,
             string effectName,
             int flags,
             bool affectAsCastIsOver,
             float angleDeg,
             uint netid
-            ) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags, netid)
+            ) : base(game, x, y, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(effectName);
             _affectAsCastIsOver = affectAsCastIsOver;
             _angleDeg = angleDeg;
-            CreateCone(new Target(x, y), target);            
-
+            CreateCone(new Vector2(x, y), targetPos);
         }
 
         public override void Update(float diff)
@@ -80,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        private void CreateCone(ITarget beginPoint, ITarget endPoint)
+        private void CreateCone(Vector2 beginPoint, Vector2 endPoint)
         {
             var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
             var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
@@ -95,6 +97,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             _radius = distance;
         }
 
+        /// <summary>
+        /// Checks if given GameObject is inside this <see cref="Cone"/>.
+        /// </summary>
+        /// <param name="target">AttackableUnit to check.</param>
+        /// <returns>True if unit is in rectangle, otherwise False.</returns>
         private bool TargetIsInCone(IAttackableUnit target)
         {
             var unitCoords = new Vector2(target.X, target.Y);
@@ -105,5 +112,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             return targetDistance <= _radius && targetAngle >= _beginAngle && targetAngle <= _endAngle;
         }
 
+        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        {
+        }
     }
 }

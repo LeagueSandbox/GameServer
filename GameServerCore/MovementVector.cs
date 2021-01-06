@@ -6,7 +6,7 @@ namespace GameServerCore
     /// <summary>
     /// Class containing coordinate conversions usually used for packets.
     /// Most coordinates understandable by the League clients are oriented around an origin which is at the center of the map,
-    /// however, LeagueSandbox has its origin at the bottom left corner of the map (center of blue fountain), so a conversion is needed.
+    /// however, LeagueSandbox has its origin at the bottom left corner of the map (behind blue fountain), so a conversion is needed.
     /// </summary>
     public class MovementVector
     {
@@ -78,6 +78,18 @@ namespace GameServerCore
         public static short TargetYToNormalFormat(IGame game, float value)
         {
             return TargetYToNormalFormat(game.Map.NavigationGrid, value);
+        }
+
+        /// <summary>
+        /// Converts a 2D vector from normal coordinates to ones compatible with League (usually used in packets); origin at the center of the map.
+        /// </summary>
+        /// <param name="coords">Vector2 to convert.</param>
+        /// <param name="navGrid">Current NavGrid.</param>
+        /// <returns>Vector2 with origin at the middle of the map.</returns>
+        public static Vector2 ToCenteredScaledCoordinates(Vector2 coords, INavigationGrid navGrid)
+        {
+            Vector2 v = new Vector2(FormatCoordinate(coords.X, navGrid.MiddleOfMap.X), FormatCoordinate(coords.Y, navGrid.MiddleOfMap.Y));
+            return v;
         }
     }
 }

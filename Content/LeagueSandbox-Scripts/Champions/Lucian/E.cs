@@ -24,10 +24,10 @@ namespace Spells
         {
             var current = new Vector2(owner.X, owner.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-            var range = to * 445;
+            var range = to * spell.SpellData.CastRangeDisplayOverride[2];
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords.X, trueCoords.Y, 1500, false, "SPELL3");
+            DashToLocation(owner, trueCoords.X, trueCoords.Y, 1500.0f, false, "SPELL3", 0, 0, 0, spell.SpellData.CastRangeDisplayOverride[2] / (1500.0f * 0.001f));
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)

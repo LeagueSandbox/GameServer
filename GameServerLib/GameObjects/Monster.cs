@@ -31,8 +31,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             uint netId = 0
         ) : base(game, null, x, y, model, name, 0, netId)
         {
-            SetTeam(TeamId.TEAM_NEUTRAL);
-
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
             {

@@ -83,30 +83,30 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         }
 
-        public bool ApplyStatModificator(IStatModifier statModifcator)
+        public bool ApplyStatModifier(IStatModifier statModifier)
         {
-            if (!statModifcator.StatModified)
+            if (!statModifier.StatModified)
             {
                 return false;
             }
-            BaseBonus += statModifcator.BaseBonus;
-            PercentBaseBonus += statModifcator.PercentBaseBonus;
-            FlatBonus += statModifcator.FlatBonus;
-            PercentBonus += statModifcator.PercentBonus;
+            BaseBonus += statModifier.BaseBonus;
+            PercentBaseBonus += statModifier.PercentBaseBonus;
+            FlatBonus += statModifier.FlatBonus;
+            PercentBonus += statModifier.PercentBonus;
 
             return true;
         }
 
-        public bool RemoveStatModificator(IStatModifier statModifcator)
+        public bool RemoveStatModifier(IStatModifier statModifier)
         {
-            if (!statModifcator.StatModified)
+            if (!statModifier.StatModified)
             {
                 return false;
             }
-            BaseBonus -= statModifcator.BaseBonus;
-            PercentBaseBonus -= statModifcator.PercentBaseBonus;
-            FlatBonus -= statModifcator.FlatBonus;
-            PercentBonus -= statModifcator.PercentBonus;
+            BaseBonus -= statModifier.BaseBonus;
+            PercentBaseBonus -= statModifier.PercentBaseBonus;
+            FlatBonus -= statModifier.FlatBonus;
+            PercentBonus -= statModifier.PercentBonus;
 
             return true;
         }

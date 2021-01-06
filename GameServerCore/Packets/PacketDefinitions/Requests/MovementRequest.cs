@@ -1,28 +1,24 @@
 ﻿using GameServerCore.Packets.Enums;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class MovementRequest : ICoreRequest
     {
-        public int NetIdHeader { get; }
+        public uint NetId { get; }
         public MoveType Type { get; } //byte
-        public float X { get; }
-        public float Y { get; }
+        public Vector2 Position { get; }
         public uint TargetNetId { get; }
-        public byte CoordCount { get; }
-        public int NetId { get; }
-        public byte[] MoveData { get; }
+        public List<Vector2> Waypoints { get; }
 
-        public MovementRequest(int netIdHeader, MoveType type, float x, float y, uint targetNetId, byte coordCount, int netId, byte[] moveData)
+        public MovementRequest(uint netId, uint targetNetId, Vector2 pos, MoveType order, List<Vector2> waypoints)
         {
-            NetIdHeader = netIdHeader;
-            Type = type;
-            X = x;
-            Y = y;
-            TargetNetId = targetNetId;
-            CoordCount = coordCount;
             NetId = netId;
-            MoveData = moveData;
+            TargetNetId = targetNetId;
+            Position = pos;
+            Type = order;
+            Waypoints = waypoints;
         }
     }
 }

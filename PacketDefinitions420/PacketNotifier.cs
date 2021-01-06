@@ -561,15 +561,35 @@ namespace PacketDefinitions420
                 enterVis.BuffCount = emptyBuffCountList;
             }
             enterVis.UnknownIsHero = false;
-            //TODO: Use MovementDataNormal instead, because currently we desync if the unit is moving
-            // TODO: Save unit waypoints in unit class so they can be used here for MovementDataNormal
-            var md = new MovementDataStop
+
+            // TODO: Verify if this fixes movement for enemy units that are coming into vision while moving to waypoints.
+            if (o is IObjAiBase ai && ai.Waypoints.Count > 1)
             {
-                Position = o.GetPosition(),
-                Forward = new Vector2(0, 1),
-                SyncID = (int)o.SyncId
-            };
-            enterVis.MovementData = md;
+                var md = new MovementDataNormal();
+                var waypoint = new List<CompressedWaypoint>();
+                //var curPos = MovementVector.ToCenteredScaledCoordinates(o.GetPosition(), _navGrid);
+                //waypoint.Add(new CompressedWaypoint((short)curPos.X, (short)curPos.Y));
+                //TODO: optimize this by saving these lists in the ObjAiBase class
+                foreach (Vector2 v in ai.Waypoints)
+                {
+                    var vec = MovementVector.ToCenteredScaledCoordinates(v, _navGrid);
+                    waypoint.Add(new CompressedWaypoint((short)vec.X, (short)vec.Y));
+                }
+                md.Waypoints = waypoint;
+                md.HasTeleportID = false;
+                md.SyncID = (int)o.SyncId;
+                enterVis.MovementData = md;
+            }
+            else
+            {
+                var md = new MovementDataStop
+                {
+                    Position = o.GetPosition(),
+                    Forward = o.GetDirection(),
+                    SyncID = (int)o.SyncId
+                };
+                enterVis.MovementData = md;
+            }
 
             if (userId != 0)
             {
@@ -620,7 +640,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="particle">Particle to network.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyFXCreateGroup(IParticle particle, int playerId = 0)
+        public void NotifyFXCreateGroup(IParticle particle, int userId = 0)
         {
             var fxPacket = new FX_Create_Group();
             fxPacket.SenderNetID = particle.Owner.NetId;
@@ -628,7 +648,7 @@ namespace PacketDefinitions420
             var fxDataList = new List<FXCreateData>();
 
             var ownerHeight = _navGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
-            var targetHeight = _navGrid.GetHeightAtLocation(particle.Target.X, particle.Target.Y);
+            var targetHeight = _navGrid.GetHeightAtLocation(particle.TargetPosition.X, particle.TargetPosition.Y);
             var particleHeight = _navGrid.GetHeightAtLocation(particle.X, particle.Y);
             var higherValue = Math.Max(targetHeight, particleHeight);
 
@@ -654,21 +674,21 @@ namespace PacketDefinitions420
                 ScriptScale = particle.Scale
             };
 
-            if (particle.Target.IsSimpleTarget) // Non-object target (usually a position)
+            if (particle.TargetObject == null) // Non-object target (usually a position)
             {
                 fxData1.TargetNetID = particle.Owner.NetId; // Probably not correct, but it works
                 fxData1.BindNetID = 0; // Not sure what this is
 
-                fxData1.TargetPositionX = (short)((particle.Target.X - _navGrid.MapWidth / 2) / 2);
-                fxData1.TargetPositionZ = (short)((particle.Target.Y - _navGrid.MapHeight / 2) / 2);
+                fxData1.TargetPositionX = (short)((particle.TargetPosition.X - _navGrid.MapWidth / 2) / 2);
+                fxData1.TargetPositionZ = (short)((particle.TargetPosition.Y - _navGrid.MapHeight / 2) / 2);
             }
             else
             {
-                fxData1.TargetNetID = (particle.Target as IGameObject).NetId;
-                fxData1.BindNetID = (particle.Target as IGameObject).NetId; // Not sure what this is
+                fxData1.TargetNetID = particle.TargetObject.NetId;
+                fxData1.BindNetID = particle.TargetObject.NetId; // Not sure what this is
 
-                fxData1.TargetPositionX = (short)(particle.Target as IGameObject).X;
-                fxData1.TargetPositionZ = (short)(particle.Target as IGameObject).Y;
+                fxData1.TargetPositionX = (short)particle.TargetObject.X;
+                fxData1.TargetPositionZ = (short)particle.TargetObject.Y;
             }
 
             if (particle.Direction.Length() <= 0)
@@ -710,7 +730,7 @@ namespace PacketDefinitions420
 
             fxPacket.FXCreateGroup = fxGroups;
 
-            if (playerId == 0)
+            if (userId == 0)
             {
                 if (particle.VisionAffected)
                 {
@@ -723,7 +743,7 @@ namespace PacketDefinitions420
             }
             else
             {
-                _packetHandlerManager.SendPacket(playerId, fxPacket.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(userId, fxPacket.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -1126,17 +1146,23 @@ namespace PacketDefinitions420
         /// <param name="p">Projectile that was created.</param>
         public void NotifyMissileReplication(IProjectile p)
         {
+            var targetPos = p.GetTargetPosition();
+            if (targetPos == new Vector2(float.NaN, float.NaN))
+            {
+                return;
+            }
+
+            var current = new Vector3(p.X, _navGrid.GetHeightAtLocation(p.X, p.Y), p.Y);
+            var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y) - current);
             var misPacket = new MissileReplication();
             misPacket.SenderNetID = p.Owner.NetId;
             misPacket.Position = new Vector3(p.X, p.GetHeight(), p.Y);
             misPacket.CasterPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
-            var current = new Vector3(p.X, _navGrid.GetHeightAtLocation(p.X, p.Y), p.Y);
-            var to = Vector3.Normalize(new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y) - current);
             // Not sure if we want to add height for these, but i did it anyway
             misPacket.Direction = new Vector3(to.X, 0, to.Y);
             misPacket.Velocity = new Vector3(to.X * p.GetMoveSpeed(), 0, to.Y * p.GetMoveSpeed());
             misPacket.StartPoint = new Vector3(p.X, p.GetHeight(), p.Y);
-            misPacket.EndPoint = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
+            misPacket.EndPoint = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
             misPacket.UnitPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
             misPacket.TimeFromCreation = 0f; // TODO: Unhardcode
             misPacket.Speed = p.GetMoveSpeed();
@@ -1156,14 +1182,14 @@ namespace PacketDefinitions420
             cast.PackageHash = p.OriginSpell != null ? (p.Owner as IObjAiBase).GetObjHash() : 0;
             cast.MissileNetID = p.NetId;
             // Not sure if we want to add height for these, but i did it anyway
-            cast.TargetPosition = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
-            cast.TargetPositionEnd = new Vector3(p.Target.X, _navGrid.GetHeightAtLocation(p.Target.X, p.Target.Y), p.Target.Y);
+            cast.TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
+            cast.TargetPositionEnd = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
 
-            if (!p.Target.IsSimpleTarget)
+            if (p.TargetUnit != null)
             {
                 var targets = new List<CastInfo.Target>();
                 var tar = new CastInfo.Target();
-                tar.UnitNetID = (p.Target as IAttackableUnit).NetId;
+                tar.UnitNetID = p.TargetUnit.NetId;
                 tar.HitResult = 0; // TODO: Unhardcode
                 targets.Add(tar);
                 cast.Targets = targets;
@@ -1175,7 +1201,7 @@ namespace PacketDefinitions420
             cast.Cooldown = p.OriginSpell != null ? p.OriginSpell.GetCooldown() : 0f;
             cast.StartCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 0f; // TODO: Verify
 
-            //TODO: Implement spell flags so these aren't set manually
+            //TODO: Implement spell flags so these aren't set manually (hardcoded)
             cast.IsAutoAttack = false;
             cast.IsSecondAutoAttack = false;
             cast.IsForceCastingOrChannel = false;
@@ -1284,12 +1310,29 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players that have vision of the specified GameObject that it has made a movement.
         /// </summary>
-        /// <param name="o">GameObject moving.</param>
-        /// TODO: Make moving only applicable to ObjAiBase.
+        /// <param name="o">GameObject that is moving.</param>
         public void NotifyMovement(IGameObject o)
         {
-            var answer = new MovementResponse(_navGrid, o);
-            _packetHandlerManager.BroadcastPacketVision(o, answer, Channel.CHL_LOW_PRIORITY);
+            var l = new List<Vector2>();
+            l.AddRange(o.Waypoints);
+            var waypoints = l.ConvertAll(v => Convertors.Vector2ToWaypoint(Convertors.TranslateToCenteredCoordinates(v, _navGrid)));
+
+            var move = new MovementDataNormal
+            {
+                SyncID = (int)o.SyncId,
+                TeleportNetID = o.NetId,
+                HasTeleportID = false,
+                Waypoints = waypoints
+            };
+
+            var packet = new WaypointGroup
+            {
+                SenderNetID = o.NetId,
+                SyncID = (int)o.SyncId,
+                Movements = new List<MovementDataNormal>() { move }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
         }
 
         /// <summary>
@@ -1610,9 +1653,9 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="unit">AttackableUnit that was killed.</param>
         /// <param name="killer">AttackableUnit that killed the unit.</param>
-        public void NotifyNpcDie(IAttackableUnit die, IAttackableUnit killer)
+        public void NotifyNpcDie(IAttackableUnit unit, IAttackableUnit killer)
         {
-            var nd = new NpcDie(die, killer);
+            var nd = new NpcDie(unit, killer);
             _packetHandlerManager.BroadcastPacket(nd, Channel.CHL_S2C);
         }
 
@@ -1622,9 +1665,9 @@ namespace PacketDefinitions420
         /// <param name="attacker">AttackableUnit that is targeting another unit.</param>
         /// <param name="target">AttackableUnit being targetted by the attacker.</param>
         /// <param name="attackType">Type of attack; RADIAL/MELEE/TARGETED</param>
-        public void NotifyOnAttack(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType)
+        public void NotifyOnAttack(IAttackableUnit attacker, IAttackableUnit target, AttackType attackType)
         {
-            var oa = new OnAttack(attacker, attacked, attackType);
+            var oa = new OnAttack(attacker, target, attackType);
             _packetHandlerManager.BroadcastPacket(oa, Channel.CHL_S2C);
         }
 
@@ -1845,9 +1888,23 @@ namespace PacketDefinitions420
             var st = new AI_TargetS2C
             {
                 SenderNetID = attacker.NetId,
-                TargetNetID = target.NetId
+                TargetNetID = 0
             };
-            _packetHandlerManager.BroadcastPacketVision(attacker, st.GetBytes(), Channel.CHL_S2C);
+
+            if (target != null)
+            {
+                st.TargetNetID = target.NetId;
+            }
+
+            // TODO: Verify if we need to account for other cases.
+            if (attacker is IBaseTurret)
+            {
+                _packetHandlerManager.BroadcastPacket(st.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.BroadcastPacketVision(attacker, st.GetBytes(), Channel.CHL_S2C);
+            }
 
             // TODO: Verify if this is the correct usage of the AI_TargetHeroS2C packet.
             if (target is IChampion)
@@ -1857,6 +1914,7 @@ namespace PacketDefinitions420
                     SenderNetID = attacker.NetId,
                     TargetNetID = target.NetId
                 };
+                // TODO: Verify if broadcasting for vision is okay for all cases.
                 _packetHandlerManager.BroadcastPacketVision(attacker, st2.GetBytes(), Channel.CHL_S2C);
             }
         }
@@ -1909,13 +1967,15 @@ namespace PacketDefinitions420
                     NotifyLaneMinionSpawned(m, team);
                     break;
                 case IChampion c:
-                    NotifyChampionSpawned(c, c.Team.GetEnemyTeam());
+                    // TODO: Verify if we need to send this to the enemy team instead.
+                    NotifyChampionSpawned(c, team);
                     break;
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
                     break;
                 case IMinion minion:
-                    NotifyMinionSpawned(minion, minion.Team.GetEnemyTeam());
+                    // TODO: Verify if we need to send this to the enemy team instead.
+                    NotifyMinionSpawned(minion, team);
                     break;
                 case IAzirTurret azirTurret:
                     NotifyAzirTurretSpawned(azirTurret);
@@ -2036,25 +2096,25 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has teleported to the specified position.
         /// </summary>
-        /// <param name="u">AttackableUnit that teleported.</param>
+        /// <param name="o">GameObject that teleported.</param>
         /// <param name="pos">2D top-down position that the unit teleported to.</param>
         /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
-        public void NotifyTeleport(IAttackableUnit u, Vector2 pos)
+        public void NotifyTeleport(IGameObject o, Vector2 pos)
         {
             // position is already in centered format
             var packet = new WaypointGroup
             {
-                SenderNetID = u.NetId,
-                SyncID = (int)u.SyncId,
+                SenderNetID = o.NetId,
+                SyncID = (int)o.SyncId,
                 Movements = new List<MovementDataNormal>()
             };
 
             var tp = new MovementDataNormal
             {
-                SyncID = (int)u.SyncId,
-                HasTeleportID = true,
-                TeleportID = 1,
-                TeleportNetID = u.NetId,
+                SyncID = (int)o.SyncId,
+                HasTeleportID = true, // TODO: Unhardcode.
+                TeleportID = 1, // TODO: Unhardcode.
+                TeleportNetID = o.NetId,
                 Waypoints = new List<CompressedWaypoint>()
             };
             // Not needed
@@ -2064,7 +2124,7 @@ namespace PacketDefinitions420
 
             packet.Movements.Add(tp);
 
-            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

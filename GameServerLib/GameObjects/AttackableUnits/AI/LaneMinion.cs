@@ -22,8 +22,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             MinionSpawnType spawnType,
             string position,
             List<Vector2> mainWaypoints,
-            uint netId = 0
-        ) : base(game, null, 0, 0, "", "", 1100, netId)
+            string model,
+            uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL
+        ) : base(game, null, 0, 0, model, "", 1100, netId, team)
         {
             IsLaneMinion = true;
             MinionSpawnType = spawnType;
@@ -33,27 +35,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _aiPaused = false;
 
             var spawnSpecifics = _game.Map.MapProperties.GetMinionSpawnPosition(BarracksName);
-            SetTeam(spawnSpecifics.Item1);
             SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
             _game.Map.MapProperties.SetMinionStats(this); // Let the map decide how strong this minion has to be.
-
-            // Set model
-            Model = _game.Map.MapProperties.GetMinionModel(spawnSpecifics.Item1, spawnType);
-
-            // Fix issues induced by having an empty model string
-            CollisionRadius = _game.Config.ContentManager.GetCharData(Model).PathfindingCollisionRadius;
 
             // If we have lane path instructions from the map
             if (mainWaypoints.Count > 0)
             {
                 // Follow these instructions
-                SetWaypoints(new List<Vector2> { mainWaypoints[0], mainWaypoints[1] });
+                SetWaypoints(new List<Vector2> { mainWaypoints[1] });
             }
             else
             {
                 // Otherwise path to own position. (Stand still)
-                SetWaypoints(new List<Vector2> { new Vector2(X, Y), new Vector2(X, Y) });
+                StopMovement();
             }
 
             MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
@@ -64,8 +59,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Game game,
             MinionSpawnType spawnType,
             string position,
+            string model,
             uint netId = 0
-        ) : this(game, spawnType, position, new List<Vector2>(), netId)
+        ) : this(game, spawnType, position, new List<Vector2>(), model, netId)
         {
 
         }

@@ -55,10 +55,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var minions = new[]
             {
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team]),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team]),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team]),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team])
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CASTER)),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CANNON)),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_MELEE)),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_SUPER))
             };
 
             const int X = 400;
@@ -66,8 +66,6 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             {
                 minion.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
                 minion.PauseAi(true);
-                minion.SetWaypoints(
-                    new List<Vector2> {new Vector2(minion.X, minion.Y), new Vector2(minion.X, minion.Y)});
                 minion.SetVisibleByTeam(team, true);
                 Game.ObjectManager.AddObject(minion);
             }
