@@ -617,7 +617,8 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, GetMinionModel(GetMinionSpawnPosition(barracksName).Item1, list[minionNo]));
+            var team = GetMinionSpawnPosition(barracksName).Item1;
+            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, GetMinionModel(team, list[minionNo]), 0, team);
             _game.ObjectManager.AddObject(m);
         }
 
