@@ -443,7 +443,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Die(IAttackableUnit killer)
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
-            _game.ObjectManager.StopTargeting(this);
             ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);

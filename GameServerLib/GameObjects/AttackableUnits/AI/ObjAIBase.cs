@@ -453,21 +453,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             switch (target)
             {
-                case IMinion _:
-                    return ClassifyUnit.MINION;
-                case ILaneMinion m:
-                    switch (m.MinionSpawnType)
+                case IMinion m:
+                    if (m.IsLaneMinion)
                     {
-                        case MinionSpawnType.MINION_TYPE_MELEE:
-                            return ClassifyUnit.MELEE_MINION;
-                        case MinionSpawnType.MINION_TYPE_CASTER:
-                            return ClassifyUnit.CASTER_MINION;
-                        case MinionSpawnType.MINION_TYPE_CANNON:
-                        case MinionSpawnType.MINION_TYPE_SUPER:
-                            return ClassifyUnit.SUPER_OR_CANNON_MINION;
+                        switch ((m as ILaneMinion).MinionSpawnType)
+                        {
+                            case MinionSpawnType.MINION_TYPE_MELEE:
+                                return ClassifyUnit.MELEE_MINION;
+                            case MinionSpawnType.MINION_TYPE_CASTER:
+                                return ClassifyUnit.CASTER_MINION;
+                            case MinionSpawnType.MINION_TYPE_CANNON:
+                            case MinionSpawnType.MINION_TYPE_SUPER:
+                                return ClassifyUnit.SUPER_OR_CANNON_MINION;
+                        }
                     }
-
-                    break;
+                    return ClassifyUnit.MINION;
                 case IBaseTurret _:
                     return ClassifyUnit.TURRET;
                 case IChampion _:
@@ -788,7 +788,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     {
                         continue;
                     }
-                    SetWaypoints(new List<Vector2> { point });
+                    SetWaypoints(new List<Vector2> { GetPosition(), point });
                     return true;
                 }
             }
@@ -815,16 +815,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             else
             {
                 // TODO: Fix Waypoints so we don't have to keep adding our current position to the start.
-                SetWaypoints(new List<Vector2>() { TargetUnit.GetPosition() });
-                /* TODO: Soon we will use path finding for this.
-                 * if(CurWaypoint >= Waypoints.Count)
+                if (WaypointIndex >= Waypoints.Count)
                 {
-                    var newWaypoints = _game.Map.NavGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
+                    var newWaypoints = _game.Map.NavigationGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
                     if (newWaypoints.Count > 1)
                     {
                         SetWaypoints(newWaypoints);
                     }
-                }*/
+                }
             }
         }
 
@@ -1042,7 +1040,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (TargetUnit != null)
             {
-                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit))
+                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(Target is IObjBuilding))
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;

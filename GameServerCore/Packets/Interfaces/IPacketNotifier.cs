@@ -111,11 +111,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="c">Champion that respawned.</param>
         void NotifyChampionRespawn(IChampion c);
         /// <summary>
-        /// Sends a packet to all players of the specified team that a champion has spawned (for the first time).
+        /// Sends a packet to all players with vision of the specified champion that it has spawned (for the first time).
         /// </summary>
         /// <param name="c">Champion that has spawned.</param>
-        /// <param name="team">Team to send the packet to.</param>
-        void NotifyChampionSpawned(IChampion c, TeamId team);
+        void NotifyChampionSpawned(IChampion c);
         /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
         /// </summary>
@@ -209,12 +208,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0);
         /// <summary>
-        /// Sends a packet to either all players of the specified team or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
+        /// Sends a packet to either all players with vision of the specified object or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
         /// </summary>
         /// <param name="o">GameObject entering vision.</param>
-        /// <param name="team">TeamId to send the packet to.</param>
         /// <param name="userId">User to send the packet to.</param>
-        void NotifyEnterVisibilityClient(IGameObject o, TeamId team, int userId = 0);
+        /// TODO: Incomplete implementation.
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit is facing the specified direction.
         /// </summary>
@@ -322,8 +321,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to the specified team detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
+        void NotifyLaneMinionSpawned(ILaneMinion m);
         /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject which has the specified netId has left vision.
         /// </summary>
@@ -377,8 +375,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
         /// <param name="minion">Minion that is spawning.</param>
-        /// <param name="team">Unused, to be removed.</param>
-        void NotifyMinionSpawned(IMinion m, TeamId team);
+        void NotifyMinionSpawned(IMinion m);
         /// <summary>
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>

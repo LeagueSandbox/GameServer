@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             List<Vector2> mainWaypoints,
             string model,
             uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL
+            TeamId team = TeamId.TEAM_BLUE
         ) : base(game, null, 0, 0, model, "", 1100, netId, team)
         {
             IsLaneMinion = true;
@@ -60,8 +60,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             MinionSpawnType spawnType,
             string position,
             string model,
-            uint netId = 0
-        ) : this(game, spawnType, position, new List<Vector2>(), model, netId)
+            uint netId = 0,
+            TeamId team = TeamId.TEAM_BLUE
+        ) : this(game, spawnType, position, new List<Vector2>(), model, netId, team)
         {
 
         }

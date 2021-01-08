@@ -17,12 +17,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public double GetTop(IGameObject obj)
         {
-            return obj.Y + obj.CollisionRadius + 1;
+            return obj.Y - obj.CollisionRadius - 1;
         }
 
         public double GetBottom(IGameObject obj)
         {
-            return obj.Y - obj.CollisionRadius - 1;
+            return obj.Y + obj.CollisionRadius + 1;
         }
     }
 

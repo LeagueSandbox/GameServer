@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
     /// <summary>
     /// Base class for all attackable units.
-    /// AttackableUnits normally follow these guidelines of functionality: Death state, Stats (including modifiers and basic replication), Buffs (and their scripts), and Call for Help.
+    /// AttackableUnits normally follow these guidelines of functionality: Death state, basic Movement, Stats (including modifiers and basic replication), Buffs (and their scripts), and Call for Help.
     /// </summary>
     public class AttackableUnit : GameObject, IAttackableUnit
     {

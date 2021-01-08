@@ -55,10 +55,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var minions = new[]
             {
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CASTER)),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CANNON)),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_MELEE)),
-                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_SUPER))
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CASTER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CASTER), 0, team),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_CANNON, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_CANNON), 0, team),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_MELEE, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_MELEE), 0, team),
+                new LaneMinion(Game, MinionSpawnType.MINION_TYPE_SUPER, spawnPositions[team], Game.Map.MapProperties.GetMinionModel(Game.Map.MapProperties.GetMinionSpawnPosition(spawnPositions[team]).Item1, MinionSpawnType.MINION_TYPE_SUPER), 0, team)
             };
 
             const int X = 400;

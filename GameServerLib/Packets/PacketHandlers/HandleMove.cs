@@ -42,12 +42,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 lastindex = translatedWaypoints.Count - 1;
             }
 
-            // prevent player pathing within their collision radius
-            if (Vector2.DistanceSquared(translatedWaypoints[lastindex], champion.GetPosition()) < (champion.CollisionRadius * champion.CollisionRadius))
-            {
-                return true;
-            }
-
             var nav = _game.Map.NavigationGrid;
 
             foreach (Vector2 wp in translatedWaypoints)
@@ -68,11 +62,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                     break;
                 }
-            }
-
-            if (translatedWaypoints == null)
-            {
-                return false;
             }
 
             switch (req.Type)
@@ -98,6 +87,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
             champion.UpdateTargetUnit(u);
+
+            if (translatedWaypoints == null)
+            {
+                return false;
+            }
+
             return true;
         }
 

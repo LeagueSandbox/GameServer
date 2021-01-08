@@ -111,7 +111,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
-                Owner.StopMovement();
                 Owner.IsCastingSpell = true;
                 State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
@@ -119,6 +118,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             else
             {
                 FinishCasting();
+            }
+
+            // TODO: Check SpellData for if the spell should stop movement (and when).
+            if (!Owner.IsDashing)
+            {
+                Owner.StopMovement();
             }
 
             _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);

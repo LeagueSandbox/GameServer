@@ -152,12 +152,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             // current position
             var cur = new Vector2(X, Y);
 
-            var next = new Vector2(Destination.X, Destination.Y);
-
-            if (TargetUnit != null)
-            {
-                next = new Vector2(TargetUnit.X, TargetUnit.Y);
-            }
+            var next = GetTargetPosition();
 
             var goingTo = next - cur;
             _direction = Vector2.Normalize(goingTo);

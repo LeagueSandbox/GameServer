@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface ILaneMinion : IObjAiBase
+    public interface ILaneMinion : IMinion
     {
         string BarracksName { get; }
         MinionSpawnType MinionSpawnType { get; }

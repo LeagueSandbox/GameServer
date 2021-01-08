@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // It will contain all GameObjects that should be able to collide with eachother, refer to IsCollisionObject.
             _quadDynamic = new QuadTree<IGameObject>(
                 _map.NavigationGrid.MinGridPosition.X,
-                _map.NavigationGrid.MaxGridPosition.Z,
+                _map.NavigationGrid.MinGridPosition.Z,
                 // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
                 _map.NavigationGrid.MaxGridPosition.X + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
                 _map.NavigationGrid.MaxGridPosition.Z + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.Z),

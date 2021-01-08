@@ -94,7 +94,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, champion.Team, userId);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId);
                     }
                 }
                 else if (kv.Value is IInhibitor || kv.Value is INexus)
