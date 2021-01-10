@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (collider is IObjMissile)
+            if (collider is IObjMissile || IsToRemove())
             {
                 return;
             }
@@ -127,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 return;
             }
 
-            if (Destination != Vector2.Zero && !IsToRemove())
+            if (Destination != Vector2.Zero)
             {
                 CheckFlagsForUnit(collider as IAttackableUnit);
             }

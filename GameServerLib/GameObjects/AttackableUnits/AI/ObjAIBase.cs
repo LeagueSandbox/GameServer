@@ -706,9 +706,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 var onCollide = _scriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider as IAttackableUnit);
 
-                // Teleport out of other objects (+1 for insurance).
-                Vector2 exit = Extensions.GetCircleEscapePoint(GetPosition(), CollisionRadius * 2, collider.GetPosition(), collider.CollisionRadius);
-                TeleportTo(exit.X, exit.Y);
+                // Champions are only teleported if they collide with other Champions.
+                // TODO: Implement Collision Priority
+                if (!(this is IChampion) || collider is IChampion)
+                {
+                    // Teleport out of other objects (+1 for insurance).
+                    Vector2 exit = Extensions.GetCircleEscapePoint(GetPosition(), CollisionRadius * 2, collider.GetPosition(), collider.CollisionRadius);
+                    TeleportTo(exit.X, exit.Y);
+                }
             }
 
             // If we were trying to path somewhere before colliding, then repath from our new position.
