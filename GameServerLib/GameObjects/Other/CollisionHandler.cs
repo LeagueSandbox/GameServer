@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             _quadDynamic = new QuadTree<IGameObject>(
                 _quadDynamic.MainRect.Left,
-                _quadDynamic.MainRect.Bottom,
+                _quadDynamic.MainRect.Top,
                 _quadDynamic.MainRect.Width,
                 _quadDynamic.MainRect.Height,
                 _objectBounds
