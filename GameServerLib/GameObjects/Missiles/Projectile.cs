@@ -199,12 +199,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             {
                 if (this is IProjectile && TargetUnit != null)
                 {
-                    // Prevent projectiles from stacking on an un-collideable object.
-                    if (GetPosition() == TargetUnit.GetPosition())
-                    {
-                        _atDestination = true;
-                    }
-
                     return;
                 }
 
