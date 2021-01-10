@@ -288,9 +288,9 @@ namespace LeagueSandbox.GameServer
         public void Update(float diff)
         {
             GameTime += diff;
+            Map.Update(diff);
             ObjectManager.Update(diff);
             ProtectionManager.Update(diff);
-            Map.Update(diff);
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
 

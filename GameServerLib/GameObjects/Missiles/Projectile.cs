@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             // (X, Y) has moved to the next position
             cur = new Vector2(X, Y);
 
-            // Check if we reached the next waypoint
+            // Check if we reached the target position/destination.
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
             if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {

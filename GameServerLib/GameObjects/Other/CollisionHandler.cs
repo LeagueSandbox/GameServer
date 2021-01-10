@@ -88,10 +88,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Remove dynamic objects
             if (IsCollisionAffected(obj))
             {
-                if (!_quadDynamic.Remove(obj))
-                {
-                    UpdateQuadTree();
-                }
+                _quadDynamic.Remove(obj);
             }
         }
 
@@ -131,6 +128,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     // TODO: Implement repathing if our position within the next few ticks intersects with another GameObject (assuming we are moving; !IsPathEnded).
                 }
             }
+
+            UpdateQuadTree();
         }
 
         /// <summary>
@@ -138,7 +137,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// </summary>
         private void UpdateQuadTree()
         {
-            _quadDynamic = new QuadTree<IGameObject>(_quadDynamic.MainRect.Width, _quadDynamic.MainRect.Height, _objectBounds);
+            _quadDynamic = new QuadTree<IGameObject>(
+                _quadDynamic.MainRect.Left,
+                _quadDynamic.MainRect.Bottom,
+                _quadDynamic.MainRect.Width,
+                _quadDynamic.MainRect.Height,
+                _objectBounds
+            );
             _quadDynamic.InsertRange(_objects.FindAll(o => IsCollisionAffected(o)));
         }
     }
