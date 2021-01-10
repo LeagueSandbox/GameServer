@@ -953,10 +953,10 @@ namespace PacketDefinitions420
 
             var md = new MovementDataNormal
             {
-                Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints, _navGrid),
+                SyncID = (int)m.SyncId,
                 TeleportNetID = m.NetId,
                 HasTeleportID = false, // TODO: Unhardcode
-                SyncID = (int)m.SyncId
+                Waypoints = Convertors.Vector2ToWaypoint(m.Waypoints, _navGrid)
             };
 
             var visionPacket = new OnEnterVisiblityClient
@@ -1983,7 +1983,6 @@ namespace PacketDefinitions420
             {
                 case ILaneMinion m:
                     NotifyLaneMinionSpawned(m);
-                    //NotifyMinionSpawned(m);
                     break;
                 case IChampion c:
                     NotifyChampionSpawned(c);

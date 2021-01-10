@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public LaneMinion(
             Game game,
             MinionSpawnType spawnType,
-            string position,
+            string barracksName,
             List<Vector2> mainWaypoints,
             string model,
             uint netId = 0,
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             IsLaneMinion = true;
             MinionSpawnType = spawnType;
-            BarracksName = position;
+            BarracksName = barracksName;
             _mainWaypoints = mainWaypoints;
             _curMainWaypoint = 0;
             _aiPaused = false;

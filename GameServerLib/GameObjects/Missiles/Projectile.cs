@@ -116,6 +116,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
+            if (collider is IObjMissile)
+            {
+                return;
+            }
+
+            if (isTerrain)
+            {
+                // TODO: Implement methods for isTerrain for projectiles such as Nautilus Q, ShyvanaDragon Q, or Ziggs Q.
+                return;
+            }
+
             if (Destination != Vector2.Zero && !IsToRemove())
             {
                 CheckFlagsForUnit(collider as IAttackableUnit);
@@ -127,8 +138,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                     CheckFlagsForUnit(collider as IAttackableUnit);
                 }
             }
-
-            // TODO: Implement methods for isTerrain for projectiles such as Nautilus Q, ShyvanaDragon Q, or Ziggs Q.
         }
 
         public override float GetMoveSpeed()
@@ -190,6 +199,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             {
                 if (this is IProjectile && TargetUnit != null)
                 {
+                    // Prevent projectiles from stacking on an un-collideable object.
+                    if (GetPosition() == TargetUnit.GetPosition())
+                    {
+                        _atDestination = true;
+                    }
+
                     return;
                 }
 

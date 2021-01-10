@@ -392,7 +392,7 @@ namespace LeagueSandbox.GameServer.Maps
                         if (Spawn())
                         {
                             _minionNumber = 0;
-                            _nextSpawnTime += _spawnInterval;
+                            _nextSpawnTime = (long)_game.GameTime + _spawnInterval;
                         }
                         else
                         {
@@ -553,7 +553,7 @@ namespace LeagueSandbox.GameServer.Maps
                 case Barracks.SPAWN_BLUE_MID:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_BLUE, new Vector2(1443, 1663));
                 case Barracks.SPAWN_RED_TOP:
-                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(14455, 13159));
+                    return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12384, 13109));
                 case Barracks.SPAWN_RED_BOT:
                     return new Tuple<TeamId, Vector2>(TeamId.TEAM_PURPLE, new Vector2(12967, 12695));
                 case Barracks.SPAWN_RED_MID:

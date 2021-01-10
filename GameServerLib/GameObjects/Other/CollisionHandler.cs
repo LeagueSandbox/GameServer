@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private readonly List<IGameObject> _objects = new List<IGameObject>();
         // This is the 'dynamic map', updated every update of the game.
         private readonly QuadTree<IGameObject> _quadDynamic;
+        private readonly IQuadTreeObjectBounds<IGameObject> _objectBounds = new CollisionObject();
 
         public CollisionHandler(IMap map)
         {
@@ -29,7 +30,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
                 _map.NavigationGrid.MaxGridPosition.X + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
                 _map.NavigationGrid.MaxGridPosition.Z + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.Z),
-                new CollisionObject()
+                _objectBounds,
+                byte.MaxValue
             );
 
             //Pathfinder.setMap(map);
@@ -61,7 +63,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         }
 
         /// <summary>
-        /// Adds the specified GameObject to the list of GameObjects to check for collisions.
+        /// Adds the specified GameObject to the list of GameObjects to check for collisions. *NOTE*: Will fail to fully add the GameObject if it is out of the map's bounds.
         /// </summary>
         /// <param name="obj">GameObject to add.</param>
         public void AddObject(IGameObject obj)
@@ -71,6 +73,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Add dynamic objects
             if (IsCollisionAffected(obj))
             {
+                // Returns false when out of bounds and fails.
                 _quadDynamic.Insert(obj);
             }
         }
@@ -109,7 +112,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     obj.OnCollision(null, true);
                 }
 
-                foreach (var obj2 in _quadDynamic.GetNearestObjects(obj))
+                var nearest = _quadDynamic.GetNearestObjects(obj);
+                foreach (var obj2 in nearest)
                 {
                     if (obj == obj2)
                     {
