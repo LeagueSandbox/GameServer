@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (collider is IObjMissile || IsToRemove())
+            if (IsToRemove() || (TargetUnit != null && collider != TargetUnit) || (Destination != Vector2.Zero && collider is IObjBuilding))
             {
                 return;
             }
@@ -287,10 +287,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             switch (unit)
             {
+                // TODO: Verify all
                 // Order is important
                 case ILaneMinion _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_MINIONS) > 0):
                     return true;
-                case IMinion _ when ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0):
+                case IMinion m when (!m.IsPet && ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_NOT_PET) > 0))
+                                || (m.IsPet && ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_USEABLE) > 0))
+                                || (m.IsWard && ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_WARDS) > 0))
+                                || (!m.IsClone && ((SpellData.Flags & (int)(SpellFlag.SPELL_FLAG_IGNORE_CLONES - 1)) > 0))
+                                || (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ALL_UNIT_TYPES) > 0:
                     if (!(unit is ILaneMinion))
                     {
                         return true;

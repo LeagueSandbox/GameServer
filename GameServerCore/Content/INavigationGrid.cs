@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 
 namespace GameServerCore.Content
 {

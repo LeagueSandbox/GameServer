@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;

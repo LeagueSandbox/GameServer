@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void OnRemoved()

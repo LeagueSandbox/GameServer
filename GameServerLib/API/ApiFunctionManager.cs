@@ -293,13 +293,12 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="name">Internal name of the minion.</param>
         /// <param name="toX">X coordinate.</param>
         /// <param name="toY">Y coordinate.</param>
-        /// <param name="visionRadius">Radius of the minion's vision.</param>
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinion(IObjAiBase owner, string model, string name, float toX, float toY, int visionRadius = 0, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinion(IObjAiBase owner, string model, string name, float toX, float toY, bool isVisible = true, bool aiPaused = true)
         {
-            var m = new Minion(_game, owner, toX, toY, model, name, visionRadius, 0, owner.Team);
+            var m = new Minion(_game, owner, toX, toY, model, name, 0, owner.Team);
             _game.ObjectManager.AddObject(m);
             m.SetVisibleByTeam(owner.Team, isVisible);
             m.PauseAi(aiPaused);
@@ -314,13 +313,12 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="model">Internal name of the minion's model.</param>
         /// <param name="name">Internal name of the minion.</param>
         /// <param name="target">Target to spawn the minion on.</param>
-        /// <param name="visionRadius">Radius of the minion's vision.</param>
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, ITarget target, int visionRadius = 0, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, ITarget target, bool isVisible = true, bool aiPaused = true)
         {
-            return AddMinion(owner, model, name, target.X, target.Y, visionRadius, isVisible, aiPaused);
+            return AddMinion(owner, model, name, target.X, target.Y, isVisible, aiPaused);
         }
 
         /// <summary>

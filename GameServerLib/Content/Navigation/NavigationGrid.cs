@@ -8,6 +8,7 @@ using Priority_Queue;
 using Vector2 = System.Numerics.Vector2;
 using System.Numerics;
 using GameServerLib.Extensions;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {

@@ -24,10 +24,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float y,
             string model,
             string name,
-            int visionRadius = 0,
             uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL
-        ) : base(game, model, new Stats.Stats(), 40, x, y, visionRadius, netId, team)
+        ) : base(game, model, new Stats.Stats(), 40, x, y, 1100, netId, team)
         {
             Name = name;
 
@@ -45,9 +44,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             IsLaneMinion = false;
 
-            // Fix issues induced by having an empty model string
-            CollisionRadius = CharData.PathfindingCollisionRadius;
-
             SetVisibleByTeam(Team, true);
 
             MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
@@ -63,7 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void Update(float diff)
@@ -76,6 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Replication.Update();
                     return;
                 }
+
                 AIMove();
             }
             Replication.Update();

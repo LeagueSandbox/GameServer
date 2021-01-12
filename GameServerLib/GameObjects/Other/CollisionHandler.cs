@@ -44,9 +44,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// <returns>True/False.</returns>
         private bool IsCollisionObject(IGameObject obj)
         {
-            // CollisionObjects can be any AI units, pure AttackableUnits, missiles, and pure GameObjects.
+            // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, missiles, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle);
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// <returns>True/False.</returns>
         private bool IsCollisionAffected(IGameObject obj)
         {
-            // Collision affected GameObjects are non-turret AI units, pure AttackableUnits, missiles, and pure GameObjects.
-            return !(obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
+            // Collision affected GameObjects are non-turret AI units, AttackableUnits, missiles, and pure GameObjects.
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             _objects.Add(obj);
 
             // Add dynamic objects
-            if (IsCollisionAffected(obj))
+            if (IsCollisionObject(obj))
             {
                 // Returns false when out of bounds and fails.
                 _quadDynamic.Insert(obj);
@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             _objects.Remove(obj);
 
             // Remove dynamic objects
-            if (IsCollisionAffected(obj))
+            if (IsCollisionObject(obj))
             {
                 _quadDynamic.Remove(obj);
             }
@@ -144,7 +144,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 _quadDynamic.MainRect.Height,
                 _objectBounds
             );
-            _quadDynamic.InsertRange(_objects.FindAll(o => IsCollisionAffected(o)));
+            _quadDynamic.InsertRange(_objects.FindAll(o => IsCollisionObject(o)));
         }
     }
 }

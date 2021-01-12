@@ -130,6 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             stats.LoadStats(CharData);
 
+            // TODO: Centralize this instead of letting it lay in the initialization.
             if (CharData.PathfindingCollisionRadius > 0)
             {
                 CollisionRadius = CharData.PathfindingCollisionRadius;
@@ -141,6 +142,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             else
             {
                 CollisionRadius = 40;
+            }
+
+            // TODO: Centralize this instead of letting it lay in the initialization.
+            if (CharData.PerceptionBubbleRadius > 0)
+            {
+                VisionRadius = CharData.PerceptionBubbleRadius;
+            }
+            else if (collisionRadius > 0)
+            {
+                VisionRadius = visionRadius;
+            }
+            else
+            {
+                VisionRadius = 1100;
             }
 
             Stats.CurrentMana = stats.ManaPoints.Total;
@@ -375,7 +390,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageText.DAMAGE_TEXT_MISS);
+                                             DamageResultType.RESULT_MISS);
                 return;
             }
 
@@ -688,7 +703,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             base.OnCollision(collider, isTerrain);
 
-            if (collider is IObjMissile)
+            if (collider is IObjMissile || collider is IObjBuilding)
             {
                 // TODO: Implement OnProjectileCollide/Hit here.
                 return;
@@ -708,7 +723,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 // Champions are only teleported if they collide with other Champions.
                 // TODO: Implement Collision Priority
-                if (!(this is IChampion) || collider is IChampion)
+                // TODO: Implement dynamic navigation grid for buildings and turrets.
+                if (!(this is IChampion) || collider is IChampion || collider is IBaseTurret)
                 {
                     // Teleport out of other objects (+1 for insurance).
                     Vector2 exit = Extensions.GetCircleEscapePoint(GetPosition(), CollisionRadius * 2, collider.GetPosition(), collider.CollisionRadius);
@@ -822,7 +838,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 // TODO: Fix Waypoints so we don't have to keep adding our current position to the start.
                 if (WaypointIndex >= Waypoints.Count)
                 {
-                    var newWaypoints = _game.Map.NavigationGrid.GetPath(GetPosition(), TargetUnit.GetPosition());
+                    Vector2 targetPos = TargetUnit.GetPosition();
+                    if (!_game.Map.NavigationGrid.IsWalkable(targetPos, TargetUnit.CollisionRadius))
+                    {
+                        targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, CollisionRadius);
+                    }
+
+                    var newWaypoints = _game.Map.NavigationGrid.GetPath(GetPosition(), targetPos);
                     if (newWaypoints.Count > 1)
                     {
                         SetWaypoints(newWaypoints);

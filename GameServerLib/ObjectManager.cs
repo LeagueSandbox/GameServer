@@ -126,7 +126,8 @@ namespace LeagueSandbox.GameServer
                         if (TeamHasVisionOn(team, u))
                         {
                             u.SetVisibleByTeam(team, true);
-                            _game.PacketNotifier.NotifySpawn(u, team);
+                            // Might not be necessary, but just for good measure.
+                            _game.PacketNotifier.NotifyEnterVisibilityClient(u);
                             RemoveVisionUnit(u);
                             // TODO: send this in one place only
                             _game.PacketNotifier.NotifyUpdatedStats(u, false);
@@ -134,14 +135,14 @@ namespace LeagueSandbox.GameServer
                         }
                     }
 
-                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
+                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
                     {
                         u.SetVisibleByTeam(team, true);
                         _game.PacketNotifier.NotifyEnterVisibilityClient(u);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
-                    else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
+                    else if (u.IsVisibleByTeam(team) && (u.IsDead || !TeamHasVisionOn(team, u)) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
                     {
                         u.SetVisibleByTeam(team, false);
                         _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);

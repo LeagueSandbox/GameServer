@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string model,
             uint netId = 0,
             TeamId team = TeamId.TEAM_BLUE
-        ) : base(game, null, 0, 0, model, "", 1100, netId, team)
+        ) : base(game, null, 0, 0, model, model, netId, team)
         {
             IsLaneMinion = true;
             MinionSpawnType = spawnType;
@@ -79,7 +79,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool AIMove()
         {
-            // TODO: Use unique LaneMinion AI and add here for return values.
+            // TODO: Use unique LaneMinion AI instead of normal Minion AI and add here for return values.
+            if (ScanForTargets()) // returns true if we have a target
+            {
+                if (!RecalculateAttackPosition())
+                {
+                    KeepFocusingTarget(); // attack/follow target
+                }
+                return false;
+            }
             WalkToDestination();
             return true;
         }

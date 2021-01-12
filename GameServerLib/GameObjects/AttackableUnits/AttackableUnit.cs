@@ -225,7 +225,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
-            DamageText damageText)
+            DamageResultType damageText)
         {
             float defense = 0;
             float regain = 0;
@@ -258,9 +258,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 case DamageSource.DAMAGE_SOURCE_ATTACK:
                     regain = attackerStats.LifeSteal.Total;
                     break;
-                case DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL:
+                case DamageSource.DAMAGE_SOURCE_DEFAULT:
                     break;
-                case DamageSource.DAMAGE_SOURCE_PASSIVE:
+                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
@@ -303,8 +303,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
 
-            _game.PacketNotifier.NotifyDamageDone(attacker, this, damage, type, damageText,
+            _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, damage, type, damageText,
                 _game.Config.IsDamageTextGlobal, attackerId, targetId);
+            
             // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
 
@@ -328,11 +329,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
-            var text = DamageText.DAMAGE_TEXT_NORMAL;
+            var text = DamageResultType.RESULT_NORMAL;
 
             if (isCrit)
             {
-                text = DamageText.DAMAGE_TEXT_CRITICAL;
+                text = DamageResultType.RESULT_CRITICAL;
             }
 
             TakeDamage(attacker, damage, type, source, text);

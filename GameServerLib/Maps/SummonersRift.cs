@@ -242,9 +242,9 @@ namespace LeagueSandbox.GameServer.Maps
             // TODO: Generate & use exact positions from content files
 
             //TODO: Unhardcode everything (preferably by reading from content)
-            // These don't really matter because buildings and turrets don't collide with units, they are baked into the Navigation Grid.
-            var inhibRadius = 40;
-            var nexusRadius = 40;
+            // These only matter for projectile collisions.
+            var inhibRadius = 214;
+            var nexusRadius = 353;
             var sightRange = 1700;
 
             //BLUE TEAM
