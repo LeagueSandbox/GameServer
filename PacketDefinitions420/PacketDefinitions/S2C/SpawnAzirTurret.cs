@@ -28,9 +28,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 
             Write(0);
 
-            Write(turret.X);
+            Write(turret.Position.X);
             Write(turret.GetHeight());
-            Write(turret.Y);
+            Write(turret.Position.Y);
             Write(4.0f);
 
             Write((byte)0xC1);

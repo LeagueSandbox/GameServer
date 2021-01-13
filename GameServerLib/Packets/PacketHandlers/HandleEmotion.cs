@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, EmotionPacketRequest req)
         {
             var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
-            champion.StopChampionMovement();
+            champion.StopMovement();
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo((ulong)userId).Champion.Model;
             switch (req.Id)

@@ -36,7 +36,7 @@ namespace Spells
                 AddBuff("GangplankE", 7.0f, 1, spell, owner, owner);
             }
             
-            foreach (var allyTarget in GetUnitsInRange(owner, 1000, true)
+            foreach (var allyTarget in GetUnitsInRange(owner.Position, 1000, true)
                 .Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 if (allyTarget is IAttackableUnit && owner != allyTarget && hasbuff == false)

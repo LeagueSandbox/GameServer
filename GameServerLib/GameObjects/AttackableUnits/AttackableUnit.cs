@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -49,6 +51,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public string Model { get; protected set; }
         /// <summary>
+        /// Waypoints that make up the path a game object is walking in.
+        /// </summary>
+        public List<Vector2> Waypoints { get; protected set; }
+        /// <summary>
+        /// Index of the waypoint in the list of waypoints that the object is currently on.
+        /// </summary>
+        public KeyValuePair<int, Vector2> CurrentWaypoint { get; protected set; }
+        /// <summary>
+        /// Speed of the unit's current dash.
+        /// </summary>
+        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
+        public float DashSpeed { get; set; }
+        /// <summary>
+        /// Amount of time passed since the unit started dashing.
+        /// </summary>
+        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
+        public float DashElapsedTime { get; set; }
+        /// <summary>
+        /// Total amount of time the unit will dash.
+        /// </summary>
+        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
+        public float DashTime { get; set; }
+        /// <summary>
+        /// Whether or not this unit is currently dashing.
+        /// </summary>
+        public bool IsDashing { get; protected set; }
+        /// <summary>
         /// Stats used purely in networking the accompishments or status of units and their gameplay affecting stats.
         /// </summary>
         public IReplication Replication { get; protected set; }
@@ -63,65 +92,78 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             string model,
             IStats stats,
             int collisionRadius = 40,
-            float x = 0,
-            float y = 0,
+            Vector2 position = new Vector2(),
             int visionRadius = 0,
             uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL
-        ) : base(game, x, y, collisionRadius, visionRadius, netId, team)
+        ) : base(game, position, collisionRadius, visionRadius, netId, team)
 
         {
             Logger = LoggerProvider.GetLogger();
             Stats = stats;
             Model = model;
+            Waypoints = new List<Vector2> { Position };
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            IsDashing = false;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
         }
 
-        /// <summary>
-        /// Sets this unit's current model to the specified internally named model. *NOTE*: If the model is not present in the client files, all connected players will crash.
-        /// </summary>
-        /// <param name="model">Internally named model to set.</param>
-        /// <returns></returns>
-        /// TODO: Implement model verification (perhaps by making a list of all models in Content) so that clients don't crash if a model which doesn't exist in client files is given.
-        public bool ChangeModel(string model)
+        public override void OnAdded()
         {
-            if (Model.Equals(model))
+            base.OnAdded();
+            _game.ObjectManager.AddVisionUnit(this);
+        }
+
+        public override void Update(float diff)
+        {
+            // TODO: Rework stat management.
+            _statUpdateTimer += diff;
+            while (_statUpdateTimer >= 500)
             {
-                return false;
+                // update Stats (hpregen, manaregen) every 0.5 seconds
+                Stats.Update(_statUpdateTimer);
+                _statUpdateTimer -= 500;
             }
-            IsModelUpdated = true;
-            Model = model;
-            return true;
+
+            Move(diff);
+
+            if (IsDashing && IsPathEnded())
+            {
+                if (DashTime == 0)
+                {
+                    IsDashing = false;
+                    var animList = new List<string> { "RUN" };
+                    _game.PacketNotifier.NotifySetAnimation(this, animList);
+                    return;
+                }
+
+                DashElapsedTime += diff;
+                if (DashElapsedTime >= DashTime)
+                {
+                    IsDashing = false;
+                    DashTime = 0;
+                    DashElapsedTime = 0;
+                    var animList = new List<string> { "RUN" };
+                    _game.PacketNotifier.NotifySetAnimation(this, animList);
+                }
+            }
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.ObjectManager.RemoveVisionUnit(this);
         }
 
         /// <summary>
-        /// Called when this unit dies.
+        /// Sets the position of this unit to the specified position and stops its movements.
         /// </summary>
-        /// <param name="killer">Unit that killed this unit.</param>
-        public virtual void Die(IAttackableUnit killer)
+        /// <param name="x">X coordinate to set.</param>
+        /// <param name="y">Y coordinate to set.</param>
+        public override void TeleportTo(float x, float y)
         {
-            SetToRemove();
-            _game.ObjectManager.StopTargeting(this);
-
-            _game.PacketNotifier.NotifyNpcDie(this, killer);
-
-            var exp = _game.Map.MapProperties.GetExperienceFor(this);
-            var champs = _game.ObjectManager.GetChampionsInRange(this, EXP_RANGE, true);
-            //Cull allied champions
-            champs.RemoveAll(l => l.Team == Team);
-
-            if (champs.Count > 0)
-            {
-                var expPerChamp = exp / champs.Count;
-                foreach (var c in champs)
-                {
-                    c.Stats.Experience += expPerChamp;
-                    _game.PacketNotifier.NotifyAddXp(c, expPerChamp);
-                }
-            }
-
-            if (killer != null && killer is IChampion champion)
-                champion.OnKill(this);
+            base.TeleportTo(x, y);
+            StopMovement();
         }
 
         /// <summary>
@@ -142,37 +184,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             return !Stats.IsTargetableToTeam.HasFlag(SpellFlags.NonTargetableEnemy);
-        }
-
-        /// <summary>
-        /// Gets the movement speed stat of this unit.
-        /// </summary>
-        /// <returns>Float units/sec.</returns>
-        public override float GetMoveSpeed()
-        {
-            return Stats.MoveSpeed.Total;
-        }
-
-        /// <summary>
-        /// Whether or not this unit is currently calling for help. Unimplemented.
-        /// </summary>
-        /// <returns>True/False.</returns>
-        /// TODO: Implement this.
-        public virtual bool IsInDistress()
-        {
-            return false; //return DistressCause;
-        }
-
-        public override void OnAdded()
-        {
-            base.OnAdded();
-            _game.ObjectManager.AddVisionUnit(this);
-        }
-
-        public override void OnRemoved()
-        {
-            base.OnRemoved();
-            _game.ObjectManager.RemoveVisionUnit(this);
         }
 
         /// <summary>
@@ -252,6 +263,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             switch (source)
             {
+                case DamageSource.DAMAGE_SOURCE_RAW:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PERIODIC:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PROC:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_REACTIVE:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_ONDEATH:
+                    break;
                 case DamageSource.DAMAGE_SOURCE_SPELL:
                     regain = attackerStats.SpellVamp.Total;
                     break;
@@ -260,7 +283,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     break;
                 case DamageSource.DAMAGE_SOURCE_DEFAULT:
                     break;
+                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
+                    break;
                 case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PET:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
@@ -305,7 +332,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, damage, type, damageText,
                 _game.Config.IsDamageTextGlobal, attackerId, targetId);
-            
+
             // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
 
@@ -339,16 +366,262 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             TakeDamage(attacker, damage, type, source, text);
         }
 
-        public override void Update(float diff)
+        /// <summary>
+        /// Whether or not this unit is currently calling for help. Unimplemented.
+        /// </summary>
+        /// <returns>True/False.</returns>
+        /// TODO: Implement this.
+        public virtual bool IsInDistress()
         {
-            base.Update(diff);
+            return false; //return DistressCause;
+        }
 
-            _statUpdateTimer += diff;
-            while (_statUpdateTimer >= 500)
+        /// <summary>
+        /// Called when this unit dies.
+        /// </summary>
+        /// <param name="killer">Unit that killed this unit.</param>
+        public virtual void Die(IAttackableUnit killer)
+        {
+            SetToRemove();
+            _game.ObjectManager.StopTargeting(this);
+
+            _game.PacketNotifier.NotifyNpcDie(this, killer);
+
+            var exp = _game.Map.MapProperties.GetExperienceFor(this);
+            var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
+            //Cull allied champions
+            champs.RemoveAll(l => l.Team == Team);
+
+            if (champs.Count > 0)
             {
-                // update Stats (hpregen, manaregen) every 0.5 seconds
-                Stats.Update(_statUpdateTimer);
-                _statUpdateTimer -= 500;
+                var expPerChamp = exp / champs.Count;
+                foreach (var c in champs)
+                {
+                    c.Stats.Experience += expPerChamp;
+                    _game.PacketNotifier.NotifyAddXp(c, expPerChamp);
+                }
+            }
+
+            if (killer != null && killer is IChampion champion)
+                champion.OnKill(this);
+        }
+
+        /// <summary>
+        /// Sets this unit's current model to the specified internally named model. *NOTE*: If the model is not present in the client files, all connected players will crash.
+        /// </summary>
+        /// <param name="model">Internally named model to set.</param>
+        /// <returns></returns>
+        /// TODO: Implement model verification (perhaps by making a list of all models in Content) so that clients don't crash if a model which doesn't exist in client files is given.
+        public bool ChangeModel(string model)
+        {
+            if (Model.Equals(model))
+            {
+                return false;
+            }
+            IsModelUpdated = true;
+            Model = model;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the movement speed stat of this unit.
+        /// </summary>
+        /// <returns>Float units/sec.</returns>
+        public virtual float GetMoveSpeed()
+        {
+            return Stats.MoveSpeed.Total;
+        }
+
+        /// <summary>
+        /// Moves this unit to its specified waypoints, updating its position along the way.
+        /// </summary>
+        /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
+        private void Move(float diff)
+        {
+            // no waypoints remained - clear the Waypoints
+            if (CurrentWaypoint.Key >= Waypoints.Count)
+            {
+                StopMovement();
+                return;
+            }
+
+            // current -> next positions
+            var cur = new Vector2(Position.X, Position.Y);
+            var next = CurrentWaypoint.Value;
+
+            if (cur == next)
+            {
+                StopMovement();
+            }
+
+            var goingTo = next - cur;
+            _direction = Vector2.Normalize(goingTo);
+
+            // usually doesn't happen
+            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            {
+                _direction = new Vector2(0, 0);
+            }
+
+            var moveSpeed = GetMoveSpeed();
+
+            var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
+
+            var deltaMovement = moveSpeed * 0.001f * diff;
+
+            // Prevent moving past the next waypoint.
+            if (deltaMovement * deltaMovement > distSqr)
+            {
+                deltaMovement = MathF.Sqrt(distSqr);
+            }
+
+            var xx = _direction.X * deltaMovement;
+            var yy = _direction.Y * deltaMovement;
+
+            // TODO: Prevent movement past obstacles (after moving movement functionality to AttackableUnit).
+            //Vector2 nextPos = new Vector2(X + xx, Y + yy);
+            //KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(GetPosition(), nextPos);
+            //if (pathBlocked.Key)
+            //{
+            //    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, CollisionRadius + 1.0f);
+            //}
+
+            Position = new Vector2(Position.X + xx, Position.Y + yy);
+
+            // (X, Y) have now moved to the next position
+            cur = new Vector2(Position.X, Position.Y);
+
+            // Check if we reached the next waypoint
+            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
+            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
+            {
+                var nextIndex = CurrentWaypoint.Key + 1;
+                // stop moving because we have reached our last waypoint
+                if (nextIndex >= Waypoints.Count)
+                {
+                    return;
+                }
+                // start moving to our next waypoint
+                else
+                {
+                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Waypoints[nextIndex]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
+        /// </summary>
+        public Vector2 GetNextWaypoint()
+        {
+            if (CurrentWaypoint.Key < Waypoints.Count)
+            {
+                return CurrentWaypoint.Value;
+            }
+            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        }
+
+        /// <summary>
+        /// Returns whether this unit has reached the last waypoint in its path of waypoints.
+        /// </summary>
+        public bool IsPathEnded()
+        {
+            return CurrentWaypoint.Key >= Waypoints.Count;
+        }
+
+        /// <summary>
+        /// Sets this unit's movement path to the given waypoints.
+        /// </summary>
+        /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
+        public void SetWaypoints(List<Vector2> newWaypoints)
+        {
+            Waypoints = newWaypoints;
+
+            _movementUpdated = true;
+            if (Waypoints.Count == 1)
+            {
+                StopMovement();
+                return;
+            }
+
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[1]);
+        }
+
+        /// <summary>
+        /// Forces this unit to stop moving.
+        /// </summary>
+        public virtual void StopMovement()
+        {
+            Waypoints = new List<Vector2> { Position };
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+        }
+
+        /// <summary>
+        /// Returns whether this unit has set its waypoints this update.
+        /// </summary>
+        /// <returns>True/False</returns>
+        public bool IsMovementUpdated()
+        {
+            return _movementUpdated;
+        }
+
+        /// <summary>
+        /// Used each object manager update after this unit has set its waypoints and the server has networked it.
+        /// </summary>
+        public void ClearMovementUpdated()
+        {
+            _movementUpdated = false;
+        }
+
+        /// <summary>
+        /// Forces this unit to perform a dash which ends at the given position.
+        /// </summary>
+        /// <param name="endPos">Position to end the dash at.</param>
+        /// <param name="dashSpeed">Amount of units the dash should travel in a second (movespeed).</param>
+        /// <param name="animation">Internal name of the dash animation.</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Whether or not the AI unit should face the direction they were facing before the dash.</param>
+        /// TODO: Find a good way to grab these variables from spell data.
+        /// TODO: Verify if we should count Dashing as a form of Crowd Control.
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "RUN", float leapGravity = 0.0f, bool keepFacingLastDirection = true)
+        {
+            var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, CollisionRadius + 1.0f);
+            // TODO: Take into account the rest of the arguments
+            IsDashing = true;
+            DashSpeed = dashSpeed;
+            DashTime = 0;
+            DashElapsedTime = 0;
+            SetWaypoints(new List<Vector2> { Position, newCoords });
+
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection);
+
+            if (animation == null)
+            {
+                animation = "RUN";
+            }
+
+            var animList = new List<string> { "RUN", animation };
+            _game.PacketNotifier.NotifySetAnimation(this, animList);
+        }
+
+        /// <summary>
+        /// Sets this unit's current dash state to the given state.
+        /// </summary>
+        /// <param name="state">State to set. True = dashing, false = not dashing.</param>
+        /// TODO: Verify if we want to classify Dashing as a form of Crowd Control.
+        public virtual void SetDashingState(bool state)
+        {
+            IsDashing = state;
+
+            if (state == false)
+            {
+                StopMovement();
+                DashTime = 0;
+                DashElapsedTime = 0;
+
+                var animList = new List<string> { "RUN" };
+                _game.PacketNotifier.NotifySetAnimation(this, animList);
             }
         }
     }

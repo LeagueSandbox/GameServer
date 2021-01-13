@@ -143,18 +143,20 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit. The packet details a group of waypoints which the unit will move to given the specified parameters.
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
         /// </summary>
         /// <param name="u">Unit that is dashing.</param>
-        /// <param name="t">Target the unit is dashing to (single-point or unit).</param>
         /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="leapHeight">How high the unit will reach at the peak of the dash.</param>
-        /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will attempt to travel to the Target before stopping or reaching the Target.</param>
-        /// TODO: Replace current implementation with LeaguePackets as this is incomplete.
-        void NotifyDash(IAttackableUnit u, ITarget t, float dashSpeed, bool keepFacingLastDirection, float leapHeight, float followTargetMaxDistance, float backDistance, float travelTime);
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which has these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        void NotifyWaypointGroupWithSpeed(IAttackableUnit u, float dashSpeed, float leapGravity = 0, bool keepFacingLastDirection = false, IGameObject target = null, float followTargetMaxDistance = 0, float backDistance = 0, float travelTime = 0);
         /// <summary>
         /// Sends a packet to all players detailing a debug message.
         /// </summary>
@@ -419,11 +421,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="m">GameObject of type Monster that spawned.</param>
         void NotifyMonsterSpawned(IMonster m);
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified GameObject that it has made a movement.
+        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
-        /// <param name="o">GameObject that is moving.</param>
-        /// TODO: Make moving only applicable to AttackableUnits.
-        void NotifyMovement(IGameObject o);
+        /// <param name="u">AttackableUnit that is moving.</param>
+        void NotifyMovement(IAttackableUnit u);
         /// <summary>
         /// Sends a packet to all players detailing that the specified attacker unit is starting their next auto attack.
         /// </summary>

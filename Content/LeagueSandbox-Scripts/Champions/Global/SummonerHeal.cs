@@ -14,7 +14,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var units = GetChampionsInRange(owner, 850, true);
+            var units = GetChampionsInRange(owner.Position, 850, true);
             IChampion mostWoundedAlliedIChampion = null;
             float lowestHealthPercentage = 100;
             float maxHealth;

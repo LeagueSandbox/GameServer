@@ -27,7 +27,7 @@ namespace Spells
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var ad = owner.Stats.AttackDamage.Total * 0.6f;
             var damage = 40 + spell.Level * 30 + ap + ad;
-            foreach (var enemyTarget in GetUnitsInRange(owner, 300, true)
+            foreach (var enemyTarget in GetUnitsInRange(owner.Position, 300, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 enemyTarget.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,

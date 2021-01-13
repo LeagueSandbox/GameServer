@@ -33,7 +33,7 @@ namespace Spells
             var reduce = spell.Level * 5 + armor * 0.05f;
             AddParticleTarget(owner, "Shatter_nova.troy", owner, 1);
 
-            foreach (var enemy in GetUnitsInRange(owner, 375, true)
+            foreach (var enemy in GetUnitsInRange(owner.Position, 375, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 var hasbuff = HasBuff((IObjAiBase)enemy, "TaricWDis");

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 
@@ -32,11 +33,6 @@ namespace GameServerCore.Domain.GameObjects
         /// TODO: Move to AttackableUnit as it relates to stats..
         ICharData CharData { get; }
         /// <summary>
-        /// Speed of the AI's current dash.
-        /// </summary>
-        /// TODO: Implement a dash class so these things can be separate from AI (however, dashes should only be applicable to ObjAIBase).
-        float DashSpeed { get; set; }
-        /// <summary>
         /// Whether or not this AI has made their first auto attack against their current target. Refreshes after untargeting or targeting another unit.
         /// </summary>
         bool HasMadeInitialAttack { get; set; }
@@ -61,9 +57,9 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsMelee { get; set; }
         /// <summary>
-        /// Current order this AI is performing. *NOTE*: Does not contain all possible values.
+        /// Current order this AI is performing.
         /// </summary>
-        /// TODO: Rework AI so this enum can be finished.
+        /// TODO: Rework AI so this enum can be used fully.
         MoveOrder MoveOrder { get; }
         /// <summary>
         /// Unit this AI will auto attack when it is in auto attack range.
@@ -108,17 +104,18 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void ClearAllCrowdControl();
         /// <summary>
-        /// Forces this AI to move towards the given target (GameObject/Position (remove Target btw)).
+        /// Forces this AI unit to perform a dash which follows the specified GameObject.
         /// </summary>
-        /// <param name="t">GameObject/Position to move towards.</param>
-        /// <param name="dashSpeed">How fast (units/sec) to move towards the target.</param>
-        /// <param name="followTargetMaxDistance">Max distance to follow the target before the dash ends. TODO: Verify.</param>
-        /// <param name="backDistance">Distance to move past the target? Unused.</param>
-        /// <param name="travelTime">Time until this dash ends.</param>
-        /// TODO: Remove Target class.
-        /// TODO: Find a good way to grab these variables from spell data.
-        /// TODO: Verify if we should count Dashing as a form of Crowd Control.
-        void DashToTarget(ITarget t, float dashSpeed, float followTargetMaxDistance, float backDistance, float travelTime);
+        /// <param name="target">GameObject to follow.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="animation">Internal name of the dash animation.</param>
+        /// <param name="leapGravity">How much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Unknown parameter.</param>
+        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        void DashToTarget(IGameObject target, float dashSpeed, string animation, float leapGravity, bool keepFacingLastDirection, float followTargetMaxDistance, float backDistance, float travelTime);
         /// <summary>
         /// Gets the parent buff instance of the buffs of the given name.
         /// </summary>
@@ -214,22 +211,16 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void ResetAutoAttackSpellData();
         /// <summary>
-        /// Sets this AI's current dash state to the given state.
-        /// </summary>
-        /// <param name="state">State to set. True = dashing, false = not dashing.</param>
-        /// TODO: Verify if we want to classify Dashing as a form of Crowd Control.
-        void SetDashingState(bool state);
-        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
         /// TODO: Remove Target class.
         void SetTargetUnit(IAttackableUnit target);
         /// <summary>
-        /// Forces this AI to stop moving.
+        /// Sets this unit's move order to the given order.
         /// </summary>
-        /// TODO: Remove the need for the Waypoints to have at least 1 waypoint so this can be a simple clearing of waypoints (i.e. ClearWaypoints()).
-        void StopMovement();
+        /// <param name="order">MoveOrder to set.</param>
+        void UpdateMoveOrder(MoveOrder order);
         /// <summary>
         /// Sets this AI's current target unit.
         /// </summary>

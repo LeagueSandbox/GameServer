@@ -38,7 +38,7 @@
         /// </summary>
         DAMAGE_SOURCE_ATTACK,
         /// <summary>
-        /// Buff/Summoner spell damage (single & multi instance).
+        /// Buff Summoner spell damage (single and multi instance)
         /// </summary>
         DAMAGE_SOURCE_DEFAULT,
         /// <summary>

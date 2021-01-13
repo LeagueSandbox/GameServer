@@ -28,8 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Cone(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             IAttackableUnit owner,
             Vector2 targetPos,
@@ -39,11 +38,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             bool affectAsCastIsOver,
             float angleDeg,
             uint netid
-            ) : base(game, x, y, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
+            ) : base(game, position, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
         {
             _affectAsCastIsOver = affectAsCastIsOver;
             _angleDeg = angleDeg;
-            CreateCone(new Vector2(x, y), targetPos);
+            CreateCone(position, targetPos);
         }
 
         public override void Update(float diff)
@@ -104,10 +103,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// <returns>True if unit is in rectangle, otherwise False.</returns>
         private bool TargetIsInCone(IAttackableUnit target)
         {
-            var unitCoords = new Vector2(target.X, target.Y);
+            var unitCoords = new Vector2(target.Position.X, target.Position.Y);
             var targetDistance = Vector2.Distance(_ownerCoords, unitCoords);
 
-            float targetAngle = (float)Math.Acos((target.X - _ownerCoords.X) / targetDistance);
+            float targetAngle = (float)Math.Acos((target.Position.X - _ownerCoords.X) / targetDistance);
 
             return targetDistance <= _radius && targetAngle >= _beginAngle && targetAngle <= _endAngle;
         }

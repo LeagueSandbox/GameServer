@@ -25,8 +25,8 @@ namespace YasuoE
             var damage = 50f + ownerSpell.Level * 20f + unit.Stats.AbilityPower.Total * 0.6f;
             AddParticleTarget(unit, "Yasuo_Base_E_Dash.troy", unit);
             AddParticleTarget(unit, "Yasuo_Base_E_dash_hit.troy", target);
-            var to = Vector2.Normalize(target.GetPosition() - unit.GetPosition());
-            DashToLocation(unit, target.X + to.X * 175f, target.Y + to.Y * 175f, 750f + unit.Stats.MoveSpeed.Total * 0.6f, false, "SPELL3");
+            var to = Vector2.Normalize(target.Position - unit.Position);
+            DashToLocation(unit, new Vector2(target.Position.X + to.X * 175f, target.Position.Y + to.Y * 175f), 750f + unit.Stats.MoveSpeed.Total * 0.6f, "SPELL3", 0, false);
             target.TakeDamage(unit, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 

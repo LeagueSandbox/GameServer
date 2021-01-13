@@ -23,13 +23,13 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * 625;
             var trueCoords = current + range;
 
-            spell.AddCone("Incinerate", trueCoords.X, trueCoords.Y, 24.76f);
-            AddParticle(owner, "IIncinerate_buf.troy", trueCoords.X, trueCoords.Y);
+            spell.AddCone("Incinerate", trueCoords, 24.76f);
+            AddParticle(owner, "IIncinerate_buf.troy", trueCoords);
             FaceDirection(owner, trueCoords, false);
             spell.SpellAnimation("SPELL2", owner);
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);

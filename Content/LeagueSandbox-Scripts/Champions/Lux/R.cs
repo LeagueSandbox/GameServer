@@ -19,13 +19,13 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * 3340;
             var trueCoords = current + range;
 
-            spell.AddLaser("LuxMaliceCannon", trueCoords.X, trueCoords.Y);
-            AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords.X, trueCoords.Y);
+            spell.AddLaser("LuxMaliceCannon", trueCoords);
+            AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords);
             FaceDirection(owner, trueCoords, false);
             spell.SpellAnimation("SPELL4", owner);
             AddParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner);

@@ -23,7 +23,7 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * spell.SpellData.CastRangeDisplayOverride[0];
             trueCoords = current + range;
@@ -38,7 +38,7 @@ namespace Spells
                 spell.SpellAnimation("SPELL3b", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ3_cas.troy", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner, bone: "C_BUFFBONE_GLB_Weapon_1");
-                foreach (var affectEnemys in GetUnitsInRange(owner, 270f, true))
+                foreach (var affectEnemys in GetUnitsInRange(owner.Position, 270f, true))
                 {
                     if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
@@ -46,13 +46,13 @@ namespace Spells
                         AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", affectEnemys);
                         AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", affectEnemys);
                         AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
-                        DashToLocation((ObjAiBase)affectEnemys, affectEnemys.X + 10f, affectEnemys.Y + 10f, 13f, true, "RUN", 16.5f, travelTime: 1.15f);
+                        DashToLocation(affectEnemys, new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, "RUN", 16.5f, true);
                     }
                 }
             }
             else
             {
-                spell.AddProjectile("YasuoQ3Mis", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
+                spell.AddProjectile("YasuoQ3Mis", owner.Position, trueCoords);
                 spell.SpellAnimation("SPELL1C", owner);
                 (owner as IChampion).SetSpell("YasuoQW", 0, true);
                 AddParticleTarget(owner, "Yasuo_Base_Q3_Hand.troy", owner);
@@ -70,7 +70,7 @@ namespace Spells
             AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
             target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            DashToLocation((ObjAiBase)target, target.X+10f, target.Y+10f, 13f, true, "RUN", 16.5f, travelTime:1.15f);
+            DashToLocation(target, new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, "RUN", 16.5f);
         }
 
         public void OnUpdate(double diff)

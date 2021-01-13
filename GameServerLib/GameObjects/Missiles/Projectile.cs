@@ -54,8 +54,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Projectile(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             IAttackableUnit owner,
             IAttackableUnit unit,
@@ -65,7 +64,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             int flags = 0,
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, x, y, collisionRadius, 0, netId)
+        ) : base(game, position, collisionRadius, 0, netId)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
             OriginSpell = originSpell;
@@ -87,8 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Projectile(
             Game game,
-            float x,
-            float y,
+            Vector2 startPosition,
             int collisionRadius,
             IAttackableUnit owner,
             Vector2 targetPos,
@@ -98,7 +96,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             int flags = 0,
             uint netId = 0,
             bool serverOnly = false
-        ) : this(game, x, y, collisionRadius, owner, null, originSpell, moveSpeed, projectileName, flags, netId, serverOnly)
+        ) : this(game, startPosition, collisionRadius, owner, null, originSpell, moveSpeed, projectileName, flags, netId, serverOnly)
         {
             Destination = targetPos;
         }
@@ -110,8 +108,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 SetToRemove();
                 return;
             }
-
-            base.Update(diff);
+            Move(diff);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
@@ -140,7 +137,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        public override float GetMoveSpeed()
+        /// <summary>
+        /// Gets the server-side speed that this Projectile moves at in units/sec.
+        /// </summary>
+        /// <returns>Units travelled per second.</returns>
+        public float GetSpeed()
         {
             return _moveSpeed;
         }
@@ -149,7 +150,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// Moves this projectile to either its target unit, or its destination, and updates its coordinates along the way.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the AI is supposed to move</param>
-        public override void Move(float diff)
+        private void Move(float diff)
         {
             if (!HasTarget())
             {
@@ -159,7 +160,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
 
             // current position
-            var cur = new Vector2(X, Y);
+            var cur = new Vector2(Position.X, Position.Y);
 
             var next = GetTargetPosition();
 
@@ -172,7 +173,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 _direction = new Vector2(0, 0);
             }
 
-            var moveSpeed = GetMoveSpeed();
+            var moveSpeed = GetSpeed();
 
             var dist = MathF.Abs(Vector2.Distance(cur, next));
 
@@ -187,11 +188,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             var xx = _direction.X * deltaMovement;
             var yy = _direction.Y * deltaMovement;
 
-            X += xx;
-            Y += yy;
+            Position = new Vector2(Position.X + xx, Position.Y + yy);
 
             // (X, Y) has moved to the next position
-            cur = new Vector2(X, Y);
+            cur = new Vector2(Position.X, Position.Y);
 
             // Check if we reached the target position/destination.
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
@@ -203,7 +203,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
                 }
 
                 // remove this projectile because it has reached its destination
-                if (GetPosition() == Destination)
+                if (Position == Destination)
                 {
                     _atDestination = true;
                 }
@@ -336,7 +336,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             if (TargetUnit != null)
             {
-                return TargetUnit.GetPosition();
+                return TargetUnit.Position;
             }
 
             return Destination;

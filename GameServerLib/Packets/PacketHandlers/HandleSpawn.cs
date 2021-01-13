@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     // Turret Vision (values based on packet data, placeholders)
                     _game.PacketNotifier.NotifyAddRegion
                     (
-                        _networkIdManager.GetNewNetId(), turret.Team, turret.GetPosition(),
+                        _networkIdManager.GetNewNetId(), turret.Team, turret.Position,
                         25000.0f, 800.0f, -2, 
                         null, turret, turret.CharData.PathfindingCollisionRadius,
                         130.0f, 1.0f, 0,

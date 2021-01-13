@@ -22,12 +22,12 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * 425;
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords.X, trueCoords.Y, 1200, false, "Spell3");
+            DashToLocation(owner, trueCoords, 1200, "Spell3", 0, false);
             AddBuff("Quickdraw", 4.0f, 1, spell, owner, owner);
             var p = AddParticleTarget(owner, "Graves_Move_OnBuffActivate.troy", owner);
             CreateTimer(4.0f, () =>

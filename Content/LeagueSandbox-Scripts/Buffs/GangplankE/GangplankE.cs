@@ -10,8 +10,6 @@ namespace GangplankE
 {
     internal class GangplankE : IBuffGameScript
     {
-        //private IBuff _hudvisual;
-
         public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
 
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;

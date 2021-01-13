@@ -230,6 +230,19 @@ namespace GameServerCore
         }
 
         /// <summary>
+        /// Whether or not the specified Vector2 v is within the specified range of the given Vector2 start.
+        /// </summary>
+        /// <param name="v">Vector2 to check.</param>
+        /// <param name="start">Vector2 where the range starts.</param>
+        /// <param name="range">Range to check around the start position.</param>
+        /// <returns></returns>
+        public static bool IsVectorWithinRange(Vector2 v, Vector2 start, float range)
+        {
+            float v1 = v.X - start.X, v2 = v.Y - start.Y;
+            return ((v1 * v1) + (v2 * v2)) <= (range * range);
+        }
+
+        /// <summary>
         /// Gets the angle from one Vector2 to another.
         /// Origin is (0,0).
         /// </summary>

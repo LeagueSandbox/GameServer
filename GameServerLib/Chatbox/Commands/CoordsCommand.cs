@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
-            _logger.Debug($"At {champion.X}; {champion.Y}");
+            _logger.Debug($"At {champion.Position.X}; {champion.Position.Y}");
             var dirMsg = "Not moving anywhere";
             if (!champion.IsPathEnded())
             {
@@ -33,7 +33,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 double ang = Math.Acos(dir.X / dir.Length()) * (180 / Math.PI); 
                 dirMsg = $"dirX: {dir.X} dirY: {dir.Y} dirAngle (to X axis): {ang}";
             }
-            var msg = $"At Coords - X: {champion.X} Y: {champion.Y} Z: {champion.GetHeight()} "+dirMsg;
+            var coords3D = champion.GetPosition3D();
+            var msg = $"At Coords - X: {coords3D.X} Y: {coords3D.Z} Height: {coords3D.Y} "+dirMsg;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
         }
     }

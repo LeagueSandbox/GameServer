@@ -8,7 +8,6 @@ namespace GangplankW
 {
     internal class GangplankW : IBuffGameScript
     {
-
         public BuffType BuffType => BuffType.HEAL;
 
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;

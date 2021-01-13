@@ -83,9 +83,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
             if (!OriginSpell.SpellData.CantCancelWhileChanneling)
             {
-                ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
-                ApiEventManager.OnChampionMove.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
-                ApiEventManager.OnChampionCrowdControlled.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
+                if (TargetUnit is IChampion c)
+                {
+                    ApiEventManager.OnChampionDamageTaken.AddListener(this, c, DeactivateBuff);
+                    ApiEventManager.OnChampionMove.AddListener(this, c, DeactivateBuff);
+                    ApiEventManager.OnChampionCrowdControlled.AddListener(this, c, DeactivateBuff);
+                }
             }
 
             _remove = false;

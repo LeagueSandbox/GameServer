@@ -32,7 +32,7 @@ namespace Spells
             var ap = owner.Stats.AbilityPower.Total * 0.5f;
             var damage = 50 + spell.Level * 100 + ap;
 
-            foreach (var enemyTarget in GetUnitsInRange(owner, 375, true)
+            foreach (var enemyTarget in GetUnitsInRange(owner.Position, 375, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 if (enemyTarget is IAttackableUnit)
@@ -50,7 +50,7 @@ namespace Spells
                 }
             }
 
-            foreach (var allyTarget in GetUnitsInRange(owner, 1100, true)
+            foreach (var allyTarget in GetUnitsInRange(owner.Position, 1100, true)
                 .Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 if (allyTarget is IObjAiBase && owner != allyTarget && hasbuff == false)

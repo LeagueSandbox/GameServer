@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -7,44 +8,32 @@ namespace LeagueSandbox.GameServer.GameObjects
     {
         public string Name { get; }
         public string Model { get; }
-        public float Z { get; }
-        public float DirX { get; }
-        public float DirY { get; }
-        public float DirZ { get; }
+        public float Height { get; }
+        public Vector3 Direction { get; }
         public float Unk1 { get; }
         public float Unk2 { get; }
         public byte SkinId { get; }
 
         public LevelProp(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             float z,
-            float dirX,
-            float dirY,
-            float dirZ,
+            Vector3 direction,
             float unk1,
             float unk2,
             string name,
             string model,
             byte skin = 0,
             uint netId = 0
-        ) : base(game, x, y, 0, 0, netId)
+        ) : base(game, position, 0, 0, netId)
         {
-            Z = z;
-            DirX = dirX;
-            DirY = dirY;
-            DirZ = dirZ;
+            Height = z;
+            Direction = direction;
             Unk1 = unk1;
             Unk2 = unk2;
             Name = name;
             Model = model;
             SkinId = skin;
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return 0.0f;
         }
     }
 }

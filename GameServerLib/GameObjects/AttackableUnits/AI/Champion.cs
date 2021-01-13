@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         ClientInfo clientInfo,
                         uint netId = 0,
                         TeamId team = TeamId.TEAM_BLUE)
-            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId, team)
+            : base(game, model, new Stats.Stats(), 30, new Vector2(), 1200, netId, team)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -166,9 +166,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 !HasCrowdControl(CrowdControlType.ROOT);
         }
 
-        public void UpdateMoveOrder(MoveOrder order)
+        public override void UpdateMoveOrder(MoveOrder order)
         {
-            MoveOrder = order;
+            base.UpdateMoveOrder(order);
 
             ApiEventManager.OnChampionMove.Publish(this);
         }
@@ -208,28 +208,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Vector2 GetRespawnPosition()
         {
-            var config = _game.Config;
-            var playerIndex = GetPlayerIndex();
-
-            if (config.Players.ContainsKey(playerIndex))
-            {
-                var p = config.Players[playerIndex];
-            }
-
-            var coords = new Vector2
-            {
-                X = _game.Map.MapProperties.GetRespawnLocation(Team).X,
-                Y = _game.Map.MapProperties.GetRespawnLocation(Team).Y
-            };
-
-            return new Vector2(coords.X, coords.Y);
-        }
-
-        // TODO: fix StopMovement function in ObjAiBase and delete this
-        public void StopChampionMovement()
-        {
-            StopMovement();
-            _game.PacketNotifier.NotifyMovement(this);
+            return _game.Map.MapProperties.GetRespawnLocation(Team);
         }
         
         public void TeleportTo(float x, float y)
@@ -303,12 +282,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (!(it.Value is IAttackableUnit u) ||
                         u.IsDead ||
                         u.Team == Team ||
-                        GetDistanceTo(u) > range)
+                        Vector2.Distance(Position, u.Position) > range)
                         continue;
 
-                    if (!(GetDistanceTo(u) < distanceToTarget))
+                    if (!(Vector2.Distance(Position, u.Position) < distanceToTarget))
                         continue;
-                    distanceToTarget = GetDistanceTo(u);
+                    distanceToTarget = Vector2.Distance(Position, u.Position);
                     nextTarget = u;
                 }
 
@@ -371,8 +350,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool OnDisconnect()
         {
-            this.StopChampionMovement();
-            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(GetPosition(), _game.Map.MapProperties.GetRespawnLocation(Team).GetPosition()));
+            this.StopMovement();
+            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, _game.Map.MapProperties.GetRespawnLocation(Team)));
 
             return true;
         }

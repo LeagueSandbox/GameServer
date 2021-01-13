@@ -18,12 +18,12 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             WriteNetId(m);
             WriteNetId(m);
             Write((byte)0x40);
-            Write(m.X); //x
+            Write(m.Position.X); //x
             Write(m.GetHeight()); //z
-            Write(m.Y); //y
-            Write(m.X); //x
+            Write(m.Position.Y); //y
+            Write(m.Position.X); //x
             Write(m.GetHeight()); //z
-            Write(m.Y); //y
+            Write(m.Position.Y); //y
             Write(m.Facing.X); //facing x
             Write(navGrid.GetHeightAtLocation(m.Facing.X, m.Facing.Y)); //facing z
             Write(m.Facing.Y); //facing y
@@ -53,8 +53,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0xFB); //  |-> Unk
             Write((byte)0x27); //  |
             Write((byte)0x00); //<-|
-            Write(m.X); //x
-            Write(m.Y); //y
+            Write(m.Position.X); //x
+            Write(m.Position.Y); //y
             Write(-0.8589599f); // rotation1 from -1 to 1
             Write(0.5120428f); // rotation2 from -1 to 1
         }

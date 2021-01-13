@@ -22,12 +22,12 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * spell.SpellData.CastRangeDisplayOverride[2];
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords.X, trueCoords.Y, 1500.0f, false, "SPELL3", 0, 0, 0, spell.SpellData.CastRangeDisplayOverride[2] / (1500.0f * 0.001f));
+            DashToLocation(owner, trueCoords, 1500, "SPELL3", 0, false);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)

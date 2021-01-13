@@ -39,6 +39,11 @@ namespace GameServerCore.Domain.GameObjects
         bool IsServerOnly { get; }
 
         /// <summary>
+        /// Gets the server-side speed that this Projectile moves at in units/sec.
+        /// </summary>
+        /// <returns>Units travelled per second.</returns>
+        float GetSpeed();
+        /// <summary>
         /// Whether or not this projectile has a target unit or a destination; if it is a valid projectile.
         /// </summary>
         /// <returns>True/False.</returns>
