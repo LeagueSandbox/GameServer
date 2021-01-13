@@ -46,8 +46,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         uint playerTeamSpecialId,
                         IRuneCollection runeList,
                         ClientInfo clientInfo,
-                        uint netId = 0)
-            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId)
+                        uint netId = 0,
+                        TeamId team = TeamId.TEAM_BLUE)
+            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId, team)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -115,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void OnRemoved()
@@ -442,7 +443,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Die(IAttackableUnit killer)
         {
             RespawnTimer = 5000 + Stats.Level * 2500;
-            _game.ObjectManager.StopTargeting(this);
             ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
@@ -508,10 +508,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void OnCollision(IGameObject collider)
+        public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            base.OnCollision(collider);
-            if (collider == null)
+            base.OnCollision(collider, isTerrain);
+            if (isTerrain)
             {
                 //CORE_INFO("I bumped into a wall!");
             }

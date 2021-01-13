@@ -24,32 +24,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float y,
             string model,
             string name,
-            int visionRadius = 0,
-            uint netId = 0
-        ) : base(game, model, new Stats.Stats(), 40, x, y, visionRadius, netId)
+            uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL
+        ) : base(game, model, new Stats.Stats(), 40, x, y, 1100, netId, team)
         {
             Name = name;
 
             Owner = owner;
 
-            if (!(Owner == null) && Owner is IChampion)
+            IsPet = false;
+            if (Owner != null)
             {
-                SetTeam(Owner.Team);
                 IsPet = true;
                 if (model == Owner.Model) // Placeholder, should be changed
                 {
                     IsClone = true;
                 }
             }
-            else
-            {
-                SetTeam(Team);
-                IsPet = false;
-            }
-            IsLaneMinion = false;
 
-            // Fix issues induced by having an empty model string
-            CollisionRadius = CharData.PathfindingCollisionRadius;
+            IsLaneMinion = false;
 
             SetVisibleByTeam(Team, true);
 
@@ -66,7 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void Update(float diff)
@@ -79,6 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Replication.Update();
                     return;
                 }
+
                 AIMove();
             }
             Replication.Update();

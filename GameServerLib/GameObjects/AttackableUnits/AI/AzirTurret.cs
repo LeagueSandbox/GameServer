@@ -15,8 +15,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float x = 0,
             float y = 0,
             TeamId team = TeamId.TEAM_BLUE,
-            uint netId = 0
-        ) : base(game, name, model, x, y, team, netId)
+            uint netId = 0,
+            LaneID lane = LaneID.NONE
+        ) : base(game, name, model, x, y, team, netId, lane)
         {
             Owner = owner;
 
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void RefreshWaypoints()

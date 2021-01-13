@@ -111,7 +111,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             if (SpellData.GetCastTime() > 0 && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
             {
-                Owner.SetPosition(Owner.X, Owner.Y); //stop moving serverside too. TODO: check for each spell if they stop movement or not
                 Owner.IsCastingSpell = true;
                 State = SpellState.STATE_CASTING;
                 CurrentCastTime = SpellData.GetCastTime();
@@ -121,11 +120,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 FinishCasting();
             }
 
-            _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);
+            // TODO: Check SpellData for if the spell should stop movement (and when).
+            if (!Owner.IsDashing)
+            {
+                Owner.StopMovement();
+            }
 
-            // Stops movement serverside
-            // TODO: check for each spell if they stop movement or not
-            Owner.StopMovement();
+            _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);
 
             return true;
         }
@@ -242,7 +243,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                     fromY,
                     (int)projectileSpellData.LineWidth,
                     Owner,
-                    new Target(toX, toY),
+                    new Vector2(toX, toY),
                     this,
                     projectileSpellData.MissileSpeed,
                     nameMissile,
@@ -263,7 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
-        public void AddProjectileTarget(string nameMissile, ITarget target, bool isServerOnly = false)
+        public void AddProjectileTarget(string nameMissile, IAttackableUnit target, bool isServerOnly = false)
         {
             ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
 
@@ -297,15 +298,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             var l = new Laser(
                 _game,
-                Owner.X,
-                Owner.Y,
-                (int)SpellData.LineWidth,
+                Owner.X, // TODO: Change this to a parameter.
+                Owner.Y, // TODO: Change this to a parameter.
+                (int)SpellData.LineWidth, // TODO: Change this to a parameter.
                 Owner,
-                new Target(toX, toY),
+                new Vector2(toX, toY), // TODO: Remove Target class.
                 this,
                 effectName,
                 SpellData.Flags,
-                affectAsCastIsOver,
+                affectAsCastIsOver, // TODO: Verify if this is needed.
                 _futureProjNetId
             );
             Projectiles.Add(l.NetId, l);
@@ -321,7 +322,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 Owner.Y,
                 (int)SpellData.LineWidth,
                 Owner,
-                new Target(toX, toY),
+                new Vector2(toX, toY),
                 this,
                 effectName,
                 SpellData.Flags,

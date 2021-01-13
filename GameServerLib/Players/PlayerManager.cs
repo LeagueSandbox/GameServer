@@ -57,8 +57,7 @@ namespace LeagueSandbox.GameServer.Players
                 _currentId // same as StartClient.bat
             );
             _currentId++;
-            var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player);
-            c.SetTeam(teamId);
+            var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player, 0, teamId);
 
             var pos = c.GetSpawnPosition();
             c.SetPosition(pos.X, pos.Y);

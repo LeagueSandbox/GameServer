@@ -52,7 +52,7 @@ namespace Spells
             {
                 var damage = 25 + (45 * spell.Level) + (ownerAbilityPowerTotal * 0.8f);
 
-                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, DamageText.DAMAGE_TEXT_NORMAL);
+                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, DamageResultType.RESULT_NORMAL);
             }
         }
 

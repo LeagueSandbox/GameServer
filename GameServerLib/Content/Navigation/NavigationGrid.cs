@@ -1,46 +1,96 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using Priority_Queue;
-using LeagueSandbox.GameServer.GameObjects;
-using RoyT.AStar;
 using Vector2 = System.Numerics.Vector2;
 using System.Numerics;
 using GameServerLib.Extensions;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
     public class NavigationGrid : INavigationGrid
     {
-        public const float SCALE = 2f;
-
+        /// <summary>
+        /// The minimum position on the NavigationGrid in normal coordinate space (bottom left in 2D).
+        /// NavigationGridCells are undefined below these minimums.
+        /// </summary>
         public Vector3 MinGridPosition { get; private set; }
+        /// <summary>
+        /// The maximum position on the NavigationGrid in normal coordinate space (top right in 2D).
+        /// NavigationGridCells are undefined beyond these maximums.
+        /// </summary>
         public Vector3 MaxGridPosition { get; private set; }
+        /// <summary>
+        /// Calculated resolution of the Navigation Grid (percentage of a cell 1 normal unit takes up, not to be confused with 1/CellSize).
+        /// Multiple used to convert cell-based coordinates back into normal coordinates (CellCountX/Z / TranslationMaxGridPosition).
+        /// </summary>
         public Vector3 TranslationMaxGridPosition { get; private set; }
-
+        /// <summary>
+        /// Ideal number of normal units a cell takes up (not fully accurate, but mostly, refer to TranslationMaxGridPosition for true size).
+        /// </summary>
         public float CellSize { get; private set; }
+        /// <summary>
+        /// Width of the Navigation Grid in cells.
+        /// </summary>
         public uint CellCountX { get; private set; }
+        /// <summary>
+        /// Height of the Navigation Grid in cells.
+        /// </summary>
         public uint CellCountY { get; private set; }
+        /// <summary>
+        /// Array of all cells contained in this Navigation Grid.
+        /// </summary>
         public NavigationGridCell[] Cells { get; private set; }
-
+        /// <summary>
+        /// Array of region tags where each index represents a cell's index.
+        /// </summary>
         public uint[] RegionTags { get; private set; }
+        /// <summary>
+        /// Table of regions possible in the current Navigation Grid.
+        /// Regions are the areas representing key points on a map. In the case of OldSR, this could be lanes top, middle, or bot, and the last region being jungle.
+        /// *NOTE*: Regions only exist in Navigation Grids with a version of 5 or higher. OldSR is version 3.
+        /// </summary>
         public NavigationRegionTagTable RegionTagTable { get; private set; }
-
+        /// <summary>
+        /// Number of sampled heights in the X coordinate plane.
+        /// </summary>
         public uint SampledHeightsCountX { get; private set; }
+        /// <summary>
+        /// Number of sampled heights in the Y coordinate plane (Z coordinate in 3D space).
+        /// </summary>
         public uint SampledHeightsCountY { get; private set; }
+        /// <summary>
+        /// Multiple used to convert from normal coordinates to an index format used to get sampled heights from the Navigation Grid.
+        /// </summary>
+        /// TODO: Seems to be volatile. If there ever comes a time when Navigation Grid editing becomes easy, that'd be the perfect time to rework the methods for getting sampled heights.
         public Vector2 SampledHeightsDistance { get; private set; }
+        /// <summary>
+        /// Array of sampled heights where each index represents a cell's index (depends on SampledHeightsCountX/Y).
+        /// </summary>
         public float[] SampledHeights { get; private set; }
-
+        /// <summary>
+        /// Grid of hints.
+        /// Function likely related to pathfinding.
+        /// Currently Unused.
+        /// </summary>
         public NavigationHintGrid HintGrid { get; private set; }
-
-        public float OffsetX { get; private set; }
-        public float OffsetZ { get; private set; }
+        /// <summary>
+        /// Width of the map in normal coordinate space, where the origin is at (0, 0).
+        /// *NOTE*: Not to be confused with MaxGridPosition.X, whos origin is at MinGridPosition.
+        /// </summary>
         public float MapWidth { get; private set; }
+        /// <summary>
+        /// Height of the map in normal coordinate space, where the origin is at (0, 0).
+        /// *NOTE*: Not to be confused with MaxGridPosition.Z, whos origin is at MinGridPosition.
+        /// </summary>
         public float MapHeight { get; private set; }
+        /// <summary>
+        /// Center of the map in normal coordinate space.
+        /// </summary>
         public Vector2 MiddleOfMap { get; private set; }
 
         public NavigationGrid(string fileLocation) : this(File.OpenRead(fileLocation)) { }
@@ -126,7 +176,14 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
         }
 
-        public List<Vector2> GetPath(Vector2 from, Vector2 to)
+        /// <summary>
+        /// Finds a path of waypoints, which are aligned by the cells of the navgrid (A* method), that lead to a set destination.
+        /// </summary>
+        /// <param name="from">Point that the path starts at.</param>
+        /// <param name="to">Point that the path ends at.</param>
+        /// <param name="distanceThreshold">Amount of distance away from terrain that the path should be.</param>
+        /// <returns>List of points forming a path in order: from -> to</returns>
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
             List<Vector2> returnList = new List<Vector2>() { from };
 
@@ -139,20 +196,23 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             if (cellFrom != null && goal != null)
             {
                 SimplePriorityQueue<Stack<NavigationGridCell>> priorityQueue = new SimplePriorityQueue<Stack<NavigationGridCell>>();
-                Stack<NavigationGridCell> start = new Stack<NavigationGridCell>();
-                Dictionary<int, NavigationGridCell> closedList = new Dictionary<int, NavigationGridCell>();
-                Stack<NavigationGridCell> path = null;
 
+                Stack<NavigationGridCell> start = new Stack<NavigationGridCell>();
                 start.Push(cellFrom);
                 priorityQueue.Enqueue(start, NavigationGridCell.Distance(cellFrom, goal));
+
+                Dictionary<int, NavigationGridCell> closedList = new Dictionary<int, NavigationGridCell>();
                 closedList.Add(cellFrom.ID, cellFrom);
+
+                Stack<NavigationGridCell> path = null;
 
                 // while there are still paths to explore
                 while (true)
                 {
-                    if (!priorityQueue.TryFirst(out _))
+                    if (!priorityQueue.TryFirst(out path))
                     {
                         // no solution
+                        path = null;
                         return null;
                     }
 
@@ -160,25 +220,30 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     priorityQueue.TryDequeue(out path);
 
                     NavigationGridCell cell = path.Peek();
-
                     currentCost -= (NavigationGridCell.Distance(cell, goal) + cell.Heuristic); // decrease the heuristic to get the cost
 
-                    // found the min solution return it (path)
+                    // found the min solution and return it (path)
                     if (cell.ID == goal.ID)
                     {
                         break;
                     }
 
+                    NavigationGridCell tempCell = null;
                     foreach (NavigationGridCell neighborCell in GetCellNeighbors(cell))
                     {
-                        // if the neighbor in the closed list - skip
-                        if (closedList.TryGetValue(neighborCell.ID, out _))
+                        // if the neighbor is in the closed list - skip
+                        if (closedList.TryGetValue(neighborCell.ID, out tempCell))
                         {
                             continue;
                         }
 
                         // not walkable - skip
-                        if (neighborCell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || neighborCell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                        if (distanceThreshold != 0 && !IsWalkable(neighborCell.Locator.X, neighborCell.Locator.Y, distanceThreshold, false))
+                        {
+                            closedList.Add(neighborCell.ID, neighborCell);
+                            continue;
+                        }
+                        else if (neighborCell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || neighborCell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
                         {
                             closedList.Add(neighborCell.ID, neighborCell);
                             continue;
@@ -186,13 +251,20 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                         // calculate the new path and cost +heuristic and add to the priority queue
                         Stack<NavigationGridCell> npath = new Stack<NavigationGridCell>(new Stack<NavigationGridCell>(path));
-
                         npath.Push(neighborCell);
+
                         // add 1 for every cell used
                         priorityQueue.Enqueue(npath, currentCost + 1 + neighborCell.Heuristic + neighborCell.ArrivalCost + neighborCell.AdditionalCost
                             + NavigationGridCell.Distance(neighborCell, goal));
+
                         closedList.Add(neighborCell.ID, neighborCell);
                     }
+                }
+
+                // shouldn't happen usually
+                if (path == null)
+                {
+                    return null;
                 }
 
                 NavigationGridCell[] pathArray = path.ToArray();
@@ -200,13 +272,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 List<NavigationGridCell> pathList = SmoothPath(new List<NavigationGridCell>(pathArray));
 
-                pathList.RemoveAt(0); // removes the first point
+                // removes the first point
+                pathList.RemoveAt(0);
 
                 foreach (NavigationGridCell navGridCell in pathList.ToArray())
                 {
                     returnList.Add(TranslateFrmNavigationGrid(navGridCell.Locator));
                 }
-
                 return returnList;
             }
 
@@ -214,10 +286,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         /// <summary>
-        /// Remove waypoints that have LOS from the waypoint before the waypoint after
+        /// Remove waypoints (cells) that have LOS from one to the other.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
+        /// <returns>Smoothed list of waypoints.</returns>
         private List<NavigationGridCell> SmoothPath(List<NavigationGridCell> path)
         {
             int curWaypointToSmooth = 0;
@@ -246,16 +318,53 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return path;
         }
 
+        /// <summary>
+        /// Translates the given float into cell format where each unit is a cell.
+        /// </summary>
+        /// <param name="value">Float to translate.</param>
+        /// <returns></returns>
+        public float TranslateToNavGrid(float value)
+        {
+            float unit = MathF.Sqrt(2) / 2;
+            float sign = 1.0f;
+            if (value < 0)
+            {
+                sign = -1.0f;
+            }
+
+            // Signed length of translated and scaled unit vector.
+            return sign * MathF.Sqrt(((value * unit * TranslationMaxGridPosition.X) * (value * unit * TranslationMaxGridPosition.X))
+                                    + ((value * unit * TranslationMaxGridPosition.Z) * (value * unit * TranslationMaxGridPosition.Z)));
+        }
+
+        /// <summary>
+        /// Translates the given Vector2 into cell format where each unit is a cell.
+        /// This is to simplify the calculations required to get cells.
+        /// </summary>
+        /// <param name="vector">Vector2 to translate.</param>
+        /// <returns>Cell formatted Vector2.</returns>
         public Vector2 TranslateToNavGrid(Vector2 vector)
         {
             vector.X = (vector.X - this.MinGridPosition.X) * this.TranslationMaxGridPosition.X;
             vector.Y = (vector.Y - this.MinGridPosition.Z) * this.TranslationMaxGridPosition.Z;
             return vector;
         }
+
+        /// <summary>
+        /// Translates the given cell locator position back into normal coordinate space as a Vector2.
+        /// </summary>
+        /// <param name="locator">Cell locator.</param>
+        /// <returns>Normal coordinate space Vector2.</returns>
         public Vector2 TranslateFrmNavigationGrid(NavigationGridLocator locator)
         {
             return TranslateFrmNavigationGrid(new Vector2(locator.X, locator.Y));
         }
+
+        /// <summary>
+        /// Translates the given cell formatted Vector2 back into normal coordinate space.
+        /// </summary>
+        /// <param name="vector">Vector2 to translate.</param>
+        /// <returns>Normal coordinate space Vector2.</returns>
         public Vector2 TranslateFrmNavigationGrid(Vector2 vector)
         {
             Vector2 ret = new Vector2
@@ -267,36 +376,38 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return ret;
         }
 
-        public Vector2 GetCellVector(short x, short y)
+        /// <summary>
+        /// Gets the index of the cell at the given position.
+        /// </summary>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="z">2D Y coordinate.</param>
+        /// <param name="translate">Whether or not the given position should be translated into cell format. False = given position is already in cell format.</param>
+        /// <returns>Cell index.</returns>
+        public int GetCellIndex(float x, float z, bool translate = true)
         {
-            return new Vector2(UncompressX(x), UncompressZ(y));
-        }
+            Vector2 vector = new Vector2(x, z);
 
-        public int GetCellIndex(short x, short y)
-        {
-            Vector2 vector = GetCellVector(x, y);
-
-            if (vector.X > 0)
+            if (translate)
             {
-                return (int)(vector.X + vector.Y * this.CellCountX);
+                vector = TranslateToNavGrid(new Vector2 { X = x, Y = z });
             }
 
-            return -1;
-        }
-        public int GetCellIndex(float x, float z)
-        {
-            for (int i = 0; i < this.Cells.Length; i++)
+            // TODO: Cleanup all the casting but keep the same method.
+            long index = (short)vector.Y * this.CellCountX + (short)vector.X;
+            if ((short)vector.X < 0 || (short)vector.X > this.CellCountX || (short)vector.Y < 0 || (short)vector.Y > this.CellCountY || index >= this.Cells.Length)
             {
-                if (UncompressX(this.Cells[i].Locator.X) > x - this.CellSize && UncompressX(this.Cells[i].Locator.X) < x + this.CellSize &&
-                    UncompressZ(this.Cells[i].Locator.Y) > z - this.CellSize && UncompressZ(this.Cells[i].Locator.Y) < z + this.CellSize)
-                {
-                    return i;
-                }
+                return -1;
             }
 
-            return -1;
+            return (int)index;
         }
 
+        /// <summary>
+        /// Gets the cell at the given cell based coordinates.
+        /// </summary>
+        /// <param name="x">cell based X coordinate</param>
+        /// <param name="y">cell based Y coordinate.</param>
+        /// <returns>Cell instance.</returns>
         public NavigationGridCell GetCell(short x, short y)
         {
             long index = y * this.CellCountX + x;
@@ -308,6 +419,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return this.Cells[index];
         }
 
+        /// <summary>
+        /// Gets a list of all cells within 8 cardinal directions of the given cell.
+        /// </summary>
+        /// <param name="cell">Cell to start the check at.</param>
+        /// <returns>List of neighboring cells.</returns>
         private List<NavigationGridCell> GetCellNeighbors(NavigationGridCell cell)
         {
             List<NavigationGridCell> neighbors = new List<NavigationGridCell>();
@@ -327,87 +443,249 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return neighbors;
         }
 
-        public ushort CompressX(float positionX)
+        /// <summary>
+        /// Gets the index of a cell that is closest to the given 2D point.
+        /// Usually used when the given point is outside the boundaries of the Navigation Grid.
+        /// </summary>
+        /// <param name="x">X coordinate to check.</param>
+        /// <param name="y">Y coordinate to check.</param>
+        /// <param name="translate">Whether or not the given coordinates are in LS form.</param>
+        /// <returns>Index of a valid cell.</returns>
+        public int GetClosestValidCellIndex(float x, float y, bool translate = true)
         {
-            if (Math.Abs((positionX - this.OffsetX) * (1 / SCALE)) >= ushort.MaxValue)
+            Vector3 minGridPos = MinGridPosition;
+            // Because indices are from 0, we subtract a single cell's size from the maximums to prevent getting -1 cell index.
+            Vector3 maxGridPos = new Vector3(MaxGridPosition.X - (1 / TranslationMaxGridPosition.X), MaxGridPosition.Y, MaxGridPosition.Z - (1 / TranslationMaxGridPosition.Z));
+
+            if (!translate)
             {
-                throw new Exception("Compressed position reached maximum value.");
+                minGridPos = Vector3.Zero;
+                Vector2 max2D = TranslateToNavGrid(new Vector2(maxGridPos.X, maxGridPos.Z));
+                maxGridPos = new Vector3(max2D.X, 0, max2D.Y);
             }
 
-            return (ushort)Convert.ToInt32((positionX - this.OffsetX) * (1 / SCALE));
-        }
-        public ushort CompressZ(float positionZ)
-        {
-            if (Math.Abs((positionZ - this.OffsetZ) * (1 / SCALE)) >= ushort.MaxValue)
+            if (Extensions.IsVectorValid(new Vector2(x, y), new Vector2(maxGridPos.X, maxGridPos.Z), new Vector2(minGridPos.X, minGridPos.Z)))
             {
-                throw new Exception("Compressed position reached maximum value.");
+                return GetCellIndex(x, y, translate);
             }
 
-            return (ushort)Convert.ToInt32((positionZ - this.OffsetZ) * (1 / SCALE));
-        }
-
-        public float UncompressX(short shortX)
-        {
-            return shortX / (1 / SCALE) + this.OffsetX;
-        }
-        public float UncompressZ(short shortZ)
-        {
-            return shortZ / (1 / SCALE) + this.OffsetZ;
-        }
-
-        public Vector2 Uncompress(Vector2 vector)
-        {
-            return new Vector2
+            // Left
+            if (x < minGridPos.X)
             {
-                X = vector.X / this.MaxGridPosition.X + this.MinGridPosition.X,
-                Y = vector.Y / this.MaxGridPosition.Z + this.MinGridPosition.Z
+                // Bottom
+                if (y < minGridPos.Z)
+                {
+                    return Cells.Length - (int)CellCountX;
+                }
+                // Top
+                else if (y > maxGridPos.Z)
+                {
+                    return 0;
+                }
+
+                // Middle
+                return GetCellIndex(minGridPos.X, y, translate);
+            }
+
+            // Right
+            if (x > maxGridPos.X)
+            {
+                // Bottom
+                if (y < minGridPos.Z)
+                {
+                    return Cells.Length - 1;
+                }
+                // Top
+                else if (y > maxGridPos.Z)
+                {
+                    return (int)CellCountX;
+                }
+
+                // Middle
+                return GetCellIndex(maxGridPos.X, y, translate);
+            }
+
+            // Bottom
+            if (y < minGridPos.Z)
+            {
+                return GetCellIndex(x, minGridPos.Z, translate);
+            }
+
+            // Top
+            return GetCellIndex(x, maxGridPos.Z, translate);
+        }
+
+        /// <summary>
+        /// Gets a list of cells within the specified range of a specified point.
+        /// </summary>
+        /// <param name="origin">Vector2 with normal coordinates to start the check. *NOTE*: Must be untranslated (normal coordinates).</param>
+        /// <param name="radius">Range to check around the origin.</param>
+        /// <returns>List of all cells in range. Null if range extends outside of NavigationGrid boundaries.</returns>
+        private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
+        {
+            List<NavigationGridCell> cells = new List<NavigationGridCell>();
+
+            if (!translate)
+            {
+                radius = TranslateToNavGrid(radius);
+            }
+
+            // Ordered: bottom left, bottom right, top right.
+            int[] cellIndices = new int[3]
+            {
+                GetCellIndex(origin.X - radius, origin.Y - radius, translate),
+                GetCellIndex(origin.X + radius, origin.Y - radius, translate),
+                GetCellIndex(origin.X + radius, origin.Y + radius, translate)
             };
+
+            int rowIndex = cellIndices[0];
+            int columnIndex = cellIndices[1];
+            for (int i = cellIndices[0]; i <= cellIndices[2]; i++)
+            {
+                if (i > columnIndex)
+                {
+                    i = rowIndex + (int)CellCountX;
+                    rowIndex = i;
+                    columnIndex += (int)CellCountX;
+                }
+
+                if (i >= Cells.Length || i < 0)
+                {
+                    break;
+                }
+
+                NavigationGridCell cell = Cells[i];
+
+                if (Extensions.DistanceSquaredToRectangle(new Vector2(cell.Locator.X, cell.Locator.Y), 1, 1, TranslateToNavGrid(origin)) <= radius * radius)
+                {
+                    cells.Add(cell);
+                }
+            }
+
+            return cells;
         }
 
-        public bool IsWalkable(float x, float y)
+        /// <summary>
+        /// Whether or not the cell at the given position can be pathed on.
+        /// </summary>
+        /// <param name="x">X coordinate to check.</param>
+        /// <param name="y">Y coordinate to check,</param>
+        /// <param name="checkRadius">Radius around the given point to check for walkability.</param>
+        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
+        /// <returns>True/False.</returns>
+        public bool IsWalkable(float x, float y, float checkRadius = 0, bool translate = true)
         {
-            return IsWalkable(new Vector2(x, y));
+            return IsWalkable(new Vector2(x, y), checkRadius, translate);
         }
-        public bool IsWalkable(Vector2 coords)
+
+        /// <summary>
+        /// Whether or not the cell at the given position can be pathed on.
+        /// </summary>
+        /// <param name="coords">Vector2 position to check.</param>
+        /// <param name="checkRadius">Radius around the given point to check for walkability.</param>
+        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
+        /// <returns>True/False.</returns>
+        public bool IsWalkable(Vector2 coords, float checkRadius = 0, bool translate = true)
         {
-            Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+            if (checkRadius == 0)
+            {
+                Vector2 vector = new Vector2 { X = coords.X, Y = coords.Y };
+
+                if (translate)
+                {
+                    vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+                }
+
+                NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
+
+                return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
+            }
+
+            // If one of the cells within the checkRadius are not passable or see through, the location isn't walkable.
+            // Otherwise it is walkable if none of them are not passable or see through.
+            Vector2 trueCoords = coords;
+            if (!translate)
+            {
+                // GetAllCellsInRange requires the coordinates to be untranslated.
+                trueCoords = TranslateFrmNavigationGrid(coords);
+            }
+
+            List<NavigationGridCell> cells = GetAllCellsInRange(trueCoords, checkRadius, translate);
+
+            if (cells.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (NavigationGridCell c in cells)
+            {
+                if (c == null || c.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || c.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                {
+                    return false;
+                }
+                continue;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Whether or not the given position is see-through. In other words, if it does not block vision.
+        /// </summary>
+        /// <param name="x">X coordinate to check.</param>
+        /// <param name="y">Y coordinate to check.</param>
+        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
+        /// <returns>True/False.</returns>
+        public bool IsVisible(float x, float y, bool translate = true)
+        {
+            return IsVisible(new Vector2(x, y), translate);
+        }
+
+        /// <summary>
+        /// Whether or not the given position is see-through. In other words, if it does not block vision.
+        /// </summary>
+        /// <param name="coords">Vector2 position to check.</param>
+        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
+        /// <returns>True/False.</returns>
+        public bool IsVisible(Vector2 coords, bool translate = true)
+        {
+            Vector2 vector = new Vector2 { X = coords.X, Y = coords.Y };
+
+            if (translate)
+            {
+                vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+            }
+
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE);
+            //TODO: implement bush logic here
+            return cell != null && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION));
         }
 
-        public bool IsSeeThrough(float x, float y)
+        /// <summary>
+        /// Whether or not the given position has the specified flags.
+        /// </summary>
+        /// <param name="coords">Vector2 position to check.</param>
+        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
+        /// <returns>True/False.</returns>
+        public bool HasFlag(Vector2 coords, NavigationGridCellFlags flag, bool translate = true)
         {
-            return IsSeeThrough(new Vector2(x, y));
-        }
-        public bool IsSeeThrough(Vector2 coords)
-        {
-            Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+            Vector2 vector = new Vector2 { X = coords.X, Y = coords.Y };
+
+            if (translate)
+            {
+                vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+            }
+
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell != null && cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
+            return cell.HasFlag(flag);
         }
 
-        public bool IsBrush(float x, float y)
-        {
-            return IsBrush(new Vector2(x, y));
-        }
-        public bool IsBrush(Vector2 coords)
-        {
-            Vector2 vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
-            NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-
-            return cell != null && cell.HasFlag(NavigationGridCellFlags.HAS_GRASS);
-        }
-
-        public bool HasGlobalVision(Vector2 coords)
-        {
-            Vector2 vector = TranslateToNavGrid(coords);
-            NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-
-            return cell != null && cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION);
-        }
-
+        /// <summary>
+        /// Gets the height of the ground at the given position. Used purely for packets.
+        /// </summary>
+        /// <param name="location">Vector2 position to check.</param>
+        /// <returns>Height (3D Y coordinate) at the given position.</returns>
         public float GetHeightAtLocation(Vector2 location)
         {
             // Uses SampledHeights to get the height of a given location on the Navigation Grid
@@ -480,25 +758,37 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             return 0.0f;
         }
+
+        /// <summary>
+        /// Gets the height of the ground at the given position. Used purely for packets.
+        /// </summary>
+        /// <param name="x">X coordinate to check.</param>
+        /// <param name="y">Y coordinate to check.</param>
+        /// <returns>Height (3D Y coordinate) at the given position.</returns>
         public float GetHeightAtLocation(float x, float y)
         {
             return GetHeightAtLocation(new Vector2(x, y));
         }
 
-        public float CastRay(Vector2 origin, Vector2 destination, bool inverseRay = false)
-        {
-            return (float)Math.Sqrt(CastRaySqr(origin, destination, inverseRay));
-        }
-        public float CastRaySqr(Vector2 origin, Vector2 destination, bool checkWalkable = false)
+        /// <summary>
+        /// Casts a ray and returns false when failed, with a stopping position, or true on success with the given destination.
+        /// </summary>
+        /// <param name="origin">Vector position to start the ray cast from.</param>
+        /// <param name="destination">Vector2 position to end the ray cast at.</param>
+        /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
+        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
+        /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
+        public KeyValuePair<bool, Vector2> CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
         {
             float x1 = origin.X;
             float y1 = origin.Y;
             float x2 = destination.X;
             float y2 = destination.Y;
 
-            if (x1 < 0 || y1 < 0 || x1 >= this.MapWidth || y1 >= this.MapHeight)
+            // Out of bounds
+            if (x1 < MinGridPosition.X || y1 < MinGridPosition.Z || x1 >= MaxGridPosition.X || y1 >= MaxGridPosition.Z)
             {
-                return 0.0f;
+                return new KeyValuePair<bool, Vector2>(false, new Vector2(float.NaN, float.NaN));
             }
 
             float distx = x2 - x1;
@@ -516,8 +806,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             for (i = 0; i < il; i++)
             {
                 //TODO: Implement bush logic (preferably near here)
-                //TODO: Implement methods for NavGrids without SEE_THROUGH flags
-                if (IsWalkable(x1, y1) == checkWalkable && IsSeeThrough(x1, y1) == checkWalkable)
+                //TODO: Implement methods for maps whose NavGrids don't use SEE_THROUGH flags for buildings
+                if ((checkWalkable && !IsWalkable(x1, y1)) || (checkVisible && !IsVisible(x1, y1)))
                 {
                     break;
                 }
@@ -528,54 +818,133 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 y1 += dy;
             }
 
-            if (i == il || (x1 == origin.X && y1 == origin.Y))
+            if (i == il || (x1 == destination.X && y1 == destination.Y))
             {
-                return (new Vector2(x2, y2) - origin).SqrLength();
+                return new KeyValuePair<bool, Vector2>(true, new Vector2(x2, y2));
             }
 
-            return (new Vector2(x1, y1) - origin).SqrLength();
-        }
-        public float CastInfiniteRaySqr(Vector2 origin, Vector2 direction, bool inverseRay = false)
-        {
-            return CastRaySqr(origin, origin + direction * 1024, inverseRay);
-        }
-        public float CastInfiniteRay(Vector2 origin, Vector2 direction, bool inverseRay = false)
-        {
-            return (float)Math.Sqrt(CastInfiniteRaySqr(origin, direction, inverseRay));
+            return new KeyValuePair<bool, Vector2>(false, new Vector2(x1, y1));
         }
 
-        public bool IsAnythingBetween(Vector2 a, Vector2 b)
+        /// <summary>
+        /// Casts a ray in the given direction and returns false when failed, with a stopping position, or true on success with the given destination.
+        /// *NOTE*: Is not actually infinite, just travels (direction * 1024) units ahead of the given origin.
+        /// </summary>
+        /// <param name="origin">Vector position to start the ray cast from.</param>
+        /// <param name="direction">Ray cast direction.</param>
+        /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
+        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
+        /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
+        public KeyValuePair<bool, Vector2> CastInfiniteRay(Vector2 origin, Vector2 direction, bool checkWalkable = true, bool checkVisible = false)
         {
-            return CastRaySqr(a, b) < (b - a).SqrLength();
+            return CastRay(origin, origin + direction * 1024, checkWalkable, checkVisible);
         }
-        public bool IsAnythingBetween(IGameObject a, IGameObject b)
+
+        /// <summary>
+        /// Whether or not there is anything blocking pathing or vision from the starting position to the ending position. (depending on checkVision).
+        /// </summary>
+        /// <param name="startPos">Position to start the check from.</param>
+        /// <param name="endPos">Position to end the check at.</param>
+        /// <param name="checkVision">True = Check if vision is blocked. False = Check if pathing is blocked.</param>
+        /// <returns>True/False.</returns>
+        public KeyValuePair<bool, Vector2> IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
+        {
+            KeyValuePair<bool, Vector2> result = CastRay(startPos, endPos, !checkVision, checkVision);
+            return new KeyValuePair<bool, Vector2>(!result.Key, result.Value);
+        }
+
+        /// <summary>
+        /// Whether or not there is anything blocking the two given GameObjects from either seeing eachother or pathing straight towards eachother (depending on checkVision).
+        /// </summary>
+        /// <param name="a">GameObject to start the check from.</param>
+        /// <param name="b">GameObject to end the check at.</param>
+        /// <param name="checkVision">True = Check for positions that block vision. False = Check for positions that block pathing.</param>
+        /// <returns>True/False.</returns>
+        public bool IsAnythingBetween(IGameObject a, IGameObject b, bool checkVision = false)
         {
             if (a is IObjBuilding)
             {
-                double rayDist = Math.Sqrt(CastRaySqr(b.GetPosition(), a.GetPosition()));
+                double rayDist = Math.Sqrt((CastRay(b.GetPosition(), a.GetPosition(), !checkVision, checkVision).Value - b.GetPosition()).SqrLength());
                 rayDist += a.CollisionRadius;
                 return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
             if (b is IObjBuilding)
             {
-                double rayDist = Math.Sqrt(CastRaySqr(a.GetPosition(), b.GetPosition()));
+                double rayDist = Math.Sqrt((CastRay(a.GetPosition(), b.GetPosition(), !checkVision, checkVision).Value - a.GetPosition()).SqrLength());
                 rayDist += b.CollisionRadius;
                 return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
             }
-            return CastRaySqr(a.GetPosition(), b.GetPosition()) < (b.GetPosition() - a.GetPosition()).SqrLength();
-        }
-        public bool IsAnythingBetween(NavigationGridLocator a, NavigationGridLocator b)
-        {
-            return IsAnythingBetween(new Vector2(a.X, a.Y), new Vector2(b.X, b.Y));
-        }
-        public bool IsAnythingBetween(NavigationGridCell a, NavigationGridCell b)
-        {
-            return IsAnythingBetween(a.Locator, b.Locator);
+            return !CastRay(a.GetPosition(), b.GetPosition(), !checkVision, checkVision).Key;
         }
 
-        public Vector2 GetClosestTerrainExit(Vector2 location)
+        /// <summary>
+        /// Whether or not there is anything blocking pathing from the first given cell to the next.
+        /// </summary>
+        /// <param name="origin">Cell to start the check from.</param>
+        /// <param name="destination">Cell to end the check at.</param>
+        /// <param name="ignoreTerrain">Whether or not to ignore terrain when checking for pathability between cells.</param>
+        /// <returns>True/False.</returns>
+        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, bool ignoreTerrain = false)
         {
-            if (IsWalkable(location))
+            float x1 = origin.Locator.X;
+            float y1 = origin.Locator.Y;
+            float x2 = destination.Locator.X;
+            float y2 = destination.Locator.Y;
+
+            if (x1 < 0 || y1 < 0 || x1 >= CellCountX || y1 >= CellCountY)
+            {
+                return false;
+            }
+
+            float distx = x2 - x1;
+            float disty = y2 - y1;
+            float greatestdist = Math.Abs(distx);
+            if (Math.Abs(disty) > greatestdist)
+            {
+                greatestdist = Math.Abs(disty);
+            }
+
+            int il = (int)greatestdist;
+            float dx = distx / greatestdist;
+            float dy = disty / greatestdist;
+            int i;
+            for (i = 0; i <= il; i++)
+            {
+                if (!ignoreTerrain)
+                {
+                    // 4 corners
+                    List<Vector2> vertices = new List<Vector2>()
+                    {
+                        new Vector2((short)Math.Ceiling(x1), (short)Math.Ceiling(y1)),
+                        new Vector2((short)Math.Floor(x1), (short)Math.Ceiling(y1)),
+                        new Vector2((short)Math.Ceiling(x1), (short)Math.Floor(y1)),
+                        new Vector2((short)Math.Floor(x1), (short)Math.Floor(y1)),
+                    };
+
+                    // if none are walkable, then the path is blocked.
+                    if (!vertices.Exists(v => IsWalkable(v, 0, false)))
+                    {
+                        return true;
+                    }
+                }
+
+                // report on terrain
+                x1 += dx;
+                y1 += dy;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the closest pathable position to the given position. *NOTE*: Computationally heavy, use sparingly.
+        /// </summary>
+        /// <param name="location">Vector2 position to start the check at.</param>
+        /// <param name="distanceThreshold">Amount of distance away from terrain the exit should be.</param>
+        /// <returns>Vector2 position which can be pathed on.</returns>
+        public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0)
+        {
+            if (IsWalkable(location, distanceThreshold))
             {
                 return location;
             }
@@ -583,6 +952,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             double trueX = location.X;
             double trueY = location.Y;
             double angle = Math.PI / 4;
+            // What is the point of rr?
             double rr = (location.X - trueX) * (location.X - trueX) + (location.Y - trueY) * (location.Y - trueY);
             double r = Math.Sqrt(rr);
 
@@ -590,7 +960,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             // y = r * sin(angle)
             // r = distance from center
             // Draws spirals until it finds a walkable spot
-            while (!IsWalkable((float)trueX, (float)trueY))
+            while (!IsWalkable((float)trueX, (float)trueY, distanceThreshold))
             {
                 trueX = location.X + r * Math.Cos(angle);
                 trueY = location.Y + r * Math.Sin(angle);

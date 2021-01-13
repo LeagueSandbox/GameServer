@@ -40,7 +40,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             Name = name;
             Model = model;
             SkinId = skin;
-            SetTeam(TeamId.TEAM_NEUTRAL);
         }
 
         public override float GetMoveSpeed()

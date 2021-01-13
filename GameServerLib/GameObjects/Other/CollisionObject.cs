@@ -1,9 +1,4 @@
 ﻿using GameServerCore.Domain.GameObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UltimateQuadTree;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
@@ -22,12 +17,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public double GetTop(IGameObject obj)
         {
-            return obj.Y + obj.CollisionRadius + 1;
+            return obj.Y - obj.CollisionRadius - 1;
         }
 
         public double GetBottom(IGameObject obj)
         {
-            return obj.Y - obj.CollisionRadius - 1;
+            return obj.Y + obj.CollisionRadius + 1;
         }
     }
 

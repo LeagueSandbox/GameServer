@@ -1,18 +1,40 @@
-﻿using System;
+﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
+    /// <summary>
+    /// Class representing a cell in a Navigation Grid, containing all of its features such as terrain flags, index, actors, position, and pathfinding variables.
+    /// </summary>
     public class NavigationGridCell
     {
+        /// <summary>
+        /// Terrain flags for this cell.
+        /// </summary>
         public NavigationGridCellFlags Flags { get; private set; }
+        /// <summary>
+        /// Index of this cell.
+        /// </summary>
         public int ID { get; private set; }
+        /// <summary>
+        /// Whether or not this cell is open for pathing. Usually false when the cell is occupied by actors.
+        /// </summary>
         public float CenterHeight { get; private set; }
         public int SessionId { get; private set; }
         public float ArrivalCost { get; private set; }
         public bool IsOpen { get; private set; }
         public float Heuristic { get; private set; }
-        public uint ActorList { get; private set; }
+        /// <summary>
+        /// List of Actors occupying this cell, as well as how much area each Actor is occupying.
+        /// </summary>
+        public SortedList<IGameObject, float> ActorList { get; private set; }
+        /// <summary>
+        /// Locator variable for this cell detailing its position on the Navigation Grid.
+        /// *NOTE*: Requires translation from Navigation Grid in order to compare to League Sandbox coordinates.
+        /// </summary>
         public NavigationGridLocator Locator { get; private set; }
         public float AdditionalCost { get; private set; }
         public float HintAsGoodCell { get; private set; }
@@ -51,7 +73,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 ArrivalCost = arrivalCost,
                 IsOpen = isOpen,
                 Heuristic = heuristic,
-                ActorList = actorList,
+                ActorList = new SortedList<IGameObject, float>(),
                 Locator = locator,
                 AdditionalCost = additionalCost,
                 HintAsGoodCell = hintAsGoodCell,
@@ -86,7 +108,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 ArrivalCost = arrivalCost,
                 IsOpen = isOpen,
                 Heuristic = heuristic,
-                ActorList = actorList,
+                ActorList = new SortedList<IGameObject, float>(),
                 Locator = locator,
                 GoodCellSessionId = goodCellSessionId,
                 RefHintWeight = refHintWeight,
@@ -95,32 +117,44 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             };
         }
 
+        /// <summary>
+        /// Sets this cell's terrain flags.
+        /// </summary>
+        /// <param name="flags">Flags to set.</param>
         public void SetFlags(NavigationGridCellFlags flags)
         {
             this.Flags |= flags;
         }
+
+        /// <summary>
+        /// Whether or not this cell has the specified flag(s).
+        /// </summary>
+        /// <param name="flag">Flag(s) to check for.</param>
+        /// <returns>True/False</returns>
         public bool HasFlag(NavigationGridCellFlags flag)
         {
             return (this.Flags & flag) == flag;
         }
 
+        /// <summary>
+        /// Sets the cell as open or not for pathing.
+        /// Usually false when a statistically significant amount of the cell is occupied by Actors.
+        /// </summary>
+        /// <param name="isOpen">True = can be pathed on. False = unable to be pathed on.</param>
+        public void SetOpen(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
+
+        /// <summary>
+        /// Gets the distance in cells from one cell to another.
+        /// </summary>
+        /// <param name="a">First cell.</param>
+        /// <param name="b">Second cell.</param>
+        /// <returns>Distance where each unit represents a cell (or close to 50 normal units).</returns>
         public static int Distance(NavigationGridCell a, NavigationGridCell b)
         {
             return NavigationGridLocator.Distance(a.Locator, b.Locator);
         }
-    }
-
-    public enum NavigationGridCellFlags : ushort
-    {
-        HAS_GRASS = 0x1,
-        NOT_PASSABLE = 0x2,
-        BUSY = 0x4,
-        TARGETTED = 0x8,
-        MARKED = 0x10,
-        PATHED_ON = 0x20,
-        SEE_THROUGH = 0x40,
-        OTHER_DIRECTION_END_TO_START = 0x80,
-        HAS_GLOBAL_VISION = 0x100,
-        // HAS_TRANSPARENT_TERRAIN = 0x42 // (SeeThrough | NotPassable)
     }
 }

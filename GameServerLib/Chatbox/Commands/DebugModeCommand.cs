@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         }
                     }
 
-                    var circleparticle = new Particle(_game, _userChampion, new Target(_userChampion.GetPosition()), "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
+                    var circleparticle = new Particle(_game, _userChampion, _userChampion.GetPosition(), "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
                     _circleParticles.Add(_userChampion.NetId, circleparticle);
                     _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
@@ -175,7 +175,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         {
                             var current = _userChampion.Waypoints[waypoint - 1];
 
-                            var wpTarget = new Target(_userChampion.Waypoints[waypoint]);
+                            var wpTarget = _userChampion.Waypoints[waypoint];
 
                             // Makes the arrow point to the next waypoint
                             var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
@@ -249,7 +249,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         }
                         circlesize = (1f / 100f) * champion.CollisionRadius;
 
-                        var circleparticle = new Particle(_game, champion, new Target(champion.GetPosition()), "DebugCircle_green.troy", circlesize, "", 0, default, 0, false, false);
+                        var circleparticle = new Particle(_game, champion, champion.GetPosition(), "DebugCircle_green.troy", circlesize, "", 0, default, 0, false, false);
                         _circleParticles.Add(champion.NetId, circleparticle);
                         _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
@@ -272,7 +272,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             {
                                 var current = champion.Waypoints[waypoint - 1];
 
-                                var wpTarget = new Target(champion.Waypoints[waypoint]);
+                                var wpTarget = champion.Waypoints[waypoint];
 
                                 // Makes the arrow point to the next waypoint
                                 var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);

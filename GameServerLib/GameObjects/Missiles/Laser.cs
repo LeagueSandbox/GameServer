@@ -13,6 +13,11 @@ using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.GameObjects.Missiles
 {
+    /// <summary>
+    /// Class representing rectangular spell hitboxes.
+    /// </summary>
+    /// TODO: Create a generalized class for spell based hitboxes instead of inheriting Projectile.
+    /// TODO: Refactor the collision detection method for this class.
     internal class Laser : Projectile
     {
         private bool _affectAsCastIsOver;
@@ -27,16 +32,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             float y,
             int collisionRadius,
             IAttackableUnit owner,
-            ITarget target,
+            Vector2 targetPos,
             ISpell originSpell,
             string effectName,
             int flags,
             bool affectAsCastIsOver,
-            uint netid) : base(game, x, y, collisionRadius, owner, target, originSpell, 0, effectName, flags, netid)
+            uint netid) : base(game, x, y, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
-            CreateRectangle(new Target(x, y), target);
-            _affectAsCastIsOver = affectAsCastIsOver;            
+            CreateRectangle(new Vector2(x, y), targetPos);
+            _affectAsCastIsOver = affectAsCastIsOver;
         }
 
         public override void Update(float diff)
@@ -65,12 +70,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        /*public override void SetToRemove()
-        {
-            base.SetToRemove();
-            _game.PacketNotifier.NotifyProjectileDestroy(this);
-        }*/
-
         private void ApplyEffects(IAttackableUnit unit)
         {
             ObjectsHit.Add(unit);
@@ -80,15 +79,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             }
         }
 
-        /* WARNING!
-         * METHODS BELOW CONTAIN TOO MUCH MATHS.
-         * PLEASE TURN BACK NOW IF YOU DON'T WANT YOUR BRAIN TO BE BLOWN.
-         */
-
         /// <summary>
         /// Assigns this <see cref="Laser"/>'s corners to form a rectangle.
         /// </summary>
-        private void CreateRectangle(ITarget beginPoint, ITarget endPoint)
+        private void CreateRectangle(Vector2 beginPoint, Vector2 endPoint)
         {
             var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
             var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
@@ -121,30 +115,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
             var totalArea = longSide * shortSide;
 
-            var triangle1Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
-            var triangle2Area = GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
-            var triangle3Area = GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
-            var triangle4Area = GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
+            var triangle1Area = Extensions.GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerBegin2, unitCoords);
+            var triangle2Area = Extensions.GetTriangleArea(_rectangleCornerBegin1, _rectangleCornerEnd1, unitCoords);
+            var triangle3Area = Extensions.GetTriangleArea(_rectangleCornerBegin2, _rectangleCornerEnd2, unitCoords);
+            var triangle4Area = Extensions.GetTriangleArea(_rectangleCornerEnd1, _rectangleCornerEnd2, unitCoords);
 
             return totalArea >= triangle1Area + triangle2Area + triangle3Area + triangle4Area;
         }
 
-        /// <summary>
-        /// Calculates given triangle's area using Heron's formula.
-        /// </summary>
-        /// <param name="first">First corner of the triangle.</param>
-        /// <param name="second">Second corner of the triangle</param>
-        /// <param name="third">Third corner of the triangle.</param>
-        /// <returns>the area of the triangle.</returns>
-        private float GetTriangleArea(Vector2 first, Vector2 second, Vector2 third)
+        public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            var line1Length = Vector2.Distance(first, second);
-            var line2Length = Vector2.Distance(second, third);
-            var line3Length = Vector2.Distance(third, first);
-
-            var s = (line1Length + line2Length + line3Length) / 2;
-
-            return (float)Math.Sqrt(s * (s - line1Length) * (s - line2Length) * (s - line3Length));
         }
     }
 }

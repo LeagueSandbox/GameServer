@@ -4,10 +4,6 @@ using System.Linq;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 
@@ -26,11 +22,13 @@ namespace LeagueSandbox.GameServer
         // Dictionaries of GameObjects.
         private Dictionary<uint, IGameObject> _objects;
         private Dictionary<uint, IChampion> _champions;
+        private Dictionary<uint, IBaseTurret> _turrets;
         private Dictionary<uint, IInhibitor> _inhibitors;
         private Dictionary<TeamId, Dictionary<uint, IAttackableUnit>> _visionUnits;
 
         // Locks for each dictionary.
         private object _objectsLock = new object();
+        private object _turretsLock = new object();
         private object _inhibitorsLock = new object();
         private object _championsLock = new object();
         private object _visionLock = new object();
@@ -48,6 +46,7 @@ namespace LeagueSandbox.GameServer
         {
             _game = game;
             _objects = new Dictionary<uint, IGameObject>();
+            _turrets = new Dictionary<uint, IBaseTurret>();
             _inhibitors = new Dictionary<uint, IInhibitor>();
             _champions = new Dictionary<uint, IChampion>();
             _visionUnits = new Dictionary<TeamId, Dictionary<uint, IAttackableUnit>>();
@@ -127,7 +126,8 @@ namespace LeagueSandbox.GameServer
                         if (TeamHasVisionOn(team, u))
                         {
                             u.SetVisibleByTeam(team, true);
-                            _game.PacketNotifier.NotifySpawn(u, team);
+                            // Might not be necessary, but just for good measure.
+                            _game.PacketNotifier.NotifyEnterVisibilityClient(u);
                             RemoveVisionUnit(u);
                             // TODO: send this in one place only
                             _game.PacketNotifier.NotifyUpdatedStats(u, false);
@@ -135,14 +135,14 @@ namespace LeagueSandbox.GameServer
                         }
                     }
 
-                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u))
+                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
                     {
                         u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(u, team);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(u);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
-                    else if (u.IsVisibleByTeam(team) && !TeamHasVisionOn(team, u) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
+                    else if (u.IsVisibleByTeam(team) && (u.IsDead || !TeamHasVisionOn(team, u)) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
                     {
                         u.SetVisibleByTeam(team, false);
                         _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
@@ -271,7 +271,7 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _objects)
                 {
                     if (kv.Value.Team == team && kv.Value.GetDistanceTo(o) < kv.Value.VisionRadius &&
-                        !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o))
+                        !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
                         if (unit != null && unit.IsDead)
@@ -425,18 +425,67 @@ namespace LeagueSandbox.GameServer
         }
 
         /// <summary>
-        /// Gets a GameObject of type Inhibitor from the list of Inhibitors in ObjectManager who is identified by the specified NetID.
+        /// Adds a GameObject of type BaseTurret to the list of BaseTurrets in ObjectManager.
+        /// </summary>
+        /// <param name="turret">BaseTurret to add.</param>
+        public void AddTurret(IBaseTurret turret)
+        {
+            lock (_turretsLock)
+            {
+                _turrets.Add(turret.NetId, turret);
+            }
+        }
+
+        /// <summary>
+        /// Gets a GameObject of type BaseTurret from the list of BaseTurrets in ObjectManager who is identified by the specified NetID.
+        /// Unused.
         /// </summary>
         /// <param name="netId"></param>
-        /// <returns>Inhibitor instance identified by the specified NetID.</returns>
-        public IInhibitor GetInhibitorById(uint id)
+        /// <returns>BaseTurret instance identified by the specified NetID.</returns>
+        public IBaseTurret GetTurretById(uint netId)
         {
-            if (!_inhibitors.ContainsKey(id))
+            if (!_turrets.ContainsKey(netId))
             {
                 return null;
             }
 
-            return _inhibitors[id];
+            return _turrets[netId];
+        }
+
+        /// <summary>
+        /// Removes a GameObject of type BaseTurret from the list of BaseTurrets in ObjectManager.
+        /// Unused.
+        /// </summary>
+        /// <param name="turret">BaseTurret to remove.</param>
+        public void RemoveTurret(IBaseTurret turret)
+        {
+            lock (_turretsLock)
+            {
+                _turrets.Remove(turret.NetId);
+            }
+        }
+
+        /// <summary>
+        /// How many turrets of a specified team are destroyed in the specified lane.
+        /// Used for building protection, specifically for cases where new turrets are added after map turrets.
+        /// Unused.
+        /// </summary>
+        /// <param name="team">Team of the BaseTurrets to check.</param>
+        /// <param name="lane">Lane to check.</param>
+        /// <returns>Number of turrets in the lane destroyed.</returns>
+        /// TODO: Implement AzirTurrets so this can be used.
+        public int GetTurretsDestroyedForTeam(TeamId team, LaneID lane)
+        {
+            int destroyed = 0;
+            foreach (var turret in _turrets.Values)
+            {
+                if (turret.Team == team && turret.Lane == lane && turret.IsDead)
+                {
+                    destroyed++;
+                }
+            }
+
+            return destroyed;
         }
 
         /// <summary>
@@ -449,6 +498,21 @@ namespace LeagueSandbox.GameServer
             {
                 _inhibitors.Add(inhib.NetId, inhib);
             }
+        }
+
+        /// <summary>
+        /// Gets a GameObject of type Inhibitor from the list of Inhibitors in ObjectManager who is identified by the specified NetID.
+        /// </summary>
+        /// <param name="netId"></param>
+        /// <returns>Inhibitor instance identified by the specified NetID.</returns>
+        public IInhibitor GetInhibitorById(uint id)
+        {
+            if (!_inhibitors.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _inhibitors[id];
         }
 
         /// <summary>

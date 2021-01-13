@@ -25,6 +25,7 @@ namespace LeagueSandbox.GameServer.Content
         float AttackSpeedPerLevel { get; }
         bool IsMelee { get; } //Yes or no
         float PathfindingCollisionRadius { get; }
+        float PerceptionBubbleRadius { get; }
         float GameplayCollisionRadius { get; }
         PrimaryAbilityResourceType ParType { get; }
         string[] SpellNames { get; }

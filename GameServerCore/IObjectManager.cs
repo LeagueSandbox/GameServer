@@ -107,6 +107,32 @@ namespace GameServerCore
         void StopTargeting(IAttackableUnit target);
 
         /// <summary>
+        /// Adds a GameObject of type BaseTurret to the list of BaseTurrets in ObjectManager.
+        /// </summary>
+        /// <param name="turret">BaseTurret to add.</param>
+        void AddTurret(IBaseTurret turret);
+
+        /// <summary>
+        /// Gets a GameObject of type BaseTurret from the list of BaseTurrets in ObjectManager who is identified by the specified NetID.
+        /// </summary>
+        /// <param name="netId"></param>
+        /// <returns>BaseTurret instance identified by the specified NetID.</returns>
+        IBaseTurret GetTurretById(uint netId);
+
+        /// <summary>
+        /// Removes a GameObject of type BaseTurret from the list of BaseTurrets in ObjectManager.
+        /// </summary>
+        /// <param name="turret">BaseTurret to remove.</param>
+        void RemoveTurret(IBaseTurret turret);
+
+        /// <summary>
+        /// How many turrets of a specified team are destroyed in the specified lane.
+        /// </summary>
+        /// <param name="team">Team of the BaseTurrets to check.</param>
+        /// <returns>true/false; destroyed or not</returns>
+        int GetTurretsDestroyedForTeam(TeamId team, LaneID lane);
+
+        /// <summary>
         /// Adds a GameObject of type Inhibitor to the list of Inhibitors in ObjectManager.
         /// </summary>
         /// <param name="inhib">Inhibitor to add.</param>

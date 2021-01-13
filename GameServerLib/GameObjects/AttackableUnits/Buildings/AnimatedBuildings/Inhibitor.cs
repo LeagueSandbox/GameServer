@@ -26,12 +26,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId, team)
         {
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;
             InhibitorState = InhibitorState.ALIVE;
-            SetTeam(team);
         }
 
         public override void OnAdded()

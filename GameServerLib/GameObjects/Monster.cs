@@ -29,10 +29,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(game, null, x, y, model, name, 0, netId)
+        ) : base(game, null, x, y, model, name, netId)
         {
-            SetTeam(TeamId.TEAM_NEUTRAL);
-
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
             {
@@ -51,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this, Team);
+            _game.PacketNotifier.NotifySpawn(this);
         }
     }
 }

@@ -43,6 +43,24 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
         void NotifyAddGold(IChampion c, IAttackableUnit died, float gold);
         /// <summary>
+        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in for initializing turret vision.
+        /// </summary>
+        /// <param name="newFogId">NetID of the owner of the region.</param>
+        /// <param name="team">Team to send the packet to.</param>
+        /// <param name="position">2D top-down position of the region.</param>
+        /// <param name="time">Amount of time the region lasts.</param>
+        /// <param name="radius">Radius of the region.</param>
+        /// <param name="regionType">Type of region, possible values unknown.</param>
+        /// <param name="clientInfo">Info about a client that might own (or be the target of) the region.</param>
+        /// <param name="obj">GameObject that might own (or be the target of) the region.</param>
+        /// <param name="collisionRadius">Collision radius for the region (only if it should have collision).</param>
+        /// <param name="grassRadius">Radius of the region's grass.</param>
+        /// <param name="sizemult">Multiplier that is applied to the radius of the region.</param>
+        /// <param name="addsize">Number of units to add to the region's radius.</param>
+        /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
+        /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
+        void NotifyAddRegion(uint newFogId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
+        /// <summary>
         /// Sends a packet to all players that have vision of the specified Azir turret that it has spawned.
         /// </summary>
         /// <param name="azirTurret">AzirTurret instance.</param>
@@ -111,12 +129,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="c">Champion that respawned.</param>
         void NotifyChampionRespawn(IChampion c);
         /// <summary>
-        /// Sends a packet to all players of the specified team that a champion has spawned (for the first time).
-        /// </summary>
-        /// <param name="c">Champion that has spawned.</param>
-        /// <param name="team">Team to send the packet to.</param>
-        void NotifyChampionSpawned(IChampion c, TeamId team);
-        /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
         /// </summary>
         /// <param name="u">ObjAiBase who owns the spell going on cooldown.</param>
@@ -130,18 +142,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">ID of the user to send the packet to.</param>
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
-        /// <summary>
-        /// Sends a packet to optionally all players (given isGlobal), a specified user that is the source of damage, or a specified user that is receiving the damage. The packet details an instance of damage being applied to a unit by another unit.
-        /// </summary>
-        /// <param name="source">Unit which caused the damage.</param>
-        /// <param name="target">Unit which is taking the damage.</param>
-        /// <param name="amount">Amount of damage dealt to the target (usually the end result of all damage calculations).</param>
-        /// <param name="type">Type of damage being dealt; PHYSICAL/MAGICAL/TRUE</param>
-        /// <param name="damagetext">Type of text to show above the target; INVULNERABLE/DODGE/CRIT/NORMAL/MISS</param>
-        /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
-        /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
-        /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
-        void NotifyDamageDone(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageText damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit. The packet details a group of waypoints which the unit will move to given the specified parameters.
         /// </summary>
@@ -191,6 +191,16 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="team">TeamId to send the packet to.</param>
         void NotifyDestroyClientMissile(IProjectile p, TeamId team);
         /// <summary>
+        /// Sends a packet to either all players with vision of a target, or the specified player.
+        /// The packet displays the specified message of the specified type as floating text over a target.
+        /// </summary>
+        /// <param name="target">Target to display on.</param>
+        /// <param name="message">Message to display.</param>
+        /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
+        /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
+        /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
+        void NotifyDisplayFloatingText(IGameObject target, string message, FloatTextType textType = FloatTextType.Debug, int userId = 0, int param = 0);
+        /// <summary>
         /// Sends a packet to all players detailing an emotion that is being performed by the unit that owns the specified netId.
         /// </summary>
         /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
@@ -209,12 +219,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0);
         /// <summary>
-        /// Sends a packet to either all players of the specified team or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
+        /// Sends a packet to either all players with vision of the specified object or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
         /// </summary>
         /// <param name="o">GameObject entering vision.</param>
-        /// <param name="team">TeamId to send the packet to.</param>
         /// <param name="userId">User to send the packet to.</param>
-        void NotifyEnterVisibilityClient(IGameObject o, TeamId team, int userId = 0);
+        /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
+        /// TODO: Incomplete implementation.
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit is facing the specified direction.
         /// </summary>
@@ -223,13 +234,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="isInstant">Whether or not the unit should instantly turn to the direction.</param>
         /// <param name="turnTime">The amount of time (seconds) the turn should take.</param>
         void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
-        /// <summary>
-        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
-        /// TODO: Replace with LeaguePackets' NotifyAddRegion
-        /// </summary>
-        /// <param name="u">Unit to attach the region to.</param>
-        /// <param name="newFogId">NetID of the region.</param>
-        void NotifyFogUpdate2(IAttackableUnit u, uint newFogId);
         /// <summary>
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
@@ -294,12 +298,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="client">Info of the client which the user owns.</param>
         void NotifyHeroSpawn(int userId, ClientInfo client);
         /// <summary>
-        /// Sends a packet to the specified player which spawns (usually) their Champion.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="champion">Champion which the user owns.</param>
-        void NotifyHeroSpawn2(int userId, IChampion champion);
-        /// <summary>
         /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
         /// </summary>
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
@@ -319,11 +317,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="toSlot">Slot the item was swapped to.</param>
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         /// <summary>
-        /// Sends a packet to the specified team detailing that the specified LaneMinion has spawned.
+        /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        void NotifyLaneMinionSpawned(ILaneMinion m, TeamId team);
+        /// TODO: Implement wave counter.
+        void NotifyLaneMinionSpawned(ILaneMinion m);
         /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject which has the specified netId has left vision.
         /// </summary>
@@ -377,8 +375,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
         /// <param name="minion">Minion that is spawning.</param>
-        /// <param name="team">Unused, to be removed.</param>
-        void NotifyMinionSpawned(IMinion m, TeamId team);
+        void NotifyMinionSpawned(IMinion m);
         /// <summary>
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
@@ -424,8 +421,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players that have vision of the specified GameObject that it has made a movement.
         /// </summary>
-        /// <param name="o">GameObject moving.</param>
-        /// TODO: Make moving only applicable to ObjAiBase.
+        /// <param name="o">GameObject that is moving.</param>
+        /// TODO: Make moving only applicable to AttackableUnits.
         void NotifyMovement(IGameObject o);
         /// <summary>
         /// Sends a packet to all players detailing that the specified attacker unit is starting their next auto attack.
@@ -639,8 +636,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
         /// <param name="o">GameObject that has spawned.</param>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        void NotifySpawn(IGameObject o, TeamId team);
+        void NotifySpawn(IGameObject o);
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>
@@ -696,10 +692,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has teleported to the specified position.
         /// </summary>
-        /// <param name="u">AttackableUnit that teleported.</param>
+        /// <param name="o">GameObject that teleported.</param>
         /// <param name="pos">2D top-down position that the unit teleported to.</param>
         /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
-        void NotifyTeleport(IAttackableUnit u, Vector2 pos);
+        void NotifyTeleport(IGameObject o, Vector2 pos);
         /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>
@@ -724,14 +720,26 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Replace this with LeaguePackets, rename UnitAnnounces to EventID, and complete its enum (refer to LeaguePackets.Game.Events.EventID).
         void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null);
         /// <summary>
+        /// Sends a packet to optionally all players (given isGlobal), a specified user that is the source of damage, or a specified user that is receiving the damage. The packet details an instance of damage being applied to a unit by another unit.
+        /// </summary>
+        /// <param name="source">Unit which caused the damage.</param>
+        /// <param name="target">Unit which is taking the damage.</param>
+        /// <param name="amount">Amount of damage dealt to the target (usually the end result of all damage calculations).</param>
+        /// <param name="type">Type of damage being dealt; PHYSICAL/MAGICAL/TRUE</param>
+        /// <param name="damagetext">Type of text to show above the target; refer to DamageResultType enum.</param>
+        /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
+        /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
+        /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
+        void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0);
+        /// <summary>
         /// Sends a packet to the specified player detailing that the specified target GameObject's (debug?) path drawing mode has been set to the specified mode.
         /// </summary>
         /// <param name="userId">User to send the packet to(?).</param>
         /// <param name="unit">Unit that has called for the packet.</param>
         /// <param name="target">GameObject who's (debug?) draw path mode is being set.</param>
-        /// <param name="mode">Draw path mode to set.</param>
+        /// <param name="mode">Draw path mode to set. Refer to DrawPathMode enum.</param>
         /// TODO: Verify the functionality of this packet (and its parameters) and create an enum for the mode.
-        void NotifyUnitSetDrawPathMode(int userId, IAttackableUnit unit, IGameObject target, byte mode);
+        void NotifyUnitSetDrawPathMode(int userId, IAttackableUnit unit, IGameObject target, DrawPathMode mode);
         /// <summary>
         /// Unfinished(?) function which intends to resume the game automatically (without client requests). This is usually called after the pause time has ended in Game.GameLoop.
         /// </summary>

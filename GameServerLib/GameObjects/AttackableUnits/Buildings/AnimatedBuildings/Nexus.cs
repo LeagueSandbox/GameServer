@@ -14,12 +14,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             float y = 0,
             int visionRadius = 0,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId)
+        ) : base(game, model, new Stats.Stats(), collisionRadius, x, y, visionRadius, netId, team)
         {
             Stats.CurrentHealth = 5500;
             Stats.HealthPoints.BaseValue = 5500;
-
-            SetTeam(team);
         }
 
         public override void Die(IAttackableUnit killer)

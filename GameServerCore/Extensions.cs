@@ -19,6 +19,23 @@ namespace GameServerCore
         public const float COMPARE_EPSILON = 0.0001f;
 
         /// <summary>
+        /// Whether or not the given Vector2 is within the specified boundaries
+        /// </summary>
+        /// <param name="v">Vector2 to check.</param>
+        /// <param name="max">Vector2 maximums to check against.</param>
+        /// <param name="min">Vector2 minimums to check against.</param>
+        /// <returns>True/False</returns>
+        public static bool IsVectorValid(Vector2 v, Vector2 max, Vector2 min)
+        {
+            if (v == null)
+            {
+                return false;
+            }
+
+            return v.X <= max.X && v.Y <= max.Y && v.X >= min.X && v.Y >= min.Y;
+        }
+
+        /// <summary>
         /// Gets the squared length of the specified Vector2.
         /// </summary>
         /// <param name="v">Vector2 who's length should be squared.</param>
@@ -84,9 +101,9 @@ namespace GameServerCore
             // Rotating (px,py) around (ox, oy) with angle a
             // p'x = cos(a) * (px-ox) - sin(a) * (py-oy) + ox
             // p'y = sin(a) * (px-ox) + cos(a) * (py-oy) + oy
-            angle = (float)-DegreeToRadian(angle);
-            var x = (float)(Math.Cos(angle) * (v.X - origin.X) - Math.Sin(angle) * (v.Y - origin.Y) + origin.X);
-            var y = (float)(Math.Sin(angle) * (v.X - origin.X) + Math.Cos(angle) * (v.Y - origin.Y) + origin.Y);
+            angle = -DegreeToRadian(angle);
+            var x = MathF.Cos(angle) * (v.X - origin.X) - MathF.Sin(angle) * (v.Y - origin.Y) + origin.X;
+            var y = MathF.Sin(angle) * (v.X - origin.X) + MathF.Cos(angle) * (v.Y - origin.Y) + origin.Y;
             return new Vector2(x, y);
         }
 
@@ -122,7 +139,7 @@ namespace GameServerCore
 
             // Get the angle
             var ang = Vector2.Dot(v, vectorToGetAngle);
-            var returnVal = (float)RadianToDegree(Math.Acos(ang));
+            var returnVal = RadianToDegree(MathF.Acos(ang));
             if (vectorToGetAngle.X < v.X)
             {
                 returnVal = 360 - returnVal;
@@ -140,7 +157,76 @@ namespace GameServerCore
         /// <returns>Clamped float.</returns>
         public static float Clamp(this float value, float minValue, float maxValue)
         {
-            return value < minValue ? minValue : Math.Min(value, maxValue);
+            return value < minValue ? minValue : MathF.Min(value, maxValue);
+        }
+
+        /// <summary>
+        /// Calculates given triangle's area using Heron's formula.
+        /// </summary>
+        /// <param name="first">First corner of the triangle.</param>
+        /// <param name="second">Second corner of the triangle</param>
+        /// <param name="third">Third corner of the triangle.</param>
+        /// <returns>the area of the triangle.</returns>
+        public static float GetTriangleArea(Vector2 first, Vector2 second, Vector2 third)
+        {
+            var line1Length = Vector2.Distance(first, second);
+            var line2Length = Vector2.Distance(second, third);
+            var line3Length = Vector2.Distance(third, first);
+
+            var s = (line1Length + line2Length + line3Length) / 2;
+
+            return (float)Math.Sqrt(s * (s - line1Length) * (s - line2Length) * (s - line3Length));
+        }
+
+        /// <summary>
+        /// Gets the squared distance from a specific point to a rectangle's border.
+        /// </summary>
+        /// <param name="rect">Rectangle center point.</param>
+        /// <param name="width">Width of the rectangle.</param>
+        /// <param name="height">Height of the rectangle.</param>
+        /// <param name="origin">Point to check distance from.</param>
+        /// <param name="rotation">Optional rotation of the rectangle in degrees (expensive).</param>
+        /// <returns>Float squared distance.</returns>
+        public static float DistanceSquaredToRectangle(Vector2 rect, float width, float height, Vector2 origin, float rotation = 0)
+        {
+            if (rotation != 0)
+            {
+                rect = Rotate(rect, rect, rotation);
+                origin = Rotate(origin, rect, rotation);
+            }
+
+            float dx = MathF.Max(MathF.Abs(origin.X - rect.X) - width / 2, 0);
+            float dy = MathF.Max(MathF.Abs(origin.Y - rect.Y) - height / 2, 0);
+
+            return dx * dy + dy * dy;
+        }
+
+        /// <summary>
+        /// Whether or not the given origin point lies inside the boundaries of the given rectangle.
+        /// </summary>
+        /// <param name="rect">Center point of the rectangle.</param>
+        /// <param name="width">Width of the rectangle.</param>
+        /// <param name="height">Height of the rectangle.</param>
+        /// <param name="origin">Origin point to check.</param>
+        /// <param name="rotation">Optional rotation of the rectangle in degrees (expensive).</param>
+        /// <returns></returns>
+        public static bool IsPointInRectangle(Vector2 rect, float width, float height, Vector2 origin, float rotation = 0)
+        {
+            if (rotation != 0)
+            {
+                // What? You thought the rectangle rotated? No, everything rotated around the rectangle.
+                rect = Rotate(rect, rect, rotation);
+                origin = Rotate(origin, rect, rotation);
+            }
+
+            float dx = MathF.Max(MathF.Abs(origin.X - rect.X) - width / 2, 0);
+            float dy = MathF.Max(MathF.Abs(origin.Y - rect.Y) - height / 2, 0);
+
+            if (dx == 0 && dy == 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -160,9 +246,9 @@ namespace GameServerCore
         /// </summary>
         /// <param name="angle">Angle in degrees.</param>
         /// <returns>Angle in radians.</returns>
-        public static double DegreeToRadian(double angle)
+        public static float DegreeToRadian(float angle)
         {
-            return Math.PI * angle / 180.0;
+            return MathF.PI * angle / 180.0f;
         }
 
         /// <summary>
@@ -170,9 +256,9 @@ namespace GameServerCore
         /// </summary>
         /// <param name="angle">Angle in radians.</param>
         /// <returns>Angle in degrees.</returns>
-        public static double RadianToDegree(double angle)
+        public static float RadianToDegree(float angle)
         {
-            return angle * (180.0 / Math.PI);
+            return angle * (180.0f / MathF.PI);
         }
 
         /// <summary>
@@ -184,33 +270,12 @@ namespace GameServerCore
         /// <returns>Vector2 point on the circle closest to the starting position..</returns>
         public static Vector2 GetClosestCircleEdgePoint(Vector2 from, Vector2 circlePos, float radius)
         {
-            return new Vector2(circlePos.X + (float)(Math.Cos(Math.Atan2(from.Y - circlePos.Y, from.X - circlePos.X)) * Math.Sqrt(radius)),
-                               circlePos.Y + (float)(Math.Sin(Math.Atan2(from.Y - circlePos.Y, from.X - circlePos.X)) * Math.Sqrt(radius)));
+            return new Vector2(circlePos.X + (MathF.Cos(MathF.Atan2(from.Y - circlePos.Y, from.X - circlePos.X)) * radius),
+                               circlePos.Y + (MathF.Sin(MathF.Atan2(from.Y - circlePos.Y, from.X - circlePos.X)) * radius));
         }
 
         /// <summary>
-        /// Gets the area of the circular segment formed by the intersection of a line formed by the two given points with a circle.
-        /// </summary>
-        /// <param name="p1">Starting position of a line.</param>
-        /// <param name="p2">Ending position of a line.</param>
-        /// <param name="origin">Position of the circle.</param>
-        /// <param name="r">Radius of the circle.</param>
-        /// <returns>Area of the circular segment.</returns>
-        public static double CircularSegmentArea(Vector2 p1, Vector2 p2, Vector2 origin, float r)
-        {
-            float l = Math.Abs(Vector2.Distance(p1, p2));
-            double angle = DegreeToRadian(AngleBetween(p1, p1, origin));
-            double h = r * Math.Cos((1 / 2) * angle);
-            double arcl = r * angle;
-
-            double sectorArea = (1 / 2) * r * arcl;
-            double triArea = (1 / 2) * l * h;
-
-            return sectorArea - triArea;
-        }
-
-        /// <summary>
-        /// Finds the points of intersection between a line and a circle which is located at (0,0)
+        /// Attempts to find the points of intersection between a line and a circle which is located at (0,0)
         /// </summary>
         /// <param name="p1">Closest line endpoint to the circle</param>
         /// <param name="p2">Second closest line endpoint to the circle</param>
@@ -222,29 +287,36 @@ namespace GameServerCore
 
             float dx = p2.X - p1.X;
             float dy = p2.Y - p1.Y;
-            double dr = Math.Sqrt((dx * dx) + (dy * dy));
+            float dr = MathF.Sqrt((dx * dx) + (dy * dy));
+            // Dot Product
             float D = (p1.X * p2.Y) - (p2.X * p1.Y);
 
+            // Sign variable to account for the square rooting of distance;
+            // this leads into two intersections
             int sgn = 1;
             if (dy < 0)
             {
                 sgn = -1;
             }
 
-            double? x1 = (D * dy + (sgn * dx * Math.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
-            double? y1 = (-D * dx + (Math.Abs(dy) * Math.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
-            double? x2 = (D * dy - (sgn * dx * Math.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
-            double? y2 = (-D * dx - (Math.Abs(dy) * Math.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
+            // Make nullable floats so we can check for 0 intersections
+            float? x1 = (D * dy + (sgn * dx * MathF.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
+            float? y1 = (-D * dx + (MathF.Abs(dy) * MathF.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
+            float? x2 = (D * dy - (sgn * dx * MathF.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
+            float? y2 = (-D * dx - (MathF.Abs(dy) * MathF.Sqrt((r * r) * (dr * dr) - (D * D)))) / (dr * dr);
 
-            double discriminant = (r * r) * (dr * dr) - (D * D);
+            float discriminant = (r * r) * (dr * dr) - (D * D);
 
+            // Checking for no intersections
             if (discriminant > 0 && (x1 != null || x1.GetValueOrDefault() != 0) && (x2 != null || x2.GetValueOrDefault() != 0))
             {
                 intersections.Add(new Vector2((float)x1, (float)y1));
                 intersections.Add(new Vector2((float)x2, (float)y2));
             }
+            // In the case of 1 intersection
             else if (discriminant == 0)
             {
+                // Check which side intersected
                 if (x1 != null || x1.GetValueOrDefault() != 0)
                 {
                     intersections.Add(new Vector2((float)x1, (float)y1));
@@ -256,6 +328,23 @@ namespace GameServerCore
             }
 
             return intersections;
+        }
+
+        /// <summary>
+        /// Attempts to find an escape point for the first given circle.
+        /// Should only be used when the two given circles are intersecting.
+        /// </summary>
+        /// <param name="p1">Position of the first circle</param>
+        /// <param name="r1">Radius of the first circle</param>
+        /// <param name="p2">Position of the second circle</param>
+        /// <param name="r2">Radius of the second circle</param>
+        /// <returns></returns>
+        public static Vector2 GetCircleEscapePoint(Vector2 p1, float r1, Vector2 p2, float r2)
+        {
+            Vector2 edgepoint1 = GetClosestCircleEdgePoint(p2, p1, r1);
+            Vector2 edgepoint2 = GetClosestCircleEdgePoint(p1, p2, r2);
+
+            return Vector2.Add(p1, Vector2.Subtract(edgepoint2, edgepoint1));
         }
     }
 

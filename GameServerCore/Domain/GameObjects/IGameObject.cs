@@ -6,6 +6,7 @@ namespace GameServerCore.Domain.GameObjects
 {
     /// <summary>
     /// Base class for all objects in League of Legends.
+    /// GameObjects normally follow these guidelines of functionality: Position, Collision, Vision, Team, and Networking.
     /// </summary>
     public interface IGameObject : ITarget, IUpdate
     {
@@ -22,10 +23,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         List<Vector2> Waypoints { get; }
         /// <summary>
-        /// Index of the waypoint in the list of waypoints that the object is current on.
+        /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         int WaypointIndex { get; }
         /// <summary>
         /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
@@ -42,6 +45,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Current target the game object is looking at, moving to, or attacking (can be coordinates or an object)
         /// </summary>
+        /// TODO: Remove the Target class and replace with IAttackableUnit.
+        /// TODO: GameObjects and AttackableUnits shouldn't be able to target, so move this to ObjAIBase as well.
         ITarget Target { get; }
 
         /// <summary>
@@ -86,9 +91,9 @@ namespace GameServerCore.Domain.GameObjects
         bool IsCollidingWith(IGameObject o);
 
         /// <summary>
-        /// Called when the object is ontop of another object or when the object is inside terrain.
+        /// Called by ObjectManager when the object is ontop of another object or when the object is inside terrain.
         /// </summary>
-        void OnCollision(IGameObject collider);
+        void OnCollision(IGameObject collider, bool isTerrain = false);
 
         /// <summary>
         /// Sets the object's team.
@@ -99,6 +104,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Returns the units that the game object travels each second. Default 0 unless overriden.
         /// </summary>
+        /// TODO: Move this to AttackableUnit, as even though this relates to movement, it moreso refers to stats.
         float GetMoveSpeed();
 		
 		/// <summary>
@@ -110,26 +116,31 @@ namespace GameServerCore.Domain.GameObjects
         /// Sets the object's path to the newWaypoints
         /// </summary>
         /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         void SetWaypoints(List<Vector2> newWaypoints);
 
         /// <summary>
         /// Returns the waypoint that the object is currently moving to.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         Vector2 GetNextWaypoint();
 
         /// <summary>
         /// Whether or not the object has changed its waypoints since the last game update.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         bool IsMovementUpdated();
 
         /// <summary>
         /// Called every update after the object sets its waypoints.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         void ClearMovementUpdated();
 
         /// <summary>
         /// Whether or not the object has reached its final waypoint.
         /// </summary>
+        /// TODO: Move this to ObjAIBase, as neither GameObjects nor AttackableUnits should be able to move or target.
         bool IsPathEnded();
 
         /// <summary>
@@ -144,5 +155,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         /// <param name="visible">true/false; networked or not</param>
         void SetVisibleByTeam(TeamId team, bool visible);
+
+        /// <summary>
+        /// Sets the position of this GameObject to the specified position.
+        /// </summary>
+        /// <param name="x">X coordinate to set.</param>
+        /// <param name="y">Y coordinate to set.</param>
+        void TeleportTo(float x, float y);
     }
 }

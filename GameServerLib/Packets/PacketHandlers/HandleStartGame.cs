@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                             _game.PacketNotifier.NotifyHeroSpawn2(userId, player.Item2.Champion);
+                            _game.PacketNotifier.NotifyEnterVisibilityClient(player.Item2.Champion, userId);
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */

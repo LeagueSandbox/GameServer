@@ -31,7 +31,38 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 return true;
             }
-            var vMoves = ReadWaypoints(req.MoveData, req.CoordCount, _game.Map);
+
+            // Last waypoint position
+            var pos = req.Position;
+            var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
+
+            var lastindex = 0;
+            if (!(translatedWaypoints.Count - 1 < 0))
+            {
+                lastindex = translatedWaypoints.Count - 1;
+            }
+
+            var nav = _game.Map.NavigationGrid;
+
+            foreach (Vector2 wp in translatedWaypoints)
+            {
+                if (!_game.Map.NavigationGrid.IsWalkable(wp))
+                {
+                    Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
+
+                    // prevent player pathing within their collision radius
+                    if (Vector2.DistanceSquared(champion.GetPosition(), exit) < (champion.CollisionRadius * champion.CollisionRadius))
+                    {
+                        return true;
+                    }
+
+                    if (_game.Map.NavigationGrid.IsWalkable(champion.GetPosition()))
+                    {
+                        translatedWaypoints = nav.GetPath(champion.GetPosition(), exit);
+                    }
+                    break;
+                }
+            }
 
             switch (req.Type)
             {
@@ -43,78 +74,33 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     //Logging->writeLine("Emotion");
                     return true;
                 case MoveType.ATTACKMOVE:
-                    vMoves[0] = new Vector2(champion.X,champion.Y);
+                    translatedWaypoints[0] = champion.GetPosition();
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
-                    champion.SetWaypoints(vMoves);
+                    champion.SetWaypoints(translatedWaypoints);
                     break;
                 case MoveType.MOVE:
-                    vMoves[0] = new Vector2(champion.X, champion.Y);
+                    translatedWaypoints[0] = champion.GetPosition();
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
-                    champion.SetWaypoints(vMoves);
+                    champion.SetWaypoints(translatedWaypoints);
                     break;
             }
 
             var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
             champion.UpdateTargetUnit(u);
+
+            if (translatedWaypoints == null)
+            {
+                return false;
+            }
+
             return true;
         }
 
-        private List<Vector2> ReadWaypoints(byte[] buffer, int coordCount, IMap map)
+        private Vector2 TranslateFromCenteredCoordinates(Vector2 vector)
         {
-            if (coordCount % 2 > 0)
-            {
-                coordCount++;
-            }
-
-            List<Vector2> vMoves = new List<Vector2>();
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(buffer)))
-            {
-                BitArray mask = null;
-                if (coordCount > 2)
-                {
-                    mask = new BitArray(reader.ReadBytes((coordCount - 3) / 8 + 1));
-                }
-
-                Vector2 lastCoord = new Vector2(reader.ReadInt16(), reader.ReadInt16());
-                vMoves.Add(TranslateCoordinates(lastCoord, map.NavigationGrid.MiddleOfMap));
-
-                if (coordCount < 3)
-                {
-                    return vMoves;
-                }
-
-                for (int i = 0; i < coordCount - 2; i += 2)
-                {
-                    if (mask[i])
-                    {
-                        lastCoord.X += reader.ReadSByte();
-                    }
-                    else
-                    {
-                        lastCoord.X = reader.ReadInt16();
-                    }
-
-                    if (mask[i + 1])
-                    {
-                        lastCoord.Y += reader.ReadSByte();
-                    }
-                    else
-                    {
-                        lastCoord.Y = reader.ReadInt16();
-                    }
-
-                    vMoves.Add(TranslateCoordinates(lastCoord, map.NavigationGrid.MiddleOfMap));
-                }
-            }
-
-            return vMoves;
-        }
-
-        private Vector2 TranslateCoordinates(Vector2 vector, Vector2 mapCenter)
-        {
-            // For ???? reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
-            // mapCenter contains the real center point coordinates, meaning width/2, height/2
-            return new Vector2(2 * vector.X + mapCenter.X, 2 * vector.Y + mapCenter.Y);
+            // For some reason, League coordinates are translated into center-based coordinates (origin at the center of the map),
+            // so we have to translate them back into normal coordinates where the origin is at the bottom left of the map.
+            return new Vector2(2 * vector.X + _game.Map.NavigationGrid.MiddleOfMap.X, 2 * vector.Y + _game.Map.NavigationGrid.MiddleOfMap.Y);
         }
     }
 }

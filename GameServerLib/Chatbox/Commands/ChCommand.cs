@@ -36,7 +36,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 0, // Doesnt matter at this point
                 currentChampion.RuneList,
                 _playerManager.GetClientInfoByChampion(currentChampion),
-                currentChampion.NetId
+                currentChampion.NetId,
+                _playerManager.GetPeerInfo((ulong)userId).Champion.Team
             );
             c.SetPosition(
                 _playerManager.GetPeerInfo((ulong)userId).Champion.X,

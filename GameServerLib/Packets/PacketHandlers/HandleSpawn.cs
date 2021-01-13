@@ -70,8 +70,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                      _game.PacketNotifier.NotifyTurretSpawn(userId, turret);
 
-                    // Fog Of War
-                     _game.PacketNotifier.NotifyFogUpdate2(turret, _networkIdManager.GetNewNetId());
+                    // TODO: Implemnent a Region class so we can have a centralized (and cleaner) way of making new regions.
+                    // Turret Vision (values based on packet data, placeholders)
+                    _game.PacketNotifier.NotifyAddRegion
+                    (
+                        _networkIdManager.GetNewNetId(), turret.Team, turret.GetPosition(),
+                        25000.0f, 800.0f, -2, 
+                        null, turret, turret.CharData.PathfindingCollisionRadius,
+                        130.0f, 1.0f, 0,
+                        true, true
+                    );
 
                     // To suppress game HP-related errors for enemy turrets out of vision
                     _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId);
@@ -94,7 +102,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, champion.Team, userId);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId);
                     }
                 }
                 else if (kv.Value is IInhibitor || kv.Value is INexus)

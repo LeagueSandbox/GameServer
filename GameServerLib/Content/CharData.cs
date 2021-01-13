@@ -68,6 +68,7 @@ namespace LeagueSandbox.GameServer.Content
         public float AttackSpeedPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
+        public float PerceptionBubbleRadius { get; private set; } = 0.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
 
@@ -134,8 +135,8 @@ namespace LeagueSandbox.GameServer.Content
             MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
-            PathfindingCollisionRadius =
-                file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
+            PathfindingCollisionRadius = file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
+            PerceptionBubbleRadius = file.GetFloat("Data", "PerceptionBubbleRadius", PerceptionBubbleRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
             Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
                 out var tempPar);

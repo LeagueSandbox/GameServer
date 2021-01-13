@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             AnnouncerEvents = new List<IAnnounce>();
-            CollisionHandler = new CollisionHandler(_game, this);
+            CollisionHandler = new CollisionHandler(this);
             MapProperties = GetMapProperties(Id);
         }
 
