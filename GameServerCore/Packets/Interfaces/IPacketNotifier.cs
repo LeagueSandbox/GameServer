@@ -317,9 +317,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="toSlot">Slot the item was swapped to.</param>
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
         /// <summary>
-        /// Sends a packet to the specified team detailing that the specified LaneMinion has spawned.
+        /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
+        /// TODO: Implement wave counter.
         void NotifyLaneMinionSpawned(ILaneMinion m);
         /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject which has the specified netId has left vision.

@@ -968,9 +968,10 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specifed LaneMinion detailing that it has spawned.
+        /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
+        /// TODO: Implement wave counter.
         public void NotifyLaneMinionSpawned(ILaneMinion m)
         {
             var p = new Barrack_SpawnUnit
@@ -986,7 +987,7 @@ namespace PacketDefinitions420
                 MinionLevel = 1 // TODO: Unhardcode
             };
 
-            _packetHandlerManager.BroadcastPacketVision(m, p.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(p.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
