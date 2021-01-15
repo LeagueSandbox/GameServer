@@ -25,8 +25,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// </summary>
         public BuffAddType BuffAddType { get; private set; }
         /// <summary>
-        /// 
+        /// Type of buff to add. Determines how this buff interacts with mechanics of the game. Refer to BuffType.
         /// </summary>
+        /// TODO: Add comments to BuffType enum.
         public BuffType BuffType { get; private set; }
         /// <summary>
         /// Total time this buff should be applied to its target.

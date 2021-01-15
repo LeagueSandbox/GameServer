@@ -977,6 +977,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (!IsDashing)
             {
                 // Prevent moving past obstacles. TODO: Verify if works at high speeds.
+                // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
                 KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
                 if (pathBlocked.Key)
                 {
