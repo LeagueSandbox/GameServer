@@ -20,12 +20,12 @@ namespace GarenE
 
         public IStatsModifier StatsModifier => null;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             // TODO: allow garen move through units
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             // TODO: disallow garen move through units
         }

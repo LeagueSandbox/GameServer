@@ -1430,13 +1430,13 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
         /// </summary>
-        /// <param name="target">ObjAiBase who is receiving the group of buffs.</param>
+        /// <param name="target">Unit that is receiving the group of buffs.</param>
         /// <param name="buffs">Group of buffs being added to the target.</param>
         /// <param name="buffType">Type of buff that applies to the entire group of buffs.</param>
         /// <param name="buffName">Internal name of the buff that applies to the group of buffs.</param>
         /// <param name="runningTime">Time that has passed since the group of buffs was created.</param>
         /// <param name="duration">Total amount of time the group of buffs should be active.</param>
-        public void NotifyNPC_BuffAddGroup(IObjAiBase target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration)
+        public void NotifyNPC_BuffAddGroup(IAttackableUnit target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration)
         {
             var addGroupPacket = new NPC_BuffAddGroup
             {
@@ -1484,10 +1484,10 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs is being removed from the ObjAiBase.
         /// </summary>
-        /// <param name="target">ObjAiBase getting their group of buffs removed.</param>
+        /// <param name="target">Unit getting their group of buffs removed.</param>
         /// <param name="buffs">Group of buffs getting removed.</param>
         /// <param name="buffName">Internal name of the buff that is applicable to the entire group of buffs.</param>
-        public void NotifyNPC_BuffRemoveGroup(IObjAiBase target, List<IBuff> buffs, string buffName)
+        public void NotifyNPC_BuffRemoveGroup(IAttackableUnit target, List<IBuff> buffs, string buffName)
         {
             var removeGroupPacket = new NPC_BuffRemoveGroup
             {
@@ -1528,13 +1528,13 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the buffs already occupying the slots of the group of buffs were replaced by the newly specified group of buffs.
+        /// Sends a packet to all players with vision of the specified unit detailing that the buffs already occupying the slots of the group of buffs were replaced by the newly specified group of buffs.
         /// </summary>
-        /// <param name="target">ObjAiBase getting their group of buffs replaced.</param>
+        /// <param name="target">Unit getting their group of buffs replaced.</param>
         /// <param name="buffs">Group of buffs replacing buffs in the same slots.</param>
         /// <param name="runningtime">Time since the group of buffs was created.</param>
         /// <param name="duration">Total time the group of buffs should be active.</param>
-        public void NotifyNPC_BuffReplaceGroup(IObjAiBase target, List<IBuff> buffs, float runningtime, float duration)
+        public void NotifyNPC_BuffReplaceGroup(IAttackableUnit target, List<IBuff> buffs, float runningtime, float duration)
         {
             var replaceGroupPacket = new NPC_BuffReplaceGroup
             {
@@ -1581,11 +1581,11 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified target detailing an update to the number of buffs in each of the buff slots occupied by the specified group of buffs.
         /// </summary>
-        /// <param name="target">ObjAiBase who's buffs will be updated.</param>
+        /// <param name="target">Unit who's buffs will be updated.</param>
         /// <param name="buffs">Group of buffs to update.</param>
         /// <param name="duration">Total time the buff should last.</param>
         /// <param name="runningTime">Time since the buff's creation.</param>
-        public void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningTime)
+        public void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningTime)
         {
             var updateGroupPacket = new NPC_BuffUpdateCountGroup
             {

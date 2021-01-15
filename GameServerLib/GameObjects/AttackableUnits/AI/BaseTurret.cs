@@ -93,8 +93,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         continue;
                     }
                     if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
-                        Vector2.Distance(enemyChamp.Position, enemyChampTarget.Position) > enemyChamp.Stats.Range.Total ||
-                        Vector2.Distance(Position, enemyChampTarget.Position) > Stats.Range.Total)
+                        Vector2.DistanceSquared(enemyChamp.Position, enemyChampTarget.Position) > enemyChamp.Stats.Range.Total * enemyChamp.Stats.Range.Total ||
+                        Vector2.DistanceSquared(Position, enemyChampTarget.Position) > Stats.Range.Total * Stats.Range.Total)
                     {
                         continue;
                     }
@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 var goldEarn = _globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
-                if (Vector2.Distance(player.Position, Position) <= Stats.Range.Total * 1.5f && !player.IsDead)
+                if (Vector2.DistanceSquared(player.Position, Position) <= (Stats.Range.Total * 1.5f) * (Stats.Range.Total * 1.5f) && !player.IsDead)
                 {
                     goldEarn = _globalGold * 2.5f;
                     if (_globalExp > 0)
@@ -139,16 +139,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
             base.Die(killer);
-        }
-
-        /// <summary>
-        /// Movespeed of this turret.
-        /// Unused.
-        /// </summary>
-        /// <returns>Current movespeed. Units travelled per second while moving.</returns>
-        public override float GetMoveSpeed()
-        {
-            return 0;
         }
 
         /// <summary>
@@ -201,7 +191,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && Vector2.Distance(Position, TargetUnit.Position) > Stats.Range.Total)
+            if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
                 TargetUnit = null;
                 _game.PacketNotifier.NotifySetTarget(this, null);

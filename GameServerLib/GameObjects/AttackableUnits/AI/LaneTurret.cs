@@ -283,15 +283,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
         }
 
-        public override void RefreshWaypoints()
-        {
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return 0;
-        }
-
         public override void AutoAttackHit(IAttackableUnit target)
         {
             if (Type == TurretType.FOUNTAIN_TURRET)

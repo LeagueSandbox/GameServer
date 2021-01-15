@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (mainWaypoints.Count > 0)
             {
                 // Follow these instructions
-                SetWaypoints(new List<Vector2> { mainWaypoints[1] });
+                SetWaypoints(new List<Vector2> { Position, mainWaypoints[1] });
             }
             else
             {
@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             if (_mainWaypoints.Count > _curMainWaypoint + 1)
             {
-                if (Waypoints.Count == 1 || CurrentWaypoint.Key >= Waypoints.Count && ++_curMainWaypoint < _mainWaypoints.Count)
+                if (Waypoints.Count == 1 || IsPathEnded() && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
                     SetWaypoints(new List<Vector2>() { Position, _mainWaypoints[_curMainWaypoint] });

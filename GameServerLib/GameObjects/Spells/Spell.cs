@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Projectiles = new Dictionary<uint, IProjectile>();
             SpellNetId = _networkIdManager.GetNewNetId();
 
-            if (SpellData.TargettingType == 1 && Target != null && Vector2.Distance(Target.Position, Owner.Position) > SpellData.CastRange[Level])
+            if (SpellData.TargettingType == 1 && Target != null && Vector2.DistanceSquared(Target.Position, Owner.Position) > SpellData.CastRange[Level] * SpellData.CastRange[Level])
             {
                 return false;
             }

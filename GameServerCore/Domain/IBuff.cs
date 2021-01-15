@@ -12,8 +12,8 @@ namespace GameServerCore.Domain
         string Name { get; }
         ISpell OriginSpell { get; }
         byte Slot { get; }
-        IObjAiBase SourceUnit { get; }
-        IObjAiBase TargetUnit { get; }
+        IAttackableUnit SourceUnit { get; }
+        IAttackableUnit TargetUnit { get; }
         float TimeElapsed { get; }
 
         void ActivateBuff();

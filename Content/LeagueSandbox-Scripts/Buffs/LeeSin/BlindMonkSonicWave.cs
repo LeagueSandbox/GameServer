@@ -19,13 +19,13 @@ namespace BlindMonkSonicWave
         ISpell originSpell;
         IBuff thisBuff;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             originSpell = ownerSpell;
             thisBuff = buff;
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
         }
 

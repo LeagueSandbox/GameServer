@@ -16,13 +16,13 @@ namespace SummonerHasteBuff
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             StatsModifier.MoveSpeed.PercentBonus = 27 / 100.0f;
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             unit.RemoveStatModifier(StatsModifier);
         }

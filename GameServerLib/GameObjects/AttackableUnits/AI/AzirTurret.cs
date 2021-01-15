@@ -30,14 +30,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
         }
-
-        public override void RefreshWaypoints()
-        {
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return 0;
-        }
     }
 }

@@ -102,12 +102,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var nextTargetPriority = 14;
             var objects = _game.ObjectManager.GetObjects();
             //Find target closest to max attack range.
-            foreach (var it in objects.OrderBy(x => Vector2.Distance(Position, x.Value.Position) - Stats.Range.Total))
+            foreach (var it in objects.OrderBy(x => Vector2.DistanceSquared(Position, x.Value.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
                 if (!(it.Value is IAttackableUnit u) ||
                     u.IsDead ||
                     u.Team == Team ||
-                    Vector2.Distance(Position, u.Position) > DETECT_RANGE ||
+                    Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
                     !_game.ObjectManager.TeamHasVisionOn(Team, u))
                     continue;
                 var priority = (int)ClassifyTarget(u);  // get the priority.
@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         protected void KeepFocusingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || Vector2.Distance(Position, TargetUnit.Position) > Stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);

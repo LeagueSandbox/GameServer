@@ -18,7 +18,7 @@ namespace Overdrive
 
         //IParticle p;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             //p = AddParticleTarget(unit, "Overdrive_buf.troy", unit, 1);
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (12f + ownerSpell.Level * 4) / 100f;
@@ -27,7 +27,7 @@ namespace Overdrive
 
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             //RemoveParticle(p);
             unit.RemoveStatModifier(StatsModifier);

@@ -139,7 +139,10 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="y">Y coordinate.</param>
         public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
-            CancelDash(unit);
+            if (unit.IsDashing)
+            {
+                CancelDash(unit);
+            }
             unit.TeleportTo(x, y);
         }
 
@@ -260,7 +263,7 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// This particle will be attached to a target.
         /// </summary>
-        /// <param name="unit">AI unit that should own this particle.</param>
+        /// <param name="unit">Unit that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="target">GameObject to attach this particle to.</param>
         /// <param name="size">Scale.</param>
@@ -367,10 +370,10 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Instantly cancels any dashes the specified AI unit is performing.
+        /// Instantly cancels any dashes the specified unit is performing.
         /// </summary>
-        /// <param name="unit">AI unit to stop dashing.</param>
-        public static void CancelDash(IObjAiBase unit)
+        /// <param name="unit">Unit to stop dashing.</param>
+        public static void CancelDash(IAttackableUnit unit)
         {
             // Allow the user to move the champion
             unit.SetDashingState(false);
@@ -382,14 +385,14 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Forces the specified AI unit to perform a dash which follows the specified GameObject.
+        /// Forces the specified AI unit to perform a dash which follows the specified AttackableUnit.
         /// </summary>
         /// <param name="unit">AI unit that is dashing.</param>
         /// <param name="animation">Internal name of the dash animation.</param>
         /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
         /// <param name="leapGravity">How much gravity the unit will experience when above the ground while dashing.</param>
         /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="target">GameObject to follow.</param>
+        /// <param name="target">Unit to follow.</param>
         /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Unknown parameter.</param>
         /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
@@ -397,7 +400,7 @@ namespace LeagueSandbox.GameServer.API
         public static void DashToTarget
         (
             IObjAiBase unit,
-            IGameObject target,
+            IAttackableUnit target,
             float dashSpeed,
             string animation,
             float leapGravity,

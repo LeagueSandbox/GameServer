@@ -448,7 +448,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="buffName">Internal name of the buff that applies to the group of buffs.</param>
         /// <param name="runningTime">Time that has passed since the group of buffs was created.</param>
         /// <param name="duration">Total amount of time the group of buffs should be active.</param>
-        void NotifyNPC_BuffAddGroup(IObjAiBase target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration);
+        void NotifyNPC_BuffAddGroup(IAttackableUnit target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration);
         /// <summary>
         /// Sends a packet to all players who have vision of the target of the specified buff detailing that the buff was removed from its target.
         /// </summary>
@@ -460,7 +460,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="target">ObjAiBase getting their group of buffs removed.</param>
         /// <param name="buffs">Group of buffs getting removed.</param>
         /// <param name="buffName">Internal name of the buff that is applicable to the entire group of buffs.</param>
-        void NotifyNPC_BuffRemoveGroup(IObjAiBase target, List<IBuff> buffs, string buffName);
+        void NotifyNPC_BuffRemoveGroup(IAttackableUnit target, List<IBuff> buffs, string buffName);
         /// <summary>
         /// Sends a packet to all players with vision of the target of the specified buff detailing that the buff previously in the same slot was replaced by the newly specified buff.
         /// </summary>
@@ -473,7 +473,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="buffs">Group of buffs replacing buffs in the same slots.</param>
         /// <param name="runningtime">Time since the group of buffs was created.</param>
         /// <param name="duration">Total time the group of buffs should be active.</param>
-        void NotifyNPC_BuffReplaceGroup(IObjAiBase target, List<IBuff> buffs, float runningtime, float duration);
+        void NotifyNPC_BuffReplaceGroup(IAttackableUnit target, List<IBuff> buffs, float runningtime, float duration);
         /// <summary>
         /// Sends a packet to all players with vision of the target of the specified buff detailing an update to the number of buffs in the specified buff's slot
         /// </summary>
@@ -484,11 +484,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players with vision of the specified target detailing an update to the number of buffs in each of the buff slots occupied by the specified group of buffs.
         /// </summary>
-        /// <param name="target">ObjAiBase who's buffs will be updated.</param>
+        /// <param name="target">Attackable who's buffs will be updated.</param>
         /// <param name="buffs">Group of buffs to update.</param>
         /// <param name="duration">Total time the buff should last.</param>
         /// <param name="runningTime">Time since the buff's creation.</param>
-        void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningtime);
+        void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningtime);
         /// <summary>
         /// Sends a packet to all players with vision of the target of the specified buff detailing an update to the stack counter of the specified buff.
         /// </summary>

@@ -15,16 +15,12 @@ namespace Silence
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        private UnitCrowdControl _crowd = new UnitCrowdControl(CrowdControlType.SILENCE);
-
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.ApplyCrowdControl(_crowd);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
-            unit.RemoveCrowdControl(_crowd);
         }
 
         public void OnUpdate(double diff)

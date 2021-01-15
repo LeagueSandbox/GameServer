@@ -16,7 +16,7 @@ namespace LuluWBuff
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var ap = ownerSpell.Owner.Stats.AbilityPower.Total * 0.001;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;
@@ -24,7 +24,7 @@ namespace LuluWBuff
             var time = 2.5f + 0.5f * ownerSpell.Level;
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             unit.RemoveStatModifier(StatsModifier);
         }

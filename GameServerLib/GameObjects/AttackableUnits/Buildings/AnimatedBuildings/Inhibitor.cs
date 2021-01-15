@@ -111,10 +111,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
 
         }
 
-        public override float GetMoveSpeed()
-        {
-            return 0;
-        }
-
     }
 }

@@ -157,15 +157,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return 0;
         }
 
-        public bool CanMove()
-        {
-            return !HasCrowdControl(CrowdControlType.STUN) &&
-                !IsDashing &&
-                (GetBuffs().Count(x => x.OriginSpell.SpellData.CanMoveWhileChanneling) == GetBuffsCount() || !IsCastingSpell) &&
-                !IsDead &&
-                !HasCrowdControl(CrowdControlType.ROOT);
-        }
-
         public override void UpdateMoveOrder(MoveOrder order)
         {
             base.UpdateMoveOrder(order);
@@ -273,7 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
-                var distanceToTarget = 25000f;
+                var sqrDistanceToTarget = 25000f * 25000f;
                 IAttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
@@ -282,12 +273,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (!(it.Value is IAttackableUnit u) ||
                         u.IsDead ||
                         u.Team == Team ||
-                        Vector2.Distance(Position, u.Position) > range)
+                        Vector2.DistanceSquared(Position, u.Position) > range * range)
                         continue;
 
-                    if (!(Vector2.Distance(Position, u.Position) < distanceToTarget))
+                    if (!(Vector2.DistanceSquared(Position, u.Position) < sqrDistanceToTarget))
                         continue;
-                    distanceToTarget = Vector2.Distance(Position, u.Position);
+                    sqrDistanceToTarget = Vector2.DistanceSquared(Position, u.Position);
                     nextTarget = u;
                 }
 
@@ -493,6 +484,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (isTerrain)
             {
                 //CORE_INFO("I bumped into a wall!");
+            }
+            // Champions are only teleported if they collide with other Champions.
+            // TODO: Implement Collision Priority
+            // TODO: Implement dynamic navigation grid for buildings and turrets.
+            else if (collider is IChampion || collider is IBaseTurret)
+            {
+                // Teleport out of other objects (+1 for insurance).
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius * 2, collider.Position, collider.CollisionRadius);
+                TeleportTo(exit.X, exit.Y);
             }
         }
 

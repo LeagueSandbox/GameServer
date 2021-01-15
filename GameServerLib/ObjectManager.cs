@@ -176,7 +176,7 @@ namespace LeagueSandbox.GameServer
                     u.IsModelUpdated = false;
                 }
 
-                if (u.IsMovementUpdated() && !u.IsDashing)
+                if (u.IsMovementUpdated())
                 {
                     _game.PacketNotifier.NotifyMovement(u);
                     u.ClearMovementUpdated();
@@ -191,7 +191,9 @@ namespace LeagueSandbox.GameServer
         public void AddObject(IGameObject o)
         {
             if (o == null)
+            {
                 return;
+            }
 
             // If it crashes here the problem is most likely somewhere else
             lock (_objectsLock)
@@ -271,7 +273,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && Vector2.Distance(kv.Value.Position, o.Position) < kv.Value.VisionRadius &&
+                    if (kv.Value.Team == team && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius &&
                         !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;

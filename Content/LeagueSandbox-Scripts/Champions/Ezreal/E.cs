@@ -46,16 +46,16 @@ namespace Spells
             AddParticleTarget(owner, "Ezreal_arcaneshift_flash.troy", owner);
             IAttackableUnit target2 = null;
             var units = GetUnitsInRange(current, 700, true);
-            float distance = 700;
+            float sqrDistance = 700 * 700;
             foreach (var value in units)
             {
                 if (owner.Team != value.Team && value is IObjAiBase)
                 {
-                    if (Vector2.Distance(trueCoords, value.Position) <=
-                        distance)
+                    if (Vector2.DistanceSquared(trueCoords, value.Position) <=
+                        sqrDistance)
                     {
                         target2 = value;
-                        distance = Vector2.Distance(trueCoords, value.Position);
+                        sqrDistance = Vector2.DistanceSquared(trueCoords, value.Position);
                     }
                 }
             }

@@ -17,22 +17,15 @@ namespace LuluWDebuff
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        private UnitCrowdControl _crowdDisarm = new UnitCrowdControl(CrowdControlType.DISARM);
-        private UnitCrowdControl _crowdSilence = new UnitCrowdControl(CrowdControlType.SILENCE);
-
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             StatsModifier.MoveSpeed.BaseBonus = StatsModifier.MoveSpeed.BaseBonus - 60;
-            unit.ApplyCrowdControl(_crowdDisarm);
-            unit.ApplyCrowdControl(_crowdSilence);
             unit.AddStatModifier(StatsModifier);
             var time = 1 + 0.25f * ownerSpell.Level;
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
-            unit.RemoveCrowdControl(_crowdDisarm);
-            unit.RemoveCrowdControl(_crowdSilence);
             unit.RemoveStatModifier(StatsModifier);
         }
 
